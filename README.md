@@ -123,10 +123,10 @@ For code quality and consistency, we integrate ESLint into our development proce
         <p>
           With a strong foundation in computer science and a keen eye for detail, I'm committed to leveraging technology to solve complex problems. I thrive in dynamic environments that encourage continuous learning and provide opportunities to push the boundaries of what's possible. As I grow in my career, I aim to combine my technical expertise with a user-centric approach to create solutions that are both efficient and impactful.
         </p>
-        <a href="https://github.com/TristanU21442615">
+        <a href="https://github.com/bchraf3">
           <img src="/media/githubPic.png" width="24" height="24"/>
         </a>
-        <a href="www.linkedin.com/in/tristan-sutherland-87ba92238">
+        <a href="https://www.linkedin.com/in/bouchaib-chraf-3b80a51a4/">
           <img src="/media/linkedinPic.png" width="24" height="24"/>
         </a>
       </td>

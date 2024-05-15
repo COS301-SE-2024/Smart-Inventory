@@ -116,7 +116,7 @@ For code quality and consistency, we integrate ESLint into our development proce
     </tr>
     <tr>
       <td width="150" height="140">
-        <img src="media/Bryce.png" width="150" height="auto">
+        <img src="media/Bryce.jpg" width="150" height="auto">
       </td>
       <td style="vertical align: top; width: 70%;">
         <b>

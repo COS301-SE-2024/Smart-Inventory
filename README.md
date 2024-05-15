@@ -1,5 +1,5 @@
-<h1> Helix - SmartInventory - Smart Inventory System to track and organise inventory</h1>
-<h2>About</h2>
+# Helix - SmartInventory - Smart Inventory System to track and organise inventory
+## About
 
 <div align="center">
   <a href="https://github.com/TristanU21442615/HelixCapstone">

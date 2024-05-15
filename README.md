@@ -120,16 +120,26 @@ For code quality and consistency, we integrate ESLint into our development proce
       </td>
       <td style="vertical align: top; width: 70%;">
         <b>
-          Tristan Sutherland
+          Bryce Sukhdeo
         </b>
         <br>
         <p>
-          Passionate about data-driven decision-making, I am dedicated to transitioning into the role of a data scientist. I thrive in collaborative environments and am committed to continuous learning to stay at the forefront of emerging trends in data science.
+          Bryce, a computer science student majoring in data science, brings a strong focus on
+          artificial intelligence and data structures to the team. His proficiency in Java, Python, and
+          RStudio, along with his expertise in NoSQL databases, will be invaluable in developing the
+          SmartInventory system's data management and analysis components. Bryce's keen
+          interest in becoming a data scientist aligns perfectly with the project's goal of
+          incorporating advanced features such as demand forecasting and inventory optimization.
+          Bryce's ability to work well in teams and his willingness to contribute to all aspects of
+          programming, including areas outside his specialties, demonstrate his adaptability and
+          commitment to the project's success. His strong problem-solving skills and ability to
+          adapt to new challenges will be essential in navigating the complexities of the
+          SmartInventory project and ensuring its timely delivery.
         </p>
-        <a href="https://github.com/TristanU21442615">
+        <a href="https://github.com/BryceAxl">
           <img src="/media/githubPic.png" width="24" height="24"/>
         </a>
-        <a href="www.linkedin.com/in/tristan-sutherland-87ba92238">
+        <a href="https://www.linkedin.com/in/bryce-sukhdeo-64997260/">
           <img src="/media/linkedinPic.png" width="24" height="24"/>
         </a>
       </td>

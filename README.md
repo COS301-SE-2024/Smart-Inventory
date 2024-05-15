@@ -124,7 +124,7 @@ For code quality and consistency, we integrate ESLint into our development proce
         </b>
         <br>
         <p>
-          Bryce, a computer science student majoring in data science, brings a strong focus on
+          A computer science student majoring in data science, brings a strong focus on
           artificial intelligence and data structures to the team. His proficiency in Java, Python, and
           RStudio, along with his expertise in NoSQL databases, will be invaluable in developing the
           SmartInventory system's data management and analysis components. Bryce's keen
@@ -146,7 +146,7 @@ For code quality and consistency, we integrate ESLint into our development proce
     </tr>
       <tr>
       <td width="150" height="140">
-        <img src="/media/Tristan.png" width="150" height="auto">
+        <img src="/media/Bryce.png" width="150" height="auto">
       </td>
       <td style="vertical align: top; width: 70%;">
         <b>

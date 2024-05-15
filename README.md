@@ -121,7 +121,7 @@ For code quality and consistency, we integrate ESLint into our development proce
         </b>
         <br>
         <p>
-          Passionate about data-driven decision-making, I am dedicated to transitioning into the role of a data scientist. I thrive in collaborative environments and am committed to continuous learning to stay at the forefront of emerging trends in data science.
+          With a strong foundation in computer science and a keen eye for detail, I'm committed to leveraging technology to solve complex problems. I thrive in dynamic environments that encourage continuous learning and provide opportunities to push the boundaries of what's possible. As I grow in my career, I aim to combine my technical expertise with a user-centric approach to create solutions that are both efficient and impactful.
         </p>
         <a href="https://github.com/TristanU21442615">
           <img src="/media/githubPic.png" width="24" height="24"/>

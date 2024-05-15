@@ -113,7 +113,47 @@ For code quality and consistency, we integrate ESLint into our development proce
     </tr>
     <tr>
       <td width="150" height="140">
-        <img src="/media/Bush.jpg" width="150" height="auto">
+        <img src="/media/Tristan.png" width="150" height="auto">
+      </td>
+      <td style="vertical align: top; width: 70%;">
+        <b>
+          Tristan Sutherland
+        </b>
+        <br>
+        <p>
+          Passionate about data-driven decision-making, I am dedicated to transitioning into the role of a data scientist. I thrive in collaborative environments and am committed to continuous learning to stay at the forefront of emerging trends in data science.
+        </p>
+        <a href="https://github.com/">
+          <img src="/media/githubPic.png" width="24" height="24"/>
+        </a>
+        <a href="https://www.linkedin.com/">
+          <img src="/media/linkedinPic.png" width="24" height="24"/>
+        </a>
+      </td>
+    </tr>
+      <tr>
+      <td width="150" height="140">
+        <img src="/media/Tristan.png" width="150" height="auto">
+      </td>
+      <td style="vertical align: top; width: 70%;">
+        <b>
+          Tristan Sutherland
+        </b>
+        <br>
+        <p>
+          Passionate about data-driven decision-making, I am dedicated to transitioning into the role of a data scientist. I thrive in collaborative environments and am committed to continuous learning to stay at the forefront of emerging trends in data science.
+        </p>
+        <a href="https://github.com/TristanU21442615">
+          <img src="/media/githubPic.png" width="24" height="24"/>
+        </a>
+        <a href="www.linkedin.com/in/tristan-sutherland-87ba92238">
+          <img src="/media/linkedinPic.png" width="24" height="24"/>
+        </a>
+      </td>
+    </tr>
+      <tr>
+      <td width="150" height="140">
+        <img src="/media/bush.jpg" width="150" height="auto">
       </td>
       <td style="vertical align: top; width: 70%;">
         <b>
@@ -127,46 +167,6 @@ For code quality and consistency, we integrate ESLint into our development proce
           <img src="/media/githubPic.png" width="24" height="24"/>
         </a>
         <a href="https://www.linkedin.com/in/bouchaib-chraf-3b80a51a4/">
-          <img src="/media/linkedinPic.png" width="24" height="24"/>
-        </a>
-      </td>
-    </tr>
-      <tr>
-      <td width="150" height="140">
-        <img src="/media/Tristan.png" width="150" height="auto">
-      </td>
-      <td style="vertical align: top; width: 70%;">
-        <b>
-          Tristan Sutherland
-        </b>
-        <br>
-        <p>
-          Passionate about data-driven decision-making, I am dedicated to transitioning into the role of a data scientist. I thrive in collaborative environments and am committed to continuous learning to stay at the forefront of emerging trends in data science.
-        </p>
-        <a href="https://github.com/TristanU21442615">
-          <img src="/media/githubPic.png" width="24" height="24"/>
-        </a>
-        <a href="www.linkedin.com/in/tristan-sutherland-87ba92238">
-          <img src="/media/linkedinPic.png" width="24" height="24"/>
-        </a>
-      </td>
-    </tr>
-      <tr>
-      <td width="150" height="140">
-        <img src="/media/Tristan.png" width="150" height="auto">
-      </td>
-      <td style="vertical align: top; width: 70%;">
-        <b>
-          Tristan Sutherland
-        </b>
-        <br>
-        <p>
-          Passionate about data-driven decision-making, I am dedicated to transitioning into the role of a data scientist. I thrive in collaborative environments and am committed to continuous learning to stay at the forefront of emerging trends in data science.
-        </p>
-        <a href="https://github.com/TristanU21442615">
-          <img src="/media/githubPic.png" width="24" height="24"/>
-        </a>
-        <a href="www.linkedin.com/in/tristan-sutherland-87ba92238">
           <img src="/media/linkedinPic.png" width="24" height="24"/>
         </a>
       </td>

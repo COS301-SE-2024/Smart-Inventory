@@ -117,7 +117,7 @@ For code quality and consistency, we integrate ESLint into our development proce
       </td>
       <td style="vertical align: top; width: 70%;">
         <b>
-          Tristan Sutherland
+          Bouchaib Chraf
         </b>
         <br>
         <p>

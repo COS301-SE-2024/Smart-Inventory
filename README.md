@@ -166,20 +166,20 @@ For code quality and consistency, we integrate ESLint into our development proce
     </tr>
       <tr>
       <td width="150" height="140">
-        <img src="/media/Tristan.png" width="150" height="auto">
+        <img src="media/Thabang.jpeg" width="150" height="auto">
       </td>
       <td style="vertical align: top; width: 70%;">
         <b>
-          Tristan Sutherland
+          Thabang Kgaladi
         </b>
         <br>
         <p>
-          Passionate about data-driven decision-making, I am dedicated to transitioning into the role of a data scientist. I thrive in collaborative environments and am committed to continuous learning to stay at the forefront of emerging trends in data science.
+ A student of Information and Knowledge Systems at the University of Pretoria, they are deeply immersed in the world of software development. Their passion for technology extends beyond academics into gaming and digital creation. With a rich background in digital arts, having worked with Adobe Illustrator and Photoshop, they are currently exploring the possibilities within 3D modeling using Blender. Proficient in programming languages such as C++, C#, Java, and Python, they also excel in frameworks like Angular, Ionic, and MVC C#. Their ultimate ambition is to craft their own game or a tech-focused app, blending their interests in technology and art to create something truly unique.
         </p>
-        <a href="https://github.com/TristanU21442615">
+        <a href="https://github.com/u21686875">
           <img src="/media/githubPic.png" width="24" height="24"/>
         </a>
-        <a href="www.linkedin.com/in/tristan-sutherland-87ba92238">
+        <a href="https://www.linkedin.com/in/thabang-kgaladi-12b001215">
           <img src="/media/linkedinPic.png" width="24" height="24"/>
         </a>
       </td>

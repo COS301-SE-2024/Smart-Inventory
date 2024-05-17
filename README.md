@@ -2,7 +2,7 @@
 <h2>About</h2>
 
 ## Google Docs Link
-< a href="https://drive.google.com/drive/u/6/my-drive">
+https://drive.google.com/drive/u/6/my-drive
 
 <div align="center">
   <a href="https://github.com/TristanU21442615/HelixCapstone">

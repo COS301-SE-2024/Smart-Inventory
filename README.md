@@ -1,8 +1,6 @@
 <h1> Helix - SmartInventory - Smart Inventory System to track and organise inventory</h1>
 <h2>About</h2>
 
-## Google Docs Link
-https://drive.google.com/drive/u/6/my-drive
 
 <div align="center">
   <a href="https://github.com/TristanU21442615/HelixCapstone">
@@ -10,7 +8,10 @@ https://drive.google.com/drive/u/6/my-drive
   </a>
 </div>
 <hr>
-<br>
+<be>
+
+## Google Drive Link
+https://drive.google.com/drive/folders/1yC_nHp_spKNN3gHi4fL5JUDHA2dskahi?usp=sharing
 
 ## Git Strategy - Git Flow
 

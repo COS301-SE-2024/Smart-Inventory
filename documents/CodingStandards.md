@@ -16,7 +16,7 @@
 [Comments](#12)\
 [Formatting](#13)\
 [Standards Technology](#14)\
-[Miscellaneous](#15)\
+[Miscellaneous](#15)
 
 <a id="1"></a>
 ## Introduction

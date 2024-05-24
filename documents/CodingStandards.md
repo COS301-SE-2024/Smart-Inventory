@@ -16,7 +16,7 @@
 [Comments](#12)\
 [Formatting](#13)\
 [Standards Technology](#14)\
-[Miscellaneous](#15)
+[Miscellaneous](#15)\
 
 <a id="1"></a>
 ## Introduction
@@ -271,129 +271,30 @@ scripts/
 
 -   **Interface Names**: Use `PascalCase` and prefix with `I` if needed. e.g., `IUserProfile`, `IOrderDetails`.
 -   **Property Names**: Use `camelCase`. e.g., `userName`, `orderItems`.
-- Example 
-
-```typescript
-export interface IUserProfile {
-    userId: number;
-    userName: string;
-    email: string;
-    dateOfBirth: Date;
-    isActive: boolean;
-}
-```
 
 ### Java with Spring Boot (DTOs)
 
 -   **Class Names**: Use `PascalCase` and suffix with `Dto` if needed. e.g., `UserProfileDto`, `OrderDetailsDto`.
 -   **Property Names**: Use `camelCase`. e.g., `userName`, `orderItems`.
-- Example
-
-```java
-public class UserProfileDto {
-    private Long userId;
-    private String userName;
-    private String email;
-    private LocalDate dateOfBirth;
-    private Boolean isActive;
-
-    // Getters and Setters
-}
-```
 
 ### REST API (JSON Schemas)
 
 -   **Schema Names**: Use `PascalCase` and suffix with `Schema` if needed. e.g., `UserProfileSchema`, `OrderDetailsSchema`.
 -   **Property Names**: Use `camelCase`. e.g., `userName`, `orderItems`.
-- Example
-
-```json
-{
-    "UserProfileSchema": {
-        "type": "object",
-        "properties": {
-            "userId": {
-                "type": "integer"
-            },
-            "userName": {
-                "type": "string"
-            },
-            "email": {
-                "type": "string"
-            },
-            "dateOfBirth": {
-                "type": "string",
-                "format": "date"
-            },
-            "isActive": {
-                "type": "boolean"
-            }
-        },
-        "required": ["userId", "userName", "email"]
-    }
-}
-```
 
 ### PostgreSQL (Tables and Columns)
 
 -   **Table Names**: Use `snake_case` and plural nouns. e.g., `user_profiles`, `order_details`.
 -   **Column Names**: Use `snake_case`. e.g., `user_name`, `order_date`.
-- Example
 
-```sql
-CREATE TABLE user_profiles (
-    user_id SERIAL PRIMARY KEY,
-    user_name VARCHAR(50) NOT NULL,
-    email VARCHAR(100) NOT NULL,
-    date_of_birth DATE,
-    is_active BOOLEAN DEFAULT TRUE
-);
-```
 ### JSON Data (For API Communication)
 
 -   **Schema Names**: Use `PascalCase` for complex types, and `camelCase` for property names.
-- Example
-```json
-{
-    "orderDetails": {
-        "orderId": 456,
-        "orderDate": "2023-05-01T12:00:00Z",
-        "userId": 123,
-        "items": [
-            {
-                "itemId": 1,
-                "quantity": 2,
-                "price": 19.99
-            }
-        ]
-    }
-}
-```
 
 ### TensorFlow (Data Structures)
 
 -   **Class Names**: Use `PascalCase` for class and model names. e.g., `ImageClassifier`, `DataPreprocessor`.
 -   **Variable Names**: Use `camelCase` for variable names. e.g., `learningRate`, `batchSize`.
-- Example
-```python
-class ImageClassifier:
-    def __init__(self, learning_rate: float):
-        self.learning_rate = learning_rate
-        self.model = self._build_model()
-
-    def _build_model(self):
-        model = tf.keras.Sequential([
-            tf.keras.layers.Conv2D(32, (3, 3), activation='relu', input_shape=(28, 28, 1)),
-            tf.keras.layers.MaxPooling2D((2, 2)),
-            tf.keras.layers.Flatten(),
-            tf.keras.layers.Dense(128, activation='relu'),
-            tf.keras.layers.Dense(10, activation='softmax')
-        ])
-        model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=self.learning_rate),
-                      loss='sparse_categorical_crossentropy',
-                      metrics=['accuracy'])
-        return model
-```
 
 <a id="6"></a>
 ## Function Conventions
@@ -509,42 +410,154 @@ class ImageClassifier:
 <a id="9"></a>
 ## Indentation and Spaces
 
+<div style="text-align: center;">
+
+| Aspect                | JavaScript/TypeScript (Angular) | Java (Spring Boot) | Python (TensorFlow) | SQL (PostgreSQL) | CSS/SCSS | JSON/YAML |
+|-----------------------|---------------------------------|--------------------|---------------------|------------------|----------|-----------|
+| **Indentation**       | 2 spaces                        | 4 spaces           | 4 spaces            | 2 spaces         | 2 spaces | 2 spaces  |
+| **Line Length**       | 80 characters                   | 80 characters      | 80 characters       | 80 characters    | 80 characters | 80 characters |
+| **Braces**            | Same line for opening, new line for closing | Same line for opening, new line for closing | Same line for opening, new line for closing | Same line for opening, new line for closing | Same line for opening, new line for closing | N/A |
+| **Whitespace**        | Single space after keywords and before opening parentheses. No spaces inside parentheses, brackets, or braces. Single blank line to separate sections. Remove trailing whitespace. | Same as Angular | Same as Angular | Same as Angular | Same as Angular | Same as Angular |
+| **Alignment**         | Align code for readability. | Same as Angular | Same as Angular | Same as Angular | Same as Angular | Same as Angular |
+| **Function/Method Declarations** | Single space between signature and body. | Same as Angular | Same as Angular | Same as Angular | Same as Angular | Same as Angular |
+| **Control Structures**| Always use braces `{}` | Same as Angular | Same as Angular | Same as Angular | Same as Angular | Same as Angular |
+| **Operators**         | Space before and after binary operators. No spaces around unary operators. | Same as Angular | Same as Angular | Same as Angular | Same as Angular | Same as Angular |
+
+</div>
 
 <a id="10"></a>
 ## Testing and Debugging
 
+### JavaScript/TypeScript (Angular), Jasmine, and Cypress
+
+- **Test Structure**:
+  - **Describe Blocks**: Group related tests using `describe` blocks.
+  - **It Blocks**: Use `it` blocks for individual test cases.
+  - **Setup/Teardown**: Use `beforeEach` and `afterEach` for setup and teardown logic.
+
+- **Assertions**:
+  - Use Jasmine matchers (e.g., `toEqual`, `toBe`, `toContain`) for assertions.
+
+- **Mocking and Spies**:
+  - Use Jasmine spies to mock functions and services.
+
+- **End-to-End Testing**:
+  - Use Cypress for end-to-end tests.
+  - Organize tests in the `cypress/integration` directory.
+  - Use `cy` commands to interact with the application.
+
+### Java (Spring Boot), Spring Test, and Postman
+
+- **Test Structure**:
+  - Use JUnit 5 for unit and integration tests.
+  - Use `@Test` annotation for test methods.
+  - Organize tests in the `src/test/java` directory following the same package structure as the main code.
+
+- **Assertions**:
+  - Use JUnit assertions (e.g., `assertEquals`, `assertNotNull`, `assertTrue`).
+
+- **Mocking**:
+  - Use Mockito for mocking dependencies.
+
+- **API Testing**:
+  - Use Postman for manual API testing.
+  - Create and organize Postman collections to group related API tests.
+  - Use Postman scripts to automate testing sequences.
+
+### Python (TensorFlow)
+
+- **Test Structure**:
+  - Use `unittest` or `pytest` for testing.
+  - Organize tests in the `tests` directory.
+  - Use `setUp` and `tearDown` for setup and teardown logic.
+
+- **Assertions**:
+  - Use `unittest` assertions (e.g., `assertEqual`, `assertTrue`, `assertIsNone`).
+
+- **Mocking**:
+  - Use `unittest.mock` for mocking dependencies.
+
+### SQL (PostgreSQL)
+
+- **Test Structure**:
+  - Use migration tools (like Flyway or Liquibase) to manage database schema changes.
+  - Write SQL scripts for testing in a dedicated test directory.
+  - Use `psql` or other PostgreSQL clients to run and verify test scripts.
 
 <a id="11"></a>
 ## Error Handling
 
+### General Coding Standards
+
+These standards apply to all technologies used in this project.
+
+#### Syntax
+- **Try-Catch Blocks**:
+  - Use try-catch blocks to capture and handle exceptions.
+  - Place risky code inside the try block and handle exceptions in catch blocks.
+
+- **Throwing Exceptions**:
+  - Throw exceptions with meaningful error messages to aid debugging.
+  - Prefer specific exception types over general ones to provide more context.
+
+#### Usage
+- **Logging**:
+  - Use logging frameworks (e.g., log4j, SLF4J, logging in Python) to record errors and events.
+  - Log relevant information such as error messages, stack traces, and context details.
+
+- **Graceful Degradation**:
+  - Implement graceful degradation by providing fallback mechanisms or alternative workflows when errors occur.
+  - Notify users about errors in a user-friendly manner and guide them on how to proceed.
 
 <a id="12"></a>
 ## Comments
 
-### Syntax
+- **Single-Line Comments**:
+  - Use single-line comments (`//` in JavaScript/TypeScript, Java, Python, SQL) for brief comments on the same line as the code.
 
-### Uses
+- **Block Comments**:
+  - Use block comments (`/* */` in JavaScript/TypeScript, Java, Python, SQL) for longer comments spanning multiple lines.
 
 <a id="13"></a>
 ## Formatting
 
-### Whitespace
+### General Formatting Standards
 
-#### Indentation
+##### Indentation
+- Use spaces for indentation.
+- Set the indentation size to 2 spaces for JavaScript/TypeScript and CSS/SCSS, 4 spaces for Java and Python, and 2 spaces for SQL.
 
-#### General Use
+##### General Use
+- Maintain a consistent line length of 80 characters.
+- Use a single space after keywords and before opening parentheses.
+- Avoid spaces inside parentheses, brackets, or braces.
+- Utilize a single blank line to separate logical sections of the code.
+- Remove trailing whitespace at the end of lines.
 
-### Operators
-   
-### Expressions
+#### Operators
+- Place a single space before and after binary operators.
+- Avoid spaces around unary operators.
 
-### Functions
-   
-### Braces
+#### Expressions
+- Format expressions to enhance readability.
+- Break long expressions into multiple lines if needed.
+
+#### Functions
+- Use a clear and consistent naming convention for functions.
+- Document functions using comments to describe their purpose, parameters, and return values.
+
+#### Braces
+- Place opening braces on the same line as the declaration.
+- Place closing braces on a new line.
+
+#### Whitespaces
+
+| Aspect    | JavaScript/TypeScript (Angular) | Java (Spring Boot) and Python (TensorFlow) | SQL (PostgreSQL) |
+|-----------|---------------------------------|---------------------------------------------|------------------|
+| Whitespace| Indent using 2 spaces.          | Indent using 4 spaces.                      | Indent using 2 spaces. |
 
 <a id="14"></a>
 ## Standards Technology
-### Prettier
 
 <a id="15"></a>
 ## Miscellaneous

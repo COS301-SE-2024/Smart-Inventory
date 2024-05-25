@@ -17,7 +17,8 @@ The purpose of this document is to assist users in becomming familiar with our a
 
 <div align="center">
   <h3>Create Account</h3>
-  <img src="">
+  <img src="/media/wireframes/CreateAcc_dark.png">
+  <img src="/media/wireframes/CreateAcc_light.png">
 </div>
 
 **Create Account with details:**
@@ -26,7 +27,8 @@ The purpose of this document is to assist users in becomming familiar with our a
 
 <div align="center">
   <h3>Dashboard</h3>
-  <img src="">
+  <img src="/media/wireframes/Dashboard_dark.png">
+  <img src="/media/wireframes/Dashboard_light.png">
 </div>
 
 **Dashboard:**

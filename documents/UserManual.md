@@ -7,7 +7,8 @@ The purpose of this document is to assist users in becomming familiar with our a
 <hr>
 <div align="center">
   <h3>Sign in</h3>
-  <img src="">
+  <img src="/media/wireframes/SignIn_dark.png">
+  <img src="/media/wireframes/SignIn_light.png">
 </div>
 
 **Signin with details:**

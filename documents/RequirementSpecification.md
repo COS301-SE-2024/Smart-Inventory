@@ -3,8 +3,11 @@
 ## Introduction
 
 ### Overview
+This project involves creating a Smart Inventory web app for businesses.  SmartInventory is a comprehensive web-based inventory management system designed 
+to streamline and automate the process of tracking, ordering, and managing stock for businesses, restaurants, and laboratories. The system aims to simplify inventory management by providing a user-friendly interface for administrators, inventory controllers, and end users to capture stock details, request stock, and generate insightful reports.
 
 ### Objectives
+This document guides stakeholders through the qualities and functionalities of the Smart Inventory System. It details how client requirements are gathered and evaluated using a structured software engineering methodology.
 
 ## Users
 

@@ -24,15 +24,23 @@ A user will be brought to this page either through an email link or when they op
   * If the details are incorrect the user will be notified with error messages over the field that they have provided incorrect details to.
   * The user can choose to try again to correctly input the details.
     
-** Dark or Light mode display: **
+<br>
+
+**Dark or Light mode display:**
 * The user can also choose their page display setting through the toggle button in the bottom right corner according to their preference.
 * This display preference can be changed in settings in the actual system when signed in.
-** Forgot password: **
+
+<br>
+
+**Forgot password:**
 * If a user has not been given a password or has forgotten it they can press the 'forgot password?' link.
 * This will firstly send the email to the admin user of the team the email provided is apart of to make them aware of the sign in attempt.
 * The user asking for the change will also receive a mail to verify the account and to change the password.
 * If a user is signed in the can also change the password in their settings.
-** Create Account: **
+
+<br>
+  
+**Create Account:**
 * If an account has not been created the user can choose to click on the create account link to take them to the page to create an account.
 * There the user should follow the create account steps provided below.
 

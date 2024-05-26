@@ -104,37 +104,64 @@ The users of SmartInventory can easily be split into these groups groups:
 ### 2. Team/User Management subsystem
 
 ### 3. Reporting subsystem
-1. Generate inventory reports
-  1. Provide a report on current stock levels for all products.
-  2. Include details such as product name, supplier, quantity, and expiration date.
-  3. Allow filtering and sorting of the inventory report based on various criteria (e.g., product category, supplier, expiration date)
 
-2. Generate stock take reports
-  1. Facilitate the process of performing stock takes by generating a report of all products and their expected quantities
-  2. Allow inventory personnel to input actual quantities during the stock take process
-  3. Highlight discrepancies between expected and actual quantities in the stock take report
-  4. Provide a summary of stock take results, including total discrepancies and percentage accuracy
-
-3. Generate expiration reports
-  1. Identify products that are nearing their expiration dates
-  2. Generate a report listing products due to expire within a configurable time frame (e.g., 30 days, 60 days)
-  3. Include details such as product name, supplier, quantity, and expiration date
-  4. Highlight products that have already expired or are critically close to expiration
-
-4. Generate order history reports
-  1. Provide a report on the order history for each product
-  2. Include details such as order date, supplier, quantity ordered, and order status (e.g., pending, shipped, received)
-  3. Allow filtering and sorting of the order history report based on various criteria (e.g., product, supplier, date range)
-
-
-6. Generate supplier performance reports
-  1. Track and report on the performance of suppliers in terms of order fulfillment and delivery timeliness
-  2. Calculate key performance indicators (KPIs) such as order fill rate, on-time delivery percentage, and lead time
-
-7. Enable the export of reports in various formats (e.g., CSV, PDF, Excel) for further analysis or sharing
-
-8. Allow anlytics for various reports.
-
+<ol>
+  <li>Generate inventory reports</li>
+  <ol>
+    </br>
+    <li>Provide a report on current stock levels for all products.</li>
+    </br>
+    <li>Include details such as product name, supplier, quantity, and expiration date.</li>
+    </br>
+    <li>Allow filtering and sorting of the inventory report based on various criteria (e.g., product category, supplier, expiration date)</li>
+  </ol>
+  </br>
+  <li>Generate stock take reports</li>
+  <ol>
+    </br>
+    <li>Facilitate the process of performing stock takes by generating a report of all products and their expected quantities</li>
+    </br>
+    <li>Allow inventory personnel to input actual quantities during the stock take process</li>
+    </br>
+    <li>Highlight discrepancies between expected and actual quantities in the stock take report</li>
+    </br>
+    <li>Provide a summary of stock take results, including total discrepancies and percentage accuracy</li>
+  </ol>
+  </br>
+  <li>Generate expiration reports</li>
+    <ol>
+      </br>
+      <li>Identify products that are nearing their expiration dates</li>
+      </br>
+      <li>Generate a report listing products due to expire within a configurable time frame (e.g., 30 days, 60 days)</li>
+      </br>
+      <li>Include details such as product name, supplier, quantity, and expiration date</li>
+      </br>
+      <li>Highlight products that have already expired or are critically close to expiration</li>
+    </ol>
+  </br>
+<li>Generate order history reports</li>
+  <ol>
+    </br>
+    <li>Provide a report on the order history for each product</li>
+    </br>
+    <li>Include details such as order date, supplier, quantity ordered, and order status (e.g., pending, shipped, received)</li>
+    </br>
+    <li>Allow filtering and sorting of the order history report based on various criteria (e.g., product, supplier, date range)</li>
+  </ol>
+  </br>
+<li>Generate supplier performance reports</li>
+  <ol>
+    </br>
+    <li>Track and report on the performance of suppliers in terms of order fulfillment and delivery timeliness</li>
+    </br>
+    <li>Calculate key performance indicators (KPIs) such as order fill rate, on-time delivery percentage, and lead time</li>
+  </ol>
+  </br>
+  <li>Enable the export of reports in various formats (e.g., CSV, PDF, Excel) for further analysis or sharing</li>
+</br>
+<li>Allow anlytics for various reports.</li>
+</ol>
 ### 4. Inventory Management subsystem
 
 ### 5. Stock Request subystem

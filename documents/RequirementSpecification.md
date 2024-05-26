@@ -17,10 +17,13 @@ The users of SmartInventory can easily be split into these groups groups:
 * Suppliers
 
 **Business Owners:**
+
 </br>
 **Employees:**
+
 </br>
 **Suppliers:**
+
 </br>
 
 ### User Stories
@@ -67,6 +70,7 @@ The users of SmartInventory can easily be split into these groups groups:
 ## Functional Requirements
 
 ### 1. Authentication and Authorization subsystem
+R1. The system shall provide a secure login mechanism for administrators and inventory controllers and end users to access the web interface.
 
 ### 2. Team/User Management subsystem
 

@@ -53,6 +53,25 @@ A user will be brought to this page either through an email link or when they op
 </div>
 
 **Create Account with details:**
+* An admin user will be brought to this page either through an when they open the app at their own volition, allowing them to take further action.
+* The admin user will enter their name, surname, the companies name, their email or the companies email password and be asked to repeat the password in the corresponding fields.
+* The admin is asked to repeat the password for validation purposes and to make sure correct password is given.
+* Once the admin user has filled in these details they should agree on the terms and conditions as well to consent to the apps terms and conditions.
+* The user will now be able to press the Create Account button to allow them to take further actions on the actual system(only if the details provided are correct).
+* If the details are incorrect the admin user will be notified with error messages over the field that they have provided incorrect details to.
+* The admin user can choose to try again to correctly input the details.
+    
+<br>
+  
+**Log In:**
+* If an account has been created the user can choose to click on the Log In link to take them to the page to log into an account.
+* There the user should follow the log in account steps provided above.
+
+<br>
+
+**Dark or Light mode display:**
+* The user can also choose their page display setting through the toggle button in the bottom right corner according to their preference.
+* This display preference can be changed in settings in the actual system when account has been created.
 
 <br>
 

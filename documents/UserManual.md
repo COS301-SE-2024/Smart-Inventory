@@ -23,7 +23,8 @@ A user will be brought to this page either through an email link or when they op
   * The user will now be able to press the Sign In button to allow them to take further actions on the actual system(only if the details provided are correct).
   * If the details are incorrect the user will be notified with error messages over the field that they have inputted incorrectly.
   * They can choose to try again to correctly input the details.
-* The user can also choose their page display setting through the toggle button in the bottom right corner according to their prefrence.
+* Dark or Light mode display:
+  * The user can also choose their page display setting through the toggle button in the bottom right corner according to their prefrence.
   * This prefrence can be changed in settings in the actual system when signed in as well.
 
 <br>

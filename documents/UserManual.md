@@ -53,7 +53,7 @@ A user will be brought to this page either through an email link or when they op
 </div>
 
 **Create Account with details:**
-* An admin user will be brought to this page either through an when they open the app at their own volition, allowing them to take further action.
+* An admin user will be brought to this page when they open the app at their own volition, allowing them to take further action.
 * The admin user will enter their name, surname, the companies name, their email or the companies email password and be asked to repeat the password in the corresponding fields.
 * The admin is asked to repeat the password for validation purposes and to make sure correct password is given.
 * Once the admin user has filled in these details they should agree on the terms and conditions as well to consent to the apps terms and conditions.

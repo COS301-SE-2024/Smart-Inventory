@@ -16,8 +16,11 @@ The users of SmartInventory can easily be split into these groups groups:
 * Suppliers
 
 **Business Owners:**
+</br>
 **Employees:**
+</br>
 **Suppliers:**
+</br>
 
 ### User Characteristics
 

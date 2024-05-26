@@ -73,10 +73,23 @@ The users of SmartInventory can easily be split into these groups groups:
 
 ### 1. Authentication and Authorization subsystem
 1. The system shall provide a secure login mechanism for administrators and inventory controllers and end users to access the web interface.
+
 2. The system shall support role-based access control (RBAC) to differentiate between administrators,  inventory controllers and end users.
-2.1. Administrators shall have full access to all system features and configurations.
-2.2. Inventory controllers shall have access to add products and supplier information, perform stocktake operations, approve stock requests for some items that have that requirement and also request stock from the system.
-2.3. End users shall have access to request stock from the system and deprecate the amount used.
+  1. Administrators shall have full access to all system features and configurations.
+  2. Inventory controllers shall have access to add products and supplier information, perform stocktake operations, approve stock requests for some items that have that requirement and also request stock from the system.
+  3. End users shall have access to request stock from the system and deprecate the amount used.
+
+3. The system shall enforce strong password policies for user accounts, including minimum length, complexity, and periodic password changes.
+
+4. The system shall implement secure password storage using industry-standard encryption techniques, such as salted hashing algorithms.
+
+5. The system shall provide a password recovery mechanism for users who forget their login credentials.
+
+6. The system shall automatically log out users after a specified period of inactivity to prevent unauthorized access.
+
+7. The system shall maintain an audit trail of user activities, including successful and failed login attempts, for security monitoring purposes.
+
+8. The system shall allow administrators to manage user accounts, including creating new accounts, modifying existing accounts, and disabling or deleting accounts as needed.
 
 ### 2. Team/User Management subsystem
 

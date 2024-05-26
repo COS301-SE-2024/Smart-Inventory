@@ -12,6 +12,10 @@ The purpose of this document is to assist users in becomming familiar with our a
 </div>
 
 **Signin with details:**
+A user will be brought to this page either through an email link or when they open the app at their own volition, allowing them to take further action.
+* Through the link:
+  * y
+* Through the users own initiative:
 
 <br>
 

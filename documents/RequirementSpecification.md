@@ -75,27 +75,30 @@ The users of SmartInventory can easily be split into these groups groups:
 
 <ol>
   <li>Administrator should be able to create a new account securly for their entire business.</li>
-  
+  </br>
   <li>The system shall provide a secure login mechanism for administrators and inventory controllers and end users to access the web interface.</li>
-
+  </br>
   <li>The system shall support role-based access control (RBAC) to differentiate between administrators,  inventory controllers and end users.
   <ol>
+    </br>
     <li>Administrators shall have full access to all system features and configurations.</li>
+    </br>
     <li>Inventory controllers shall have access to add products and supplier information, perform stocktake operations, approve stock requests for some items that have that requirement and also request stock from the system.</li>
+    </br>
     <li>End users shall have access to request stock from the system and deprecate the amount used.</li>
   </ol>
-
+  </br>
   <li>The system shall enforce strong password policies for user accounts, including minimum length, complexity, and periodic password changes.</li>
-
+  </br>
   <li>The system shall implement secure password storage using industry-standard encryption techniques, such as salted hashing algorithms.</li>
-
+  </br>
   <li>The system shall provide a password recovery mechanism for users who forget their login credentials.</li>
-
+  </br>
   <li>The system shall automatically log out users after a specified period of inactivity to prevent unauthorized access.</li>
-
+  </br>
   <li>Users should be able to log out of their account, ending the session and requiring re-login to access their account to stop unintended users from accesing system when the correct users are gone.</li>
-
-<li>The system shall maintain an audit trail of user activities, including successful and failed login attempts, for security monitoring purposes.</li>
+  </br>
+  <li>The system shall maintain an audit trail of user activities, including successful and failed login attempts, for security monitoring purposes.</li>
 </ol>
 
 ### 2. Team/User Management subsystem

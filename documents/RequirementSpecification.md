@@ -162,6 +162,7 @@ The users of SmartInventory can easily be split into these groups groups:
 </br>
 <li>Allow anlytics for various reports.</li>
 </ol>
+
 ### 4. Inventory Management subsystem
 
 ### 5. Stock Request subystem

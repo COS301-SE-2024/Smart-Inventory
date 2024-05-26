@@ -77,9 +77,9 @@ The users of SmartInventory can easily be split into these groups groups:
 2. The system shall provide a secure login mechanism for administrators and inventory controllers and end users to access the web interface.
 
 3. The system shall support role-based access control (RBAC) to differentiate between administrators,  inventory controllers and end users.
-   3.1. Administrators shall have full access to all system features and configurations.
-   3.2. Inventory controllers shall have access to add products and supplier information, perform stocktake operations, approve stock requests for some items that have that requirement and also request stock from the system.
-   3.3. End users shall have access to request stock from the system and deprecate the amount used.
+  1. Administrators shall have full access to all system features and configurations.
+  2. Inventory controllers shall have access to add products and supplier information, perform stocktake operations, approve stock requests for some items that have that requirement and also request stock from the system.
+  3. End users shall have access to request stock from the system and deprecate the amount used.
 
 4. The system shall enforce strong password policies for user accounts, including minimum length, complexity, and periodic password changes.
 

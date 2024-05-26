@@ -27,15 +27,28 @@ The users of SmartInventory can easily be split into these groups groups:
 
 <table>
   <tr>
-    <th>User</th>
-    <th>User Story</th>
+    <td>Administrator</td>
+    <td>test</td>
   </tr>
+</table>
+</br>
+<table>
   <tr>
     <td>Administrator</td>
     <td>test</td>
   </tr>
+</table>
+</br>
+<table>
   <tr>
-    <td>General User</td>
+    <td>Administrator</td>
+    <td>test</td>
+  </tr>
+</table>
+</br>
+<table>
+  <tr>
+    <td>Administrator</td>
     <td>test</td>
   </tr>
 </table>

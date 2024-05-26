@@ -10,6 +10,7 @@ to streamline and automate the process of tracking, ordering, and managing stock
 This document guides stakeholders through the qualities and functionalities of the Smart Inventory System. It details how client requirements are gathered and evaluated using a structured software engineering methodology.
 
 ## Users
+### User Characteristics
 The users of SmartInventory can easily be split into these groups groups: 
 * Business Owners
 * Employees
@@ -21,8 +22,6 @@ The users of SmartInventory can easily be split into these groups groups:
 </br>
 **Suppliers:**
 </br>
-
-### User Characteristics
 
 ### User Stories
 

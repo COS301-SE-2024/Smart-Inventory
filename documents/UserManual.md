@@ -82,5 +82,36 @@ A user will be brought to this page either through an email link or when they op
 </div>
 
 **Dashboard:**
+Once an account is created or a user signs in they will be taken to the Dashboard page. It is similar to a home page but gives an overview of whats happening between team and their activities as well as with the activities within the bussiness. 
+Below the functionalities possible on the page is discussed.
+<br>
+
+**Side Bar:**
+The side bar can be found on the left hand side of the page. 
+* Close Sidebar:
+  * The sidebars default is to be open to close it for more space you can click the hamburger button at the top of it which should colapse it.
+* Open Siebar:
+  * The sidebars default is to be open but if it has been closed you can click on the humburger menu to open it on your page once again. 
+* The Sidebar Choices:
+  * Dashboard: The home icon represents the dashboard. Overview of activities and customization of what activities you would like to keep track of in the same place.
+  * Inventory: The table icon is used to represent the inventory tab. This is the inventory that the bussiness possesses. Here inventory can be added and removed. Exel spreadsheets can be imported or exported. User can also search for inventory as well as filter it.
+  * Reports: Analytics and reports for diffrent types of information.
+  * Requests: 
+  * Suppliers: The truck icon represents the suppliers tab. This is where the suppliers for the company can be found. Suppliers can be added and removed. Suplliers can be contacted with here as well as track suppliers.
+  * Orders: This is where the order for the company can be found. Orders can be added and removed. Orders can be tracked and excel spreedsheets can be imported and exported.
+  * Settings: The gear icon is the settings choice. This is where personalization of your account is achieved.
+  * Log Out: The bottom most button is the log out button so that a user can log out of their account for security purposes.
+* Use Sidebar:
+  * To use the sidebar to navigate all that is needed to do is if the sidebar is closed open it.
+  * When the sidebar is open read which of the above choices you would like to navigate to click on it and it will navigate you to the page.
+
+<br>
+**Team:**
+<br>
+**Summary:**
+<br>
+**Quick Actions:**
+<br>
+**Add Widget:**
 
 <br>

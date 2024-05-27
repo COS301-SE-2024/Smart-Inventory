@@ -45,11 +45,11 @@ In the world of inventory management, reliable suppliers are a cornerstone of su
 
 <table>
   <tr>
-    <th style="width: 100px;">User Story</th>
+    <th style="width: 50px;">User Story</th>
     <th>Acceptance Criteria</th>
   </tr>
   <tr>
-    <td style="width: 100px;">As an administrator, I want to be able to securely login in, and manage user accounts. So that I can ensure appropriate access levels are maintained.</td>
+    <td style="width: 50px;">As an administrator, I want to be able to securely login in, and manage user accounts. So that I can ensure appropriate access levels are maintained.</td>
     <td><li>I can create new user accounts with specific roles (administrator, inventory controller, end-user).</li>
 <li>I can modify existing user accounts to update their roles or permissions.</li>
 <li>I can disable or delete user accounts as needed.</li>

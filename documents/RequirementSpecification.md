@@ -242,7 +242,7 @@ The users of SmartInventory can easily be split into these groups groups:
     <li>User who performed the transaction.</li>
     </br>
   </ol>
-  <li>Automatically detect when an order should be created based on predefined rules, considering product usage and expiration dates.</ol>li>
+  <li>Automatically detect when an order should be created based on predefined rules, considering product usage and expiration dates.</li>
 </ol>
 
 ### 5. Stock Request subystem

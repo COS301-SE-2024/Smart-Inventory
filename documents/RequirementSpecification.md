@@ -2,20 +2,20 @@
 
 ## Introduction
 
-### Overview
-This project involves creating a Smart Inventory web app for businesses.  SmartInventory is a comprehensive web-based inventory management system designed 
+SmartInventory is a comprehensive web-based inventory management system designed
 to streamline and automate the process of tracking, ordering, and managing stock for businesses, restaurants, and laboratories. The system aims to simplify inventory management by providing a user-friendly interface for administrators, inventory controllers, and end users to capture stock details, request stock, and generate insightful reports.
 
 ### Objectives
 This document guides stakeholders through the qualities and functionalities of the Smart Inventory System. It details how client requirements are gathered and evaluated using a structured software engineering methodology.
 
 ## Users
-### User Characteristics
+### User Types
 The users of SmartInventory can easily be split into these groups groups: 
-* Business Owners
-* Employees
+* Business Owners/Managers(Administrators)
+* Employees(Inventory Controllers/End-Users)
 * Suppliers
 
+### User Type Characteristics
 **Business Owners:**
 
 </br>
@@ -74,7 +74,7 @@ The users of SmartInventory can easily be split into these groups groups:
 ### 1. Authentication and Authorization subsystem
 
 <ol>
-  <li>Administrator should be able to create a new account securly for their entire business.</li>
+  <li>Administrator should be able to create a new account securely for their entire business.</li>
   </br>
   <li>The system shall provide a secure login mechanism for administrators and inventory controllers and end users to access the web interface.</li>
   </br>

@@ -44,10 +44,10 @@ In the world of inventory management, reliable suppliers are a cornerstone of su
 ### User Stories
 
 <table>
-  <th>
-    <td>User Story</td>
-    <td>Acceptance Criteria</td>
-  </th>
+  <tr>
+    <th>User Story</th>
+    <th>Acceptance Criteria</th>
+  </tr>
   <tr>
     <td>As an administrator, I want to be able to securely login in, and manage user accounts. So that I can ensure appropriate access levels are maintained.</td>
     <td>test</td>

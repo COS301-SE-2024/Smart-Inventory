@@ -42,7 +42,7 @@ In the world of inventory management, reliable suppliers are a cornerstone of su
 * Foster a more collaborative relationship with businesses through streamlined communication and order management.
 
 ### User Stories
-****
+
 <table>
   <th>
     <td>User Story</td>

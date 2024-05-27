@@ -44,15 +44,7 @@ In the world of inventory management, reliable suppliers are a cornerstone of su
 ### User Stories
  User Story | Acceptance Criteria |
 | ----------------- |:-------------------------------------:|
-| As an administrator, I want to be able to securely login in, and manage user accounts. So that I can ensure appropriate access levels are maintained. 
-| 
-* I can create new user accounts with specific roles (administrator, inventory controller, end-user). 
-* I can modify existing user accounts to update their roles or permissions.
-* I can modify existing user accounts to update their roles or permissions.
-* I can disable or delete user accounts as needed.
-* Changes to user accounts are logged in the audit trail for security monitoring.
-* From the dashboard, I can see an overview of the inventory status and other statistics.
-|
+| As an administrator, I want to be able to securely login in, and manage user accounts. So that I can ensure appropriate access levels are maintained. |* I can create new user accounts with specific roles (administrator, inventory controller, end-user).* I can modify existing user accounts to update their roles or permissions.* I can modify existing user accounts to update their roles or permissions.* I can disable or delete user accounts as needed.* Changes to user accounts are logged in the audit trail for security monitoring.* From the dashboard, I can see an overview of the inventory status and other statistics.|
 
 <table>
   <tr>

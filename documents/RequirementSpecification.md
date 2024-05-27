@@ -263,6 +263,7 @@ The users of SmartInventory can easily be split into these groups groups:
 <li>Store supplier details including name, contact information, and products offered.</li>
   <ol>
     <li> This information will be used to identify and communicate with suppliers when requesting quotes.</li> 
+    <li>Push notifications to notify user about supplier communication or issues.</li>
   </ol>
 <li>Record and track supplier performance metrics such as delivery time, product quality, and order fulfillment rates.</li>
   <ol>

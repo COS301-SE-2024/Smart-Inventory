@@ -32,8 +32,6 @@ In today's dynamic business world, empowering your employees is crucial for effi
 * Provide limited, relevant data insights that assist with daily tasks (e.g., current stock levels for specific products).
 * Maintain strong security measures to protect sensitive business information.
 
-</br>
-
 **Suppliers:**
 
 In the world of inventory management, reliable suppliers are a cornerstone of success. Ideal suppliers possess key characteristics that contribute to smooth business operations. They prioritize clear and timely communication, keeping businesses informed about stock availability, potential delays, and any other relevant updates. Additionally, they demonstrate a commitment to accuracy by providing detailed product specifications and ensuring orders are fulfilled according to exact requirements. Furthermore, reliable suppliers offer competitive pricing and flexible payment terms that suit the needs of the business. Finally, a strong track record of dependability and on-time deliveries is crucial for building trust and fostering a long-lasting partnership. By prioritizing communication, accuracy, competitive pricing, and reliable deliveries, suppliers become valuable assets for any business managing inventory effectively.
@@ -42,8 +40,6 @@ In the world of inventory management, reliable suppliers are a cornerstone of su
 * Track order status updates and shipment confirmations in real-time.
 * Eliminate confusion through clear communication and accurate order information. This leads to fewer order fulfillment errors and delays.
 * Foster a more collaborative relationship with businesses through streamlined communication and order management.
-
-</br>
 
 ### User Stories
 

@@ -207,6 +207,44 @@ The users of SmartInventory can easily be split into these groups groups:
 
 ### 4. Inventory Management subsystem
 
+<ol>
+  <li>Store inventory item details in a database, including:</li>
+  <ol>
+    </br>
+    <li>Record Product name, description, and SKU</li>
+    </br>
+    <li>Record Supplier information</li>
+    </br>
+    <li>Record Expiration dates</li>
+    </br>
+    <li>Record Current product quantity</li>
+  </ol>
+  </br>
+<li>Monitor stock levels and expiration dates. Generate alerts when stock levels reach predefined thresholds.</li>
+  </br>
+<li>Provide a real-time dashboard showing current stock levels.</li>
+  </br>
+<li>Allow searching for specific stock items by name, SKU, or supplier.</li>
+  </br>
+<li>Enable sorting of stock items by name, SKU, quantity, or expiration date, and filtering by supplier, quantity range, or expiration date range.</li>
+  </br>
+<li>Allow authorized users to edit stock details, logging all edits in the stock transaction history.</li>
+  </br>
+<li>Maintain a history of stock transactions for each item, including:</li>
+  <ol>
+    </br>
+    <li>Date/time</li>
+    </br>
+    <li>Transaction type (add, remove, update)</li>
+    </br>
+    <li>Quantity change</li>
+    </br>
+    <li>User who performed the transaction.</li>
+    </br>
+  </ol>
+  <li>Automatically detect when an order should be created based on predefined rules, considering product usage and expiration dates.</ol>li>
+</ol>
+
 ### 5. Stock Request subystem
 
 ### 6. Supplier Management subsystem

@@ -4,7 +4,7 @@ SmartInventory is a comprehensive web-based inventory management system designed
 to streamline and automate the process of tracking, ordering, and managing stock for businesses, restaurants, and laboratories. The system aims to simplify inventory management by providing a user-friendly interface for administrators, inventory controllers, and end users to capture stock details, request stock, and generate insightful reports.
 
 ### Objectives
-This document guides stakeholders through the qualities and functionalities of the Smart Inventory System. It details how client requirements are gathered and evaluated using a structured software engineering methodology.
+This document goes into the details of users firstly the type of users the system will have as well as what they might need and guides stakeholders through the qualities and functionalities of the Smart Inventory System. It details how client requirements are gathered and evaluated using a structured software engineering methodology.
 
 ## Users
 ### User Types
@@ -23,7 +23,7 @@ In today's fast-paced business environment, owners and managers need tools that 
 * Provide insights and reports to support informed decisions.
 * Protect business data with strong security measures.
   
-**Employees:**
+**Employees(Inventory Controllers/End-Users):**
 
 In today's dynamic business world, empowering your employees is crucial for efficient inventory management.  A well-designed inventory management app can be a game-changer, streamlining processes and boosting productivity.  The ideal app prioritizes a user-friendly experience with minimal technical jargon and complex features. Instead of overwhelming employees with vast amounts of data, the focus should be on clear task management and visibility into relevant information like current stock levels. An intuitive interface further enhances efficiency, minimizing training time and ensuring everyone can contribute effectively.  Finally, the employee should not have to worry about security therefore robust security measures safeguard sensitive business information, providing both employees and managers peace of mind. By prioritizing user-friendliness and clear functionalities, inventory management apps can empower employees and become valuable tools for a more efficient and collaborative work environment.
 * Minimize technical jargon and complex features for a smooth experience.
@@ -42,10 +42,14 @@ In the world of inventory management, reliable suppliers are a cornerstone of su
 * Foster a more collaborative relationship with businesses through streamlined communication and order management.
 
 ### User Stories
-
+****
 <table>
+  <th>
+    <td>User Story</td>
+    <td>Acceptance Criteria</td>
+  </th>
   <tr>
-    <td>Administrator</td>
+    <td>As an administrator, I want to be able to securely login in, and manage user accounts. So that I can ensure appropriate access levels are maintained.</td>
     <td>test</td>
   </tr>
 </table>

@@ -106,26 +106,41 @@ The users of SmartInventory can easily be split into these groups groups:
 <ol>
   <li>Team Registration</li>
   <ol>
+    </br>
     <li>The system shall allow new users to be registered by administrators. </li>
+    </br>
     <li>Administrators shall provide the necessary details for user registration, such as name, email address, username, initial password and user role (administrator, inventory controller, or end user).</li>
+    </br>
     <li>The system shall validate the provided email address and ensure it is unique within the system.</li>
+    </br>
     <li>Upon successful registration, the system shall send a welcome email to the user's provided email address, containing instructions to set up their account and change their initial password.</li>
   </ol>
+  </br>
 <li>User Roles and Permissions</li>
   <ol>
+    </br>
     <li>The system shall support different user roles, such as administrator, inventory controller and end user.</li>
+    </br>
     <li>Each user role shall have specific permissions and access rights within the system.</li>
+    </br>
     <li>Administrators shall have the ability to manage user accounts, including creating, modifying, and deactivating user accounts.</li>
   </ol>
+  </br>
 <li>User Profile Management</li>
   <ol>
+    </br>
     <li>The system shall allow users to view and update their profile information, such as name, contact details, and preferences.</li>
+    </br>
     <li>Users shall be able to change their password while logged into their account.</li>
   </ol>
+  </br>
 <li>User Deactivation and Deletion</li>
   <ol>  
+    </br>
     <li>The system shall allow administrators to deactivate user accounts, preventing them from accessing the system.</li>
+    </br>
     <li>Deactivated user accounts shall be retained in the system for a specified period before being permanently deleted.</li>
+    </br>
     <li>The system shall provide a mechanism for administrators to permanently delete user accounts when necessary.</li>
   </ol>
 </ol>

@@ -16,15 +16,34 @@ The users of SmartInventory can easily be split into these groups groups:
 * Suppliers
 
 ### User Type Characteristics
-**Business Owners:**
-
+**Business Owners/Managers(Aministrator):**
+In today's fast-paced business environment, owners and managers need tools that empower them to manage their operations effectively. The ideal inventory management app should prioritize ease of use, offering a clear and intuitive interface that minimizes technical jargon and complex features. Furthermore, mobility is key, allowing access and management at the owner/mangers convenience. This functionality should not come at a premium.  Affordable pricing models that scale with business size ensure accessibility for all. The app should adapt to diverse business needs and product types. Finally, data-driven insights and reports are crucial for informed decision-making, while robust security measures ensure the protection of sensitive business information. 
+* Minimize technical jargon and complex features.
+* Allow access and management from smartphones and tablets.
+* Offer a pricing model that fits the size and budget of the business.
+* Adapt to different business needs and product types.
+* Provide insights and reports to support informed decisions.
+* Protect business data with strong security measures.
+  
 </br>
 
 **Employees:**
+In today's dynamic business world, empowering your employees is crucial for efficient inventory management.  A well-designed inventory management app can be a game-changer, streamlining processes and boosting productivity.  The ideal app prioritizes a user-friendly experience with minimal technical jargon and complex features. Instead of overwhelming employees with vast amounts of data, the focus should be on clear task management and visibility into relevant information like current stock levels. An intuitive interface further enhances efficiency, minimizing training time and ensuring everyone can contribute effectively.  Finally, the employee should not have to worry about security therefore robust security measures safeguard sensitive business information, providing both employees and managers peace of mind. By prioritizing user-friendliness and clear functionalities, inventory management apps can empower employees and become valuable tools for a more efficient and collaborative work environment.
+* Minimize technical jargon and complex features for a smooth experience.
+* Focus on specific tasks relevant to employees, like real-time stock checks or order fulfillment.
+* A good design minimizes training time and ensures everyone can contribute effectively.
+* Provide limited, relevant data insights that assist with daily tasks (e.g., current stock levels for specific products).
+* Maintain strong security measures to protect sensitive business information.
 
 </br>
 
 **Suppliers:**
+In the world of inventory management, reliable suppliers are a cornerstone of success. Ideal suppliers possess key characteristics that contribute to smooth business operations. They prioritize clear and timely communication, keeping businesses informed about stock availability, potential delays, and any other relevant updates. Additionally, they demonstrate a commitment to accuracy by providing detailed product specifications and ensuring orders are fulfilled according to exact requirements. Furthermore, reliable suppliers offer competitive pricing and flexible payment terms that suit the needs of the business. Finally, a strong track record of dependability and on-time deliveries is crucial for building trust and fostering a long-lasting partnership. By prioritizing communication, accuracy, competitive pricing, and reliable deliveries, suppliers become valuable assets for any business managing inventory effectively.
+* Get notifications and clear details of new orders placed by businesses.
+* Access detailed order specifications, including quantities, delivery timeframes, and specific product requirements.
+* Track order status updates and shipment confirmations in real-time.
+* Eliminate confusion through clear communication and accurate order information. This leads to fewer order fulfillment errors and delays.
+* Foster a more collaborative relationship with businesses through streamlined communication and order management.
 
 </br>
 
@@ -61,19 +80,19 @@ The users of SmartInventory can easily be split into these groups groups:
 ### User Type Interactions
 
 ## Subsystems
-### 1. Authentication and Authorization subsystem
-### 2. Team/User Management subsystem
-### 3. Reporting subsystem
-### 4. Inventory Management subsystem
-### 5. Stock Request subystem
-### 6. Supplier Management subsystem
-### 7. Order Placement subsystem
+### 1. Authentication and Authorization Subsystem
+### 2. Team/User Management Subsystem
+### 3. Reporting Subsystem
+### 4. Inventory Management Subsystem
+### 5. Stock Request Subystem
+### 6. Supplier Management Subsystem
+### 7. Order Placement Subsystem
 
 ## Functional Requirements
-
-### 1. Authentication and Authorization subsystem
+### 1. Authentication and Authorization Subsystem
 
 <ol>
+  <li>Create Account</li>
   <li>Administrator should be able to create a new account securely for their entire business.</li>
   </br>
   <li>The system shall provide a secure login mechanism for administrators and inventory controllers and end users to access the web interface.</li>
@@ -101,7 +120,7 @@ The users of SmartInventory can easily be split into these groups groups:
   <li>The system shall maintain an audit trail of user activities, including successful and failed login attempts, for security monitoring purposes.</li>
 </ol>
 
-### 2. Team/User Management subsystem
+### 2. Team/User Management Subsystem
 
 <ol>
   <li>Team Registration</li>
@@ -145,7 +164,7 @@ The users of SmartInventory can easily be split into these groups groups:
   </ol>
 </ol>
 
-### 3. Reporting subsystem
+### 3. Reporting Subsystem
 
 <ol>
   <li>Generate inventory reports</li>
@@ -205,7 +224,7 @@ The users of SmartInventory can easily be split into these groups groups:
 <li>Allow anlytics for various reports.</li>
 </ol>
 
-### 4. Inventory Management subsystem
+### 4. Inventory Management Subsystem
 
 <ol>
   <li>Store inventory item details in a database, including:</li>
@@ -245,7 +264,7 @@ The users of SmartInventory can easily be split into these groups groups:
   <li>Automatically detect when an order should be created based on predefined rules, considering product usage and expiration dates.</li>
 </ol>
 
-### 5. Stock Request subystem
+### 5. Stock Request Subystem
 
 <ol>
 <li>Allow authorized end users to request stock from the system, capturing details such as requester, item, quantity, and purpose (inventory controller can specify purposes).</li>
@@ -257,7 +276,7 @@ The users of SmartInventory can easily be split into these groups groups:
 <li>Maintain a history of stock requests for auditing purposes.</li>
 </ol>
 
-### 6. Supplier Management subsystem
+### 6. Supplier Management Subsystem
 
 <ol>
 <li>Store supplier details including name, contact information, and products offered.</li>
@@ -275,12 +294,12 @@ The users of SmartInventory can easily be split into these groups groups:
   </ol>
 </ol>
 
-### 7. Order Placement subsystem
+### 7. Order Placement Subsystem
 
 ## Use Case Diagrams
 
 <div align="center">
-   <h3>1. </h3>
+   <h3>1. Authentication and Authorization Subsystem</h3>
    <img src="/media/">
 </div>
 <div align="center">

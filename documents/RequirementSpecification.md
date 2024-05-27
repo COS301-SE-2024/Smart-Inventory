@@ -1,7 +1,5 @@
 # Software Requirement Specification
-
 ## Introduction
-
 SmartInventory is a comprehensive web-based inventory management system designed
 to streamline and automate the process of tracking, ordering, and managing stock for businesses, restaurants, and laboratories. The system aims to simplify inventory management by providing a user-friendly interface for administrators, inventory controllers, and end users to capture stock details, request stock, and generate insightful reports.
 
@@ -14,11 +12,8 @@ The users of SmartInventory can easily be split into these groups groups:
 * Business Owners/Managers(Administrators)
 * Employees(Inventory Controllers/End-Users)
 * Suppliers
-
 ### User Type Characteristics
 **Business Owners/Managers(Aministrator):**
-
-</br>
 
 In today's fast-paced business environment, owners and managers need tools that empower them to manage their operations effectively. The ideal inventory management app should prioritize ease of use, offering a clear and intuitive interface that minimizes technical jargon and complex features. Furthermore, mobility is key, allowing access and management at the owner/mangers convenience. This functionality should not come at a premium.  Affordable pricing models that scale with business size ensure accessibility for all. The app should adapt to diverse business needs and product types. Finally, data-driven insights and reports are crucial for informed decision-making, while robust security measures ensure the protection of sensitive business information. 
 * Minimize technical jargon and complex features.
@@ -42,8 +37,6 @@ In today's dynamic business world, empowering your employees is crucial for effi
 </br>
 
 **Suppliers:**
-
-</br>
 
 In the world of inventory management, reliable suppliers are a cornerstone of success. Ideal suppliers possess key characteristics that contribute to smooth business operations. They prioritize clear and timely communication, keeping businesses informed about stock availability, potential delays, and any other relevant updates. Additionally, they demonstrate a commitment to accuracy by providing detailed product specifications and ensuring orders are fulfilled according to exact requirements. Furthermore, reliable suppliers offer competitive pricing and flexible payment terms that suit the needs of the business. Finally, a strong track record of dependability and on-time deliveries is crucial for building trust and fostering a long-lasting partnership. By prioritizing communication, accuracy, competitive pricing, and reliable deliveries, suppliers become valuable assets for any business managing inventory effectively.
 * Get notifications and clear details of new orders placed by businesses.
@@ -329,3 +322,5 @@ In the world of inventory management, reliable suppliers are a cornerstone of su
    <h3>6. </h3>
    <img src="/media/">
 </div>
+
+## Conslusion

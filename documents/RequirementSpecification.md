@@ -58,7 +58,7 @@ The users of SmartInventory can easily be split into these groups groups:
   </tr>
 </table>
 
-### User Interaction
+### User Type Interactions
 
 ## Subsystems
 ### 1. Authentication and Authorization subsystem

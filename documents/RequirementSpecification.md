@@ -247,7 +247,32 @@ The users of SmartInventory can easily be split into these groups groups:
 
 ### 5. Stock Request subystem
 
+<ol>
+<li>Allow authorized end users to request stock from the system, capturing details such as requester, item, quantity, and purpose (inventory controller can specify purposes).</li>
+  </br>
+<li>Validate stock availability before processing requests and notify requesters about the status of their requests.</li>
+  </br>
+<li>Update inventory levels upon successful stock requests and notify inventory controllers of the requests.</li>
+  </br>
+<li>Maintain a history of stock requests for auditing purposes.</li>
+</ol>
+
 ### 6. Supplier Management subsystem
+
+<ol>
+<li>Store supplier details including name, contact information, and products offered.</li>
+  <ol>
+    <li> This information will be used to identify and communicate with suppliers when requesting quotes.</li> 
+  </ol>
+<li>Record and track supplier performance metrics such as delivery time, product quality, and order fulfillment rates.</li>
+  <ol>
+    <li>This information will be used to evaluate supplier reliability and make informed decisions when placing orders.</li>
+  </ol>
+<li>Provide an interface for inventory controllers to add, edit, and remove suppliers, as well as search and filter supplier records for efficient retrieval of information.</li>
+  <ol>
+  <li>This will allow for the maintenance of accurate and up-to-date supplier information.</li>
+  </ol>
+</ol>
 
 ### 7. Order Placement subsystem
 

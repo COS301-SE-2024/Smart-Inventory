@@ -42,6 +42,7 @@ In the world of inventory management, reliable suppliers are a cornerstone of su
 * Foster a more collaborative relationship with businesses through streamlined communication and order management.
 
 ### User Stories
+#### Authentication and Authorisation
 
 <table>
   <thead>
@@ -52,14 +53,14 @@ In the world of inventory management, reliable suppliers are a cornerstone of su
   </thead>
   <tbody>
     <tr>
-      <td>As an administrator, I want to be able to securely login in, and manage user accounts. So that I can ensure appropriate access levels are maintained.</td>
+      <td>As an administrator, I want to be able to securely login, and manage user accounts. So that I can ensure appropriate access levels are maintained.</td>
       <td>
         <ul>
           <li>I can create new user accounts with specific roles (administrator, inventory controller, end-user).</li>
-          <li>I can modify existing user accounts to update their roles or permissions.</li>
+          <li> I can create, modify, and deactivate user accounts as necessary.</li>
           <li>I can disable or delete user accounts as needed.</li>
           <li>Changes to user accounts are logged in the audit trail for security monitoring.</li>
-          <li>From the dashboard, I can see an overview of the inventory status and other statistics.</li>
+          <li>From the dashboard, I can see an overview of the team statictics and the team members.</li>
         </ul>
       </td>
     </tr>
@@ -75,14 +76,12 @@ In the world of inventory management, reliable suppliers are a cornerstone of su
   </thead>
   <tbody>
     <tr>
-      <td>As an administrator, I want to be able to securely login in, and manage user accounts. So that I can ensure appropriate access levels are maintained.</td>
+      <td>I want to manage user roles and permissions, so that users have appropriate access rights within the system.</td>
       <td>
         <ul>
-          <li>I can create new user accounts with specific roles (administrator, inventory controller, end-user).</li>
+          <li>The system supports different user roles such as administrator, inventory controller, and end user.</li>
+          <li>Each user role has specific permissions and access rights.</li>
           <li>I can modify existing user accounts to update their roles or permissions.</li>
-          <li>I can disable or delete user accounts as needed.</li>
-          <li>Changes to user accounts are logged in the audit trail for security monitoring.</li>
-          <li>From the dashboard, I can see an overview of the inventory status and other statistics.</li>
         </ul>
       </td>
     </tr>
@@ -98,7 +97,54 @@ In the world of inventory management, reliable suppliers are a cornerstone of su
   </thead>
   <tbody>
     <tr>
-      <td>As an administrator, I want to be able to securely login in, and manage user accounts. So that I can ensure appropriate access levels are maintained.</td>
+      <td>As an employee, I want to be able to securely sign in, and manage my own account settings. So that I can be able to adjust the application according to what I want.</td>
+      <td>
+        <ul>
+          <li>Dark and Light Mode etc FINISHHHHHh</li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+
+#### Inventory Management
+
+<table>
+  <thead>
+    <tr>
+      <th width="40%">User Story</th>
+      <th width="70%">Acceptance Criteria</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>As an inventory controller, I want to be able to manage products and stock levels, so that I can ensure accurate inventory records.
+</td>
+      <td>
+        <ul>
+          <li>I can add new products to the inventory.</li>
+          <li>I can add supplier information for each product.</li>
+          <li>I can perform stocktake operations to update stock levels.</li>
+          <li>I can approve stock requests for items that require approval.I can approve stock requests for items that require approval.</li>
+          <li>All inventory-related activities are logged in the audit trail for monitoring purposes.</li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table>
+  <thead>
+    <tr>
+      <th width="40%">User Story</th>
+      <th width="70%">Acceptance Criteria</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>As an end user, I want to be able to request stock from the system, so that I can replenish inventory when needed.
+</td>
       <td>
         <ul>
           <li>I can create new user accounts with specific roles (administrator, inventory controller, end-user).</li>

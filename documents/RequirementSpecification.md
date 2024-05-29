@@ -42,7 +42,6 @@ In the world of inventory management, reliable suppliers are a cornerstone of su
 * Foster a more collaborative relationship with businesses through streamlined communication and order management.
 
 ### User Stories
-#### Authentication and Authorisation
 
 <table>
   <thead>
@@ -109,9 +108,6 @@ In the world of inventory management, reliable suppliers are a cornerstone of su
   </tbody>
 </table>
 
-
-#### Inventory Management
-
 <table>
   <thead>
     <tr>
@@ -144,14 +140,13 @@ In the world of inventory management, reliable suppliers are a cornerstone of su
   </thead>
   <tbody>
     <tr>
-      <td>As an end user, I want to be able to request stock from the system, so that I can replenish inventory when needed.</td>
+      <td>As a user responsible for inventory monitoring, I want the system to generate alerts when stock levels reach predefined thresholds. So that I can take timely action to replenish inventory
+</td>
       <td>
         <ul>
-          <li>I can create new user accounts with specific roles (administrator, inventory controller, end-user).</li>
-          <li>I can modify existing user accounts to update their roles or permissions.</li>
-          <li>I can disable or delete user accounts as needed.</li>
-          <li>Changes to user accounts are logged in the audit trail for security monitoring.</li>
-          <li>From the dashboard, I can see an overview of the inventory status and other statistics.</li>
+          <li>The system monitors stock levels and expiration dates.</li>
+          <li>Alerts are generated when stock levels reach predefined thresholds and the appropriate amount is ordered.</li>
+          <li>Alerts are generated when a certain stock reaches close to their expiration dates.</li>
         </ul>
       </td>
     </tr>
@@ -167,14 +162,11 @@ In the world of inventory management, reliable suppliers are a cornerstone of su
   </thead>
   <tbody>
     <tr>
-      <td>As an administrator, I want to be able to securely login in, and manage user accounts. So that I can ensure appropriate access levels are maintained.</td>
+      <td>As an administrator, of the inventory management system, I want to view a real-time dashboard showing current stock levels. So that I can have immediate visibility into inventory status.
+</td>
       <td>
         <ul>
-          <li>I can create new user accounts with specific roles (administrator, inventory controller, end-user).</li>
-          <li>I can modify existing user accounts to update their roles or permissions.</li>
-          <li>I can disable or delete user accounts as needed.</li>
-          <li>Changes to user accounts are logged in the audit trail for security monitoring.</li>
-          <li>From the dashboard, I can see an overview of the inventory status and other statistics.</li>
+          <li>The system provides a real-time dashboard showing current stock levels.</li>
         </ul>
       </td>
     </tr>
@@ -190,14 +182,12 @@ In the world of inventory management, reliable suppliers are a cornerstone of su
   </thead>
   <tbody>
     <tr>
-      <td>As an administrator, I want to be able to securely login in, and manage user accounts. So that I can ensure appropriate access levels are maintained.</td>
+      <td>As a user managing inventory, I want to search for specific stock items by name, SKU, or supplier and sort them by name, SKU, quantity, or expiration date. So that I can quickly locate and organize inventory items.</td>
       <td>
         <ul>
-          <li>I can create new user accounts with specific roles (administrator, inventory controller, end-user).</li>
-          <li>I can modify existing user accounts to update their roles or permissions.</li>
-          <li>I can disable or delete user accounts as needed.</li>
-          <li>Changes to user accounts are logged in the audit trail for security monitoring.</li>
-          <li>From the dashboard, I can see an overview of the inventory status and other statistics.</li>
+          <li>The system allows searching for stock items by name, SKU, or supplier.</li>
+          <li>Users can sort stock items by name, SKU, quantity, or expiration date.</li>
+          <li>Users can filter stock items by supplier, quantity range, or expiration date range.</li>
         </ul>
       </td>
     </tr>
@@ -213,19 +203,38 @@ In the world of inventory management, reliable suppliers are a cornerstone of su
   </thead>
   <tbody>
     <tr>
-      <td>As an administrator, I want to be able to securely login in, and manage user accounts. So that I can ensure appropriate access levels are maintained.</td>
+      <td>As an authorized user, I want to edit stock details for inventory items and have all edits logged in the stock transaction history. So that changes to inventory are accurately tracked.
+</td>
       <td>
         <ul>
-          <li>I can create new user accounts with specific roles (administrator, inventory controller, end-user).</li>
-          <li>I can modify existing user accounts to update their roles or permissions.</li>
-          <li>I can disable or delete user accounts as needed.</li>
-          <li>Changes to user accounts are logged in the audit trail for security monitoring.</li>
-          <li>From the dashboard, I can see an overview of the inventory status and other statistics.</li>
+          <li>Authorized users can edit stock details for inventory items.</li>
+          <li>All edits are logged in the stock transaction history.</li>
         </ul>
       </td>
     </tr>
   </tbody>
 </table>
+
+<table>
+  <thead>
+    <tr>
+      <th width="40%">User Story</th>
+      <th width="70%">Acceptance Criteria</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>As a user of the inventory management system, I want the system to automatically detect when orders should be created based on predefined rules considering product usage and expiration dates. So that I can ensure timely replenishment of inventory.</td>
+      <td>
+        <ul>
+          <li>The system automatically detects when orders should be created based on predefined rules.</li>
+          <li> Rules consider product usage and expiration dates.</li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
 
 ## Subsystems
 ### 1. Authentication and Authorization Subsystem

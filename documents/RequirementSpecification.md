@@ -66,27 +66,119 @@ In the world of inventory management, reliable suppliers are a cornerstone of su
   </tbody>
 </table>
 
-
-
 <table>
-  <tr>
-    <td>Administrator</td>
-    <td>test</td>
-  </tr>
+  <thead>
+    <tr>
+      <th width="40%">User Story</th>
+      <th width="70%">Acceptance Criteria</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>As an administrator, I want to be able to securely login in, and manage user accounts. So that I can ensure appropriate access levels are maintained.</td>
+      <td>
+        <ul>
+          <li>I can create new user accounts with specific roles (administrator, inventory controller, end-user).</li>
+          <li>I can modify existing user accounts to update their roles or permissions.</li>
+          <li>I can disable or delete user accounts as needed.</li>
+          <li>Changes to user accounts are logged in the audit trail for security monitoring.</li>
+          <li>From the dashboard, I can see an overview of the inventory status and other statistics.</li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
 </table>
-</br>
+
 <table>
-  <tr>
-    <td>Administrator</td>
-    <td>test</td>
-  </tr>
+  <thead>
+    <tr>
+      <th width="40%">User Story</th>
+      <th width="70%">Acceptance Criteria</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>As an administrator, I want to be able to securely login in, and manage user accounts. So that I can ensure appropriate access levels are maintained.</td>
+      <td>
+        <ul>
+          <li>I can create new user accounts with specific roles (administrator, inventory controller, end-user).</li>
+          <li>I can modify existing user accounts to update their roles or permissions.</li>
+          <li>I can disable or delete user accounts as needed.</li>
+          <li>Changes to user accounts are logged in the audit trail for security monitoring.</li>
+          <li>From the dashboard, I can see an overview of the inventory status and other statistics.</li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
 </table>
-</br>
+
 <table>
-  <tr>
-    <td>Administrator</td>
-    <td>test</td>
-  </tr>
+  <thead>
+    <tr>
+      <th width="40%">User Story</th>
+      <th width="70%">Acceptance Criteria</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>As an administrator, I want to be able to securely login in, and manage user accounts. So that I can ensure appropriate access levels are maintained.</td>
+      <td>
+        <ul>
+          <li>I can create new user accounts with specific roles (administrator, inventory controller, end-user).</li>
+          <li>I can modify existing user accounts to update their roles or permissions.</li>
+          <li>I can disable or delete user accounts as needed.</li>
+          <li>Changes to user accounts are logged in the audit trail for security monitoring.</li>
+          <li>From the dashboard, I can see an overview of the inventory status and other statistics.</li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table>
+  <thead>
+    <tr>
+      <th width="40%">User Story</th>
+      <th width="70%">Acceptance Criteria</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>As an administrator, I want to be able to securely login in, and manage user accounts. So that I can ensure appropriate access levels are maintained.</td>
+      <td>
+        <ul>
+          <li>I can create new user accounts with specific roles (administrator, inventory controller, end-user).</li>
+          <li>I can modify existing user accounts to update their roles or permissions.</li>
+          <li>I can disable or delete user accounts as needed.</li>
+          <li>Changes to user accounts are logged in the audit trail for security monitoring.</li>
+          <li>From the dashboard, I can see an overview of the inventory status and other statistics.</li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table>
+  <thead>
+    <tr>
+      <th width="40%">User Story</th>
+      <th width="70%">Acceptance Criteria</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>As an administrator, I want to be able to securely login in, and manage user accounts. So that I can ensure appropriate access levels are maintained.</td>
+      <td>
+        <ul>
+          <li>I can create new user accounts with specific roles (administrator, inventory controller, end-user).</li>
+          <li>I can modify existing user accounts to update their roles or permissions.</li>
+          <li>I can disable or delete user accounts as needed.</li>
+          <li>Changes to user accounts are logged in the audit trail for security monitoring.</li>
+          <li>From the dashboard, I can see an overview of the inventory status and other statistics.</li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
 </table>
 
 ### User Type Interactions

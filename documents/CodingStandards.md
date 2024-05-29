@@ -39,6 +39,8 @@ By committing to these standards, we aim to foster a collaborative and productiv
 <a id="2"></a>
 ## Git Strategy
 
+To maintain a consistent and efficient workflow, we will use Git Flow as our Git strategy.
+
 ### Branching
 
 - **Main Branches**:

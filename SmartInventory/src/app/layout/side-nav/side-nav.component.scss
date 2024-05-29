@@ -1,0 +1,27 @@
+ion-menu {
+    --ion-background-color: #1e1e1e;
+    --ion-text-color: #ffffff;
+}
+
+ion-header {
+    --background: var(--ion-background-color, #1e1e1e);
+}
+
+ion-item {
+    --background: transparent;
+    --color: #ffffff;
+    --ion-item-color: #ffffff;
+}
+
+ion-icon {
+    --color: #ffffff;
+}
+
+ion-item[_ngcontent-ng-c1130444033] {
+    --background: var(--ion-item-background, var(--ion-background-color, #fff));
+    --color: #ffffff;
+    --padding-start: 0;
+    --ion-item-background: #000000;
+    --ion-item-color: #ffffff;
+    --border-color: transparent;
+}

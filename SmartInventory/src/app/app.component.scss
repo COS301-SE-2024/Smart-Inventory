@@ -117,3 +117,11 @@ ion-note {
 ion-item.selected {
   --color: var(--ion-color-primary);
 }
+
+ion-menu.md.menu-type-overlay.menu-enabled.menu-side-start.menu-pane-visible.split-pane-side.hydrated {
+  width: 120px;
+}
+
+ion-router-outlet#main-content {
+  background-color: black;
+}

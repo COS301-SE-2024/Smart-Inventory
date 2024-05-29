@@ -1,0 +1,26 @@
+<ion-menu contentId="main-content" side="start" type="overlay">
+	<ion-header>
+		<ion-toolbar color="dark">
+			<ion-title>Menu</ion-title>
+		</ion-toolbar>
+	</ion-header>
+	<ion-content>
+		<ion-list>
+			<ion-menu-toggle auto-hide="false">
+				<ion-item lines="none" routerLink="/dashboard">
+					<ion-icon slot="start" name="home-outline"></ion-icon>
+					<ion-label>Dashboard</ion-label>
+				</ion-item>
+				<ion-item lines="none" routerLink="/inventory">
+					<ion-icon slot="start" name="cube-outline"></ion-icon>
+					<ion-label>Inventory</ion-label>
+				</ion-item>
+				<ion-item lines="none" routerLink="/reports">
+					<ion-icon slot="start" name="bar-chart-outline"></ion-icon>
+					<ion-label>Reports</ion-label>
+				</ion-item>
+				<!-- Add more items as necessary -->
+			</ion-menu-toggle>
+		</ion-list>
+	</ion-content>
+</ion-menu>

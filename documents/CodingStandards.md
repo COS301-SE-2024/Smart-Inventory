@@ -15,8 +15,7 @@
 [Error Handling](#11)\
 [Comments](#12)\
 [Formatting](#13)\
-[Standards Technology](#14)\
-[Miscellaneous](#15)\
+[Miscellaneous](#14)
 
 <a id="1"></a>
 ## Introduction
@@ -40,7 +39,54 @@ By committing to these standards, we aim to foster a collaborative and productiv
 <a id="2"></a>
 ## Git Strategy
 
- 
+### Branching
+
+- **Main Branches**:
+  - `main`: The production-ready branch. Only stable, release-quality code is merged here.
+  - `develop`: The integration branch for feature development. All new features and bug fixes branch off from here and are merged back once complete.
+
+- **Supporting Branches**:
+  - **Feature Branches**: Used for developing new features. Branch off from `develop` and merge back into `develop`.
+    - Naming: `feature/feature-name`
+    - Example: `feature/login-page`
+  - **Release Branches**: Used for preparing a new production release. Branch off from `develop` and merge into both `main` and `develop` after completion.
+    - Naming: `release/release-version`
+    - Example: `release/1.0.0`
+  - **Hotfix Branches**: Used for quick fixes in production. Branch off from `main` and merge back into both `main` and `develop`.
+    - Naming: `hotfix/hotfix-name`
+    - Example: `hotfix/critical-bug-fix`
+  - **Bugfix Branches**: Used for fixing bugs discovered during development. Branch off from `develop` and merge back into `develop`.
+    - Naming: `bugfix/bug-name`
+    - Example: `bugfix/ui-glitch`
+
+### Commits
+
+- **Commit Messages**:
+  - Follow the format: `type(scope): description`
+  - **Types**: `feat` (new feature), `fix` (bug fix), `docs` (documentation changes), `style` (formatting, missing semi-colons, etc.), `refactor` (code change that neither fixes a bug nor adds a feature), `test` (adding or correcting tests), `chore` (maintain).
+  - **Example**: `feat(login): add user authentication`
+
+- **Commit Frequency**:
+  - Commit frequently with small, logical changes.
+  - Ensure each commit compiles and passes all tests.
+
+### Merging
+
+- **Pull Requests (PRs)**:
+  - Create a PR for merging branches into `develop` or `main`.
+  - Provide a clear description of changes and link to relevant issues.
+  - Request reviews from at least one team member.
+  - Ensure all checks pass before merging.
+
+- **Merge Strategy**:
+  - Use `squash and merge` to combine commits into a single commit on the target branch.
+  - Resolve conflicts before merging.
+
+### Tags
+
+- **Release Tags**:
+  - Tag releases on the `main` branch using semantic versioning.
+  - **Example**: `v1.0.0`
 
 <a id="3"></a>
 ## File Structure
@@ -557,8 +603,5 @@ These standards apply to all technologies used in this project.
 | Whitespace| Indent using 2 spaces.          | Indent using 4 spaces.                      | Indent using 2 spaces. |
 
 <a id="14"></a>
-## Standards Technology
-
-<a id="15"></a>
 ## Miscellaneous
 

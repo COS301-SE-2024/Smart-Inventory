@@ -100,7 +100,9 @@ In the world of inventory management, reliable suppliers are a cornerstone of su
       <td>As an employee, I want to be able to securely sign in, and manage my own account settings. So that I can be able to adjust the application according to what I want.</td>
       <td>
         <ul>
-          <li>Dark and Light Mode etc FINISHHHHHh</li>
+          <li>I can view and update my profile information including name, contact details, and preferences.</li>
+          <li>I can change my password while logged into my account.</li>
+          <li>Dark and Light Mode prefrence example</li>
         </ul>
       </td>
     </tr>
@@ -119,8 +121,7 @@ In the world of inventory management, reliable suppliers are a cornerstone of su
   </thead>
   <tbody>
     <tr>
-      <td>As an inventory controller, I want to be able to manage products and stock levels, so that I can ensure accurate inventory records.
-</td>
+      <td>As an inventory controller, I want to be able to manage products and stock levels, so that I can ensure accurate inventory records.</td>
       <td>
         <ul>
           <li>I can add new products to the inventory.</li>
@@ -143,8 +144,7 @@ In the world of inventory management, reliable suppliers are a cornerstone of su
   </thead>
   <tbody>
     <tr>
-      <td>As an end user, I want to be able to request stock from the system, so that I can replenish inventory when needed.
-</td>
+      <td>As an end user, I want to be able to request stock from the system, so that I can replenish inventory when needed.</td>
       <td>
         <ul>
           <li>I can create new user accounts with specific roles (administrator, inventory controller, end-user).</li>
@@ -226,8 +226,6 @@ In the world of inventory management, reliable suppliers are a cornerstone of su
     </tr>
   </tbody>
 </table>
-
-### User Type Interactions
 
 ## Subsystems
 ### 1. Authentication and Authorization Subsystem

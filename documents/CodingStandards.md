@@ -92,10 +92,9 @@
 
 Sure, here is the detailed explanation of each main folder in your Angular/Ionic project structure formatted in Markdown:
 
-```markdown
-# Folder Structure Explanation
+## Folder Structure Explanation
 
-## Core Folder
+### Core Folder
 
 **Purpose:**
 The `core` folder is intended for services, guards, interceptors, and other singleton classes that provide core functionality for the application. These are generally provided at the root level and are meant to be shared across the entire application.
@@ -110,7 +109,7 @@ The `core` folder is intended for services, guards, interceptors, and other sing
 - **Guard**: `ng generate guard core/guards/auth`
 - **Interceptor**: Create manually, as Angular CLI doesn’t have a direct command. You can create a file manually and then register it in your app module.
 
-## Layout Folder
+### Layout Folder
 
 **Purpose:**
 The `layout` folder contains components that define the overall layout of the application, such as headers, footers, and sidebars. These components are typically used in the root component to wrap the main content.
@@ -127,7 +126,7 @@ ng generate component layout/footer
 ng generate component layout/sidebar
 ```
 
-## Pages Folder
+### Pages Folder
 
 **Purpose:**
 The `pages` folder contains the different feature modules and their associated components, services, and other related files. Each feature module represents a distinct part of the application, such as a login page, home page, etc.
@@ -138,13 +137,10 @@ The `pages` folder contains the different feature modules and their associated c
 
 **Generating Files:**
 ```bash
-ng generate module pages/home --routing
-ng generate component pages/home/home
-ng generate module pages/login --routing
-ng generate component pages/login/login
+ionic generate page pages/home
 ```
 
-## Shared Folder
+### Shared Folder
 
 **Purpose:**
 The `shared` folder contains reusable components, directives, and pipes that can be shared across multiple feature modules. These are generally UI elements or utilities that are not tied to a specific feature.

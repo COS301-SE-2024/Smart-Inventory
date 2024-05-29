@@ -42,7 +42,7 @@ In the world of inventory management, reliable suppliers are a cornerstone of su
 * Foster a more collaborative relationship with businesses through streamlined communication and order management.
 
 ### User Stories
-| User Story ------| Acceptance Criteria ------------------------------------------- |
+| <th width="40%">User Story</th> <th width="70%">Acceptance Criteria</th> |
 |---|---|
 | As an administrator, I want to be able to securely login in, and manage user accounts. So that I can ensure appropriate access levels are maintained. |<li>I can create new user accounts with specific roles (administrator, inventory controller, end-user).</li><li>I can modify existing user accounts to update their roles or permissions.</li><li>I can disable or delete user accounts as needed.</li><li>Changes to user accounts are logged in the audit trail for security monitoring.</li><li>From the dashboard, I can see an overview of the inventory status and other statistics.</li>
 

@@ -39,13 +39,13 @@ The SmartInventory system will employ a layered architecture, separating the app
 
 #### Quality Requirements Addressed
 
-**Maintainability:**
+Maintainability:
 * The layered architecture facilitates easier maintenance by isolating changes to specific layers, reducing the impact on the overall system.
   
-**Scalability:**
+Scalability:
 * Layers can be scaled independently based on the demands of the system, allowing for optimal performance as the business grows.
 
-**Usability:**
+Usability:
 * The presentation layer can be designed to provide a user-friendly interface.
   
 ### Service-Oriented Architecture (SOA) 
@@ -55,13 +55,13 @@ The system will be designed using SOA principles, breaking down the functionalit
 
 #### Quality requirements addressed
 
-**Scalability:** 
+Scalability: 
 * Services can be scaled independently, allowing the system to handle increased load and adapt to changing business needs.
   
-**Maintainability:**
+Maintainability:
 * SOA promotes loose coupling, making it easier to update or replace individual services without affecting the entire system.
   
-**Reliability:**
+Reliability:
 * Services can be designed with fault tolerance and redundancy in mind, ensuring the system remains operational even if individual components fail.
 
 ### Event-Driven Architecture (EDA)
@@ -70,10 +70,10 @@ The SmartInventory system will incorporate event-driven architecture to enable r
 
 #### Quality Requirements addressed
 
-**Reliability:** 
+Reliability: 
 * EDA allows for asynchronous processing, ensuring that critical events are handled promptly and reliably, even under high load.
   
-**Scalability:**
+Scalability:
 * The event-driven approach enables the system to scale efficiently by processing events in parallel and distributing the workload across multiple components.
 
 ## Architectural Styles Considered but only in part

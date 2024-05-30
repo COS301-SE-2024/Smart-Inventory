@@ -453,6 +453,25 @@ In the world of inventory management, reliable suppliers are a cornerstone of su
 
 ### 7. Order Placement Subsystem
 
+<ol>
+  <li>
+    Generate purchase orders(i.e quote layouts with product information and quantities already filled in, for suppliers based on products they have available. Suppliers will then only need to fill in information like price, delivery time and banking details)
+When stock levels are low, the Order Placement System will send out a quote layout for suppliers to fill in using the contact information stored in the Supplier Management subsystem.
+</li>
+<li>
+  Send purchase orders to suppliers via email or API.
+</li>
+<li>
+  Track order status (ordered, received, canceled) and expected delivery dates.
+</li>
+<li>
+  Maintain a history of placed orders for record-keeping.
+</li>
+<li>
+  Evaluate and rate received quotes based on predefined criteria (e.g., price, delivery time, etc.) to assist in selecting the best supplier for each order.
+</li>
+</ol>
+
 ## Use Case Diagrams
 
 <div align="center">

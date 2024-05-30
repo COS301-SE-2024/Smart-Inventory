@@ -503,4 +503,4 @@ When stock levels are low, the Order Placement System will send out a quote layo
    <img src="/media/UseCases/_UseCase7.drawio.png">
 </div>
 
-## Conslusion
+## Conclusion

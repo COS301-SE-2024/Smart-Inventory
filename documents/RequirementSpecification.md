@@ -283,6 +283,7 @@ In the world of inventory management, reliable suppliers are a cornerstone of su
       Warn user on incorrect inputs provided and details as to why it might be incorrect.
     </li>
   </ol>
+  </br>
   <li>
     Implement role-based access control (RBAC)
   </li>
@@ -297,6 +298,7 @@ In the world of inventory management, reliable suppliers are a cornerstone of su
       Grant stock request and deprecation access to end users.
     </li>
   </ol>
+  </br>
   <li>Log out.</li>
   <ol>
     <li>
@@ -306,6 +308,7 @@ In the world of inventory management, reliable suppliers are a cornerstone of su
       Automatically log out inactive users requiring re-login to access their account.
     </li>
   </ol>
+  </br>
   <li>Auditing.</li>
   <ol>
       <li>

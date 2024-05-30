@@ -283,25 +283,20 @@ In the world of inventory management, reliable suppliers are a cornerstone of su
       Warn user on incorrect inputs provided and details as to why it might be incorrect.
     </li>
   </ol>
-  </br>
   <li>
     Implement role-based access control (RBAC)
   </li>
   <ol>
-    </br>
     <li>
       Grant full access to administrators.
     </li>
-    </br>
     <li>
       Grant product and supplier management access to inventory controllers.
     </li>
-    </br>
     <li>
       Grant stock request and deprecation access to end users.
     </li>
   </ol>
-  </br>
   <li>Log out.</li>
   <ol>
     <li>
@@ -311,9 +306,7 @@ In the world of inventory management, reliable suppliers are a cornerstone of su
       Automatically log out inactive users requiring re-login to access their account.
     </li>
   </ol>
-  </br>
   <li>Auditing.</li>
-  </br>
   <ol>
       <li>
         Maintain a detailed audit trail of user activities within the system for  accountability purposes.
@@ -322,7 +315,6 @@ In the world of inventory management, reliable suppliers are a cornerstone of su
       The system shall maintain an audit trail of user activities, including successful and failed login attempts, for security monitoring purposes.
     </li>
   </ol>
-  </br>
 </ol>
 
 ### 2. Team/User Management Subsystem

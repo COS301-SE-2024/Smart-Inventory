@@ -250,31 +250,79 @@ In the world of inventory management, reliable suppliers are a cornerstone of su
 
 <ol>
   <li>Create Account</li>
-  <li>Administrator should be able to create a new account securely for their entire business.</li>
-  </br>
-  <li>The system shall provide a secure login mechanism for administrators and inventory controllers and end users to access the web interface.</li>
-  </br>
-  <li>The system shall support role-based access control (RBAC) to differentiate between administrators,  inventory controllers and end users.
   <ol>
-    </br>
-    <li>Administrators shall have full access to all system features and configurations.</li>
-    </br>
-    <li>Inventory controllers shall have access to add products and supplier information, perform stocktake operations, approve stock requests for some items that have that requirement and also request stock from the system.</li>
-    </br>
-    <li>End users shall have access to request stock from the system and deprecate the amount used.</li>
+    <li>
+      Enforce strong password policies.
+    </li>
+    <li>
+      Implement secure password storage.
+    </li>
+    <li>
+      Prevent user error through repeat password and regression checks.
+    </li>
+    <li>
+      Warn user on incorrect inputs provided and details as to why it might be incorrect.
+    </li>
+    </ol>
+  </br>
+  <li>Log in</li>
+  <ol>
+    <li>
+      Provide secure login for different user roles.
+    </li>
+    <li>
+      Enforce strong password policies.
+    </li>
+    <li>
+      Implement secure password storage.
+    </li>
+    <li>
+      Provide password recovery mechanism.
+    </li>
+    <li>
+      Warn user on incorrect inputs provided and details as to why it might be incorrect.
+    </li>
   </ol>
   </br>
-  <li>The system shall enforce strong password policies for user accounts, including minimum length, complexity, and periodic password changes.</li>
+  <li>
+    Implement role-based access control (RBAC)
+  </li>
+  <ol>
+    </br>
+    <li>
+      Grant full access to administrators.
+    </li>
+    </br>
+    <li>
+      Grant product and supplier management access to inventory controllers.
+    </li>
+    </br>
+    <li>
+      Grant stock request and deprecation access to end users.
+    </li>
+  </ol>
   </br>
-  <li>The system shall implement secure password storage using industry-standard encryption techniques, such as salted hashing algorithms.</li>
+  <li>Log out.</li>
+  <ol>
+    <li>
+      Allow users to log out of the system manually requiring re-login to access their account.
+    </li>
+    <li>
+      Automatically log out inactive users requiring re-login to access their account.
+    </li>
+  </ol>
   </br>
-  <li>The system shall provide a password recovery mechanism for users who forget their login credentials.</li>
+  <li>Auditing.</li>
   </br>
-  <li>The system shall automatically log out users after a specified period of inactivity to prevent unauthorized access.</li>
+  <ol>
+      <li>
+        Maintain a detailed audit trail of user activities within the system for  accountability purposes.
+    </li>
+    <li>
+      The system shall maintain an audit trail of user activities, including successful and failed login attempts, for security monitoring purposes.
+    </li>
+  </ol>
   </br>
-  <li>Users should be able to log out of their account, ending the session and requiring re-login to access their account to stop unintended users from accesing system when the correct users are gone.</li>
-  </br>
-  <li>The system shall maintain an audit trail of user activities, including successful and failed login attempts, for security monitoring purposes.</li>
 </ol>
 
 ### 2. Team/User Management Subsystem

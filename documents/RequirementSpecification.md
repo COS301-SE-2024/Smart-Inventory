@@ -457,27 +457,31 @@ In the world of inventory management, reliable suppliers are a cornerstone of su
 
 <div align="center">
    <h3>1. Authentication and Authorization Subsystem</h3>
-   <img src="/media/">
+   <img src="/media/UseCases/_UseCase1.drawio.png">
 </div>
 <div align="center">
    <h3>2. </h3>
-   <img src="/media/">
+   <img src="/media/UseCases/_UseCase2.drawio.png">
 </div>
 <div align="center"> 
    <h3>3. </h3>
-   <img src="/media/">
+   <img src="/media/UseCases/_UseCase3.drawio.png">
 </div>
 <div align="center">
    <h3>4. </h3>
-   <img src="/media/">
+   <img src="/media/UseCases/_UseCase4.drawio.png">
 </div>
 <div align="center">
    <h3>5. </h3>
-   <img src="/media/">
+   <img src="/media/UseCases/_UseCase5.drawio.png">
 </div>
 <div align="center">
    <h3>6. </h3>
-   <img src="/media/">
+   <img src="/media/UseCases/_UseCase6.drawio.png">
+</div>
+<div align="center">
+   <h3>7. </h3>
+   <img src="/media/UseCases/_UseCase7.drawio.png">
 </div>
 
 ## Conslusion

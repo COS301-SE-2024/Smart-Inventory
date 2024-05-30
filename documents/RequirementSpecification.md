@@ -453,31 +453,54 @@ In the world of inventory management, reliable suppliers are a cornerstone of su
 
 ### 7. Order Placement Subsystem
 
+<ol>
+  <li>
+    Generate purchase orders(i.e quote layouts with product information and quantities already filled in, for suppliers based on products they have available. Suppliers will then only need to fill in information like price, delivery time and banking details)
+When stock levels are low, the Order Placement System will send out a quote layout for suppliers to fill in using the contact information stored in the Supplier Management subsystem.
+</li>
+<li>
+  Send purchase orders to suppliers via email or API.
+</li>
+<li>
+  Track order status (ordered, received, canceled) and expected delivery dates.
+</li>
+<li>
+  Maintain a history of placed orders for record-keeping.
+</li>
+<li>
+  Evaluate and rate received quotes based on predefined criteria (e.g., price, delivery time, etc.) to assist in selecting the best supplier for each order.
+</li>
+</ol>
+
 ## Use Case Diagrams
 
 <div align="center">
    <h3>1. Authentication and Authorization Subsystem</h3>
-   <img src="/media/">
+   <img src="/media/UseCases/_UseCase1.drawio.png">
 </div>
 <div align="center">
-   <h3>2. </h3>
-   <img src="/media/">
+   <h3>2. Team/User Management Subsystem</h3>
+   <img src="/media/UseCases/_UseCase2.drawio.png">
 </div>
 <div align="center"> 
-   <h3>3. </h3>
-   <img src="/media/">
+   <h3>3. Reporting Subsystem</h3>
+   <img src="/media/UseCases/_UseCase3.drawio.png">
 </div>
 <div align="center">
-   <h3>4. </h3>
-   <img src="/media/">
+   <h3>4. Inventory Management Subsystem</h3>
+   <img src="/media/UseCases/_UseCase4.drawio.png">
 </div>
 <div align="center">
-   <h3>5. </h3>
-   <img src="/media/">
+   <h3>5. Stock Request Subystem</h3>
+   <img src="/media/UseCases/_UseCase5.drawio.png">
 </div>
 <div align="center">
-   <h3>6. </h3>
-   <img src="/media/">
+   <h3>6. Supplier Management Subsystem</h3>
+   <img src="/media/UseCases/_UseCase6.drawio.png">
+</div>
+<div align="center">
+   <h3>7. Order Placement Subsystem</h3>
+   <img src="/media/UseCases/_UseCase7.drawio.png">
 </div>
 
-## Conslusion
+## Conclusion

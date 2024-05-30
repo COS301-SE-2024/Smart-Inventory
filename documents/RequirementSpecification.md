@@ -348,14 +348,13 @@ In the world of inventory management, reliable suppliers are a cornerstone of su
       Allow administrators to modify exsisting accounts and permissions.
     </li> 
     <li>
-      Allow administrators to deactivate user accounts.
+      Allow administrators to deactivate/delete user accounts.
     </li>
   </ol>
   </br>
 <li>User Profile Management</li>
   <ol>
-    </br>
-    <li>Allow users to view their account and its details</li>
+    <li>Allow users to view their account and its details.</li>
     <li>
       Allow users to update their profile information, such as name, contact details, and preferences.
     </li>
@@ -363,67 +362,96 @@ In the world of inventory management, reliable suppliers are a cornerstone of su
       Users are be able to change their password while logged into their account.
     </li>
   </ol>
-  </br>
 </ol>
 
 ### 3. Reporting Subsystem
 
 <ol>
-  <li>Generate inventory reports</li>
+  <li>
+    Generate inventory reports
+  </li>
   <ol>
-    </br>
-    <li>Provide a report on current stock levels for all products.</li>
-    </br>
-    <li>Include details such as product name, supplier, quantity, and expiration date.</li>
-    </br>
-    <li>Allow filtering and sorting of the inventory report based on various criteria (e.g., product category, supplier, expiration date)</li>
+    <li>
+      Provide a report on current stock levels for all products.
+    </li>
+    <li>
+      Include details such as product name, supplier, quantity, and expiration date.
+    </li>
+    <li>
+      Allow filtering and sorting of the inventory report based on various criteria (e.g., product category, supplier, expiration date)
+    </li>
   </ol>
   </br>
-  <li>Generate stock take reports</li>
+  <li>
+    Generate stock take reports
+  </li>
   <ol>
-    </br>
-    <li>Facilitate the process of performing stock takes by generating a report of all products and their expected quantities</li>
-    </br>
-    <li>Allow inventory personnel to input actual quantities during the stock take process</li>
-    </br>
-    <li>Highlight discrepancies between expected and actual quantities in the stock take report</li>
-    </br>
-    <li>Provide a summary of stock take results, including total discrepancies and percentage accuracy</li>
+    <li>
+      Facilitate the process of performing stock takes by generating a report of all products and their expected quantities
+    </li>
+    <li>
+      Allow inventory personnel to input actual quantities during the stock take process
+    </li>
+    <li>
+      Highlight discrepancies between expected and actual quantities in the stock take report
+    </li>
+    <li>
+      Provide a summary of stock take results, including total discrepancies and percentage accuracy
+    </li>
   </ol>
   </br>
-  <li>Generate expiration reports</li>
+  <li>
+    Generate expiration reports
+  </li>
     <ol>
-      </br>
-      <li>Identify products that are nearing their expiration dates</li>
-      </br>
-      <li>Generate a report listing products due to expire within a configurable time frame (e.g., 30 days, 60 days)</li>
-      </br>
-      <li>Include details such as product name, supplier, quantity, and expiration date</li>
-      </br>
-      <li>Highlight products that have already expired or are critically close to expiration</li>
+      <li>
+        Identify products that are nearing their expiration dates
+      </li>
+      <li>
+        Generate a report listing products due to expire within a configurable time frame (e.g., 30 days, 60 days)
+      </li>
+      <li>
+        Include details such as product name, supplier, quantity, and expiration date
+      </li>
+      <li>
+        Highlight products that have already expired or are critically close to expiration
+      </li>
     </ol>
   </br>
-<li>Generate order history reports</li>
+<li>
+  Generate order history reports
+</li>
   <ol>
-    </br>
-    <li>Provide a report on the order history for each product</li>
-    </br>
-    <li>Include details such as order date, supplier, quantity ordered, and order status (e.g., pending, shipped, received)</li>
-    </br>
-    <li>Allow filtering and sorting of the order history report based on various criteria (e.g., product, supplier, date range)</li>
+    <li>
+      Provide a report on the order history for each product
+    </li>
+    <li>
+      Include details such as order date, supplier, quantity ordered, and order status (e.g., pending, shipped, received)
+    </li>
+    <li>
+      Allow filtering and sorting of the order history report based on various criteria (e.g., product, supplier, date range)
+    </li>
   </ol>
   </br>
-<li>Generate supplier performance reports</li>
+<li>
+  Generate supplier performance reports
+</li>
   <ol>
-    </br>
-    <li>Track and report on the performance of suppliers in terms of order fulfillment and delivery timeliness</li>
-    </br>
-    <li>Calculate key performance indicators (KPIs) such as order fill rate, on-time delivery percentage, and lead time</li>
+    <li>
+      Track and report on the performance of suppliers in terms of order fulfillment and delivery timeliness
+    </li>
+    <li>
+      Calculate key performance indicators (KPIs) such as order fill rate, on-time delivery percentage, and lead time
+    </li>
   </ol>
   </br>
-  <li>Enable the export of reports in various formats (e.g., CSV, PDF, Excel) for further analysis or sharing</li>
+  <li>
+    Enable the export of reports in various formats (e.g., CSV, PDF, Excel) for further analysis or sharing
+  </li>
 </br>
-<li>Allow anlytics for various reports.</li>
+<li>
+  Allow anlytics for various reports.
+</li>
 </ol>
 
 ### 4. Inventory Management Subsystem

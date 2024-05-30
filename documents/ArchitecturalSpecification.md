@@ -38,10 +38,13 @@ The team has decided to apply the strategy of design based on quality requiremen
 The SmartInventory system will employ a layered architecture, separating the application into distinct layers such as presentation, business logic, and data access. This promotes a clear separation of concerns, making the system more modular, maintainable, and easier to understand. The presentation layer will handle the user interface, the business logic layer will contain the core application logic, and the data access layer will manage interactions with the database.
 
 #### Quality Requirements Addressed
+
 **Maintainability:**
 * The layered architecture facilitates easier maintenance by isolating changes to specific layers, reducing the impact on the overall system.
+  
 **Scalability:**
 * Layers can be scaled independently based on the demands of the system, allowing for optimal performance as the business grows.
+
 **Usability:**
 * The presentation layer can be designed to provide a user-friendly interface.
   
@@ -51,10 +54,13 @@ The SmartInventory system will employ a layered architecture, separating the app
 The system will be designed using SOA principles, breaking down the functionality into discrete, loosely coupled services. Each service will encapsulate a specific business capability, such as inventory management, order placement, or reporting. Services will communicate through well-defined interfaces, enabling flexibility and reusability.
 
 #### Quality requirements addressed
+
 **Scalability:** 
 * Services can be scaled independently, allowing the system to handle increased load and adapt to changing business needs.
+  
 **Maintainability:**
 * SOA promotes loose coupling, making it easier to update or replace individual services without affecting the entire system.
+  
 **Reliability:**
 * Services can be designed with fault tolerance and redundancy in mind, ensuring the system remains operational even if individual components fail.
 
@@ -63,8 +69,10 @@ The system will be designed using SOA principles, breaking down the functionalit
 The SmartInventory system will incorporate event-driven architecture to enable real-time responsiveness and asynchronous processing. Key events, such as low stock levels or expiring products, will trigger appropriate actions, such as generating alerts or initiating automatic order placement.
 
 #### Quality Requirements addressed
+
 **Reliability:** 
 * EDA allows for asynchronous processing, ensuring that critical events are handled promptly and reliably, even under high load.
+  
 **Scalability:**
 * The event-driven approach enables the system to scale efficiently by processing events in parallel and distributing the workload across multiple components.
 

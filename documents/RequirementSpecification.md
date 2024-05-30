@@ -351,7 +351,6 @@ In the world of inventory management, reliable suppliers are a cornerstone of su
       Allow administrators to deactivate user accounts.
     </li>
   </ol>
-</ol>
   </br>
 <li>User Profile Management</li>
   <ol>

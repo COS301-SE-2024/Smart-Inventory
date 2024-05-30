@@ -460,27 +460,27 @@ In the world of inventory management, reliable suppliers are a cornerstone of su
    <img src="/media/UseCases/_UseCase1.drawio.png">
 </div>
 <div align="center">
-   <h3>2. </h3>
+   <h3>2. Team/User Management Subsystem</h3>
    <img src="/media/UseCases/_UseCase2.drawio.png">
 </div>
 <div align="center"> 
-   <h3>3. </h3>
+   <h3>3. Reporting Subsystem</h3>
    <img src="/media/UseCases/_UseCase3.drawio.png">
 </div>
 <div align="center">
-   <h3>4. </h3>
+   <h3>4. Inventory Management Subsystem</h3>
    <img src="/media/UseCases/_UseCase4.drawio.png">
 </div>
 <div align="center">
-   <h3>5. </h3>
+   <h3>5. Stock Request Subystem</h3>
    <img src="/media/UseCases/_UseCase5.drawio.png">
 </div>
 <div align="center">
-   <h3>6. </h3>
+   <h3>6. Supplier Management Subsystem</h3>
    <img src="/media/UseCases/_UseCase6.drawio.png">
 </div>
 <div align="center">
-   <h3>7. </h3>
+   <h3>7. Order Placement Subsystem</h3>
    <img src="/media/UseCases/_UseCase7.drawio.png">
 </div>
 

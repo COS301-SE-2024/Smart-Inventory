@@ -1,0 +1,193 @@
+<ion-header [translucent]="true">
+    <ion-toolbar>
+        <ion-buttons slot="end">
+            <ion-button (click)="showUserProfile()" class="user-profile-button">
+                <ion-icon name="person-circle-outline"></ion-icon>
+                <ion-label>
+                    <h3>{{ userName }}</h3>
+                    <p>{{ userRole }}</p>
+                </ion-label>
+            </ion-button>
+        </ion-buttons>
+        <ion-title class="dashboard-header">Dashboard</ion-title>
+        <!-- Other toolbar content -->
+    </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+    <ion-grid>
+        <ion-row>
+            <ion-col>
+                <ion-card class="equal-height">
+                    <ion-card-header>
+                        <ion-row class="center-align">
+                            <ion-col size="6" class="center-content">
+                                <ion-card-title>Team Name</ion-card-title>
+                            </ion-col>
+                            <ion-col size="6" class="center-content">
+                                <ion-button>Add Team Members</ion-button>
+                            </ion-col>
+                        </ion-row>
+                    </ion-card-header>
+                </ion-card>
+            </ion-col>
+            <ion-col>
+                <ion-card class="equal-height">
+                    <ion-card-header>
+                        <ion-row class="center-align">
+                            <ion-col class="center-content">
+                                <ion-card-title>Summary</ion-card-title>
+                            </ion-col>
+                        </ion-row>
+                    </ion-card-header>
+                </ion-card>
+            </ion-col>
+            <ion-col>
+                <ion-card class="equal-height">
+                    <ion-card-header class="center-align quick-actions-card">
+                        <ion-card-title>Quick Actions</ion-card-title>
+                    </ion-card-header>
+                </ion-card>
+            </ion-col>
+        </ion-row>
+        <ion-row>
+            <ion-col>
+                <ion-card class="section">
+                    <ion-list class="section">
+                        <ion-item class="team-member" lines="none">
+                            <ion-avatar slot="start">
+                                <ion-icon name="person-circle-outline" size="large"></ion-icon>
+                            </ion-avatar>
+                            <ion-label style="margin-right: auto">
+                                <h4>John Smith</h4>
+                                <p>Developer</p>
+                            </ion-label>
+                            <ion-buttons slot="end" style="margin-left: auto">
+                                <ion-button size="small">Activity</ion-button>
+                                <ion-button size="small" color="danger">Remove</ion-button>
+                            </ion-buttons>
+                        </ion-item>
+
+                        <ion-item class="team-member" lines="none">
+                            <ion-avatar slot="start">
+                                <ion-icon name="person-circle-outline" size="large"></ion-icon>
+                            </ion-avatar>
+                            <ion-label style="margin-right: auto">
+                                <h4>Jane Doe</h4>
+                                <p>Designer</p>
+                            </ion-label>
+                            <ion-buttons slot="end" style="margin-left: auto">
+                                <ion-button size="small">Activity</ion-button>
+                                <ion-button size="small" color="danger">Remove</ion-button>
+                            </ion-buttons>
+                        </ion-item>
+
+                        <ion-item class="team-member" lines="none">
+                            <ion-avatar slot="start">
+                                <ion-icon name="person-circle-outline" size="large"></ion-icon>
+                            </ion-avatar>
+                            <ion-label style="margin-right: auto">
+                                <h4>Mike Brown</h4>
+                                <p>Project Manager</p>
+                            </ion-label>
+                            <ion-buttons slot="end" style="margin-left: auto">
+                                <ion-button size="small">Activity</ion-button>
+                                <ion-button size="small" color="danger">Remove</ion-button>
+                            </ion-buttons>
+                        </ion-item>
+                    </ion-list>
+                </ion-card>
+            </ion-col>
+            <ion-col>
+                <ion-grid>
+                    <ion-row style="position: relative; top: 50px">
+                        <ion-col>
+                            <ion-card class="summary-card">
+                                <ion-card-content>
+                                    <h4>1000</h4>
+                                    <p>temp</p>
+                                </ion-card-content>
+                            </ion-card>
+                        </ion-col>
+                        <ion-col>
+                            <ion-card class="summary-card">
+                                <ion-card-content>
+                                    <h4>1000</h4>
+                                    <p>temp</p>
+                                </ion-card-content>
+                            </ion-card>
+                        </ion-col>
+                        <ion-col>
+                            <ion-card class="summary-card">
+                                <ion-card-content>
+                                    <h4>1000</h4>
+                                    <p>temp</p>
+                                </ion-card-content>
+                            </ion-card>
+                        </ion-col>
+                    </ion-row>
+                </ion-grid>
+            </ion-col>
+            <ion-col>
+                <ion-card class="actions">
+                    <ion-list>
+                        <ion-item lines="none">
+                            <ion-avatar slot="start">
+                                <ion-icon name="person-add-outline" size="large"></ion-icon>
+                            </ion-avatar>
+                            <ion-label>
+                                <h4>Add Member</h4>
+                            </ion-label>
+                        </ion-item>
+
+                        <ion-item lines="none">
+                            <ion-avatar slot="start">
+                                <ion-icon name="clipboard-outline" size="large"></ion-icon>
+                            </ion-avatar>
+                            <ion-label>
+                                <h4>Create Order</h4>
+                            </ion-label>
+                        </ion-item>
+
+                        <ion-item lines="none">
+                            <ion-avatar slot="start">
+                                <ion-icon name="cube-outline" size="large"></ion-icon>
+                            </ion-avatar>
+                            <ion-label>
+                                <h4>Add Product</h4>
+                            </ion-label>
+                        </ion-item>
+                        <ion-item lines="none">
+                            <ion-avatar slot="start">
+                                <ion-icon name="car-outline" size="large"></ion-icon>
+                            </ion-avatar>
+                            <ion-label>
+                                <h4>Add Supplier</h4>
+                            </ion-label>
+                        </ion-item>
+                        <ion-item lines="none">
+                            <ion-avatar slot="start">
+                                <ion-icon name="arrow-up-circle-outline" size="large"></ion-icon>
+                            </ion-avatar>
+                            <ion-label>
+                                <h4>Add Export</h4>
+                            </ion-label>
+                        </ion-item>
+                    </ion-list>
+                </ion-card>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
+    <ion-row>
+        <ion-col size="12">
+            <ion-card class="stock-report">
+                <ion-card-header>
+                    <ion-card-title>Stock Report</ion-card-title>
+                </ion-card-header>
+                <ion-card-content class="stock-data">
+                    <!-- Stock report data goes here -->
+                </ion-card-content>
+            </ion-card>
+        </ion-col>
+    </ion-row>
+</ion-content>

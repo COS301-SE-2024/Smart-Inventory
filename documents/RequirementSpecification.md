@@ -452,6 +452,9 @@ In the world of inventory management, reliable suppliers are a cornerstone of su
 <li>
   Allow anlytics for various reports.
 </li>
+    <li>
+      Allow for exporting of reports
+    </li>
 </ol>
 
 ### 4. Inventory Management Subsystem
@@ -465,6 +468,9 @@ In the world of inventory management, reliable suppliers are a cornerstone of su
     <li>Allow user to record Expiration dates</li>
     <li>Allow user to record current product quantity</li>
   </ol>
+    <li>
+      Allow for exporting of inventory table.
+    </li>
   </br>
 <li>Monitor stock levels and expiration dates.</li> 
   <ol>

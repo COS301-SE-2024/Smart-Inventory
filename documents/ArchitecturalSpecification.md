@@ -193,25 +193,111 @@ While this constraint might limit the available options for libraries, the benef
 ## Technology Decisions
 ### Frontend
 #### Angular
+* Usability:
+  * Angular excels at building Single-Page Applications (SPAs) that provide a responsive and user-friendly experience.
+  * Aligning with the quality requirement for a user-friendly web interface for various user roles.
+* Maintainability:
+  * Angular's architecture promotes modularity and clear separation of concerns.
+  * Making the codebase easier to maintain and update in the long run.
+* Scalability:
+  * Angular SPAs can handle complex data flows and functionalities efficiently.
+  * Allowing the application to scale as the business grows.
+* Open-Source:
+  * Angular is a mature open-source framework with a large and active community.
+  * This aligns with the project's open-source constraint.
+
 #### Ionic
+* Efficiency and Maintainability:
+  * By using Ionic on top of Angular, the development team can create a single codebase that works seamlessly across web browsers and mobile devices.
+  * Reducing development time and adhering to the maintainability quality requirement.
+* Usability:
+  * Ionic leverages native device features to provide a look and feel consistent with the user's device.
+  * Enhancing usability across platforms.
+
 #### Typescript
+* Maintainability:
+  * TypeScript leads to fewer runtime errors and improving code maintainability in the long run compared to that of javascript.
+  * Adhering to the maintainability requirement.
+* Security:
+  * TypeScript can help identify potential security vulnerabilities early in the development process by:
+    * Catching type errors that could lead to unexpected behavior.
 
 ### Database
 #### AWS DynamoDB
-#### AWS S3
+* Scalability: A core requirement for the SmartInventory system is scalability to handle growing inventory data. DynamoDB is a NoSQL database specifically designed for high scalability and performance. It can efficiently handle increasing data volumes without compromising speed.
+* Flexibility: The schema in DynamoDB is flexible, allowing for easy adaptation to future changes in data structures without significant database modifications. This caters to the evolving nature of inventory data as business needs change.
+Fast Performance: DynamoDB excels in performing reads and writes for frequently accessed data, which is crucial for the SmartInventory system where users regularly update and retrieve inventory information.
 
+#### AWS S3
+* Cost-Effectiveness:
+  * S3 offers a cost-efficient storage solution for large, infrequently accessed data objects.
+* High Availability:
+  * S3 provides highly durable and fault-tolerant storage, ensuring data redundancy and minimizing the risk of data loss.
+  * Adhering to reliability quality requirement.
+* Object Storage:
+  * S3 is optimized for storing objects of any size and type, making it suitable for various file formats associated with inventory management.
+* Provides a solution to DynamoDB analytic deffeciancies.
+  
 ### API
-#### AWS Lambda Functions
-#### AWS API Gateway
+#### AWS Lambda Functions and API Gateway
+* Scalabilty:
+  * Serverless architecture with Lambda functions eliminates server provisioning and scales automatically based on demand.
+  * This ensures efficient resource utilization for varying workloads.
+* Maintainability:
+  * Promotes maintainability due to their focus on single functionalities and smaller codebases.
+* Event-Driven:
+  * Ideal for the SmartInventory system where actions might be triggered by events like low stock or order placement.
+* Open-Source Compatible.
+
+#### API Gateway
+* Scalability:
+  * A single entry point for all API requests simplifies development and scales efficiently to handle increasing traffic.
+* API Management:
+  * Provides a central point for managing and securing APIs, simplifying development and reducing complexity.
+* Security:
+  * Acts as a central point for enforcing authentication and authorization policies before requests reach backend functions, improving access control.
+
 #### AWS Step Functions
+* Workflow Orchestration:
+  * If the SmartInventory system involves complex workflows (e.g., order fulfillment with multiple steps), Step Functions can orchestrate these steps efficiently.
+  * Useful for the event driven architecture.
+* Error Handling:
+  * Step Functions can handle errors gracefully and ensure workflows are retried or rolled back if necessary.
+  * Adhering to reliability quality requirement.
 
 ### Testing
 #### Cypress
-#### Postman
+Cypress component and end-to-end testing for frontend.
+* Usability(Usability testing):
+  * Cypress is an excellent tool for testing the user interface (UI) of the SmartInventory web application.
+  * Following User-centered design principles (as explained above), Cypress allows manual and automated testing to ensure the UI is intuitive and functions as expected for various user roles.
+* Testing also generally increases reliability.
 
+#### Postman
+Postman to facilitate API testing.
+* API Testing:
+  * The chosen architecture utilizes AWS API Gateway and serverless functions (Lambdas) for backend logic.
+    * Postman is a powerful tool for testing these APIs.
+* Testing also generally increases reliability.
+  
 ### Miscellaneous
 #### AWS Cognito
-#### Amplify
-#### Amplify Cloud Sandbox
+* Security:
+  * Addresses the need for secure user authentication as specified in the document's objectives.
+  * Cognito provides features like user registration, login, and role-based access control (RBAC).
 
-## Conclusion
+#### Amplify
+Amplify simplifies cloud integration as well as allowing for deployment.
+* Simplifies Backend Development:
+  * Amplify provides pre-built components and libraries for building mobile and web applications, streamlining backend development and reducing boilerplate code.
+* Modular Design:
+  * Amplify promotes a modular approach, aligning with the project's maintainability goal.
+* Scalability:
+  * Amplify simplifies integration with various AWS services like DynamoDB and Lambda functions, fostering scalability as the system grows.
+
+#### Amplify Cloud Sandbox
+* Rapid Prototyping and Development:
+  * Amplify Cloud Sandbox allows developers to quickly set up and test backend resources in a sandbox environment, accelerating development and reducing time spent on infrastructure management.
+* Maintainability:
+  * The sandbox facilitates iterative development and testing cycles within a controlled environment, promoting maintainability.
+  * It leverages open-source tools under the hood.

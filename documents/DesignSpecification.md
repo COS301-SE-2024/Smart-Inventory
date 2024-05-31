@@ -52,23 +52,27 @@ DynamoDB's primary key consists of a partition key and an optional sort key. In 
 DynamoDB's powerful querying capabilities, such as the ability to query by partition key and sort key, and its seamless integration with other AWS services, make it a suitable choice for the SmartInventory system. The database design can evolve as the system grows, leveraging DynamoDB's scalability and flexibility.
 
 ## Design Decisions
+### Database Design
 The design of the SmartInventory system is based on the following key decisions:
 
-### Technology Stack:
+#### Technology Stack:
 The system will be developed using an open-source technology stack, ensuring cost-effectiveness, flexibility, and community support. The specific technologies will be selected based on their suitability for the project requirements, scalability, and maintainability.
 
-### Security Measures:
+#### Security Measures:
 Data security is a top priority for the SmartInventory system. End-to-end encryption will be implemented to protect sensitive data both in transit and at rest. Secure user authentication mechanisms, such as password hashing and secure storage, will be employed. Role-based access control (RBAC) will be enforced to ensure that users have access only to the features and data relevant to their roles.
 
-### Modular Design:
+#### Modular Design:
 The system will follow a modular design approach, breaking down the functionality into smaller, independent modules. This promotes code reusability, maintainability, and easier testing. Modular design also allows for the incremental development and deployment of features.
 
-### Automated Testing:
+#### Automated Testing:
 Comprehensive automated testing will be incorporated into the development process to ensure code quality and minimize bugs. Unit tests, integration tests, and end-to-end tests will be written to cover critical functionality and edge cases. Automated testing will be run as part of the continuous integration and deployment pipeline.
 
-### Scalability Considerations:
+#### Scalability Considerations:
 The SmartInventory system will be designed with scalability in mind. The architecture will allow for horizontal scaling, enabling the addition of more instances to handle increased load. Caching mechanisms will be employed to improve performance and reduce the load on the database. The system will be designed to handle a growing number of users, products, and transactions.
 
-## Conclusion
-The SmartInventory system design specification outlines the objectives, functional requirements, database design, architecture, and key design decisions. By leveraging a combination of layered architecture, service-oriented architecture, and event-driven architecture, the system aims to achieve modularity, flexibility, and scalability. The use of open-source technologies, strong security measures, modular design, automated testing, and scalability considerations will contribute to the development of a robust and maintainable inventory management solution. This design specification serves as a blueprint for the implementation phase, guiding the development team in building a system that meets the specified requirements and quality standards.
-
+### Interface Design
+#### UI and UX design:
+#### User-centric design:
+#### Intuitive navigation:
+#### Design consistency:
+#### Trends and historical considerations:

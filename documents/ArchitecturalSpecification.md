@@ -78,6 +78,9 @@ Reliability:
 Scalability:
 * The event-driven approach enables the system to scale efficiently by processing events in parallel and distributing the workload across multiple components.
 
+### Serverless Architecture
+#### Description
+#### Quality Requirements addressed
 
 ## Architectural Constraints
 A core architectural constraint for this project is the requirement to **utilize only open-source libraries**. This decision fosters an open-source development philosophy for the project itself. This contraint might actually provide greater advantages than disadvantages. Here's why this constraint is important:

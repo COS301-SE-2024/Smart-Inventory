@@ -1,53 +1,9 @@
 # Design Specification
 ## Introduction
-SmartInventory is a comprehensive web-based inventory management system designed to streamline and automate the process of tracking, ordering, and managing stock for businesses, restaurants, and laboratories. The system aims to simplify inventory management by providing a user-friendly interface for administrators, inventory controllers, and end users to capture stock details, request stock, and generate insightful reports.
-
-### Objectives and Requirements
-
-#### Authentication and Authorization:
-- Provide secure login for different user roles (administrators, inventory controllers, end users).
-- Enforce strong password policies and implement secure password storage.
-- Provide a password recovery mechanism.
-- Allow users to log out manually and automatically log out inactive users.
-- Maintain a detailed audit trail of user activities for security and accountability.
-- Implement role-based access control (RBAC) granting appropriate permissions to each user role.
-
-#### User Management:
-- Allow administrators to register new users with necessary details (name, email, role).
-- Validate and ensure unique email addresses during user registration.
-- Send welcome emails with login links and initial passwords to new users.
-- Allow users to view and update their profile information (email, password).
-- Enable administrators to update user roles and deactivate user accounts.
-
-#### Inventory Management:
-- Track and manage product details, including name, description, SKU, and category.
-- Record and update inventory levels for each product.
-- Associate products with specific suppliers.
-- Track expiration dates for perishable items.
-
-#### Stock Request System:
-- Allow end users to request stock, specifying the product and quantity needed.
-- Capture the purpose of stock requests (e.g., regular replenishment, special projects).
-- Enable inventory controllers to approve or reject stock requests.
-- Update inventory levels based on approved stock requests.
-
-#### Order Placement System:
-- Generate purchase orders based on approved stock requests or low inventory levels.
-- Send purchase orders to respective suppliers.
-- Track order status (e.g., pending, shipped, received, canceled).
-- Update inventory levels upon receipt of ordered items.
-
-#### Supplier Management:
-- Maintain a database of supplier details, including name, contact information, and address.
-- Track supplier performance metrics.
-- Associate suppliers with specific products they provide.
-
-#### Reporting:
-- Generate inventory reports showing current stock levels and valuation.
-- Provide stock take reports for physical inventory reconciliation.
-- Generate expiration reports for perishable items.
-- Offer order history reports to track purchase trends.
-- Produce supplier performance reports to assess supplier reliability and lead times.
+SmartInventory is a comprehensive web-based application designed to revolutionize inventory management for businesses of all sizes, including restaurants and laboratories. This design specification outlines the visual elements and functionalities that will shape the user experience within SmartInventory. 
+* Wireframes and detailed design mockups will illustrate the user interface, navigation flow, and interaction patterns for each user role.
+* Additionally, this document will include a section dedicated to the design of the database schema for Amazon DynamoDB, the NoSQL database service that will power SmartInventory's data storage and retrieval capabilities.
+The document aims to provide a clear roadmap for developers to translate the vision of SmartInventory into a user-centric and efficient application.
 
 ## Wireframes
 ### Sign in and Create Account

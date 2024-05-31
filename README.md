@@ -1,198 +1,27 @@
-<h1> Helix - SmartInventory - Smart Inventory System to track and organise inventory</h1>
-<h2>About</h2>
+# SmartInventory
 
+This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.0.2.
 
-<div align="center">
-  <a href="https://github.com/TristanU21442615/HelixCapstone">
-    <img src="documents/media/.png" width="50%" height="50%">
-  </a>
-</div>
-<hr>
-<be>
+## Development server
 
-## Google Drive Link
-https://drive.google.com/drive/folders/1yC_nHp_spKNN3gHi4fL5JUDHA2dskahi?usp=sharing
+Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
 
-## Git Strategy - Git Flow
+## Code scaffolding
 
-<img src="https://github.com/TristanU21442615/HelixCapstone/blob/documents/media/GitFolwStrategy.png">
+Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
 
-## ✨Key Features
-### 1
-  
-### 2
-  
-### 3
-  
-### 4
+## Build
 
-### 5
-  
-<hr>
-<br>
+Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
 
-## 🛠️ Tech Stack
-### 💻 Frontend:
+## Running unit tests
 
-### ⚙️ Backend:
+Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
 
-### Standards
-> [!NOTE]  
-> Read more about standards in coding standards document.
+## Running end-to-end tests
 
-**ESLint:**
-<br>
-For code quality and consistency, we integrate ESLint into our development process. 
-* ESLint is a widely-used static code analysis tool that helps identify and fix common programming errors and enforce coding standards.
-* With ESLint, we ensure our codebase remains clean, readable, and maintainable.
+Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
 
-<hr>
-<br>
+## Further help
 
-## 📂Documents
-  📄
-  <a href="documents/RequirementSpecification.md">
-    Software Requirement Specification
-  </a>
-  
-  ##
-
-  📄
-  <a href="documents/ArchitecturalSpecification.md">
-    Architectural Specification
-  </a>
-  
-  ##
-
-  📄
-  <a href="documents/DesignSpecification.md">
-    Design Specification
-  </a>
-  
-  ##
-
-  📄
-  <a href="documents/CodingStandards.md">
-    Coding Standards
-  </a>
-
-  ##
-
-  📄
-  <a href="documents/UserManual.md">
-    User Manual
-  </a>
-
-  ##
-
-  📄
-  <a href="documents/TestingPolicy.md">
-    Testing Policy
-  </a>
-  <hr>
-<br>
-
-## 👷Our Team
-
-<table>
-    <tr>
-      <td width="150" height="140">
-        <img src="/media/Tristan.jpg" width="150" height="auto">
-      </td>
-      <td style="vertical align: top; width: 70%;">
-        <b>
-          Tristan Sutherland
-        </b>
-        <br>
-        <p>
-          Passionate about data-driven decision-making, I am dedicated to transitioning into the role of a data scientist. I thrive in collaborative environments and am committed to continuous learning to stay at the forefront of emerging trends in data science.
-        </p>
-        <a href="https://github.com/TristanU21442615">
-          <img src="/media/githubPic.png" width="24" height="24"/>
-        </a>
-        <a href="www.linkedin.com/in/tristan-sutherland-87ba92238">
-          <img src="/media/linkedinPic.png" width="24" height="24"/>
-        </a>
-      </td>
-    </tr>
-    <tr>
-      <td width="150" height="140">
-        <img src="/media/Tristan.png" width="150" height="auto">
-      </td>
-      <td style="vertical align: top; width: 70%;">
-        <b>
-          Tristan Sutherland
-        </b>
-        <br>
-        <p>
-          Passionate about data-driven decision-making, I am dedicated to transitioning into the role of a data scientist. I thrive in collaborative environments and am committed to continuous learning to stay at the forefront of emerging trends in data science.
-        </p>
-        <a href="https://github.com/">
-          <img src="/media/githubPic.png" width="24" height="24"/>
-        </a>
-        <a href="https://www.linkedin.com/">
-          <img src="/media/linkedinPic.png" width="24" height="24"/>
-        </a>
-      </td>
-    </tr>
-      <tr>
-      <td width="150" height="140">
-        <img src="/media/Tristan.png" width="150" height="auto">
-      </td>
-      <td style="vertical align: top; width: 70%;">
-        <b>
-          Tristan Sutherland
-        </b>
-        <br>
-        <p>
-          Passionate about data-driven decision-making, I am dedicated to transitioning into the role of a data scientist. I thrive in collaborative environments and am committed to continuous learning to stay at the forefront of emerging trends in data science.
-        </p>
-        <a href="https://github.com/TristanU21442615">
-          <img src="/media/githubPic.png" width="24" height="24"/>
-        </a>
-        <a href="www.linkedin.com/in/tristan-sutherland-87ba92238">
-          <img src="/media/linkedinPic.png" width="24" height="24"/>
-        </a>
-      </td>
-    </tr>
-      <tr>
-      <td width="150" height="140">
-        <img src="/media/bush.jpg" width="150" height="auto">
-      </td>
-      <td style="vertical align: top; width: 70%;">
-        <b>
-          Bouchaib Chraf
-        </b>
-        <br>
-        <p>
-          With a strong foundation in computer science and a keen eye for detail, I'm committed to leveraging technology to solve complex problems. I thrive in dynamic environments that encourage continuous learning and provide opportunities to push the boundaries of what's possible. As I grow in my career, I aim to combine my technical expertise with a user-centric approach to create solutions that are both efficient and impactful.
-        </p>
-        <a href="https://github.com/bchraf3">
-          <img src="/media/githubPic.png" width="24" height="24"/>
-        </a>
-        <a href="https://www.linkedin.com/in/bouchaib-chraf-3b80a51a4/">
-          <img src="/media/linkedinPic.png" width="24" height="24"/>
-        </a>
-      </td>
-    </tr>
-      <tr>
-      <td width="150" height="140">
-        <img src="media/Hawa.jpeg" width="150" height="auto">
-      </td>
-      <td style="vertical align: top; width: 70%;">
-        <b>
-          Hawa Ibrahim
-        </b>
-        <br>
-        <p>
-          Passionate about data-driven decision-making, I am dedicated to transitioning into the role of a data scientist. I thrive in collaborative environments and am committed to continuous learning to stay at the forefront of emerging trends in data science.
-        </p>
-        <a href="https://github.com/TristanU21442615">
-          <img src="/media/githubPic.png" width="24" height="24"/>
-        </a>
-        <a href="www.linkedin.com/in/tristan-sutherland-87ba92238">
-          <img src="/media/linkedinPic.png" width="24" height="24"/>
-        </a>
-      </td>
-    </tr>
-  </table>
+To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.

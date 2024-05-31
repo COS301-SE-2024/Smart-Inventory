@@ -1,4 +1,4 @@
-https://github.com/COS301-SE-2024/Smart-Inventory/blob/documents/media/ArchitecturalDiagrams/Arch.drawio.png# Architectural Specification
+# Architectural Specification
 
 ## Introduction
 This is the outline for the architectural blueprint for the SmartInventory system, a comprehensive web-based application designed to streamline and automate inventory management processes for businesses of various types, including restaurants and laboratories.  Building upon the functionalities outlined in the requirement specification.
@@ -94,6 +94,12 @@ Usability:
 Security:
 * Allowing layered controls like firewalls, access controls, and encryption at different layers make it harder to breach the system. Data protection as data is secured at rest and in transit using encryption. Allows for separation of duties limiting user access based on roles, minimizing damage from compromised accounts.
 
+#### Diagram
+
+<div align="center">
+   <img src="/media/ArchitecturalDiagrams/LayerArch.drawio.png">
+</div>
+
 ### Service-Oriented Architecture (SOA) 
 
 #### Description
@@ -110,6 +116,12 @@ Maintainability:
 Reliability:
 * Services can be designed with fault tolerance and redundancy in mind, ensuring the system remains operational even if individual components fail.
 
+#### Diagram
+
+<div align="center">
+   <img src="/media/ArchitecturalDiagrams/SOA.drawio.png">
+</div>
+
 ### Event-Driven Architecture (EDA)
 #### Description
 The SmartInventory system will incorporate event-driven architecture to enable real-time responsiveness and asynchronous processing. Key events, such as low stock levels or expiring products, will trigger appropriate actions, such as generating alerts or initiating automatic order placement.
@@ -121,6 +133,8 @@ Reliability:
   
 Scalability:
 * The event-driven approach enables the system to scale efficiently by processing events in parallel and distributing the workload across multiple components.
+
+#### Diagram
 
 ### Serverless Architecture
 #### Description
@@ -148,6 +162,12 @@ Security Considerations while serverless architecture offers benefits, security 
   * Secure the API Gateway with authentication and authorization mechanisms to control access to system functionalities.
 * Data Security:
   * Utilize secure cloud storage services that offer encryption for data at rest and in transit.
+ 
+#### Diagram
+
+<div align="center">
+   <img src="/media/ArchitecturalDiagrams/ServerlessArch.drawio.png">
+</div>
 
 ## Architectural Constraints
 A core architectural constraint for this project is the requirement to **utilize only open-source libraries**. This decision fosters an open-source development philosophy for the project itself. This contraint might actually provide greater advantages than disadvantages. Here's why this constraint is important:

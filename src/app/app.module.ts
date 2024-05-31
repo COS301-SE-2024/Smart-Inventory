@@ -20,6 +20,11 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { LoginCreateAccountComponent } from './pages/loginCreateAccount/loginCreateAccount.component';
 import { AppComponent } from './app.component';
 
+import { addIcons } from 'ionicons';
+import * as allIcons from 'ionicons/icons';
+
+addIcons(allIcons);
+
 @NgModule({
     declarations: [AppComponent, LoginCreateAccountComponent],
     imports: [

@@ -1,0 +1,41 @@
+/* app.component.scss */
+ion-searchbar {
+    // --background: #fff; /* Adjust background color as needed */
+    --border-radius: 25px; /* Rounded edges, adjust radius as desired */
+    --placeholder-color: #666; /* Placeholder text color */
+    --icon-color: #666; /* Search icon color */
+    --clear-icon-color: #666; /* Clear icon color */
+    width: 100em;
+  }
+  
+
+.user-profile-button {
+    display: flex;
+    align-items: center;
+    --padding-start: 14px; // Adjust padding as needed
+    --padding-end: 8px; // Adjust padding as needed
+    --background: transparent; // Remove button background
+
+    ion-icon {
+        margin-right: 8px; // Space between icon and text
+        color: #ffffff; // Adjust the color as needed
+    }
+
+    ion-label {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        margin-right: 60px; // Adjust this value to increase or decrease the space on the right side
+
+        h3 {
+            margin: 0;
+            font-size: 1.2em; // Adjust the size as needed
+        }
+
+        p {
+            margin: 0;
+            font-size: 0.8em; // Adjust the size as needed
+            color: #cccccc; // Adjust the color as needed
+        }
+    }
+}

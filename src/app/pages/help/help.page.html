@@ -1,21 +1,25 @@
 <ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-row>
-      <ion-col size="10">
-        <ion-searchbar show-clear-button="always" value="Always Show"></ion-searchbar>
-      </ion-col>
-      <ion-col size="2">
-         <hr>
-         <ion-icon name="person-circle-outline" size="large"></ion-icon>
-      </ion-col>
-    </ion-row>
-  </ion-toolbar>
+    <ion-toolbar>
+        <ion-buttons slot="end">
+            <ion-button (click)="showUserProfile()" class="user-profile-button">
+                <ion-icon name="person-circle-outline" size="large"></ion-icon>
+                <ion-label>
+                    <h3>{{ userName }}</h3>
+                    <p>{{ userRole }}</p>
+                </ion-label>
+            </ion-button>
+        </ion-buttons>
+        <ion-searchbar show-clear-button="always" palceholder="Always Show"></ion-searchbar>
+        <!-- Other toolbar content -->
+    </ion-toolbar>
 </ion-header>
 
+
+
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">help</ion-title>
-    </ion-toolbar>
-  </ion-header>
+	<ion-header collapse="condense">
+		<ion-toolbar>
+			<ion-title size="large">help</ion-title>
+		</ion-toolbar>
+	</ion-header>
 </ion-content>

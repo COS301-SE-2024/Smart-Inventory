@@ -7,9 +7,18 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HelpPage implements OnInit {
 
-  constructor() { }
+  userName: string;
+  userRole: string;
+  constructor() { 
+    this.userName = "John";
+    this.userRole = "Admin"
+  }
 
   ngOnInit() {
+  }
+
+  showUserProfile(){
+    console.log("User Profile: ", this.userName, this.userRole);
   }
 
 }

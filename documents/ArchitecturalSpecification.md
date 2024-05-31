@@ -1,9 +1,15 @@
 # Architectural Specification
 
 ## Introduction
+This is the outline for the architectural blueprint for the SmartInventory system, a comprehensive web-based application designed to streamline and automate inventory management processes for businesses of various types, including restaurants and laboratories.  Building upon the functionalities outlined in the requirement specification.
 
 ### Objectives
-The primary objective of this document is to guide stakeholders involved in the development of the Smart Inventory System. It aims to define the architectural framework, constraints and technologies used to successfully implement the desired features and functionalities. 
+The primary objective of this document is to guide stakeholders involved in the development of the Smart Inventory System. It aims to define the architectural framework, constraints and technologies used to successfully implement the desired features and functionalities. This document details the system architecture that will ensure:
+* Efficiency
+* Scalability
+* Security
+* Usability
+* Maintainability
 
 ## Quality Requirements
 

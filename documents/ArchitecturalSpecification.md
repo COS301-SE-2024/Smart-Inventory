@@ -1,4 +1,4 @@
-# Architectural Specification
+https://github.com/COS301-SE-2024/Smart-Inventory/blob/documents/media/ArchitecturalDiagrams/Arch.drawio.png# Architectural Specification
 
 ## Introduction
 This is the outline for the architectural blueprint for the SmartInventory system, a comprehensive web-based application designed to streamline and automate inventory management processes for businesses of various types, including restaurants and laboratories.  Building upon the functionalities outlined in the requirement specification.

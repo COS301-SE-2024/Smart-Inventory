@@ -184,10 +184,18 @@
                 <ion-card-header>
                     <ion-card-title>Stock Report</ion-card-title>
                 </ion-card-header>
-                <ion-card-content class="stock-data">
-                    <!-- Stock report data goes here -->
-                </ion-card-content>
             </ion-card>
+        </ion-col>
+    </ion-row>
+    <ion-row>
+        <ion-col size="12" class="mt-large">
+            <app-inventory-stats></app-inventory-stats>
+        </ion-col>
+        <ion-col size="6">
+            <app-heatmap></app-heatmap>
+        </ion-col>
+        <ion-col size="6">
+            <app-financial-stats></app-financial-stats>
         </ion-col>
     </ion-row>
 </ion-content>

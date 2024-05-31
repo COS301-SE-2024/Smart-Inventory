@@ -86,6 +86,7 @@ Usability:
 * The presentation layer can be designed to provide a user-friendly interface.
 
 Security:
+* Allowing layered controls like firewalls, access controls, and encryption at different layers make it harder to breach the system. Data protection ad data is secured at rest and in transit using encryption. Allows for separation of duties limiting user access based on roles, minimizing damage from compromised accounts.
 
 ### Service-Oriented Architecture (SOA) 
 
@@ -117,7 +118,30 @@ Scalability:
 
 ### Serverless Architecture
 #### Description
-#### Quality Requirements addressed
+The SmartInventory system can benefit from a serverless architecture by leveraging cloud-based services to handle backend logic and infrastructure management. This approach eliminates the need to provision and manage servers, reducing operational overhead and costs. Here's how serverless architecture can be implemented in the SmartInventory system:
+
+API Gateway:
+* A single API gateway will serve as the entry point for all external requests to the system. This gateway can handle authentication, authorization, and routing of requests to appropriate serverless functions.
+  
+Lambda Functions:
+* Core functionalities of the system, like processing inventory updates, generating reports, or fulfilling stock requests, can be implemented as serverless functions. These functions are event-driven and only execute when triggered by specific events (e.g., an API call, a database update).
+
+Database:
+* A cloud-based database service can be used to store inventory data, user information, and other system data. Serverless architectures often integrate seamlessly with managed database services offered by cloud providers.
+
+#### Quality Requirements Addressed
+
+Maintainability: 
+* Serverless functions are typically small, focused pieces of code. This promotes maintainability and easier debugging compared to complex monolithic applications.
+
+Scalability: 
+* Serverless architecture scales automatically based on demand. The cloud provider allocates resources on-the-fly as needed to handle increased workloads, eliminating the need for manual server provisioning.
+  
+Security Considerations while serverless architecture offers benefits, security needs to be carefully addressed:
+* API Gateway Security: 
+  * Secure the API Gateway with authentication and authorization mechanisms to control access to system functionalities.
+* Data Security:
+  * Utilize secure cloud storage services that offer encryption for data at rest and in transit.
 
 ## Architectural Constraints
 A core architectural constraint for this project is the requirement to **utilize only open-source libraries**. This decision fosters an open-source development philosophy for the project itself. This contraint might actually provide greater advantages than disadvantages. Here's why this constraint is important:

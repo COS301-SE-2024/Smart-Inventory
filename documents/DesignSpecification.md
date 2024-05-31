@@ -1,8 +1,10 @@
 # Design Specification
 ## Introduction
 SmartInventory is a comprehensive web-based application designed to revolutionize inventory management for businesses of all sizes, including restaurants and laboratories. This design specification outlines the visual elements and functionalities that will shape the user experience within SmartInventory. 
+
 * Wireframes and detailed design mockups will illustrate the user interface, navigation flow, and interaction patterns for each user role.
 * Additionally, this document will include a section dedicated to the design of the database schema for Amazon DynamoDB, the NoSQL database service that will power SmartInventory's data storage and retrieval capabilities.
+  
 The document aims to provide a clear roadmap for developers to translate the vision of SmartInventory into a user-centric and efficient application.
 
 ## Wireframes

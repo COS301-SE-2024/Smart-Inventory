@@ -184,5 +184,11 @@ A core architectural constraint for this project is the requirement to **utilize
 
 While this constraint might limit the available options for libraries, the benefits of transparency, collaboration, and long-term sustainability contribute to a robust and maintainable project foundation.
 
+## Archtectural Diagram
+
+<div align="center">
+   <img src="/media/ArchitecturalDiagrams/Arch.drawio.png">
+</div>
+
 ## Technology Decisions
 ## Conclusion

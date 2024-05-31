@@ -457,39 +457,41 @@ In the world of inventory management, reliable suppliers are a cornerstone of su
 ### 4. Inventory Management Subsystem
 
 <ol>
-  <li>Store inventory item details in a database, including:</li>
+  <li>Store inventory item details in a database:</li>
   <ol>
-    </br>
-    <li>Record Product name, description, and SKU</li>
-    </br>
-    <li>Record Supplier information</li>
-    </br>
-    <li>Record Expiration dates</li>
-    </br>
-    <li>Record Current product quantity</li>
+    <li>Allow admin or inventory controller to decide on table columns of choice</li>
+    <li>Allow user to import excel or csv spreedsheet to initialise database</li>
+    <li>Allow user to record supplier information</li>
+    <li>Allow user to record Expiration dates</li>
+    <li>Allow user to record current product quantity</li>
   </ol>
   </br>
-<li>Monitor stock levels and expiration dates. Generate alerts when stock levels reach predefined thresholds.</li>
+<li>Monitor stock levels and expiration dates.</li> 
+  <ol>
+    <li>Generate alerts when stock levels reach predefined thresholds.</li>
+  </ol>
   </br>
 <li>Provide a real-time dashboard showing current stock levels.</li>
   </br>
-<li>Allow searching for specific stock items by name, SKU, or supplier.</li>
+<li>Allow for database matching</li> 
+  <ol>
+    <li>Allow searching for specific stock items by user choice.</li>
+    <li>Enable filtering/sorting of stock items by user choice.</li>
+  </ol>
   </br>
-<li>Enable sorting of stock items by name, SKU, quantity, or expiration date, and filtering by supplier, quantity range, or expiration date range.</li>
-  </br>
-<li>Allow authorized users to edit stock details, logging all edits in the stock transaction history.</li>
+<li>Role based access control.</li>
+  <ol>
+    <li>Allow authorized users to edit stock details, logging all edits in the stock transaction history.</li>
+    <li>Prevent unauthorized users to edit stock details, logging all edits in the stock transaction history.</li>
+    <li>Allow unauthorized users to view inventory.</li>
+  </ol>
   </br>
 <li>Maintain a history of stock transactions for each item, including:</li>
   <ol>
-    </br>
     <li>Date/time</li>
-    </br>
     <li>Transaction type (add, remove, update)</li>
-    </br>
     <li>Quantity change</li>
-    </br>
     <li>User who performed the transaction.</li>
-    </br>
   </ol>
   <li>Automatically detect when an order should be created based on predefined rules, considering product usage and expiration dates.</li>
 </ol>
@@ -497,13 +499,31 @@ In the world of inventory management, reliable suppliers are a cornerstone of su
 ### 5. Stock Request Subystem
 
 <ol>
-<li>Allow authorized end users to request stock from the system, capturing details such as requester, item, quantity, and purpose (inventory controller can specify purposes).</li>
+  <li>Role Based Access control</li>
+  <ol>
+    <li>Allow authorized all users to request stock from the system</li>
+    <li>Capture details such as requester, item, quantity, and purpose (inventory controller can specify purposes) for audit trail.</li>
+  </ol>
   </br>
-<li>Validate stock availability before processing requests and notify requesters about the status of their requests.</li>
+  <li>Monitor Stock</li>
+  <ol>
+    <li>Validate stock availability before processing requests</li>
+    <li>Notify requesters about the status of their requests.</li>
+  </ol>
   </br>
-<li>Update inventory levels upon successful stock requests and notify inventory controllers of the requests.</li>
+  <li>Succesful Requests</li>
+  <ol>
+    <li>Update inventory levels.</li>
+    <li>Notify inventory controllers of the requests.</li>
+    <li>Update user activity as well as dashboard.</li>
+  </ol>
   </br>
-<li>Maintain a history of stock requests for auditing purposes.</li>
+  <li>Unsuccesful Requests</li>
+  <ol>
+    <li>Notify inventory controllers of the requests.</li>
+    <li>autonomously order more stock.</li>
+  </ol>
+  <li>Allow admin to view audit trail.</li>
 </ol>
 
 ### 6. Supplier Management Subsystem
@@ -511,16 +531,22 @@ In the world of inventory management, reliable suppliers are a cornerstone of su
 <ol>
 <li>Store supplier details including name, contact information, and products offered.</li>
   <ol>
-    <li> This information will be used to identify and communicate with suppliers when requesting quotes.</li> 
+    <li>This information will be used to identify and communicate with suppliers when requesting quotes.</li> 
     <li>Push notifications to notify user about supplier communication or issues.</li>
   </ol>
-<li>Record and track supplier performance metrics such as delivery time, product quality, and order fulfillment rates.</li>
+<li>Record and track supplier performance metrics</li>
   <ol>
-    <li>This information will be used to evaluate supplier reliability and make informed decisions when placing orders.</li>
+    <li>This information will be used to evaluate supplier reliability</li>
+    <li>Automtion uses this to make an informed decisions when placing orders.</li>
+    <li>Performance metrics users can view are delivery time, product quality, and order fulfillment rates.</li>
+    <li>When a supplier updates their progress so does the metrics</li>
   </ol>
-<li>Provide an interface for inventory controllers to add, edit, and remove suppliers, as well as search and filter supplier records for efficient retrieval of information.</li>
+<li>Manage Suppliers.</li>
   <ol>
-  <li>This will allow for the maintenance of accurate and up-to-date supplier information.</li>
+  <li>Provide a way for inventory controllers and admin to add suppliers</li>
+  <li>Provide a way for inventory controllers and admin to edit</li>
+  <li>Provide a way for inventory controllers and admin to remove suppliers</li>
+  <li>Provide a way for users to search and filter supplier records for efficient retrieval of information</li>
   </ol>
 </ol>
 

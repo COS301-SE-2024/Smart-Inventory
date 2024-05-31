@@ -1,4 +1,4 @@
-# SmartInventory System Design Specification
+# Design Specification
 
 ## Introduction
 SmartInventory is a comprehensive web-based inventory management system designed to streamline and automate the process of tracking, ordering, and managing stock for businesses, restaurants, and laboratories. The system aims to simplify inventory management by providing a user-friendly interface for administrators, inventory controllers, and end users to capture stock details, request stock, and generate insightful reports.

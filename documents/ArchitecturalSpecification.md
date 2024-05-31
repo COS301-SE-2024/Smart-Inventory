@@ -11,21 +11,51 @@ The primary objective of this document is to guide stakeholders involved in the 
 
 The system must ensure data protection through end-to-end encryption, secure user authentication, and role-based access control to prevent unauthorized access and maintain data confidentiality.
 
+API gateways: 
+* Implement a central point of entry for all API calls. This enables enforcement of authentication and authorization policies before requests reach individual services.
+Data encryption:
+* Encrypt sensitive data at rest (stored in databases) and in transit (transferred between services) using industry-standard algorithms.
+
 ### 2. Reliability
 
 The system should be reliable in terms of accurately tracking inventory levels, generating timely alerts, order placement and generating accurate reports.
+
+Fault tolerance: 
+* Design the system to be fault-tolerant, meaning it can continue to operate even if some components fail.
+Error handling:
+* Implement robust error handling mechanisms to gracefully handle unexpected situations and prevent system crashes.
 
 ### 3. Usability
 
 The web interface should be user-friendly and intuitive for administrators, inventory controllers, and end users to perform their respective tasks efficiently.
 
+User-centered design: 
+* Involve potential users in the design process to understand their needs and preferences.
+UI/UX best practices:
+* Follow established UI/UX design principles to create interfaces that are visually appealing, easy to navigate, and consistent across different user roles and devices.
+API design:
+* Design APIs that are clear, consistent, and well-documented for developers integrating with the system.
+
 ### 4. Scalability
 
 The system should be designed to handle growth in inventory, users, and transactions, ensuring that performance remains optimal as the business expands.
+Scalable architecture: 
+* Choose an architecture that can be easily scaled horizontally (adding more servers) or vertically (adding more resources to existing servers) as needed.
+Cloud-based deployment:
+* Deploying the system on a cloud platform that offers built-in scalability features.
+Database optimization:
+* Optimize the database schema and queries to handle increasing data volumes efficiently.
 
 ### 5. Maintainability
 
 The system should be developed using best practices, such as modular design and comprehensive documentation, to facilitate easy maintenance, updates, and troubleshooting.
+
+Clear documentation: 
+* Document the system architecture, APIs, and code clearly.
+* This facilitates understanding for future maintenance and upgrades by developers.
+Modular design:
+* Divide the system into loosely coupled modules with well-defined interfaces.
+* This allows developers to modify or replace individual modules without impacting the entire system.
 
 ## Architectural Strategy
 

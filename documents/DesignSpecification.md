@@ -1,9 +1,9 @@
 # SmartInventory System Design Specification
 
-## 1. Introduction
+## Introduction
 SmartInventory is a comprehensive web-based inventory management system designed to streamline and automate the process of tracking, ordering, and managing stock for businesses, restaurants, and laboratories. The system aims to simplify inventory management by providing a user-friendly interface for administrators, inventory controllers, and end users to capture stock details, request stock, and generate insightful reports.
 
-### 1.1 Objectives and Requirements
+### Objectives and Requirements
 
 #### Authentication and Authorization:
 - Provide secure login for different user roles (administrators, inventory controllers, end users).
@@ -50,7 +50,7 @@ SmartInventory is a comprehensive web-based inventory management system designed
 - Offer order history reports to track purchase trends.
 - Produce supplier performance reports to assess supplier reliability and lead times.
 
-### 1.2 Database Design
+### Database Design
 The SmartInventory system will utilize Amazon DynamoDB, a fully managed NoSQL database service provided by Amazon Web Services (AWS). DynamoDB offers high scalability, low latency, and flexible data modeling, making it suitable for the inventory management system. The key tables and their sample data are as follows:
 
 #### Users Table:
@@ -83,7 +83,7 @@ DynamoDB's primary key consists of a partition key and an optional sort key. In 
 
 DynamoDB's powerful querying capabilities, such as the ability to query by partition key and sort key, and its seamless integration with other AWS services, make it a suitable choice for the SmartInventory system. The database design can evolve as the system grows, leveraging DynamoDB's scalability and flexibility.
 
-### 1.3 Architecture Diagram
+### Architecture Diagram
 The SmartInventory system will employ a combination of architectural styles to meet the quality requirements and design objectives. The key architectural styles used are:
 
 #### Layered Architecture:
@@ -97,7 +97,7 @@ The system will incorporate event-driven architecture to enable real-time respon
 
 (Here you would include the architecture diagrams as shown in the SRS document)
 
-### 1.4 Design Decisions
+### Design Decisions
 The design of the SmartInventory system is based on the following key decisions:
 
 #### Technology Stack:
@@ -115,6 +115,6 @@ Comprehensive automated testing will be incorporated into the development proces
 #### Scalability Considerations:
 The SmartInventory system will be designed with scalability in mind. The architecture will allow for horizontal scaling, enabling the addition of more instances to handle increased load. Caching mechanisms will be employed to improve performance and reduce the load on the database. The system will be designed to handle a growing number of users, products, and transactions.
 
-## 1.5 Conclusion
+## Conclusion
 The SmartInventory system design specification outlines the objectives, functional requirements, database design, architecture, and key design decisions. By leveraging a combination of layered architecture, service-oriented architecture, and event-driven architecture, the system aims to achieve modularity, flexibility, and scalability. The use of open-source technologies, strong security measures, modular design, automated testing, and scalability considerations will contribute to the development of a robust and maintainable inventory management solution. This design specification serves as a blueprint for the implementation phase, guiding the development team in building a system that meets the specified requirements and quality standards.
 

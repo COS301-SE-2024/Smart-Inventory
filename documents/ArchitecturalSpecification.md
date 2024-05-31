@@ -78,11 +78,21 @@ Reliability:
 Scalability:
 * The event-driven approach enables the system to scale efficiently by processing events in parallel and distributing the workload across multiple components.
 
-## Architectural Styles Considered but only in part
-### Domain-Driven Design (DDD)
-While DDD principles are valuable for modeling complex business domains, the inventory management domain in SmartInventory was assessed to be relatively straightforward. The additional overhead of applying DDD patterns like aggregates, bounded contexts, and repositories was judged to outweigh the benefits for this project's scope. 
-* However, DDD's tactical patterns like entities and value objects may still be used within the business logic layer.
-
 
 ## Architectural Constraints
+A core architectural constraint for this project is the requirement to **utilize only open-source libraries**. This decision fosters an open-source development philosophy for the project itself. This contraint might actually provide greater advantages than disadvantages. Here's why this constraint is important:
+
+* Transparency and Collaboration:
+  * Open-source libraries offer the advantage of publicly available code.
+  * This transparency allows for deeper understanding, easier debugging, and potential contributions from the broader developer community.
+* Alignment with Open-Source Project Goals:
+  * By relying solely on open-source libraries, we ensure compatibility with an open-source project philosophy.
+  * This means the project itself can potentially be released as open-source, allowing others to benefit from and contribute to its development.
+* Long-Term Sustainability:
+  * Open-source libraries often have active communities and ongoing maintenance.
+  * This reduces the risk of relying on proprietary libraries that might become unsupported or unavailable in the future.
+
+While this constraint might limit the available options for libraries, the benefits of transparency, collaboration, and long-term sustainability contribute to a robust and maintainable project foundation.
+
+## Technology Decisions
 ## Conclusion

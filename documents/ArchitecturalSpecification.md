@@ -47,7 +47,9 @@ Scalability:
 
 Usability:
 * The presentation layer can be designed to provide a user-friendly interface.
-  
+
+Security:
+
 ### Service-Oriented Architecture (SOA) 
 
 #### Description
@@ -83,3 +85,4 @@ While DDD principles are valuable for modeling complex business domains, the inv
 
 
 ## Architectural Constraints
+## Conclusion

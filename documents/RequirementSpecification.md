@@ -575,5 +575,3 @@ When stock levels are low, the Order Placement System will send out a quote layo
    <h3>7. Order Placement Subsystem</h3>
    <img src="/media/UseCases/_UseCase7.drawio.png">
 </div>
-
-## Conclusion

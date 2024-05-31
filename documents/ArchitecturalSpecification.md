@@ -191,4 +191,23 @@ While this constraint might limit the available options for libraries, the benef
 </div>
 
 ## Technology Decisions
+### Frontend
+#### Angular
+#### Ionic
+#### Typescript
+### Database
+#### AWS DynamoDB
+#### AWS S3
+### API
+#### AWS Lambda Functions
+#### AWS API Gateway
+#### AWS Step Functions
+### Testing
+#### Cypress
+#### Postman
+### Miscellaneous
+#### AWS Cognito
+#### Amplify
+#### Amplify Cloud Sandbox
+
 ## Conclusion

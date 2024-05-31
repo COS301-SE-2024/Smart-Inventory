@@ -242,23 +242,13 @@ scripts/
 -   **Pipes**: Use `PascalCase` and suffix with `Pipe`. e.g., `DateFormatterPipe`.
 -   **Modules**: Use `PascalCase` and suffix with `Module`. e.g., `AppModule`.
 
-### Java with Spring Boot
-
--   **Packages**: Use lowercase and dot-separated. e.g., `com.example.projectname`.
--   **Classes**: Use `PascalCase`. e.g., `UserService`, `OrderController`.
--   **Interfaces**: Use `PascalCase` and prefix with `I` if needed. e.g., `IUserService`.
--   **Methods**: Use `camelCase`. e.g., `getUserById`, `calculateTotalAmount`.
--   **Variables**: Use `camelCase`. e.g., `userName`, `orderList`.
--   **Constants**: Use `UPPER_CASE` with underscores. e.g., `MAX_CONNECTIONS`.
--   **Properties (application.properties/yml)**: Use `lowercase` with dot separation. e.g., `server.port`, `spring.datasource.url`.
-
-### REST API
+### API
 
 -   **Endpoints**: Use `kebab-case` and plural nouns. e.g., `/api/users`, `/api/orders`.
 -   **HTTP Methods**: Use appropriate HTTP methods for actions (GET, POST, PUT, DELETE). e.g., `GET /api/users`, `POST /api/orders`.
 -   **Parameters**: Use `camelCase` for query parameters. e.g., `/api/users?userId=123`.
 
-### PostgreSQL
+### DynamoDB
 
 -   **Tables**: Use `snake_case` and plural nouns. e.g., `users`, `order_items`.
 -   **Columns**: Use `snake_case`. e.g., `first_name`, `order_date`.
@@ -284,7 +274,7 @@ scripts/
 -   **Job Names**: Use `camelCase`. e.g., `buildApp`, `runTests`.
 -   **Step Names**: Use `Sentence case`. e.g., `Checkout code`, `Run tests`.
 
-### Testing (Spring Test, Postman, Jasmine, Cypress)
+### Testing (Postman, Cypress)
 
 -   **Test Files**: Use `camelCase` or `PascalCase` as per the language norms. e.g., `UserServiceTest.java`, `userService.test.ts`.
 -   **Test Cases**: Use descriptive names and `camelCase`. e.g., `shouldCreateUserSuccessfully`, `testUserLogin`.
@@ -320,22 +310,22 @@ scripts/
 -   **Interface Names**: Use `PascalCase` and prefix with `I` if needed. e.g., `IUserProfile`, `IOrderDetails`.
 -   **Property Names**: Use `camelCase`. e.g., `userName`, `orderItems`.
 
-### Java with Spring Boot (DTOs)
+### DTOs
 
 -   **Class Names**: Use `PascalCase` and suffix with `Dto` if needed. e.g., `UserProfileDto`, `OrderDetailsDto`.
 -   **Property Names**: Use `camelCase`. e.g., `userName`, `orderItems`.
 
-### REST API (JSON Schemas)
+### API (DynamoDB JSON Schemas)
 
 -   **Schema Names**: Use `PascalCase` and suffix with `Schema` if needed. e.g., `UserProfileSchema`, `OrderDetailsSchema`.
 -   **Property Names**: Use `camelCase`. e.g., `userName`, `orderItems`.
 
-### PostgreSQL (Tables and Columns)
+### DynamoDB (Tables and Columns)
 
 -   **Table Names**: Use `snake_case` and plural nouns. e.g., `user_profiles`, `order_details`.
 -   **Column Names**: Use `snake_case`. e.g., `user_name`, `order_date`.
 
-### JSON Data (For API Communication)
+### DynamoDB JSON Data (For API Communication)
 
 -   **Schema Names**: Use `PascalCase` for complex types, and `camelCase` for property names.
 
@@ -353,27 +343,21 @@ scripts/
 -   **Parameters**: Use `camelCase` for parameter names and ensure they are descriptive.
 -   **Single Responsibility**: Each function should perform a single task or responsibility.
 -   **Documentation**: Include JSDoc or equivalent comments for complex functions, describing the purpose, parameters, and return values.
--   **Length**: Keep functions short and focused. Ideally, a function should not exceed 50 lines of code.
+-   **Length**: Keep functions short and focused. Ideally, a function should not exceed 100 lines of code.
 -   **Return Types**: Explicitly define return types where applicable.
 
-### Angular (TypeScript) and JavaScript
+### Angular and TypeScript
 
 -   **Function Declaration**: Use `function` keyword for named functions and `const` for anonymous functions or arrow functions.
 -   **Async Functions**: Use `async/await` for asynchronous operations.
 
-### Java with Spring Boot
-
--   **Method Declaration**: Use `camelCase` for method names.
--   **Visibility**: Explicitly define the visibility (public, private, protected).
--   **Static Methods**: Use `PascalCase` for class names and `camelCase` for static methods.
-
-### REST API (JavaScript/TypeScript and Java with Spring Boot)
+### API (JavaScript/TypeScript and Java with Spring Boot)
 
 -   **Function Declaration**: Functions related to API calls should be descriptive.
 -   **Async Functions**: Use `async/await` in JavaScript/TypeScript and `@Async` in Java.
 -   **Error Handling**: Implement robust error handling using `try/catch` blocks.
 
-### Testing (Jasmine, Cypress, Spring Test)
+### Testing (Cypress)
 
 -   **Test Function Names**: Use descriptive names and `camelCase`.
     
@@ -392,13 +376,13 @@ scripts/
 
 ### General Code Layout Conventions
 
--   **Indentation**: Use 2 spaces for indentation in JavaScript/TypeScript, and 4 spaces in Java and Python.
--   **Line Length**: Limit lines to a maximum of 80 characters.
+-   **Indentation**: Use 4 spaces for indentation in JavaScript/TypeScript.
+-   **Line Length**: Limit lines to a maximum of 100 characters.
 -   **Braces**: Use braces for all control structures (if, else, for, while, etc.), even if they contain only one statement.
 -   **Whitespace**: Use blank lines to separate sections of code, such as between methods, to improve readability.
 -   **Comments**: Use single-line comments (`//`) for short comments and block comments (`/* */`) for longer descriptions. Keep comments concise and relevant.
 
-### Angular (TypeScript) and JavaScript
+### Angular and TypeScript
 
 -   **File Structure**: Organize files by feature or module.
 -   **Import Statements**: Group imports by external libraries first, then internal modules, separated by a blank line.
@@ -409,20 +393,7 @@ scripts/
     -   **Properties**: Place at the top of the class.
     -   **Methods**: Place below properties, separated by blank lines.
 
-### Java with Spring Boot
-
--   **File Structure**: Follow standard Maven/Gradle directory structure.
--   **Package Declaration**: At the top of the file.
--   **Import Statements**: Group imports logically (standard Java imports first, then third-party libraries, followed by project-specific imports), separated by a blank line.
--   **Class Layout**:
-    -   **Annotations**: Immediately above the class.
-    -   **Class-Level Javadoc**: Immediately below the package declaration and above the class declaration.
-    -   **Static Fields**: At the top of the class.
-    -   **Instance Fields**: Below static fields.
-    -   **Constructors**: Below fields.
-    -   **Methods**: Group methods logically and separate by blank lines.
-
-### REST API (JavaScript/TypeScript and Java with Spring Boot)
+### API (JavaScriptTypeScript)
 
 -   **Controller Layout**:
     
@@ -431,13 +402,6 @@ scripts/
     -   **Request Handling**: Validate and handle request parameters and body at the top of the method.
     -   **Service Calls**: Place service calls in the middle of the method.
     -   **Response Handling**: Handle response formatting and error handling at the end.
-
-### PostgreSQL (SQL)
-
--   **File Structure**: Organize SQL files by schema or feature.
--   **Comments**: Use `--` for single-line comments and `/* */` for block comments.
--   **Statement Separation**: Separate SQL statements with blank lines.
--   **Indentation**: Use consistent indentation for readability.
 
 ### TensorFlow (Python)
 

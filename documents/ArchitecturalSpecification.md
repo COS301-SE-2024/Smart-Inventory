@@ -11,23 +11,33 @@ The primary objective of this document is to guide stakeholders involved in the 
 
 The system must ensure data protection through end-to-end encryption, secure user authentication, and role-based access control to prevent unauthorized access and maintain data confidentiality.
 
+#### Other Measures Used to Acheive this Quality Requirement
+
 ### 2. Reliability
 
 The system should be reliable in terms of accurately tracking inventory levels, generating timely alerts, order placement and generating accurate reports.
+
+#### Other Measures Used to Acheive this Quality Requirement
 
 ### 3. Usability
 
 The web interface should be user-friendly and intuitive for administrators, inventory controllers, and end users to perform their respective tasks efficiently.
 
+#### Other Measures Used to Acheive this Quality Requirement
+
 ### 4. Scalability
 
 The system should be designed to handle growth in inventory, users, and transactions, ensuring that performance remains optimal as the business expands.
+
+#### Other Measures Used to Acheive this Quality Requirement
 
 ### 5. Maintainability
 
 The system should be developed using best practices, such as modular design and comprehensive documentation, to facilitate easy maintenance, updates, and troubleshooting.
 
-## Architectural Strategies
+#### Other Measures Used to Acheive this Quality Requirement
+
+## Architectural Strategy
 
 The team has decided to apply the strategy of design based on quality requirements for the project. Analyzing the system based on client requirements and user stories yields a large set of quality requirements to use for the project. A set of well defined quality requirements yields a good foundation for designing the architecture of the system.
 

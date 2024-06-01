@@ -108,6 +108,25 @@ Reviews focus on checking that coding standards are being followed and that any 
   <hr>
 <br>
 
+## 🔗Links
+
+<a href="">
+    Project Board
+  </a>
+
+##
+
+  <a href="">
+    Demo 1 Recording
+  </a>
+  
+  ##
+
+  <a href="">
+    Demo 1 Presentation Slides
+  </a>
+<br>
+
 ## 👷Our Team
 
 <table>

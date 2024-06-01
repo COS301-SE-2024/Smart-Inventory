@@ -7,7 +7,6 @@
 <div align="center">
     <img src="documents/media/.png" width="50%" height="50%">
 </div>
-
 <hr>
 </br>
 
@@ -137,21 +136,41 @@ Reviews focus on checking that coding standards are being followed and that any 
 > Read more about decisions of technologies in the Architectural Specification.
 
 ### ⚙️ Frontend:
+* Angular
+* Ionic
+* Typescript
 
-### ⚙️ Backend:
-
-### ⚙️ Database:
-
-### ⚙️ Standards
-
-**ESLint:**
 <br>
 
-**Prettier:**
+### ⚙️ Backend:
+* AWS Lambda Functions
+* API Gateway
+* AWS Step Functions
+
+<br>
+ 
+### ⚙️ Database:
+* AWS DynamoDB
+* AWS S3
+  
+<br>
+
+### ⚙️ Standards
+* ESLint
+* Prettier
+  
 <br>
 
 ### ⚙️ Testing
+* Cypress
+* Postman
 
+<br>
+
+### ⚙️ Cloud
+* Amplify
+* Amplify Cloud Sandbox
+  
 <hr>
 </br>
 

@@ -1,5 +1,5 @@
 <div align="center">
-    <img src="/media/Logo.jpg" width="50%" height="50%">
+    <img src="/media/Logo.jpg" width="20%" height="20%">
 </div>
 
 # Helix - SmartInventory - Smart Inventory System to track and organise inventory

@@ -10,16 +10,11 @@
 
 
 <hr>
-<be>
-
-## Google Drive Link
-
-https://drive.google.com/drive/folders/1yC_nHp_spKNN3gHi4fL5JUDHA2dskahi?usp=sharing
-
+</br>
 
 ## Git Strategy - Git Flow
 
-<img src="https://github.com/TristanU21442615/HelixCapstone/blob/documents/media/GitFolwStrategy.png">
+<img src="/media/GitFolwStrategy.png">
 
 ## ✨Current Key Features
 ### 1 Sign In and Create Account

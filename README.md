@@ -41,19 +41,19 @@ Reviews focus on checking that coding standards are being followed and that any 
 > Use of issues as well as naming conventions of branches can be found in the coding standards documentation.
 
 ## ✨Current Key Features
-### 1 Sign In and Create Account
+### 1. Sign In and Create Account
 * Sign in with email and password.
 * Create account for a team.
 * Receive temporary pin for secure access.
   
-### 2 Team Management
+### 2. Team Management
 * Add team member.
 * Remove team member.
 * Assign roles.
 * Edit roles.
   
-### 3 Settings
-### 4 Help
+### 3. Settings
+### 4. Help
 
 <hr>
 <br>

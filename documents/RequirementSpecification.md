@@ -46,7 +46,7 @@ In the world of inventory management, reliable suppliers are a cornerstone of su
 <table>
   <tbody>
     <tr><td>As an administrator, I want to be able to securely login, and manage user accounts. So that I can ensure appropriate access levels are maintained.</td></tr>
-    <tr><td>I want to manage user roles and permissions, so that users have appropriate access rights within the system.</td></tr>
+    <tr><td>As an administrator, I want to manage user roles and permissions, so that users have appropriate access rights within the system.</td></tr>
     <tr><td>As an employee, I want to be able to securely sign in, and manage my own account settings. So that I can be able to adjust the application according to what I want.</td></tr>
     <tr><td>As an inventory controller, I want to be able to manage products and stock levels, so that I can ensure accurate inventory records.</td></tr>
     <tr><td>As a user responsible for inventory monitoring, I want the system to generate alerts when stock levels reach predefined thresholds. So that I can take timely action to replenish inventory</td></tr>

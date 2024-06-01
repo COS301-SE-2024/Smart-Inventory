@@ -2,7 +2,7 @@
 
 ## Introduction
 
-In our development of an X clone we will utilise Deno for testing API endpoints and Cypress for unit testing, component testing, and end-to-end (E2E) testing. 
+In our development of the Smart Inventory web app we will utilise Postman for testing API endpoints and Cypress for unit/component testing, and end-to-end (E2E) testing. 
 
 ## Types of Tests
 
@@ -24,159 +24,47 @@ Mocked tests will be utilised to simulate external dependencies such as API resp
 
 ### Test Coverage
 
-We aim to achieve a test coverage of at least 60%, ensuring that most of our codebase is thoroughly tested and free from critical issues.
+We aim to achieve a test coverage of at least 80%, ensuring that most of our codebase is thoroughly tested and free from critical issues.
 
 ## Test Tools
 
 #### Cypress: 
 
 Cypress is a testing framework that allows component testing, integration testing, and E2E testing for web applications. Its ability to perform tests directly in the browser environment makes it ideal for ensuring the reliability, usability, security, and privacy of our application.
+* Automate Tests: Create automated test scripts to streamline the testing process and improve efficiency.
 
-#### Deno
-
-Deno, with its built-in TypeScript support, secure runtime environment, and simplified dependency management, is suitable for API testing due to its ability to easily handle HTTP requests, run tests in isolation, and ensure reliable, maintainable, and consistent test results. Deno's ability to create and test mock Supabase instances makes it well-suited for testing Supabase-related functionality.
+#### Postman
+Postman is a powerful API testing tool that enables us to:
+* Send HTTP Requests: Simulate various HTTP requests (GET, POST, PUT, DELETE) to interact with the Smart Inventory API endpoints.
+* Test API Functionality: Verify the behavior of API endpoints under different conditions (success, error scenarios).
+* Validate Responses: Ensure API responses are formatted correctly and contain the expected data.
+* Manage Environments & Collections: Organize API requests into collections and manage different testing environments (development, staging, production).
+* Automate Tests: Create automated test scripts to streamline the testing process and improve efficiency.
 
 ## Quality Assurance Requirements
 
-**Reliability:**\
-Ensures that the application performs consistently and reliably under various conditions.\
-**Usability:**\
-Focuses on making the application intuitive and user-friendly.\
-**Privacy:**\
-Ensures that user data is handled securely and respects privacy.
+**Reliability:**
+* Unit Tests: By ensuring individual units function as expected, unit tests contribute significantly to overall application reliability.
+* Component Tests: Similar to unit tests, component tests help identify issues within isolated components, improving reliability of the integrated system.
+* E2E Tests: By simulating real user workflows, E2E tests uncover errors that might affect application stability and reliability in real-world scenarios.
+* Mocked Tests: By isolating components from external dependencies, mocked tests aid in building reliable units that function consistently regardless of external factors.
 
-### Testing Processes
+**Usability:**
+* Unit Tests: While unit tests primarily focus on functionality, they can also indirectly improve usability by ensuring core functionalities work as expected, leading to a more predictable and usable experience.
+* Component Tests: By verifying components function correctly according to specifications, component tests help identify usability issues within individual components that might hinder the overall user experience.
+* E2E Tests: E2E tests are particularly valuable for usability testing. By simulating real user workflows, they expose usability issues in the entire application flow, ensuring a smooth and intuitive user experience.
 
+**Efficiency:**
+* Automated Tests: Provided by both Cypress and Postman, automated testing scripts significantly improve efficiency by streamlining the testing process and reducing manual effort.
+
+**Maintainability:**
+* Unit Tests: Well-written unit tests act as documentation for the code, making it easier for developers to understand the purpose and behavior of individual units. This improves code maintainability by providing clear reference points for future modifications.
+* Component Tests: Similar to unit tests, component tests document the expected behavior of components, aiding in maintainability by providing a clear understanding of how components interact and function within the system.
+
+**Scalability:**
+* E2E Tests: By identifying performance bottlenecks or limitations early on, E2E tests can help ensure the application is designed with scalability in mind. This allows for future growth and increased user load without compromising functionality.
+
+## Testing Processes
 ### Unit Tests:
-**Quality Assurance Requirement:** Reliability, Usability
-  - Unit tests will cover individual components, functions, and utilities in the application. They will verify that each unit behaves correctly under different inputs and scenarios.
-
-**Function Unit Tests:**
-
-Reliability: 
-  - Test individual functions to ensure they produce the expected output for different inputs and edge cases. Verify error handling and boundary conditions to ensure reliability under various scenarios.
-Usability: 
-  - Validate that functions are designed with user experience in mind, such as providing clear and concise error messages or intuitively handling inputs.
-
-**Component Unit Tests:**
-
-Quality Assurance Requirements: Reliability, Usability
-  - Component tests will focus on testing interactions between different modules or layers of the application, such as frontend and backend integration.
-
-Reliability: 
-  - Test React components to ensure they render correctly and behave as expected based on their props and state. Verify that component logic, such as event handling and state management, is reliable and error-free.
-
-**API Integration Tests:**
-
-Reliability: 
-  - Ensure that API endpoints return the expected response under various conditions, such as valid inputs, invalid inputs, and error scenarios. Verify that the API contracts are maintained and that data integrity is preserved.
-    
-Usability: 
-  - Test API responses to ensure they provide clear and understandable information to frontend components. Validate that error messages are user-friendly and informative.
-
-**Frontend-Backend Integration Tests:**
-
-Reliability: 
-  - Test communication between the frontend and backend systems to ensure that data is transmitted accurately and securely. Verify that frontend components correctly display data received from the backend.
-
-Usability: 
-  - Validate that user interactions on the frontend trigger the appropriate backend actions and updates. 
-  - Ensure that the user interface remains responsive and intuitive during interactions with backend services.
-
 ### End-to-End (E2E) Tests:
-
-**Quality Assurance Requirement:** Reliability, Usability, Privacy
-  - E2E tests will simulate user interactions with the application from start to finish. They cover critical user workflows, such as registration, authentication, data manipulation, and more. These tests ensure that the application functions correctly, and respects user privacy throughout the entire user journey.
-
-**Registration and Authentication Tests:**
-
-Reliability: 
-  - Test the registration and authentication process to ensure that users can create accounts and log in reliably without encountering errors or issues.
-
-Usability: 
-  - Validate that the registration and authentication flows are intuitive and user-friendly, with clear instructions and feedback for users.
-
-Security: 
-  - Test for secure handling of user credentials.
-
-Privacy:
-  - We test privacy by covering data privacy compliance to ensure that the system complies with relevant data protection regulations by assessing data handling practices and privacy policies. 
-  - Anonymity is also tested to evaluate whether personally identifiable information is adequately anonymised to protect user privacy.
-
-**Data Manipulation Tests:**
-
-Reliability: 
-  - Test data manipulation features, such as creating, updating, and deleting posts, likes, and bookmarks, to ensure they perform reliably without data loss or corruption.
-
-Usability: 
-- Validate that data manipulation flows are easy to understand and use, with clear UI elements and error handling for input validation.
-
-**Compatibility Tests:**
-
-Reliability: 
-  - Test the application's compatibility across different web browsers and devices to ensure consistent behavior and performance.
-
-Usability: 
-  - Validate that the application renders correctly and remains usable across various browsers and desktop screen sizes
-
-Privacy: 
-  - Verify that user privacy is maintained across different browsers and devices, with consistent handling of sessions and local storage.
-
-
-# Testing Policy
-
-## Introduction
-
-## Types of Tests
-
-### Unit Tests:
-
-### Integrations Tests 
-
-### End-to-End (E2E) Tests
-
-### Mocked Tests
-
-### Test Coverage
-
-## Test Tools
-
-#### Postman: 
-
-#### Cypress: 
-
-## Quality Assurance Requirements
-
-**1. :**
-**2. :**
-**3. :**
-**4. :**
-
-### Testing Processes
-
-### Unit Tests:
-**Quality Assurance Requirement:**
-
-**Function Unit Tests:**
-
-**Component Unit Tests:**
-
-**Async Function Unit Tests:**
-
-### Integration Tests:
-
-**API Integration Tests:**
-
-**Database Integration Tests:**
-
-**Frontend-Backend Integration Tests:**
-
-**Load Tests:**
-
-### End-to-End (E2E) Tests
-
-**Registration and Authentication Tests:**
-
-**Data Manipulation Tests:**
-
-**Compatibility Tests:**
+### API Tests:

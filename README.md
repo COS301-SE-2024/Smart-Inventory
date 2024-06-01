@@ -144,9 +144,6 @@ Reviews focus on checking that coding standards are being followed and that any 
 
 ### ⚙️ Standards
 
-> [!NOTE]  
-> Read more about standards in coding standards document.
-
 **ESLint:**
 <br>
 

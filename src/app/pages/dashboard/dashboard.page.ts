@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { ModalController, IonModal } from '@ionic/angular';
+import { ModalController } from '@ionic/angular';
 
 interface TeamMember {
 	id: number;
 	name: string;
 	role: string;
+	selected: boolean;
 }
 
 @Component({
@@ -16,27 +17,31 @@ export class DashboardPage implements OnInit {
 	userName: string = 'John Doe';
 	userRole: string = 'Admin';
 	members: TeamMember[] = [
-		{ id: 1, name: 'Alice Johnson', role: 'Analyst' },
-		{ id: 2, name: 'Bob White', role: 'Engineer' },
-		{ id: 3, name: 'Carol Blue', role: 'Manager' }
+		{ id: 1, name: 'Alice Johnson', role: 'Analyst', selected: false },
+		{ id: 2, name: 'Bob White', role: 'Engineer', selected: false },
+		{ id: 3, name: 'Carol Blue', role: 'Manager', selected: false }
 	];
-	filteredMembers: TeamMember[] = [...this.members];
-	teamMembers: TeamMember[] =[] ; // List to display in the dashboard
+	teamMembers: TeamMember[] = []; // List to display in the dashboard
 	searchQuery: string = '';
 
 	constructor(private modalController: ModalController) { }
 
 	ngOnInit() { }
 
-	addMember(member: TeamMember) {
-		this.teamMembers.push(member);
-		console.log('Member added:', member);
+	dismissModal() {
+		this.modalController.dismiss();
 	}
 
-	selectMember(member: TeamMember) {
-		this.teamMembers.push(member);
-		this.modalController.dismiss();
-		console.log('Member added:', member);
+	saveSelection() {
+		// Filter for selected members and add them to the teamMembers array if they are not already added
+		const selectedMembers = this.members.filter(member => member.selected && !this.isMemberAlreadyAdded(member));
+		this.teamMembers = [...this.teamMembers, ...selectedMembers];
+		this.members.forEach(member => member.selected = false); // Reset selection
+		this.dismissModal();
+	}
+
+	isMemberAlreadyAdded(member: TeamMember) {
+		return this.teamMembers.some(tm => tm.id === member.id);
 	}
 
 	removeMember(memberToRemove: TeamMember) {
@@ -44,6 +49,6 @@ export class DashboardPage implements OnInit {
 	}
 
 	showUserProfile() {
-		console.log('wassgood');
+		console.log('User profile clicked');
 	}
 }

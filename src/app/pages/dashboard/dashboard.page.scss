@@ -18,16 +18,76 @@
     margin: 15px;
     // border: 1px solid #ccc;
     /* Helps visualize the container */
+    padding-left: 20px;
+    padding-right: 20px;
 }
 
-.team-member {
+.add-member-modal .modal-wrapper {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 8px 16px;
-    // border-bottom: 1px solid #ccc;
-    /* Adds a visual separator */
+    flex-direction: column;
+    height: 100%;
+    /* Use 100% of the modal's height */
+    --border-radius: 12px;
+    /* Rounded corners for the modal */
+    --background: #fff;
+    /* Modal background color */
+    border-radius: 12px;
+    /* Ensure outer border radius is applied */
 }
+
+.add-member-modal ion-modal {
+    --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    /* Shadow for a subtle depth effect */
+    height: 80%;
+    /* Adjust height based on how much of the screen you want the modal to cover */
+    max-height: 500px;
+    /* Maximum height */
+}
+
+.add-member-modal ion-header {
+    --background: #f8f8f8;
+    /* Slightly off-white background for the header */
+    border-bottom: 1px solid #ccc;
+    /* Adds a separator */
+}
+
+.add-member-modal ion-content {
+    flex: 1;
+    /* Allows the content area to expand and fill the space */
+    overflow-y: auto;
+    /* Ensures content is scrollable */
+}
+
+.add-member-modal ion-list {
+    --padding: 0;
+    /* Removes padding within the list for full width usage */
+}
+
+.add-member-modal ion-item {
+    --border-radius: 8px;
+    /* Rounded corners for list items */
+    margin: 8px;
+    /* Margin around items to prevent cramping */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    /* Subtle shadow for each item */
+}
+
+.add-member-modal ion-avatar {
+    --border-radius: 50%;
+    /* Circular avatars */
+}
+
+.add-member-modal ion-checkbox {
+    margin-right: 10px;
+    /* Space between checkbox and avatar */
+}
+
+
+ion-modal {
+    --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    /* Shadow for a subtle depth effect */
+}
+
 
 ion-avatar {
     flex-shrink: 0;

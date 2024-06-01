@@ -27,20 +27,41 @@
                             <ion-col size="6" class="center-content">
                                 <ion-button id="open-custom-dialog">Add Team Members</ion-button>
                             </ion-col>
-                            <ion-modal id="example-modal" trigger="open-custom-dialog">
+                            <ion-modal id="example-modal" class="add-member-modal" trigger="open-custom-dialog">
                                 <ng-template>
-                                    <div class="wrapper">
-                                        <h1>Select a Team Member</h1>
-                                        <ion-list lines="none">
-                                            <ion-item *ngFor="let member of members" button="true" detail="false"
-                                                (click)="selectMember(member)">
-                                                <ion-icon slot="start" name="person-circle"></ion-icon>
-                                                <ion-label>{{ member.name }} - {{ member.role }}</ion-label>
-                                            </ion-item>
-                                        </ion-list>
+                                    <div class="modal-wrapper">
+                                        <ion-header>
+                                            <ion-toolbar>
+                                                <ion-title class="ion-text-center">Add Members</ion-title>
+                                            </ion-toolbar>
+                                        </ion-header>
+                                        <ion-content>
+                                            <ion-list lines="none">
+                                                <ion-item *ngFor="let member of members" button="true" detail="false">
+                                                    <ion-checkbox slot="start"
+                                                        [(ngModel)]="member.selected"></ion-checkbox>
+                                                    <ion-avatar slot="start">
+                                                        <img src="https://via.placeholder.com/50">
+                                                    </ion-avatar>
+                                                    <ion-label>{{ member.name }} - {{ member.role }}</ion-label>
+                                                </ion-item>
+                                            </ion-list>
+                                        </ion-content>
+                                        <ion-footer>
+                                            <ion-toolbar>
+                                                <ion-buttons slot="start">
+                                                    <ion-button (click)="dismissModal()">Close</ion-button>
+                                                </ion-buttons>
+                                                <ion-buttons slot="end">
+                                                    <ion-button (click)="saveSelection()">Save</ion-button>
+                                                </ion-buttons>
+                                            </ion-toolbar>
+                                        </ion-footer>
                                     </div>
                                 </ng-template>
                             </ion-modal>
+
+
                         </ion-row>
                     </ion-card-header>
                 </ion-card>

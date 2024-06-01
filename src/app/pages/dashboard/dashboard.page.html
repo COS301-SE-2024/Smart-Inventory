@@ -2,7 +2,7 @@
     <ion-toolbar>
         <ion-buttons slot="end">
             <ion-button (click)="showUserProfile()" class="user-profile-button">
-                <ion-icon name="person-circle-outline"></ion-icon>
+                <ion-icon name="person-circle-outline" size="large"></ion-icon>
                 <ion-label>
                     <h3>{{ userName }}</h3>
                     <p>{{ userRole }}</p>
@@ -25,8 +25,22 @@
                                 <ion-card-title>Team Name</ion-card-title>
                             </ion-col>
                             <ion-col size="6" class="center-content">
-                                <ion-button>Add Team Members</ion-button>
+                                <ion-button id="open-custom-dialog">Add Team Members</ion-button>
                             </ion-col>
+                            <ion-modal id="example-modal" trigger="open-custom-dialog">
+                                <ng-template>
+                                    <div class="wrapper">
+                                        <h1>Select a Team Member</h1>
+                                        <ion-list lines="none">
+                                            <ion-item *ngFor="let member of members" button="true" detail="false"
+                                                (click)="selectMember(member)">
+                                                <ion-icon slot="start" name="person-circle"></ion-icon>
+                                                <ion-label>{{ member.name }} - {{ member.role }}</ion-label>
+                                            </ion-item>
+                                        </ion-list>
+                                    </div>
+                                </ng-template>
+                            </ion-modal>
                         </ion-row>
                     </ion-card-header>
                 </ion-card>
@@ -50,49 +64,22 @@
                 </ion-card>
             </ion-col>
         </ion-row>
-        <ion-row>
+        <ion-row class="close">
             <ion-col>
                 <ion-card class="section">
-                    <ion-list class="section">
-                        <ion-item class="team-member" lines="none">
+                    <ion-list>
+                        <ion-item *ngFor="let member of teamMembers" class="team-member" lines="none">
                             <ion-avatar slot="start">
                                 <ion-icon name="person-circle-outline" size="large"></ion-icon>
                             </ion-avatar>
                             <ion-label style="margin-right: auto">
-                                <h4>John Smith</h4>
-                                <p>Developer</p>
+                                <h4>{{ member.name }}</h4>
+                                <p>{{ member.role }}</p>
                             </ion-label>
                             <ion-buttons slot="end" style="margin-left: auto">
-                                <ion-button size="small">Activity</ion-button>
-                                <ion-button size="small" color="danger">Remove</ion-button>
-                            </ion-buttons>
-                        </ion-item>
-
-                        <ion-item class="team-member" lines="none">
-                            <ion-avatar slot="start">
-                                <ion-icon name="person-circle-outline" size="large"></ion-icon>
-                            </ion-avatar>
-                            <ion-label style="margin-right: auto">
-                                <h4>Jane Doe</h4>
-                                <p>Designer</p>
-                            </ion-label>
-                            <ion-buttons slot="end" style="margin-left: auto">
-                                <ion-button size="small">Activity</ion-button>
-                                <ion-button size="small" color="danger">Remove</ion-button>
-                            </ion-buttons>
-                        </ion-item>
-
-                        <ion-item class="team-member" lines="none">
-                            <ion-avatar slot="start">
-                                <ion-icon name="person-circle-outline" size="large"></ion-icon>
-                            </ion-avatar>
-                            <ion-label style="margin-right: auto">
-                                <h4>Mike Brown</h4>
-                                <p>Project Manager</p>
-                            </ion-label>
-                            <ion-buttons slot="end" style="margin-left: auto">
-                                <ion-button size="small">Activity</ion-button>
-                                <ion-button size="small" color="danger">Remove</ion-button>
+                                <ion-button size="medium">Activity</ion-button>
+                                <ion-button size="medium" color="danger"
+                                    (click)="removeMember(member)">Remove</ion-button>
                             </ion-buttons>
                         </ion-item>
                     </ion-list>

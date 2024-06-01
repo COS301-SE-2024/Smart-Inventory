@@ -1,11 +1,11 @@
 <div align="center">
-    <img src="documents/media/.png" width="50%" height="50%">
+    <img src="documents/media/Logo.jpg" width="50%" height="50%">
 </div>
 
 # Helix - SmartInventory - Smart Inventory System to track and organise inventory
 ## About
 <div align="center">
-    <img src="documents/media/Logo.png" width="50%" height="50%">
+    <img src="documents/media/" width="50%" height="50%">
 </div>
 <hr>
 </br>

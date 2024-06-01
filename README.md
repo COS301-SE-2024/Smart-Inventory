@@ -3,11 +3,7 @@
 </div>
 
 # Helix - SmartInventory - Smart Inventory System to track and organise inventory
-## About
-<div align="center">
-    <img src="documents/media/" width="50%" height="50%">
-</div>
-
+## ℹ️ About
 ### ❔ What is SmartInventory?
 
 SmartInventory is a user-friendly, web-based application that streamlines and automates core inventory processes. It empowers users to:

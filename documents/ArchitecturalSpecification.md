@@ -265,6 +265,20 @@ Fast Performance: DynamoDB excels in performing reads and writes for frequently 
   * Step Functions can handle errors gracefully and ensure workflows are retried or rolled back if necessary.
   * Adhering to reliability quality requirement.
 
+### Standards
+
+> [!NOTE]  
+> Read more about standards in coding standards document.
+
+**Prettier:**
+* Prettier is our code formatter used to maintain our linter rules to uphold our coding standards.
+  
+**ESLint:**
+<br>
+For code quality and consistency, we integrate ESLint into our development process. 
+* ESLint is a widely-used static code analysis tool that helps identify and fix common programming errors and enforce coding standards.
+* With ESLint, we ensure our codebase remains clean, readable, and maintainable.
+
 ### Testing
 #### Cypress
 Cypress component and end-to-end testing for frontend.

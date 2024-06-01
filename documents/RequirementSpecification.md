@@ -559,18 +559,45 @@ In the world of inventory management, reliable suppliers are a cornerstone of su
 ### 7. Order Placement Subsystem
 
 <ol>
+  <li>Purchase order settings</li>
+  <ol>
+    <li>Edit quote layouts</li> 
+    <li>Allow templates with product information and quantities already filled in, for suppliers based on products they have available.</li>
+    <li>
+      Allow to choose supplier or autonomously select the best choice in supplier.
+    </li>
+  </ol>
+  <li>Notified of low stock.</li>
+  <ol>
+    <li>
+      Generate purchase orders autonomously using template when notified of low stock.
+    </li>
+    <li>
+      Send purchase order via email or api to supplier for confirmation of details and order.
+    </li>
+    <li>
+      Update purchase order autonomasly if supplier confirms thier details have changed.
+    </li> 
+  </ol>
   <li>
-    Generate purchase orders(i.e quote layouts with product information and quantities already filled in, for suppliers based on products they have available. Suppliers will then only need to fill in information like price, delivery time and banking details)
-When stock levels are low, the Order Placement System will send out a quote layout for suppliers to fill in using the contact information stored in the Supplier Management subsystem.
-</li>
-<li>
-  Send purchase orders to suppliers via email or API.
-</li>
+    Manually generate purchase orders
+  </li>
+  <ol>
+    <li>
+      Send purchase order via email or api to supplier for confirmation of details and order.
+    </li>
+    <li>
+      Update purchase order autonomasly if supplier confirms thier details have changed.
+    </li>
+  </ol>
 <li>
   Track order status (ordered, received, canceled) and expected delivery dates.
 </li>
 <li>
-  Maintain a history of placed orders for record-keeping.
+  As tracking order status starts update order fufilment metrics.
+</li>
+<li>
+  Maintain a history of placed orders for record-keeping for template use and confirmation of correct information.
 </li>
 <li>
   Evaluate and rate received quotes based on predefined criteria (e.g., price, delivery time, etc.) to assist in selecting the best supplier for each order.

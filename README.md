@@ -131,6 +131,33 @@ Reviews focus on checking that coding standards are being followed and that any 
 <hr>
 </br>
 
+## 🛠️ Tech Stack
+
+> [!NOTE]  
+> Read more about decisions of technologies in the Architectural Specification.
+
+### ⚙️ Frontend:
+
+### ⚙️ Backend:
+
+### ⚙️ Database:
+
+### ⚙️ Standards
+
+> [!NOTE]  
+> Read more about standards in coding standards document.
+
+**ESLint:**
+<br>
+
+**Prettier:**
+<br>
+
+### ⚙️ Testing
+
+<hr>
+</br>
+
 ## Getting Started Guide
 
 This guide will walk you through setting up and running our Angular app with AWS Amplify integration on your local machine.

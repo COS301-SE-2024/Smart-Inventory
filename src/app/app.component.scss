@@ -3,6 +3,16 @@
     width: 100vw;
 }
 
+/* Main content adjustment */
+.main-content {
+    margin-left: 80px;
+    transition: margin-left 0.3s ease;
+}
+
+.side-navbar.expanded+.main-content {
+    margin-left: 250px;
+}
+
 ion-menu ion-content {
     --background: var(--ion-item-background, var(--ion-background-color, #000000));
 }

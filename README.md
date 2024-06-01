@@ -40,6 +40,9 @@ Reviews focus on checking that coding standards are being followed and that any 
 > [!NOTE]  
 > Use of issues as well as naming conventions of branches can be found in the coding standards documentation.
 
+<hr>
+</br>
+
 ## ✨Current Key Features
 ### 1. Sign In and Create Account
 * Sign in with email and password.

@@ -8,13 +8,34 @@
     <img src="documents/media/.png" width="50%" height="50%">
 </div>
 
-
 <hr>
 </br>
 
 ## Git Strategy - Git Flow
 
 <img src="/media/GitFolwStrategy.png">
+
+### Git Structure
+This project follows a mono-repo structure. 
+* This means that all code, documentation, and resources are stored within this single repository.
+
+### Git Organisation and Management
+#### Branches:
+* main: This branch contains the final, production-ready code.
+    * No direct commits are permitted and all changes must come in a pull-request from a release branch.
+* develop: All current development happens in this branch. This includes features, tests and fixes.
+* feature: Feature branches are branched off the develop branch to add functionalities and to fix bugs.
+* documentation: This is the branch used for documentation related content and layout commits.
+* hotfix: This branch is created when a quick or crucial changes need to be made once all repo branches are merged into the main.
+
+#### Pull Request Workflow:
+1. Developers create feature branches from the develop.
+2. Upon the completion of a feature, a pull-request into develop is created.
+3. Automated lints and tests are used to validate changes.
+4. A pull-request must be reviewed by at least 1 other team member before merging into develop.
+
+#### Code Review Process:
+Reviews focus on checking that coding standards are being followed and that any issues brought on by miscommunication are cleared up early on.
 
 ## ✨Current Key Features
 ### 1 Sign In and Create Account

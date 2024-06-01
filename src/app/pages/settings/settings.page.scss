@@ -133,11 +133,16 @@ ion-searchbar {
   --background-hover: #242323;
   --border-width: 0;
 
+  display: flex;
+  justify-content: flex-start; /* Align text to the left */
+
 }
 
 .nav-button.active {
   --background: #05FF00;
   color: black;
+
+  
 }
 
 // .mode-toggle {
@@ -203,5 +208,25 @@ ion-toggle::part(track) {
 ion-toggle::part(handle) {
   height: 30px; /* Adjust the handle height to fit the new track size */
   width: 30px; /* Adjust the handle width */
-  background-color: green; /* Set the handle color to green */
+  background-color: #05FF00; /* Set the handle color to green */
 }
+
+.content-row {
+  display: flex;
+  align-items: center;
+  margin-top: 3%;
+  // width: 100%;
+}
+
+.content-title {
+  font-size: 50px;
+  margin-left: 1%;
+  font-weight: bold;
+}
+
+.content-description {
+  font-size: 20px;
+  margin-left: 1%;
+  font-weight: 600;
+}
+

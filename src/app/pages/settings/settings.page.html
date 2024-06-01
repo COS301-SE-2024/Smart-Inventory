@@ -28,9 +28,16 @@
 	<div class="row second-row">
 		<ion-card class="settings-card">
 		<div class="left-column">
-			<ion-button *ngFor="let item of navItems" class="nav-button" [class.active]="selectedNavItem === item" (click)="selectNavItem(item)">
+
+			<ion-button expand="full" class="nav-button" [class.active]="selectedNavItem === 'General'" (click)="selectNavItem('General')">General</ion-button>
+			<ion-button expand="full" class="nav-button" [class.active]="selectedNavItem === 'Preferences'" (click)="selectNavItem('Preferences')">Preferences</ion-button>
+			<ion-button expand="full" class="nav-button" [class.active]="selectedNavItem === 'Notifications'" (click)="selectNavItem('Notifications')">Notifications</ion-button>
+			<ion-button expand="full" class="nav-button" [class.active]="selectedNavItem === 'User Permissions'" (click)="selectNavItem('User Permissions')">User Permissions</ion-button>
+			<ion-button expand="full" class="nav-button" [class.active]="selectedNavItem === 'Account'" (click)="selectNavItem('Account')">Account</ion-button>
+
+			<!-- <ion-button *ngFor="let item of navItems" class="nav-button" [class.active]="selectedNavItem === item" (click)="selectNavItem(item)">
 			{{ item }}
-			</ion-button>
+			</ion-button> -->
 
 			<!-- Mode toggle -->
 			<!-- <div class="mode-toggle"> -->
@@ -48,6 +55,23 @@
 		<div class="vertical-line"></div>
 		<div class="right-column">
 			<!-- Right column content goes here -->
+			<ng-container [ngSwitch]="selectedNavItem">
+				<div *ngSwitchCase="'General'">
+					<div class="general-content" style="height: calc(100% - 3%);">
+						<div class="general-row" style="height: calc(20% - 3%)">
+							<h1 class="general-title">General</h1>
+							<p>Update Application Preferences</p>
+						</div>
+						<div class="general-row" style="height: calc(40% - 3%)">General Content Row 2</div>
+						<div class="general-row" style="height: calc(40% - 3%)">General Content Row 3</div>
+					  </div>
+				</div>
+				<div *ngSwitchCase="'Preferences'">Content for Preferences</div>
+				<div *ngSwitchCase="'Notifications'">Content for Notifications</div>
+				<div *ngSwitchCase="'User Permissions'">Content for User Permissions</div>
+				<div *ngSwitchCase="'Account'">Content for Account</div>
+				<div *ngSwitchDefault>Select an option to see the content</div>
+			  </ng-container>
 		</div>
 		
 		</ion-card>

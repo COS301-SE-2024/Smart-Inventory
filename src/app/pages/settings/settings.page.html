@@ -33,14 +33,17 @@
 			</ion-button>
 
 			<!-- Mode toggle -->
-			<div class="mode-toggle">
+			<!-- <div class="mode-toggle"> -->
 				<!-- <span class="mode-text">Light Mode</span> -->
-				<ion-toggle [(ngModel)]="darkMode" justify="space-between" class="mode-toggle-btn" color="primary" slot="end">Dark Mode</ion-toggle>
-			</div>
+				<!-- <ion-toggle [(ngModel)]="darkMode" justify="space-between" class="mode-toggle-btn" color="primary" slot="end">Dark Mode</ion-toggle> -->
+			<!-- </div> -->
 
-			
+			<!-- Mode toggle -->
+			<div class="mode-toggle">
+				<span class="mode-text">{{ darkMode ? 'Dark Mode' : 'Light Mode' }}</span>
+				<ion-toggle [(ngModel)]="darkMode" class="mode-toggle-btn" slot="end"></ion-toggle>
+			</div>
 		</div>
-		
 		<div class="vertical-line"></div>
 		<div class="right-column">
 			<!-- Right column content goes here -->

@@ -135,18 +135,58 @@ ion-searchbar {
     color: black;
   }
 
-.mode-toggle {
-    margin-top: auto; /* Pushes the toggle to the bottom */
-    padding-bottom: 10%;
-  }
+// .mode-toggle {
+//     margin-top: auto; /* Pushes the toggle to the bottom */
+//     padding-bottom: 10%;
+//   }
   
-  .mode-text {
-    font-weight: 600; /* semi-bold */
-  }
+//   .mode-text {
+//     font-weight: 600; /* semi-bold */
+//   }
   
-  .mode-toggle-btn {
-    --padding-bottom: 5%; /* override Ionic default margin */
+//   .mode-toggle-btn {
+//     --padding-bottom: 5%; /* override Ionic default margin */
+//     --handle-background: #05FF00;
+//     --track-background-checked: #8F8F8F;
+//     --handle-background-checked: #05FF00;
+//   }
 
-  }
+.left-column {
+  width: 25%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding-top: 3%;
+  height: 100%;
+}
+
+.mode-toggle {
+  margin-top: auto; /* Pushes the toggle to the bottom */
+  margin-bottom: 3%;
+  margin-left: 1%;
+  margin-right: 1%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.mode-text {
+  font-weight: 600; /* semi-bold */
+}
+
+.mode-toggle-btn {
+  --margin-bottom: 0; /* Override Ionic default margin */
+  --height: 100px; /* Custom height for the track */
+  --width: 200px; /* Custom width for the track */
+  // --handle-height: 30px; /* Custom height for the handle */
+  // --handle-width: 30px; /* Custom width for the handle */
+  --handle-background: #fff;
+  --background: #d3d3d3;
+  --background-checked: #05FF00;
+  --border-radius: 20px; /* Adjust for rounded corners */
+  --handle-border-radius: 50%; /* Ensure the handle is circular */
+}
+
+
   
   

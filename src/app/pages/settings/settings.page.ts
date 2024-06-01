@@ -21,9 +21,9 @@ export class SettingsPage implements OnInit {
 
   selectImage(imageNumber: number): void {
     this.selectedImage = this.selectedImage === imageNumber ? null : imageNumber;
-  }  
+  }
 
-  constructor() { 
+  constructor() {
     this.userName = "John";
     this.userRole = "Admin";
   }
@@ -32,7 +32,7 @@ export class SettingsPage implements OnInit {
 
   }
 
-  showUserProfile(){
+  showUserProfile() {
     console.log("User Profile: ", this.userName, this.userRole);
   }
 
@@ -40,13 +40,21 @@ export class SettingsPage implements OnInit {
     this.selectedNavItem = item;
   }
 
-  onSave() { 
+  onSave() {
 
   }
-  
+
+  selectedTheme: 'light' | 'dark' = 'dark'; // Default to 'dark'
+
+  selectTheme(theme: 'light' | 'dark') {
+    this.selectedTheme = theme;
+    // Additional logic to actually change the theme if applicable
+    console.log('Theme selected:', theme);
+  }
+
   onCancel() {
 
   }
 
-  
+
 }

@@ -1,77 +1,110 @@
 <ion-header [translucent]="true">
 	<ion-toolbar>
 		<ion-buttons slot="end">
-		<ion-button (click)="showUserProfile()" class="user-profile-button">
-			<ion-icon name="person-circle-outline" size="large"></ion-icon>
-			<ion-label>
-			<h3>{{ userName }}</h3>
-			<p>{{ userRole }}</p>
-			</ion-label>
-		</ion-button>
+			<ion-button (click)="showUserProfile()" class="user-profile-button">
+				<ion-icon name="person-circle-outline" size="large"></ion-icon>
+				<ion-label>
+					<h3>{{ userName }}</h3>
+					<p>{{ userRole }}</p>
+				</ion-label>
+			</ion-button>
 		</ion-buttons>
 		<ion-searchbar show-clear-button="always" placeholder="Always Show"></ion-searchbar>
 		<!-- Other toolbar content -->
 	</ion-toolbar>
 </ion-header>
-  
+
 <ion-content>
 	<!-- First Row -->
 	<div class="row first-row">
 		<h1 class="settings-title">Settings</h1>
 		<div class="buttons-container">
-		<ion-button class="save-button" size="large" (click)="onSave()">Save</ion-button>
-		<ion-button class="cancel-button" size="large" (click)="onCancel()">Cancel</ion-button>
+			<ion-button class="save-button" size="large" (click)="onSave()">Save</ion-button>
+			<ion-button class="cancel-button" size="large" (click)="onCancel()">Cancel</ion-button>
 		</div>
 	</div>
 
 	<!-- Second Row -->
 	<div class="row second-row">
 		<ion-card class="settings-card">
-		<div class="left-column">
+			<div class="left-column">
 
-			<ion-button expand="full" class="nav-button" [class.active]="selectedNavItem === 'General'" (click)="selectNavItem('General')">General</ion-button>
-			<ion-button expand="full" class="nav-button" [class.active]="selectedNavItem === 'Preferences'" (click)="selectNavItem('Preferences')">Preferences</ion-button>
-			<ion-button expand="full" class="nav-button" [class.active]="selectedNavItem === 'Notifications'" (click)="selectNavItem('Notifications')">Notifications</ion-button>
-			<ion-button expand="full" class="nav-button" [class.active]="selectedNavItem === 'User Permissions'" (click)="selectNavItem('User Permissions')">User Permissions</ion-button>
-			<ion-button expand="full" class="nav-button" [class.active]="selectedNavItem === 'Account'" (click)="selectNavItem('Account')">Account</ion-button>
+				<ion-button expand="full" class="nav-button" [class.active]="selectedNavItem === 'General'"
+					(click)="selectNavItem('General')">General</ion-button>
+				<ion-button expand="full" class="nav-button" [class.active]="selectedNavItem === 'Preferences'"
+					(click)="selectNavItem('Preferences')">Preferences</ion-button>
+				<ion-button expand="full" class="nav-button" [class.active]="selectedNavItem === 'Notifications'"
+					(click)="selectNavItem('Notifications')">Notifications</ion-button>
+				<ion-button expand="full" class="nav-button" [class.active]="selectedNavItem === 'User Permissions'"
+					(click)="selectNavItem('User Permissions')">User Permissions</ion-button>
+				<ion-button expand="full" class="nav-button" [class.active]="selectedNavItem === 'Account'"
+					(click)="selectNavItem('Account')">Account</ion-button>
 
-			<!-- Mode toggle -->
-			<div class="mode-toggle">
-				<span class="mode-text">{{ darkMode ? 'Dark Mode' : 'Light Mode' }}</span>
-				<ion-toggle [(ngModel)]="darkMode" mode="ios" class="mode-toggle-btn" slot="end"></ion-toggle>
-			</div>
-			
-		</div>
-		<div class="vertical-line"></div>
-		<div class="right-column">
-			<!-- Right column content goes here -->
-			<ng-container [ngSwitch]="selectedNavItem">
-				<div *ngSwitchCase="'General'">
-					<div class="general-row-one">
-						<h1 class="general-title">General</h1>
-						<p>Update Application Preferences</p>
-						<hr>
-					</div>
-					<div class="general-row-two">
-						<h1>Select Themes</h1>
-						<div class="image-grid">
-						  <img src="assets/images/light-mode.png" alt="Light Mode" [class.active]="selectedImage === 1" (click)="selectImage(1)">
-						  <img src="assets/images/light-mode.png" alt="Light Mode" [class.active]="selectedImage === 2" (click)="selectImage(2)">
-						</div>
-					  </div>					  
-					<div class="general-row-three">
-						Ehlo
-					</div>
+				<!-- Mode toggle -->
+				<div class="mode-toggle">
+					<span class="mode-text">{{ darkMode ? 'Dark Mode' : 'Light Mode' }}</span>
+					<ion-toggle [(ngModel)]="darkMode" mode="ios" class="mode-toggle-btn" slot="end"></ion-toggle>
 				</div>
-				<div *ngSwitchCase="'Preferences'">Content for Preferences</div>
-				<div *ngSwitchCase="'Notifications'">Content for Notifications</div>
-				<div *ngSwitchCase="'User Permissions'">Content for User Permissions</div>
-				<div *ngSwitchCase="'Account'">Content for Account</div>
-				<div *ngSwitchDefault>Select an option to see the content</div>
-			  </ng-container>
-		</div>
-		
+
+			</div>
+			<div class="vertical-line"></div>
+			<div class="right-column">
+				<!-- Right column content goes here -->
+				<ng-container [ngSwitch]="selectedNavItem">
+					<div *ngSwitchCase="'General'">
+						<div class="general-settings">
+							<h1>General</h1>
+							<p>Update Application Preferences</p>
+							<hr>
+							<div class="theme-selection">
+								<h2 class="theme-title">Select Theme</h2>
+								<div class="themes">
+									<div class="theme light-mode" [class.active]="selectedTheme === 'light'"
+										(click)="selectTheme('light')">
+										<img src="assets/images/light-mode.png" alt="Light Mode">
+									</div>
+									<div class="theme dark-mode" [class.active]="selectedTheme === 'dark'"
+										(click)="selectTheme('dark')">
+										<img src="assets/images/light-mode.png" alt="Dark Mode">
+									</div>
+								</div>
+							</div>
+
+							<div class="other-settings">
+								<div class="setting-item">
+									<label>Time Zone</label>
+									<ion-select aria-label="Fruit" interface="popover" placeholder="Select Time">
+										<ion-select-option value="SAST">(SAST-09:00) South Africa Standard
+											Time</ion-select-option>
+									</ion-select>
+								</div>
+								<div class="setting-item">
+									<label>Language</label>
+									<ion-select interface="popover" placeholder="Select Language">
+										<ion-select-option value="en">English</ion-select-option>
+										<!-- Other languages -->
+									</ion-select>
+								</div>
+								<div class="setting-item">
+									<label>Date and Time Format</label>
+									<ion-select interface="popover" placeholder="Select Format">
+										<ion-select-option value="ddmmyyyy">DD/MM/YYYY</ion-select-option>
+										<!-- Other formats -->
+									</ion-select>
+								</div>
+							</div>
+
+						</div>
+
+					</div>
+					<div *ngSwitchCase="'Preferences'">Content for Preferences</div>
+					<div *ngSwitchCase="'Notifications'">Content for Notifications</div>
+					<div *ngSwitchCase="'User Permissions'">Content for User Permissions</div>
+					<div *ngSwitchCase="'Account'">Content for Account</div>
+					<div *ngSwitchDefault>Select an option to see the content</div>
+				</ng-container>
+			</div>
+
 		</ion-card>
 	</div>
 </ion-content>
-  

@@ -45,6 +45,144 @@ ion-searchbar {
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
+/// 
+/// 
+/// 
+/// 
+
+
+.general-settings {
+  color: #fff;
+  /* Ensure text is readable on dark background */
+  font-size: 16px;
+  padding: 20px;
+  border: none;
+  /* Remove borders if any */
+  margin: 25px;
+}
+
+.general-settings h1,
+.general-settings p {
+  margin-bottom: 20px;
+  /* Provide sufficient spacing */
+}
+
+.general-settings p {
+  padding-left: 22px;
+  padding-top: 10px;
+  font-size: 20px;
+  /* Provide sufficient spacing */
+}
+
+.general-settings h1 {
+  font-size: 54px;
+  font-weight: 600;
+  padding-left: 22px;
+}
+
+hr {
+  border-top: 1px solid #444;
+  /* Subtle separator */
+  margin-bottom: 20px;
+  /* Space below the separator */
+}
+
+
+.theme-selection {
+  display: flex;
+  flex-direction: column;
+  /* Keeps title and themes container in a column */
+  align-items: center;
+  /* Center aligns everything horizontally */
+  padding: 20px;
+  /* Padding around the entire container */
+}
+
+.theme-title {
+  text-align: center;
+  /* Center-align the text */
+  font-size: 30px;
+  /* Set font size */
+  color: #fff;
+  /* Text color, assuming a dark background */
+  margin-bottom: 20px;
+  /* Space between title and theme images */
+}
+
+.themes {
+  display: flex;
+  /* Displays theme images side by side */
+  justify-content: center;
+  /* Centers the themes horizontally */
+}
+
+.theme {
+  margin: 0 10px;
+  /* Adds horizontal space between theme images */
+  cursor: pointer;
+  border: 3px solid transparent;
+  /* Prepare for active state border */
+}
+
+.theme img {
+  // height: 120px;
+  /* Increased size for better visibility */
+  width: auto;
+  /* Maintains aspect ratio */
+}
+
+.active {
+  border-color: #00FF00;
+  /* Green border for active theme */
+}
+
+
+.other-settings {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+
+.setting-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  /* Adds space between each setting */
+}
+
+.setting-item label {
+  flex: 0 0 150px;
+  /* Assigns fixed width to the label */
+  color: #fff;
+  /* Assuming a dark theme background */
+  padding-right: 10px;
+  /* Space between label and select */
+  font-weight: 600;
+  font-size: 20px;
+}
+
+ion-select {
+  flex: 1;
+  /* Allows the select to fill the rest of the space */
+  --padding-start: 10px;
+  /* Internal padding within the select */
+  --padding-end: 10px;
+  --border-radius: 8px;
+  /* Rounded corners for the select element */
+  --background: #444;
+  /* Darker background for the select */
+  --color: #fff;
+  /* Light color for the text */
+  --placeholder-color: #ccc;
+  /* Lighter color for the placeholder */
+}
+
+
+
+/// 
+/// 
+/// 
+/// 
 
 .row {
   display: flex;
@@ -108,6 +246,7 @@ ion-searchbar {
 
 .right-column {
   width: 75%;
+  // margin: 7%;
 }
 
 .vertical-line {
@@ -134,7 +273,8 @@ ion-searchbar {
   --border-width: 0;
 
   display: flex;
-  justify-content: flex-start; /* Align text to the left */
+  justify-content: flex-start;
+  /* Align text to the left */
 
 }
 
@@ -142,7 +282,7 @@ ion-searchbar {
   --background: #05FF00;
   color: black;
 
-  
+
 }
 
 .left-column {
@@ -183,16 +323,23 @@ ion-searchbar {
 }
 
 ion-toggle::part(track) {
-  height: 34px;  /* Increase the height of the track */
-  width: 68px;   /* Increase the width of the track */
-  background: #555; /* Optionally change the background color */
-  border-radius: 17px; /* Adjust the border-radius for a more rounded look */
+  height: 34px;
+  /* Increase the height of the track */
+  width: 68px;
+  /* Increase the width of the track */
+  background: #555;
+  /* Optionally change the background color */
+  border-radius: 17px;
+  /* Adjust the border-radius for a more rounded look */
 }
 
 ion-toggle::part(handle) {
-  height: 30px; /* Adjust the handle height to fit the new track size */
-  width: 30px; /* Adjust the handle width */
-  background-color: #05FF00; /* Set the handle color to green */
+  height: 30px;
+  /* Adjust the handle height to fit the new track size */
+  width: 30px;
+  /* Adjust the handle width */
+  background-color: #05FF00;
+  /* Set the handle color to green */
 }
 
 .general-row-one {
@@ -228,7 +375,8 @@ ion-toggle::part(handle) {
 
 .image-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr; /* 1x2 grid */
+  grid-template-columns: 1fr 1fr;
+  /* 1x2 grid */
   width: 60%;
 }
 
@@ -241,7 +389,8 @@ ion-toggle::part(handle) {
 }
 
 .image-grid img.active {
-  outline: 3px solid blue; /* Outline in blue when selected */
+  outline: 3px solid blue;
+  /* Outline in blue when selected */
 }
 
 .general-row-three {
@@ -249,9 +398,13 @@ ion-toggle::part(handle) {
 }
 
 hr {
-  border: none; /* Remove the default border */
-  height: 1px; /* Set the height of the line */
-  background-color: #8F8F8F; /* Set the color of the line */
-  margin: 20px 2%; /* Add margin for spacing */
+  border: none;
+  /* Remove the default border */
+  height: 1px;
+  /* Set the height of the line */
+  background-color: #8F8F8F;
+  /* Set the color of the line */
+  margin: 20px 2%;
+  /* Add margin for spacing */
   width: 95%;
 }

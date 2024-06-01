@@ -1,27 +1,73 @@
-# SmartInventory
+# Getting Started Guide
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.0.2.
+This guide will walk you through setting up and running our Angular app with AWS Amplify integration on your local machine.
 
-## Development server
+## Prerequisites
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+Before you begin, ensure that you have the following installed on your machine:
 
-## Code scaffolding
+- Node.js (version 12 or later)
+- npm (version 6 or later)
+- Angular CLI
+- AWS CLI
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+## Setup Steps
 
-## Build
+1. Install Node.js and npm:
+   - Visit the official Node.js website: [https://nodejs.org](https://nodejs.org)
+   - Download the latest LTS version of Node.js for your operating system.
+   - Follow the installation instructions for your operating system.
+   - After installation, verify that Node.js and npm are installed correctly by running the following commands in your terminal:
+     ```
+     node --version
+     npm --version
+     ```
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+2. Install Angular CLI:
+   - Open your terminal and run the following command to install Angular CLI globally:
+     ```
+     npm install -g @angular/cli
+     ```
+   - Verify that Angular CLI is installed correctly by running the following command:
+     ```
+     ng version
+     ```
 
-## Running unit tests
+3. Install AWS CLI:
+   - Visit the official AWS CLI installation guide: [https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
+   - Follow the installation instructions for your operating system.
+   - After installation, verify that AWS CLI is installed correctly by running the following command:
+     ```
+     aws --version
+     ```
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+4. Navigate to the cloned repository directory:
+   - Open your terminal and navigate to the `Smart-Inventory` repository directory in your `GitHub` folder.
+   - Run the following command:
+     ```
+     cd ~/Documents/GitHub/Smart-Inventory
+     ```
 
-## Running end-to-end tests
+5. Install the project dependencies:
+`npm install`
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+6. Configure AWS CLI:
+    - Run `aws configure` in your terminal.
+    - Provide your access key and secret access key when prompted.
 
-## Further help
+7. Start the Amplify sandbox:
+   - Run the following command:
+     ```
+     npx ampx sandbox
+     ```
+    - Wait for the `npx ampx sandbox` command to finish running. This may take a few minutes.
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+## Running the App
+
+To run the app locally, use the following command:
+```
+ng serve
+```
+Open your browser and navigate to `http://localhost:4200` to see the app in action.
+
+That's it! You should now have the Angular app with AWS Amplify integration running on your local machine. If you encounter any issues or have further questions, please don't hesitate to reach out to the team.

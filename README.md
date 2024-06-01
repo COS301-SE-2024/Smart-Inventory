@@ -74,6 +74,13 @@
   <a href="documents/TestingPolicy.md">
     Testing Policy
   </a>
+
+  ##
+
+  📄
+  <a href="documents/ServicesContract.md">
+    Service Contract
+  </a>
   <hr>
 <br>
 

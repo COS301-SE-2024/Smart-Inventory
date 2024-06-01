@@ -62,7 +62,7 @@ Reviews focus on checking that coding standards are being followed and that any 
 <hr>
 </br>
 
-## Current Capabilities
+## 🚧 Current Capabilities
 ### 1. Sign In and Create Account
 * Sign in with email and password.
 * Create account for a team.

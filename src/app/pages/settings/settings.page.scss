@@ -1,149 +1,154 @@
 /* app.component.scss */
 ion-searchbar {
-    // --background: #fff; /* Adjust background color as needed */
-    --border-radius: 25px; /* Rounded edges, adjust radius as desired */
-    --placeholder-color: #666; /* Placeholder text color */
-    --icon-color: #666; /* Search icon color */
-    --clear-icon-color: #666; /* Clear icon color */
-    width: 100em;
-  }
-  
+  // --background: #fff; /* Adjust background color as needed */
+  --border-radius: 25px;
+  /* Rounded edges, adjust radius as desired */
+  --placeholder-color: #666;
+  /* Placeholder text color */
+  --icon-color: #666;
+  /* Search icon color */
+  --clear-icon-color: #666;
+  /* Clear icon color */
+  width: 100em;
+}
+
 
 .user-profile-button {
+  display: flex;
+  align-items: center;
+  --padding-start: 14px; // Adjust padding as needed
+  --padding-end: 8px; // Adjust padding as needed
+  --background: transparent; // Remove button background
+
+  ion-icon {
+    margin-right: 8px; // Space between icon and text
+    color: #ffffff; // Adjust the color as needed
+  }
+
+  ion-label {
     display: flex;
-    align-items: center;
-    --padding-start: 14px; // Adjust padding as needed
-    --padding-end: 8px; // Adjust padding as needed
-    --background: transparent; // Remove button background
+    flex-direction: column;
+    align-items: flex-start;
+    margin-right: 60px; // Adjust this value to increase or decrease the space on the right side
 
-    ion-icon {
-        margin-right: 8px; // Space between icon and text
-        color: #ffffff; // Adjust the color as needed
+    h3 {
+      margin: 0;
+      font-size: 1.2em; // Adjust the size as needed
     }
 
-    ion-label {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        margin-right: 60px; // Adjust this value to increase or decrease the space on the right side
-
-        h3 {
-            margin: 0;
-            font-size: 1.2em; // Adjust the size as needed
-        }
-
-        p {
-            margin: 0;
-            font-size: 0.8em; // Adjust the size as needed
-            color: #cccccc; // Adjust the color as needed
-        }
+    p {
+      margin: 0;
+      font-size: 0.8em; // Adjust the size as needed
+      color: #cccccc; // Adjust the color as needed
     }
+  }
 }
+
 ///////////////////////////////////////////////////////////////////////////////////
 
 .row {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .first-row {
-    height: 15%;
-    flex-direction: row;
-  }
-  
-  .second-row {
-    height: 85%;
-    padding: 3%;
-    // padding-bottom: 3%;
-  }
-  
-  .settings-title {
-    font-size: 70px;
-    margin-left: 10%;
-    width: 70%;
-    text-align: left;
-    margin-top: 1%;
-  }
-  
-  .buttons-container {
-    width: 30%;
-    display: flex;
-    justify-content: space-between;
-    margin-right: 10%;
-  }
-  
-  .save-button {
-    --background: #05FF00;
-  }
-  
-  .cancel-button {
-    --background: #8F8F8F;
-  }
-  
-  .settings-card {
-    width: 100%;
-    height: 100%;
-    background-color: #242323;
-    padding: 3% 3% 0 3%;
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    justify-content: space-between;
-  }
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.first-row {
+  height: 15%;
+  flex-direction: row;
+}
+
+.second-row {
+  height: 85%;
+  padding: 3%;
+  // padding-bottom: 3%;
+}
+
+.settings-title {
+  font-size: 70px;
+  margin-left: 10%;
+  width: 70%;
+  text-align: left;
+  margin-top: 1%;
+}
+
+.buttons-container {
+  width: 30%;
+  display: flex;
+  justify-content: space-between;
+  margin-right: 10%;
+}
+
+.save-button {
+  --background: #05FF00;
+}
+
+.cancel-button {
+  --background: #8F8F8F;
+}
+
+.settings-card {
+  width: 100%;
+  height: 100%;
+  background-color: #242323;
+  padding: 3% 3% 0 3%;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: space-between;
+}
 
 .left-column {
-    width: 25%;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding-top: 3%;
-    height: 100%;
-  }
-  
-  .right-column {
-    width: 75%;
-  }
-  
-  .vertical-line {
-    width: 3px;
-    background-color: #8F8F8F;
-    height: 100%;
-    margin-left: 3%;
-   
-  }
-  
-  .nav-button {
-    width: 100%;
-    margin-bottom: 10px;
-    border-radius: 5px;
-    --background: #242323;
-    color: white;
-    text-align: left;
+  width: 25%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding-top: 3%;
+  height: 100%;
+}
 
-    /* Remove shadow and stroke */
-    --box-shadow: none;
-    --background-activated: #242323;
-    --background-focused: #242323;
-    --background-hover: #242323;
-    --border-width: 0;
+.right-column {
+  width: 75%;
+}
 
-  }
-  
-  .nav-button.active {
-    --background: #05FF00;
-    color: black;
-  }
+.vertical-line {
+  width: 3px;
+  background-color: #8F8F8F;
+  height: 100%;
+  margin-left: 3%;
+
+}
+
+.nav-button {
+  width: 100%;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  --background: #242323;
+  color: white;
+  text-align: left;
+
+  /* Remove shadow and stroke */
+  --box-shadow: none;
+  --background-activated: #242323;
+  --background-focused: #242323;
+  --background-hover: #242323;
+  --border-width: 0;
+
+}
+
+.nav-button.active {
+  --background: #05FF00;
+  color: black;
+}
 
 // .mode-toggle {
 //     margin-top: auto; /* Pushes the toggle to the bottom */
 //     padding-bottom: 10%;
 //   }
-  
+
 //   .mode-text {
 //     font-weight: 600; /* semi-bold */
 //   }
-  
+
 //   .mode-toggle-btn {
 //     --padding-bottom: 5%; /* override Ionic default margin */
 //     --handle-background: #05FF00;
@@ -161,7 +166,8 @@ ion-searchbar {
 }
 
 .mode-toggle {
-  margin-top: auto; /* Pushes the toggle to the bottom */
+  margin-top: auto;
+  /* Pushes the toggle to the bottom */
   margin-bottom: 3%;
   margin-left: 1%;
   margin-right: 1%;
@@ -171,22 +177,31 @@ ion-searchbar {
 }
 
 .mode-text {
-  font-weight: 600; /* semi-bold */
+  font-weight: 600;
+  /* semi-bold */
 }
 
 .mode-toggle-btn {
-  --margin-bottom: 0; /* Override Ionic default margin */
-  --height: 100px; /* Custom height for the track */
-  --width: 200px; /* Custom width for the track */
-  // --handle-height: 30px; /* Custom height for the handle */
-  // --handle-width: 30px; /* Custom width for the handle */
-  --handle-background: #fff;
-  --background: #d3d3d3;
-  --background-checked: #05FF00;
-  --border-radius: 20px; /* Adjust for rounded corners */
-  --handle-border-radius: 50%; /* Ensure the handle is circular */
+  --handle-width: 28px;
+  --handle-height: 28px;
+  --handle-border-radius: 50%;
+  --handle-background: #05FF00;
+  /* Color of the toggle handle */
+  --background: #555;
+  /* Background of the toggle when off */
+  --background-checked: #555;
+  /* Background of the toggle when on */
 }
 
+ion-toggle::part(track) {
+  height: 34px;  /* Increase the height of the track */
+  width: 68px;   /* Increase the width of the track */
+  background: #555; /* Optionally change the background color */
+  border-radius: 17px; /* Adjust the border-radius for a more rounded look */
+}
 
-  
-  
+ion-toggle::part(handle) {
+  height: 30px; /* Adjust the handle height to fit the new track size */
+  width: 30px; /* Adjust the handle width */
+  background-color: green; /* Set the handle color to green */
+}

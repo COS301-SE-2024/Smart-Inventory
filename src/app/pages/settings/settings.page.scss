@@ -1,0 +1,410 @@
+/* app.component.scss */
+ion-searchbar {
+  // --background: #fff; /* Adjust background color as needed */
+  --border-radius: 25px;
+  /* Rounded edges, adjust radius as desired */
+  --placeholder-color: #666;
+  /* Placeholder text color */
+  --icon-color: #666;
+  /* Search icon color */
+  --clear-icon-color: #666;
+  /* Clear icon color */
+  width: 100em;
+}
+
+
+.user-profile-button {
+  display: flex;
+  align-items: center;
+  --padding-start: 14px; // Adjust padding as needed
+  --padding-end: 8px; // Adjust padding as needed
+  --background: transparent; // Remove button background
+
+  ion-icon {
+    margin-right: 8px; // Space between icon and text
+    color: #ffffff; // Adjust the color as needed
+  }
+
+  ion-label {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-right: 60px; // Adjust this value to increase or decrease the space on the right side
+
+    h3 {
+      margin: 0;
+      font-size: 1.2em; // Adjust the size as needed
+    }
+
+    p {
+      margin: 0;
+      font-size: 0.8em; // Adjust the size as needed
+      color: #cccccc; // Adjust the color as needed
+    }
+  }
+}
+
+///////////////////////////////////////////////////////////////////////////////////
+/// 
+/// 
+/// 
+/// 
+
+
+.general-settings {
+  color: #fff;
+  /* Ensure text is readable on dark background */
+  font-size: 16px;
+  padding: 20px;
+  border: none;
+  /* Remove borders if any */
+  margin: 25px;
+}
+
+.general-settings h1,
+.general-settings p {
+  margin-bottom: 20px;
+  /* Provide sufficient spacing */
+}
+
+.general-settings p {
+  padding-left: 22px;
+  padding-top: 10px;
+  font-size: 20px;
+  /* Provide sufficient spacing */
+}
+
+.general-settings h1 {
+  font-size: 54px;
+  font-weight: 600;
+  padding-left: 22px;
+}
+
+hr {
+  border-top: 1px solid #444;
+  /* Subtle separator */
+  margin-bottom: 20px;
+  /* Space below the separator */
+}
+
+
+.theme-selection {
+  display: flex;
+  flex-direction: column;
+  /* Keeps title and themes container in a column */
+  align-items: center;
+  /* Center aligns everything horizontally */
+  padding: 20px;
+  /* Padding around the entire container */
+}
+
+.theme-title {
+  text-align: center;
+  /* Center-align the text */
+  font-size: 30px;
+  /* Set font size */
+  color: #fff;
+  /* Text color, assuming a dark background */
+  margin-bottom: 20px;
+  /* Space between title and theme images */
+}
+
+.themes {
+  display: flex;
+  /* Displays theme images side by side */
+  justify-content: center;
+  /* Centers the themes horizontally */
+}
+
+.theme {
+  margin: 0 10px;
+  /* Adds horizontal space between theme images */
+  cursor: pointer;
+  border: 3px solid transparent;
+  /* Prepare for active state border */
+}
+
+.theme img {
+  // height: 120px;
+  /* Increased size for better visibility */
+  width: auto;
+  /* Maintains aspect ratio */
+}
+
+.active {
+  border-color: #00FF00;
+  /* Green border for active theme */
+}
+
+
+.other-settings {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+
+.setting-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  /* Adds space between each setting */
+}
+
+.setting-item label {
+  flex: 0 0 150px;
+  /* Assigns fixed width to the label */
+  color: #fff;
+  /* Assuming a dark theme background */
+  padding-right: 10px;
+  /* Space between label and select */
+  font-weight: 600;
+  font-size: 20px;
+}
+
+ion-select {
+  flex: 1;
+  /* Allows the select to fill the rest of the space */
+  --padding-start: 10px;
+  /* Internal padding within the select */
+  --padding-end: 10px;
+  --border-radius: 8px;
+  /* Rounded corners for the select element */
+  --background: #444;
+  /* Darker background for the select */
+  --color: #fff;
+  /* Light color for the text */
+  --placeholder-color: #ccc;
+  /* Lighter color for the placeholder */
+}
+
+
+
+/// 
+/// 
+/// 
+/// 
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.first-row {
+  height: 15%;
+  flex-direction: row;
+}
+
+.second-row {
+  height: 85%;
+  padding: 3%;
+  // padding-bottom: 3%;
+}
+
+.settings-title {
+  font-size: 70px;
+  margin-left: 10%;
+  width: 70%;
+  text-align: left;
+  margin-top: 1%;
+}
+
+.buttons-container {
+  width: 30%;
+  display: flex;
+  justify-content: space-between;
+  margin-right: 10%;
+}
+
+.save-button {
+  --background: #05FF00;
+}
+
+.cancel-button {
+  --background: #8F8F8F;
+}
+
+.settings-card {
+  width: 100%;
+  height: 100%;
+  background-color: #242323;
+  padding: 3% 3% 0 3%;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.left-column {
+  width: 25%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding-top: 3%;
+  height: 100%;
+}
+
+.right-column {
+  width: 75%;
+  // margin: 7%;
+}
+
+.vertical-line {
+  width: 3px;
+  background-color: #8F8F8F;
+  height: 100%;
+  margin-left: 3%;
+
+}
+
+.nav-button {
+  width: 100%;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  --background: #242323;
+  color: white;
+  text-align: left;
+
+  /* Remove shadow and stroke */
+  --box-shadow: none;
+  --background-activated: #242323;
+  --background-focused: #242323;
+  --background-hover: #242323;
+  --border-width: 0;
+
+  display: flex;
+  justify-content: flex-start;
+  /* Align text to the left */
+
+}
+
+.nav-button.active {
+  --background: #05FF00;
+  color: black;
+
+
+}
+
+.left-column {
+  width: 25%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding-top: 3%;
+  height: 100%;
+}
+
+.mode-toggle {
+  margin-top: auto;
+  /* Pushes the toggle to the bottom */
+  margin-bottom: 3%;
+  margin-left: 1%;
+  margin-right: 1%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.mode-text {
+  font-weight: 600;
+  /* semi-bold */
+}
+
+.mode-toggle-btn {
+  --handle-width: 28px;
+  --handle-height: 28px;
+  --handle-border-radius: 50%;
+  --handle-background: #05FF00;
+  /* Color of the toggle handle */
+  --background: #555;
+  /* Background of the toggle when off */
+  --background-checked: #555;
+  /* Background of the toggle when on */
+}
+
+ion-toggle::part(track) {
+  height: 34px;
+  /* Increase the height of the track */
+  width: 68px;
+  /* Increase the width of the track */
+  background: #555;
+  /* Optionally change the background color */
+  border-radius: 17px;
+  /* Adjust the border-radius for a more rounded look */
+}
+
+ion-toggle::part(handle) {
+  height: 30px;
+  /* Adjust the handle height to fit the new track size */
+  width: 30px;
+  /* Adjust the handle width */
+  background-color: #05FF00;
+  /* Set the handle color to green */
+}
+
+.general-row-one {
+  height: 10vh;
+  // flex-direction: row;
+}
+
+.general-row-one h1 {
+  font-weight: 600;
+  font-size: 50px;
+  margin-left: 3%;
+  color: #ffffff;
+}
+
+.general-row-one p {
+  font-weight: 500;
+  font-size: 15px;
+  color: #ffffff;
+  margin-top: 3%;
+  margin-left: 3.5%;
+}
+
+.general-row-two {
+  height: 45vh;
+  // padding: 3%;
+  // padding-bottom: 3%;
+}
+
+.general-row-two h1 {
+  margin: 1% 2.5%;
+  color: #ffffff;
+}
+
+.image-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  /* 1x2 grid */
+  width: 60%;
+}
+
+.image-grid img {
+  // width: 100%;
+  // height: auto;
+  cursor: pointer;
+  margin-left: 2px;
+  text-align: left;
+}
+
+.image-grid img.active {
+  outline: 3px solid blue;
+  /* Outline in blue when selected */
+}
+
+.general-row-three {
+  height: 45vh;
+}
+
+hr {
+  border: none;
+  /* Remove the default border */
+  height: 1px;
+  /* Set the height of the line */
+  background-color: #8F8F8F;
+  /* Set the color of the line */
+  margin: 20px 2%;
+  /* Add margin for spacing */
+  width: 95%;
+}

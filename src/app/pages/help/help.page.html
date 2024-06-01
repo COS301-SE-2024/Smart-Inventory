@@ -1,0 +1,42 @@
+<ion-header [translucent]="true">
+	<ion-toolbar>
+		<ion-buttons slot="end">
+		<ion-button (click)="showUserProfile()" class="user-profile-button">
+			<ion-icon name="person-circle-outline" size="large"></ion-icon>
+			<ion-label>
+			<h3>{{ userName }}</h3>
+			<p>{{ userRole }}</p>
+			</ion-label>
+		</ion-button>
+		</ion-buttons>
+		<ion-searchbar show-clear-button="always" placeholder="Always Show"></ion-searchbar>
+		<!-- Other toolbar content -->
+	</ion-toolbar>
+</ion-header>
+  
+<ion-content>
+	<!-- First Row -->
+	<div class="row first-row">
+		<h1 class="settings-title">Help</h1>
+		<div class="buttons-container">
+		<ion-button class="save-button" size="large" (click)="onSave()">Save</ion-button>
+		<ion-button class="cancel-button" size="large" (click)="onCancel()">Cancel</ion-button>
+		</div>
+	</div>
+
+	<!-- Second Row -->
+	<div class="row second-row">
+		<ion-card class="settings-card">
+		<div class="left-column">
+			<ion-button *ngFor="let item of navItems" class="nav-button" [class.active]="selectedNavItem === item" (click)="selectNavItem(item)">
+			{{ item }}
+			</ion-button>
+		</div>
+		<div class="vertical-line"></div>
+		<div class="right-column">
+			<!-- Right column content goes here -->
+		</div>
+		</ion-card>
+	</div>
+</ion-content>
+  

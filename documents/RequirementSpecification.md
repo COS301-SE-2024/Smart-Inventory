@@ -11,7 +11,7 @@ This document goes into the details of users firstly the type of users the syste
 The users of SmartInventory can easily be split into these groups groups: 
 * Business Owners/Managers(Administrators)
 * Employees(Inventory Controllers/End-Users)
-* Suppliers
+  
 ### User Type Characteristics
 **Business Owners/Managers(Aministrator):**
 
@@ -31,15 +31,6 @@ In today's dynamic business world, empowering your employees is crucial for effi
 * A good design minimizes training time and ensures everyone can contribute effectively.
 * Provide limited, relevant data insights that assist with daily tasks (e.g., current stock levels for specific products).
 * Maintain strong security measures to protect sensitive business information.
-
-**Suppliers:**
-
-In the world of inventory management, reliable suppliers are a cornerstone of success. Ideal suppliers possess key characteristics that contribute to smooth business operations. They prioritize clear and timely communication, keeping businesses informed about stock availability, potential delays, and any other relevant updates. Additionally, they demonstrate a commitment to accuracy by providing detailed product specifications and ensuring orders are fulfilled according to exact requirements. Furthermore, reliable suppliers offer competitive pricing and flexible payment terms that suit the needs of the business. Finally, a strong track record of dependability and on-time deliveries is crucial for building trust and fostering a long-lasting partnership. By prioritizing communication, accuracy, competitive pricing, and reliable deliveries, suppliers become valuable assets for any business managing inventory effectively.
-* Get notifications and clear details of new orders placed by businesses.
-* Access detailed order specifications, including quantities, delivery timeframes, and specific product requirements.
-* Track order status updates and shipment confirmations in real-time.
-* Eliminate confusion through clear communication and accurate order information. This leads to fewer order fulfillment errors and delays.
-* Foster a more collaborative relationship with businesses through streamlined communication and order management.
 
 ### User Stories
 

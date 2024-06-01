@@ -56,7 +56,7 @@ Reviews focus on checking that coding standards are being followed and that any 
 ### 4. Help
 
 <hr>
-<br>
+</br>
 
 ## 📂Documents
   📄
@@ -106,7 +106,7 @@ Reviews focus on checking that coding standards are being followed and that any 
     Service Contract
   </a>
   <hr>
-<br>
+</br>
 
 ## 🔗Links
 
@@ -125,7 +125,8 @@ Reviews focus on checking that coding standards are being followed and that any 
   <a href="">
     Demo 1 Presentation Slides
   </a>
-<br>
+<hr>
+</br>
 
 ## 👷Our Team
 

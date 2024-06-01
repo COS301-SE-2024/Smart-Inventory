@@ -10,19 +10,19 @@
 <hr>
 </br>
 
-### What is SmartInventory?
+### ❔ What is SmartInventory?
 
 SmartInventory is a user-friendly, web-based application that streamlines and automates core inventory processes. It empowers users to:
 * Gain real-time visibility into stock levels, eliminating stockouts and ensuring smooth operations.
 * Simplify the ordering process with automated suggestions and real-time order tracking.
 * Capture detailed stock information, manage stock movements, and generate insightful reports for data-driven decision making.
 
-### Who can use SmartInventory?
+### 👥 Who can use SmartInventory?
 SmartInventory is designed to cater to the needs of various user roles within an organization:
 * Business Owners/Managers (Administrators): Manage user access, configure system settings, and gain comprehensive inventory insights.
 * Employees (Inventory Controllers/End-Users): Focus on daily stock management tasks, including adding, updating, and requesting stock.
 
-### Key Features
+### ✨ Key Features
 * User-friendly Interface: Prioritizes ease of use with minimal technical jargon for a smooth user experience.
 * Role-Based Access Control (RBAC): Ensures users have appropriate access rights within the system.
 * Real-Time Inventory Tracking: Provides clear visibility into current stock levels.
@@ -62,7 +62,7 @@ Reviews focus on checking that coding standards are being followed and that any 
 <hr>
 </br>
 
-## ✨Current Key Features
+## Current Capabilities
 ### 1. Sign In and Create Account
 * Sign in with email and password.
 * Create account for a team.
@@ -194,7 +194,7 @@ Reviews focus on checking that coding standards are being followed and that any 
 <hr>
 </br>
 
-## Getting Started Guide
+## ✅ Getting Started Guide
 
 This guide will walk you through setting up and running our Angular app with AWS Amplify integration on your local machine.
 

@@ -21,34 +21,20 @@ https://drive.google.com/drive/folders/1yC_nHp_spKNN3gHi4fL5JUDHA2dskahi?usp=sha
 
 <img src="https://github.com/TristanU21442615/HelixCapstone/blob/documents/media/GitFolwStrategy.png">
 
-## ✨Key Features
-### 1
+## ✨Current Key Features
+### 1 Sign In and Create Account
+* Sign in with email and password.
+* Create account for a team.
+* Receive temporary pin for secure access.
   
-### 2
+### 2 Team Management
+* Add team member.
+* Remove team member.
+* Assign roles.
+* Edit roles.
   
-### 3
-  
-### 4
-
-### 5
-  
-<hr>
-<br>
-
-## 🛠️ Tech Stack
-### 💻 Frontend:
-
-### ⚙️ Backend:
-
-### Standards
-> [!NOTE]  
-> Read more about standards in coding standards document.
-
-**ESLint:**
-<br>
-For code quality and consistency, we integrate ESLint into our development process. 
-* ESLint is a widely-used static code analysis tool that helps identify and fix common programming errors and enforce coding standards.
-* With ESLint, we ensure our codebase remains clean, readable, and maintainable.
+### 3 Settings
+### 4 Help
 
 <hr>
 <br>

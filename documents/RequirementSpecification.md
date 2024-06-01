@@ -318,6 +318,7 @@ In the world of inventory management, reliable suppliers are a cornerstone of su
       The system shall maintain an audit trail of user activities, including successful and failed login attempts, for security monitoring purposes.
     </li>
   </ol>
+  </br>
 </ol>
 
 ### 2. Team/User Management Subsystem
@@ -362,6 +363,7 @@ In the world of inventory management, reliable suppliers are a cornerstone of su
       Users are be able to change their password while logged into their account.
     </li>
   </ol>
+  </br>
 </ol>
 
 ### 3. Reporting Subsystem
@@ -448,12 +450,15 @@ In the world of inventory management, reliable suppliers are a cornerstone of su
   <li>
     Enable the export of reports in various formats (e.g., CSV, PDF, Excel) for further analysis or sharing
   </li>
+  </br>
 <li>
   Allow anlytics for various reports.
 </li>
+  </br>
     <li>
       Allow for exporting of reports
     </li>
+  </br>
 </ol>
 
 ### 4. Inventory Management Subsystem
@@ -467,6 +472,7 @@ In the world of inventory management, reliable suppliers are a cornerstone of su
     <li>Allow user to record Expiration dates</li>
     <li>Allow user to record current product quantity</li>
   </ol>
+  </br>
     <li>
       Allow for exporting of inventory table.
     </li>
@@ -498,7 +504,9 @@ In the world of inventory management, reliable suppliers are a cornerstone of su
     <li>Quantity change</li>
     <li>User who performed the transaction.</li>
   </ol>
+  </br>
   <li>Automatically detect when an order should be created based on predefined rules, considering product usage and expiration dates.</li>
+  </br>
 </ol>
 
 ### 5. Stock Request Subystem
@@ -528,7 +536,9 @@ In the world of inventory management, reliable suppliers are a cornerstone of su
     <li>Notify inventory controllers of the requests.</li>
     <li>autonomously order more stock.</li>
   </ol>
+  </br>
   <li>Allow admin to view audit trail.</li>
+  </br>
 </ol>
 
 ### 6. Supplier Management Subsystem
@@ -539,6 +549,7 @@ In the world of inventory management, reliable suppliers are a cornerstone of su
     <li>This information will be used to identify and communicate with suppliers when requesting quotes.</li> 
     <li>Push notifications to notify user about supplier communication or issues.</li>
   </ol>
+  </br>
 <li>Record and track supplier performance metrics</li>
   <ol>
     <li>This information will be used to evaluate supplier reliability</li>
@@ -546,6 +557,7 @@ In the world of inventory management, reliable suppliers are a cornerstone of su
     <li>Performance metrics users can view are delivery time, product quality, and order fulfillment rates.</li>
     <li>When a supplier updates their progress so does the metrics</li>
   </ol>
+  </br>
 <li>Manage Suppliers.</li>
   <ol>
   <li>Provide a way for inventory controllers and admin to add suppliers</li>
@@ -553,6 +565,7 @@ In the world of inventory management, reliable suppliers are a cornerstone of su
   <li>Provide a way for inventory controllers and admin to remove suppliers</li>
   <li>Provide a way for users to search and filter supplier records for efficient retrieval of information</li>
   </ol>
+  </br>
 </ol>
 
 ### 7. Order Placement Subsystem
@@ -566,6 +579,7 @@ In the world of inventory management, reliable suppliers are a cornerstone of su
       Allow to choose supplier or autonomously select the best choice in supplier.
     </li>
   </ol>
+  </br>
   <li>Notified of low stock.</li>
   <ol>
     <li>
@@ -578,9 +592,11 @@ In the world of inventory management, reliable suppliers are a cornerstone of su
       Update purchase order autonomasly if supplier confirms thier details have changed.
     </li> 
   </ol>
+  </br>
   <li>
     Manually generate purchase orders
   </li>
+  </br>
   <ol>
     <li>
       Send purchase order via email or api to supplier for confirmation of details and order.
@@ -589,18 +605,23 @@ In the world of inventory management, reliable suppliers are a cornerstone of su
       Update purchase order autonomasly if supplier confirms thier details have changed.
     </li>
   </ol>
+  </br>
 <li>
   Track order status (ordered, received, canceled) and expected delivery dates.
 </li>
+  </br>
 <li>
   As tracking order status starts update order fufilment metrics.
 </li>
+  </br>
 <li>
   Maintain a history of placed orders for record-keeping for template use and confirmation of correct information.
 </li>
+  </br>
 <li>
   Evaluate and rate received quotes based on predefined criteria (e.g., price, delivery time, etc.) to assist in selecting the best supplier for each order.
 </li>
+  </br>
 </ol>
 
 ## Use Case Diagrams

@@ -44,11 +44,6 @@ In the world of inventory management, reliable suppliers are a cornerstone of su
 ### User Stories
 
 <table>
-  <thead>
-    <tr>
-      <th width="40%">User Story</th>
-    </tr>
-  </thead>
   <tbody>
     <tr><td>As an administrator, I want to be able to securely login, and manage user accounts. So that I can ensure appropriate access levels are maintained.</td></tr>
     <tr><td>I want to manage user roles and permissions, so that users have appropriate access rights within the system.</td></tr>

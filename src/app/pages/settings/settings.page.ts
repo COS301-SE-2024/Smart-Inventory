@@ -13,6 +13,8 @@ export class SettingsPage implements OnInit {
   navItems = ['General', 'Preferences', 'Notifications', 'User Permissions', 'Account'];
   selectedNavItem = this.navItems[0];
 
+  darkMode: boolean = false;
+
   constructor() { 
     this.userName = "John";
     this.userRole = "Admin";
@@ -35,7 +37,7 @@ export class SettingsPage implements OnInit {
   }
   
   onCancel() {
-    
+
   }
 
 }

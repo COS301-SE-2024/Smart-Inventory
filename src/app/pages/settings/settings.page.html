@@ -31,11 +31,21 @@
 			<ion-button *ngFor="let item of navItems" class="nav-button" [class.active]="selectedNavItem === item" (click)="selectNavItem(item)">
 			{{ item }}
 			</ion-button>
+
+			<!-- Mode toggle -->
+			<div class="mode-toggle">
+				<!-- <span class="mode-text">Light Mode</span> -->
+				<ion-toggle [(ngModel)]="darkMode" justify="space-between" class="mode-toggle-btn" color="primary" slot="end">Dark Mode</ion-toggle>
+			</div>
+
+			
 		</div>
+		
 		<div class="vertical-line"></div>
 		<div class="right-column">
 			<!-- Right column content goes here -->
 		</div>
+		
 		</ion-card>
 	</div>
 </ion-content>

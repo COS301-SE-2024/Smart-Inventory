@@ -48,12 +48,12 @@ ion-searchbar {
   }
   
   .first-row {
-    height: 20%;
+    height: 15%;
     flex-direction: row;
   }
   
   .second-row {
-    height: 80%;
+    height: 85%;
     padding: 3%;
     // padding-bottom: 3%;
   }
@@ -63,6 +63,7 @@ ion-searchbar {
     margin-left: 10%;
     width: 70%;
     text-align: left;
+    margin-top: 1%;
   }
   
   .buttons-container {
@@ -90,10 +91,14 @@ ion-searchbar {
     align-items: flex-start;
     justify-content: space-between;
   }
-  
-  .left-column {
+
+.left-column {
     width: 25%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     padding-top: 3%;
+    height: 100%;
   }
   
   .right-column {
@@ -114,6 +119,7 @@ ion-searchbar {
     border-radius: 5px;
     --background: #242323;
     color: white;
+    text-align: left;
 
     /* Remove shadow and stroke */
     --box-shadow: none;
@@ -128,4 +134,19 @@ ion-searchbar {
     --background: #05FF00;
     color: black;
   }
+
+.mode-toggle {
+    margin-top: auto; /* Pushes the toggle to the bottom */
+    padding-bottom: 10%;
+  }
+  
+  .mode-text {
+    font-weight: 600; /* semi-bold */
+  }
+  
+  .mode-toggle-btn {
+    --padding-bottom: 5%; /* override Ionic default margin */
+
+  }
+  
   

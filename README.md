@@ -37,7 +37,7 @@ This project follows a mono-repo structure.
 #### Code Review Process:
 Reviews focus on checking that coding standards are being followed and that any issues brought on by miscommunication are cleared up early on.
 
-> Note
+> [!NOTE]  
 > Use of issues as well as naming conventions of branches can be found in the coding standards documentation.
 
 ## ✨Current Key Features

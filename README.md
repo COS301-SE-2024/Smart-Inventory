@@ -140,13 +140,13 @@ Reviews focus on checking that coding standards are being followed and that any 
 ##
 
   <a href="">
-    Demo 1 Recording
+    Recording
   </a>
   
   ##
 
   <a href="">
-    Demo 1 Presentation Slides
+    Presentation Slides
   </a>
 <hr>
 </br>

@@ -7,8 +7,6 @@
 <div align="center">
     <img src="documents/media/" width="50%" height="50%">
 </div>
-<hr>
-</br>
 
 ### ❔ What is SmartInventory?
 
@@ -29,6 +27,9 @@ SmartInventory is designed to cater to the needs of various user roles within an
 * Automated Reordering: Generates purchase orders based on predefined rules and stock levels.
 * Inventory Reporting: Offers insightful reports to support informed decision-making.
 * Supplier Management: Stores supplier details, tracks performance metrics, and facilitates communication.
+
+<hr>
+</br>
 
 ## Git Strategy - Git Flow
 

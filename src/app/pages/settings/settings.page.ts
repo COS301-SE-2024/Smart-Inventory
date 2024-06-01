@@ -15,6 +15,14 @@ export class SettingsPage implements OnInit {
 
   darkMode: boolean = false;
 
+  imageUrl1: string = 'assets/images/light-mode.png';
+  imageUrl2: string = 'assets/images/light-mode.png';
+  selectedImage: number | null = null; // Explicitly declare as number or null
+
+  selectImage(imageNumber: number): void {
+    this.selectedImage = this.selectedImage === imageNumber ? null : imageNumber;
+  }  
+
   constructor() { 
     this.userName = "John";
     this.userRole = "Admin";
@@ -40,4 +48,5 @@ export class SettingsPage implements OnInit {
 
   }
 
+  
 }

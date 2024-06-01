@@ -145,22 +145,6 @@ ion-searchbar {
   
 }
 
-// .mode-toggle {
-//     margin-top: auto; /* Pushes the toggle to the bottom */
-//     padding-bottom: 10%;
-//   }
-
-//   .mode-text {
-//     font-weight: 600; /* semi-bold */
-//   }
-
-//   .mode-toggle-btn {
-//     --padding-bottom: 5%; /* override Ionic default margin */
-//     --handle-background: #05FF00;
-//     --track-background-checked: #8F8F8F;
-//     --handle-background-checked: #05FF00;
-//   }
-
 .left-column {
   width: 25%;
   display: flex;
@@ -211,22 +195,63 @@ ion-toggle::part(handle) {
   background-color: #05FF00; /* Set the handle color to green */
 }
 
-.content-row {
-  display: flex;
-  align-items: center;
-  margin-top: 3%;
-  // width: 100%;
+.general-row-one {
+  height: 10vh;
+  // flex-direction: row;
 }
 
-.content-title {
-  font-size: 50px;
-  margin-left: 1%;
-  font-weight: bold;
-}
-
-.content-description {
-  font-size: 20px;
-  margin-left: 1%;
+.general-row-one h1 {
   font-weight: 600;
+  font-size: 50px;
+  margin-left: 3%;
+  color: #ffffff;
 }
 
+.general-row-one p {
+  font-weight: 500;
+  font-size: 15px;
+  color: #ffffff;
+  margin-top: 3%;
+  margin-left: 3.5%;
+}
+
+.general-row-two {
+  height: 45vh;
+  // padding: 3%;
+  // padding-bottom: 3%;
+}
+
+.general-row-two h1 {
+  margin: 1% 2.5%;
+  color: #ffffff;
+}
+
+.image-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* 1x2 grid */
+  width: 60%;
+}
+
+.image-grid img {
+  // width: 100%;
+  // height: auto;
+  cursor: pointer;
+  margin-left: 2px;
+  text-align: left;
+}
+
+.image-grid img.active {
+  outline: 3px solid blue; /* Outline in blue when selected */
+}
+
+.general-row-three {
+  height: 45vh;
+}
+
+hr {
+  border: none; /* Remove the default border */
+  height: 1px; /* Set the height of the line */
+  background-color: #8F8F8F; /* Set the color of the line */
+  margin: 20px 2%; /* Add margin for spacing */
+  width: 95%;
+}

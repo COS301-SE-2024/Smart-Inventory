@@ -35,16 +35,6 @@
 			<ion-button expand="full" class="nav-button" [class.active]="selectedNavItem === 'User Permissions'" (click)="selectNavItem('User Permissions')">User Permissions</ion-button>
 			<ion-button expand="full" class="nav-button" [class.active]="selectedNavItem === 'Account'" (click)="selectNavItem('Account')">Account</ion-button>
 
-			<!-- <ion-button *ngFor="let item of navItems" class="nav-button" [class.active]="selectedNavItem === item" (click)="selectNavItem(item)">
-			{{ item }}
-			</ion-button> -->
-
-			<!-- Mode toggle -->
-			<!-- <div class="mode-toggle"> -->
-				<!-- <span class="mode-text">Light Mode</span> -->
-				<!-- <ion-toggle [(ngModel)]="darkMode" justify="space-between" class="mode-toggle-btn" color="primary" slot="end">Dark Mode</ion-toggle> -->
-			<!-- </div> -->
-
 			<!-- Mode toggle -->
 			<div class="mode-toggle">
 				<span class="mode-text">{{ darkMode ? 'Dark Mode' : 'Light Mode' }}</span>
@@ -57,14 +47,21 @@
 			<!-- Right column content goes here -->
 			<ng-container [ngSwitch]="selectedNavItem">
 				<div *ngSwitchCase="'General'">
-					<div class="general-content" style="height: calc(100% - 3%);">
-						<div class="general-row" style="height: calc(20% - 3%)">
-							<h1 class="general-title">General</h1>
-							<p>Update Application Preferences</p>
+					<div class="general-row-one">
+						<h1 class="general-title">General</h1>
+						<p>Update Application Preferences</p>
+						<hr>
+					</div>
+					<div class="general-row-two">
+						<h1>Select Themes</h1>
+						<div class="image-grid">
+						  <img src="assets/images/light-mode.png" alt="Light Mode" [class.active]="selectedImage === 1" (click)="selectImage(1)">
+						  <img src="assets/images/light-mode.png" alt="Light Mode" [class.active]="selectedImage === 2" (click)="selectImage(2)">
 						</div>
-						<div class="general-row" style="height: calc(40% - 3%)">General Content Row 2</div>
-						<div class="general-row" style="height: calc(40% - 3%)">General Content Row 3</div>
-					  </div>
+					  </div>					  
+					<div class="general-row-three">
+						Ehlo
+					</div>
 				</div>
 				<div *ngSwitchCase="'Preferences'">Content for Preferences</div>
 				<div *ngSwitchCase="'Notifications'">Content for Notifications</div>

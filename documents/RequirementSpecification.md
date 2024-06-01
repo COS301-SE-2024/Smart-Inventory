@@ -448,7 +448,6 @@ In the world of inventory management, reliable suppliers are a cornerstone of su
   <li>
     Enable the export of reports in various formats (e.g., CSV, PDF, Excel) for further analysis or sharing
   </li>
-</br>
 <li>
   Allow anlytics for various reports.
 </li>

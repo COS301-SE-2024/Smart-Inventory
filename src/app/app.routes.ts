@@ -7,6 +7,14 @@ export const routes: Routes = [
     path: '',
     component: AuthComponent,
   },
+  {
+    path: 'dashboard',
+    loadChildren: () => import('./pages/dashboard/dashboard.module').then(m => m.DashboardPageModule)
+  },
+  {
+    path: 'help',
+    loadChildren: () => import('./pages/help/help.module').then(m => m.HelpPageModule)
+  }
 ];
 
 @NgModule({

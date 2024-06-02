@@ -5,7 +5,7 @@ import { Amplify } from 'aws-amplify';
 import outputs from '../../amplify_outputs.json';
 import { FormsModule } from '@angular/forms';
 import { fetchAuthSession } from 'aws-amplify/auth';
-import { CognitoIdentityProviderClient, AdminCreateUserCommand, AdminAddUserToGroupCommand, AdminUpdateUserAttributesCommand, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
+import { CognitoIdentityProviderClient, AdminCreateUserCommand, AdminAddUserToGroupCommand, AdminUpdateUserAttributesCommand, GetUserCommand, ListUsersCommand } from '@aws-sdk/client-cognito-identity-provider';
 import { CognitoIdentityClient } from '@aws-sdk/client-cognito-identity';
 import { fromCognitoIdentityPool } from '@aws-sdk/credential-provider-cognito-identity';
 Amplify.configure(outputs);
@@ -46,7 +46,13 @@ export class AppComponent {
         identityPoolId: identityPoolId,
       });
 
-      const client = new CognitoIdentityProviderClient({ region, credentials });
+      const client = new CognitoIdentityProviderClient({
+        region: "us-east-1",
+        credentials: {
+          accessKeyId: "",
+          secretAccessKey: "",
+        },
+      });
 
       // Retrieve the custom attribute using GetUserCommand
       const getUserCommand = new GetUserCommand({
@@ -58,30 +64,41 @@ export class AppComponent {
         (attr) => attr.Name === 'custom:tenderID'
       )?.Value;
     
-      await signUp({
-        username: formData.email,
-        password: "passWord1!",
-        options: {
-          userAttributes: {
-            email: formData.email,
-            family_name: formData.surname, 
-            given_name: formData.name,
-            'custom:tenderID': adminUniqueAttribute
-          },
-        }
-      });
+      // await signUp({
+      //   username: formData.email,
+      //   password: "passWord1!",
+      //   options: {
+      //     userAttributes: {
+      //       email: formData.email,
+      //       family_name: formData.surname, 
+      //       given_name: formData.name,
+      //       'custom:tenderID': adminUniqueAttribute
+      //     },
+      //   }
+      // });
 
-      // Add the user to the selected group with AdminAddUserToGroupCommand
-     const addUserToGroupCommand = new AdminAddUserToGroupCommand({
+    // const addToGroupCommand = new AdminAddUserToGroupCommand({
+    //   GroupName: formData.group,
+    //   Username: formData.name,
+    //   UserPoolId: outputs.auth.user_pool_id,
+    // });
+    // await client.send(addToGroupCommand);
+
+    const listUsersCommand = new ListUsersCommand({
       UserPoolId: outputs.auth.user_pool_id,
-      Username:  formData.email,
-      GroupName: formData.role
-     });
-     await client.send(addUserToGroupCommand);
+    });
+
+    const listUsersResponse = await client.send(listUsersCommand);
+    const users = listUsersResponse.Users;
+
+    console.log('List of users:', users);
   
       console.log('User created and added to the group successfully');
     } catch (error) {
       console.error('Error creating user and adding to group:', error);
     }
   }
+
+
+
 }

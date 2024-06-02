@@ -1,12 +1,21 @@
 import { Component, OnInit } from '@angular/core';
 
+// Define the User interface here
+interface User {
+  siNo: number;
+  name: string;
+  username: string;
+  mobile: string;
+  role: string;
+  status: string;
+}
+
 @Component({
   selector: 'app-settings',
   templateUrl: './settings.page.html',
   styleUrls: ['./settings.page.scss'],
 })
 export class SettingsPage implements OnInit {
-
   userName: string;
   userRole: string;
 
@@ -32,14 +41,21 @@ export class SettingsPage implements OnInit {
   passwordEditable: boolean = false;
   showPassword: boolean = false;
 
+  currentPage: number = 1;
+  totalPages: number = 1;
+
+  users: User[] = [
+    { siNo: 1, name: 'John Doe', username: 'johndoe', mobile: '123456789', role: 'Employee', status: 'Active' },
+    { siNo: 2, name: 'Jane Smith', username: 'janesmith', mobile: '987654321', role: 'Inventory Controller', status: 'Disabled' },
+    // Add more user objects as needed
+  ];
+
   constructor() {
     this.userName = "John";
     this.userRole = "Admin";
   }
 
-  ngOnInit() {
-
-  }
+  ngOnInit() { }
 
   showUserProfile() {
     console.log("User Profile: ", this.userName, this.userRole);
@@ -49,9 +65,7 @@ export class SettingsPage implements OnInit {
     this.selectedNavItem = item;
   }
 
-  onSave() {
-
-  }
+  onSave() { }
 
   selectedTheme: 'light' | 'dark' = 'dark'; // Default to 'dark'
 
@@ -61,9 +75,7 @@ export class SettingsPage implements OnInit {
     console.log('Theme selected:', theme);
   }
 
-  onCancel() {
-
-  }
+  onCancel() { }
 
   validateMobileNumber(event: any) {
     const regex = /^\(\+27\) \d{2} \d{3} \d{4}$/;
@@ -89,4 +101,36 @@ export class SettingsPage implements OnInit {
     this.passwordEditable = !this.passwordEditable;
   }
 
+  viewNotifications() {
+    // Implement view notifications logic
+  }
+
+  showProfileDropdown() {
+    // Implement show profile dropdown logic
+  }
+
+  addUser() {
+    // Implement add user logic
+  }
+
+  editUser(user: User) {
+    // Implement edit user logic
+  }
+
+  prevPage() {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+    }
+  }
+
+  nextPage() {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+    }
+  }
+
+  lastPage() {
+    this.currentPage = this.totalPages;
+  }
 }
+

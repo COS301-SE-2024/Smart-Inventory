@@ -24,8 +24,8 @@ The document aims to provide a clear roadmap for developers to translate the vis
 ### Dashboard
 
 <div style="text-align: center;">
-    <img src="/media/wireframes/Dashboard-dark.png" alt="Dashboard-dark">
-    <img src="/media/wireframes/Dashboard-light.png" alt="Dashboard-light">
+    <img src="/media/wireframes/Dashboard_dark.png" alt="Dashboard-dark">
+    <img src="/media/wireframes/Dashboard_light.png" alt="Dashboard-light">
 </div>
 
 ### Orders

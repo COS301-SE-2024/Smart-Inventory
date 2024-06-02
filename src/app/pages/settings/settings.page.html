@@ -97,10 +97,148 @@
 						</div>
 
 					</div>
-					<div *ngSwitchCase="'Preferences'">Content for Preferences</div>
-					<div *ngSwitchCase="'Notifications'">Content for Notifications</div>
-					<div *ngSwitchCase="'User Permissions'">Content for User Permissions</div>
-					<div *ngSwitchCase="'Account'">Content for Account</div>
+					<div *ngSwitchCase="'Preferences'">
+						<div class="general-settings">
+							<h1>Preferences</h1>
+							<p>Update Application Preferences</p>
+							<hr>
+						</div>
+					</div>
+
+					<!-- <div *ngSwitchCase="'Notifications'">
+						<div class="general-settings">
+							<h1>Notifications</h1>
+							<p>Get notified on what’s happening, you turn notifications on or off at any time</p>
+							<hr>
+						</div>
+					</div> -->
+
+					<div *ngSwitchCase="'Notifications'">
+						<div class="general-settings">
+						  <h1>Notifications</h1>
+						  <p>Get notified on what’s happening, you can turn notifications on or off at any time</p>
+						  <hr>
+					  
+						  <!-- First 50% Row -->
+						  <div class="notification-settings first-half">
+							<!-- First Sub-Row -->
+							<div class="notification-row">
+							  <div class="notification-column">
+								<p class="semi-bold">Email Notifications</p>
+							  </div>
+							  <div class="notification-column">
+								<div class="mode-toggle">
+								  <ion-toggle [(ngModel)]="notification1" mode="ios" class="mode-toggle-btn"></ion-toggle>
+								  <span class="mode-text">{{ notification1 ? 'On' : 'Off' }}</span>
+								</div>
+							  </div>
+							  <div class="notification-column">
+								<ion-select [disabled]="!notification1" interface="popover" placeholder="Select Option">
+									<ion-select-option value="option1">Daily</ion-select-option>
+									<ion-select-option value="option2">Weekly</ion-select-option>
+									<ion-select-option value="option3">Immediate</ion-select-option>
+								</ion-select>
+							  </div>
+							</div>
+					  
+							<!-- Second Sub-Row -->
+							<div class="notification-row">
+							  <div class="notification-column">
+								<p class="semi-bold">SMS Notifications</p>
+							  </div>
+							  <div class="notification-column">
+								<div class="mode-toggle">
+								  <ion-toggle [(ngModel)]="notification2" mode="ios" class="mode-toggle-btn"></ion-toggle>
+								  <span class="mode-text">{{ notification2 ? 'On' : 'Off' }}</span>
+								</div>
+							  </div>
+							  <div class="notification-column">
+								<ion-select [disabled]="!notification2" interface="popover" placeholder="Select Option">
+									<ion-select-option value="option1">Daily</ion-select-option>
+									<ion-select-option value="option2">Weekly</ion-select-option>
+									<ion-select-option value="option3">Immediate</ion-select-option>
+								</ion-select>
+							  </div>
+							</div>
+					  
+							<!-- Third Sub-Row -->
+							<div class="notification-row">
+							  <div class="notification-column">
+								<p class="semi-bold">Push Notifications</p>
+							  </div>
+							  <div class="notification-column">
+								<div class="mode-toggle">
+								  <ion-toggle [(ngModel)]="notification3" mode="ios" class="mode-toggle-btn"></ion-toggle>
+								  <span class="mode-text">{{ notification3 ? 'On' : 'Off' }}</span>
+								</div>
+							  </div>
+							  <div class="notification-column">
+								<ion-select [disabled]="!notification3" interface="popover" placeholder="Select Option">
+								  <ion-select-option value="option1">Daily</ion-select-option>
+								  <ion-select-option value="option2">Weekly</ion-select-option>
+								  <ion-select-option value="option3">Immediate</ion-select-option>
+								</ion-select>
+							  </div>
+							</div>
+						  </div>
+					  
+						  <!-- Second 50% Row -->
+						  <div class="notification-settings second-half">
+							<h3 style="font-size: 2.5em; font-weight: 600;">Notification Triggers</h3>
+							<!-- First Sub-Row -->
+							<div class="notification-item">
+							  <ion-checkbox slot="start"></ion-checkbox>
+							  <div class="notification-text">
+								<h3>Low Stock</h3>
+								<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+							  </div>
+							</div>
+					  
+							<!-- Second Sub-Row -->
+							<div class="notification-item">
+							  <ion-checkbox slot="start"></ion-checkbox>
+							  <div class="notification-text">
+								<h3>New Inventory Added</h3>
+								<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+							  </div>
+							</div>
+					  
+							<!-- Third Sub-Row -->
+							<div class="notification-item">
+							  <ion-checkbox slot="start"></ion-checkbox>
+							  <div class="notification-text">
+								<h3>Inventory Update</h3>
+								<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+							  </div>
+							</div>
+					  
+							<!-- Fourth Sub-Row -->
+							<div class="notification-item">
+							  <ion-checkbox slot="start"></ion-checkbox>
+							  <div class="notification-text">
+								<h3>Inventory Update</h3>
+								<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+							  </div>
+							</div>
+						  </div>
+						</div>
+					  </div>
+					  
+
+					<div *ngSwitchCase="'User Permissions'">
+						<div class="general-settings">
+							<h1>User Permissions</h1>
+							<p>Update User Permissions</p>
+							<hr>
+						</div>
+					</div>
+					<div *ngSwitchCase="'Account'">
+						<div class="general-settings">
+							<h1>Account</h1>
+							<p>Update Account Preferences</p>
+							<hr>
+						</div>
+					</div>
 					<div *ngSwitchDefault>Select an option to see the content</div>
 				</ng-container>
 			</div>

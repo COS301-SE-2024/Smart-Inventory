@@ -17,8 +17,8 @@ The document aims to provide a clear roadmap for developers to translate the vis
 </div>
 
 <div style="text-align: center;">
-    <img src="/media/wireframes/SignIn-dark.png" alt="SignIn-dark">
-    <img src="/media/wireframes/SignIn-light.png" alt="SignIn-light">
+    <img src="/media/wireframes/SignIn_dark.png" alt="SignIn-dark">
+    <img src="/media/wireframes/SignIn_light.png" alt="SignIn-light">
 </div>
 
 ### Dashboard

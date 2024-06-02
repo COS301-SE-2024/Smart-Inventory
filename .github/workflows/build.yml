@@ -33,20 +33,16 @@ jobs:
           node-version: '18.19.0'
 
       - name: Install dependencies
-        run:  |
+        run: |
           npm ci
 
-      - name: Build Codebase
-        run:  |
-          npm run build --configuration=production
+      - name: Run Tests
+        run: |
+          npm run test
 
-          - name: Run Tests
-          run: |
-            npm run test
-  
-        - name: Build Codebase
-          run: |
-            npm run build
+      - name: Build Codebase
+        run: |
+          npm run build
 
   end:
     name: The end
@@ -54,6 +50,5 @@ jobs:
     needs: [start, run_tests]
     steps:
       - name: Ending
-        id: init
         run: |
           echo "${{ github.repository }} has been successfully built"

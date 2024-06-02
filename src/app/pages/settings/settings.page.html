@@ -217,11 +217,84 @@
 					  </div>
 					  
 
-					<div *ngSwitchCase="'User Permissions'">
+					<!-- <div *ngSwitchCase="'User Permissions'">
 						<div class="general-settings">
 							<h1>User Permissions</h1>
 							<p>Update User Permissions</p>
 							<hr>
+						</div>
+					</div> -->
+
+					<div *ngSwitchCase="'User Permissions'">
+						<div class="general-settings">
+						  <div class="header-row">
+							<h1>User Permissions</h1>
+							<div class="icons-container">
+							  <ion-button id="notification-button" (click)="viewNotifications()" clear>
+								<!-- <ion-icon name="notifications-sharp" class="icon-large"> -->
+								<!-- <ion-icon name="notifications"> -->
+								  <!-- <ion-badge id="notifications-badge" color="danger">3</ion-badge> -->
+								<!-- </ion-icon> -->
+								<div class="notification-icon-container">
+									<ion-icon name="notifications-sharp" class="icon-large"></ion-icon>
+									<ion-badge id="notifications-badge" color="danger">3</ion-badge>
+								</div>
+							  </ion-button>
+							  <ion-button id="profile-button" (click)="showProfileDropdown()" clear>
+								<ion-icon class="icon-large" name="person-circle-outline"></ion-icon>
+							  </ion-button>
+							</div>
+						  </div>
+						  <hr>
+						  <div class="row search-filter-row">
+							<ion-searchbar placeholder="Search"></ion-searchbar>
+							<ion-searchbar placeholder="Filter"></ion-searchbar>
+							<ion-button (click)="addUser()">
+							  <!-- <ion-icon name="add-circle-outline"></ion-icon> -->
+							  <ion-icon class="icon-large" name="person-add-sharp"></ion-icon>
+							</ion-button>
+						  </div>
+						  <ion-grid>
+							<ion-row class="table-header-row">
+							  <ion-col>SI. No</ion-col>
+							  <ion-col>Name</ion-col>
+							  <ion-col>Username</ion-col>
+							  <ion-col>Mobile Number</ion-col>
+							  <ion-col>Role</ion-col>
+							  <ion-col>Status</ion-col>
+							  <ion-col></ion-col>
+							</ion-row>
+							<ion-row *ngFor="let user of users; let i = index" [class.odd]="i % 2 === 0" [class.even]="i % 2 !== 0">
+							  <ion-col>{{ user.siNo }}</ion-col>
+							  <ion-col>{{ user.name }}</ion-col>
+							  <ion-col>{{ user.username }}</ion-col>
+							  <ion-col>{{ user.mobile }}</ion-col>
+							  <ion-col>
+								<ion-select interface="popover" [(ngModel)]="user.role">
+								  <ion-select-option value="Employee">Employee</ion-select-option>
+								  <ion-select-option value="Inventory Controller">Inventory Controller</ion-select-option>
+								</ion-select>
+							  </ion-col>
+							  <ion-col>
+								<ion-select interface="popover" [(ngModel)]="user.status">
+								  <ion-select-option value="Active">Active</ion-select-option>
+								  <ion-select-option value="Disabled">Disabled</ion-select-option>
+								</ion-select>
+							  </ion-col>
+							  <ion-col>
+								<ion-button (click)="editUser(user)">
+								  <ion-icon name="create-outline"></ion-icon>
+								</ion-button>
+							  </ion-col>
+							</ion-row>
+						  </ion-grid>
+						  <div class="pagination">
+							<ion-button (click)="prevPage()">First</ion-button>
+							<ion-button (click)="prevPage()">Previous</ion-button>
+							<span>Page {{currentPage}} of {{totalPages}}</span>
+							<ion-button (click)="nextPage()">Next</ion-button>
+							<ion-button (click)="lastPage()">Last</ion-button>
+						  </div>
 						</div>
 					</div>
 

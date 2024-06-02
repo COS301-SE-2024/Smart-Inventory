@@ -8,6 +8,10 @@ const routes: Routes = [
     component: LoginCreateAccountComponent,
   },
   {
+    path: '',
+    component: LoginCreateAccountComponent,
+  },
+  {
     path: 'dashboard',
     loadChildren: () => import('./pages/dashboard/dashboard.module').then(m => m.DashboardPageModule)
   },
@@ -26,5 +30,8 @@ const routes: Routes = [
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule],
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule],
 })
+export class AppRoutingModule { }
 export class AppRoutingModule { }

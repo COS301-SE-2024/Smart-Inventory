@@ -191,12 +191,12 @@ ion-select {
 }
 
 .first-row {
-  height: 15%;
+  height: 10%;
   flex-direction: row;
 }
 
 .second-row {
-  height: 85%;
+  height: 90%;
   padding: 3%;
   // padding-bottom: 3%;
 }
@@ -204,13 +204,13 @@ ion-select {
 .settings-title {
   font-size: 70px;
   margin-left: 10%;
-  width: 70%;
+  width: 90%;
   text-align: left;
   margin-top: 1%;
 }
 
 .buttons-container {
-  width: 30%;
+  width: 10%;
   display: flex;
   justify-content: space-between;
   margin-right: 10%;
@@ -218,6 +218,7 @@ ion-select {
 
 .save-button {
   --background: #05FF00;
+  margin-right: 30px;
 }
 
 .cancel-button {
@@ -246,7 +247,9 @@ ion-select {
 
 .right-column {
   width: 75%;
-  // margin: 7%;
+  overflow-y: auto; /* Enable vertical scrolling */
+  height: 600px; /* Adjust this value based on your header and other content heights */
+  padding: 1em; /* Optional: Add some padding */
 }
 
 .vertical-line {
@@ -408,3 +411,85 @@ hr {
   /* Add margin for spacing */
   width: 95%;
 }
+
+////////////////////////////////////////////////////////////////////////////////////////
+
+.notification-settings {
+  // height: 50%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+.notification-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.notification-column {
+  width: 33%;
+  display: flex;
+  align-items: center;
+}
+
+.notification-column p.semi-bold {
+  font-weight: 600;
+  margin-left: 1em;
+}
+
+.mode-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+}
+
+.notification-item {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 1em;
+  margin-top: 20px;
+}
+
+.notification-item ion-checkbox {
+  --checkbox-background-checked: #05FF00;
+  --border-radius: 5px;
+  --size: 30px;
+}
+
+.notification-item ion-checkbox::part(container) {
+  border-radius: 6px;
+  border: 2px solid #05FF00;
+}
+
+.notification-text {
+  
+  width: 95%;
+}
+
+.notification-text h3 {
+  margin: 0;
+  margin-left: 40px;
+  font-weight: 600;
+  font-size: 1.5em;
+}
+
+.notification-text p {
+  margin: 0;
+  margin-left: 20px;
+  font-size: 0.875em;
+}
+
+.first-half {
+  // margin-top: 50px;
+  height: 50vh;
+}
+
+.second-half {
+  margin-top: 50px;
+  height: 50vh;
+}
+

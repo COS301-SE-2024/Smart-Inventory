@@ -23,6 +23,10 @@ export class SettingsPage implements OnInit {
     this.selectedImage = this.selectedImage === imageNumber ? null : imageNumber;
   }
 
+  notification1: boolean = false;
+  notification2: boolean = false;
+  notification3: boolean = false;
+
   constructor() {
     this.userName = "John";
     this.userRole = "Admin";

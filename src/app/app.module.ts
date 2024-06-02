@@ -21,6 +21,8 @@ import { LoginCreateAccountComponent } from './pages/loginCreateAccount/loginCre
 import { AppComponent } from './app.component';
 import { addIcons } from 'ionicons';
 import * as allIcons from 'ionicons/icons';
+import { LayoutModule } from '@angular/cdk/layout';
+import { SideNavbarComponent } from './layout/side-navbar/side-navbar.component';
 
 addIcons(allIcons);
 
@@ -28,7 +30,7 @@ addIcons(allIcons);
 addIcons(allIcons);
 
 @NgModule({
-    declarations: [AppComponent, LoginCreateAccountComponent],
+    declarations: [AppComponent, LoginCreateAccountComponent, SideNavbarComponent],
     imports: [
         BrowserModule,
         IonicModule.forRoot(),
@@ -45,6 +47,7 @@ addIcons(allIcons);
         MatCheckboxModule,
         MatSlideToggleModule,
         MatSnackBarModule,
+        LayoutModule,
     ],
     providers: [
         provideIonicAngular(),

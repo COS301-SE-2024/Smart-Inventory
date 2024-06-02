@@ -20,14 +20,14 @@ export const handler: PostConfirmationTriggerHandler = async (event) => {
   await client.send(addToGroupCommand);
 
   // Generate a unique value for the custom attribute
-  const uniqueValue = generateUniqueValue();
+  const tenderID = generateUniqueValue();
 
   // Update the custom attribute with the unique value
   const updateAttributesCommand = new AdminUpdateUserAttributesCommand({
     UserAttributes: [
       {
         Name: 'custom:unique_attribute',
-        Value: uniqueValue,
+        Value: tenderID,
       },
     ],
     Username: userName,

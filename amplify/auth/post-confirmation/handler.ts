@@ -26,7 +26,7 @@ export const handler: PostConfirmationTriggerHandler = async (event) => {
   const updateAttributesCommand = new AdminUpdateUserAttributesCommand({
     UserAttributes: [
       {
-        Name: 'custom:unique_attribute',
+        Name: 'custom:tenderID',
         Value: tenderID,
       },
     ],

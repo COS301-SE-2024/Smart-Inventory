@@ -27,7 +27,7 @@ export class FinancialStatsComponent implements OnInit {
 
   public chartOptions: ChartOptions;
 
-  constructor() { 
+  constructor() {
     this.chartOptions = {
       series: [
         {
@@ -52,13 +52,28 @@ export class FinancialStatsComponent implements OnInit {
         }
       },
       dataLabels: {
-        enabled: false
+        enabled: false,
+        style: {
+          colors: ['#FFF'] // Sets data label colors to white
+        }
       },
       xaxis: {
         type: 'category',
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug']
+        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
+        labels: {
+          style: {
+            colors: '#FFF', // Sets x-axis label colors to white
+            fontSize: '14px', // Optionally adjust the font size
+            fontFamily: 'Helvetica, Arial, sans-serif' // Optionally adjust the font family
+          }
+        }
       },
       tooltip: {
+        theme: 'dark', // This often works to ensure light text on dark backgrounds
+        style: {
+          fontSize: '12px',
+          fontFamily: 'Helvetica, Arial, sans-serif'
+        },
         x: {
           format: 'dd/MM/yy HH:mm'
         }

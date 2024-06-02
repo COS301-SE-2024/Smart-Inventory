@@ -232,13 +232,61 @@
 							<hr>
 						</div>
 					</div>
-					<div *ngSwitchCase="'Account'">
+					<!-- <div *ngSwitchCase="'Account'">
 						<div class="general-settings">
 							<h1>Account</h1>
 							<p>Update Account Preferences</p>
 							<hr>
 						</div>
-					</div>
+					</div> -->
+
+					<div *ngSwitchCase="'Account'">
+						<div class="general-settings">
+						  <h1>Account</h1>
+						  <p>Update Account Preferences</p>
+						  <hr>
+						  <div class="account-settings">
+							 <!-- Edit Profile Section -->
+							 <h2 class="edit-profile-title">Edit Profile</h2>
+							 <!-- Personal Details Subheading -->
+							 <h3>Personal Details</h3>
+							 <div class="form-row">
+							   <ion-input label="First Name" label-placement="floating" fill="outline" placeholder="Enter First Name"></ion-input>
+							   <ion-input label="Last Name" label-placement="floating" fill="outline" placeholder="Enter Last Name"></ion-input>
+							 </div>
+							 <div class="form-row">
+							   <ion-input label="Email Address" label-placement="floating" fill="outline" placeholder="Enter Email Address"></ion-input>
+							   <ion-input label="Mobile Number" label-placement="floating" fill="outline" placeholder="Enter Mobile Number" [ngModel]="mobileNumber" (ngModelChange)="validateMobileNumber($event)"></ion-input>
+							 </div>
+							 <!-- Address Subheading -->
+							 <h3>Address</h3>
+							 <div class="form-row">
+							   <ion-input label="Country" label-placement="floating" fill="outline" placeholder="Enter Country"></ion-input>
+							   <ion-input label="Province" label-placement="floating" fill="outline" placeholder="Enter Province"></ion-input>
+							 </div>
+							 <div class="form-row">
+							   <ion-input label="City" label-placement="floating" fill="outline" placeholder="Enter City"></ion-input>
+							   <ion-input label="Street Name" label-placement="floating" fill="outline" placeholder="Enter Street Name"></ion-input>
+							 </div>
+							 <div class="form-row">
+							   <ion-input label="Flat/Unit" label-placement="floating" fill="outline" placeholder="Enter Flat/Unit"></ion-input>
+							   <ion-input label="Zip Code" label-placement="floating" fill="outline" placeholder="Enter Zip Code" [ngModel]="zipCode" (ngModelChange)="validateZipCode($event)"></ion-input>
+							 </div>
+							 <!-- Password Subheading -->
+							 <h2 class="edit-password-title">Password</h2>
+							 <div class="password-row">
+								<div class="password-input-container">
+								  <ion-input class="password-text-field" [type]="showPassword ? 'text' : 'password'" label="Password" label-placement="floating" fill="outline" placeholder="Enter New Password" [readonly]="!passwordEditable"></ion-input>
+								</div>
+								<ion-button class="password-button" (click)="togglePasswordEditable()" expand="block">{{ passwordEditable ? 'Save Password' : 'Change Password' }}</ion-button>
+							  </div>
+							  
+						  </div>
+						 
+						</div>
+					  </div>
+					  
+
 					<div *ngSwitchDefault>Select an option to see the content</div>
 				</ng-container>
 			</div>

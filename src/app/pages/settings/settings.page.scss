@@ -493,3 +493,57 @@ hr {
   height: 50vh;
 }
 
+/////////////////////////////////////////////////////////////////////////////////
+// .general-settings {
+//   padding: 16px;
+// }
+
+.form-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.password-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.password-input-container {
+  flex: 0 0 30%; /* Span 30% */
+}
+
+.password-button {
+  background: none;
+  color: #05FF00;
+  --background: none;
+  --color: #05FF00;
+  --box-shadow: none;
+
+}
+
+ion-input {
+  flex: 1;
+}
+
+ion-button {
+  flex: 0 0 auto;
+}
+
+.edit-profile-title {
+  font-weight: 600;
+  font-size: 2em;
+}
+
+.edit-password-title {
+  margin-top: 1.5em;
+  font-weight: 600;
+  font-size: 2em;
+}
+
+.account-settings {
+  margin-left: 30px;
+}

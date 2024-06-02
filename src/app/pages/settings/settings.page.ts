@@ -27,6 +27,11 @@ export class SettingsPage implements OnInit {
   notification2: boolean = false;
   notification3: boolean = false;
 
+  mobileNumber: string = '';
+  zipCode: string = '';
+  passwordEditable: boolean = false;
+  showPassword: boolean = false;
+
   constructor() {
     this.userName = "John";
     this.userRole = "Admin";
@@ -60,5 +65,28 @@ export class SettingsPage implements OnInit {
 
   }
 
+  validateMobileNumber(event: any) {
+    const regex = /^\(\+27\) \d{2} \d{3} \d{4}$/;
+    if (!regex.test(event)) {
+      // Handle invalid mobile number
+      console.log('Invalid mobile number');
+    } else {
+      this.mobileNumber = event;
+    }
+  }
+
+  validateZipCode(event: any) {
+    const regex = /^\d{4}$/;
+    if (!regex.test(event)) {
+      // Handle invalid zip code
+      console.log('Invalid zip code');
+    } else {
+      this.zipCode = event;
+    }
+  }
+
+  togglePasswordEditable() {
+    this.passwordEditable = !this.passwordEditable;
+  }
 
 }

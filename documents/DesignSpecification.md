@@ -8,15 +8,79 @@ SmartInventory is a comprehensive web-based application designed to revolutioniz
 The document aims to provide a clear roadmap for developers to translate the vision of SmartInventory into a user-centric and efficient application.
 
 ## Wireframes
+
 ### Sign in and Create Account
-### Settings
-### Help
+
+<div style="text-align: center;">
+    <img src="/media/wireframes/CreateAcc_dark.png" alt="Create Account">
+    <img src="/media/wireframes/CreateAcc_light.png" alt="Create Account">
+</div>
+
+<div style="text-align: center;">
+    <img src="/media/wireframes/SignIn-dark.png" alt="SignIn-dark">
+    <img src="/media/wireframes/SignIn-light.png" alt="SignIn-light">
+</div>
+
 ### Dashboard
+
+<div style="text-align: center;">
+    <img src="/media/wireframes/Dashboard-dark.png" alt="Dashboard-dark">
+    <img src="/media/wireframes/Dashboard-light.png" alt="Dashboard-light">
+</div>
+
+### Orders
+
+<div style="text-align: center;">
+    <img src="/media/wireframes/Orders-dark-mode.png" alt="Orders-dark">
+    <img src="/media/wireframes/Orders-light-mode.png" alt="Orders-light">
+</div>
+
 ### Inventory
+
+<div style="text-align: center;">
+    <img src="/media/wireframes/Inventory-dark-mode.png" alt="Inventory-dark">
+    <img src="/media/wireframes/Inventory-light-mode.png" alt="Inventory-light">
+</div>
+
+### Settings
+
+<div style="text-align: center;">
+    <img src="/media/wireframes/Settings-General-dark-mode.png" alt="Settings-General-dark">
+    <img src="/media/wireframes/Settings-General-light-mode.png" alt="Settings-General-light">
+</div>
+
+<div style="text-align: center;">
+    <img src="/media/wireframes/Settings-Notifications-dark-mode.png" alt="Settings-Notifications-dark">
+    <img src="/media/wireframes/Settings-Notifications-light-mode.png" alt="Settings-Notifications-light">
+</div>
+
+<div style="text-align: center;">
+    <img src="/media/wireframes/Settings-UserPermissions-dark-mode.png" alt="Settings-UserPermissions-dark">
+    <img src="/media/wireframes/Settings-UserPermissions-light-mode.png" alt="Settings-UserPermissions-light">
+</div>
+
+<div style="text-align: center;">
+    <img src="/media/wireframes/Settings-Account-dark-mode.png" alt="Settings-Account-dark">
+    <img src="/media/wireframes/Settings-Account-light-mode.png" alt="Settings-Account-light">
+</div>
+
+<div style="text-align: center;">
+    <img src="/media/wireframes/Settings-Account-2-dark-mode.png" alt="Settings-Account-dark">
+    <img src="/media/wireframes/Settings-Account-2-light-mode.png" alt="Settings-Account-light">
+</div>
+
+### Help
+
+<div style="text-align: center;">
+    <img src="/media/wireframes/HelpAndSupportCentre-dark-mode.png" alt="HelpAndSupportCentre-dark">
+    <img src="/media/wireframes/HelpAndSupportCentre-light-mode.png" alt="HelpAndSupportCentre-light">
+</div>
+
+
 ### Reports
 ### Requests
 ### Suppliers
-### Orders
+
 
 ## Database Design
 The SmartInventory system will utilize Amazon DynamoDB, a fully managed NoSQL database service provided by Amazon Web Services (AWS). DynamoDB offers high scalability, low latency, and flexible data modeling, making it suitable for the inventory management system. The key tables and their sample data are as follows:

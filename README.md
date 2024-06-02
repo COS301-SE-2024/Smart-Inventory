@@ -158,8 +158,6 @@ Reviews focus on checking that coding standards are being followed and that any 
 * Ionic
 * Typescript
 
-<br>
-
 ### ⚙️ Backend:
 * AWS Lambda Functions
 * API Gateway

@@ -137,13 +137,13 @@ Reviews focus on checking that coding standards are being followed and that any 
 ##
 
   <a href="">
-    Recording
+    Helix - Demo 1 Recording
   </a>
   
   ##
 
   <a href="">
-    Presentation Slides
+    Helix - Demo 1 Presentation Slides
   </a>
 <hr>
 </br>
@@ -164,27 +164,19 @@ Reviews focus on checking that coding standards are being followed and that any 
 * AWS Lambda Functions
 * API Gateway
 * AWS Step Functions
-
-<br>
  
 ### ⚙️ Database:
 * AWS DynamoDB
 * AWS S3
-  
-<br>
 
 ### ⚙️ Standards
 * ESLint
 * Prettier
-  
-<br>
 
 ### ⚙️ Testing
 * Cypress
 * Postman
-
-<br>
-
+  
 ### ⚙️ Cloud
 * Amplify
 * Amplify Cloud Sandbox

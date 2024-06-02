@@ -10,7 +10,7 @@ import {
   provideIonicAngular,
 } from '@ionic/angular/standalone';
 
-import { AppRoutingModule } from './app-routing.module';
+import { AppRoutingModule } from './app.routes';
 import { ReactiveFormsModule } from '@angular/forms';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { MatInputModule } from '@angular/material/input';
@@ -32,11 +32,7 @@ import { SideNavbarComponent } from './layout/side-navbar/side-navbar.component'
 addIcons(allIcons);
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    LoginCreateAccountComponent,
-    SideNavbarComponent,
-  ],
+  declarations: [LoginCreateAccountComponent, SideNavbarComponent],
   imports: [
     BrowserModule,
     IonicModule.forRoot(),
@@ -60,6 +56,6 @@ addIcons(allIcons);
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     provideAnimationsAsync(),
   ],
-  bootstrap: [AppComponent],
+  bootstrap: [],
 })
 export class AppModule {}

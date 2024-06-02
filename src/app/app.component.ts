@@ -9,6 +9,9 @@ import { CognitoIdentityProviderClient, AdminCreateUserCommand, AdminAddUserToGr
 import { CognitoIdentityClient } from '@aws-sdk/client-cognito-identity';
 import { fromCognitoIdentityPool } from '@aws-sdk/credential-provider-cognito-identity';
 Amplify.configure(outputs);
+import { signUp } from "aws-amplify/auth"
+
+import { confirmSignUp } from 'aws-amplify/auth';
 
 @Component({
   selector: 'app-root',
@@ -27,7 +30,7 @@ export class AppComponent {
   };
 
   constructor(public authenticator: AuthenticatorService) {
-    Amplify.configure(outputs);
+    Amplify.configure(outputs,{ssr:true});
   }
 
   async onSubmit(formData: any) {
@@ -45,7 +48,6 @@ export class AppComponent {
 
       const client = new CognitoIdentityProviderClient({ region, credentials });
 
-
       // Retrieve the custom attribute using GetUserCommand
       const getUserCommand = new GetUserCommand({
         AccessToken: session.tokens?.accessToken.toString(),
@@ -55,38 +57,27 @@ export class AppComponent {
       const adminUniqueAttribute = getUserResponse.UserAttributes?.find(
         (attr) => attr.Name === 'custom:tenderID'
       )?.Value;
-  
-      console.log(adminUniqueAttribute);
-      console.log(formData);
+    
+      await signUp({
+        username: formData.email,
+        password: "passWord1!",
+        options: {
+          userAttributes: {
+            email: formData.email,
+            family_name: formData.surname, 
+            given_name: formData.name,
+            'custom:tenderID': adminUniqueAttribute
+          },
+        }
+      });
 
-      // Create the user with AdminCreateUserCommand
-      // const createUserCommand = new AdminCreateUserCommand({
-      //   UserPoolId: outputs.auth.user_pool_id,
-      //   Username: formData.email,
-      //   UserAttributes: [
-      //     {
-      //       Name: 'given_name',
-      //       Value: formData.name,
-      //     },
-      //     {
-      //       Name: 'family_name',
-      //       Value: formData.surname,
-      //     },
-      //     {
-      //       Name: 'email',
-      //       Value: formData.email,
-      //     },    
-      //   ]
-      // });
-      // await client.send(createUserCommand);
-  
-      // // Add the user to the selected group with AdminAddUserToGroupCommand
-      // const addUserToGroupCommand = new AdminAddUserToGroupCommand({
-      //   UserPoolId: outputs.auth.user_pool_id,
-      //   Username: this.user.email,
-      //   GroupName: this.user.role
-      // });
-      // await client.send(addUserToGroupCommand);
+      // Add the user to the selected group with AdminAddUserToGroupCommand
+     const addUserToGroupCommand = new AdminAddUserToGroupCommand({
+      UserPoolId: outputs.auth.user_pool_id,
+      Username:  formData.email,
+      GroupName: formData.role
+     });
+     await client.send(addUserToGroupCommand);
   
       console.log('User created and added to the group successfully');
     } catch (error) {

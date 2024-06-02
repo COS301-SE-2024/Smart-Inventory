@@ -1,0 +1,105 @@
+<ion-header [translucent]="true">
+    <ion-toolbar>
+        <ion-buttons slot="end">
+            <ion-button (click)="showUserProfile()" class="user-profile-button">
+                <ion-icon name="person-circle-outline" size="large"></ion-icon>
+                <ion-label>
+                    <h3>{{ userName }}</h3>
+                    <p>{{ userRole }}</p>
+                </ion-label>
+            </ion-button>
+        </ion-buttons>
+        <ion-searchbar show-clear-button="always" placeholder="Always Show"></ion-searchbar>
+        <!-- Other toolbar content -->
+    </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <!-- First Row -->
+    <div class="row first-row">
+        <h1 class="settings-title">Settings</h1>
+        <div class="buttons-container">
+            <ion-button class="save-button" size="large" (click)="onSave()">Save</ion-button>
+            <ion-button class="cancel-button" size="large" (click)="onCancel()">Cancel</ion-button>
+        </div>
+    </div>
+
+    <!-- Second Row -->
+    <div class="row second-row">
+        <ion-card class="settings-card">
+            <div class="left-column">
+
+                <ion-button expand="full" class="nav-button" [class.active]="selectedNavItem === 'General'"
+                    (click)="selectNavItem('General')">FAQs</ion-button>
+                <ion-button expand="full" class="nav-button" [class.active]="selectedNavItem === 'Preferences'"
+                    (click)="selectNavItem('Preferences')">User Guides</ion-button>
+                <ion-button expand="full" class="nav-button" [class.active]="selectedNavItem === 'Notifications'"
+                    (click)="selectNavItem('Notifications')">Troubleshooting</ion-button>
+                <ion-button expand="full" class="nav-button" [class.active]="selectedNavItem === 'User Permissions'"
+                    (click)="selectNavItem('User Permissions')">Contact Support</ion-button>
+                <ion-button expand="full" class="nav-button" [class.active]="selectedNavItem === 'Account'"
+                    (click)="selectNavItem('Account')">Realse Notes</ion-button>
+
+                <!-- Mode toggle -->
+                <div class="mode-toggle">
+                    <span class="mode-text">{{ darkMode ? 'Dark Mode' : 'Light Mode' }}</span>
+                    <ion-toggle [(ngModel)]="darkMode" mode="ios" class="mode-toggle-btn" slot="end"></ion-toggle>
+                </div>
+
+            </div>
+            <div class="vertical-line"></div>
+            <div class="right-column">
+                <!-- Right column content goes here -->
+                <ng-container [ngSwitch]="selectedNavItem">
+                    <div *ngSwitchCase="'General'">
+                        <ion-content class="mainFAQ">
+                            <h2 class="faq-title">FAQs</h2> <!-- Title added -->
+                            <ion-accordion-group [value]="defaultAccordion">
+                                <ion-accordion value="item1">
+                                    <ion-item slot="header" class="accordion-header">
+                                        <ion-label>Lorem ipsum dolor sit amet, consectetur adipiscing?</ion-label>
+                                    </ion-item>
+                                    <ion-content slot="content" class="ion-padding accordion-content">
+                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+                                        incididunt ut labore et dolore magna aliqua.
+                                    </ion-content>
+                                </ion-accordion>
+                                <ion-accordion value="item2">
+                                    <ion-item slot="header" class="accordion-header">
+                                        <ion-label>Lorem ipsum dolor sit amet?</ion-label>
+                                    </ion-item>
+                                    <ion-content slot="content" class="ion-padding accordion-content">
+                                        Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+                                        aliquip ex ea commodo consequat.
+                                    </ion-content>
+                                </ion-accordion>
+                                <!-- Additional accordions can be added following the same format -->
+                            </ion-accordion-group>
+                        </ion-content>
+
+                    </div>
+
+                    <div *ngSwitchCase="'Preferences'">Content for Preferences</div>
+                    <div *ngSwitchCase="'Notifications'">Content for Notifications</div>
+                    <div *ngSwitchCase="'User Permissions'">Content for User Permissions</div>
+                    <div *ngSwitchCase="'Account'">Content for Account</div>
+                    <div *ngSwitchDefault>Select an option to see the content</div>
+                    <ion-row class="contact-section-wrapper">
+                        <div class="contact-section">
+                            <div class="contact-description">
+                                <h2>Still Have Questions?</h2>
+                                <p>Can't find what you're looking for? Get in touch with our friendly help service.</p>
+                            </div>
+                            <ion-button class="contact-button" (click)="contactSupport()">Get in Touch</ion-button>
+                        </div>
+
+                    </ion-row>
+                </ng-container>
+
+
+            </div>
+
+        </ion-card>
+
+    </div>
+</ion-content>

@@ -1,0 +1,209 @@
+<ion-header [translucent]="true">
+    <ion-toolbar>
+        <ion-buttons slot="end">
+            <ion-button (click)="showUserProfile()" class="user-profile-button">
+                <ion-icon name="person-circle-outline" size="large"></ion-icon>
+                <ion-label>
+                    <h3>{{ userName }}</h3>
+                    <p>{{ userRole }}</p>
+                </ion-label>
+            </ion-button>
+        </ion-buttons>
+        <ion-title class="dashboard-header">Dashboard</ion-title>
+        <!-- Other toolbar content -->
+    </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+    <ion-grid>
+        <ion-row>
+            <ion-col>
+                <ion-card class="equal-height">
+                    <ion-card-header>
+                        <ion-row class="center-align">
+                            <ion-col size="6" class="center-content">
+                                <ion-card-title>Team Name</ion-card-title>
+                            </ion-col>
+                            <ion-col size="6" class="center-content">
+                                <ion-button id="open-custom-dialog">Add Team Members</ion-button>
+                            </ion-col>
+                            <ion-modal id="example-modal" class="add-member-modal" trigger="open-custom-dialog">
+                                <ng-template>
+                                    <div class="modal-wrapper">
+                                        <ion-header>
+                                            <ion-toolbar>
+                                                <ion-title class="ion-text-center">Add Members</ion-title>
+                                            </ion-toolbar>
+                                        </ion-header>
+                                        <ion-content>
+                                            <ion-list lines="none">
+                                                <ion-item *ngFor="let member of members" button="true" detail="false">
+                                                    <ion-checkbox slot="start"
+                                                        [(ngModel)]="member.selected"></ion-checkbox>
+                                                    <ion-avatar slot="start">
+                                                        <img src="https://via.placeholder.com/50">
+                                                    </ion-avatar>
+                                                    <ion-label>{{ member.name }} - {{ member.role }}</ion-label>
+                                                </ion-item>
+                                            </ion-list>
+                                        </ion-content>
+                                        <ion-footer>
+                                            <ion-toolbar>
+                                                <ion-buttons slot="start">
+                                                    <ion-button (click)="dismissModal()">Close</ion-button>
+                                                </ion-buttons>
+                                                <ion-buttons slot="end">
+                                                    <ion-button (click)="saveSelection()">Save</ion-button>
+                                                </ion-buttons>
+                                            </ion-toolbar>
+                                        </ion-footer>
+                                    </div>
+                                </ng-template>
+                            </ion-modal>
+
+
+                        </ion-row>
+                    </ion-card-header>
+                </ion-card>
+            </ion-col>
+            <ion-col>
+                <ion-card class="equal-height">
+                    <ion-card-header>
+                        <ion-row class="center-align">
+                            <ion-col class="center-content">
+                                <ion-card-title>Summary</ion-card-title>
+                            </ion-col>
+                        </ion-row>
+                    </ion-card-header>
+                </ion-card>
+            </ion-col>
+            <ion-col>
+                <ion-card class="equal-height">
+                    <ion-card-header class="center-align quick-actions-card">
+                        <ion-card-title>Quick Actions</ion-card-title>
+                    </ion-card-header>
+                </ion-card>
+            </ion-col>
+        </ion-row>
+        <ion-row class="close">
+            <ion-col>
+                <ion-card class="section">
+                    <ion-list>
+                        <ion-item *ngFor="let member of teamMembers" class="team-member" lines="none">
+                            <ion-avatar slot="start">
+                                <ion-icon name="person-circle-outline" size="large"></ion-icon>
+                            </ion-avatar>
+                            <ion-label style="margin-right: auto">
+                                <h4>{{ member.name }}</h4>
+                                <p>{{ member.role }}</p>
+                            </ion-label>
+                            <ion-buttons slot="end" style="margin-left: auto">
+                                <ion-button size="medium">Activity</ion-button>
+                                <ion-button size="medium" color="danger"
+                                    (click)="removeMember(member)">Remove</ion-button>
+                            </ion-buttons>
+                        </ion-item>
+                    </ion-list>
+                </ion-card>
+            </ion-col>
+            <ion-col>
+                <ion-grid>
+                    <ion-row style="position: relative; top: 50px">
+                        <ion-col>
+                            <ion-card class="summary-card">
+                                <ion-card-content>
+                                    <h4>1000</h4>
+                                    <p>temp</p>
+                                </ion-card-content>
+                            </ion-card>
+                        </ion-col>
+                        <ion-col>
+                            <ion-card class="summary-card">
+                                <ion-card-content>
+                                    <h4>1000</h4>
+                                    <p>temp</p>
+                                </ion-card-content>
+                            </ion-card>
+                        </ion-col>
+                        <ion-col>
+                            <ion-card class="summary-card">
+                                <ion-card-content>
+                                    <h4>1000</h4>
+                                    <p>temp</p>
+                                </ion-card-content>
+                            </ion-card>
+                        </ion-col>
+                    </ion-row>
+                </ion-grid>
+            </ion-col>
+            <ion-col>
+                <ion-card class="actions">
+                    <ion-list>
+                        <ion-item lines="none">
+                            <ion-avatar slot="start">
+                                <ion-icon name="person-add-outline" size="large"></ion-icon>
+                            </ion-avatar>
+                            <ion-label>
+                                <h4>Add Member</h4>
+                            </ion-label>
+                        </ion-item>
+
+                        <ion-item lines="none">
+                            <ion-avatar slot="start">
+                                <ion-icon name="clipboard-outline" size="large"></ion-icon>
+                            </ion-avatar>
+                            <ion-label>
+                                <h4>Create Order</h4>
+                            </ion-label>
+                        </ion-item>
+
+                        <ion-item lines="none">
+                            <ion-avatar slot="start">
+                                <ion-icon name="cube-outline" size="large"></ion-icon>
+                            </ion-avatar>
+                            <ion-label>
+                                <h4>Add Product</h4>
+                            </ion-label>
+                        </ion-item>
+                        <ion-item lines="none">
+                            <ion-avatar slot="start">
+                                <ion-icon name="car-outline" size="large"></ion-icon>
+                            </ion-avatar>
+                            <ion-label>
+                                <h4>Add Supplier</h4>
+                            </ion-label>
+                        </ion-item>
+                        <ion-item lines="none">
+                            <ion-avatar slot="start">
+                                <ion-icon name="arrow-up-circle-outline" size="large"></ion-icon>
+                            </ion-avatar>
+                            <ion-label>
+                                <h4>Add Export</h4>
+                            </ion-label>
+                        </ion-item>
+                    </ion-list>
+                </ion-card>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
+    <ion-row>
+        <ion-col size="12">
+            <ion-card class="stock-report">
+                <ion-card-header>
+                    <ion-card-title>Stock Report</ion-card-title>
+                </ion-card-header>
+            </ion-card>
+        </ion-col>
+    </ion-row>
+    <ion-row>
+        <ion-col size="12" class="mt-large">
+            <app-inventory-stats></app-inventory-stats>
+        </ion-col>
+        <ion-col size="6">
+            <app-multi-series></app-multi-series>
+        </ion-col>
+        <ion-col size="6">
+            <app-financial-stats></app-financial-stats>
+        </ion-col>
+    </ion-row>
+</ion-content>

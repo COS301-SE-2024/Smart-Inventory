@@ -1,0 +1,94 @@
+.side-navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 80px; /* Adjust based on your collapsed width */
+    transition: width 0.3s ease;
+    background-color: #333;
+    color: #fff;
+    z-index: 1; /* Keeps it above the page content but below any overlays or modals */
+}
+
+.side-navbar.expanded {
+    width: 250px;
+    /* Expanded width */
+}
+
+.toggle-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+}
+
+.nav-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.nav-menu li {
+    display: flex;
+    flex-direction: column;
+    /* Stack icon and label vertically when collapsed */
+    align-items: center;
+    padding: 10px;
+}
+
+.nav-menu li, .nav-bottom li {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+}
+
+.nav-bottom {
+    position: absolute;
+    bottom: 0;
+    right: 15px;
+}
+
+.nav-menu ion-icon {
+    font-size: 24px;
+}
+
+.nav-menu .label {
+    color: #fff;
+    /* Bright color for visibility */
+    display: block;
+    /* Always visible */
+    font-size: 12px;
+    /* Smaller font size */
+}
+
+.side-navbar.expanded .nav-menu li {
+    flex-direction: row;
+    /* Icon and label inline when expanded */
+    align-items: center;
+}
+
+.side-navbar.expanded .nav-menu .label {
+    margin-left: 10px;
+    /* Space between icon and label */
+    color: #fff;
+    /* Default color when expanded */
+}
+
+@media (max-width: 768px) {
+    .side-navbar {
+        width: 100%;
+        /* Full width for small screens */
+        height: auto;
+        position: static;
+        /* Non-fixed for small screens */
+    }
+
+    .main-content {
+        margin-left: 0;
+        /* No margin needed for small screens */
+    }
+}
+
+li:hover{
+    cursor: pointer;
+}

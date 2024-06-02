@@ -1,0 +1,102 @@
+<div class="login-holder" [ngClass]="{ dark: darkMode, light: !darkMode }">
+    <div>
+        <h1>Smart Inventory</h1>
+        <h2 *ngIf="signIn">Sign In</h2>
+        <h2 *ngIf="!signIn">Create Account</h2>
+        <h3>Manage your Inventory efficiently!</h3>
+        <h4>Let's get you all set upso you can verify your personal account and begin setting up your work profile</h4>
+    </div>
+
+    <form class="form" [formGroup]="login">
+        <div class="login" *ngIf="signIn">
+            <mat-form-field class="input">
+                <mat-label>Username</mat-label>
+                <input type="text" matInput formControlName="username" placeholder="Username" />
+            </mat-form-field>
+
+            <mat-form-field class="input">
+                <mat-label>Email</mat-label>
+                <input type="email" matInput formControlName="email" placeholder="Email" />
+            </mat-form-field>
+
+            <mat-form-field class="input">
+                <mat-label>Password</mat-label>
+                <input type="text" matInput formControlName="password" placeholder="Password" />
+            </mat-form-field>
+
+            <div class="memory">
+                <section class="remember">
+                    <input
+                        type="checkbox"
+                        class="remember-Check"
+                        [ngClass]="{ dark: darkMode, light: !darkMode }"
+                    /><span [ngClass]="{ dark: darkMode, light: !darkMode }">Remember me</span>
+                </section>
+                <button class="changePage">Forgot password?</button>
+            </div>
+
+            <button mat-raised-button class="signIn" color="primary" (click)="onSave()">Sign In</button>
+
+            <p>Not registered yet?<button (click)="changeScreen()" class="changePage">Create a new account</button></p>
+        </div>
+
+        <div class="createAccount" *ngIf="!signIn">
+            <div class="createTable">
+                <mat-form-field class="inputCreate">
+                    <mat-label>Name</mat-label>
+                    <input type="text" matInput formControlName="name" placeholder="Name" />
+                </mat-form-field>
+
+                <mat-form-field class="inputCreate">
+                    <mat-label>Surname</mat-label>
+                    <input type="text" matInput formControlName="surname" placeholder="Email" />
+                </mat-form-field>
+
+                <mat-form-field class="inputCreate">
+                    <mat-label>Email</mat-label>
+                    <input type="email" matInput formControlName="email" placeholder="Email" />
+                </mat-form-field>
+
+                <mat-form-field class="inputCreate">
+                    <mat-label>Company Name</mat-label>
+                    <input type="text" matInput formControlName="compName" placeholder="Company Name" />
+                </mat-form-field>
+
+                <mat-form-field class="inputCreate">
+                    <mat-label>Password</mat-label>
+                    <input type="text" matInput formControlName="password" placeholder="Password" />
+                </mat-form-field>
+
+                <mat-form-field class="inputCreate">
+                    <mat-label>Repeat Password</mat-label>
+                    <input type="text" matInput formControlName="repPassword" placeholder="Repeat Password" />
+                </mat-form-field>
+            </div>
+
+            <div class="memory">
+                <section class="remember">
+                    <input
+                        type="checkbox"
+                        class="remember-Check"
+                        [ngClass]="{ dark: darkMode, light: !darkMode }"
+                    /><span [ngClass]="{ dark: darkMode, light: !darkMode }"
+                        >I agree to all terms <a>privacy policies and fees</a></span
+                    >
+                </section>
+                <button class="changePage">Forgot password?</button>
+            </div>
+
+            <button mat-raised-button class="signIn" color="primary" (click)="onSave()">Create Account</button>
+
+            <p>
+                Already have an account?
+                <button (click)="changeScreen()" class="changePage">Log in</button>
+            </p>
+        </div>
+
+        <mat-slide-toggle (change)="changeMode()" color="primary"
+            ><span *ngIf="darkMode" class="dark">Dark Mode</span
+            ><span *ngIf="!darkMode" class="light">Light Mode</span></mat-slide-toggle
+        >
+    </form>
+</div>

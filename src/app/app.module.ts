@@ -32,11 +32,7 @@ import { SideNavbarComponent } from './layout/side-navbar/side-navbar.component'
 addIcons(allIcons);
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    LoginCreateAccountComponent,
-    SideNavbarComponent,
-  ],
+  declarations: [LoginCreateAccountComponent, SideNavbarComponent],
   imports: [
     BrowserModule,
     IonicModule.forRoot(),
@@ -60,6 +56,6 @@ addIcons(allIcons);
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     provideAnimationsAsync(),
   ],
-  bootstrap: [AppComponent],
+  bootstrap: [],
 })
 export class AppModule {}

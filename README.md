@@ -330,11 +330,11 @@ That's it! You should now have the Angular app with AWS Amplify integration runn
       </td>
       <td style="vertical align: top; width: 70%;">
         <b>
-          Tristan Sutherland
+          Bouchaib Chraf
         </b>
         <br>
         <p>
-          Passionate about data-driven decision-making, I am dedicated to transitioning into the role of a data scientist. I thrive in collaborative environments and am committed to continuous learning to stay at the forefront of emerging trends in data science.
+          .
         </p>
         <a href="https://github.com/TristanU21442615">
           <img src="/media/githubPic.png" width="24" height="24"/>

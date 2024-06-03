@@ -136,7 +136,7 @@ Reviews focus on checking that coding standards are being followed and that any 
 
 ##
 
-  <a href="">
+  <a href="media/SmartInventory-Demo1.pdf">
     Helix - Demo 1 Recording
   </a>
   

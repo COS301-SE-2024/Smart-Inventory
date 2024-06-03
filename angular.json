@@ -124,7 +124,10 @@
               "src/global.scss",
               "src/theme/variables.scss"
             ],
-            "scripts": []
+            "scripts": [],
+            "exclude": [
+              "src/app/app.component.spec.ts"
+            ]
           },
           "configurations": {
             "ci": {

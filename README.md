@@ -314,7 +314,7 @@ That's it! You should now have the Angular app with AWS Amplify integration runn
     </tr>
       <tr>
       <td width="150" height="140">
-        <img src="/media/Tristan.jpg" width="150" height="auto">
+        <img src="/media/WhatsApp Image 2024-06-03 at 06.53.20_3ff78913.jpg" width="150" height="auto">
       </td>
       <td style="vertical align: top; width: 70%;">
         <b>

@@ -1,0 +1,77 @@
+<ion-header>
+	<ion-toolbar>
+		<ion-title>Orders</ion-title>
+	</ion-toolbar>
+</ion-header>
+
+<ion-grid>
+	<ion-row>
+		<div class="search">
+			<ion-col size="8">
+				<ion-searchbar placeholder="Custom Placeholder"></ion-searchbar>
+			</ion-col>
+		</div>
+		<div class="filter">
+			<ion-col>
+				<ion-icon name="calendar-clear" size="large"></ion-icon>
+			</ion-col>
+			<ion-col>
+				<ion-select placeholder="Filter" fill="outline" interface="popover">
+					<ion-select-option value="apple">Apple</ion-select-option>
+					<ion-select-option value="banana">Banana</ion-select-option>
+					<ion-select-option value="orange">Orange</ion-select-option>
+				</ion-select>
+			</ion-col>
+		</div>
+
+
+	</ion-row>
+
+	<hr>
+	<ion-row class="row">
+		<ion-header id="orderHeadingBlack">
+			<ion-toolbar>
+				<ion-title>Orders</ion-title>
+				<ion-buttons slot="end">
+					<ion-button>+ New Orders</ion-button>
+				</ion-buttons>
+			</ion-toolbar>
+		</ion-header>
+		<hr>
+		<ion-col size="12">
+			<table class="orders-table">
+				<thead>
+					<tr>
+						<th><input type="checkbox"></th>
+						<th>Order ID</th>
+						<th>Date</th>
+						<th>Customer</th>
+						<th>Destination</th>
+						<th>Items</th>
+						<th>Status</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td><input type="checkbox"></td>
+						<td>#1</td>
+						<td>06/30/2022</td>
+						<td>Ramesh Chaudhary</td>
+						<td>Lalitpur</td>
+						<td>3</td>
+						<td><span class="status completed">Completed</span></td>
+					</tr>
+					<tr>
+						<td><input type="checkbox"></td>
+						<td>#2</td>
+						<td>06/30/2022</td>
+						<td>Ramesh Chaudhary</td>
+						<td>Lalitpur</td>
+						<td>3</td>
+						<td><span class="status pending">Pending</span></td>
+					</tr>
+				</tbody>
+			</table>
+		</ion-col>
+	</ion-row>
+</ion-grid>

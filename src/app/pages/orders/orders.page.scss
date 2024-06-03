@@ -1,0 +1,213 @@
+ion-title {
+    font-size: 50px;
+    padding: 15px 10px;
+}
+
+ion-icon {
+    color: white;
+}
+
+.row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.search {
+    display: flex;
+    align-items: center;
+    width: 60%;
+    /* Adjust width as needed */
+}
+
+.filter {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    width: 40%;
+    /* Adjust width as needed */
+}
+
+ion-col {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+ion-searchbar {
+    width: 100%;
+    /* Makes the searchbar take full width of its container */
+}
+
+ion-icon {
+    margin-right: 10px;
+    /* Adds some space between the icon and select */
+}
+
+ion-select {
+    width: 100%;
+    /* Ensures the select element fills its container */
+}
+
+ion-grid.md.hydrated {
+    margin: 0;
+    padding: 0;
+}
+
+ion-icon {
+    border: 2px solid #fff;
+    padding: 10px;
+}
+
+ion-select::part(label) {
+    color: white;
+    /* Changes the label color to white */
+}
+
+ion-select::part(text) {
+    color: white;
+    /* Changes the selected option text color to white */
+}
+
+ion-select::part(placeholder) {
+    color: white;
+    padding: 15px;
+    /* Changes the placeholder text color to white */
+}
+
+ion-searchbar {
+    --background: transparent;
+    --border-width: 1px;
+    --border-color: #ffffff;
+    --border-radius: 4px;
+    --padding-start: 15px;
+    /* Adjust padding as needed */
+    --padding-end: 15px;
+    /* Adjust padding as needed */
+    --color: white;
+    --icon-color: white;
+    --placeholder-color: white;
+    --height: 44px;
+    /* Match the height of the ion-select */
+}
+
+.search ion-col {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+.orders-table {
+    width: 100%;
+    border-collapse: collapse;
+    color: white;
+}
+
+.orders-table th,
+.orders-table td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.orders-table th {
+    background-color: #000000;
+}
+
+.orders-table tr:hover {
+    background-color: #333;
+}
+
+.orders-table input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+}
+
+.status {
+    padding: 5px 10px;
+    border-radius: 5px;
+    color: black;
+}
+
+.status.completed {
+    background-color: limegreen;
+}
+
+.status.pending {
+    background-color: yellow;
+}
+
+hr {
+    background-color: #ffff;
+    text-align: left;
+    margin-left: 0;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+ion-toolbar {
+    --color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+ion-title {
+    margin-left: 10px;
+}
+
+#orderHeadingBlack {
+    background-color: #000;
+    color: white;
+}
+
+#orderHeadingBlack ion-toolbar {
+    --background: #000;
+    --color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#orderHeadingBlack ion-title {
+    color: white;
+    margin-left: 10px;
+}
+
+#orderHeadingBlack ion-button:hover {
+    --background: #555;
+}
+
+#orderHeadingBlack ion-button {
+    --background: #444;
+    /* Ashy background color */
+    --color: white;
+    --padding-start: 20px;
+    /* Increase padding */
+    --padding-end: 20px;
+    /* Increase padding */
+    --padding-top: 20px;
+    /* Increase padding */
+    --padding-bottom: 20px;
+    /* Increase padding */
+    --border-radius: 4px;
+    /* Add border radius if needed */
+    font-size: 18px;
+    /* Increase font size */
+    margin-right: 10px;
+}
+
+ion-buttons.buttons-last-slot.sc-ion-buttons-md-h.sc-ion-buttons-md-s.md.hydrated {
+    background-color: #444;
+    /* color: white; */
+}
+
+input.searchbar-input.sc-ion-searchbar-md {
+    background-color: unset;
+}
+
+.searchbar-input-container.sc-ion-searchbar-md {
+    border: 3px solid wheat;
+}

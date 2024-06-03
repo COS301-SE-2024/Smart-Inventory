@@ -1,0 +1,354 @@
+<ion-header [translucent]="true">
+	<ion-toolbar>
+		<ion-buttons slot="end">
+			<ion-button (click)="showUserProfile()" class="user-profile-button">
+				<ion-icon name="person-circle-outline" size="large"></ion-icon>
+				<ion-label>
+					<h3>{{ userName }}</h3>
+					<p>{{ userRole }}</p>
+				</ion-label>
+			</ion-button>
+		</ion-buttons>
+		<ion-searchbar show-clear-button="always" placeholder="Always Show"></ion-searchbar>
+		<!-- Other toolbar content -->
+	</ion-toolbar>
+</ion-header>
+
+<ion-content>
+	<!-- First Row -->
+	<div class="row first-row">
+		<h1 class="settings-title">Settings</h1>
+		<div class="buttons-container">
+			<ion-button class="save-button" size="large" (click)="onSave()">Save</ion-button>
+			<ion-button class="cancel-button" size="large" (click)="onCancel()">Cancel</ion-button>
+		</div>
+	</div>
+
+	<!-- Second Row -->
+	<div class="row second-row">
+		<ion-card class="settings-card">
+			<div class="left-column">
+
+				<ion-button expand="full" class="nav-button" [class.active]="selectedNavItem === 'General'"
+					(click)="selectNavItem('General')">General</ion-button>
+				<ion-button expand="full" class="nav-button" [class.active]="selectedNavItem === 'Preferences'"
+					(click)="selectNavItem('Preferences')">Preferences</ion-button>
+				<ion-button expand="full" class="nav-button" [class.active]="selectedNavItem === 'Notifications'"
+					(click)="selectNavItem('Notifications')">Notifications</ion-button>
+				<ion-button expand="full" class="nav-button" [class.active]="selectedNavItem === 'User Permissions'"
+					(click)="selectNavItem('User Permissions')">User Permissions</ion-button>
+				<ion-button expand="full" class="nav-button" [class.active]="selectedNavItem === 'Account'"
+					(click)="selectNavItem('Account')">Account</ion-button>
+
+				<!-- Mode toggle -->
+				<div class="mode-toggle">
+					<span class="mode-text">{{ darkMode ? 'Dark Mode' : 'Light Mode' }}</span>
+					<ion-toggle [(ngModel)]="isLightTheme" (ionChange)="toggleTheme()" mode="ios" class="mode-toggle-btn" slot="end"></ion-toggle>
+				</div>
+
+			</div>
+			<div class="vertical-line"></div>
+			<div class="right-column">
+				<!-- Right column content goes here -->
+				<ng-container [ngSwitch]="selectedNavItem">
+					<div *ngSwitchCase="'General'">
+						<div class="general-settings">
+							<h1>General</h1>
+							<p>Update Application Preferences</p>
+							<hr>
+							<div class="theme-selection">
+								<h2 class="theme-title">Select Theme</h2>
+								<div class="themes">
+									<div class="theme light-mode" [class.active]="selectedTheme === 'light'"
+										(click)="selectTheme('light')">
+										<img src="assets/images/light-mode.png" alt="Light Mode">
+									</div>
+									<div class="theme dark-mode" [class.active]="selectedTheme === 'dark'"
+										(click)="selectTheme('dark')">
+										<img src="assets/images/dark-mode.png" alt="Dark Mode">
+									</div>
+								</div>
+							</div>
+
+							<div class="other-settings">
+								<div class="setting-item">
+									<label>Time Zone</label>
+									<ion-select aria-label="Fruit" interface="popover" placeholder="Select Time">
+										<ion-select-option value="SAST">(SAST-09:00) South Africa Standard
+											Time</ion-select-option>
+									</ion-select>
+								</div>
+								<div class="setting-item">
+									<label>Language</label>
+									<ion-select interface="popover" placeholder="Select Language">
+										<ion-select-option value="en">English</ion-select-option>
+										<!-- Other languages -->
+									</ion-select>
+								</div>
+								<div class="setting-item">
+									<label>Date and Time Format</label>
+									<ion-select interface="popover" placeholder="Select Format">
+										<ion-select-option value="ddmmyyyy">DD/MM/YYYY</ion-select-option>
+										<!-- Other formats -->
+									</ion-select>
+								</div>
+							</div>
+
+						</div>
+
+					</div>
+					<div *ngSwitchCase="'Preferences'">
+						<div class="general-settings">
+							<h1>Preferences</h1>
+							<p>Update Application Preferences</p>
+							<hr>
+						</div>
+					</div>
+
+					<div *ngSwitchCase="'Notifications'">
+						<div class="general-settings">
+						  <h1>Notifications</h1>
+						  <p>Get notified on what’s happening, you can turn notifications on or off at any time</p>
+						  <hr>
+					  
+						  <!-- First 50% Row -->
+						  <div class="notification-settings first-half">
+							<!-- First Sub-Row -->
+							<div class="notification-row">
+							  <div class="notification-column">
+								<p class="semi-bold">Email Notifications</p>
+							  </div>
+							  <div class="notification-column">
+								<div class="mode-toggle">
+								  <ion-toggle [(ngModel)]="notification1" mode="ios" class="mode-toggle-btn"></ion-toggle>
+								  <span class="mode-text">{{ notification1 ? 'On' : 'Off' }}</span>
+								</div>
+							  </div>
+							  <div class="notification-column">
+								<ion-select [disabled]="!notification1" interface="popover" placeholder="Select Option">
+									<ion-select-option value="option1">Daily</ion-select-option>
+									<ion-select-option value="option2">Weekly</ion-select-option>
+									<ion-select-option value="option3">Immediate</ion-select-option>
+								</ion-select>
+							  </div>
+							</div>
+					  
+							<!-- Second Sub-Row -->
+							<div class="notification-row">
+							  <div class="notification-column">
+								<p class="semi-bold">SMS Notifications</p>
+							  </div>
+							  <div class="notification-column">
+								<div class="mode-toggle">
+								  <ion-toggle [(ngModel)]="notification2" mode="ios" class="mode-toggle-btn"></ion-toggle>
+								  <span class="mode-text">{{ notification2 ? 'On' : 'Off' }}</span>
+								</div>
+							  </div>
+							  <div class="notification-column">
+								<ion-select [disabled]="!notification2" interface="popover" placeholder="Select Option">
+									<ion-select-option value="option1">Daily</ion-select-option>
+									<ion-select-option value="option2">Weekly</ion-select-option>
+									<ion-select-option value="option3">Immediate</ion-select-option>
+								</ion-select>
+							  </div>
+							</div>
+					  
+							<!-- Third Sub-Row -->
+							<div class="notification-row">
+							  <div class="notification-column">
+								<p class="semi-bold">Push Notifications</p>
+							  </div>
+							  <div class="notification-column">
+								<div class="mode-toggle">
+								  <ion-toggle [(ngModel)]="notification3" mode="ios" class="mode-toggle-btn"></ion-toggle>
+								  <span class="mode-text">{{ notification3 ? 'On' : 'Off' }}</span>
+								</div>
+							  </div>
+							  <div class="notification-column">
+								<ion-select [disabled]="!notification3" interface="popover" placeholder="Select Option">
+								  <ion-select-option value="option1">Daily</ion-select-option>
+								  <ion-select-option value="option2">Weekly</ion-select-option>
+								  <ion-select-option value="option3">Immediate</ion-select-option>
+								</ion-select>
+							  </div>
+							</div>
+						  </div>
+					  
+						  <!-- Second 50% Row -->
+						  <div class="notification-settings second-half">
+							<h3 style="font-size: 2.5em; font-weight: 600;">Notification Triggers</h3>
+							<!-- First Sub-Row -->
+							<div class="notification-item">
+							  <ion-checkbox slot="start"></ion-checkbox>
+							  <div class="notification-text">
+								<h3>Low Stock</h3>
+								<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+							  </div>
+							</div>
+					  
+							<!-- Second Sub-Row -->
+							<div class="notification-item">
+							  <ion-checkbox slot="start"></ion-checkbox>
+							  <div class="notification-text">
+								<h3>New Inventory Added</h3>
+								<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+							  </div>
+							</div>
+					  
+							<!-- Third Sub-Row -->
+							<div class="notification-item">
+							  <ion-checkbox slot="start"></ion-checkbox>
+							  <div class="notification-text">
+								<h3>Inventory Update</h3>
+								<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+							  </div>
+							</div>
+					  
+							<!-- Fourth Sub-Row -->
+							<div class="notification-item">
+							  <ion-checkbox slot="start"></ion-checkbox>
+							  <div class="notification-text">
+								<h3>Inventory Update</h3>
+								<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+							  </div>
+							</div>
+						  </div>
+						</div>
+					  </div>
+					  
+
+					<!-- <div *ngSwitchCase="'User Permissions'">
+						<div class="general-settings">
+							<h1>User Permissions</h1>
+							<p>Update User Permissions</p>
+							<hr>
+						</div>
+					</div> -->
+
+					<div *ngSwitchCase="'User Permissions'">
+						<div class="general-settings">
+						  <div class="header-row">
+							<h1>User Permissions</h1>
+							<div class="icons-container">
+							  <ion-button id="notification-button" (click)="viewNotifications()" clear>
+								<!-- <ion-icon name="notifications-sharp" class="icon-large"> -->
+								<!-- <ion-icon name="notifications"> -->
+								  <!-- <ion-badge id="notifications-badge" color="danger">3</ion-badge> -->
+								<!-- </ion-icon> -->
+								<div class="notification-icon-container">
+									<ion-icon name="notifications-sharp" class="icon-large"></ion-icon>
+									<ion-badge id="notifications-badge" color="danger">3</ion-badge>
+								</div>
+							  </ion-button>
+							  <ion-button id="profile-button" (click)="showProfileDropdown()" clear>
+								<ion-icon class="icon-large" name="person-circle-outline"></ion-icon>
+							  </ion-button>
+							</div>
+						  </div>
+						  <hr>
+						  <div class="row search-filter-row">
+							<ion-searchbar placeholder="Search"></ion-searchbar>
+							<ion-searchbar placeholder="Filter"></ion-searchbar>
+							<ion-button (click)="addUser()">
+							  <!-- <ion-icon name="add-circle-outline"></ion-icon> -->
+							  <ion-icon class="icon-large" name="person-add-sharp"></ion-icon>
+							</ion-button>
+						  </div>
+						  <ion-grid>
+							<ion-row class="table-header-row">
+							  <ion-col>SI. No</ion-col>
+							  <ion-col>Name</ion-col>
+							  <ion-col>Username</ion-col>
+							  <ion-col>Mobile Number</ion-col>
+							  <ion-col>Role</ion-col>
+							  <ion-col>Status</ion-col>
+							  <ion-col></ion-col>
+							</ion-row>
+							<ion-row *ngFor="let user of users; let i = index" [class.odd]="i % 2 === 0" [class.even]="i % 2 !== 0">
+							  <ion-col>{{ user.siNo }}</ion-col>
+							  <ion-col>{{ user.name }}</ion-col>
+							  <ion-col>{{ user.username }}</ion-col>
+							  <ion-col>{{ user.mobile }}</ion-col>
+							  <ion-col>
+								<ion-select interface="popover" [(ngModel)]="user.role">
+								  <ion-select-option value="Employee">Employee</ion-select-option>
+								  <ion-select-option value="Inventory Controller">Inventory Controller</ion-select-option>
+								</ion-select>
+							  </ion-col>
+							  <ion-col>
+								<ion-select interface="popover" [(ngModel)]="user.status">
+								  <ion-select-option value="Active">Active</ion-select-option>
+								  <ion-select-option value="Disabled">Disabled</ion-select-option>
+								</ion-select>
+							  </ion-col>
+							  <ion-col>
+								<ion-button (click)="editUser(user)">
+								  <ion-icon name="create-outline"></ion-icon>
+								</ion-button>
+							  </ion-col>
+							</ion-row>
+						  </ion-grid>
+						  <div class="pagination">
+							<ion-button (click)="prevPage()">First</ion-button>
+							<ion-button (click)="prevPage()">Previous</ion-button>
+							<span>Page {{currentPage}} of {{totalPages}}</span>
+							<ion-button (click)="nextPage()">Next</ion-button>
+							<ion-button (click)="lastPage()">Last</ion-button>
+						  </div>
+						</div>
+					</div>
+
+					<div *ngSwitchCase="'Account'">
+						<div class="general-settings">
+						  <h1>Account</h1>
+						  <p>Update Account Preferences</p>
+						  <hr>
+						  <div class="account-settings">
+							 <!-- Edit Profile Section -->
+							 <h2 class="edit-profile-title">Edit Profile</h2>
+							 <!-- Personal Details Subheading -->
+							 <h3>Personal Details</h3>
+							 <div class="form-row">
+							   <ion-input label="First Name" label-placement="floating" fill="outline" placeholder="Enter First Name"></ion-input>
+							   <ion-input label="Last Name" label-placement="floating" fill="outline" placeholder="Enter Last Name"></ion-input>
+							 </div>
+							 <div class="form-row">
+							   <ion-input label="Email Address" label-placement="floating" fill="outline" placeholder="Enter Email Address"></ion-input>
+							   <ion-input label="Mobile Number" label-placement="floating" fill="outline" placeholder="Enter Mobile Number" [ngModel]="mobileNumber" (ngModelChange)="validateMobileNumber($event)"></ion-input>
+							 </div>
+							 <!-- Address Subheading -->
+							 <h3>Address</h3>
+							 <div class="form-row">
+							   <ion-input label="Country" label-placement="floating" fill="outline" placeholder="Enter Country"></ion-input>
+							   <ion-input label="Province" label-placement="floating" fill="outline" placeholder="Enter Province"></ion-input>
+							 </div>
+							 <div class="form-row">
+							   <ion-input label="City" label-placement="floating" fill="outline" placeholder="Enter City"></ion-input>
+							   <ion-input label="Street Name" label-placement="floating" fill="outline" placeholder="Enter Street Name"></ion-input>
+							 </div>
+							 <div class="form-row">
+							   <ion-input label="Flat/Unit" label-placement="floating" fill="outline" placeholder="Enter Flat/Unit"></ion-input>
+							   <ion-input label="Zip Code" label-placement="floating" fill="outline" placeholder="Enter Zip Code" [ngModel]="zipCode" (ngModelChange)="validateZipCode($event)"></ion-input>
+							 </div>
+							 <!-- Password Subheading -->
+							 <h2 class="edit-password-title">Password</h2>
+							 <div class="password-row">
+								<div class="password-input-container">
+								  <ion-input class="password-text-field" [type]="showPassword ? 'text' : 'password'" label="Password" label-placement="floating" fill="outline" placeholder="Enter New Password" [readonly]="!passwordEditable"></ion-input>
+								</div>
+								<ion-button class="password-button" (click)="togglePasswordEditable()" expand="block">{{ passwordEditable ? 'Save Password' : 'Change Password' }}</ion-button>
+							  </div>
+							  
+						  </div>
+						 
+						</div>
+					  </div>
+					  
+
+					<div *ngSwitchDefault>Select an option to see the content</div>
+				</ng-container>
+			</div>
+
+		</ion-card>
+	</div>
+</ion-content>

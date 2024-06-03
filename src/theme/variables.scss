@@ -1,0 +1,135 @@
+// For information on how to create your own theme, please see:
+// http://ionicframework.com/docs/theming/
+/* Light Theme Variables */
+:root {
+    --primary-color: #131414;
+    --secondary-color: #e8e8e8;
+    --accent-color: #82b1ff;
+    --error-color: #ff5252;
+    --warning-color: #ffc107;
+    --info-color: #2196f3;
+    --success-color: #4caf50;
+
+    --font-family: 'Roboto', sans-serif;
+    --font-size-base: 1rem;
+    --font-size-large: 1.25rem;
+    --font-size-small: 0.875rem;
+
+    --spacing-small: 15px;
+    --spacing-medium: 30px;
+    --spacing-large: 45px;
+
+    --ion-background-color: #ffffff;
+    --ion-text-color: #000000;
+}
+
+/* Dark Theme Variables */
+body.dark-theme {
+    --primary-color: #bb86fc;
+    --secondary-color: #3700b3;
+    --accent-color: #03dac6;
+    --error-color: #cf6679;
+    --warning-color: #ffad46;
+    --info-color: #2196f3;
+    --success-color: #03dac6;
+
+    --background-color: #121212;
+    --text-color: #ffffff;
+
+}
+
+
+body.light-theme {
+  --ion-background-color: #fff;
+  --ion-text-color: #000000;
+  /* Ensure these match the light theme variables */
+
+  .settings-card {
+    width: 100%;
+    height: 100%;
+    background-color: #8F8F8F;
+    padding: 3% 3% 0 3%;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+
+  .vertical-line {
+    width: 3px;
+    background-color: #000;
+    height: 100%;
+    margin-left: 3%;
+  
+  }
+
+  hr {
+    background-color: #000;
+  }
+
+  .nav-button {
+    width: 100%;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    --background: #8F8F8F;
+    color: white;
+    text-align: left;
+  
+    /* Remove shadow and stroke */
+    --box-shadow: none;
+    --background-activated: #242323;
+    --background-focused: #242323;
+    --background-hover: #242323;
+    --border-width: 0;
+  
+    display: flex;
+    justify-content: flex-start;
+    /* Align text to the left */
+  
+  }
+
+  .right-column h1 {
+    color:#000;
+  }
+
+  .right-column p{
+    color:#000;
+  }
+
+  .theme-title {
+    color: #000;
+  }
+
+  .other-settings .setting-item label{
+    color:#000;
+  }
+
+  .other-settings .setting-item ion-select-option{
+    --color:#fff;
+  }
+
+  .other-settings .setting-item ion-select-option interface-popover{
+    --color:#fff;
+  }
+
+  .notification-text p{
+    color: #000;
+  }
+
+  .notification-settings h3 {
+    color: #000;
+  }
+
+  .account-settings {
+    color: #000;
+  }
+
+  ion-header {
+    --background: #8F8F8F;
+  }
+
+  ion-card-title {
+    --ion-background-color: #8F8F8F;
+  }
+}
+

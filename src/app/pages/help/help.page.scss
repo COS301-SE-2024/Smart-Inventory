@@ -1,0 +1,289 @@
+/* app.component.scss */
+ion-searchbar {
+    // --background: #fff; /* Adjust background color as needed */
+    --border-radius: 25px;
+    /* Rounded edges, adjust radius as desired */
+    --placeholder-color: #666;
+    /* Placeholder text color */
+    --icon-color: #666;
+    /* Search icon color */
+    --clear-icon-color: #666;
+    /* Clear icon color */
+    width: 100em;
+}
+
+
+.user-profile-button {
+    display: flex;
+    align-items: center;
+    --padding-start: 14px; // Adjust padding as needed
+    --padding-end: 8px; // Adjust padding as needed
+    --background: transparent; // Remove button background
+
+    ion-icon {
+        margin-right: 8px; // Space between icon and text
+        color: #ffffff; // Adjust the color as needed
+    }
+
+    ion-label {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        margin-right: 60px; // Adjust this value to increase or decrease the space on the right side
+
+        h3 {
+            margin: 0;
+            font-size: 1.2em; // Adjust the size as needed
+        }
+
+        p {
+            margin: 0;
+            font-size: 0.8em; // Adjust the size as needed
+            color: #cccccc; // Adjust the color as needed
+        }
+    }
+}
+
+///////////////////////////////////////////////////////////////////////////////////
+
+.row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.first-row {
+    height: 20%;
+    flex-direction: row;
+}
+
+.second-row {
+    height: 80%;
+    padding: 3%;
+    // padding-bottom: 3%;
+}
+
+.settings-title {
+    font-size: 70px;
+    margin-left: 10%;
+    width: 70%;
+    text-align: left;
+}
+
+.buttons-container {
+    width: 30%;
+    display: flex;
+    justify-content: space-between;
+    margin-right: 10%;
+}
+
+.save-button {
+    --background: #05FF00;
+}
+
+.cancel-button {
+    --background: #8F8F8F;
+}
+
+.settings-card {
+    width: 100%;
+    height: 100%;
+    background-color: #242323;
+    padding: 3% 3% 0 3%;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+
+.left-column {
+    width: 25%;
+    padding-top: 3%;
+}
+
+.right-column {
+    width: 75%;
+    margin: 25px;
+    overflow-y: visible; /* Allows vertical scrolling */
+    // overflow-y: ;
+    // height: 50vh; /* Optional: adjust based on your layout's needs */
+}
+
+.vertical-line {
+    width: 3px;
+    background-color: #8F8F8F;
+    height: 100%;
+    margin-left: 3%;
+
+}
+
+.nav-button {
+    width: 100%;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    --background: #242323;
+    color: white;
+
+    /* Remove shadow and stroke */
+    --box-shadow: none;
+    --background-activated: #242323;
+    --background-focused: #242323;
+    --background-hover: #242323;
+    --border-width: 0;
+
+}
+
+.mainFAQ {
+    min-height: 50vh; // This ensures that the content area takes at least the full height of the viewport
+    overflow-y: visible;
+}
+
+.ion-padding {
+    min-height: 30vh;
+}
+
+
+.nav-button.active {
+    --background: #05FF00;
+    color: black;
+}
+
+.mode-toggle {
+    margin-top: auto;
+    /* Pushes the toggle to the bottom */
+    margin-bottom: 3%;
+    margin-left: 1%;
+    margin-right: 1%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.mode-text {
+    font-weight: 600;
+    /* semi-bold */
+}
+
+.mode-toggle-btn {
+    --handle-width: 28px;
+    --handle-height: 28px;
+    --handle-border-radius: 50%;
+    --handle-background: #05FF00;
+    /* Color of the toggle handle */
+    --background: #555;
+    /* Background of the toggle when off */
+    --background-checked: #555;
+    /* Background of the toggle when on */
+}
+
+.mainFAQ {
+    font-family: Arial, sans-serif;
+    /* Ensures a clean, readable font is used */
+    color: #FFF;
+    /* White text color */
+    background-color: transparent;
+    /* Black background for high contrast */
+}
+
+.mainFAQ::part(scroll) {
+    background-color: #242323;
+}
+
+.mainFAQ ion-accordion-group ion-accordion ion-content::part(scroll) {
+    background-color: #151515;
+}
+
+.faq-title {
+    text-align: center;
+    /* Centers the title */
+    color: #FFF;
+    /* White color for the title */
+    margin-top: 20px;
+    /* Adds space above the title */
+    margin-bottom: 40px;
+    /* Adds space below the title */
+    font-size: 50px;
+    position: sticky;
+}
+
+.accordion-header {
+    background-color: #242424;
+    /* Dark grey background for the header */
+    color: #FFF;
+    /* White text color for the header */
+    border: none;
+    /* Removes border */
+}
+
+.accordion-header ion-label {
+    font-size: 1.2rem;
+    /* Larger font size for readability */
+}
+
+.accordion-content {
+    background-color: transparent;
+    /* Slightly lighter grey for content */
+    color: #FFF;
+    /* White text color for content */
+    font-size: 1rem;
+    /* Standard font size for content */
+    padding: 15px;
+    /* Padding for content text */
+}
+
+ion-accordion-group {
+    border-top: 3px solid #FFF;
+    /* Adds a white top border to the accordion group */
+}
+
+ion-item {
+    --border-color: transparent;
+    /* Removes borders from ion-item components */
+    --background: transparent;
+    /* Makes ion-item background transparent */
+}
+
+ion-accordion {
+    margin-bottom: 10px;
+    /* Adds spacing between accordions */
+}
+
+.contact-section {
+    background-color: #05FF00; /* Maintain the green background */
+    color: rgb(0, 0, 0); /* Black text for readability */
+    padding: 20px; /* Padding for internal spacing */
+    text-align: left; /* Align text to the left */
+    display: flex; /* Enable flexbox layout */
+    justify-content: space-between; /* Space between text and button */
+    align-items: center; /* Center items vertically */
+    border-radius: 15px; /* Rounded corners */
+    margin-top: 20px;
+}
+
+.contact-description h2{
+    font-size: 30px;
+    font-weight: 600;
+}
+
+.contact-description {
+    margin: 0; /* Remove margin to ensure alignment */
+    flex: 1; /* Allows the description to take up the available space */
+    padding-right: 20px; /* Adds some space between the text and button */
+}
+
+.contact-button {
+    white-space: nowrap; /* Ensures the button text does not wrap */
+    --background: rgb(0, 0, 0); /* Dark button background */
+    --background-activated: rgb(30, 30, 30); /* Darker when activated */
+    --background-hover: rgb(10, 10, 10); /* Slightly lighter on hover */
+    --border-radius: 5px; /* Rounded corners for the button */
+    --color: #FFF; /* White text on the button */
+    padding: 10px 20px; /* Padding inside the button */
+    font-size: 1em; /* Font size for the button */
+}
+ion-content, .settings-card {
+    height: 100%; /* Ensure they expand to the full available height */
+    overflow-y: auto; /* Make sure they can scroll if needed */
+}
+
+

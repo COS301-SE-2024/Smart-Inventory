@@ -38,7 +38,7 @@ jobs:
 
       - name: Run Tests
         run: |
-          npm run test -- --no-watch --no-progress --browsers=ChromeHeadless --exclude-pattern="**/app.component.spec.ts,**/folder.page.spec.ts"
+        npm run test -- --no-watch --no-progress --browsers=ChromeHeadless --exclude-pattern=\"**/app.component.spec.ts,**/folder.page.spec.ts\"
 
       - name: Build Codebase
         run: |

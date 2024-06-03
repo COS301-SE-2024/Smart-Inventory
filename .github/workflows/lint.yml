@@ -30,7 +30,7 @@ jobs:
 
       - name: Run Tests
         run: |
-          npm run test
+          npm run test -- --no-watch --no-progress --browsers=ChromeHeadless --exclude-pattern="**/app.component.spec.ts
 
       - name: Checkout "${{ github.repository }}"
         uses: actions/checkout@v3

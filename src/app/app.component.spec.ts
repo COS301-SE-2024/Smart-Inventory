@@ -22,23 +22,4 @@ describe('AppComponent', () => {
     const app = fixture.componentInstance;
     expect(app).toBeTruthy();
   });
-
-  xit('should have menu labels if defined', () => {
-    const menuLabels = component.menuLabels;
-    if (menuLabels) {
-      expect(menuLabels.length).toEqual(12); // Adjust the expected number of menu labels
-    } else {
-      expect(menuLabels).toBeUndefined();
-    }
-  });
-
-  xit('should have urls if defined', () => {
-    const urls = component.urls;
-    if (urls) {
-      expect(urls.length).toEqual(12); // Adjust the expected number of URLs
-    } else {
-      expect(urls).toBeUndefined();
-    }
-  });
-
 });

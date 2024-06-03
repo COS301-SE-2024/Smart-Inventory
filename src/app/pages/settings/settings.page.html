@@ -43,7 +43,7 @@
 				<!-- Mode toggle -->
 				<div class="mode-toggle">
 					<span class="mode-text">{{ darkMode ? 'Dark Mode' : 'Light Mode' }}</span>
-					<ion-toggle [(ngModel)]="darkMode" mode="ios" class="mode-toggle-btn" slot="end"></ion-toggle>
+					<ion-toggle [(ngModel)]="isLightTheme" (ionChange)="toggleTheme()" mode="ios" class="mode-toggle-btn" slot="end"></ion-toggle>
 				</div>
 
 			</div>

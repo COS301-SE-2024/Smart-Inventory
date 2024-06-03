@@ -3,14 +3,9 @@ import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
 
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
-import {
-  IonButton,
-  IonInput,
-  IonContent,
-  provideIonicAngular,
-} from '@ionic/angular/standalone';
+import { IonButton, IonInput, IonContent, provideIonicAngular } from '@ionic/angular/standalone';
 
-import { AppRoutingModule } from './app.routes';
+import { AppRoutingModule } from './app-routing.module';
 import { ReactiveFormsModule } from '@angular/forms';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { MatInputModule } from '@angular/material/input';
@@ -31,31 +26,34 @@ import { SideNavbarComponent } from './layout/side-navbar/side-navbar.component'
 
 addIcons(allIcons);
 
+
+addIcons(allIcons);
+
 @NgModule({
-  declarations: [LoginCreateAccountComponent, SideNavbarComponent],
-  imports: [
-    BrowserModule,
-    IonicModule.forRoot(),
-    ReactiveFormsModule,
-    AppRoutingModule,
-    IonButton,
-    IonContent,
-    IonInput,
-    MatInputModule,
-    MatIconModule,
-    MatButtonModule,
-    FormsModule,
-    MatFormFieldModule,
-    MatCheckboxModule,
-    MatSlideToggleModule,
-    MatSnackBarModule,
-    LayoutModule,
-  ],
-  providers: [
-    provideIonicAngular(),
-    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-    provideAnimationsAsync(),
-  ],
-  bootstrap: [],
+    declarations: [AppComponent, LoginCreateAccountComponent, SideNavbarComponent],
+    imports: [
+        BrowserModule,
+        IonicModule.forRoot(),
+        ReactiveFormsModule,
+        AppRoutingModule,
+        IonButton,
+        IonContent,
+        IonInput,
+        MatInputModule,
+        MatIconModule,
+        MatButtonModule,
+        FormsModule,
+        MatFormFieldModule,
+        MatCheckboxModule,
+        MatSlideToggleModule,
+        MatSnackBarModule,
+        LayoutModule,
+    ],
+    providers: [
+        provideIonicAngular(),
+        { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+        provideAnimationsAsync(),
+    ],
+    bootstrap: [AppComponent],
 })
 export class AppModule {}

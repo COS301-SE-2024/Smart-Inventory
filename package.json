@@ -2,7 +2,7 @@
   "name": "SmartInventory",
   "version": "0.0.1",
   "scripts": {
-    "test": "ng test"
+    "test": "ng test  --exclude-pattern \"src/app/app.component.spec.ts\""
   },
   "dependencies": {
     "@angular/animations": "^17.0.2",

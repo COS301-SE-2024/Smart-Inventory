@@ -24,11 +24,6 @@ import * as allIcons from 'ionicons/icons';
 
 addIcons(allIcons);
 
-import { addIcons } from 'ionicons';
-import * as allIcons from 'ionicons/icons';
-
-addIcons(allIcons);
-
 @NgModule({
     declarations: [AppComponent, LoginCreateAccountComponent],
     imports: [

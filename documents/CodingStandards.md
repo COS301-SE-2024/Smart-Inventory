@@ -96,7 +96,6 @@ To maintain a consistent and efficient workflow, we will use Git Flow as our Git
 The file structure for our repository follows a monorepo approach, organizing the project components in a clear and logical manner. This structure is designed to accommodate the technologies we are using, such as Angular, Java with Spring Boot, REST APIs, PostgreSQL, AWS, TensorFlow, and various testing and security tools. The goal is to enhance maintainability, scalability, and collaboration across the development team.
 
 ### Top Level Structure
-
 -   **client**: Contains the frontend code and related assets.
 -   **server**: Contains the backend code and related configurations.
 -   **config**: Contains configuration files for the project.
@@ -242,12 +241,6 @@ scripts/
 -   **Pipes**: Use `PascalCase` and suffix with `Pipe`. e.g., `DateFormatterPipe`.
 -   **Modules**: Use `PascalCase` and suffix with `Module`. e.g., `AppModule`.
 
-### API
-
--   **Endpoints**: Use `kebab-case` and plural nouns. e.g., `/api/users`, `/api/orders`.
--   **HTTP Methods**: Use appropriate HTTP methods for actions (GET, POST, PUT, DELETE). e.g., `GET /api/users`, `POST /api/orders`.
--   **Parameters**: Use `camelCase` for query parameters. e.g., `/api/users?userId=123`.
-
 ### DynamoDB
 
 -   **Tables**: Use `snake_case` and plural nouns. e.g., `users`, `order_items`.
@@ -278,11 +271,6 @@ scripts/
 
 -   **Test Files**: Use `camelCase` or `PascalCase` as per the language norms. e.g., `UserServiceTest.java`, `userService.test.ts`.
 -   **Test Cases**: Use descriptive names and `camelCase`. e.g., `shouldCreateUserSuccessfully`, `testUserLogin`.
-
-### Security (Spring Security, JWT, HTTP/SSL, bcrypt)
-
--   **Security Classes**: Use `PascalCase`. e.g., `SecurityConfig`, `JwtTokenProvider`.
--   **Configuration Properties**: Use `lowercase` with dot separation. e.g., `security.jwt.secret`, `server.ssl.key-store`.
 
 ### TensorFlow
 
@@ -351,14 +339,13 @@ scripts/
 -   **Function Declaration**: Use `function` keyword for named functions and `const` for anonymous functions or arrow functions.
 -   **Async Functions**: Use `async/await` for asynchronous operations.
 
-### API (JavaScript/TypeScript and Java with Spring Boot)
+### API (JavaScript/TypeScript)
 
 -   **Function Declaration**: Functions related to API calls should be descriptive.
 -   **Async Functions**: Use `async/await` in JavaScript/TypeScript and `@Async` in Java.
 -   **Error Handling**: Implement robust error handling using `try/catch` blocks.
 
 ### Testing (Cypress)
-
 -   **Test Function Names**: Use descriptive names and `camelCase`.
     
 -   **Test Structure**: Follow a consistent structure: Arrange, Act, Assert.
@@ -382,7 +369,7 @@ scripts/
 -   **Whitespace**: Use blank lines to separate sections of code, such as between methods, to improve readability.
 -   **Comments**: Use single-line comments (`//`) for short comments and block comments (`/* */`) for longer descriptions. Keep comments concise and relevant.
 
-### Angular and TypeScript
+### Angular (TypeScript) and JavaScript
 
 -   **File Structure**: Organize files by feature or module.
 -   **Import Statements**: Group imports by external libraries first, then internal modules, separated by a blank line.
@@ -394,6 +381,17 @@ scripts/
     -   **Methods**: Place below properties, separated by blank lines.
 
 ### API (JavaScriptTypeScript)
+
+-   **File Structure**: Follow standard Maven/Gradle directory structure.
+-   **Package Declaration**: At the top of the file.
+-   **Import Statements**: Group imports logically (standard Java imports first, then third-party libraries, followed by project-specific imports), separated by a blank line.
+-   **Class Layout**:
+    -   **Annotations**: Immediately above the class.
+    -   **Class-Level Javadoc**: Immediately below the package declaration and above the class declaration.
+    -   **Static Fields**: At the top of the class.
+    -   **Instance Fields**: Below static fields.
+    -   **Constructors**: Below fields.
+    -   **Methods**: Group methods logically and separate by blank lines.
 
 -   **Controller Layout**:
     
@@ -528,7 +526,7 @@ These standards apply to all technologies used in this project.
   - Use single-line comments (`//` in JavaScript/TypeScript, Java, Python, SQL) for brief comments on the same line as the code.
 
 - **Block Comments**:
-  - Use block comments (`/* */` in JavaScript/TypeScript, Java, Python, SQL) for longer comments spanning multiple lines.
+  - Use block comments (`/* */` in JavaScript/TypeScript) for longer comments spanning multiple lines.
 
 <a id="13"></a>
 ## Formatting

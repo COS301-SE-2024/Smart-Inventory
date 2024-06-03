@@ -385,8 +385,3 @@ That's it! You should now have the Angular app with AWS Amplify integration runn
       </td>
     </tr>
   </table>
-```
-Open your browser and navigate to `http://localhost:4200` to see the app in action.
-
-That's it! You should now have the Angular app with AWS Amplify integration running on your local machine. If you encounter any issues or have further questions, please don't hesitate to reach out to the team.
-

@@ -136,13 +136,25 @@ Reviews focus on checking that coding standards are being followed and that any 
 
 ##
 
-  <a href="/documents/SmartInventory-Demo1.pdf">
+  <a href="">
+    Helix - Demo 1 Front-end Recording
+  </a>
+  
+##
+
+  <a href="">
+    Helix - Demo 1 Back-end Recording
+  </a>
+  
+##
+
+  <a href="">
     Helix - Demo 1 Recording
   </a>
   
   ##
 
-  <a href="">
+  <a href="/documents/SmartInventory-Demo1.pdf">
     Helix - Demo 1 Presentation Slides
   </a>
 <hr>

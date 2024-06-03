@@ -3,6 +3,7 @@ import { Injectable, Renderer2, RendererFactory2 } from '@angular/core';
 @Injectable({
   providedIn: 'root',
 })
+  
 export class ThemeService {
   private renderer: Renderer2;
   private currentTheme: string;

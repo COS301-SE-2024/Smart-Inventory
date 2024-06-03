@@ -3,32 +3,62 @@
 		<ion-icon name="menu-outline" size="large"></ion-icon>
 	</div>
 	<ul class="nav-menu">
-		<li href="/dashboard">
-			<ion-icon name="home-outline"></ion-icon>
-			<span class="label">Dashboard</span>
+		<li>
+			<a routerLink="/dashboard">
+				<ion-icon name="home-outline"></ion-icon>
+				<span class="label">Dashboard</span>
+			</a>
 		</li>
-		<li href="/inventory">
-			<ion-icon name="cube-outline"></ion-icon>
-			<span class="label">Inventory</span>
+		<li>
+			<a routerLink="/inventory">
+				<ion-icon name="cube-outline"></ion-icon>
+				<span class="label">Inventory</span>
+			</a>
 		</li>
-		<li href="/reports">
-			<ion-icon name="pie-chart-outline"></ion-icon>
-			<span class="label">Reports</span>
+		<li>
+			<a routerLink="/reports">
+				<ion-icon name="pie-chart-outline"></ion-icon>
+				<span class="label">Reports</span>
+			</a>
 		</li>
-		<li href="/requests">
-			<ion-icon name="clipboard-outline"></ion-icon>
-			<span class="label">Requests</span>
+		<li>
+			<a routerLink="/requests">
+				<ion-icon name="clipboard-outline"></ion-icon>
+				<span class="label">Requests</span>
+			</a>
 		</li>
-		<li href="/suppliers">
-			<ion-icon name="people-outline"></ion-icon>
-			<span class="label">Suppliers</span>
+		<li>
+			<a routerLink="/suppliers">
+				<ion-icon name="people-outline"></ion-icon>
+				<span class="label">Suppliers</span>
+			</a>
 		</li>
-		<li href="/orders">
-			<ion-icon name="cart-outline"></ion-icon>
-			<span class="label">Orders</span>
+		<li>
+			<a routerLink="/orders">
+				<ion-icon name="cart-outline"></ion-icon>
+				<span class="label">Orders</span>
+			</a>
 		</li>
+		<li>
+			<a routerLink="/settings">
+				<ion-icon name="settings-outline"></ion-icon>
+				<span class="label">Settings</span>
+			</a>
+		</li>
+		<li>
+			<a routerLink="/help">
+				<ion-icon name="help-circle-outline"></ion-icon>
+				<span class="label">Help</span>
+			</a>
+		</li>
+
 		<div class="nav-bottom">
-			<li href="/logout"><ion-icon name="log-out-outline"></ion-icon><span *ngIf="isExpanded">Logout</span></li>
+			<li>
+				<a routerLink="/">
+					<ion-icon name="log-out-outline"></ion-icon>
+					<span *ngIf="isExpanded">Logout</span>
+				</a>
+			</li>
 		</div>
 	</ul>
 </aside>

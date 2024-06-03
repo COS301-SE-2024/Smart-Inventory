@@ -126,7 +126,8 @@
             ],
             "scripts": [],
             "exclude": [
-              "src/app/app.component.spec.ts"
+              "src/app/app.component.spec.ts",
+              "src/app/folder/folder.page.spec.ts"
             ]
           },
           "configurations": {

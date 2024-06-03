@@ -38,11 +38,13 @@ jobs:
 
       - name: Run Tests
         run: |
-          npm run test
+          npm run test -- --no-watch --no-progress --browsers=ChromeHeadless
 
       - name: Build Codebase
         run: |
           npm run build
+
+        
 
   end:
     name: The end

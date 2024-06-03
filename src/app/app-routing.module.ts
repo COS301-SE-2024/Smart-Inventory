@@ -8,10 +8,6 @@ const routes: Routes = [
     component: LoginCreateAccountComponent,
   },
   {
-    path: '',
-    component: LoginCreateAccountComponent,
-  },
-  {
     path: 'dashboard',
     loadChildren: () => import('./pages/dashboard/dashboard.module').then(m => m.DashboardPageModule)
   },

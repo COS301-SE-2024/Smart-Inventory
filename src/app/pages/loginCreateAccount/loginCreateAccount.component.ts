@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-
+import { Router } from '@angular/router';
 @Component({
     selector: 'app-login',
     templateUrl: './loginCreateAccount.component.html',
@@ -11,7 +11,7 @@ export class LoginCreateAccountComponent implements OnInit {
     darkMode: boolean = false;
     signIn: boolean = true;
 
-    constructor() {}
+    constructor(private router: Router) { }
 
     ngOnInit() {
         this.login = new FormGroup({
@@ -42,19 +42,18 @@ export class LoginCreateAccountComponent implements OnInit {
                     password: new FormControl('', Validators.required),
                 });
             }
-        } catch {}
+        } catch { }
     }
 
     //Changes from light mode to dark mode
     changeMode() {
         try {
             this.darkMode = this.darkMode === true ? false : true;
-        } catch {}
+        } catch { }
     }
 
     //Saves the values inserted and makes a call to the API to save the data
     onSave() {
-        try {
-        } catch {}
+        this.router.navigate(['/dashboard']);
     }
 }

@@ -334,7 +334,7 @@ That's it! You should now have the Angular app with AWS Amplify integration runn
         </b>
         <br>
         <p>
-          .
+          An aspiring full-stack developer who thrives in collaborative environments. With expertise in Angular, Java, and C#, this individual combines strong analytical skills with a passion for crafting efficient, user-centric solutions. Their dedication to learning and proactive approach make them a valuable asset to any team.
         </p>
         <a href="https://github.com/TristanU21442615">
           <img src="/media/githubPic.png" width="24" height="24"/>

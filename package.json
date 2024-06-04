@@ -7,7 +7,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "lint" : "ng lint"
+    "lint": "ng lint"
   },
   "private": true,
   "dependencies": {
@@ -21,10 +21,10 @@
     "@angular/router": "^18.0.0",
     "@aws-amplify/ui-angular": "^5.0.16",
     "aws-amplify": "^6.3.4",
+    "js-yaml": ">=3.13.1",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
-    "zone.js": "~0.14.3",
-    "js-yaml": ">=3.13.1"
+    "zone.js": "~0.14.3"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^18.0.2",
@@ -33,10 +33,12 @@
     "@aws-amplify/backend": "^1.0.2",
     "@aws-amplify/backend-cli": "^1.0.3",
     "@types/jasmine": "~5.1.0",
+    "angular-eslint": "18.0.1",
     "aws-cdk": "^2.143.1",
     "aws-cdk-lib": "^2.143.1",
     "constructs": "^10.3.0",
     "esbuild": "^0.21.4",
+    "eslint": "^9.3.0",
     "jasmine-core": "~5.1.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",
@@ -44,6 +46,7 @@
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
     "tsx": "^4.11.0",
-    "typescript": "^5.4.5"
+    "typescript": "^5.4.5",
+    "typescript-eslint": "8.0.0-alpha.20"
   }
 }

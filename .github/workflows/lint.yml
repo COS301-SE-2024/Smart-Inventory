@@ -36,7 +36,7 @@ jobs:
 
       - name: Lint Codebase
         run:  |
-          npm run lint --prefix src/app
+          npm run lint 
   end:
     name: The end
     runs-on: ubuntu-latest

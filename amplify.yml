@@ -9,8 +9,8 @@ frontend:
   phases:
     preBuild:
       commands:
-        - nvm install 18.19.0
-        - nvm use 18.19.0
+        - nvm install 18.15.0
+        - nvm use 18.15.0
     build:
       commands:
         - npm install -g @angular/cli

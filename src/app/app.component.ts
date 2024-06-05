@@ -1,6 +1,10 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { AmplifyAuthenticatorModule, AuthenticatorService } from '@aws-amplify/ui-angular';
+import { Amplify } from 'aws-amplify';
+import outputs from '../../amplify_outputs.json';
+
+Amplify.configure(outputs);
 
 @Component({
   selector: 'app-root',
@@ -11,5 +15,7 @@ import { AmplifyAuthenticatorModule, AuthenticatorService } from '@aws-amplify/u
 })
 export class AppComponent {
   title = 'Smart-Inventory';
-  constructor(public authenticator: AuthenticatorService) {}
+  constructor(public authenticator: AuthenticatorService) {
+    Amplify.configure(outputs);
+  }
 }

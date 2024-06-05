@@ -1,7 +1,0 @@
-{
-  "name": "SmartInventory",
-  "integrations": {
-    "capacitor": {}
-  },
-  "type": "angular"
-}

@@ -1,58 +1,53 @@
-/* sidebar.component.scss */
 .sidenav-container {
   height: 100%;
-  width: 100%;
+  width: 100%;  /* Ensures the sidenav container takes full available space */
 }
 
-.toggle-btn {
-  position: fixed; /* Ensure it's always positioned relative to the viewport */
-  top: 10px; /* Adjust positioning as necessary */
-  left: 10px; /* Adjust so it's near the edge */
-  z-index: 1050; /* Above the sidenav and other content */
-  cursor: pointer;
+.sidenav {
+  width: 200px;  /* Standard width for sidenav */
+  background-color: #f2f2f2;  /* Light grey background */
+  color: black;  /* Changes default text/icon color to black for visibility */
+}
+
+mat-toolbar {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 16px;
+  justify-content: start;
+  height: 64px;  /* Standard toolbar height */
+  background-color: #e0e0e0;  /* Slightly darker shade for the toolbar */
 }
 
-.side-navbar {
-  width: 80px; /* Initial width when not expanded */
-  transition: width 0.3s ease;
-  background-color: #fff; /* Ensure it has a background */
+mat-icon {
+  display: block;  /* Block display for icons */
+  margin: auto;
+  font-size: 24px;  /* Standard Material icon size */
 }
 
-.side-navbar.opened {
-  width: 250px; /* Width when sidebar is expanded */
-}
-
-.mat-nav-list .mat-list-item {
+a {
   display: flex;
-  flex-direction: column; /* Stack icon and label vertically */
+  flex-direction: column;
   align-items: center;
-  transition: all 0.3s ease;
+  padding: 10px;
+  text-align: center;
+  text-decoration: none;
+  color: black;  /* Ensures text is black */
+  transition: background-color 0.3s;  /* Smooth transition for hover effect */
 }
 
-.side-navbar.opened .mat-nav-list .mat-list-item {
-  flex-direction: row; /* Align icon and label horizontally when expanded */
-  align-items: center;
-  justify-content: flex-start;
+a:hover {
+  background-color: #d6d6d6;  /* Adds a hover effect */
 }
 
-.mat-nav-list .mat-list-item .nav-label {
-  opacity: 0; /* Initially hide labels */
-  transition: opacity 0.3s ease;
+a div {
+  margin-top: 5px;
 }
 
-.side-navbar.opened .mat-nav-list .mat-list-item .nav-label {
-  opacity: 1; /* Show labels when expanded */
-  margin-left: 10px;
+a.mat-mdc-list-item.mdc-list-item.mat-mdc-list-item-interactive.mat-mdc-list-item-single-line.mdc-list-item--with-one-line {
+  height: 72px;
 }
 
-
-.mat-nav-list .mat-list-item .nav-label {
-  color: #000 !important;
-  /* Ensuring label color is black */
-  display: block;
-  transition: opacity 0.3s ease, color 0.3s ease;
+mat-nav-list.mat-mdc-nav-list.mat-mdc-list-base.mdc-list {
+  position: relative;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }

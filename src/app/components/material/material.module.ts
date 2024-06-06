@@ -36,11 +36,14 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
-
+import { MatSidenav } from '@angular/material/sidenav';
 
 
 @NgModule({
   declarations: [],
+  imports: [
+    MatSidenav
+  ],
   exports: [
     MatAutocompleteModule,
     MatCheckboxModule,
@@ -77,7 +80,8 @@ import { MatTableModule } from '@angular/material/table';
     MatTooltipModule,
     MatPaginatorModule,
     MatSortModule,
-    MatTableModule
+    MatTableModule,
+    MatSidenav
   ]
 })
 export class MaterialModule { }

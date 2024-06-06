@@ -1,12 +1,14 @@
-<nav>
-    <ul>
-      <li><a routerLink="/dashboard" routerLinkActive="active">Dashboard</a></li>
-      <li><a routerLink="/inventory" routerLinkActive="active">Inventory</a></li>
-      <li><a routerLink="/reports" routerLinkActive="active">Reports</a></li>
-      <li><a routerLink="/team" routerLinkActive="active">Team</a></li>
-      <li><a routerLink="/suppliers" routerLinkActive="active">Suppliers</a></li>
-      <li><a routerLink="/orders" routerLinkActive="active">Orders</a></li>
-      <li><a routerLink="/settings" routerLinkActive="active">Settings</a></li>
-      <li><a routerLink="/help" routerLinkActive="active">Help</a></li>
-    </ul>
+<nav [class.collapsed]="collapsed">
+  <div class="hamburger-menu" (click)="toggleSidebar()">&#9776;</div>
+  <ul>
+    <li><a routerLink="/dashboard" routerLinkActive="active">Dashboard</a></li>
+    <li><a routerLink="/inventory" routerLinkActive="active">Inventory</a></li>
+    <li><a routerLink="/reports" routerLinkActive="active">Reports</a></li>
+    <li><a routerLink="/team" routerLinkActive="active">Team</a></li>
+    <li><a routerLink="/suppliers" routerLinkActive="active">Suppliers</a></li>
+    <li><a routerLink="/orders" routerLinkActive="active">Orders</a></li>
+    <li><a routerLink="/settings" routerLinkActive="active">Settings</a></li>
+    <li><a routerLink="/help" routerLinkActive="active">Help</a></li>
+    <li><a (click)="signOut()">Sign Out</a></li>
+  </ul>
 </nav>

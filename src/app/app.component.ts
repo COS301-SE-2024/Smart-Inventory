@@ -17,6 +17,7 @@ Amplify.configure(outputs);
 })
 export class AppComponent implements OnInit {
   title = 'Smart-Inventory';
+  sidebarCollapsed = false;
 
   constructor(public authenticator: AuthenticatorService) {
     Amplify.configure(outputs);

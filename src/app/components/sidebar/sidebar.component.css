@@ -1,0 +1,45 @@
+nav {
+  width: 200px;
+  background-color: #f0f0f0;
+  padding: 20px;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  overflow-y: auto;
+  transition: width 0.3s;
+}
+
+nav.collapsed {
+  width: 60px;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+li {
+  margin-bottom: 10px;
+}
+
+a {
+  text-decoration: none;
+  color: #333;
+  cursor: pointer;
+}
+
+a.active {
+  font-weight: bold;
+  color: #007bff;
+}
+
+a:hover {
+  color: #0056b3; /* Hover color (slightly darker blue) */
+}
+
+.hamburger-menu {
+  cursor: pointer;
+  padding: 10px;
+  background-color: #f0f0f0;
+}

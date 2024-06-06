@@ -1,28 +1,38 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Component } from '@angular/core';
+import { Router, RouterLink } from '@angular/router'; // Import Router for navigation
 import { signOut } from 'aws-amplify/auth';
-
+import { MaterialModule } from '../material/material.module';
+import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive],
+  imports: [MaterialModule, CommonModule, RouterLink], // Update imports
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.css']
 })
 export class SidebarComponent {
-  @Input() collapsed = false;
-  @Output() collapsedChange = new EventEmitter<boolean>();
 
-  toggleSidebar() {
-    this.collapsed = !this.collapsed;
-    this.collapsedChange.emit(this.collapsed);
+
+  constructor(private router: Router) { } // Inject Router
+
+  isExpanded = false;
+  menuItems = [
+    { label: 'Dashboard', icon: 'dashboard', route: '/dashboard' },
+    { label: 'Inventory', icon: 'inventory', route: '/inventory' },
+    { label: 'Reports', icon: 'bar_chart', route: '/reports' },
+    { label: 'Requests', icon: 'assignment', route: '/requests' },
+    { label: 'Suppliers', icon: 'group', route: '/suppliers' },
+    { label: 'Orders', icon: 'shopping_cart', route: '/orders' },
+  ];
+
+  toggleSidenav() {
+    this.isExpanded = !this.isExpanded;
   }
 
-  async signOut() {
+  async signOut() { // Renamed to avoid confusion with `signOut` from Amplify
     try {
       await signOut();
-      // Optionally, you can redirect the user to the login page after sign-out
-      // this.router.navigate(['/login']);
+      this.router.navigate(['/login']); // Redirect after sign out
     } catch (error) {
       console.error('Error signing out:', error);
     }

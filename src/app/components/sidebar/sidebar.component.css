@@ -1,45 +1,45 @@
-nav {
-  width: 200px;
-  background-color: #f0f0f0;
-  padding: 20px;
-  height: 100vh;
-  position: fixed;
-  left: 0;
-  top: 0;
-  overflow-y: auto;
-  transition: width 0.3s;
+.sidenav-container {
+  height: 100%;
 }
 
-nav.collapsed {
-  width: 60px;
+.sidenav {
+  width: 80px; /* Initial width */
+  transition: width 0.3s ease;
 }
 
-ul {
-  list-style-type: none;
-  padding: 0;
+.sidenav.opened {
+  width: 250px; /* Width when sidenav is expanded */
 }
 
-li {
-  margin-bottom: 10px;
-}
-
-a {
-  text-decoration: none;
-  color: #333;
+.toggle-btn {
   cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
 }
 
-a.active {
-  font-weight: bold;
-  color: #007bff;
+.mat-nav-list .mat-list-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: all 0.3s ease;
 }
 
-a:hover {
-  color: #0056b3; /* Hover color (slightly darker blue) */
+.sidenav.opened .mat-nav-list .mat-list-item {
+  flex-direction: row;
+  justify-content: flex-start;
 }
 
-.hamburger-menu {
-  cursor: pointer;
-  padding: 10px;
-  background-color: #f0f0f0;
+.nav-label {
+  display: none;
+}
+
+.sidenav.opened .nav-label {
+  display: block;
+  margin-left: 10px; /* Space between icon and label */
+}
+
+*{
+  color: #000;
 }

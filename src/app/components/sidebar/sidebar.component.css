@@ -1,17 +1,14 @@
+/* sidebar.component.scss */
 .sidenav-container {
   height: 100%;
-}
-
-.sidenav {
-  width: 80px; /* Initial width */
-  transition: width 0.3s ease;
-}
-
-.sidenav.opened {
-  width: 250px; /* Width when sidenav is expanded */
+  width: 100%;
 }
 
 .toggle-btn {
+  position: fixed; /* Ensure it's always positioned relative to the viewport */
+  top: 10px; /* Adjust positioning as necessary */
+  left: 10px; /* Adjust so it's near the edge */
+  z-index: 1050; /* Above the sidenav and other content */
   cursor: pointer;
   display: flex;
   justify-content: center;
@@ -19,27 +16,43 @@
   padding: 16px;
 }
 
+.side-navbar {
+  width: 80px; /* Initial width when not expanded */
+  transition: width 0.3s ease;
+  background-color: #fff; /* Ensure it has a background */
+}
+
+.side-navbar.opened {
+  width: 250px; /* Width when sidebar is expanded */
+}
+
 .mat-nav-list .mat-list-item {
   display: flex;
-  flex-direction: column;
+  flex-direction: column; /* Stack icon and label vertically */
   align-items: center;
   transition: all 0.3s ease;
 }
 
-.sidenav.opened .mat-nav-list .mat-list-item {
-  flex-direction: row;
+.side-navbar.opened .mat-nav-list .mat-list-item {
+  flex-direction: row; /* Align icon and label horizontally when expanded */
+  align-items: center;
   justify-content: flex-start;
 }
 
-.nav-label {
-  display: none;
+.mat-nav-list .mat-list-item .nav-label {
+  opacity: 0; /* Initially hide labels */
+  transition: opacity 0.3s ease;
 }
 
-.sidenav.opened .nav-label {
+.side-navbar.opened .mat-nav-list .mat-list-item .nav-label {
+  opacity: 1; /* Show labels when expanded */
+  margin-left: 10px;
+}
+
+
+.mat-nav-list .mat-list-item .nav-label {
+  color: #000 !important;
+  /* Ensuring label color is black */
   display: block;
-  margin-left: 10px; /* Space between icon and label */
-}
-
-*{
-  color: #000;
+  transition: opacity 0.3s ease, color 0.3s ease;
 }

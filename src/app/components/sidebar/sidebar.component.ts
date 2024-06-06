@@ -15,7 +15,8 @@ export class SidebarComponent {
 
   constructor(private router: Router) { } // Inject Router
 
-  isExpanded = false;
+  isExpanded = true;
+  
   menuItems = [
     { label: 'Dashboard', icon: 'dashboard', route: '/dashboard' },
     { label: 'Inventory', icon: 'inventory', route: '/inventory' },

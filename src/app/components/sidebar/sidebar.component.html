@@ -1,16 +1,17 @@
+<!-- sidebar.component.html -->
 <mat-sidenav-container class="sidenav-container">
-  <mat-sidenav #sidenav mode="side" [(opened)]="isExpanded" class="sidenav">
+  <mat-sidenav #sidenav mode="side" [(opened)]="isExpanded" class="side-navbar" fixedInViewport="true">
     <div class="toggle-btn" (click)="toggleSidenav()">
       <mat-icon>menu</mat-icon>
     </div>
     <mat-nav-list>
-      <a mat-list-item *ngFor="let item of menuItems" routerLink="{{ item.route }}">
+      <a mat-list-item *ngFor="let item of menuItems" [routerLink]="item.route">
         <mat-icon>{{ item.icon }}</mat-icon>
-        <span class="nav-label">{{ item.label }}</span>
+        <span *ngIf="isExpanded" class="nav-label">{{ item.label }}</span>
       </a>
     </mat-nav-list>
   </mat-sidenav>
   <mat-sidenav-content>
-    <!-- Main content can go here -->
+    <!-- Main content goes here -->
   </mat-sidenav-content>
 </mat-sidenav-container>

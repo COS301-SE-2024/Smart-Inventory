@@ -5,7 +5,7 @@ import { Amplify } from 'aws-amplify';
 import outputs from '../../amplify_outputs.json';
 import { fetchAuthSession } from 'aws-amplify/auth';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
-
+import { HeaderComponent } from './components/header/header.component';
 Amplify.configure(outputs);
 
 @Component({
@@ -13,7 +13,7 @@ Amplify.configure(outputs);
   standalone: true,
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
-  imports: [RouterOutlet, AmplifyAuthenticatorModule, SidebarComponent],
+  imports: [RouterOutlet, AmplifyAuthenticatorModule, SidebarComponent, HeaderComponent],
 })
 export class AppComponent implements OnInit {
   title = 'Smart-Inventory';

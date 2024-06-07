@@ -2,10 +2,12 @@
   <ng-template amplifySlot="authenticated" let-user="user" let-signOut="signOut">
     <div class="container">
       <app-sidebar></app-sidebar>
-      <div class="content" [style.margin-left.px]="sidebarCollapsed ? 60 : 200">
-        <router-outlet></router-outlet>
+      <div style="flex-grow: 1;">
+        <app-header></app-header>
+        <div class="content">
+          <router-outlet></router-outlet>
+        </div>
       </div>
     </div>
   </ng-template>
-  
 </amplify-authenticator>

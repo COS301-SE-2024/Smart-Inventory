@@ -12,7 +12,9 @@
           <a mat-list-item routerLink="/requests"><mat-icon>request_quote</mat-icon><div>Requests</div></a>
           <a mat-list-item routerLink="/suppliers"><mat-icon>local_shipping</mat-icon><div>Suppliers</div></a>
           <a mat-list-item routerLink="/orders"><mat-icon>shopping_cart</mat-icon><div>Orders</div></a>
-      </mat-nav-list>
+
+          <a mat-list-item (click)="signOut()"><mat-icon>exit_to_app</mat-icon><div>Log Out</div></a>
+        </mat-nav-list>
   </mat-sidenav>
   <mat-sidenav-content>
       <!-- Main content goes here -->

@@ -1,4 +1,4 @@
-import { Component, HostBinding, HostListener, ViewChild } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { signOut } from 'aws-amplify/auth';
 import { MaterialModule } from '../material/material.module';

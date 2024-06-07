@@ -1,1 +1,27 @@
-<p>header works!</p>
+<!-- Header component HTML -->
+<mat-toolbar color="primary">
+    <span>{{ pageTitle }}</span>
+    <span class="flex-spacer"></span>
+    <!-- Icons -->
+    <button mat-icon-button aria-label="Filter tasks" class="toolbar-icon">
+        <mat-icon class="large-icon">filter_list</mat-icon>
+    </button>
+    <button mat-icon-button aria-label="Notifications" class="toolbar-icon">
+        <mat-icon class="large-icon">notifications</mat-icon>
+    </button>
+    <!-- User profile -->
+    <div class="user-profile" [matMenuTriggerFor]="menu">
+        <div class="profile-box">
+            <img src="{{img}}" alt="User Name" class="profile-pic">
+            <div class="user-info">
+                <span class="username">{{ user }}</span>
+                <span class="role">Admin</span>
+            </div>
+        </div>
+    </div>
+    <mat-menu #menu="matMenu">
+        <button mat-menu-item>Profile</button>
+        <button mat-menu-item>Settings</button>
+        <button mat-menu-item>Logout</button>
+    </mat-menu>
+</mat-toolbar>

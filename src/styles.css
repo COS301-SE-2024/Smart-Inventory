@@ -10,5 +10,10 @@
   max-width: 500px;
 }
 
-html, body { height: 100%; }
+body, html {
+  width: 100%; /* Ensure the body takes full width */
+  margin: 0; /* Reset default margin */
+  padding: 0; /* Reset default padding */
+}
+
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

@@ -1,14 +1,21 @@
-<nav [class.collapsed]="collapsed">
-  <div class="hamburger-menu" (click)="toggleSidebar()">&#9776;</div>
-  <ul>
-    <li><a routerLink="/dashboard" routerLinkActive="active">Dashboard</a></li>
-    <li><a routerLink="/inventory" routerLinkActive="active">Inventory</a></li>
-    <li><a routerLink="/reports" routerLinkActive="active">Reports</a></li>
-    <li><a routerLink="/team" routerLinkActive="active">Team</a></li>
-    <li><a routerLink="/suppliers" routerLinkActive="active">Suppliers</a></li>
-    <li><a routerLink="/orders" routerLinkActive="active">Orders</a></li>
-    <li><a routerLink="/settings" routerLinkActive="active">Settings</a></li>
-    <li><a routerLink="/help" routerLinkActive="active">Help</a></li>
-    <li><a (click)="signOut()">Sign Out</a></li>
-  </ul>
-</nav>
+<mat-sidenav-container class="sidenav-container">
+  <mat-sidenav #sidenav mode="side" opened="true" class="sidenav">
+      <mat-toolbar color="primary"> <!-- Adds a toolbar at the top of the sidenav -->
+          <button mat-icon-button (click)="toggleSidenav()">
+              <mat-icon>menu</mat-icon> <!-- This is the menu icon -->
+          </button>
+      </mat-toolbar>
+      <mat-nav-list>
+          <a mat-list-item routerLink="/dashboard"><mat-icon>home</mat-icon><div>Dashboard</div></a>
+          <a mat-list-item routerLink="/inventory"><mat-icon>inventory_2</mat-icon><div>Inventory</div></a>
+          <a mat-list-item routerLink="/reports"><mat-icon>assessment</mat-icon><div>Reports</div></a>
+          <a mat-list-item routerLink="/requests"><mat-icon>request_quote</mat-icon><div>Requests</div></a>
+          <a mat-list-item routerLink="/suppliers"><mat-icon>local_shipping</mat-icon><div>Suppliers</div></a>
+          <a mat-list-item routerLink="/orders"><mat-icon>shopping_cart</mat-icon><div>Orders</div></a>
+          <a mat-list-item (click)="signOut()"><mat-icon>exit_to_app</mat-icon><div>Log Out</div></a>
+      </mat-nav-list>
+  </mat-sidenav>
+  <mat-sidenav-content>
+      <!-- Main content goes here -->
+  </mat-sidenav-content>
+</mat-sidenav-container>

@@ -17,12 +17,14 @@ export class SidebarComponent {
   isExpanded = false;
   sidebarWidth = 300; // Default sidebar width
   menuItems = [
-    { label: 'Dashboard', icon: 'dashboard' },
-    { label: 'Inventory', icon: 'inventory' },
-    { label: 'Reports', icon: 'bar_chart' },
-    { label: 'Requests', icon: 'assignment' },
-    { label: 'Suppliers', icon: 'group' },
-    { label: 'Orders', icon: 'shopping_cart' }
+    { label: 'Dashboard', icon: 'home' , routerLink: '/dashboard'},
+    { label: 'Inventory', icon: 'inventory_2', routerLink: "/inventory" },
+    { label: 'Reports', icon: 'assessment', routerLink: "/reports" },
+    { label: 'Requests', icon: 'request_quote', routerLink: "/requests" },
+    { label: 'Suppliers', icon: 'local_shipping', routerLink: "/suppliers" },
+    { label: 'Orders', icon: 'shopping_cart', routerLink: "/orders" },
+    { label: 'Settings', icon: 'settings', routerLink: '/settings'},
+    { label: 'Log Out', icon: 'exit_to_app', click: true }
   ];
   constructor(private router: Router) { }
 

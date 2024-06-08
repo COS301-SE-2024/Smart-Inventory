@@ -7,6 +7,7 @@ import { SuppliersComponent } from './pages/suppliers/suppliers.component';
 import { OrdersComponent } from './pages/orders/orders.component';
 import { SettingsComponent } from './pages/settings/settings.component';
 import { HelpComponent } from './pages/help/help.component';
+import { GridComponent } from './components/grid/grid.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
@@ -18,4 +19,5 @@ export const routes: Routes = [
   { path: 'orders', component: OrdersComponent },
   { path: 'settings', component: SettingsComponent },
   { path: 'help', component: HelpComponent },
+  { path: 'grid', component: GridComponent}
 ];

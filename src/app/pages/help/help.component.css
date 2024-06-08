@@ -1,0 +1,486 @@
+/* SCROLL BAR */
+
+/* width */
+::-webkit-scrollbar {
+    margin-left: 5px;
+    width: 10px;
+    border-radius: 50px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 50px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 50px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+.body {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    margin: 0 30px;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    height: 90%;
+}
+
+.content .row {
+    display: flex;
+    align-items: center;
+    padding: 16px;
+}
+
+.content .first-row {
+    justify-content: space-between;
+    height: 10%;
+    font-size: 30px;
+}
+
+.content .first-row h1 {
+    margin: 0;
+    /* font-weight: 500; */
+    font-size: 70px;
+}
+
+.content .first-row .buttons {
+    display: flex;
+}
+
+.content .first-row .buttons button {
+    margin-left: 8px;
+    width: 130px;
+    height: 60px;
+    border-radius: 15px;
+}
+
+.content .first-row .buttons .save-button {
+    background-color: #05FF00;
+    color: black;
+    font-size: 30px;
+    font-weight: 500;
+}
+
+.content .first-row .buttons .cancel-button {
+    background-color: #8F8F8F;
+    color: black;
+    font-size: 30px;
+    font-weight: 500;
+}
+
+.content .second-row {
+    height: 90%;
+    display: flex;
+    background-color: #D1D1D1;
+    overflow-y: auto;
+}
+
+/* LEFT PANE */
+
+.content .second-row .left-pane {
+    width: 20%;
+    display: flex;
+    text-align: left !important;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    /* Ensure buttons start at the top */
+}
+
+/* NAVIGATION MENU */
+
+.content .second-row .left-pane .menu-buttons {
+    width: 100%;
+}
+
+.content .second-row .left-pane .menu-buttons button {
+    width: 100%;
+    text-align: left; 
+    background-color: #D1D1D1;
+    color: black;
+    font-weight: 100; 
+    font-size: 23px;
+    margin-bottom: 8px;
+    border-radius: 10px;
+    font-weight: 400;
+    padding-left: 0px; 
+}
+
+.content .second-row .left-pane .menu-buttons button.selected {
+    background-color: #05FF00;
+    color: black;
+}
+
+
+/* LIGHT AND DARK MODE TOGGLE */
+
+.content .second-row .left-pane .mode-toggle {
+    margin-top: 43vh;
+    display: flex;
+    align-items: center;
+    padding: 16px;
+}
+
+.content .second-row .left-pane .mode-toggle span {
+    margin-right: 8px;
+    font-size: 14px;
+}
+
+.content .second-row .left-pane .mode-toggle .mat-slide-toggle-thumb {
+    background-color: #05FF00 !important;
+}
+
+.content .second-row .left-pane .mode-toggle .mat-slide-toggle-track {
+    background-color: white !important;
+}
+
+.content .second-row .left-pane .mode-toggle .mat-checked .mat-slide-toggle-thumb {
+    background-color: #05FF00 !important;
+}
+
+.content .second-row .left-pane .mode-toggle .mat-checked .mat-slide-toggle-track {
+    background-color: #544C4C !important;
+}
+
+
+.content .second-row .vertical-line {
+    width: 3px;
+    background-color: #000;
+    height: 95%;
+    margin-left: 10px;
+}
+
+/* RIGHT PANE */
+
+.content .second-row .right-pane {
+    width: 80%;
+    padding: 16px;
+}
+
+
+/* FAQs SECTION */
+
+.content .second-row .right-pane .faq-section {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.content .second-row .right-pane .faq-section .faq-row {
+    width: 100%;
+}
+
+.content .second-row .right-pane .faq-section .faq-row.faq-row-one {
+    height: 20vh;
+}
+
+.content .second-row .right-pane .faq-section .faq-row.faq-row-one h2 {
+    margin-bottom: 15px;
+    /* font-weight: 500; */
+    font-size: 60px;
+}
+
+.content .second-row .right-pane .faq-section .faq-row.faq-row-one .filter-buttons {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.content .second-row .right-pane .faq-section .faq-row.faq-row-one .filter-buttons .filter-button {
+    margin-right: 8px;
+    margin-bottom: 8px;
+    height: 60px;
+    background-color: #05FF00;
+    color: black;
+    border-radius: 15px;
+    font-size: 20px;
+    font-weight: 500;
+}
+
+.content .second-row .right-pane .faq-section .faq-row.faq-row-two {
+    height: 40vh;
+    overflow-y: auto;
+}
+
+.content .second-row .right-pane .faq-section .faq-row.faq-row-two mat-accordion {
+    width: 100%;
+}
+
+.content .second-row .right-pane .faq-section .faq-row.faq-row-two mat-expansion-panel-header {
+    height: 10vh;
+}
+
+.content .second-row .right-pane .faq-section .faq-row.faq-row-two mat-panel-title {
+    font-size: 25px;
+    font-weight: 500;
+}
+
+.content .second-row .right-pane .faq-section .faq-row.faq-row-two mat-expansion-panel p {
+    font-size: 20px;
+    font-weight: 400;
+}
+
+.content .second-row .right-pane .faq-section .faq-row.faq-row-three {
+    margin-top: 20px;
+    height: 10%;
+    display: flex;
+    align-items: center;
+}
+
+/* BANNER  */
+
+.content .second-row .right-pane .faq-section .faq-row.faq-row-three .faq-banner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #05FF00;
+    padding: 16px;
+    width: 100%;
+    border-radius: 15px;
+}
+
+.content .second-row .right-pane .faq-section .faq-row.faq-row-three .faq-banner .banner-text h3 {
+    margin: 0;
+    margin-bottom: 5px;
+    font-size: 30px;
+}
+
+.content .second-row .right-pane .faq-section .faq-row.faq-row-three .faq-banner .banner-text p {
+    font-size: 20px;
+    margin: 0;
+    font-weight: 500;
+}
+
+.content .second-row .right-pane .faq-section .faq-row.faq-row-three .faq-banner .get-in-touch-button {
+    background-color: black;
+    color: white;
+    font-weight: 500;
+    font-size: 20px;
+    border-radius: 15px;
+    height: 70px;
+    width: 150px;
+    margin-left: auto;
+}
+
+/* TROUBLESHOOTING */
+
+.content .second-row .right-pane .troubleshooting-section {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.content .second-row .right-pane .troubleshooting-section .troubleshooting-row-one {
+    height: 10vh;
+}
+
+.content .second-row .right-pane .troubleshooting-section .troubleshooting-row-one h2 {
+    margin: 0;
+    font-size: 60px;
+}
+
+.content .second-row .right-pane .troubleshooting-section .troubleshooting-row-two {
+    height: 50vh;
+    overflow-y: auto;
+}
+
+.content .second-row .right-pane .troubleshooting-section .troubleshooting-row-two mat-accordion {
+    width: 100%;
+}
+
+.content .second-row .right-pane .troubleshooting-section .troubleshooting-row-two mat-expansion-panel-header {
+    height: 10vh;
+}
+
+.content .second-row .right-pane .troubleshooting-section .troubleshooting-row-two mat-expansion-panel p {
+    font-size: 20px;
+    font-weight: 400;
+}
+
+.content .second-row .right-pane .troubleshooting-section .troubleshooting-row-two mat-panel-title {
+    font-size: 25px;
+    font-weight: 500;
+}
+
+.content .second-row .right-pane .troubleshooting-section .troubleshooting-row-three {
+    /* height: 10%; */
+    display: flex;
+    align-items: center;
+}
+
+/* BANNER  */
+
+.content .second-row .right-pane .troubleshooting-section .troubleshooting-row-three .troubleshooting-banner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #05FF00;
+    padding: 16px;
+    width: 100%;
+    border-radius: 15px;
+}
+
+.content .second-row .right-pane .troubleshooting-section .troubleshooting-row-three .troubleshooting-banner .banner-text h3 {
+    margin: 0;
+    margin-bottom: 5px;
+    font-size: 30px;
+}
+
+.content .second-row .right-pane .troubleshooting-section .troubleshooting-row-three .troubleshooting-banner .banner-text p {
+    font-size: 20px;
+    margin: 0;
+    font-weight: 500;
+}
+
+.content .second-row .right-pane .troubleshooting-section .troubleshooting-row-three .troubleshooting-banner .get-in-touch-button {
+    background-color: black;
+    color: white;
+    font-size: 20px;
+    border-radius: 15px;
+    height: 70px;
+    width: 150px;
+    margin-left: auto;
+    font-weight: 500;
+}
+
+/* CONTACT SUPPORT */
+
+.content .second-row .right-pane .customer-support-section {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.content .second-row .right-pane .customer-support-section .customer-support-row-one {
+    height: 10vh;
+}
+
+.content .second-row .right-pane .customer-support-section .customer-support-row-one h2 {
+    margin: 0;
+    font-size: 60px;
+}
+
+.content .second-row .right-pane .customer-support-section .customer-support-row-two {
+    height: 50vh;
+    display: flex;
+}
+
+.content .second-row .right-pane .customer-support-section .customer-support-row-two .column-one {
+    width: 50%;
+}
+
+.content .second-row .right-pane .customer-support-section .customer-support-row-two .column-one img {
+    width: 100%;
+    height: 100%;
+}
+
+/* FORM SUBMISSION */
+
+.content .second-row .right-pane .customer-support-section .customer-support-row-two .column-two {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center; /* Center the form in the column */
+    margin-left: 30px;
+}
+
+.content .second-row .right-pane .customer-support-section .customer-support-row-two .column-two form {
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+    /* background-color: white;  */
+    /* padding: 20px; */
+    box-shadow: none;
+    border-radius: 10px; /* Optional: Add border radius for better look */
+}
+
+.content .second-row .right-pane .customer-support-section .customer-support-row-two .column-two form mat-form-field {
+    margin-bottom: 15px;
+    background-color: #fff;
+    margin-top: 15px;
+    padding: none;
+    border-radius: 15px;
+}
+
+.content .second-row .right-pane .customer-support-section .customer-support-row-two .column-two form mat-form-field textarea{
+    height: 120px;
+    /* background-color: #fff; */
+}
+
+::ng-deep .mdc-line-ripple,
+::ng-deep .mdc-line-ripple.ng-tns-c1534922977-12,
+::ng-deep .mdc-line-ripple--deactivating,
+::ng-deep .mdc-line-ripple.ng-star-inserted {
+    display: none !important;
+}
+
+.content .second-row .right-pane .customer-support-section .customer-support-row-two .column-two form .button-container {
+    display: flex;
+    justify-content: flex-end; /* Align the button to the right */
+}
+
+.content .second-row .right-pane .customer-support-section .customer-support-row-two .column-two form .send-button {
+    background-color: #05FF00;
+    color: black;
+    font-size: 20px;
+    font-weight: 400;
+    border-radius: 15px;
+    height: 40px;
+    width: 130px;
+}
+
+
+/* BANNER  */
+
+.content .second-row .right-pane .customer-support-section .customer-support-row-three {
+    height: 10%;
+    display: flex;
+    align-items: center;
+}
+
+.content .second-row .right-pane .customer-support-section .customer-support-row-three .customer-support-banner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #05FF00;
+    padding: 16px;
+    width: 100%;
+    border-radius: 15px;
+}
+
+.content .second-row .right-pane .customer-support-section .customer-support-row-three .customer-support-banner .banner-text h3 {
+    margin: 0;
+    margin-bottom: 5px;
+    font-size: 30px;
+}
+
+.content .second-row .right-pane .customer-support-section .customer-support-row-three .customer-support-banner .banner-text p {
+    font-size: 20px;
+    margin: 0;
+    font-weight: 500;
+}
+
+.content .second-row .right-pane .customer-support-section .customer-support-row-three .customer-support-banner .get-in-touch-button {
+    background-color: black;
+    color: white;
+    font-size: 20px;
+    border-radius: 15px;
+    height: 70px;
+    width: 150px;
+    margin-left: auto;
+    font-weight: 500;
+}
+
+  

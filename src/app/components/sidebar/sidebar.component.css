@@ -1,45 +1,53 @@
-nav {
-  width: 200px;
-  background-color: #f0f0f0;
-  padding: 20px;
-  height: 100vh;
-  position: fixed;
-  left: 0;
-  top: 0;
-  overflow-y: auto;
-  transition: width 0.3s;
+.sidenav-container {
+  height: 100%;
+  width: 100%;  /* Ensures the sidenav container takes full available space */
 }
 
-nav.collapsed {
-  width: 60px;
+.sidenav {
+  width: 200px;  /* Standard width for sidenav */
+  background-color: #f2f2f2;  /* Light grey background */
+  color: black;  /* Changes default text/icon color to black for visibility */
 }
 
-ul {
-  list-style-type: none;
-  padding: 0;
+mat-toolbar {
+  display: flex;
+  justify-content: start;
+  height: 64px;  /* Standard toolbar height */
+  background-color: #e0e0e0;  /* Slightly darker shade for the toolbar */
 }
 
-li {
-  margin-bottom: 10px;
+mat-icon {
+  display: block;  /* Block display for icons */
+  margin: auto;
+  font-size: 24px;  /* Standard Material icon size */
 }
 
 a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px;
+  text-align: center;
   text-decoration: none;
-  color: #333;
-  cursor: pointer;
-}
-
-a.active {
-  font-weight: bold;
-  color: #007bff;
+  color: black;  /* Ensures text is black */
+  transition: background-color 0.3s;  /* Smooth transition for hover effect */
 }
 
 a:hover {
-  color: #0056b3; /* Hover color (slightly darker blue) */
+  background-color: #d6d6d6;  /* Adds a hover effect */
 }
 
-.hamburger-menu {
-  cursor: pointer;
-  padding: 10px;
-  background-color: #f0f0f0;
+a div {
+  margin-top: 5px;
+}
+
+a.mat-mdc-list-item.mdc-list-item.mat-mdc-list-item-interactive.mat-mdc-list-item-single-line.mdc-list-item--with-one-line {
+  height: 72px;
+}
+
+mat-nav-list.mat-mdc-nav-list.mat-mdc-list-base.mdc-list {
+  position: relative;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }

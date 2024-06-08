@@ -1,28 +1,51 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Component, ViewChild } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
 import { signOut } from 'aws-amplify/auth';
-
+import { MaterialModule } from '../material/material.module';
+import { CommonModule } from '@angular/common';
+import { MatSidenav } from '@angular/material/sidenav';
+import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive],
+  imports: [MaterialModule, CommonModule, RouterLink, FormsModule],
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.css']
 })
 export class SidebarComponent {
-  @Input() collapsed = false;
-  @Output() collapsedChange = new EventEmitter<boolean>();
+  @ViewChild('sidenav') sidenav!: MatSidenav;
+  isExpanded = false;
+  sidebarWidth = 300; // Default sidebar width
+  menuItems = [
+    { label: 'Dashboard', icon: 'dashboard' },
+    { label: 'Inventory', icon: 'inventory' },
+    { label: 'Reports', icon: 'bar_chart' },
+    { label: 'Requests', icon: 'assignment' },
+    { label: 'Suppliers', icon: 'group' },
+    { label: 'Orders', icon: 'shopping_cart' }
+  ];
+  constructor(private router: Router) { }
 
-  toggleSidebar() {
-    this.collapsed = !this.collapsed;
-    this.collapsedChange.emit(this.collapsed);
+  toggle(item: any): void {
+    if (item.submenu) {
+      item.expanded = !item.expanded;
+    }
   }
+
+  originalWidth: string = '200px';  // Original width of the sidenav
+  expandedWidth: string = '300px';  // Expanded width of the sidenav
+
+  // This method toggles the sidenav and changes its width
+  toggleSidenav() {
+    this.isExpanded = !this.isExpanded;  // Toggle the expansion state
+    // this.sidenav.toggle();  // Toggle the visibility of the sidenav
+  }
+
 
   async signOut() {
     try {
       await signOut();
-      // Optionally, you can redirect the user to the login page after sign-out
-      // this.router.navigate(['/login']);
+      this.router.navigate(['/login']);
     } catch (error) {
       console.error('Error signing out:', error);
     }

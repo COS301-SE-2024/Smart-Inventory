@@ -1,0 +1,13 @@
+<div id="orders-chart-container">
+    <div class="filter-container">
+        <select class="year-dropdown" [(ngModel)]="selectedYear" (change)="updateChartData()">
+            <option value="2024">This year</option>
+            <option value="2023">2023</option>
+            <option value="2022">2022</option>
+            <option value="2021">2021</option>
+        </select>
+    </div>
+    <apx-chart [series]="chartOptions.series" [chart]="chartOptions.chart" [xaxis]="chartOptions.xaxis"
+        [title]="chartOptions.title" [dataLabels]="chartOptions.dataLabels" [tooltip]="chartOptions.tooltip">
+    </apx-chart>
+</div>

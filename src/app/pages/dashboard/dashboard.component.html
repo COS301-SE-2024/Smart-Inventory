@@ -1,1 +1,135 @@
-<p>dashboard works!</p>
+<div class="grid-container">
+    <!-- First row -->
+    <div class="tile">
+        <div class="header">
+            Team
+            <button class="add-button">Add Member</button>
+        </div>
+    </div>
+    <div class="tile">
+        <div class="header">Summary</div>
+    </div>
+    <div class="tile">
+        <div class="header">Quick Actions</div>
+    </div>
+
+    <!-- Second row -->
+    <div class="tile">
+        <ul class="list-with-avatars">
+            <li>
+                <img src="https://via.placeholder.com/50" alt="Avatar">
+                Alice - Developer
+                <div class="buttons">
+                    <button>Activity</button>
+                    <button>Delete</button>
+                </div>
+            </li>
+            <li>
+                <img src="https://via.placeholder.com/50" alt="Avatar">
+                Bob - Designer
+                <div class="buttons">
+                    <button>Activity</button>
+                    <button>Delete</button>
+                </div>
+            </li>
+            <li>
+                <img src="https://via.placeholder.com/50" alt="Avatar">
+                Charlie - Project Manager
+                <div class="buttons">
+                    <button>Activity</button>
+                    <button>Delete</button>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div class="tile cards-container">
+        <div class="card">Visitors: 150</div>
+        <div class="card">Downloads: 75</div>
+        <div class="card">Sign-ups: 50</div>
+    </div>
+    <div class="tile quick-actions">
+        <ul class="action-list">
+            <li><img src="https://via.placeholder.com/50/000/fff?text=+" alt="Add Member"> Add Member</li>
+            <li><img src="https://via.placeholder.com/50/000/fff?text=+" alt="Create Order"> Create Order</li>
+            <li><img src="https://via.placeholder.com/50/000/fff?text=📦" alt="Add Product"> Add Product</li>
+            <li><img src="https://via.placeholder.com/50/000/fff?text=🚚" alt="Add Supplier"> Add Supplier</li>
+            <li><img src="https://via.placeholder.com/50/000/fff?text=⬆️" alt="Export"> Export</li>
+        </ul>
+    </div>
+    <!-- Third row -->
+    <div class="full-width-tile">
+        <div class="header">Stock Report</div>
+    </div>
+
+    <!-- Fourth row -->
+    <div class="full-width-tile">
+        <div class="chart-container">
+            <!-- Place charts here -->
+            <!-- Fourth Row -->
+            <div class="row">
+                <!-- First Column for Sales and Earnings -->
+                <div class="column analytics">
+                    <div class="data-point">
+                        <h2>Sales</h2>
+                        <p>$38,100</p>
+                        <p>+8.5%</p>
+                    </div>
+                    <hr> <!-- Line between Sales and Earnings -->
+                    <div class="data-point">
+                        <h2>Earnings</h2>
+                        <p>$23,500</p>
+                        <p>-10%</p>
+                    </div>
+                </div>
+
+                <!-- Second Column for the Chart and Filter Buttons -->
+                <div class="column chart-area">
+                    <div class="chart-filters">
+                        <button (click)="setFilter('year')">This year</button>
+                        <button (click)="setFilter('month')">This month</button>
+                        <button (click)="setFilter('week')">This week</button>
+                        <button (click)="setFilter('day')">Today</button>
+                    </div>
+                    <div class="chart">
+                        <app-saleschart></app-saleschart>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="full-width-tile">
+        <div class="chart-container">
+            <!-- Place charts here -->
+            <!-- Fifth Row -->
+            <div class="row fifth-row">
+                <!-- First Column for the Bar Graph -->
+                <div class="column bar-graph">
+                    <h2>Orders</h2>
+                    <app-barchart></app-barchart> <!-- Assuming you have an OrdersChart component -->
+                </div>
+
+                <!-- Second Column for the Detailed Card -->
+                <div class="column detail-card">
+                    <div class="card">
+                        <h3>Want full report?</h3>
+                        <p>Awesome! You can see more detailed information and download it using this option.</p>
+                        <button>See reports</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <app-donutchart></app-donutchart>
+
+
+    <a href="/help" id="help-button">
+        <video autoplay loop muted playsinline>
+            <source src="https://cdn.dribbble.com/userupload/3567001/file/original-0cba4476e480f9832f7a3aa7e6670415.mp4"
+                type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </a>
+</div>

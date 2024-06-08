@@ -23,8 +23,10 @@
     "@angular/router": "^18.0.0",
     "@aws-amplify/ui-angular": "^5.0.16",
     "@aws-sdk/client-cognito-identity-provider": "^3.590.0",
+    "apexcharts": "^3.49.1",
     "aws-amplify": "^6.3.4",
     "js-yaml": ">=3.13.1",
+    "ng-apexcharts": "^1.10.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.14.3"

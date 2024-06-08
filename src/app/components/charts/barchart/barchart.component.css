@@ -1,0 +1,16 @@
+/* barchart.component.css */
+#orders-chart-container {
+    position: relative;
+}
+
+.filter-container {
+    position: absolute;
+    right: 0;
+    top: -40px;
+    /* Adjust this value as needed */
+}
+
+.year-dropdown {
+    padding: 5px 10px;
+    margin-right: 10px;
+}

@@ -15,6 +15,7 @@ import { NgApexchartsModule } from 'ng-apexcharts';
 
 describe('Dashboard Component', () => {
   beforeEach(() => {
+    cy.viewport(1280, 720),
     cy.mount(DashboardComponent, {
       imports: [
         MaterialModule,

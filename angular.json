@@ -29,9 +29,7 @@
             ],
             "styles": [
               "node_modules/@aws-amplify/ui-angular/theme.css",
-              "src/styles.css", 
-              "~@angular/material/prebuilt-themes/indigo-pink.css"
-              
+              "src/styles.css"
             ],
             "scripts": []
           },

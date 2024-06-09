@@ -35,72 +35,72 @@
 
         <div class="right-pane">
   
-         <!-- GENERAL SECTION-->
-<div *ngIf="selectedContent">
-    <ng-container *ngIf="selectedMenuItem?.title === 'General'; else otherContent">
-      <div class="general-section">
-        <div class="general-row general-row-one">
-          <h2>General</h2>
-          <p>Update General Settings</p>
-          <hr>
-        </div>
-        <div class="general-row general-row-two">
-          <h3>Select theme</h3>
-          <div class="theme-selection-grid">
-            <div class="theme-option" [ngClass]="{'selected-theme': currentTheme === 'light'}" (click)="selectTheme('light')">
-              <img src="assets/img/light-mode.png" alt="Light Mode" />
-              <!-- <p>Light Mode</p> -->
-            </div>
-            <div class="theme-option" [ngClass]="{'selected-theme': currentTheme === 'dark'}" (click)="selectTheme('dark')">
-              <img src="assets/img/dark-mode.png" alt="Dark Mode" />
-              <!-- <p>Dark Mode</p> -->
-            </div>
+        <!-- GENERAL SECTION-->
+        <div *ngIf="selectedContent">
+            <ng-container *ngIf="selectedMenuItem?.title === 'General'; else otherContent">
+              <div class="general-section">
+                <div class="general-row general-row-one">
+                  <h2>General</h2>
+                  <p>Update General Settings</p>
+                  <hr>
+                </div>
+                <div class="general-row general-row-two">
+                  <h3>Select theme</h3>
+                  <div class="theme-selection-grid">
+                    <div class="theme-option" [ngClass]="{'selected-theme': currentTheme === 'light'}" (click)="selectTheme('light')">
+                      <img src="assets/img/light-mode.png" alt="Light Mode" />
+                      <!-- <p>Light Mode</p> -->
+                    </div>
+                    <div class="theme-option" [ngClass]="{'selected-theme': currentTheme === 'dark'}" (click)="selectTheme('dark')">
+                      <img src="assets/img/dark-mode.png" alt="Dark Mode" />
+                      <!-- <p>Dark Mode</p> -->
+                    </div>
+                  </div>
+                  <div class="settings-grid">
+                    <div class="settings-row">
+                      <div class="settings-description">Time Zone</div>
+                      <div class="settings-field">
+                        <mat-form-field appearance="fill">
+                          <!-- <mat-label>Time Zone</mat-label>  -->
+                          <mat-select placeholder="Time Zone">
+                            <mat-option *ngFor="let zone of timeZones" [value]="zone">
+                              {{ zone }}
+                            </mat-option>
+                          </mat-select>
+                        </mat-form-field>
+                      </div>
+                    </div>
+                    <div class="settings-row">
+                      <div class="settings-description">Language</div>
+                      <div class="settings-field">
+                        <mat-form-field>
+                          <!-- <mat-label>Language</mat-label> -->
+                          <mat-select placeholder="Language">
+                            <mat-option *ngFor="let lang of languages" [value]="lang">
+                              {{ lang }}
+                            </mat-option>
+                          </mat-select>
+                        </mat-form-field>
+                      </div>
+                    </div>
+                    <div class="settings-row">
+                      <div class="settings-description">Date and Time Format</div>
+                      <div class="settings-field">
+                        <mat-form-field>
+                          <!-- <mat-label>Date and Time Format</mat-label> -->
+                          <mat-select placeholder="Date and Time Format">
+                            <mat-option *ngFor="let format of dateTimeFormats" [value]="format">
+                              {{ format }}
+                            </mat-option>
+                          </mat-select>
+                        </mat-form-field>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
           </div>
-          <div class="settings-grid">
-            <div class="settings-row">
-              <div class="settings-description">Time Zone</div>
-              <div class="settings-field">
-                <mat-form-field appearance="fill">
-                  <mat-label>Time Zone</mat-label>
-                  <mat-select>
-                    <mat-option *ngFor="let zone of timeZones" [value]="zone">
-                      {{ zone }}
-                    </mat-option>
-                  </mat-select>
-                </mat-form-field>
-              </div>
-            </div>
-            <div class="settings-row">
-              <div class="settings-description">Language</div>
-              <div class="settings-field">
-                <mat-form-field appearance="fill">
-                  <mat-label>Language</mat-label>
-                  <mat-select>
-                    <mat-option *ngFor="let lang of languages" [value]="lang">
-                      {{ lang }}
-                    </mat-option>
-                  </mat-select>
-                </mat-form-field>
-              </div>
-            </div>
-            <div class="settings-row">
-              <div class="settings-description">Date and Time Format</div>
-              <div class="settings-field">
-                <mat-form-field appearance="fill">
-                  <mat-label>Date and Time Format</mat-label>
-                  <mat-select>
-                    <mat-option *ngFor="let format of dateTimeFormats" [value]="format">
-                      {{ format }}
-                    </mat-option>
-                  </mat-select>
-                </mat-form-field>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </ng-container>
-  </div>
   
   
           <!-- PREFERENCES SECTION -->

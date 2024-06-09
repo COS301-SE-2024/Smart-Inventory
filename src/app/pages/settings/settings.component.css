@@ -1,3 +1,5 @@
+/* @import '~@angular/material/prebuilt-themes/indigo-pink.css';
+@import '~@angular/material/theming'; */
 /* SCROLL BAR */
 
 /* width */
@@ -237,7 +239,7 @@
 
 .theme-option {
     cursor: pointer;
-    text-align: center;
+    justify-content: left;
 }
 
 .theme-option img {
@@ -246,17 +248,34 @@
     border-radius: 15px;
 }
 
-.theme-option.selected-theme {
+.theme-selection-grid .theme-option.selected-theme {
     outline: 7px solid #05FF00;
     border-radius: 15px;
 }
 
 .settings-grid {
-    display: grid;
+    /* display: grid;
     grid-template-columns: 1fr 1fr;
     grid-template-rows: repeat(3, auto);
-    gap: 20px;
+    gap: 20px; */
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    row-gap: 20px; /* Adjusted to create proper spacing between rows */
+    column-gap: 20px; /* Adjusted to create proper spacing between columns */
+    align-items: start;
     margin-left: 5%;
+}
+
+.settings-field mat-form-field{
+    /* padding-top: 10px; */
+    background-color: #fff;
+    border-radius: 15px;
+    width: 80%;
+}
+
+.settings-field mat-form-field mat-select mat-option {
+    padding: none;
+    margin: none;
 }
 
 .settings-row {
@@ -265,7 +284,8 @@
 
 .settings-description {
     text-align: left;
-    font-weight: bold;
+    font-weight: 700;
+    font-size: 20px;
 }
 
 .settings-field {
@@ -278,6 +298,24 @@
 ::ng-deep .mdc-line-ripple.ng-star-inserted {
     display: none !important;
 }
+
+.settings-field mat-form-field ::ng-deep .mat-mdc-select-value {
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding-top: 25px;
+}
+
+::ng-deep .mat-mdc-select-arrow svg {
+    margin-top: 15px;
+}
+
+/* Ensure the overlay panel has a high z-index */
+::ng-deep .cdk-overlay-container {
+    z-index: 1000;
+  }
+  
 
 /* PREFERENCES SECTION*/
 

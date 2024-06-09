@@ -30,7 +30,7 @@ interface MenuItem {
     FormsModule,
     MatExpansionModule,
     MatListModule,
-    MatSelectModule
+    MatSelectModule,
   ],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.css'
@@ -40,8 +40,6 @@ export class SettingsComponent {
   selectedMenuItem: MenuItem | null = null;
   selectedContent: string = '';
   currentTheme = "light";
-  // isLightMode: boolean = true;
-  // activeSection: string = '';
   timeZones = ['GMT', 'UTC', 'EST', 'PST']; // Example time zones
   languages = ['English', 'Spanish', 'French', 'German']; // Example languages
   dateTimeFormats = ['MM/DD/YYYY', 'DD/MM/YYYY', 'YYYY-MM-DD']; // Example date and time formats

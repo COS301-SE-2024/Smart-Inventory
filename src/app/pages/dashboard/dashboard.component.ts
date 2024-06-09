@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { TitleService } from '../../components/header/title.service';
 import { MaterialModule } from '../../components/material/material.module';
@@ -44,7 +44,7 @@ export class DashboardComponent implements OnInit {
 
   teamMembers: TeamMember[] = [];
 
-  constructor(private dialog: MatDialog, private titleService: TitleService, private filterService: FilterService) { }
+  constructor(private dialog: MatDialog, private titleService: TitleService, private filterService: FilterService, private cdr: ChangeDetectorRef) { }
 
   setFilter(filter: string): void {
     this.filterService.changeFilter(filter);
@@ -56,7 +56,6 @@ export class DashboardComponent implements OnInit {
 
   openAddMemberDialog() {
     const availableMembers = this.members.filter(member => !this.teamMembers.some(tm => tm.id === member.id));
-    console.log(availableMembers);
     const dialogRef = this.dialog.open(AddmemberComponent, {
       width: '500px',
       height: '500px',
@@ -66,10 +65,11 @@ export class DashboardComponent implements OnInit {
     dialogRef.afterClosed().subscribe(selectedMembers => {
       if (selectedMembers) {
         this.teamMembers = [...this.teamMembers, ...selectedMembers];
-        selectedMembers.forEach((member: { selected: boolean; }) => member.selected = true); // Assuming you need to set 'selected' to true
+        this.cdr.detectChanges();  // Force change detection
       }
     });
   }
+
 
   isMemberAlreadyAdded(member: TeamMember): boolean {
     return this.teamMembers.some(tm => tm.id === member.id);

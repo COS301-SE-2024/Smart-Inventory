@@ -39,6 +39,10 @@
     font-weight: 800;
 }
 
+.header button{
+    margin-left: 20px;
+}
+
 .cards-container {
     display: flex;
     justify-content: space-between;
@@ -96,13 +100,61 @@ ul.action-list {
     position: relative;
 }
 
-.list-with-avatars img,
-.action-list img {
+.action-list {
+    list-style: none;
+    padding: 0;
+}
+
+.action-list li {
+    padding: 8px 0;
+    display: flex;
+    align-items: center;
+    font-size: 20px;
+    /* Adjust the font size as needed */
+}
+
+.action-list mat-icon {
+    margin-right: 10px;
+    /* Spacing between icon and text */
+    color: #333;
+    /* Icon color */
+    font-size: 25px;
+}
+
+
+.member-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    /* Aligns text to the left */
+    margin-right: auto;
+    /* Pushes the buttons to the right */
+    font-size: 16px;
+    /* Adjust font size as needed */
+    line-height: 1.4;
+    /* Adjust line spacing as needed */
+}
+
+.member-info .name{
+    font-weight: bold;
+}
+
+.list-with-avatars img {
     width: 50px;
     height: 50px;
     border-radius: 50%;
     margin-right: 15px;
+    /* Ensures space between the avatar and the text */
 }
+
+.list-with-avatars li {
+    display: flex;
+    align-items: center;
+    padding: 8px;
+    border-bottom: 1px solid #ccc;
+}
+
 
 
 .buttons {

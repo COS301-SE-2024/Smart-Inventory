@@ -5,15 +5,17 @@
         <div class="column half-width">
             <div class="chart-header">
                 <h2>Most Popular Products</h2>
-                <select class="year-dropdown" [(ngModel)]="selectedYear"
-                    (change)="updateChartData(selectedYear)">
-                    <option value="2024">This year</option>
-                    <option value="2023">2023</option>
-                    <option value="2022">2022</option>
-                    <option value="2021">2021</option>
-                </select>
+                <mat-form-field appearance="fill" class="year-dropdown">
+                    <mat-label>Select Year</mat-label>
+                    <mat-select [(ngModel)]="selectedYear" (selectionChange)="updateChartData(selectedYear)">
+                        <mat-option value="2024">This year</mat-option>
+                        <mat-option value="2023">2023</mat-option>
+                        <mat-option value="2022">2022</mat-option>
+                        <mat-option value="2021">2021</mat-option>
+                    </mat-select>
+                </mat-form-field>
             </div>
-            <app-donutchart></app-donutchart>
+
         </div>
 
         <!-- Second Column (Blank for now) -->
@@ -22,3 +24,7 @@
         </div>
     </div>
 </div>
+
+<apx-chart [series]="donutChartOptions.series" [chart]="donutChartOptions.chart" [labels]="donutChartOptions.labels"
+    [responsive]="donutChartOptions.responsive">
+</apx-chart>

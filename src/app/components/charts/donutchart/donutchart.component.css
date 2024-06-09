@@ -1,32 +1,37 @@
-.full-width-tile {
+.row {
     display: flex;
-    width: 100%;
-    align-items: start;
-    /* Adjust vertical alignment as needed */
     justify-content: space-between;
+    margin-top: 20px;
 }
 
-.half-width {
-    width: 50%;
-    /* Each column takes half the width */
+.column {
+    flex: 1;
+    padding: 15px;
+}
+
+.donut-chart {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .chart-header {
+    width: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 20px;
-    /* Add padding for better spacing */
+    margin-bottom: 20px;
 }
 
 .year-dropdown {
-    margin-top: 10px;
-    margin-right: 20px;
-    /* Ensures dropdown is positioned towards the right */
+    padding: 5px 10px;
+    margin-left: auto;
 }
 
-.chart-container {
-    padding: 20px;
-    box-sizing: border-box;
-    /* Ensures padding doesn't affect the overall width */
+.right {
+    /* Additional styling or leave blank */
+}
+
+span.apexcharts-legend-text {
+    font-size: 26px !important;
 }

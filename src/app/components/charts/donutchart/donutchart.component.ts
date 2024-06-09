@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { NgApexchartsModule } from 'ng-apexcharts';
 import { FormsModule } from '@angular/forms';
 import { ApexChart, ChartType } from 'ng-apexcharts'; // Ensure ChartType is imported
-
+import { MaterialModule } from '../../material/material.module';
 export interface ChartOptions {
   series: number[];
   chart: ApexChart;
@@ -18,7 +18,7 @@ type YearlyData = {
 @Component({
   selector: 'app-donutchart',
   standalone: true,
-  imports: [NgApexchartsModule, FormsModule],
+  imports: [NgApexchartsModule, FormsModule, MaterialModule],
   templateUrl: './donutchart.component.html',
   styleUrl: './donutchart.component.css'
 })
@@ -28,15 +28,20 @@ export class DonutchartComponent {
   public donutChartOptions: ChartOptions = {
     series: [44, 55, 41, 17, 15],
     chart: {
-      type: 'donut', // This now directly uses ChartType from the library
-      height: 350
+      type: 'donut', // Ensure this uses ChartType from the library
+      height: 450,   // Increased height
+      width: 450     // Specify width as needed
     },
     labels: ['Product A', 'Product B', 'Product C', 'Product D', 'Product E'],
     responsive: [{
       breakpoint: 480,
       options: {
-        chart: { width: 200 },
-        legend: { position: 'bottom' }
+        chart: {
+          width: 300  // Adjust the width for smaller screens
+        },
+        legend: {
+          position: 'bottom'
+        }
       }
     }]
   };

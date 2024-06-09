@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgApexchartsModule } from 'ng-apexcharts';
 import { ApexAxisChartSeries, ApexChart, ApexDataLabels, ApexTitleSubtitle, ApexTooltip, ApexXAxis } from 'ng-apexcharts';
-
+import { MaterialModule } from '../../material/material.module';
 export type ChartOptions = {
   series: ApexAxisChartSeries;
   chart: ApexChart;
@@ -21,7 +21,7 @@ type DataYearly = {
 @Component({
   selector: 'app-barchart',
   standalone: true,
-  imports: [NgApexchartsModule, CommonModule, FormsModule],
+  imports: [NgApexchartsModule, CommonModule, FormsModule, MaterialModule],
   templateUrl: './barchart.component.html',
   styleUrls: ['./barchart.component.css']
 })

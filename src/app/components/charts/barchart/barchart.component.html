@@ -1,11 +1,15 @@
 <div id="orders-chart-container">
     <div class="filter-container">
-        <select class="year-dropdown" [(ngModel)]="selectedYear" (change)="updateChartData()">
-            <option value="2024">This year</option>
-            <option value="2023">2023</option>
-            <option value="2022">2022</option>
-            <option value="2021">2021</option>
-        </select>
+        <mat-form-field appearance="fill" class="year-dropdown">
+            <mat-label>Select Year</mat-label>
+            <mat-select [(ngModel)]="selectedYear" (selectionChange)="updateChartData()">
+                <mat-option value="2024">This year</mat-option>
+                <mat-option value="2023">2023</mat-option>
+                <mat-option value="2022">2022</mat-option>
+                <mat-option value="2021">2021</mat-option>
+            </mat-select>
+        </mat-form-field>
+
     </div>
     <apx-chart [series]="chartOptions.series" [chart]="chartOptions.chart" [xaxis]="chartOptions.xaxis"
         [title]="chartOptions.title" [dataLabels]="chartOptions.dataLabels" [tooltip]="chartOptions.tooltip">

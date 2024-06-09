@@ -1,7 +1,7 @@
 <h2 mat-dialog-title>Add New Member</h2>
 <mat-dialog-content>
     <mat-selection-list #membersList>
-        <mat-list-option *ngFor="let member of members" checkboxPosition="before">
+        <mat-list-option *ngFor="let member of members" [value]="member" checkboxPosition="before">
             {{ member.name }} - {{ member.role }}
         </mat-list-option>
     </mat-selection-list>

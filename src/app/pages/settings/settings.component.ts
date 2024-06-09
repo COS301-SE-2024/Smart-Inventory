@@ -1,4 +1,4 @@
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, OnInit, HostListener, ViewEncapsulation  } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -6,10 +6,14 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { FormsModule } from '@angular/forms';
+// import { FormsModule } from '@angular/forms';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatListModule } from '@angular/material/list';
+import { FormControl, Validators } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatCardModule } from '@angular/material/card';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 interface MenuItem {
   title: string;
@@ -31,9 +35,14 @@ interface MenuItem {
     MatExpansionModule,
     MatListModule,
     MatSelectModule,
+    MatTabsModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatCardModule
   ],
   templateUrl: './settings.component.html',
-  styleUrl: './settings.component.css'
+  styleUrl: './settings.component.css',
+  encapsulation: ViewEncapsulation.None // Add this line
 })
 export class SettingsComponent {
 
@@ -44,7 +53,56 @@ export class SettingsComponent {
   languages = ['English', 'Spanish', 'French', 'German']; // Example languages
   dateTimeFormats = ['MM/DD/YYYY', 'DD/MM/YYYY', 'YYYY-MM-DD']; // Example date and time formats
 
-  constructor(private snackBar: MatSnackBar) {}
+  constructor(private snackBar: MatSnackBar) { }
+
+  // ACCOUNT SECTION
+  
+  profile = {
+    name: '',
+    surname: '',
+    email: '',
+    mobile: '',
+    country: '',
+    province: '',
+    city: '',
+    street: '',
+    unitNumber: '',
+    zipCode: '',
+    confirmEmail: '',
+    confirmEmailDelete: ''
+  };
+
+  password = {
+    current: '',
+    new: '',
+    currentDelete: ''
+  };
+
+  countries = ['Country 1', 'Country 2', 'Country 3'];
+  provinces = ['Province 1', 'Province 2', 'Province 3'];
+  cities = ['City 1', 'City 2', 'City 3'];
+
+  emailFormControl = new FormControl('', [Validators.required, Validators.email]);
+  mobileFormControl = new FormControl('', [Validators.pattern('\\(\\+27\\) \\d{2} \\d{3} \\d{4}')]);
+
+  isChangePasswordVisible = false;
+  isDeleteAccountVisible = false;
+  changePasswordText = 'Change Password';
+
+  toggleChangePassword() {
+    this.isChangePasswordVisible = !this.isChangePasswordVisible;
+    this.changePasswordText = this.isChangePasswordVisible ? 'Save Password' : 'Change Password';
+  }
+
+  toggleDeleteAccount() {
+    this.isDeleteAccountVisible = !this.isDeleteAccountVisible;
+  }
+
+  confirmDeleteAccount() {
+    // Add account deletion logic here
+    alert('Account deletion confirmed');
+    this.isDeleteAccountVisible = false;
+  }
 
   // NAVIGATION MENU
   menuItems: MenuItem[] = [

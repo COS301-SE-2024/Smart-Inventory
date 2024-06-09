@@ -203,6 +203,7 @@
 .content .second-row .right-pane .general-section .general-row.general-row-one h2 {
     margin: 0;
     font-size: 60px;
+    margin-bottom: 10px;
 }
 
 .content .second-row .right-pane .general-section .general-row.general-row-one p {
@@ -332,6 +333,7 @@
 .content .second-row .right-pane .preferences-section .preferences-row-one h2 {
     margin: 0;
     font-size: 60px;
+    margin-bottom: 10px;
 }
 
 .content .second-row .right-pane .preferences-section .preferences-row.preferences-row-one p {
@@ -369,6 +371,7 @@
 .content .second-row .right-pane .notifications-section .notifications-row-one h2 {
     margin: 0;
     font-size: 60px;
+    margin-bottom: 10px;
 }
 
 .content .second-row .right-pane .notifications-section .notifications-row-one p {
@@ -388,42 +391,132 @@
 .content .second-row .right-pane .notifications-section .notifications-row-two {
     height: 50vh;
     display: flex;
-    background-color: red;
+    /* background-color: red; */
 }
 
 /* ACCOUNT SECTION */
 
-.content .second-row .right-pane .accounts-section {
+.accounts-section {
     display: flex;
     flex-direction: column;
-    height: 100%;
-}
+    padding: 16px;
+    background-color: none;
+    border-radius: 8px;
+  }
 
-.content .second-row .right-pane .accounts-section .accounts-row-one {
-    height: 15vh;
-}
-
-.content .second-row .right-pane .accounts-section .accounts-row-one h2 {
+  
+  .accounts-row-one {
+    margin-bottom: 20px;
+    margin-top: 60px;
+  }
+  
+  .accounts-row-one h2 {
     margin: 0;
     font-size: 60px;
-}
-
-.content .second-row .right-pane .accounts-section .accounts-row-one p {
-    margin-bottom: 20px;
-    font-weight: 500;
+    margin-bottom: 10px;
+  }
+  
+  .accounts-row-one p {
+    margin: 8px 0 16px 0;
     font-size: 20px;
-}
-
-.content .second-row .right-pane .accounts-section .accounts-row-one hr {
+    font-weight: 500;
+  }
+  
+  .accounts-row-one hr {
     height: 4px;
-    box-shadow: none;
     background-color: #000;
     border: none;
     border-radius: 15px;
-}
-
-.content .second-row .right-pane .accounts-section .accounts-row-two {
-    height: 50vh;
+  }
+  
+  .accounts-row-two {
+    overflow-y: auto;
+    max-height: 60vh;
+  }
+  
+  .form-container {
     display: flex;
-    background-color: red;
-}
+    flex-direction: column;
+  }
+
+  .form-row {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 16px;
+    width: 60%;
+  }
+
+  .form-row.form-row-password {
+    width: 30%;
+  }
+  
+  .form-field {
+    flex: 1;
+  }
+  
+  button mat-button {
+    background-color: #8F8F8F;
+    justify-content: left;
+    width: 200px;
+    height: 60px;
+    color: #000;
+    font-size: 20px;
+    font-weight: 400;
+  }
+  
+  button.delete-button {
+    background-color: #8F8F8F;
+    width: 200px;
+    height: 60px;
+    color: #000 !important;
+    font-size: 20px;
+    font-weight: 400;
+    margin-bottom: 20px;
+  }
+
+/* Confirm Delete Button */
+.confirm-delete-button {
+    background-color: rgb(253, 58, 58) !important;
+    color: black !important;
+    font-size: 20px !important;
+    font-weight: 500 !important;
+  }
+  
+  /* Custom Form Field Styling */
+  .form-row mat-form-field {
+    background-color: none;
+  }
+  .custom-form-field {
+    width: 300px !important;
+    background-color: white !important;
+  }
+
+  mat-form-field .mdc-text-field--filled:not(.mdc-text-field--disabled){
+    background-color: #fff;
+    border-radius: 15px;
+
+  }
+
+  mat-form-field .mdc-line-ripple {
+    display: none;
+  }
+  
+  .custom-form-field .mat-form-field-flex {
+    background-color: white !important;
+    border-radius: 15px !important;
+  }
+  
+  .custom-form-field .mat-form-field-outline {
+    border-radius: 15px !important;
+  }
+  
+  .custom-form-field .mat-form-field-outline-start,
+  .custom-form-field .mat-form-field-outline-end {
+    border-radius: 15px !important;
+  }
+  
+  .custom-form-field .mat-form-field-outline-gap {
+    border-radius: 15px !important;
+  }
+
+  

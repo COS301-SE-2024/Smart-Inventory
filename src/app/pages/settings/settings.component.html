@@ -139,18 +139,127 @@
           <!-- ACCOUNT -->
           <div *ngIf="selectedContent">
             <ng-container *ngIf="selectedMenuItem?.title === 'Account'; else otherContent">
-              <div class="accounts-section">
+              <div class="accounts-section mat-elevation-z8">
                 <div class="accounts-row-one">
                   <h2>Accounts</h2>
                   <p>Update User Account Information</p>
                   <hr>
                 </div>
                 <div class="accounts-row-two">
-                  
+                  <!-- <mat-tab-group> -->
+                    <!-- <mat-tab> -->
+                      <div class="form-container">
+                        <h2>Edit Profile</h2>
+                        <h3>Personal details</h3>
+                        <div class="form-row">
+                          <mat-form-field class="form-field">
+                            <mat-label>Name</mat-label>
+                            <input matInput placeholder="Name" [(ngModel)]="profile.name">
+                          </mat-form-field>
+                          <mat-form-field class="form-field">
+                            <mat-label>Surname</mat-label>
+                            <input matInput placeholder="Surname" [(ngModel)]="profile.surname">
+                          </mat-form-field>
+                        </div>
+                        <div class="form-row">
+                          <mat-form-field class="form-field">
+                            <mat-label>Email</mat-label>
+                            <input matInput placeholder="johndoe@mail.com" [(ngModel)]="profile.email" email>
+                            <mat-error *ngIf="emailFormControl.hasError('email')">
+                              Please enter a valid email
+                            </mat-error>
+                          </mat-form-field>
+                          <mat-form-field class="form-field">
+                            <mat-label>Mobile Number</mat-label>
+                            <input matInput placeholder="(+27) xx xxx xxxx" [(ngModel)]="profile.mobile" pattern="\(\+27\) \d{2} \d{3} \d{4}">
+                            <mat-error *ngIf="mobileFormControl.hasError('pattern')">
+                              Please enter a valid mobile number
+                            </mat-error>
+                          </mat-form-field>
+                        </div>
+          
+                        <h3>Address</h3>
+                        <div class="form-row">
+                          <mat-form-field class="form-field">
+                            <mat-label>Country</mat-label>
+                            <mat-select [(ngModel)]="profile.country">
+                              <mat-option *ngFor="let country of countries" [value]="country">{{country}}</mat-option>
+                            </mat-select>
+                          </mat-form-field>
+                          <mat-form-field class="form-field">
+                            <mat-label>Province</mat-label>
+                            <mat-select [(ngModel)]="profile.province">
+                              <mat-option *ngFor="let province of provinces" [value]="province">{{province}}</mat-option>
+                            </mat-select>
+                          </mat-form-field>
+                        </div>
+                        <div class="form-row">
+                          <mat-form-field class="form-field">
+                            <mat-label>City</mat-label>
+                            <mat-select [(ngModel)]="profile.city">
+                              <mat-option *ngFor="let city of cities" [value]="city">{{city}}</mat-option>
+                            </mat-select>
+                          </mat-form-field>
+                          <mat-form-field class="form-field">
+                            <mat-label>Street Name</mat-label>
+                            <input matInput placeholder="Street Name" [(ngModel)]="profile.street">
+                          </mat-form-field>
+                        </div>
+                        <div class="form-row">
+                          <mat-form-field class="form-field">
+                            <mat-label>Flat/Unit Number</mat-label>
+                            <input matInput placeholder="Flat/Unit Number" [(ngModel)]="profile.unitNumber" type="number">
+                          </mat-form-field>
+                          <mat-form-field class="form-field">
+                            <mat-label>Zip Code</mat-label>
+                            <input matInput placeholder="Zip Code" [(ngModel)]="profile.zipCode" type="number">
+                          </mat-form-field>
+                        </div>
+          
+                        <h3>Password</h3>
+                        <div class="form-row form-row-password">
+                          <mat-form-field class="form-field">
+                            <mat-label>Current Password</mat-label>
+                            <input matInput placeholder="Current Password" [(ngModel)]="password.current" type="password">
+                          </mat-form-field>
+                          <button mat-button (click)="toggleChangePassword()">{{changePasswordText}}</button>
+                        </div>
+                        <div *ngIf="isChangePasswordVisible">
+                          <div class="form-row">
+                            <mat-form-field class="form-field custom-form-field">
+                              <mat-label>New Password</mat-label>
+                              <input matInput placeholder="New Password" [(ngModel)]="password.new" type="password">
+                            </mat-form-field>
+                            <mat-form-field class="form-field">
+                              <mat-label>Confirm Email</mat-label>
+                              <input matInput placeholder="Confirm Email" [(ngModel)]="profile.confirmEmail">
+                            </mat-form-field>
+                          </div>
+                        </div>
+          
+                        <h3>Delete Account</h3>
+                        <button mat-button class="delete-button" (click)="toggleDeleteAccount()">Delete Account</button>
+                        <div style="height: 10vh" *ngIf="isDeleteAccountVisible">
+                          <div class="form-row">
+                            <mat-form-field class="form-field">
+                              <mat-label>Current Password</mat-label>
+                              <input matInput placeholder="Current Password" [(ngModel)]="password.currentDelete" type="password">
+                            </mat-form-field>
+                            <mat-form-field class="form-field">
+                              <mat-label>Confirm Email</mat-label>
+                              <input matInput placeholder="Confirm Email" [(ngModel)]="profile.confirmEmailDelete">
+                            </mat-form-field>
+                          </div>
+                          <button mat-raised-button class="confirm-delete-button" (click)="confirmDeleteAccount()">Confirm Delete</button>
+                        </div>
+                      </div>
+                    <!-- </mat-tab> -->
+                  <!-- </mat-tab-group> -->
                 </div>
               </div>
             </ng-container>
           </div>
+          
         
           <ng-template #otherContent>
             {{ selectedContent }}

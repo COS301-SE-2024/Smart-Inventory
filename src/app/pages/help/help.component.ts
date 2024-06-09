@@ -46,6 +46,7 @@ interface TroubleshootingIssue {
 })
 export class HelpComponent implements OnInit {
 
+  // NAVIGATION MENU
   menuItems: MenuItem[] = [
     { title: 'FAQs', content: ' ' },
     { title: 'User Guides', content: ' ' },
@@ -145,16 +146,16 @@ export class HelpComponent implements OnInit {
   //   this.isLightMode = !this.isLightMode;
   // }
 
-  toggleMode() {
-    this.isLightMode = !this.isLightMode;
-    if (this.isLightMode) {
-      document.body.classList.remove('dark-mode');
-      document.body.classList.add('light-mode');
-    } else {
-      document.body.classList.remove('light-mode');
-      document.body.classList.add('dark-mode');
-    }
-  }
+  // toggleMode() {
+  //   this.isLightMode = !this.isLightMode;
+  //   if (this.isLightMode) {
+  //     document.body.classList.remove('dark-mode');
+  //     document.body.classList.add('light-mode');
+  //   } else {
+  //     document.body.classList.remove('light-mode');
+  //     document.body.classList.add('dark-mode');
+  //   }
+  // }
   
 
   onFilterClick(filter: string) {

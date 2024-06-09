@@ -165,8 +165,8 @@
 
 .content .second-row .left-pane .mode-toggle .mat-checked .mat-slide-toggle-track {
     background-color: #544C4C !important;
-}
-*/
+} */
+
 
 .content .second-row .vertical-line {
     width: 3px;
@@ -429,8 +429,29 @@
 
 .content .second-row .right-pane .customer-support-section .customer-support-row-two .column-two form mat-form-field textarea{
     height: 120px;
-    /* background-color: #fff; */
+    background-color: #fff;
 }
+
+.white-form-field .mat-form-field-flex {
+    background-color: white;
+  }
+  
+  .white-form-field .mat-input-element {
+    color: black;
+  }
+  
+  .white-form-field .mat-form-field-label {
+    color: rgba(0, 0, 0, 0.6);
+  }
+  
+  .white-form-field .mat-form-field-underline {
+    background-color: rgba(0, 0, 0, 0.42);
+  }
+  
+  .white-form-field .mat-form-field-ripple {
+    background-color: black;
+  }
+  
 
 ::ng-deep .mdc-line-ripple,
 ::ng-deep .mdc-line-ripple.ng-tns-c1534922977-12,
@@ -519,9 +540,6 @@
   .user-guides-row-two {
     height: 50vh;
     display: flex;
-    /* overflow-y: auto; */
-    /* height: 90vh; */
-    /* overflow-y: auto; */
   }
   
   .side-menu {
@@ -538,11 +556,14 @@
     list-style-type: none;
     padding: 0;
     color: #000;
+    padding-top: 10px;
   }
   
   .side-menu nav ul li {
     margin-bottom: 8px;
     font-size: 20px;
+    padding-bottom: 10px;
+    padding-top: 10px;
     font-weight: 500;
   }
 

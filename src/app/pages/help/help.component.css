@@ -92,31 +92,44 @@
 .content .second-row .left-pane {
     width: 20%;
     display: flex;
-    text-align: left !important;
     flex-direction: column;
     align-items: flex-start;
-    justify-content: flex-start;
-    /* Ensure buttons start at the top */
+    justify-content: flex-start; /* Ensure buttons start at the top */
+    padding: 0; /* Ensure there's no padding affecting positioning */
+    margin: 0; /* Ensure there's no margin affecting positioning */
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
 }
 
 /* NAVIGATION MENU */
 
 .content .second-row .left-pane .menu-buttons {
     width: 100%;
+    margin-top: 0;
+    padding: 0; /* Ensure there's no padding affecting positioning */
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+    margin-bottom: 40vh;
 }
 
 .content .second-row .left-pane .menu-buttons button {
     width: 100%;
-    text-align: left; 
+    text-align: left;
     background-color: #D1D1D1;
     color: black;
-    font-weight: 100; 
     font-size: 23px;
     margin-bottom: 8px;
+    justify-content: left;
+    padding-left: 30px;
     border-radius: 10px;
-    font-weight: 400;
-    padding-left: 0px; 
+    font-weight: 500;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
 }
+
+/* .content[_ngcontent-ng-c2828906938][_ngcontent-ng-c2828906938]   .second-row[_ngcontent-ng-c2828906938][_ngcontent-ng-c2828906938]   .left-pane[_ngcontent-ng-c2828906938][_ngcontent-ng-c2828906938]   .menu-buttons[_ngcontent-ng-c2828906938][_ngcontent-ng-c2828906938]   button[_ngcontent-ng-c2828906938][_ngcontent-ng-c2828906938]{
+    justify-content: left;
+    padding-left: 25px;
+} */
 
 .content .second-row .left-pane .menu-buttons button.selected {
     background-color: #05FF00;
@@ -126,7 +139,7 @@
 
 /* LIGHT AND DARK MODE TOGGLE */
 
-.content .second-row .left-pane .mode-toggle {
+/* .content .second-row .left-pane .mode-toggle {
     margin-top: 43vh;
     display: flex;
     align-items: center;
@@ -153,14 +166,14 @@
 .content .second-row .left-pane .mode-toggle .mat-checked .mat-slide-toggle-track {
     background-color: #544C4C !important;
 }
-
+*/
 
 .content .second-row .vertical-line {
     width: 3px;
     background-color: #000;
     height: 95%;
     margin-left: 10px;
-}
+} 
 
 /* RIGHT PANE */
 
@@ -483,4 +496,223 @@
     font-weight: 500;
 }
 
+/* USER GUIDES SECTION */
+
+.user-guides-section {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
   
+  .user-guides-row-one {
+    height: 10%;
+    display: flex;
+    align-items: center;
+    padding: 16px;
+  }
+  
+  .user-guides-row-one h2 {
+    margin: 0;
+    font-size: 60px;
+  }
+  
+  .user-guides-row-two {
+    height: 50vh;
+    display: flex;
+    /* overflow-y: auto; */
+    /* height: 90vh; */
+    /* overflow-y: auto; */
+  }
+  
+  .side-menu {
+    width: 20%;
+    position: relative;
+    /* top: 10%; */
+    background-color: #D9D9D9;
+    padding: 16px;
+    border-right: 1px solid #ccc;
+    
+  }
+  
+  .side-menu nav ul {
+    list-style-type: none;
+    padding: 0;
+    color: #000;
+  }
+  
+  .side-menu nav ul li {
+    margin-bottom: 8px;
+    font-size: 20px;
+    font-weight: 500;
+  }
+
+  a {
+    text-decoration: none;
+  }
+
+  .side-menu nav ul li a:link {
+    color: #000;
+    font-weight: 500;
+  }
+
+  .side-menu nav ul li a:visited {
+    color: #000;
+    font-weight: 500;
+  }
+ 
+  .side-menu nav ul li a:hover {
+    color: #108a0e;
+    font-weight: 500;
+  }
+
+  .side-menu nav ul li ul {
+    margin-left: 16px;
+  }
+  
+  .article-content {
+    width: 80%;
+    padding: 16px;
+    background-color: #fff;
+    overflow-y: auto;
+  }
+
+  .article-content h2,h3,p {
+    margin-bottom: 10px;
+  }
+
+  .video-container {
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    height: 100%; /* Full height of the parent container */
+  }
+  
+  .video-frame {
+    position: relative;
+    width: 100%;
+    padding-top: 56.25%; /* 16:9 Aspect Ratio */
+    overflow: hidden;
+  }
+  
+  .responsive-video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+  
+  
+  .user-guides-row-three {
+    height: 10%;
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+  }
+  
+  .user-guides-banner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #05FF00;
+    padding: 16px;
+    width: 100%;
+    border-radius: 15px;
+  }
+  
+  .banner-text h3 {
+    margin: 0;
+    margin-bottom: 5px;
+    font-size: 30px;
+    /* font-weight: 500; */
+  }
+  
+  .banner-text p {
+    font-size: 20px;
+    margin: 0;
+    font-weight: 500;
+  }
+  
+  .get-in-touch-button {
+    background-color: black;
+    color: white;
+    font-size: 20px;
+    font-weight: 500;
+    border-radius: 15px;
+    height: 70px;
+    width: 150px;
+    margin-left: auto;
+  }
+
+  /* RELEASE NOTES SECTION */
+
+.content .second-row .right-pane .release-notes-section {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.content .second-row .right-pane .release-notes-section .release-notes-row {
+    width: 100%;
+}
+
+.content .second-row .right-pane .release-notes-section .release-notes-row.release-notes-row-one {
+    height: 20vh;
+}
+
+.content .second-row .right-pane .release-notes-section .release-notes-row.release-notes-row-one h2 {
+    margin-bottom: 15px;
+    /* font-weight: 500; */
+    font-size: 60px;
+}
+
+.content .second-row .right-pane .release-notes-section .release-notes-row.release-notes-row-two {
+    height: 40vh;
+    overflow-y: auto;
+}
+
+
+.content .second-row .right-pane .release-notes-section .release-notes-row.release-notes-row-three {
+    margin-top: 20px;
+    height: 10%;
+    display: flex;
+    align-items: center;
+}
+
+/* BANNER  */
+
+.content .second-row .right-pane .release-notes-section .release-notes-row.release-notes-row-three .release-notes-banner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #05FF00;
+    padding: 16px;
+    width: 100%;
+    border-radius: 15px;
+}
+
+.content .second-row .right-pane .release-notes-section .release-notes-row.release-notes-row-three .release-notes-banner .banner-text h3 {
+    margin: 0;
+    margin-bottom: 5px;
+    font-size: 30px;
+}
+
+.content .second-row .right-pane .release-notes-section .release-notes-row.release-notes-row-three .release-notes-banner .banner-text p {
+    font-size: 20px;
+    margin: 0;
+    font-weight: 500;
+}
+
+.content .second-row .right-pane .release-notes-section .release-notes-row.release-notes-row-three .release-notes-banner .get-in-touch-button {
+    background-color: black;
+    color: white;
+    font-weight: 500;
+    font-size: 20px;
+    border-radius: 15px;
+    height: 70px;
+    width: 150px;
+    margin-left: auto;
+}

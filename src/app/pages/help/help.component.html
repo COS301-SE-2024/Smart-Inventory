@@ -21,11 +21,14 @@
             </button>
           </div>
   
+          <!-- NOT WORKING!!!!  I DON'T KNOW??? -->
           <!-- LIGHT AND DARK MODE TOGGLE -->
-          <div class="mode-toggle">
+
+          <!-- <div class="mode-toggle">
             <span>{{ isLightMode ? 'Light Mode' : 'Dark Mode' }}</span>
             <mat-slide-toggle [(ngModel)]="isLightMode" (change)="toggleMode()"></mat-slide-toggle>
-          </div>
+          </div> -->
+
         </div>
         
         <div class="vertical-line"></div>
@@ -140,6 +143,118 @@
                     <div class="banner-text">
                       <h3>Still Have Questions?</h3>
                       <p>Can't find what you're looking for? Get in touch with our friendly help service</p>
+                    </div>
+                    <button mat-button class="get-in-touch-button" (click)="onItemSelected(menuItems[3])">Get in Touch</button>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+          </div>
+          
+          <!-- USER GUIDES -->
+          <div *ngIf="selectedContent">
+            <ng-container *ngIf="selectedMenuItem?.title === 'User Guides'; else otherContent">
+              <div class="user-guides-section">
+                <div class="user-guides-row-one">
+                  <h2>User Guides</h2>
+                </div>
+                <div class="user-guides-row-two">
+                  <div class="side-menu">
+                    <nav>
+                      <ul>
+                        <li>
+                          <a href="#" [class.active]="isActive('setup-guides')" (click)="navigateTo($event, 'setup-guides')">Setup Guides</a>
+                          <ul>
+                            <li><a href="#" [class.active]="isActive('initial-setup')" (click)="navigateTo($event, 'initial-setup')">Initial Setup</a></li>
+                            <li><a href="#" [class.active]="isActive('role-configuration')" (click)="navigateTo($event, 'role-configuration')">Role Configuration</a></li>
+                            <li><a href="#" [class.active]="isActive('integration-setup')" (click)="navigateTo($event, 'integration-setup')">Integration Setup</a></li>
+                          </ul>
+                        </li>
+                        <li>
+                          <a href="#" [class.active]="isActive('feature-guides')" (click)="navigateTo($event, 'feature-guides')">Feature Guides</a>
+                          <ul>
+                            <li><a href="#" [class.active]="isActive('dashboard-overview')" (click)="navigateTo($event, 'dashboard-overview')">Dashboard Overview</a></li>
+                            <li><a href="#" [class.active]="isActive('inventory-management')" (click)="navigateTo($event, 'inventory-management')">Inventory Management</a></li>
+                            <li><a href="#" [class.active]="isActive('reporting-analytics')" (click)="navigateTo($event, 'reporting-analytics')">Reporting and Analytics</a></li>
+                          </ul>
+                        </li>
+                        <li><a href="#" [class.active]="isActive('video-tutorial')" (click)="navigateTo($event, 'video-tutorial')">Video Tutorial</a></li>
+                      </ul>
+                    </nav>
+                  </div>
+                  <div class="article-content">
+                    <h2 id="setup-guides">Setup Guides</h2>
+                    <h3 id="initial-setup">Initial Setup</h3>
+                    <p>Content for Initial Setup...
+                      Lorem ipsum dolor sit amet. Ea labore ipsam At eveniet provident id cupiditate omnis nam galisum quia. Est inventore nihil vel dolorem labore est commodi ratione et labore Quis sit accusantium minus 33 ducimus distinctio.
+                      Qui deleniti eveniet qui iure officiis ab laudantium perferendis aut saepe architecto et nisi obcaecati ut accusantium eaque et dolorem deleniti. Est nobis laborum hic voluptatem tempora aut ullam doloribus eos iusto dolorem At nostrum assumenda est quidem nisi eos veniam doloribus. Qui quam modi eum error sunt ea accusamus adipisci est quasi veniam.
+                      Et sint ipsa qui aperiam recusandae et neque quaerat ut voluptatem quam sit omnis excepturi in minus omnis At velit atque. Eos quibusdam corrupti est adipisci ipsa aut iste praesentium ut maxime libero eum voluptas laudantium.
+                    </p>
+                    <h3 id="role-configuration">Role Configuration</h3>
+                    <p>Content for Role Configuration...
+                      Lorem ipsum dolor sit amet. Ea labore ipsam At eveniet provident id cupiditate omnis nam galisum quia. Est inventore nihil vel dolorem labore est commodi ratione et labore Quis sit accusantium minus 33 ducimus distinctio.
+                      Qui deleniti eveniet qui iure officiis ab laudantium perferendis aut saepe architecto et nisi obcaecati ut accusantium eaque et dolorem deleniti. Est nobis laborum hic voluptatem tempora aut ullam doloribus eos iusto dolorem At nostrum assumenda est quidem nisi eos veniam doloribus. Qui quam modi eum error sunt ea accusamus adipisci est quasi veniam.
+                      Et sint ipsa qui aperiam recusandae et neque quaerat ut voluptatem quam sit omnis excepturi in minus omnis At velit atque. Eos quibusdam corrupti est adipisci ipsa aut iste praesentium ut maxime libero eum voluptas laudantium.
+                    </p>
+                    <h3 id="integration-setup">Integration Setup</h3>
+                    <p>Content for Integration Setup...
+                      Lorem ipsum dolor sit amet. Ea labore ipsam At eveniet provident id cupiditate omnis nam galisum quia. Est inventore nihil vel dolorem labore est commodi ratione et labore Quis sit accusantium minus 33 ducimus distinctio.
+                      Qui deleniti eveniet qui iure officiis ab laudantium perferendis aut saepe architecto et nisi obcaecati ut accusantium eaque et dolorem deleniti. Est nobis laborum hic voluptatem tempora aut ullam doloribus eos iusto dolorem At nostrum assumenda est quidem nisi eos veniam doloribus. Qui quam modi eum error sunt ea accusamus adipisci est quasi veniam.
+                      Et sint ipsa qui aperiam recusandae et neque quaerat ut voluptatem quam sit omnis excepturi in minus omnis At velit atque. Eos quibusdam corrupti est adipisci ipsa aut iste praesentium ut maxime libero eum voluptas laudantium.
+                    </p>
+                    <h2 id="feature-guides">Feature Guides</h2>
+                    <h3 id="dashboard-overview">Dashboard Overview</h3>
+                    <p>Content for Dashboard Overview...
+                      Lorem ipsum dolor sit amet. Ea labore ipsam At eveniet provident id cupiditate omnis nam galisum quia. Est inventore nihil vel dolorem labore est commodi ratione et labore Quis sit accusantium minus 33 ducimus distinctio.
+                      Qui deleniti eveniet qui iure officiis ab laudantium perferendis aut saepe architecto et nisi obcaecati ut accusantium eaque et dolorem deleniti. Est nobis laborum hic voluptatem tempora aut ullam doloribus eos iusto dolorem At nostrum assumenda est quidem nisi eos veniam doloribus. Qui quam modi eum error sunt ea accusamus adipisci est quasi veniam.
+                      Et sint ipsa qui aperiam recusandae et neque quaerat ut voluptatem quam sit omnis excepturi in minus omnis At velit atque. Eos quibusdam corrupti est adipisci ipsa aut iste praesentium ut maxime libero eum voluptas laudantium.
+                    </p>
+                    <h3 id="inventory-management">Inventory Management</h3>
+                    <p>Content for Inventory Management...
+                      Lorem ipsum dolor sit amet. Ea labore ipsam At eveniet provident id cupiditate omnis nam galisum quia. Est inventore nihil vel dolorem labore est commodi ratione et labore Quis sit accusantium minus 33 ducimus distinctio.
+                      Qui deleniti eveniet qui iure officiis ab laudantium perferendis aut saepe architecto et nisi obcaecati ut accusantium eaque et dolorem deleniti. Est nobis laborum hic voluptatem tempora aut ullam doloribus eos iusto dolorem At nostrum assumenda est quidem nisi eos veniam doloribus. Qui quam modi eum error sunt ea accusamus adipisci est quasi veniam.
+                      Et sint ipsa qui aperiam recusandae et neque quaerat ut voluptatem quam sit omnis excepturi in minus omnis At velit atque. Eos quibusdam corrupti est adipisci ipsa aut iste praesentium ut maxime libero eum voluptas laudantium.
+                    </p>
+                    <h3 id="reporting-analytics">Reporting and Analytics</h3>
+                    <p>Content for Reporting and Analytics...
+                      Lorem ipsum dolor sit amet. Ea labore ipsam At eveniet provident id cupiditate omnis nam galisum quia. Est inventore nihil vel dolorem labore est commodi ratione et labore Quis sit accusantium minus 33 ducimus distinctio.
+                      Qui deleniti eveniet qui iure officiis ab laudantium perferendis aut saepe architecto et nisi obcaecati ut accusantium eaque et dolorem deleniti. Est nobis laborum hic voluptatem tempora aut ullam doloribus eos iusto dolorem At nostrum assumenda est quidem nisi eos veniam doloribus. Qui quam modi eum error sunt ea accusamus adipisci est quasi veniam.
+                      Et sint ipsa qui aperiam recusandae et neque quaerat ut voluptatem quam sit omnis excepturi in minus omnis At velit atque. Eos quibusdam corrupti est adipisci ipsa aut iste praesentium ut maxime libero eum voluptas laudantium.
+                    </p>
+                    <h2 id="video-tutorial">Video Tutorial</h2>
+                    <div class="video-frame">
+                      <iframe class="responsive-video" src="https://www.youtube.com/embed/XekMkIJ843w?si=CNs1FbQ4Cd88Z5Ek" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                    </div>
+                  </div>
+                </div>
+                <div class="user-guides-row-three">
+                  <div class="user-guides-banner">
+                    <div class="banner-text">
+                      <h3>Still Have Questions?</h3>
+                      <p>Can't find what you're looking for? Get in touch with our friendly help service</p>
+                    </div>
+                    <button class="get-in-touch-button" (click)="onContactSupport()">Get in Touch</button>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+          </div>
+
+          <!-- RELEASE NOTES -->
+          <div *ngIf="selectedContent">
+            <ng-container *ngIf="selectedMenuItem?.title === 'Release Notes'; else otherContent">
+              <div class="release-notes-section">
+                <div class="release-notes-row release-notes-row-one">
+                  <h2>Release Notes</h2>
+                </div>
+                <div class="release-notes-row release-notes-row-two">
+                 
+                </div>
+                <div class="release-notes-row release-notes-row-three">
+                  <div class="release-notes-banner">
+                    <div class="banner-text">
+                      <h3>Still Have Questions?</h3>
+                      <p>Can't find what you're looking for? Get in touch with our friendly help service.</p>
                     </div>
                     <button mat-button class="get-in-touch-button" (click)="onItemSelected(menuItems[3])">Get in Touch</button>
                   </div>

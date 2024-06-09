@@ -1,15 +1,17 @@
-import { DashboardComponent } from '../../../src/app/pages/dashboard/dashboard.component';
-import { MaterialModule } from 'src/app/material.module';
-import { AddmemberComponent } from 'src/app/addmember/addmember.component';
-import { BubblechartComponent } from 'src/app/bubblechart/bubblechart.component';
-import { SaleschartComponent } from 'src/app/saleschart/saleschart.component';
-import { BarchartComponent } from 'src/app/barchart/barchart.component';
-import { DonutchartComponent } from 'src/app/donutchart/donutchart.component';
+import { DashboardComponent } from '../src/app/pages/dashboard/dashboard.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import { TitleService } from '../src/app/components/header/title.service';
+import { MaterialModule } from '../src/app/components/material/material.module';
 import { CommonModule } from '@angular/common';
-import { MatDialogModule, MatDialog } from '@angular/material/dialog';
-import { TitleService } from 'src/app/title.service';
-import { FilterService } from 'src/app/filter.service';
-import { ChangeDetectorRef } from '@angular/core';
+import { AddmemberComponent } from '../src/app/components/modal/addmember/addmember.component';
+import { TeamMember } from '../src/app/components/model/team-member.model'; // Correct the import path
+import { BubblechartComponent } from '../src/app/components/charts/bubblechart/bubblechart.component';
+import { SaleschartComponent } from '../src/app/components/charts/saleschart/saleschart.component';
+import { BarchartComponent } from '../src/app/components/charts/barchart/barchart.component';
+import { DonutchartComponent } from '../src/app/components/charts/donutchart/donutchart.component';
+import { FilterService } from '../src/app/services/filter.service';
+import { NgApexchartsModule } from 'ng-apexcharts';
+
 
 describe('Dashboard Component', () => {
   beforeEach(() => {
@@ -22,9 +24,10 @@ describe('Dashboard Component', () => {
         SaleschartComponent,
         BarchartComponent,
         DonutchartComponent,
-        MatDialogModule
+        MatDialogModule,
+        NgApexchartsModule,
       ],
-      providers: [MatDialog, TitleService, FilterService, ChangeDetectorRef],
+      providers: [MatDialogModule, TitleService, FilterService],
     });
   });
 

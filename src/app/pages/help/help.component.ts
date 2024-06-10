@@ -1,4 +1,4 @@
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, OnInit, HostListener,ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -42,7 +42,8 @@ interface TroubleshootingIssue {
     MatListModule
   ],
   templateUrl: './help.component.html',
-  styleUrls: ['./help.component.css']
+  styleUrls: ['./help.component.css'],
+  encapsulation: ViewEncapsulation.None
 })
 export class HelpComponent implements OnInit {
 
@@ -112,7 +113,6 @@ export class HelpComponent implements OnInit {
   filteredFaqs: FAQ[] = [];
   selectedMenuItem: MenuItem | null = null;
   selectedContent: string = '';
-  isLightMode: boolean = true;
   activeSection: string = '';
 
   constructor(private snackBar: MatSnackBar) {}
@@ -142,20 +142,21 @@ export class HelpComponent implements OnInit {
     });
   }
 
-  // toggleMode() {
-  //   this.isLightMode = !this.isLightMode;
-  // }
+ // LIGHT AND DARK MODE TOGGLE
 
-  // toggleMode() {
-  //   this.isLightMode = !this.isLightMode;
-  //   if (this.isLightMode) {
-  //     document.body.classList.remove('dark-mode');
-  //     document.body.classList.add('light-mode');
-  //   } else {
-  //     document.body.classList.remove('light-mode');
-  //     document.body.classList.add('dark-mode');
-  //   }
-  // }
+ isLightMode: boolean = true;
+ toggleMode(event: any) {
+   this.isLightMode = event.checked;
+   if (this.isLightMode) {
+     // Logic to switch to light mode
+     document.body.classList.remove('dark-mode');
+     document.body.classList.add('light-mode');
+   } else {
+     // Logic to switch to dark mode
+     document.body.classList.remove('light-mode');
+     document.body.classList.add('dark-mode');
+   }
+ }
   
 
   onFilterClick(filter: string) {

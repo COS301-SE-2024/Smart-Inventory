@@ -21,13 +21,10 @@
             </button>
           </div>
   
-          <!-- NOT WORKING!!!!  I DON'T KNOW??? -->
-          <!-- LIGHT AND DARK MODE TOGGLE -->
-
-          <!-- <div class="mode-toggle">
-            <span>{{ isLightMode ? 'Light Mode' : 'Dark Mode' }}</span>
-            <mat-slide-toggle [(ngModel)]="isLightMode" (change)="toggleMode()"></mat-slide-toggle>
-          </div> -->
+          <div class="mode-toggle">
+            <span>{{ isLightMode ? 'Dark Mode' : 'Light Mode' }}</span>
+            <mat-slide-toggle [checked]="isLightMode" (change)="toggleMode($event)"></mat-slide-toggle>
+          </div>
 
         </div>
         
@@ -119,15 +116,15 @@
 
                   <div class="column-two">
                     <form>
-                      <mat-form-field appearance="fill" class="white-form-field">
+                      <mat-form-field appearance="fill">
                         <!-- <mat-label>Name</mat-label> -->
                         <input matInput placeholder="Name" required>
                       </mat-form-field>
-                      <mat-form-field appearance="fill" class="white-form-field">
+                      <mat-form-field appearance="fill">
                         <!-- <mat-label>Email address</mat-label> -->
                         <input matInput type="email" placeholder="Email Address" required>
                       </mat-form-field>
-                      <mat-form-field appearance="fill" class="white-form-field">
+                      <mat-form-field appearance="fill">
                         <!-- <mat-label>Message</mat-label> -->
                         <textarea matInput placeholder="Message" required></textarea>
                       </mat-form-field>
@@ -248,7 +245,8 @@
                   <h2>Release Notes</h2>
                 </div>
                 <div class="release-notes-row release-notes-row-two">
-                 
+                  <h1>Under Construction</h1>
+                  <img src="assets/svg/Under-construction-amico.svg">
                 </div>
                 <div class="release-notes-row release-notes-row-three">
                   <div class="release-notes-banner">

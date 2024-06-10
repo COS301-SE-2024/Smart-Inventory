@@ -14,6 +14,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatCardModule } from '@angular/material/card';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 interface MenuItem {
   title: string;
@@ -38,7 +39,8 @@ interface MenuItem {
     MatTabsModule,
     FormsModule,
     ReactiveFormsModule,
-    MatCardModule
+    MatCardModule,
+    MatCheckboxModule
   ],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.css',
@@ -85,6 +87,27 @@ export class SettingsComponent {
   emailFormControl = new FormControl('', [Validators.required, Validators.email]);
   mobileFormControl = new FormControl('', [Validators.pattern('\\(\\+27\\) \\d{2} \\d{3} \\d{4}')]);
 
+  // NOTIFICATIONS
+  notificationTypes = [
+    { title: 'Email Notifications', enabled: false, frequency: '' },
+    { title: 'SMS Notifications', enabled: false, frequency: '' },
+    { title: 'Push Notifications', enabled: false, frequency: '' }
+  ];
+
+  notificationTriggers = [
+    { title: 'Low Stock', enabled: false },
+    { title: 'New Inventory Added', enabled: false },
+    { title: 'Inventory Update', enabled: false },
+    { title: 'Inventory Update', enabled: false }
+  ];
+
+  toggleNotification(type: any) {
+    if (!type.enabled) {
+      type.frequency = '';
+    }
+  }
+
+  // CHANGE PASSWORD
   isChangePasswordVisible = false;
   isDeleteAccountVisible = false;
   changePasswordText = 'Change Password';
@@ -94,10 +117,16 @@ export class SettingsComponent {
     this.changePasswordText = this.isChangePasswordVisible ? 'Save Password' : 'Change Password';
   }
 
+  cancelChangePassword() {
+    this.isChangePasswordVisible = false;
+    this.changePasswordText = 'Change Password';
+  }
+  
+  // DELETE ACCOUNT
   toggleDeleteAccount() {
     this.isDeleteAccountVisible = !this.isDeleteAccountVisible;
   }
-
+  
   confirmDeleteAccount() {
     // Add account deletion logic here
     alert('Account deletion confirmed');
@@ -138,14 +167,14 @@ export class SettingsComponent {
   }
 
   // LIGHT AND DARK THEM IMAGE SELECTION
-  selectTheme(theme: string) {
-    this.currentTheme = theme;
-    if (theme === 'light') {
-      this.applyLightTheme();
-    } else if (theme === 'dark') {
-      this.applyDarkTheme();
-    }
-  }
+  // selectTheme(theme: string) {
+  //   this.currentTheme = theme;
+  //   if (theme === 'light') {
+  //     this.applyLightTheme();
+  //   } else if (theme === 'dark') {
+  //     this.applyDarkTheme();
+  //   }
+  // }
 
   applyLightTheme() {
     document.body.classList.remove('dark-theme');
@@ -156,4 +185,33 @@ export class SettingsComponent {
     document.body.classList.remove('light-theme');
     document.body.classList.add('dark-theme');
   }
+
+  // LIGHT AND DARK MODE TOGGLE
+
+  isLightMode = true; // Initial mode, set to true for Light Mode by default
+
+  toggleMode(event: any) {
+    this.isLightMode = event.checked;
+    if (this.isLightMode) {
+      // Logic to switch to light mode
+      document.body.classList.remove('dark-mode');
+      document.body.classList.add('light-mode');
+    } else {
+      // Logic to switch to dark mode
+      document.body.classList.remove('light-mode');
+      document.body.classList.add('dark-mode');
+    }
+  }
+
+  selectTheme(theme: string) {
+    this.currentTheme = theme;
+    if (theme === 'dark') {
+      this.isLightMode = true; // Update toggle state
+      this.applyLightTheme();
+    } else if (theme === 'light') {
+      this.isLightMode = false; // Update toggle state
+      this.applyDarkTheme();
+    }
+  }
+  
 }

@@ -1,5 +1,3 @@
-/* @import '~@angular/material/prebuilt-themes/indigo-pink.css';
-@import '~@angular/material/theming'; */
 /* SCROLL BAR */
 
 /* width */
@@ -69,14 +67,14 @@
 }
 
 .content .first-row .buttons .save-button {
-    background-color: #05FF00;
+    background-color: #05ff00;
     color: black;
     font-size: 30px;
     font-weight: 500;
 }
 
 .content .first-row .buttons .cancel-button {
-    background-color: #8F8F8F;
+    background-color: #8f8f8f;
     color: black;
     font-size: 30px;
     font-weight: 500;
@@ -85,7 +83,7 @@
 .content .second-row {
     height: 90%;
     display: flex;
-    background-color: #D1D1D1;
+    background-color: #d1d1d1;
     overflow-y: auto;
 }
 
@@ -115,7 +113,7 @@
 .content .second-row .left-pane .menu-buttons button {
     width: 100%;
     text-align: left;
-    background-color: #D1D1D1;
+    background-color: #d1d1d1;
     color: black;
     font-size: 23px;
     margin-bottom: 8px;
@@ -128,54 +126,29 @@
     box-sizing: border-box; /* Include padding and border in the element's total width and height */
 }
 
-/* .content[_ngcontent-ng-c2828906938][_ngcontent-ng-c2828906938]   .second-row[_ngcontent-ng-c2828906938][_ngcontent-ng-c2828906938]   .left-pane[_ngcontent-ng-c2828906938][_ngcontent-ng-c2828906938]   .menu-buttons[_ngcontent-ng-c2828906938][_ngcontent-ng-c2828906938]   button[_ngcontent-ng-c2828906938][_ngcontent-ng-c2828906938]{
-    justify-content: left;
-    padding-left: 25px;
-} */
-
 .content .second-row .left-pane .menu-buttons button.selected {
-    background-color: #05FF00;
+    background-color: #05ff00;
     color: black;
 }
 
-
 /* LIGHT AND DARK MODE TOGGLE */
 
-/* .content .second-row .left-pane .mode-toggle {
-    margin-top: 43vh;
-    display: flex;
-    align-items: center;
-    padding: 16px;
+.mode-toggle span {
+   font-size: 25px;
+   font-weight: 500;
+   padding-top: 40px;
 }
 
-.content .second-row .left-pane .mode-toggle span {
-    margin-right: 8px;
-    font-size: 14px;
+.mode-toggle mat-slide-toggle {
+    margin-left: 15vh;
 }
-
-.content .second-row .left-pane .mode-toggle .mat-slide-toggle-thumb {
-    background-color: #05FF00 !important;
-}
-
-.content .second-row .left-pane .mode-toggle .mat-slide-toggle-track {
-    background-color: white !important;
-}
-
-.content .second-row .left-pane .mode-toggle .mat-checked .mat-slide-toggle-thumb {
-    background-color: #05FF00 !important;
-}
-
-.content .second-row .left-pane .mode-toggle .mat-checked .mat-slide-toggle-track {
-    background-color: #544C4C !important;
-}
-*/
 
 .content .second-row .vertical-line {
     width: 3px;
     background-color: #000;
     height: 95%;
     margin-left: 10px;
-} 
+}
 
 /* RIGHT PANE */
 
@@ -225,17 +198,20 @@
     overflow-y: auto;
 }
 
-.content .second-row .right-pane .general-section .general-row.general-row-two h3{
-    font-size: 30px;
-    margin-bottom: 15px;
+.content .second-row .right-pane .general-section .general-row.general-row-two h3 {
+    font-size: 25px;
+    font-weight: 500;
+    margin-bottom: 30px;
 }
+
+/* LIGHT AND DARK MODE SELECTION */
 
 .theme-selection-grid {
     display: flex;
     justify-content: space-between;
     margin-bottom: 40px;
     margin-left: 5%;
-    width: 60%;
+    width: 50%;
 }
 
 .theme-option {
@@ -250,28 +226,25 @@
 }
 
 .theme-selection-grid .theme-option.selected-theme {
-    outline: 7px solid #05FF00;
+    outline: 7px solid #05ff00;
     border-radius: 15px;
 }
 
+/* LANGUAGE, TIME AND DATE SETTINGS */
 .settings-grid {
-    /* display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: repeat(3, auto);
-    gap: 20px; */
     display: grid;
     grid-template-columns: 1fr 1fr;
-    row-gap: 20px; /* Adjusted to create proper spacing between rows */
+    row-gap: 10px; /* Adjusted to create proper spacing between rows */
     column-gap: 20px; /* Adjusted to create proper spacing between columns */
     align-items: start;
     margin-left: 5%;
 }
 
-.settings-field mat-form-field{
-    /* padding-top: 10px; */
-    background-color: #fff;
+.settings-field mat-form-field {
+    /* background-color: #fff; */
     border-radius: 15px;
     width: 80%;
+    background-color: none;
 }
 
 .settings-field mat-form-field mat-select mat-option {
@@ -291,7 +264,7 @@
 
 .settings-field {
     text-align: left;
-}  
+}
 
 ::ng-deep .mdc-line-ripple,
 ::ng-deep .mdc-line-ripple.ng-tns-c1534922977-12,
@@ -315,8 +288,7 @@
 /* Ensure the overlay panel has a high z-index */
 ::ng-deep .cdk-overlay-container {
     z-index: 1000;
-  }
-  
+}
 
 /* PREFERENCES SECTION*/
 
@@ -350,48 +322,193 @@
     border-radius: 15px;
 }
 
+/* UNDER CONSTRUCTION */
+
 .content .second-row .right-pane .preferences-section .preferences-row-two {
     height: 50vh;
-    overflow-y: auto;
-    background-color: red;
+    /* overflow-y: auto; */
+    justify-content: center;
+}
+
+.content .second-row .right-pane .preferences-section .preferences-row-two img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+}
+
+.content .second-row .right-pane .preferences-section .preferences-row-two h1 {
+    font-size: 70px;
+    /* display: block; */
+    text-align: center;
+    /* background-color: red; */
 }
 
 /* NOTIFICATIONS */
 
-.content .second-row .right-pane .notifications-section {
+/* Notifications Section */
+.notifications-section {
     display: flex;
-    flex-direction: column;
+    flex-direction: column; /* Ensures the sections are displayed in a column layout */
     height: 100%;
 }
 
-.content .second-row .right-pane .notifications-section .notifications-row-one {
+.notifications-row-one {
     height: 15vh;
 }
 
-.content .second-row .right-pane .notifications-section .notifications-row-one h2 {
-    margin: 0;
+.notifications-row-one h2 {
     font-size: 60px;
-    margin-bottom: 10px;
 }
 
-.content .second-row .right-pane .notifications-section .notifications-row-one p {
+.notifications-row-one p {
     margin-bottom: 20px;
     font-weight: 500;
     font-size: 20px;
 }
 
-.content .second-row .right-pane .notifications-section .notifications-row-one hr {
+.notifications-row-one hr {
     height: 4px;
-    box-shadow: none;
     background-color: #000;
     border: none;
     border-radius: 15px;
 }
 
-.content .second-row .right-pane .notifications-section .notifications-row-two {
-    height: 50vh;
+.notifications-row-two {
     display: flex;
-    /* background-color: red; */
+    flex-direction: column; /* Ensures sections inside this container are displayed in a column layout */
+    height: 50vh;
+    overflow-y: auto;
+    margin-left: 30px;
+    padding-right: 30px;
+}
+
+/* Section One */
+.notifications-section-one .notification-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.notifications-section-one .notification-column {
+    flex: 1;
+}
+
+.notifications-section-one .notification-column h4 {
+    margin: 0;
+    font-size: 25px;
+    font-weight: 500;
+}
+
+/* Override Angular Material Styles for Toggle*/
+.mdc-switch__icons {
+    height: 100% !important;
+    position: relative !important;
+    width: 100% !important;
+    z-index: 1 !important;
+    background-color: #05ff00 !important;
+    border-radius: 50% !important;
+}
+
+.mdc-switch:enabled .mdc-switch__track::after {
+    background: #544C4C !important;
+}
+
+.mdc-switch.mdc-switch--unselected:enabled .mdc-switch__icon {
+    display: none !important;
+}
+
+.mdc-switch.mdc-switch--selected:enabled .mdc-switch__icon {
+    fill: #05ff00 !important;
+}
+
+.mdc-switch:enabled .mdc-switch__track::before {
+    background: #fff !important;
+}
+
+.mdc-switch__track::before {
+    border-width: var(--mat-switch-track-outline-width) !important;
+    border-color: #ffffff !important;
+}
+
+.notifications-row-two div hr {
+    height: 4px;
+    background-color: #000;
+    border: none;
+    border-radius: 15px;
+    width: 98%;
+}
+
+/* Section Two */
+.notifications-section-two {
+    margin-top: 20px;
+}
+
+.notifications-section-two h3 {
+    margin: 0 0 20px 0;
+    font-weight: 500;
+}
+
+.notifications-section-two .trigger-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.notifications-section-two .trigger-checkbox-column {
+    width: 5%;
+}
+
+.notifications-section-two .trigger-text-column {
+    /* width: 95%; */
+}
+
+.notifications-section-two .trigger-text-column h4 {
+    margin: 0;
+    font-weight: 500;
+}
+
+.notifications-section-two .trigger-text-column p {
+    margin: 5px 0 0 0;
+}
+
+/* Mat-form-field Styles */
+mat-form-field {
+    width: 100%;
+    background-color: none !important;
+    border-radius: 15px;
+}
+
+.mdc-text-field--filled.mdc-text-field--disabled {
+    background-color: white !important;
+    border-radius: 15px !important;
+}
+
+mat-label {
+    color: #000 !important;
+}
+
+/* Ensuring the dropdown looks as specified */
+.mat-select {
+    background-color: white !important;
+    border: none !important;
+    border-radius: 15px !important;
+}
+
+.mat-select-trigger {
+    background-color: white !important;
+}
+
+/* Checkbox Styles */
+
+.mdc-checkbox__native-control:enabled:checked~.mdc-checkbox__background {
+    background-color: #03ad00 !important;
+    border: #03ad00;
+}
+
+.mdc-checkbox__checkmark {
+    color: #000 !important;
 }
 
 /* ACCOUNT SECTION */
@@ -402,121 +519,142 @@
     padding: 16px;
     background-color: none;
     border-radius: 8px;
-  }
+}
 
-  
-  .accounts-row-one {
+.accounts-row-one {
     margin-bottom: 20px;
     margin-top: 60px;
-  }
-  
-  .accounts-row-one h2 {
+}
+
+.accounts-row-one h2 {
     margin: 0;
     font-size: 60px;
     margin-bottom: 10px;
-  }
-  
-  .accounts-row-one p {
+}
+
+.accounts-row-one p {
     margin: 8px 0 16px 0;
     font-size: 20px;
     font-weight: 500;
-  }
-  
-  .accounts-row-one hr {
+}
+
+.accounts-row-one hr {
     height: 4px;
     background-color: #000;
     border: none;
     border-radius: 15px;
-  }
-  
-  .accounts-row-two {
+}
+
+.accounts-row-two {
     overflow-y: auto;
     max-height: 60vh;
-  }
-  
-  .form-container {
+}
+
+/* EDIT PERSONAL INFORMATION */
+.form-container {
     display: flex;
     flex-direction: column;
-  }
+}
 
-  .form-row {
+.form-container h3 {
+    font-size: 40px;
+}
+
+.form-container h4 {
+    font-size: 30px;
+}
+
+.form-row {
     display: flex;
     gap: 16px;
     margin-bottom: 16px;
     width: 60%;
-  }
+}
 
-  .form-row.form-row-password {
-    width: 30%;
-  }
-  
-  .form-field {
+/* EDIT PASSWORD */
+
+.form-row.form-row-password {
+    width: 60%;
+    margin-right: 30px;
+}
+
+.form-field {
     flex: 1;
-  }
-  
-  button mat-button {
-    background-color: #8F8F8F;
+}
+
+button mat-button {
+    background-color: #8f8f8f;
     justify-content: left;
     width: 200px;
     height: 60px;
     color: #000;
     font-size: 20px;
     font-weight: 400;
-  }
-  
-  button.delete-button {
-    background-color: #8F8F8F;
+}
+
+button.change-password-button {
+    color: #03ad00 !important;
+    margin-top: 10px !important;
+    font-size: 20px !important;
+}
+
+button.cancel-password-button {
+    background-color: transparent;
+    color: red !important;
+    margin-top: 10px !important;
+    font-size: 20px !important;
+}
+
+button.delete-button {
+    background-color: #8f8f8f;
     width: 200px;
     height: 60px;
     color: #000 !important;
     font-size: 20px;
     font-weight: 400;
     margin-bottom: 20px;
-  }
+}
 
-/* Confirm Delete Button */
+/* CONFIRM DELETE ACCOUNT PASSWORD */
 .confirm-delete-button {
     background-color: rgb(253, 58, 58) !important;
     color: black !important;
     font-size: 20px !important;
     font-weight: 500 !important;
-  }
-  
-  /* Custom Form Field Styling */
-  .form-row mat-form-field {
-    background-color: none;
-  }
-  .custom-form-field {
-    width: 300px !important;
-    background-color: white !important;
-  }
+}
 
-  mat-form-field .mdc-text-field--filled:not(.mdc-text-field--disabled){
+/* Custom Form Field Styling */
+.form-row mat-form-field {
+    background-color: none;
+}
+
+/* FORM FIELD EDITING SH** TOOK LONG YALL */
+
+/* MAKE FORM FIELDS WHITE */
+mat-form-field .mdc-text-field--filled:not(.mdc-text-field--disabled) {
     background-color: #fff;
     border-radius: 15px;
+}
 
-  }
-
-  mat-form-field .mdc-line-ripple {
+/* REMOVE UNDERLINE IN FORM FIELDS */
+mat-form-field .mdc-line-ripple {
     display: none;
-  }
-  
-  .custom-form-field .mat-form-field-flex {
+}
+
+.mat-form-field-flex {
     background-color: white !important;
     border-radius: 15px !important;
-  }
-  
-  .custom-form-field .mat-form-field-outline {
-    border-radius: 15px !important;
-  }
-  
-  .custom-form-field .mat-form-field-outline-start,
-  .custom-form-field .mat-form-field-outline-end {
-    border-radius: 15px !important;
-  }
-  
-  .custom-form-field .mat-form-field-outline-gap {
-    border-radius: 15px !important;
-  }
+}
 
-  
+.mat-form-field-outline {
+    border-radius: 15px !important;
+}
+
+.mat-form-field-outline-start,
+.mat-form-field-outline-end {
+    border-radius: 15px !important;
+}
+
+.mat-form-field-outline-gap {
+    border-radius: 15px !important;
+}

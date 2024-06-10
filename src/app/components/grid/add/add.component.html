@@ -1,0 +1,16 @@
+<div class="dialog">
+    <div class="header">
+        <h1>Add field</h1>
+    </div>
+    <form class="form">
+        <div *ngFor="let x of data">
+            <div class="inputHolder" *ngIf="x.elementType === 'input'">
+                <p>{{x.field}}</p>
+                <input>
+            </div>
+            
+        </div>
+    </form>
+</div>
+
+

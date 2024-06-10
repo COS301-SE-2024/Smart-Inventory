@@ -1,8 +1,8 @@
 mat-toolbar {
     display: flex;
     align-items: center;
+    background-color: #f2f2f2;
 }
-
 .flex-spacer {
     flex: 1 1 auto;
 }
@@ -23,7 +23,7 @@ mat-toolbar {
 .profile-box {
     display: flex;
     align-items: center;
-    border-left: 1px solid #000000;
+    border-left: 1px solid grey;
     padding: 11px;
     height: 50px;
     /* border-radius: 5px;

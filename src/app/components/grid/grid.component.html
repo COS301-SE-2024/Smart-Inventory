@@ -1,8 +1,8 @@
 <div class="btn-holder">
     <div class="filter">
-        <input [(ngModel)]="inputFilter" (input)='filterGrid()' placeholder="Search Order By ID">
+        <input [(ngModel)]="inputFilter" (input)="filterGrid()" placeholder="Search Order" />
         <mat-select [(ngModel)]="filterSelect">
-            <mat-option *ngFor="let option of selectOptions" [value]="option">{{option}}</mat-option>
+            <mat-option *ngFor="let option of selectOptions" [value]="option">{{ option }}</mat-option>
         </mat-select>
     </div>
     <div>
@@ -17,9 +17,10 @@
 
 <div class="grid-container">
     <ag-grid-angular
-    [rowData]="filteredRowData"
-    [columnDefs]="columnDefs"
-    class="ag-theme-quartz aggrid"
-    (gridReady)="onGridReady($event)">
-</ag-grid-angular>
+        [rowData]="filteredRowData"
+        [columnDefs]="columnDefs"
+        class="ag-theme-quartz aggrid"
+        (gridReady)="onGridReady($event)"
+    >
+    </ag-grid-angular>
 </div>

@@ -19,8 +19,13 @@ h1 {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    --mdc-protected-button-label-text-color: #000000;
 }
 
-.form{
+.form {
     margin: 20px;
+    --mdc-protected-button-label-text-color: #000000;
+}
+html {
+    --mdc-protected-button-label-text-color: #000000;
 }

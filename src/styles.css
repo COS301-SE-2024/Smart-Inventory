@@ -1,6 +1,7 @@
 * {
   margin: 0;
 }
+
 [data-amplify-authenticator] {
   position: absolute;
   top: 50%;
@@ -10,10 +11,11 @@
   max-width: 500px;
 }
 
-body, html {
-  width: 100%; /* Ensure the body takes full width */
-  margin: 0; /* Reset default margin */
-  padding: 0; /* Reset default padding */
+/* body, html {
+  width: 100%; 
+  margin: 0; 
+  padding: 0; 
 }
 
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+*/

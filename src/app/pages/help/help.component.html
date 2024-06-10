@@ -1,1 +1,158 @@
-<p>help works!</p>
+<div class="body">
+    <div class="content">
+      <div class="row first-row">
+        <h1>Help and Support</h1>
+        <div class="buttons">
+          <button mat-button class="save-button" (click)="onSave()">Save</button>
+          <button mat-button class="cancel-button" (click)="onCancel()">Cancel</button>
+        </div>
+      </div>
+
+      <div class="row second-row">
+        <div class="left-pane">
+  
+          <!-- NAVIGATION MENU -->
+          <div class="menu-buttons">
+            <button *ngFor="let item of menuItems"
+                    mat-button
+                    [ngClass]="{'selected': selectedMenuItem === item}"
+                    (click)="onItemSelected(item)">
+              {{ item.title }}
+            </button>
+          </div>
+  
+          <!-- LIGHT AND DARK MODE TOGGLE -->
+          <div class="mode-toggle">
+            <span>{{ isLightMode ? 'Light Mode' : 'Dark Mode' }}</span>
+            <mat-slide-toggle [(ngModel)]="isLightMode" (change)="toggleMode()"></mat-slide-toggle>
+          </div>
+        </div>
+        
+        <div class="vertical-line"></div>
+
+        <div class="right-pane">
+  
+          <!-- FAQs SECTION-->
+          <div *ngIf="selectedContent">
+            <ng-container *ngIf="selectedMenuItem?.title === 'FAQs'; else otherContent">
+              <div class="faq-section">
+                <div class="faq-row faq-row-one">
+                  <h2>FAQs</h2>
+                  <div class="filter-buttons">
+                    <button mat-button class="filter-button" *ngFor="let filter of faqFilters" (click)="onFilterClick(filter)">
+                      {{ filter }}
+                    </button>
+                  </div>
+                </div>
+                <div class="faq-row faq-row-two">
+                  <mat-accordion>
+                    <mat-expansion-panel *ngFor="let faq of filteredFaqs">
+                      <mat-expansion-panel-header>
+                        <mat-panel-title>
+                          {{ faq.question }}
+                        </mat-panel-title>
+                      </mat-expansion-panel-header>
+                      <p>{{ faq.answer }}</p>
+                    </mat-expansion-panel>
+                  </mat-accordion>
+                </div>
+                <div class="faq-row faq-row-three">
+                  <div class="faq-banner">
+                    <div class="banner-text">
+                      <h3>Still Have Questions?</h3>
+                      <p>Can't find what you're looking for? Get in touch with our friendly help service.</p>
+                    </div>
+                    <button mat-button class="get-in-touch-button" (click)="onItemSelected(menuItems[3])">Get in Touch</button>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+          </div>
+  
+          <!-- TROUBLESHOOTING SECTION -->
+          <div *ngIf="selectedContent">
+            <ng-container *ngIf="selectedMenuItem?.title === 'Troubleshooting'; else otherContent">
+              <div class="troubleshooting-section">
+                <div class="troubleshooting-row-one">
+                  <h2>Troubleshooting</h2>
+                </div>
+                <div class="troubleshooting-row-two">
+                  <mat-accordion>
+                    <mat-expansion-panel *ngFor="let issue of troubleshootingIssues">
+                      <mat-expansion-panel-header>
+                        <mat-panel-title>
+                          {{ issue.title }}
+                        </mat-panel-title>
+                      </mat-expansion-panel-header>
+                      <p>{{ issue.description }}</p>
+                    </mat-expansion-panel>
+                  </mat-accordion>
+                </div>
+                <div class="troubleshooting-row-three">
+                  <div class="troubleshooting-banner">
+                    <div class="banner-text">
+                      <h3>Still Have Questions?</h3>
+                      <p>Can't find what you're looking for? Get in touch with our friendly help service</p>
+                    </div>
+                    <button mat-button class="get-in-touch-button" (click)="onItemSelected(menuItems[3])">Get in Touch</button>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+          </div>
+  
+          <!-- CONTACT SUPPORT -->
+          <div *ngIf="selectedContent">
+            <ng-container *ngIf="selectedMenuItem?.title === 'Contact Support'; else otherContent">
+              <div class="customer-support-section">
+                <div class="customer-support-row-one">
+                  <h2>Contact Support</h2>
+                </div>
+                <div class="customer-support-row-two">
+                    
+                  <div class="column-one">
+                    <img src="../../assets/images/Active Support-amico.svg" alt="Support Image">
+                  </div>
+
+                  <div class="column-two">
+                    <form>
+                      <mat-form-field appearance="fill">
+                        <!-- <mat-label>Name</mat-label> -->
+                        <input matInput placeholder="Name" required>
+                      </mat-form-field>
+                      <mat-form-field appearance="fill">
+                        <!-- <mat-label>Email address</mat-label> -->
+                        <input matInput type="email" placeholder="Email Address" required>
+                      </mat-form-field>
+                      <mat-form-field appearance="fill">
+                        <!-- <mat-label>Message</mat-label> -->
+                        <textarea matInput placeholder="Message" required></textarea>
+                      </mat-form-field>
+                      <div class="button-container">
+                        <button mat-button class="send-button" (click)="onSend()">Send</button>
+                      </div>
+                    </form>
+                  </div>
+                  
+                </div>
+                <div class="customer-support-row-three">
+                  <div class="customer-support-banner">
+                    <div class="banner-text">
+                      <h3>Still Have Questions?</h3>
+                      <p>Can't find what you're looking for? Get in touch with our friendly help service</p>
+                    </div>
+                    <button mat-button class="get-in-touch-button" (click)="onItemSelected(menuItems[3])">Get in Touch</button>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+          </div>
+          
+  
+          <ng-template #otherContent>
+            {{ selectedContent }}
+          </ng-template>
+        </div>
+      </div>
+    </div>
+  </div>

@@ -1,17 +1,48 @@
 .sidenav-container {
-  height: 100%;
+  height: 100vh;
   width: 100%;  /* Ensures the sidenav container takes full available space */
 }
 
 .sidenav {
-  width: 200px;  /* Standard width for sidenav */
+  height: 100vh;
+  width: 50px;  /* Standard width for sidenav */
   background-color: #f2f2f2;  /* Light grey background */
   color: black;  /* Changes default text/icon color to black for visibility */
+  transition: width 0.8s;
+  transition-delay: 0s;
+}
+
+p {
+  width: 0px;
+  overflow: hidden;
+  transition: width 0.8s;
+  transition-delay: 0s;
+}
+
+.expanded {
+  width: 200px;
+  transition-delay: 0s;
+}
+
+.expanded p {
+  width: 200px;
+  transition-delay: 0s;
+}
+
+.sidenav:hover {
+  width: 200px;
+  transition-delay: 1s;
+}
+
+.sidenav:hover p {
+  width: 200px;
+  transition-delay: 1s;
 }
 
 mat-toolbar {
   display: flex;
-  justify-content: start;
+  align-items: center;
+  justify-content: center;
   height: 64px;  /* Standard toolbar height */
   background-color: #e0e0e0;  /* Slightly darker shade for the toolbar */
 }
@@ -43,11 +74,4 @@ a div {
 
 a.mat-mdc-list-item.mdc-list-item.mat-mdc-list-item-interactive.mat-mdc-list-item-single-line.mdc-list-item--with-one-line {
   height: 72px;
-}
-
-mat-nav-list.mat-mdc-nav-list.mat-mdc-list-base.mdc-list {
-  position: relative;
-  top: 30%;
-  left: 50%;
-  transform: translate(-50%, -50%);
 }

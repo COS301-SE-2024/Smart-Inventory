@@ -2,8 +2,8 @@
 
 /* width */
 ::-webkit-scrollbar {
-    margin-left: 5px;
-    width: 10px;
+ margin-left: 5px;
+ width: 10px;
     border-radius: 50px;
   }
   

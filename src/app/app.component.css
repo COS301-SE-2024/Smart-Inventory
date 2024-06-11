@@ -1,11 +1,11 @@
 .container {
-   display: flex;
-   height: 100vh;
-   /* Ensures the container takes full viewport height */
-   width: 100%;
-   /* Ensures the container takes full width */
-   /* overflow: hidden; */
-   /* overflow-y: scroll; */
+  display: flex;
+  height: 100vh;
+  /* Ensures the container takes full viewport height */
+  width: 100%;
+  /* Ensures the container takes full width */
+  /* overflow: hidden; */
+  /* overflow-y: scroll; */
 }
 
 .app-sidebar {

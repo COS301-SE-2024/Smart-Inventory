@@ -4,7 +4,8 @@
   /* Ensures the container takes full viewport height */
   width: 100%;
   /* Ensures the container takes full width */
-  overflow: hidden;
+  /* overflow: hidden; */
+  /* overflow-y: scroll; */
 }
 
 .app-sidebar {
@@ -33,7 +34,7 @@
 .content {
     /* margin-left: 200px; */
     margin-top: 64px;
-    width: 98%;
+    width: 100%;
     height: calc(100vh - 64px);
     /* overflow-y: auto; */
 }

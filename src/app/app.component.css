@@ -4,7 +4,7 @@
     /* Ensures the container takes full viewport height */
     width: 100%;
     /* Ensures the container takes full width */
-    overflow: hidden;
+    /*overflow: hidden; */
 }
 
 .app-sidebar {

@@ -23,24 +23,24 @@
   ::-webkit-scrollbar-thumb:hover {
     background: #555;
   }
-
-
-* {
+  
+  * {
     margin: 0;
-}
-[data-amplify-authenticator] {
+  }
+  
+  [data-amplify-authenticator] {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     width: 40%;
     max-width: 500px;
-}
-
-body,html {
- width: 100%; /* Ensure the body takes full width */
- margin: 0; /* Reset default margin */
- padding: 0; /* Reset default padding */
-}
-
-
+  }
+  
+  body, html {
+    width: 100%; /* Ensure the body takes full width */
+    margin: 0; /* Reset default margin */
+    padding: 0; /* Reset default padding */
+    /* overflow-y: scroll; */
+  }
+  

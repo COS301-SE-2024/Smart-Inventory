@@ -27,6 +27,7 @@
 * {
   margin: 0;
 }
+
 [data-amplify-authenticator] {
   position: absolute;
   top: 50%;

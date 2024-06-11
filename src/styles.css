@@ -6,28 +6,28 @@
   width: 10px;
   border-radius: 50px;
 }
-  
+
 /* Track */
 ::-webkit-scrollbar-track {
   background: #f1f1f1;
   border-radius: 50px;
 }
-  
+
 /* Handle */
 ::-webkit-scrollbar-thumb {
   background: #888;
   border-radius: 50px;
 }
-  
+
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
-  
+
 * {
   margin: 0;
 }
-  
+
 [data-amplify-authenticator] {
   position: absolute;
   top: 50%;
@@ -36,13 +36,13 @@
   width: 40%;
   max-width: 500px;
 }
-  
+
 body, html {
   width: 100%; /* Ensure the body takes full width */
   margin: 0; /* Reset default margin */
   padding: 0; /* Reset default padding */
   /* overflow-y: scroll; */
 }
-  
+ 
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   

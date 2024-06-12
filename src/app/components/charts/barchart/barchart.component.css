@@ -14,3 +14,14 @@
     padding: 5px 10px;
     margin-right: 20px;
 }
+
+.ag-charts-angular {
+    width: 100%;
+    height: 100%;
+}
+
+/* This targets the specific class for AG Charts and overrides the position */
+.ag-chart-wrapper {
+    position: fixed !important;
+    /* Ensure this takes precedence over inline styles */
+}

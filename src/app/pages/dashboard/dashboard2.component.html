@@ -1,20 +1,9 @@
-<div class="card">
-    <div class="card-header">
-        <h3 class="card-title">Dashboard</h3>
-    </div>
-    <div class="card-content">
-        <gridster [options]="options">
-            <gridster-item *ngFor="let item of dashboard" [item]="item">
-                <!-- You can uncomment below to add card styling per Gridster item -->
-                <!-- <div class="inner-card"> -->
-                <!--   <div class="inner-card-header">
-                <div class="inner-card-title">Panel</div>
-              </div> -->
-                <!--   <div class="inner-card-content"> -->
-                    <ag-charts-angular [options]="chartOptions"></ag-charts-angular>
-                <!--   </div>
-            </div> -->
+<div class="card-content">
+    <gridster [options]="options">
+        <ng-container *ngFor="let item of dashboard; let i = index">
+            <gridster-item [item]="item">
+                <ng-template #dynamicComponentContainer></ng-template>
             </gridster-item>
-        </gridster>
-    </div>
+        </ng-container>
+    </gridster>
 </div>

@@ -1,17 +1,10 @@
-import { Component } from '@angular/core';
+
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { NgApexchartsModule } from 'ng-apexcharts';
-import { ApexAxisChartSeries, ApexChart, ApexDataLabels, ApexTitleSubtitle, ApexTooltip, ApexXAxis } from 'ng-apexcharts';
+import { Component, Renderer2, ElementRef, AfterViewInit } from '@angular/core';
+import { AgChartsAngular } from 'ag-charts-angular';
+import { AgChartOptions } from 'ag-charts-community';
 import { MaterialModule } from '../../material/material.module';
-export type ChartOptions = {
-  series: ApexAxisChartSeries;
-  chart: ApexChart;
-  title: ApexTitleSubtitle;
-  xaxis: ApexXAxis;
-  dataLabels: ApexDataLabels;
-  tooltip: ApexTooltip;
-};
 
 type DataYearly = {
   [year: string]: { name: string; data: number[] }[];
@@ -21,48 +14,17 @@ type DataYearly = {
 @Component({
   selector: 'app-barchart',
   standalone: true,
-  imports: [NgApexchartsModule, CommonModule, FormsModule, MaterialModule],
+  imports: [AgChartsAngular, CommonModule, FormsModule, MaterialModule],
   templateUrl: './barchart.component.html',
   styleUrls: ['./barchart.component.css']
 })
-export class BarchartComponent {
+export class BarchartComponent implements AfterViewInit  {
   public selectedYear: string = new Date().getFullYear().toString(); // Default to current year
 
-  public chartOptions!: ChartOptions;
-
-  initializeChartOptions() {
-    this.chartOptions = {
-      series: [
-        {
-          name: 'Direct',
-          data: [450, 700, 300, 500, 800, 300, 700, 600, 300, 400, 900, 800]
-        },
-        {
-          name: 'Affiliate Driven',
-          data: [300, 400, 200, 300, 500, 200, 300, 400, 200, 300, 500, 400]
-        }
-      ],
-      chart: {
-        type: 'bar',
-        height: 350
-      },
-      xaxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-      },
-      title: {
-        text: 'Orders'
-      },
-      dataLabels: {
-        enabled: false
-      },
-      tooltip: {
-        enabled: true
-      }
-    };
-  }
+  public chartOptions: AgChartOptions;
 
   updateChartData() {
-    this.chartOptions.series = this.getSeriesDataByYear(this.selectedYear);
+    this.chartOptions.data = this.getSeriesDataByYear(this.selectedYear);
   }
 
 
@@ -89,7 +51,26 @@ export class BarchartComponent {
   }
 
 
-  constructor() {
-    this.initializeChartOptions();
+  constructor(private renderer: Renderer2, private el: ElementRef) {
+    this.chartOptions = {
+      // Data: Data to be displayed in the chart
+      data: [
+        { month: 'Jan', avgTemp: 2.3, iceCreamSales: 162000 },
+        { month: 'Mar', avgTemp: 6.3, iceCreamSales: 302000 },
+        { month: 'May', avgTemp: 16.2, iceCreamSales: 800000 },
+        { month: 'Jul', avgTemp: 22.8, iceCreamSales: 1254000 },
+        { month: 'Sep', avgTemp: 14.5, iceCreamSales: 950000 },
+        { month: 'Nov', avgTemp: 8.9, iceCreamSales: 200000 },
+      ],
+      // Series: Defines which chart type and data to use
+      series: [{ type: 'bar', xKey: 'month', yKey: 'iceCreamSales' }]
+    };
+  }
+
+  ngAfterViewInit() {
+    const chartWrapper = this.el.nativeElement.querySelector('.ag-chart-wrapper');
+    if (chartWrapper) {
+      this.renderer.setStyle(chartWrapper, 'position', 'fixed');
+    }
   }
 }

@@ -1,1 +1,34 @@
-<p>team works!</p>
+<button class="add-member-button" (click)="openAddMemberPopup()">Add Member</button>
+
+<div *ngIf="showPopup" class="popup-overlay">
+  <div class="popup-content">
+    <h2>Add Member</h2>
+    <form (ngSubmit)="onSubmit(userForm.value)" #userForm="ngForm">
+      <div class="form-group">
+        <label for="name">Name</label>
+        <input type="text" id="name" name="name" [(ngModel)]="user.name" required>
+      </div>
+      <div class="form-group">
+        <label for="surname">Surname</label>
+        <input type="text" id="surname" name="surname" [(ngModel)]="user.surname" required>
+      </div>
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" [(ngModel)]="user.email" required>
+      </div>
+      <div class="form-group">
+        <label for="role">Role</label>
+        <select id="role" name="role" [(ngModel)]="user.role" required>
+          <option value="">Select a role</option>
+          <option value="admin">Admin</option>
+          <option value="enduser">End User</option>
+          <option value="inventorycontroller">Inventory Controller</option>
+        </select>
+      </div>
+      <div class="button-group">
+        <button type="submit" [disabled]="!userForm.form.valid">Submit</button>
+        <button type="button" (click)="closePopup()">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>

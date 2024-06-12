@@ -24,14 +24,10 @@ export class TeamComponent implements OnInit {
     role: ''
   };
 
-  rowData: any[] = [];
-  colDefs: ColDef[] = [
-    { field: 'given_name', headerName: 'Given Name' },
-    { field: 'family_name', headerName: 'Family Name' },
-    { field: 'email', headerName: 'Email' },
-  ];
-
   addButton = { text: 'Add Member' };
+
+  rowData: any[] = [];
+  colDefs: ColDef[] = [];
 
   openAddMemberPopup() {
     this.showPopup = true;
@@ -140,12 +136,19 @@ export class TeamComponent implements OnInit {
       const lambdaResponse = await lambdaClient.send(invokeCommand);
       const users = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
       console.log('Users received from Lambda:', users);
-    
+  
       this.rowData = users.map((user: any) => ({
         given_name: user.Attributes.find((attr: any) => attr.Name === 'given_name')?.Value,
         family_name: user.Attributes.find((attr: any) => attr.Name === 'family_name')?.Value,
         email: user.Attributes.find((attr: any) => attr.Name === 'email')?.Value,
       }));
+  
+      // Set the colDefs after receiving the response from Lambda
+      this.colDefs = [
+        { field: 'given_name', headerName: 'Given Name' },
+        { field: 'family_name', headerName: 'Family Name' },
+        { field: 'email', headerName: 'Email' },
+      ];
     } catch (error) {
       console.error('Error fetching users:', error);
     }

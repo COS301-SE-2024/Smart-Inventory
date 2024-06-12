@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { fetchAuthSession } from 'aws-amplify/auth';
 import { CognitoIdentityProviderClient, AdminCreateUserCommand, AdminAddUserToGroupCommand, GetUserCommand, ListUsersCommand } from '@aws-sdk/client-cognito-identity-provider';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import outputs from '../../../../amplify_outputs.json';
+import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
 
 @Component({
   selector: 'app-team',
@@ -12,7 +13,7 @@ import outputs from '../../../../amplify_outputs.json';
   templateUrl: './team.component.html',
   styleUrls: ['./team.component.css']
 })
-export class TeamComponent {
+export class TeamComponent implements OnInit{
   showPopup = false;
   user = {
     name: '',
@@ -29,6 +30,10 @@ export class TeamComponent {
 
   closePopup() {
     this.showPopup = false;
+  }
+
+  async ngOnInit() {
+    await this.fetchUsers();
   }
 
   async onSubmit(formData: any) {
@@ -89,21 +94,44 @@ export class TeamComponent {
   }
 
   async fetchUsers() {
+    console.log('hello');
     try {
       const session = await fetchAuthSession();
-
+  
+      const lambdaClient = new LambdaClient({
+        region: outputs.auth.aws_region,
+        credentials: session.credentials,
+      });
+  
+      // Retrieve the custom attribute using GetUserCommand
       const client = new CognitoIdentityProviderClient({
         region: outputs.auth.aws_region,
         credentials: session.credentials,
       });
-
-      const listUsersCommand = new ListUsersCommand({
-        UserPoolId: outputs.auth.user_pool_id,
+  
+      const getUserCommand = new GetUserCommand({
+        AccessToken: session.tokens?.accessToken.toString(),
       });
-
-      const listUsersResponse = await client.send(listUsersCommand);
-      this.users = listUsersResponse.Users || [];
-      console.log(this.users);
+      const getUserResponse = await client.send(getUserCommand);
+  
+      const adminUniqueAttribute = getUserResponse.UserAttributes?.find(
+        (attr) => attr.Name === 'custom:tenentId'
+      )?.Value;
+  
+      const payload = JSON.stringify({
+        userPoolId: outputs.auth.user_pool_id,
+        tenentId: adminUniqueAttribute,
+      });
+  
+      const invokeCommand = new InvokeCommand({
+        FunctionName: 'getUsers',
+        Payload: new TextEncoder().encode(payload),
+      });
+  
+      const lambdaResponse = await lambdaClient.send(invokeCommand);
+      const users = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+      console.log('Users received from Lambda:', users);
+      this.users = users;
     } catch (error) {
       console.error('Error fetching users:', error);
     }

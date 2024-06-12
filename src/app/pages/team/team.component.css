@@ -23,14 +23,16 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    z-index: 9999;
   }
   
   .popup-content {
     background-color: white;
     padding: 20px;
     border-radius: 4px;
-    width: 400px;
-    max-width: 90%;
+    max-width: 400px;
+    width: 100%;
+    z-index: 10000;
   }
   
   .popup-content h2 {

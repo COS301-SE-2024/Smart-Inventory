@@ -5,15 +5,17 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import outputs from '../../../../amplify_outputs.json';
 import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
+import { GridComponent } from '../../components/grid/grid.component';
+import { ColDef } from 'ag-grid-community';
 
 @Component({
   selector: 'app-team',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, GridComponent],
   templateUrl: './team.component.html',
   styleUrls: ['./team.component.css']
 })
-export class TeamComponent implements OnInit{
+export class TeamComponent implements OnInit {
   showPopup = false;
   user = {
     name: '',
@@ -22,7 +24,14 @@ export class TeamComponent implements OnInit{
     role: ''
   };
 
-  users: any[] = [];
+  rowData: any[] = [];
+  colDefs: ColDef[] = [
+    { field: 'given_name', headerName: 'Given Name' },
+    { field: 'family_name', headerName: 'Family Name' },
+    { field: 'email', headerName: 'Email' },
+  ];
+
+  addButton = { text: 'Add Member' };
 
   openAddMemberPopup() {
     this.showPopup = true;
@@ -131,7 +140,12 @@ export class TeamComponent implements OnInit{
       const lambdaResponse = await lambdaClient.send(invokeCommand);
       const users = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
       console.log('Users received from Lambda:', users);
-      this.users = users;
+    
+      this.rowData = users.map((user: any) => ({
+        given_name: user.Attributes.find((attr: any) => attr.Name === 'given_name')?.Value,
+        family_name: user.Attributes.find((attr: any) => attr.Name === 'family_name')?.Value,
+        email: user.Attributes.find((attr: any) => attr.Name === 'email')?.Value,
+      }));
     } catch (error) {
       console.error('Error fetching users:', error);
     }

@@ -1,1 +1,305 @@
-<p>settings works!</p>
+<div class="body">
+    <div class="content">
+      <div class="row first-row">
+        <h1>Settings</h1>
+        <div class="buttons">
+          <button mat-button class="save-button" (click)="onSave()">Save</button>
+          <button mat-button class="cancel-button" (click)="onCancel()">Cancel</button>
+        </div>
+      </div>
+
+      <div class="row second-row">
+        <div class="left-pane">
+  
+          <!-- NAVIGATION MENU -->
+          <div class="menu-buttons">
+            <button *ngFor="let item of menuItems"
+                    mat-button
+                    [ngClass]="{'selected': selectedMenuItem === item}"
+                    (click)="onItemSelected(item)">
+              {{ item.title }}
+            </button>
+          </div>
+          <!-- GUYS ITS WORKING :) LETS GOOO FINALLY!!!! -->
+          <div class="mode-toggle">
+            <span>{{ isLightMode ? 'Dark Mode' : 'Light Mode' }}</span>
+            <mat-slide-toggle [checked]="isLightMode" (change)="toggleMode($event)"></mat-slide-toggle>
+          </div>
+        </div>
+        
+        <div class="vertical-line"></div>
+
+        <div class="right-pane">
+  
+        <!-- GENERAL SECTION-->
+        <div *ngIf="selectedContent">
+            <ng-container *ngIf="selectedMenuItem?.title === 'General'; else otherContent">
+              <div class="general-section">
+                <div class="general-row general-row-one">
+                  <h2>General</h2>
+                  <p>Update General Settings</p>
+                  <hr>
+                </div>
+                <div class="general-row general-row-two">
+                  <h3>Select theme</h3>
+                  <div class="theme-selection-grid">
+                    <div class="theme-option" [ngClass]="{'selected-theme': currentTheme === 'light'}" (click)="selectTheme('light')">
+                      <img src="assets/img/light-mode.png" alt="Light Mode" />
+                      <!-- <p>Light Mode</p> -->
+                    </div>
+                    <div class="theme-option" [ngClass]="{'selected-theme': currentTheme === 'dark'}" (click)="selectTheme('dark')">
+                      <img src="assets/img/dark-mode.png" alt="Dark Mode" />
+                      <!-- <p>Dark Mode</p> -->
+                    </div>
+                  </div>
+                  <div class="settings-grid">
+                    <div class="settings-row">
+                      <div class="settings-description">Time Zone</div>
+                      <div class="settings-field">
+                        <mat-form-field appearance="fill">
+                          <!-- <mat-label>Time Zone</mat-label>  -->
+                          <mat-select placeholder="Time Zone">
+                            <mat-option *ngFor="let zone of timeZones" [value]="zone">
+                              {{ zone }}
+                            </mat-option>
+                          </mat-select>
+                        </mat-form-field>
+                      </div>
+                    </div>
+                    <div class="settings-row">
+                      <div class="settings-description">Language</div>
+                      <div class="settings-field">
+                        <mat-form-field>
+                          <!-- <mat-label>Language</mat-label> -->
+                          <mat-select placeholder="Language">
+                            <mat-option *ngFor="let lang of languages" [value]="lang">
+                              {{ lang }}
+                            </mat-option>
+                          </mat-select>
+                        </mat-form-field>
+                      </div>
+                    </div>
+                    <div class="settings-row">
+                      <div class="settings-description">Date and Time Format</div>
+                      <div class="settings-field">
+                        <mat-form-field>
+                          <!-- <mat-label>Date and Time Format</mat-label> -->
+                          <mat-select placeholder="Date and Time Format">
+                            <mat-option *ngFor="let format of dateTimeFormats" [value]="format">
+                              {{ format }}
+                            </mat-option>
+                          </mat-select>
+                        </mat-form-field>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+          </div>
+  
+  
+          <!-- PREFERENCES SECTION -->
+          <div *ngIf="selectedContent">
+            <ng-container *ngIf="selectedMenuItem?.title === 'Preferences'; else otherContent">
+              <div class="preferences-section">
+                <div class="preferences-row preferences-row-one">
+                  <h2>Preferences</h2>
+                  <p>Update Application Preferences</p>
+                  <hr>
+                </div>
+                <div class="preferences-row preferences-row-two">
+                  <h1>Under Construction</h1>
+                  <img src="assets/svg/Under-construction-amico.svg">
+                </div>
+                
+              </div>
+            </ng-container>
+          </div>
+  
+          <!-- NOTIFICATIONS SECTION -->
+          <div *ngIf="selectedContent">
+            <ng-container *ngIf="selectedMenuItem?.title === 'Notifications'; else otherContent">
+              <div class="notifications-section">
+                <div class="notifications-row-one">
+                  <h2>Notifications</h2>
+                  <p>Update Application Notifications</p>
+                  <hr>
+                </div>
+                <div class="notifications-row-two">
+                  <!-- Section One -->
+                  <div class="notifications-section-one">
+                    <div class="notification-row" *ngFor="let type of notificationTypes">
+                      <div class="notification-column">
+                        <h4>{{ type.title }}</h4>
+                      </div>
+                      <div class="notification-column">
+                        <mat-slide-toggle [(ngModel)]="type.enabled" color="primary" (change)="toggleNotification(type)">
+                          {{ type.enabled ? 'On' : 'Off' }}
+                        </mat-slide-toggle>
+                      </div>
+                      <div class="notification-column">
+                        <mat-form-field>
+                          <mat-label>Select Option</mat-label>
+                          <mat-select class="make-this-white-please" [disabled]="!type.enabled" [(ngModel)]="type.frequency">
+                            <mat-option value="daily">Daily</mat-option>
+                            <mat-option value="immediate">Immediate</mat-option>
+                            <mat-option value="weekly">Weekly</mat-option>
+                          </mat-select>
+                        </mat-form-field>
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <hr>
+                  </div>
+                  
+                  <!-- Section Two -->
+                  <div class="notifications-section-two">
+                    <h3>Notification Triggers</h3>
+                    <div class="trigger-row" *ngFor="let trigger of notificationTriggers">
+                      <div class="trigger-checkbox-column">
+                        <mat-checkbox [(ngModel)]="trigger.enabled">
+                        </mat-checkbox>
+                      </div>
+                      <div class="trigger-text-column">
+                        <h4>{{ trigger.title }}</h4>
+                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+          </div>
+          
+          
+          <!-- ACCOUNT SECTION-->
+          <div *ngIf="selectedContent">
+            <ng-container *ngIf="selectedMenuItem?.title === 'Account'; else otherContent">
+              <div class="accounts-section mat-elevation-z8">
+                <div class="accounts-row-one">
+                  <h2>Accounts</h2>
+                  <p>Update User Account Information</p>
+                  <hr>
+                </div>
+                <div class="accounts-row-two">
+                  <div class="form-container">
+                    <h3>Edit Profile</h3>
+                    <h4>Personal details</h4>
+                    <div class="form-row">
+                      <mat-form-field class="form-field">
+                        <mat-label>Name</mat-label>
+                        <input matInput placeholder="Name" [(ngModel)]="profile.name">
+                      </mat-form-field>
+                      <mat-form-field class="form-field">
+                        <mat-label>Surname</mat-label>
+                        <input matInput placeholder="Surname" [(ngModel)]="profile.surname">
+                      </mat-form-field>
+                    </div>
+                    <div class="form-row">
+                      <mat-form-field class="form-field">
+                        <mat-label>Email</mat-label>
+                        <input matInput placeholder="johndoe@mail.com" [(ngModel)]="profile.email" email>
+                        <mat-error *ngIf="emailFormControl.hasError('email')">
+                          Please enter a valid email
+                        </mat-error>
+                      </mat-form-field>
+                      <mat-form-field class="form-field">
+                        <mat-label>Mobile Number</mat-label>
+                        <input matInput placeholder="(+27) xx xxx xxxx" [(ngModel)]="profile.mobile" pattern="\(\+27\) \d{2} \d{3} \d{4}">
+                        <mat-error *ngIf="mobileFormControl.hasError('pattern')">
+                          Please enter a valid mobile number
+                        </mat-error>
+                      </mat-form-field>
+                    </div>
+      
+                    <h4>Address</h4>
+                    <div class="form-row">
+                      <mat-form-field class="form-field">
+                        <mat-label>Country</mat-label>
+                        <mat-select [(ngModel)]="profile.country">
+                          <mat-option *ngFor="let country of countries" [value]="country">{{country}}</mat-option>
+                        </mat-select>
+                      </mat-form-field>
+                      <mat-form-field class="form-field">
+                        <mat-label>Province</mat-label>
+                        <mat-select [(ngModel)]="profile.province">
+                          <mat-option *ngFor="let province of provinces" [value]="province">{{province}}</mat-option>
+                        </mat-select>
+                      </mat-form-field>
+                    </div>
+                    <div class="form-row">
+                      <mat-form-field class="form-field">
+                        <mat-label>City</mat-label>
+                        <mat-select [(ngModel)]="profile.city">
+                          <mat-option *ngFor="let city of cities" [value]="city">{{city}}</mat-option>
+                        </mat-select>
+                      </mat-form-field>
+                      <mat-form-field class="form-field">
+                        <mat-label>Street Name</mat-label>
+                        <input matInput placeholder="Street Name" [(ngModel)]="profile.street">
+                      </mat-form-field>
+                    </div>
+                    <div class="form-row">
+                      <mat-form-field class="form-field">
+                        <mat-label>Flat/Unit Number</mat-label>
+                        <input matInput placeholder="Flat/Unit Number" [(ngModel)]="profile.unitNumber" type="number">
+                      </mat-form-field>
+                      <mat-form-field class="form-field">
+                        <mat-label>Zip Code</mat-label>
+                        <input matInput placeholder="Zip Code" [(ngModel)]="profile.zipCode" type="number">
+                      </mat-form-field>
+                    </div>
+      
+                    <h3>Password</h3>
+                    <div class="form-row form-row-password">
+                      <mat-form-field class="form-field">
+                        <mat-label>Current Password</mat-label>
+                        <input matInput placeholder="Current Password" [(ngModel)]="password.current" type="password">
+                      </mat-form-field>
+                      <button class="change-password-button" mat-button (click)="toggleChangePassword()">{{changePasswordText}}</button>
+                      <button *ngIf="isChangePasswordVisible" class="cancel-password-button" mat-button (click)="cancelChangePassword()">Cancel</button>
+                    </div>
+                    <div *ngIf="isChangePasswordVisible">
+                      <div class="form-row">
+                        <mat-form-field class="form-field">
+                          <mat-label>New Password</mat-label>
+                          <input matInput placeholder="New Password" [(ngModel)]="password.new" type="password">
+                        </mat-form-field>
+                        <mat-form-field class="form-field">
+                          <mat-label>Confirm Email</mat-label>
+                          <input matInput placeholder="Confirm Email" [(ngModel)]="profile.confirmEmail">
+                        </mat-form-field>
+                      </div>
+                    </div>
+
+                    <h3>Delete Account</h3>
+                    <button mat-button class="delete-button" (click)="toggleDeleteAccount()">Delete Account</button>
+                    <div style="height: 10vh" *ngIf="isDeleteAccountVisible">
+                      <div class="form-row">
+                        <mat-form-field class="form-field">
+                          <mat-label>Current Password</mat-label>
+                          <input matInput placeholder="Current Password" [(ngModel)]="password.currentDelete" type="password">
+                        </mat-form-field>
+                        <mat-form-field class="form-field">
+                          <mat-label>Confirm Email</mat-label>
+                          <input matInput placeholder="Confirm Email" [(ngModel)]="profile.confirmEmailDelete">
+                        </mat-form-field>
+                      </div>
+                      <button mat-raised-button class="confirm-delete-button" (click)="confirmDeleteAccount()">Confirm Delete</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+          </div>
+          
+        
+          <ng-template #otherContent>
+            {{ selectedContent }}
+          </ng-template>
+        </div>
+      </div>
+    </div>
+  </div>

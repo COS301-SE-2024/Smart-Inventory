@@ -60,6 +60,8 @@ export class GridComponent implements OnInit {
     ngOnInit(): void {
         this.filteredRowData = this.rowData;
         this.selectOptions = this.columnDefs.map((f: any) => f.field);
+        console.log('Received rowData:', this.rowData);
+        console.log('Received columnDefs:', this.columnDefs);
     }
 
     onGridReady(params: any) {

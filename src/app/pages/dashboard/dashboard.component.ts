@@ -3,38 +3,34 @@ import { MatDialog } from '@angular/material/dialog';
 import { TitleService } from '../../components/header/title.service';
 import { MaterialModule } from '../../components/material/material.module';
 import { CommonModule } from '@angular/common';
+import { GridsterModule } from 'angular-gridster2';
+import { GridType, DisplayGrid } from 'angular-gridster2';
+import { GridsterConfig, GridsterItem } from 'angular-gridster2';
+import { AgChartsAngular } from 'ag-charts-angular';
+import { AgChartOptions } from 'ag-charts-community';
+
 import { AddmemberComponent } from '../../components/modal/addmember/addmember.component';
 import { TeamMember } from '../../components/model/team-member.model'; // Correct the import path
-import { BubblechartComponent } from '../../components/charts/bubblechart/bubblechart.component';
-import { SaleschartComponent } from '../../components/charts/saleschart/saleschart.component';
-import { BarchartComponent } from '../../components/charts/barchart/barchart.component';
-import { DonutchartComponent } from '../../components/charts/donutchart/donutchart.component';
+// import { BubblechartComponent } from '../../components/charts/bubblechart/bubblechart.component';
+// import { SaleschartComponent } from '../../components/charts/saleschart/saleschart.component';
+// import { BarchartComponent } from '../../components/charts/barchart/barchart.component';
+// import { DonutchartComponent } from '../../components/charts/donutchart/donutchart.component';
 import { FilterService } from '../../services/filter.service';
 
 
 @Component({
   selector: 'app-dashboard',
-  templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.css'],
+  templateUrl: './dashboard2.component.html',
+  styleUrls: ['./dashboard2.component.css'],
   standalone: true,
-  imports: [MaterialModule, CommonModule, AddmemberComponent, BubblechartComponent, SaleschartComponent, BarchartComponent, DonutchartComponent]
+  imports: [MaterialModule, CommonModule, AddmemberComponent, GridsterModule, AgChartsAngular]
 })
 export class DashboardComponent implements OnInit {
 
-  tiles = [
-    { text: 'Team', cols: 1, rows: 1, hasButton: true },
-    { text: 'Summary', cols: 1, rows: 1 },
-    { text: 'Quick Actions', cols: 1, rows: 1 },
-    {
-      text: '', cols: 1, rows: 2, members: [  // Increased rows span here
-        { name: 'Alice', role: 'Developer' },
-        { name: 'Bob', role: 'Designer' },
-        { name: 'Charlie', role: 'Project Manager' }
-      ]
-    },
-    { text: 'Tile 5', cols: 1, rows: 1, styleClass: 'clear-background' },
-    { text: 'Tile 6', cols: 1, rows: 1 }
-  ];
+  options: GridsterConfig;
+  dashboard: Array<GridsterItem>;
+
+  public chartOptions: AgChartOptions;
 
   members: TeamMember[] = [
     { id: 1, name: 'Alice Johnson', role: 'Analyst', selected: false },
@@ -44,7 +40,51 @@ export class DashboardComponent implements OnInit {
 
   teamMembers: TeamMember[] = [];
 
-  constructor(private dialog: MatDialog, private titleService: TitleService, private filterService: FilterService, private cdr: ChangeDetectorRef) { }
+  constructor(private dialog: MatDialog, private titleService: TitleService, private filterService: FilterService, private cdr: ChangeDetectorRef) {
+    this.options = {
+      gridType: GridType.Fit,
+      displayGrid: DisplayGrid.Always,
+      draggable: {
+        enabled: true
+      },
+      resizable: {
+        enabled: true
+      },
+      pushItems: true,
+      minCols: 4,
+      maxCols: 100,
+      minRows: 10, // Increased minimum rows for better initial height
+      maxRows: 100,
+      minItemWidth: 100, // Minimum width each item can shrink to
+      minItemHeight: 100, // Minimum height each item can shrink to
+      maxItemCols: 50,  // Maximum columns an item can expand to
+      maxItemRows: 50,  // Maximum rows an item can expand to
+    };
+
+    this.dashboard = [
+      { cols: 2, rows: 5, y: 0, x: 0 },
+      { cols: 2, rows: 2, y: 0, x: 2 },
+      { cols: 1, rows: 2, y: 0, x: 2 },
+      { cols: 1, rows: 2, y: 0, x: 2 },
+      { cols: 1, rows: 2, y: 0, x: 2 },
+      { cols: 1, rows: 2, y: 0, x: 2 }
+    ];
+
+    this.chartOptions = {
+      // Data: Data to be displayed in the chart
+      autoSize: true,
+      data: [
+        { month: 'Jan', avgTemp: 2.3, iceCreamSales: 162000 },
+        { month: 'Mar', avgTemp: 6.3, iceCreamSales: 302000 },
+        { month: 'May', avgTemp: 16.2, iceCreamSales: 800000 },
+        { month: 'Jul', avgTemp: 22.8, iceCreamSales: 1254000 },
+        { month: 'Sep', avgTemp: 14.5, iceCreamSales: 950000 },
+        { month: 'Nov', avgTemp: 8.9, iceCreamSales: 200000 },
+      ],
+      // Series: Defines which chart type and data to use
+      series: [{ type: 'bar', xKey: 'month', yKey: 'iceCreamSales' }]
+    };
+  }
 
   setFilter(filter: string): void {
     this.filterService.changeFilter(filter);

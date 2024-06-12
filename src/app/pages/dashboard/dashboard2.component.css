@@ -1,0 +1,81 @@
+.gridster-item {
+    border: 1px solid #ccc;
+    background: #f4f4f4;
+    overflow: visible;
+    /* Ensures nothing is clipped */
+    transition: width 0.5s ease, height 0.5s ease;
+    /* Smooth transitions on resize */
+}
+
+.card {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.card-content {
+    position: relative;
+    /* Essential for positioning the absolute child */
+    height: 100%;
+    /* Adjust based on your layout needs */
+    width: 100%;
+    /* Adjust based on your layout needs */
+    /* padding: 10px; Optional: for some spacing inside the card */
+}
+
+.gridster-item,
+.card {
+    overflow: visible;
+}
+
+
+gridster {
+    position: relative;
+    box-sizing: border-box;
+    background: white;
+    width: 100%;
+    height: 100%;
+    -webkit-user-select: none;
+    user-select: none;
+    display: block;
+}
+
+gridster-item {
+    /* box-sizing: border-box;
+    z-index: 1;
+    position: absolute;
+    overflow: hidden;
+    transition: .3s;
+    display: none; */
+    background: #ccc;
+    /* -webkit-user-select: text;
+    user-select: text; */
+}
+
+.card-header {
+    background-color: #007BFF;
+    color: white;
+    padding: 10px;
+    text-align: center;
+}
+
+.gridster-item,
+.card {
+    overflow: visible;
+}
+
+.ag-charts-angular {
+    width: 100%;
+    height: 100%;
+}
+
+/* This targets the specific class for AG Charts and overrides the position */
+.ag-chart-wrapper {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    /* Ensures it takes the full width of the parent */
+    height: 93% !important;
+    /* Ensures it takes the full height of the parent */
+}

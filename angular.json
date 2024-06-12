@@ -20,10 +20,11 @@
               "zone.js"
             ],
             "tsConfig": "tsconfig.app.json",
-            "assets": [
+           "assets": [
               {
                 "glob": "**/*",
-                "input": "public"
+                "input": "src/assets",
+                "output": "/assets"
               }
             ],
             "styles": [
@@ -86,7 +87,8 @@
             "assets": [
               {
                 "glob": "**/*",
-                "input": "public"
+                "input": "src/assets",
+                "output": "/assets"
               }
             ],
             "styles": [
@@ -100,6 +102,6 @@
     }
   },
   "cli": {
-    "analytics": "0b39000f-da55-49a1-966b-fa047a27340c"
+    "analytics": "d4058aff-177e-4153-8b59-7a41b162a7d0"
   }
 }

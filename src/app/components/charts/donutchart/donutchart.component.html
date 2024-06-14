@@ -1,7 +1,6 @@
-<!-- Sixth Row -->
+<!-- Assuming this is inside the donutchart.component.html -->
 <div class="full-width-tile">
     <div class="chart-container">
-        <!-- First Column for Donut Chart -->
         <div class="column half-width">
             <div class="chart-header">
                 <h2>Most Popular Products</h2>
@@ -15,14 +14,10 @@
                     </mat-select>
                 </mat-form-field>
             </div>
-
+            <ag-charts-angular [options]="chartOptions"></ag-charts-angular>
         </div>
-
-        <!-- Second Column (Blank for now) -->
         <div class="column half-width">
             <!-- Future content can be added here -->
         </div>
     </div>
 </div>
-
-<ag-charts-angular [options]="chartOptions"></ag-charts-angular>

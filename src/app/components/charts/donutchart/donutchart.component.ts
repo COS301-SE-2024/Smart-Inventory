@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { AgChartsAngular } from 'ag-charts-angular';
+import { AgChartsAngular } from "ag-charts-angular";
+import { AgChartOptions, AgCharts } from "ag-charts-community";
 import { MaterialModule } from '../../material/material.module';
 export interface ChartOptions {
   data: any[];
@@ -22,35 +23,56 @@ type YearlyData = {
 
 export class DonutchartComponent {
   public selectedYear: string = new Date().getFullYear().toString(); // Default to current year
-  public chartOptions: ChartOptions;
+  public chartOptions: AgChartOptions;
 
   constructor() {
-    this.chartOptions = this.getChartData(this.selectedYear);
+    this.chartOptions = {
+      data: this.getData(),
+      title: {
+        text: "Portfolio Composition",
+      },
+      series: [
+        {
+          type: "donut",
+          calloutLabelKey: "asset",
+          angleKey: "amount",
+          innerRadiusRatio: 1,
+        },
+      ],
+    };
   }
 
-  public getChartData(year: string): ChartOptions {
-    const data: YearlyData = {
-      '2024': [44, 55, 41, 17, 15],
-      '2023': [53, 32, 33, 52, 13],
-      '2022': [63, 42, 23, 62, 23],
-      '2021': [73, 52, 53, 72, 33]
-    };
-
-    const labels = ['Product A', 'Product B', 'Product C', 'Product D', 'Product E'];
+  public getChartData(): AgCharts {
 
     return {
-      data: labels.map((label, index) => ({ label: label, value: data[year][index] })),
-      series: [{
-        type: 'pie',
-        angleKey: 'value',
-        labelKey: 'label',
-        innerRadiusOffset: -40 // Makes it a donut chart
-      }]
+      data: this.getData(),
+      title: {
+        text: "Portfolio Composition",
+      },
+      series: [
+        {
+          type: "donut",
+          calloutLabelKey: "asset",
+          angleKey: "amount",
+          innerRadiusRatio: 1,
+        },
+      ],
     };
   }
 
+  getData() {
+    return [
+      { asset: "Stocks", amount: 60000 },
+      { asset: "Bonds", amount: 40000 },
+      { asset: "Cash", amount: 7000 },
+      { asset: "Real Estate", amount: 5000 },
+      { asset: "Commodities", amount: 3000 },
+    ];
+  }
 
   updateChartData(year: string) {
-    this.chartOptions = this.getChartData(year);
+    this.chartOptions = this.getChartData();
+    console.log(this.chartOptions);  // Check what is being set
   }
+
 }

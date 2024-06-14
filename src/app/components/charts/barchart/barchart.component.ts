@@ -18,15 +18,61 @@ type DataYearly = {
   templateUrl: './barchart.component.html',
   styleUrls: ['./barchart.component.css']
 })
-export class BarchartComponent implements AfterViewInit  {
+export class BarchartComponent implements AfterViewInit {
   public selectedYear: string = new Date().getFullYear().toString(); // Default to current year
 
   public chartOptions: AgChartOptions;
 
-  updateChartData() {
-    this.chartOptions.data = this.getSeriesDataByYear(this.selectedYear);
+  updateChartData(year: string) {
+    const seriesData = this.getDataByYear(year);
+
+    this.chartOptions = {
+      data: seriesData.flatMap(series => series),
+      title: {
+        text: "Direct VS Affliators",
+      },
+      footnote: {
+        text: "Source: Department for Digital, Culture, Media & Sport",
+      },
+      series: [
+        {
+          type: "bar",
+          xKey: "month",
+          yKey: "Direct",
+          yName: "Direct",
+        },
+        {
+          type: "bar",
+          xKey: "month",
+          yKey: "Affiliate Driven",
+          yName: "Affiliate Driven",
+        },
+      ],
+      axes: [
+        {
+          type: "category",
+          position: "bottom",
+          title: {
+            text: "Month",
+          },
+        },
+        {
+          type: "number",
+          position: "left",
+          title: {
+            text: "Total Visitors",
+          },
+          label: {
+            formatter: ({ value }) => this.formatNumber(value),
+          },
+        },
+      ],
+    };
   }
 
+  formatNumber(value: number) {
+    return new Intl.NumberFormat('en-US', { maximumSignificantDigits: 3 }).format(value);
+  }
 
   getSeriesDataByYear(year: string) {
     const data: DataYearly = {
@@ -50,21 +96,29 @@ export class BarchartComponent implements AfterViewInit  {
     return data[year] || data['2024']; // Fallback to 2024 if year is not found
   }
 
+  getDataByYear(year: string) {
+    const yearlyData = this.getSeriesDataByYear(year);
+    // We need to create a single array where each element has month, Direct, and Affiliate Driven keys
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const combinedData = [];
+
+    for (let i = 0; i < 12; i++) {
+      combinedData.push({
+        month: months[i],
+        Direct: yearlyData[0].data[i], // assuming Direct is always the first array element
+        'Affiliate Driven': yearlyData[1].data[i] // assuming Affiliate Driven is always the second
+      });
+    }
+
+    return combinedData;
+  }
 
   constructor(private renderer: Renderer2, private el: ElementRef) {
-    this.chartOptions = {
-      // Data: Data to be displayed in the chart
-      data: [
-        { month: 'Jan', avgTemp: 2.3, iceCreamSales: 162000 },
-        { month: 'Mar', avgTemp: 6.3, iceCreamSales: 302000 },
-        { month: 'May', avgTemp: 16.2, iceCreamSales: 800000 },
-        { month: 'Jul', avgTemp: 22.8, iceCreamSales: 1254000 },
-        { month: 'Sep', avgTemp: 14.5, iceCreamSales: 950000 },
-        { month: 'Nov', avgTemp: 8.9, iceCreamSales: 200000 },
-      ],
-      // Series: Defines which chart type and data to use
-      series: [{ type: 'bar', xKey: 'month', yKey: 'iceCreamSales' }]
-    };
+    this.chartOptions = {};
+  }
+
+  ngOnInit() {
+    this.updateChartData(this.selectedYear);
   }
 
   ngAfterViewInit() {

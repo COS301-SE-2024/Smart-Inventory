@@ -28,10 +28,7 @@
     margin-left: auto;
 }
 
-.right {
-    /* Additional styling or leave blank */
-}
-
-span.apexcharts-legend-text {
-    font-size: 26px !important;
+.chart-container {
+    height: 90px;
+    background-color: #e6e6e6;
 }

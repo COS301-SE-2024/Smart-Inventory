@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, Type, ElementRef, AfterViewInit, QueryList, ViewChildren } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { TitleService } from '../../components/header/title.service';
 import { MaterialModule } from '../../components/material/material.module';
@@ -12,29 +12,32 @@ import { AgChartOptions } from 'ag-charts-community';
 import { AddmemberComponent } from '../../components/modal/addmember/addmember.component';
 import { TeamMember } from '../../components/model/team-member.model'; // Correct the import path
 // import { BubblechartComponent } from '../../components/charts/bubblechart/bubblechart.component';
-// import { SaleschartComponent } from '../../components/charts/saleschart/saleschart.component';
+import { SaleschartComponent } from '../../components/charts/saleschart/saleschart.component';
 import { BarchartComponent } from '../../components/charts/barchart/barchart.component';
 import { DonutchartComponent } from '../../components/charts/donutchart/donutchart.component';
 import { FilterService } from '../../services/filter.service';
 
-interface Card extends GridsterItem {
-  chartOptions: AgChartOptions;
-  title: string;
+interface CustomGridsterItem extends GridsterItem {
+  component?: Type<any>;  // Optional Angular component type
+  type?: string;           // Optional type identifier for the item
+  label?: string;          // Optional label for display in the UI
 }
 
 @Component({
   selector: 'app-dashboard',
-  templateUrl: './dashboard2.component.html',
-  styleUrls: ['./dashboard2.component.css'],
+  templateUrl: './dashboard.component.html',
+  styleUrls: ['./dashboard.component.css'],
   standalone: true,
-  imports: [MaterialModule, CommonModule, AddmemberComponent, GridsterModule, AgChartsAngular, BarchartComponent, DonutchartComponent]
+  imports: [MaterialModule, CommonModule, AddmemberComponent, GridsterModule, AgChartsAngular, BarchartComponent, DonutchartComponent, SaleschartComponent]
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit, AfterViewInit {
 
   options: GridsterConfig;
-  dashboard: Array<GridsterItem>;
+  charts: Type<any>[] = [];
+  dashboard: Array<CustomGridsterItem> = [];
+  @ViewChildren('gridsterItemContent') gridsterItemContents!: QueryList<ElementRef>;
 
-  public chartOptions: AgChartOptions;
+  public chartOptions!: AgChartOptions;
 
   members: TeamMember[] = [
     { id: 1, name: 'Alice Johnson', role: 'Analyst', selected: false },
@@ -44,38 +47,9 @@ export class DashboardComponent implements OnInit {
 
   teamMembers: TeamMember[] = [];
 
-  cards: Card[] = [
-    {
-      x: 0, y: 0, rows: 1, cols: 2,
-      chartOptions: {
-        // chart options for the first card
-      },
-      title: 'Card 1'
-    },
-    {
-      x: 0, y: 1, rows: 1, cols: 2,
-      chartOptions: {
-        // chart options for the second card
-        autoSize: true,
-        data: [
-          { month: 'Jan', avgTemp: 2.3, iceCreamSales: 162000 },
-          { month: 'Mar', avgTemp: 6.3, iceCreamSales: 302000 },
-          { month: 'May', avgTemp: 16.2, iceCreamSales: 800000 },
-          { month: 'Jul', avgTemp: 22.8, iceCreamSales: 1254000 },
-          { month: 'Sep', avgTemp: 14.5, iceCreamSales: 950000 },
-          { month: 'Nov', avgTemp: 8.9, iceCreamSales: 200000 },
-        ],
-        // Series: Defines which chart type and data to use
-        series: [{ type: 'bar', xKey: 'month', yKey: 'iceCreamSales' }]
-      },
-      title: 'Card 2'
-    }
-    // more cards as needed
-  ];
-
   constructor(private dialog: MatDialog, private titleService: TitleService, private filterService: FilterService, private cdr: ChangeDetectorRef) {
     this.options = {
-      gridType: GridType.Fit,
+      gridType: GridType.VerticalFixed,
       displayGrid: DisplayGrid.Always,
       draggable: {
         enabled: true
@@ -83,61 +57,111 @@ export class DashboardComponent implements OnInit {
       resizable: {
         enabled: true
       },
-      pushItems: true,
-      minCols: 4,
-      maxCols: 100,
-      minRows: 10, // Increased minimum rows for better initial height
+      pushItems: false,
+      minCols: 3,
+      maxCols: 12,
+      minRows: 1, // Increased minimum rows for better initial height
       maxRows: 100,
       minItemWidth: 100, // Minimum width each item can shrink to
-      minItemHeight: 100, // Minimum height each item can shrink to
-      maxItemCols: 50,  // Maximum columns an item can expand to
-      maxItemRows: 50,  // Maximum rows an item can expand to
+      minItemHeight: 50, // Minimum height each item can shrink to
+      maxItemCols: 12,  // Maximum columns an item can expand to
+      maxItemRows: 10,  // Maximum rows an item can expand to
+      fixedRowHeight: 100, 
+      addEmptyRowsCount: 10
     };
+    this.dashboard = [];
+  }
 
-    this.dashboard = [
-      {
-        cols: 2, rows: 5, y: 0, x: 0,
-        component: BarchartComponent,
-        chartOptions: {
-          autoSize: true,
-          data: [/* data specific to this chart */],
-          series: [{ type: 'bar', xKey: 'month', yKey: 'iceCreamSales' }]
-        }
-      },
-      {
-        cols: 2, rows: 2, y: 0, x: 2,
-        component: DonutchartComponent,
-        chartOptions: {
-          autoSize: true,
-          data: [/* different data for this chart */],
-          series: [{ type: 'pie', xKey: 'month', yKey: 'iceCreamSales' }]
-        }
-      }
-      // Add more entries as needed
-    ];
+  addChart(type: string) {
+    let component: Type<any> | null = null;
 
+    if (type === 'bar') {
+      component = BarchartComponent;
+    } else if (type === 'donut') {
+      component = DonutchartComponent;
+    }
+    else if (type === 'area') {
+      component = SaleschartComponent;
+    }
 
-    this.chartOptions = {
-      // Data: Data to be displayed in the chart
-      autoSize: true,
-      data: [
-        { month: 'Jan', avgTemp: 2.3, iceCreamSales: 162000 },
-        { month: 'Mar', avgTemp: 6.3, iceCreamSales: 302000 },
-        { month: 'May', avgTemp: 16.2, iceCreamSales: 800000 },
-        { month: 'Jul', avgTemp: 22.8, iceCreamSales: 1254000 },
-        { month: 'Sep', avgTemp: 14.5, iceCreamSales: 950000 },
-        { month: 'Nov', avgTemp: 8.9, iceCreamSales: 200000 },
-      ],
-      // Series: Defines which chart type and data to use
-      series: [{ type: 'bar', xKey: 'month', yKey: 'iceCreamSales' }]
-    };
+    if (component) { // Ensure component is not null before adding to dashboard
+      this.dashboard.push({
+        cols: 2,
+        rows: 3,
+        y: 0,
+        x: 0,
+        component: component
+      });
+    } else {
+      console.error('Invalid chart type:', type);
+    }
   }
 
   setFilter(filter: string): void {
     this.filterService.changeFilter(filter);
   }
 
+  adjustGridsterItemHeights() {
+    this.gridsterItemContents.forEach((content, index) => {
+      const height = content.nativeElement.offsetHeight;
+      const rows = Math.ceil(height / this.options.fixedRowHeight!);
+      this.dashboard[index].rows = rows;
+    });
+    this.cdr.detectChanges();  // Trigger change detection if necessary
+  }
+  
+  ngAfterViewInit() {
+    this.gridsterItemContents.changes.subscribe(() => {
+      this.adjustGridsterItemHeights();
+    });
+  
+    this.adjustGridsterItemHeights();  // Initial adjustment
+  }
+  
+
   ngOnInit() {
+
+    this.dashboard = [
+      {
+        cols: 4, rows: 4, y: 0, x: 0,  // Team
+        type: 'team',
+        label: 'Team'
+      },
+      {
+        cols: 4, rows: 4, y: 0, x: 4,  // Summary
+        type: 'summary',
+        label: 'Summary'
+      },
+      {
+        cols: 4, rows: 4, y: 0, x: 8,  // Actions
+        type: 'actions',
+        label: 'Quick Actions'
+      },
+      {
+        cols: 12, rows: 4, y: 4, x: 0,  // Analytics and Chart
+        type: 'analyticsChart',
+        label: 'Analytics and Chart'
+      },
+      {
+        cols: 6, rows: 4, y: 8, x: 0,  // Detailed Interactions
+        type: 'detailedInteractions',
+        label: 'Detailed Interactions'
+      },
+      {
+        cols: 6, rows: 4, y: 8, x: 6,  // Feature Area
+        type: 'featureArea',
+        label: 'Feature Area'
+      },
+      {
+        cols: 2,
+        rows: 3,
+        y: 0,
+        x: 0,
+        component: DonutchartComponent
+      }
+    ];
+
+    this.cdr.detectChanges();
     this.titleService.updateTitle('Dashboard');
   }
 

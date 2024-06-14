@@ -1,70 +1,56 @@
-<div class="grid-container">
-    <!-- First row -->
-    <div class="tile">
-        <div class="header">
-            Team
-            <button mat-stroked-button color="primary" class="add-button" (click)="openAddMemberDialog()">Add
-                Member</button>
+<gridster [options]="options">
+    <gridster-item *ngFor="let item of dashboard" [item]="item">
+        <!-- Team -->
+        <div *ngIf="item.type === 'team'" class="tile">
+            <div class="header">{{ item.label }}
+                <button mat-stroked-button color="primary" class="add-button" (click)="openAddMemberDialog()">Add
+                    Member</button>
+            </div>
+            <ul class="list-with-avatars">
+                <li *ngFor="let mem of teamMembers">
+                    <img src="https://via.placeholder.com/50" alt="Avatar">
+                    <div class="member-info">
+                        <div class="name">{{ mem.name }}</div>
+                        <div>{{ mem.role }}</div>
+                    </div>
+                    <div class="buttons">
+                        <button mat-stroked-button color="primary">Activity</button>
+                        <button mat-stroked-button color="warn" (click)="removeMember(mem)">Delete</button>
+                    </div>
+                </li>
+            </ul>
         </div>
-    </div>
-    <div class="tile">
-        <div class="header">Summary</div>
-    </div>
-    <div class="tile">
-        <div class="header">Quick Actions</div>
-    </div>
 
-    <!-- Second row -->
-    <div class="tile">
-        <ul class="list-with-avatars" *ngFor="let mem of teamMembers">
-            <li>
-                <img src="https://via.placeholder.com/50" alt="Avatar">
-                <div class="member-info">
-                    <div class="name">{{ mem.name }}</div>
-                    <div>{{ mem.role }}</div>
-                </div>
-                <div class="buttons">
-                    <button mat-stroked-button color="primary">Activity</button>
-                    <button mat-stroked-button color="warn" (click)="removeMember(mem)">Delete</button>
-                </div>
-            </li>
-        </ul>
-    </div>
+        <!-- Summary -->
+        <div *ngIf="item.type === 'summary'" class="tile">
+            <div class="header">{{ item.label }}</div>
+            <div class="content">Various statistical data and summaries go here.</div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div *ngIf="item.type === 'actions'" class="tile">
+            <div class="header">{{ item.label }}</div>
+            <ul class="action-list">
+                <li><mat-icon>person_add</mat-icon> Add Member</li>
+                <li><mat-icon>add_shopping_cart</mat-icon> Create Order</li>
+                <li><mat-icon>inventory_2</mat-icon> Add Product</li>
+                <li><mat-icon>local_shipping</mat-icon> Add Supplier</li>
+                <li><mat-icon>publish</mat-icon> Export</li>
+            </ul>
+        </div>
 
 
-    <div class="tile cards-container">
-        <div class="card">Visitors: 150</div>
-        <div class="card">Downloads: 75</div>
-        <div class="card">Sign-ups: 50</div>
-    </div>
-    <div class="tile quick-actions">
-        <ul class="action-list">
-            <li><mat-icon>person_add</mat-icon> Add Member</li>
-            <li><mat-icon>add_shopping_cart</mat-icon> Create Order</li>
-            <li><mat-icon>inventory_2</mat-icon> Add Product</li>
-            <li><mat-icon>local_shipping</mat-icon> Add Supplier</li>
-            <li><mat-icon>publish</mat-icon> Export</li>
-        </ul>
-    </div>
-    <!-- Third row -->
-    <div class="full-width-tile">
-        <div class="header">Stock Report</div>
-    </div>
 
-    <!-- Fourth row -->
-    <div class="full-width-tile">
-        <div class="chart-container">
-            <!-- Place charts here -->
-            <!-- Fourth Row -->
+        <div *ngIf="item.type === 'analyticsChart'" class="tile">
+            <div class="header">{{ item.label }}</div>
             <div class="row">
-                <!-- First Column for Sales and Earnings -->
                 <div class="column analytics">
                     <div class="data-point">
                         <h2>Sales</h2>
                         <p>$38,100</p>
                         <p>+8.5%</p>
                     </div>
-                    <hr> <!-- Line between Sales and Earnings -->
+                    <hr>
                     <div class="data-point">
                         <h2>Earnings</h2>
                         <p>$23,500</p>
@@ -72,7 +58,6 @@
                     </div>
                 </div>
 
-                <!-- Second Column for the Chart and Filter Buttons -->
                 <div class="column chart-area">
                     <div class="chart-filters">
                         <button mat-stroked-button color="primary" (click)="setFilter('year')">This year</button>
@@ -81,75 +66,48 @@
                         <button mat-stroked-button color="primary" (click)="setFilter('day')">Today</button>
                     </div>
                     <div class="chart">
-                        <app-saleschart></app-saleschart>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </div>
-
-    <div class="full-width-tile">
-        <div class="chart-container">
-            <!-- Place charts here -->
-            <!-- Fifth Row -->
-            <div class="row fifth-row">
-                <!-- First Column for the Bar Graph -->
-                <div class="column bar-graph">
-                    <h2>Orders</h2>
-                    <app-barchart></app-barchart> <!-- Assuming you have an OrdersChart component -->
-                </div>
-
-                <!-- Second Column for the Detailed Card -->
-                <div class="column detail-card">
-                    <div class="card">
-                        <h3>Want full report?</h3>
-                        <p>Awesome! You can see more detailed information and download it using this option.</p>
-                        <button>See reports</button>
+                        <app-saleschart></app-saleschart> <!-- Placeholder for actual chart component -->
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Sixth Row -->
-    <div class="full-width-tile">
-        <div class="chart-container">
-            <!-- Place charts here -->
-            <!-- Fifth Row -->
-            <div class="row fifth-row">
-                <!-- First Column for the Bar Graph -->
-                <div class="column bar-graph">
-                    <!-- <h2>Orders</h2> -->
-                    <app-donutchart></app-donutchart> <!-- Assuming you have an OrdersChart component -->
-                </div>
+        <div *ngIf="item.type === 'detailedInteractions'" class="tile">
+            <!-- <div class="header">{{ item.label }}</div> -->
+            <!-- <div class="content"> -->
+            <!-- Content specific to detailed interactions, such as forms, data tables, etc. -->
+            <!-- <p>Interactive data forms, dynamic tables, and other user-engagement elements go here.</p> -->
+            <app-barchart></app-barchart>
+            <!-- </div> -->
+        </div>
 
-                <!-- Second Column for the Detailed Card -->
-                <div class="column detail-card">
-                    <div class="card">
-                        <h3>Want full report?</h3>
-                        <p>Awesome! You can see more detailed information and download it using this option.</p>
-                        <button>See reports</button>
-                    </div>
-                </div>
+        <!-- Gridster Item for Feature Area -->
+        <div *ngIf="item.type === 'featureArea'" class="tile">
+            <div class="header">{{ item.label }}</div>
+            <div class="content">
+                <!-- Content specific to features, such as quick tools, links, or utility widgets
+                <ul>
+                    <li><mat-icon>build</mat-icon> Tool 1</li>
+                    <li><mat-icon>settings</mat-icon> Tool 2</li>
+                    More tools or features -->
+                <!-- </ul> -->
+                <app-donutchart></app-donutchart>
             </div>
         </div>
-    </div>
+    </gridster-item>
+</gridster>
 
+<a id="help-button">
+    <button mat-raised-button [matMenuTriggerFor]="mainMenu">Help Options</button>
+    <mat-menu #mainMenu="matMenu" yPosition="above">
+        <button mat-menu-item [matMenuTriggerFor]="widgetMenu">Add a Widget</button>
+        <button mat-menu-item>Help</button>
+        <button mat-menu-item>Settings</button>
+    </mat-menu>
 
-
-    <a id="help-button">
-        <button mat-raised-button [matMenuTriggerFor]="mainMenu">Help Options</button>
-        <mat-menu #mainMenu="matMenu" yPosition="above">
-            <button mat-menu-item [matMenuTriggerFor]="widgetMenu">Add a Widget</button>
-            <button mat-menu-item>Help</button>
-            <button mat-menu-item>Settings</button>
-        </mat-menu>
-
-        <mat-menu #widgetMenu="matMenu" yPosition="above">
-            <button mat-menu-item>Bar Chart</button>
-            <button mat-menu-item>Donut Chart</button>
-            <button mat-menu-item>Bubble Chart</button>
-        </mat-menu>
-    </a>
-</div>
+    <mat-menu #widgetMenu="matMenu" yPosition="above">
+        <button mat-menu-item (click)="addChart('bar')">Bar Chart</button>
+        <button mat-menu-item (click)="addChart('donut')">Donut Chart</button>
+        <button mat-menu-item (click)="addChart('area')">Area Chart</button>
+    </mat-menu>
+</a>

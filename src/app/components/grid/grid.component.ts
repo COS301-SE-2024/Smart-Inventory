@@ -1,6 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { AgGridAngular } from 'ag-grid-angular'; // Angular Data Grid Component
-import { ColDef } from 'ag-grid-community'; // Column Definition Type Interface
+import { AgGridAngular } from 'ag-grid-angular';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { MatButtonModule } from '@angular/material/button';
@@ -13,6 +12,7 @@ import { FormsModule } from '@angular/forms';
 import { AddComponent } from './add/add.component';
 import { CommonModule } from '@angular/common';
 import { MatSelectModule } from '@angular/material/select';
+import { CellValueChangedEvent, RowValueChangedEvent } from 'ag-grid-community';
 
 @Component({
     selector: 'app-grid',
@@ -52,6 +52,9 @@ export class GridComponent implements OnInit {
         type: 'fitGridWidth',
     };
 
+    public rowSelection: 'single' | 'multiple' = 'multiple';
+    public editType: 'fullRow' = 'fullRow';
+
     constructor(public dialog: MatDialog) {}
 
     ngOnInit(): void {
@@ -65,13 +68,34 @@ export class GridComponent implements OnInit {
         this.gridApi.sizeColumnsToFit();
     }
 
-    openAddDialog() {
-        const dialogRef = this.dialog.open(AddComponent, { data: this.columnDefs });
-
-        dialogRef.afterClosed().subscribe((result) => {});
+    addRow() {
+        this.gridApi.applyTransaction({ add: [{}] });
     }
 
-    importExcel() {}
+    deleteRow() {
+        // get the first child of the
+        var selectedRows = this.gridApi.getSelectedRows();
+        if (!selectedRows || selectedRows.length === 0) {
+            console.log('No rows selected!');
+            return;
+        }
+        this.gridApi.applyTransaction({ remove: selectedRows });
+    }
+
+    onCellValueChanged(event: CellValueChangedEvent) {
+        console.log('onCellValueChanged: ' + event.colDef.field + ' = ' + event.newValue);
+    }
+
+    onRowValueChanged(event: RowValueChangedEvent) {
+        const data = event.data;
+        console.log(
+            'onRowValueChanged: (' + data.make + ', ' + data.model + ', ' + data.price + ', ' + data.field5 + ')',
+        );
+    }
+
+    importExcel() {
+        alert('Import Not completed');
+    }
 
     downloadCSV() {
         const params = {

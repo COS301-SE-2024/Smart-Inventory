@@ -8,8 +8,10 @@
     <div>
         <button class="btnAdd" mat-raised-button [matMenuTriggerFor]="menu">Quick Actions</button>
         <mat-menu #menu="matMenu">
-            <button mat-menu-item color="primary" (click)="downloadCSV()">Export To Excel</button>
-            <button mat-menu-item color="primary" (click)="importExcel()">Import From Excel</button>
+            <button mat-menu-item color="primary" (click)="downloadCSV()">Export Excel</button>
+            <button mat-menu-item color="primary" (click)="importExcel()">Import Excel</button>
+            <button mat-menu-item color="primary" (click)="addRow()">+ Add New</button>
+            <button mat-menu-item color="primary" (click)="deleteRow()">- Remove Selected</button>
         </mat-menu>
     </div>
 </div>
@@ -18,6 +20,11 @@
     <ag-grid-angular
         [rowData]="filteredRowData"
         [columnDefs]="columnDefs"
+        [rowSelection]="rowSelection"
+        [editType]="editType"
+        (cellValueChanged)="onCellValueChanged($event)"
+        (rowValueChanged)="onRowValueChanged($event)"
+        [rowData]="rowData"
         class="ag-theme-quartz aggrid"
         (gridReady)="onGridReady($event)"
     >

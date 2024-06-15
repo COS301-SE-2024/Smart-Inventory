@@ -1,7 +1,7 @@
 <div class="btn-holder">
     <div class="filter">
         <input [(ngModel)]="inputFilter" (input)="filterGrid()" placeholder="Search Order" />
-        <mat-select [(ngModel)]="filterSelect">
+        <mat-select [(ngModel)]="filterSelect" placeholder="Select Column">
             <mat-option *ngFor="let option of selectOptions" [value]="option">{{ option }}</mat-option>
         </mat-select>
     </div>

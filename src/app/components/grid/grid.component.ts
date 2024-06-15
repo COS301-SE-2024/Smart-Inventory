@@ -76,7 +76,6 @@ export class GridComponent implements OnInit {
     downloadCSV() {
         const params = {
             fileName: 'orderExport.csv',
-            // other options like columnSeparator, processCellCallback
         };
         this.gridApi.exportDataAsCsv(params);
     }

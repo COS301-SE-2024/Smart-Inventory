@@ -22,6 +22,7 @@ input {
     height: 40px;
     width: 350px;
     padding: 5px;
+    font-size: 15px;
 }
 mat-select {
     border: 1px solid grey;
@@ -31,6 +32,7 @@ mat-select {
     padding: 5px;
     width: 200px;
     height: 40px;
+    font-size: 15px;
 }
 
 ::ng-deep .mat-mdc-select-value {

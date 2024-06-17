@@ -122,9 +122,9 @@ export class BarchartComponent implements AfterViewInit {
   }
 
   ngAfterViewInit() {
-    const chartWrapper = this.el.nativeElement.querySelector('.ag-chart-wrapper');
-    if (chartWrapper) {
-      this.renderer.setStyle(chartWrapper, 'position', 'fixed');
-    }
+    // const chartWrapper = this.el.nativeElement.querySelector('.ag-chart-wrapper');
+    // if (chartWrapper) {
+    //   this.renderer.setStyle(chartWrapper, 'position', 'absolute');
+    // }
   }
 }

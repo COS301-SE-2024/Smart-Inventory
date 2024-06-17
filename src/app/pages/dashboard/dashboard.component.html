@@ -1,113 +1,100 @@
-<gridster [options]="options">
-    <gridster-item *ngFor="let item of dashboard" [item]="item">
-        <!-- Team -->
-        <div *ngIf="item.type === 'team'" class="tile">
-            <div class="header">{{ item.label }}
-                <button mat-stroked-button color="primary" class="add-button" (click)="openAddMemberDialog()">Add
-                    Member</button>
+<!-- gear-tab.component.html -->
+
+
+
+
+
+
+
+
+
+
+<div class="main-container">
+    <div class="help-button-container">
+        <a id="help-button">
+            <button mat-raised-button [matMenuTriggerFor]="mainMenu">Help Options</button>
+            <mat-menu #mainMenu="matMenu" yPosition="above">
+                <button mat-menu-item [matMenuTriggerFor]="widgetMenu">Add a Widget</button>
+                <button mat-menu-item>Help</button>
+                <button mat-menu-item>Settings</button>
+            </mat-menu>
+
+            <mat-menu #widgetMenu="matMenu" yPosition="above">
+                <button mat-menu-item (click)="addChart('bar')">Bar Chart</button>
+                <button mat-menu-item (click)="addChart('donut')">Donut Chart</button>
+                <button mat-menu-item (click)="addChart('area')">Area Chart</button>
+            </mat-menu>
+        </a>
+    </div>
+    <div class="sidebar-container">
+        <div class="gear-icon" (click)="toggleSidebar()">
+            <mat-icon class="gear">settings</mat-icon>
+        </div>
+        <div class="sidebar" [class.active]="sidebarOpen">
+            <!-- Add your sidebar content here -->
+            <div class="sidebar-header">SIDEBAR FILTERS</div>
+            <div class="sidebar-content">
+                <button mat-button>Download Free</button>
+                <button mat-button>Buy Pro</button>
+                <button mat-button>View Documentation</button>
+                <!-- Additional buttons or content -->
             </div>
-            <ul class="list-with-avatars">
-                <li *ngFor="let mem of teamMembers">
-                    <img src="https://via.placeholder.com/50" alt="Avatar">
-                    <div class="member-info">
-                        <div class="name">{{ mem.name }}</div>
-                        <div>{{ mem.role }}</div>
-                    </div>
-                    <div class="buttons">
-                        <button mat-stroked-button color="primary">Activity</button>
-                        <button mat-stroked-button color="warn" (click)="removeMember(mem)">Delete</button>
-                    </div>
-                </li>
-            </ul>
         </div>
-
-        <!-- Summary -->
-        <div *ngIf="item.type === 'summary'" class="tile">
-            <div class="header">{{ item.label }}</div>
-            <div class="content">Various statistical data and summaries go here.</div>
-        </div>
-
-        <!-- Quick Actions -->
-        <div *ngIf="item.type === 'actions'" class="tile">
-            <div class="header">{{ item.label }}</div>
-            <ul class="action-list">
-                <li><mat-icon>person_add</mat-icon> Add Member</li>
-                <li><mat-icon>add_shopping_cart</mat-icon> Create Order</li>
-                <li><mat-icon>inventory_2</mat-icon> Add Product</li>
-                <li><mat-icon>local_shipping</mat-icon> Add Supplier</li>
-                <li><mat-icon>publish</mat-icon> Export</li>
-            </ul>
-        </div>
-
-
-
-        <div *ngIf="item.type === 'analyticsChart'" class="tile">
-            <div class="header">{{ item.label }}</div>
-            <div class="row">
-                <div class="column analytics">
-                    <div class="data-point">
-                        <h2>Sales</h2>
-                        <p>$38,100</p>
-                        <p>+8.5%</p>
+    </div>
+    <gridster [options]="options">
+        <gridster-item [item]="item" *ngFor="let item of dashboard">
+            <!-- Use ngSwitch to differentiate between card types -->
+            <div [ngSwitch]="item.type">
+                <!-- Normal Cards -->
+                <div *ngSwitchCase="'card'" class="card" [ngClass]="{'orders': item.name === 'Orders'}">
+                    <div class="icon-container">
+                        <mat-icon class="icon">{{item.icon}}</mat-icon>
                     </div>
-                    <hr>
-                    <div class="data-point">
-                        <h2>Earnings</h2>
-                        <p>$23,500</p>
-                        <p>-10%</p>
+                    <div class="text-content">
+                        <h4>{{item.name}}</h4>
+                        <p class="analytic">{{item.analytic}}</p>
                     </div>
-                </div>
-
-                <div class="column chart-area">
-                    <div class="chart-filters">
-                        <button mat-stroked-button color="primary" (click)="setFilter('year')">This year</button>
-                        <button mat-stroked-button color="primary" (click)="setFilter('month')">This month</button>
-                        <button mat-stroked-button color="primary" (click)="setFilter('week')">This week</button>
-                        <button mat-stroked-button color="primary" (click)="setFilter('day')">Today</button>
-                    </div>
-                    <div class="chart">
-                        <app-saleschart></app-saleschart> <!-- Placeholder for actual chart component -->
+                    <div class="percentage"
+                        [ngClass]="{'increase': (item.percentage ?? 0) > 0, 'decrease': (item.percentage ?? 0) < 0}">
+                        {{item.percentage | percent:'1.1-2'}}
                     </div>
                 </div>
             </div>
-        </div>
-
-        <div *ngIf="item.type === 'detailedInteractions'" class="tile">
-            <!-- <div class="header">{{ item.label }}</div> -->
-            <!-- <div class="content"> -->
-            <!-- Content specific to detailed interactions, such as forms, data tables, etc. -->
-            <!-- <p>Interactive data forms, dynamic tables, and other user-engagement elements go here.</p> -->
-            <app-barchart></app-barchart>
-            <!-- </div> -->
-        </div>
-
-        <!-- Gridster Item for Feature Area -->
-        <div *ngIf="item.type === 'featureArea'" class="tile">
-            <div class="header">{{ item.label }}</div>
-            <div class="content">
-                <!-- Content specific to features, such as quick tools, links, or utility widgets
-                <ul>
-                    <li><mat-icon>build</mat-icon> Tool 1</li>
-                    <li><mat-icon>settings</mat-icon> Tool 2</li>
-                    More tools or features -->
-                <!-- </ul> -->
-                <app-donutchart></app-donutchart>
+            <ng-container *ngIf="item.type === 'chart'">
+                <ng-container *ngComponentOutlet="item.component"></ng-container>
+            </ng-container>
+        </gridster-item>
+        <gridster-item [item]="largeItem">
+            <div class="full-width-card">
+                <div class="statistics">
+                    <div class="sales">
+                        <h3>Sales</h3>
+                        <!-- Insert sales analytics content here -->
+                    </div>
+                    <div class="earnings">
+                        <h3>Earnings</h3>
+                        <!-- Insert earnings analytics content here -->
+                    </div>
+                </div>
+                <app-saleschart class="chart"></app-saleschart>
             </div>
-        </div>
-    </gridster-item>
-</gridster>
+        </gridster-item>
+        <gridster-item [item]="newLargeItem">
+            <div class="new-full-width-card">
+                <app-barchart class="chart-section"></app-barchart>
+                <div class="info-section">
+                    <h3>Want full report?</h3>
+                    <p>Awesome! You can see more detailed information and download it using this option.</p>
+                    <button class="report-btn">See reports</button>
+                </div>
+            </div>
+        </gridster-item>
+        <gridster-item [item]="SalesvsTarget">
+            <app-bubblechart></app-bubblechart>
+        </gridster-item>
+        <gridster-item [item]="Product">
+            <app-donutchart></app-donutchart>
+        </gridster-item>
+    </gridster>
 
-<a id="help-button">
-    <button mat-raised-button [matMenuTriggerFor]="mainMenu">Help Options</button>
-    <mat-menu #mainMenu="matMenu" yPosition="above">
-        <button mat-menu-item [matMenuTriggerFor]="widgetMenu">Add a Widget</button>
-        <button mat-menu-item>Help</button>
-        <button mat-menu-item>Settings</button>
-    </mat-menu>
-
-    <mat-menu #widgetMenu="matMenu" yPosition="above">
-        <button mat-menu-item (click)="addChart('bar')">Bar Chart</button>
-        <button mat-menu-item (click)="addChart('donut')">Donut Chart</button>
-        <button mat-menu-item (click)="addChart('area')">Area Chart</button>
-    </mat-menu>
-</a>
+</div>

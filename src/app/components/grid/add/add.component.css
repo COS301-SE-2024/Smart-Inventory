@@ -5,8 +5,7 @@
 
 .header {
     display: flex;
-    color: white;
-    background-color: black;
+    background-color: white;
     justify-content: center;
     height: 50px;
 }

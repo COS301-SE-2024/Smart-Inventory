@@ -1,14 +1,21 @@
 .container {
-  display: flex;
-  height: 100vh;
-  /* Ensures the container takes full viewport height */
-  width: 100%;
-  /* Ensures the container takes full width */
-  /* overflow: hidden; */
-  /* overflow-y: scroll; */
+    display: flex;
+    height: 100vh;
+    /* Ensures the container takes full viewport height */
+    width: 100%;
+    /* Ensures the container takes full width */
+    overflow: hidden;
 }
 
 .app-sidebar {
+    height: 100vh;
+    /* Sidebar takes full viewport height */
+    position: fixed;
+    /* Makes sidebar stay in place */
+    width: 200px;
+    /* Adjust the width as necessary */
+    z-index: 1000;
+    /* Ensures sidebar is above other content */
     height: 100vh;
     /* Sidebar takes full viewport height */
     position: fixed;
@@ -33,8 +40,8 @@
 
 .content {
     /* margin-left: 200px; */
-    margin-top: 64px;
-    width: 100%;
+    margin-top: 25px;
+    width: 98%;
     height: calc(100vh - 64px);
     /* overflow-y: auto; */
 }

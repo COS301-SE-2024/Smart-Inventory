@@ -1,11 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { AgGridAngular } from 'ag-grid-angular';
-import { ColDef } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -14,6 +13,7 @@ import { AddComponent } from './add/add.component';
 import { RemoveComponent } from './remove/remove.component';
 import { CommonModule } from '@angular/common';
 import { MatSelectModule } from '@angular/material/select';
+import { CellValueChangedEvent, RowValueChangedEvent } from 'ag-grid-community';
 
 @Component({
     selector: 'app-grid',
@@ -26,7 +26,6 @@ import { MatSelectModule } from '@angular/material/select';
         FormsModule,
         MatButtonModule,
         AddComponent,
-        RemoveComponent,
         MatMenuModule,
         CommonModule,
         MatSelectModule,
@@ -39,7 +38,6 @@ export class GridComponent implements OnInit {
     @Input() rowData: any;
     @Input() columnDefs: any;
     @Input() addButton: any;
-    @Input() removeButton: any;
 
     filteredRowData: any[] = [];
 
@@ -55,13 +53,14 @@ export class GridComponent implements OnInit {
         type: 'fitGridWidth',
     };
 
+    public rowSelection: 'single' | 'multiple' = 'multiple';
+    public editType: 'fullRow' = 'fullRow';
+
     constructor(public dialog: MatDialog) {}
 
     ngOnInit(): void {
         this.filteredRowData = this.rowData;
         this.selectOptions = this.columnDefs.map((f: any) => f.field);
-        console.log('Received rowData:', this.rowData);
-        console.log('Received columnDefs:', this.columnDefs);
     }
 
     onGridReady(params: any) {
@@ -70,38 +69,40 @@ export class GridComponent implements OnInit {
         this.gridApi.sizeColumnsToFit();
     }
 
-    openAddDialog() {
-        const dialogRef = this.dialog.open(AddComponent, { data: this.columnDefs });
-
-        dialogRef.afterClosed().subscribe((result) => {});
+    addRow() {
+        this.gridApi.applyTransaction({ add: [{}] });
     }
 
-    openRemoveDialog() {
-        const selectedItems = this.gridApi.getSelectedRows();
-        const dialogRef = this.dialog.open(RemoveComponent, { data: selectedItems });
-
-        dialogRef.afterClosed().subscribe((result) => {
-            if (result) {
-                this.removeItems(selectedItems);
-            }
-        });
+    deleteRow() {
+        // get the first child of the
+        var selectedRows = this.gridApi.getSelectedRows();
+        if (!selectedRows || selectedRows.length === 0) {
+            console.log('No rows selected!');
+            return;
+        }
+        this.gridApi.applyTransaction({ remove: selectedRows });
     }
 
-    removeItems(items: any[]) {
-        items.forEach((item) => {
-            const index = this.rowData.findIndex((row: any) => row === item);
-            if (index > -1) {
-                this.rowData.splice(index, 1);
-            }
-        });
-        this.filteredRowData = [...this.rowData];
-        this.gridApi.setRowData(this.filteredRowData);
+    onCellValueChanged(event: CellValueChangedEvent) {
+        console.log('onCellValueChanged: ' + event.colDef.field + ' = ' + event.newValue);
     }
 
-    importExcel() {}
+    onRowValueChanged(event: RowValueChangedEvent) {
+        const data = event.data;
+        console.log(
+            'onRowValueChanged: (' + data.make + ', ' + data.model + ', ' + data.price + ', ' + data.field5 + ')',
+        );
+    }
+
+    importExcel() {
+        alert('Import Not completed');
+    }
 
     downloadCSV() {
-        this.gridApi.getDataAsCsv();
+        const params = {
+            fileName: 'orderExport.csv',
+        };
+        this.gridApi.exportDataAsCsv(params);
     }
 
     filterGrid() {
@@ -117,6 +118,11 @@ export class GridComponent implements OnInit {
             this.filteredRowData = this.rowData;
         }
 
+        if (this.gridColumnAPI !== undefined) {
+            this.gridApi.setData(this.filteredRowData);
+            this.gridColumnAPI.setColumnDefs(this.filteredRowData);
+        }
+    
         if (this.gridColumnAPI !== undefined) {
             this.gridApi.setData(this.filteredRowData);
             this.gridColumnAPI.setColumnDefs(this.filteredRowData);

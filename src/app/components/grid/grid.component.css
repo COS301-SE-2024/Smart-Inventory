@@ -22,7 +22,6 @@ input {
     height: 40px;
     width: 350px;
     padding: 5px;
-    font-size: 15px;
 }
 mat-select {
     border: 1px solid grey;

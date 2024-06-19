@@ -10,6 +10,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 import { AddComponent } from './add/add.component';
+import { RemoveComponent } from './remove/remove.component';
 import { CommonModule } from '@angular/common';
 import { MatSelectModule } from '@angular/material/select';
 import { CellValueChangedEvent, RowValueChangedEvent } from 'ag-grid-community';
@@ -117,6 +118,11 @@ export class GridComponent implements OnInit {
             this.filteredRowData = this.rowData;
         }
 
+        if (this.gridColumnAPI !== undefined) {
+            this.gridApi.setData(this.filteredRowData);
+            this.gridColumnAPI.setColumnDefs(this.filteredRowData);
+        }
+    
         if (this.gridColumnAPI !== undefined) {
             this.gridApi.setData(this.filteredRowData);
             this.gridColumnAPI.setColumnDefs(this.filteredRowData);

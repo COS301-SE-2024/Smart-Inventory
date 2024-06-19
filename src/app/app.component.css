@@ -16,6 +16,14 @@
     /* Adjust the width as necessary */
     z-index: 1000;
     /* Ensures sidebar is above other content */
+    height: 100vh;
+    /* Sidebar takes full viewport height */
+    position: fixed;
+    /* Makes sidebar stay in place */
+    width: 200px;
+    /* Adjust the width as necessary */
+    z-index: 1000;
+    /* Ensures sidebar is above other content */
 }
 
 .app-header {

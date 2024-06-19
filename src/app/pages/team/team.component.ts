@@ -7,7 +7,7 @@ import outputs from '../../../../amplify_outputs.json';
 import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
 import { GridComponent } from '../../components/grid/grid.component';
 import { ColDef } from 'ag-grid-community';
-
+import { TitleService } from '../../components/header/title.service';
 @Component({
   selector: 'app-team',
   standalone: true,
@@ -16,6 +16,10 @@ import { ColDef } from 'ag-grid-community';
   styleUrls: ['./team.component.css']
 })
 export class TeamComponent implements OnInit {
+
+  constructor(private titleService: TitleService){
+
+  }
   showPopup = false;
   user = {
     name: '',
@@ -39,6 +43,7 @@ export class TeamComponent implements OnInit {
 
   async ngOnInit() {
     await this.fetchUsers();
+    this.titleService.updateTitle('Team');
   }
 
   async onSubmit(formData: any) {

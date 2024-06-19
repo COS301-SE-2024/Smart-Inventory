@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ColDef } from 'ag-grid-community';
 import { GridComponent } from '../../components/grid/grid.component';
 import {MatButtonModule} from '@angular/material/button';
+import { TitleService } from '../../components/header/title.service';
 
 @Component({
   selector: 'app-inventory',
@@ -10,7 +11,15 @@ import {MatButtonModule} from '@angular/material/button';
   templateUrl: './inventory.component.html',
   styleUrl: './inventory.component.css'
 })
-export class InventoryComponent {
+export class InventoryComponent implements OnInit {
+
+  constructor(private titleService: TitleService){
+
+  }
+
+  ngOnInit(): void {
+      this.titleService.updateTitle('Inventory');
+  }
 
   addButton: any = {text: 'Add Items', button: true}
   removeButton: any = {text: 'Remove Items', button: true}

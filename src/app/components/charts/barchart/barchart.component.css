@@ -1,16 +1,34 @@
-/* barchart.component.css */
-#orders-chart-container {
-    position: relative;
+.row {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
 }
 
-.filter-container {
-    position: absolute;
-    right: 0;
-    top: -40px;
-    /* Adjust this value as needed */
+.column {
+    flex: 1;
+    padding: 15px;
+}
+
+.donut-chart {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.chart-header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
 }
 
 .year-dropdown {
     padding: 5px 10px;
-    margin-right: 20px;
+    margin-left: auto;
+}
+
+.chart-container {
+    height: 90px;
+    /* background-color: #cccccc4d; */
 }

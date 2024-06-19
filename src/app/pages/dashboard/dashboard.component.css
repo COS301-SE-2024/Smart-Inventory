@@ -1,317 +1,300 @@
-/* SCROLL BAR */
-
-/* width */
-::-webkit-scrollbar {
-    margin-left: 5px;
-    width: 10px;
-    border-radius: 50px;
-}
-
-/* Track */
-::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 50px;
-}
-
-/* Handle */
-::-webkit-scrollbar-thumb {
-    background: #888;
-    border-radius: 50px;
-}
-
-/* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
-    background: #555;
-}
-
-.grid-container {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-gap: 10px;
-    padding: 10px;
+.gridster {
     width: 100%;
+    height: 100%;
 }
 
-.tile {
-    background-color: #f0f0f0;
-    padding: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.tile,
-.full-width-tile {
-    background-color: #f0f0f0;
-    padding: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.full-width-tile {
-    grid-column: 1 / -1;
-    /* Spans all columns */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    /* Centers content horizontally */
-}
-
-.chart-container {
-    width: 100%;
-    /* Ensures the container fills its tile */
-}
-
-.header {
-    text-align: center;
-    font-size: 24px;
-    font-weight: 800;
-}
-
-.header button{
-    margin-left: 20px;
-}
-
-.cards-container {
-    display: flex;
-    justify-content: space-between;
+gridster-item {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.15);
+    margin: 20px;
+    background: transparent !important;
+    border-radius: 10px;
 }
 
 .card {
-    background-color: white;
-    flex: 1;
-    margin: 10px;
-    padding: 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    text-align: center;
-}
-
-ul.list-with-avatars {
-    list-style: none;
-    padding: 0;
-    overflow-y: auto;
-    /* Enables vertical scrolling */
-    max-height: 200px;
-    /* Sets maximum height */
-}
-
-.list-with-avatars li {
-    display: flex;
-    align-items: center;
-    padding: 8px;
-    border-bottom: 1px solid #ccc;
-    position: relative;
-}
-
-.list-with-avatars img {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    margin-right: 15px;
-}
-
-ul.list-with-avatars,
-ul.action-list {
-    list-style: none;
-    padding: 0;
-    overflow-y: auto;
-    /* Enables vertical scrolling */
-    max-height: 200px;
-    /* Sets maximum height for team list */
-}
-
-.list-with-avatars li,
-.action-list li {
-    display: flex;
-    align-items: center;
-    padding: 8px;
-    border-bottom: 1px solid #ccc;
-    position: relative;
-}
-
-.action-list {
-    list-style: none;
-    padding: 0;
-}
-
-.action-list li {
-    padding: 8px 0;
-    display: flex;
-    align-items: center;
-    font-size: 20px;
-    /* Adjust the font size as needed */
-}
-
-.action-list mat-icon {
-    margin-right: 10px;
-    /* Spacing between icon and text */
-    color: #333;
-    /* Icon color */
-    font-size: 25px;
-}
-
-
-.member-info {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: flex-start;
-    /* Aligns text to the left */
-    margin-right: auto;
-    /* Pushes the buttons to the right */
-    font-size: 16px;
-    /* Adjust font size as needed */
-    line-height: 1.4;
-    /* Adjust line spacing as needed */
-}
-
-.member-info .name{
-    font-weight: bold;
-}
-
-.list-with-avatars img {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    margin-right: 15px;
-    /* Ensures space between the avatar and the text */
-}
-
-.list-with-avatars li {
-    display: flex;
-    align-items: center;
-    padding: 8px;
-    border-bottom: 1px solid #ccc;
-}
-
-
-
-.buttons {
-    margin-left: auto;
-    display: flex;
-}
-
-.buttons button {
-    margin-left: 10px;
-}
-
-#help-button {
-    position: fixed;
-    /* Keeps the button in a fixed position on the screen */
-    right: 20px;
-    /* Distance from the right edge of the viewport */
-    bottom: 20px;
-    /* Distance from the bottom edge of the viewport */
-    z-index: 1000;
-    /* Ensures the button floats above other page content */
-    border: none;
-    /* Optional: Removes any border if present */
-}
-
-#help-button video {
-    width: 120px;
-    height: auto;
-    border-radius: 64%;
-    overflow: hidden;
-}
-
-.row {
     display: flex;
     justify-content: space-between;
-    margin: 20px;
-}
-
-.column {
-    flex: 1;
-    /* Ensures each column takes up half the space */
+    align-items: center;
+    background-color: white;
+    /* default background for non-Orders */
+    color: black;
+    border-radius: 8px;
     padding: 20px;
 }
 
-.analytics {
-    border-right: 1px solid #ccc;
-    /* Visual separation between columns */
+.card.orders {
+    background-color: #66bb6a;
+    /* specific background for Orders */
+    color: white;
 }
 
-.data-point {
-    margin-bottom: 20px;
-}
-
-hr {
-    border: none;
-    height: 1px;
-    background-color: #ccc;
-    /* Light grey line */
-    margin: 20px 0;
-}
-
-.chart-area {
+.icon-container {
+    flex-grow: 0;
+    flex-shrink: 0;
+    width: 140px;
+    height: 120px;
     display: flex;
-    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
-.chart-filters {
-    margin-bottom: 20px;
-    text-align: center;
-}
-
-.chart-filters button {
-    margin-right: 10px;
-    padding: 5px 10px;
-    cursor: pointer;
-}
-
-.chart {
-    flex-grow: 1;
-    /* Makes the chart take the remaining space */
-}
-
-/* Additional styling for responsiveness */
-@media (max-width: 768px) {
-    .row {
-        flex-direction: column;
-    }
-
-    .chart-area,
-    .analytics {
-        width: 100%;
-    }
-
-    .chart-filters {
-        flex-direction: row;
-        justify-content: center;
-    }
-}
-
-.bar-graph {
-    /* Additional styling for the bar graph column */
+.icon {
+    font-size: 60px;
+    /* color: rgb(255, 0, 0); */
+    border-radius: 50%;
+    padding: 20px;
+    display: flex;
+    align-items: inherit;
+    /* justify-content: right; */
+    height: 100%;
     width: 100%;
 }
 
-.detail-card .card {
-    background-color: #f0f0f0;
-    /* Light gray background */
-    border-radius: 8px;
+.text-content {
+    flex-grow: 1;
+    padding-left: 20px;
+    /* space between icon and text */
+}
+
+
+h4 {
+    font-size: 16px;
+    /* larger font size */
+    margin: 0;
+}
+
+.analytic {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 5px 0;
+}
+
+.percentage {
+    font-size: 24px;
+    /* large percentage font size */
+    font-weight: bold;
+    margin-left: auto;
+    /* push to the right */
+}
+
+.increase {
+    color: #b2fab4;
+    /* lighter green for positive */
+}
+
+.decrease {
+    color: #ff8a65;
+    /* red for negative */
+}
+
+
+
+
+
+.full-width-card {
+    display: flex;
+    justify-content: space-between;
+    height: 100%;
+}
+
+.statistics {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+}
+
+.sales,
+.earnings {
+    flex: 1;
+    padding: 10px;
+}
+
+.chart {
+    width: 50%;
+}
+
+.new-full-width-card {
+    display: flex;
+    justify-content: space-between;
+    height: 100%;
+}
+
+.chart-section {
+    width: 50%;
+    /* Ensure there's enough space for the chart */
+}
+
+@media (max-width: 1024px) {
+    .icon-container {
+        display: none;
+        /* Hides the icon container */
+    }
+
+    .card {
+        justify-content: center;
+        /* Centers the text content and percentage in the card */
+        height: 100%;
+    }
+
+    .text-content,
+    .percentage {
+        flex-grow: 1;
+        /* Allows text content and percentage to fill the card evenly */
+        text-align: center;
+        /* Centers the text within their containers */
+    }
+}
+
+.info-section {
+    width: 50%;
     padding: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     text-align: center;
 }
 
-.detail-card button {
-    background-color: #007bff;
-    /* Bootstrap primary blue */
+.report-btn {
+    background-color: blue;
     color: white;
-    border: none;
     padding: 10px 20px;
+    border: none;
     border-radius: 5px;
     cursor: pointer;
     margin-top: 20px;
 }
 
-/* Responsive adjustments for smaller screens */
+gridster {
+    position: relative;
+    box-sizing: border-box;
+    background: rgb(255, 255, 255) !important;
+    width: 100%;
+    height: 100%;
+    -webkit-user-select: none;
+    user-select: none;
+    display: block;
+}
+
+.chart-card {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    padding: 10px;
+}
+
+.ag-chart-wrapper {
+    position: fixed !important;
+    /* Overrides the position style */
+    top: 50%;
+    /* Center the chart vertically */
+    left: 50%;
+    /* Center the chart horizontally */
+    transform: translate(-50%, -50%);
+    /* Adjusts the positioning to truly center it */
+    z-index: 1000;
+    /* Ensures it's above other content */
+    margin: 10px;
+    /* Adjust as needed */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    /* Optional: Adds shadow for better depth */
+    overflow: hidden;
+    /* Ensures no content spills out */
+}
+
 @media (max-width: 768px) {
-    .row {
-        flex-direction: column;
+    gridster-item {
+        margin: 5px;
+        /* Smaller margins on smaller screens */
     }
 
-    .column {
-        width: 100%;
-        /* Full width on small screens */
+    .card,
+    .full-width-card,
+    .new-full-width-card {
+        padding: 10px;
+        /* Smaller padding on smaller screens */
     }
+}
+
+a#help-button {
+    position: absolute;
+    left: 92%;
+}
+
+/* gear-tab.component.css */
+.sidebar-container {
+    position: fixed;
+    top: 30%;
+    right: 0;
+    transform: translateY(-50%);
+    z-index: 1040;
+    /* Below help button, above dashboard */
+}
+
+.gear-icon {
+    position: absolute;
+    left: 80%;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: #f0f0f0;
+    border-radius: 41px;
+    width: 98px;
+    height: 67px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    cursor: pointer;
+    z-index: 1050;
+}
+
+.gear {
+    font-size: 30px;
+    color: #000;
+}
+
+.sidebar {
+    width: 300px;
+    background-color: #fff;
+    height: 100%;
+    transform: translateX(100%);
+    transition: transform 0.3s ease-in-out;
+    box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar.active {
+    transform: translateX(0);
+}
+
+.sidebar-header {
+    padding: 20px;
+    font-size: 20px;
+    border-bottom: 1px solid #ccc;
+}
+
+.sidebar-content {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+
+
+.main-container {
+    position: relative;
+    height: 100vh;
+    /* Full viewport height */
+    /* width: 100vh; */
+    /* Full viewport width */
+}
+
+.help-button-container {
+    position: sticky;
+    top: 95%;
+    /* Adjust based on desired visibility */
+    /* right: 20px; */
+    /* Keeps it visible at the top-right */
+    z-index: 1050;
+    /* Above all other content */
 }

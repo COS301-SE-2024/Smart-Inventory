@@ -28,10 +28,16 @@
     margin-left: auto;
 }
 
-.right {
-    /* Additional styling or leave blank */
+.chart-container {
+    height: 90px;
+    z-index: 1;
+    /* background-color: #e6e6e6; */
 }
 
-span.apexcharts-legend-text {
-    font-size: 26px !important;
+.ag-chart-wrapper {
+    position: fixed !important;  /* Overrides the position style */
+    top: 50%;                    /* Center the chart vertically */
+    left: 50%;                   /* Center the chart horizontally */
+    transform: translate(-50%, -50%); /* Adjusts the positioning to truly center it */
+    z-index: 1000;               /* Ensures it's above other content */
 }

@@ -1,92 +1,66 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { NgApexchartsModule } from 'ng-apexcharts';
-import {
-  ApexAxisChartSeries,
-  ApexChart,
-  ApexXAxis,
-  ApexYAxis,
-  ApexDataLabels,
-  ApexTitleSubtitle,
-  ApexTooltip
-} from 'ng-apexcharts';
-
-export type ChartOptions = {
-  series: ApexAxisChartSeries;
-  chart: ApexChart;
-  xaxis: ApexXAxis;
-  yaxis: ApexYAxis;
-  dataLabels: ApexDataLabels;
-  title: ApexTitleSubtitle;
-  tooltip: ApexTooltip;
-};
-
+import { Component, OnInit } from '@angular/core';
+import { AgChartsAngular } from "ag-charts-angular";
+import { AgChartOptions } from "ag-charts-community";
 
 
 @Component({
   selector: 'app-bubblechart',
   standalone: true,
-  imports: [NgApexchartsModule],
+  imports: [AgChartsAngular],
   templateUrl: './bubblechart.component.html',
   styleUrl: './bubblechart.component.css'
 })
 export class BubblechartComponent implements OnInit {
-  public chartOptions: ChartOptions;
+  public chartOptions: AgChartOptions;
 
   constructor() {
     this.chartOptions = {
+      data:[
+        { country: 'United States', sales: 8000, target: 20000 },
+        { country: 'Brazil', sales: 7000, target: 10000 },
+        { country: 'Australia', sales: 3500, target: 5000 },
+        { country: 'Russia', sales: 1500, target: 3000 },
+        { country: 'Uruguay', sales: 500, target: 2500 }
+      ],
+      title: {
+        text: "Sales VS Target",
+      },
       series: [
         {
-          name: 'Electronics',
-          data: this.generateBubbleData(20, 250, 15, 150, 30)
+          type: "bar",
+          xKey: "country",
+          yKey: "sales",
+          yName: "Sales",
+          direction: 'horizontal',
+          cornerRadius: 10,
+          stacked: true,
         },
         {
-          name: 'Clothing',
-          data: this.generateBubbleData(20, 250, 15, 150, 30)
+          type: "bar",
+          xKey: "country",
+          yKey: "target",
+          yName: "Target",
+          direction: 'horizontal',
+          cornerRadius: 10,
+          stacked: true,
         },
-        {
-          name: 'Home Appliances',
-          data: this.generateBubbleData(20, 250, 15, 150, 30)
-        },
-        {
-          name: 'Books',
-          data: this.generateBubbleData(20, 250, 15, 150, 30)
-        },
-        {
-          name: 'Fitness',
-          data: this.generateBubbleData(20, 250, 15, 150, 30)
-        }
       ],
-      chart: {
-        height: 350,
-        type: 'bubble',
-      },
-      dataLabels: {
-        enabled: false
-      },
-      xaxis: {
-        tickAmount: 12,
-        type: 'category',
-        title: {
-          text: 'Inventory Levels'
-        }
-      },
-      yaxis: {
-        max: 250,
-        title: {
-          text: 'Sales Volume'
-        }
-      },
-      tooltip: {
-        shared: false,
-        y: {
-          formatter: function (y) {
-            return `Sales: ${y.toFixed(0)}`;
-          }
-        }
-      },
-      title: {
-        text: 'Inventory Levels vs Sales Volume by Product Category'
-      }
+      axes: [
+        {
+          type: "category",
+          position: "left",
+          title: {
+            text: "Countries",
+          },
+        },
+        {
+          type: "number",
+          position: "bottom",
+          title: {
+            text: "USD",
+          },
+        },
+      ],
     };
   }
 

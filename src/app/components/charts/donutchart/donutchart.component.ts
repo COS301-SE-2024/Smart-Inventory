@@ -1,90 +1,88 @@
 import { Component } from '@angular/core';
-import { NgApexchartsModule } from 'ng-apexcharts';
 import { FormsModule } from '@angular/forms';
-import { ApexChart, ChartType } from 'ng-apexcharts'; // Ensure ChartType is imported
+import { AgChartsAngular } from "ag-charts-angular";
+import { AgChartOptions, AgCharts } from "ag-charts-community";
 import { MaterialModule } from '../../material/material.module';
 export interface ChartOptions {
-  series: number[];
-  chart: ApexChart;
-  labels: string[];
-  responsive: any[];
+  data: any[];
+  series: any[];
 }
 
 type YearlyData = {
-  [year: string]: { series: number[]; labels: string[]; };
+  [key: string]: number[];
 };
 
 
 @Component({
   selector: 'app-donutchart',
   standalone: true,
-  imports: [NgApexchartsModule, FormsModule, MaterialModule],
+  imports: [FormsModule, MaterialModule, AgChartsAngular],
   templateUrl: './donutchart.component.html',
   styleUrl: './donutchart.component.css'
 })
 
 export class DonutchartComponent {
   public selectedYear: string = new Date().getFullYear().toString(); // Default to current year
-  public donutChartOptions: ChartOptions = {
-    series: [44, 55, 41, 17, 15],
-    chart: {
-      type: 'donut', // Ensure this uses ChartType from the library
-      height: 450,   // Increased height
-      width: 450     // Specify width as needed
-    },
-    labels: ['Product A', 'Product B', 'Product C', 'Product D', 'Product E'],
-    responsive: [{
-      breakpoint: 480,
-      options: {
-        chart: {
-          width: 300  // Adjust the width for smaller screens
-        },
-        legend: {
-          position: 'bottom'
-        }
-      }
-    }]
-  };
+  public chartOptions: AgChartOptions;
 
   constructor() {
-    this.donutChartOptions = this.getChartData(this.selectedYear);
+    this.chartOptions = {
+      data: this.getData(),
+      title: {
+        text: "Portfolio Composition",
+      },
+      series: [
+        {
+          type: "donut",
+          calloutLabelKey: "asset",
+          angleKey: "amount",
+          innerRadiusRatio: 0.5,
+        },
+      ],
+    };
   }
 
-  public getChartData(year: string): ChartOptions {
-    const data: YearlyData = {
-      '2024': {
-        series: [44, 55, 41, 17, 15],
-        labels: ['Product A', 'Product B', 'Product C', 'Product D', 'Product E']
+  public getChartData(): AgCharts {
+
+    return {
+      data: this.getData(),
+      title: {
+        text: "Portfolio Composition",
       },
-      '2023': {
-        series: [53, 32, 33, 52, 13],
-        labels: ['Product A', 'Product B', 'Product C', 'Product D', 'Product E']
-      },
-      '2022': {
-        series: [63, 42, 23, 62, 23],
-        labels: ['Product A', 'Product B', 'Product C', 'Product D', 'Product E']
-      },
-      '2021': {
-        series: [73, 52, 53, 72, 33],
-        labels: ['Product A', 'Product B', 'Product C', 'Product D', 'Product E']
+      series: [
+        {
+          type: "donut",
+          calloutLabelKey: "asset",
+          angleKey: "amount",
+          innerRadiusRatio: 1,
+        },
+      ],
+      legend: {
+        position: 'right',  // Positions the legend to the right
+        item: {
+          marker: {
+            strokeWidth: 0  // Optional: Adjusts the marker stroke width if needed
+          },
+          paddingX: 16,  // Optional: Adjusts the horizontal padding of the legend items
+          paddingY: 5    // Optional: Adjusts the vertical padding of the legend items
+        }
       }
     };
-    return {
-      series: data[year]?.series || data['2024'].series,
-      chart: { type: 'donut' as ChartType, height: 350 },
-      labels: data[year]?.labels || data['2024'].labels,
-      responsive: [{
-        breakpoint: 480,
-        options: {
-          chart: { width: 200 },
-          legend: { position: 'bottom' }
-        }
-      }]
-    };
   }
 
+  getData() {
+    return [
+      { asset: "Stocks", amount: 60000 },
+      { asset: "Bonds", amount: 40000 },
+      { asset: "Cash", amount: 7000 },
+      { asset: "Real Estate", amount: 5000 },
+      { asset: "Commodities", amount: 3000 },
+    ];
+  }
 
   updateChartData(year: string) {
-    this.donutChartOptions = this.getChartData(year);
+    this.chartOptions = this.getChartData();
+    console.log(this.chartOptions);  // Check what is being set
   }
+
 }

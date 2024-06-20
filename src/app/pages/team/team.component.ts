@@ -8,10 +8,12 @@ import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
 import { GridComponent } from '../../components/grid/grid.component';
 import { ColDef } from 'ag-grid-community';
 import { TitleService } from '../../components/header/title.service';
+import { DeleteButtonRenderer } from './delete-button-renderer.component';
+
 @Component({
   selector: 'app-team',
   standalone: true,
-  imports: [CommonModule, FormsModule, GridComponent],
+  imports: [CommonModule, FormsModule, GridComponent, DeleteButtonRenderer],
   templateUrl: './team.component.html',
   styleUrls: ['./team.component.css']
 })
@@ -153,6 +155,11 @@ export class TeamComponent implements OnInit {
         { field: 'given_name', headerName: 'Given Name' },
         { field: 'family_name', headerName: 'Family Name' },
         { field: 'email', headerName: 'Email' },
+        {
+          headerName: 'Actions',
+          cellRenderer: DeleteButtonRenderer,
+          width: 100,
+        },
       ];
     } catch (error) {
       console.error('Error fetching users:', error);

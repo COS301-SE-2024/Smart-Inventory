@@ -282,7 +282,7 @@ a#help-button {
 
 
 .main-container {
-    position: relative;
+    /* position: relative; */
     height: 100vh;
     /* Full viewport height */
     /* width: 100vh; */

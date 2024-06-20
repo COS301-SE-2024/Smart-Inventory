@@ -2,6 +2,8 @@ mat-toolbar {
     display: flex;
     align-items: center;
     background-color: #f2f2f2;
+    font-weight: 450;
+    font-size: 35px;
 }
 .flex-spacer {
     flex: 1 1 auto;

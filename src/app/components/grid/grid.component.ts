@@ -9,8 +9,6 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
-import { AddComponent } from './add/add.component';
-import { RemoveComponent } from './remove/remove.component';
 import { CommonModule } from '@angular/common';
 import { MatSelectModule } from '@angular/material/select';
 import { CellValueChangedEvent, RowValueChangedEvent } from 'ag-grid-community';
@@ -25,7 +23,6 @@ import { CellValueChangedEvent, RowValueChangedEvent } from 'ag-grid-community';
         MatInputModule,
         FormsModule,
         MatButtonModule,
-        AddComponent,
         MatMenuModule,
         CommonModule,
         MatSelectModule,

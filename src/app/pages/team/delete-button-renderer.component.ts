@@ -80,8 +80,7 @@ export class DeleteButtonRenderer implements ICellRendererAngularComp {
             const command = new AdminDeleteUserCommand(input);
             await client.send(command);
             console.log('User deleted successfully:', email);
-            // Refresh the user list after deleting the user
-            // You can emit an event or call a method to trigger the refresh
+            this.params.api.applyTransaction({ remove: [this.params.node.data] });
         } catch (error) {
             console.error('Error deleting user:', error);
         }

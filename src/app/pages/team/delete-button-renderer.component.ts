@@ -3,6 +3,9 @@ import { ICellRendererParams } from 'ag-grid-community';
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { DeleteConfirmationDialogComponent } from './delete-confirmation-dialog.component';
+import { CognitoIdentityProviderClient, AdminDeleteUserCommand } from '@aws-sdk/client-cognito-identity-provider';
+import outputs from '../../../../amplify_outputs.json';
+import { fetchAuthSession } from 'aws-amplify/auth';
 
 @Component({
     selector: 'app-delete-button-renderer',
@@ -44,7 +47,7 @@ export class DeleteButtonRenderer implements ICellRendererAngularComp {
         return true;
     }
 
-    onDeleteButtonClick() {
+    async onDeleteButtonClick() {
         const { given_name, family_name, email } = this.params.data;
         this.openDeleteConfirmationDialog(given_name, family_name, email);
     }
@@ -55,11 +58,32 @@ export class DeleteButtonRenderer implements ICellRendererAngularComp {
             data: { given_name, family_name, email },
         });
 
-        dialogRef.afterClosed().subscribe((result) => {
-            if (result) {
-                // User confirmed deletion, perform delete logic here
-                console.log('Delete confirmed for user:', email);
-            }
+        dialogRef.componentInstance.deleteConfirmed.subscribe(async () => {
+            await this.deleteUser(email);
         });
+    }
+
+    async deleteUser(email: string) {
+        try {
+            const session = await fetchAuthSession();
+
+            const client = new CognitoIdentityProviderClient({
+                region: outputs.auth.aws_region,
+                credentials: session.credentials,
+            });
+
+            const input = {
+                UserPoolId: outputs.auth.user_pool_id,
+                Username: email,
+            };
+
+            const command = new AdminDeleteUserCommand(input);
+            await client.send(command);
+            console.log('User deleted successfully:', email);
+            // Refresh the user list after deleting the user
+            // You can emit an event or call a method to trigger the refresh
+        } catch (error) {
+            console.error('Error deleting user:', error);
+        }
     }
 }

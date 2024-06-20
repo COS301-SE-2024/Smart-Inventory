@@ -9,11 +9,14 @@ import { GridComponent } from '../../components/grid/grid.component';
 import { ColDef } from 'ag-grid-community';
 import { TitleService } from '../../components/header/title.service';
 import { DeleteButtonRenderer } from './delete-button-renderer.component';
+import { DeleteConfirmationDialogComponent } from './delete-confirmation-dialog.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-team',
   standalone: true,
-  imports: [CommonModule, FormsModule, GridComponent, DeleteButtonRenderer],
+  imports: [CommonModule, FormsModule, GridComponent, DeleteButtonRenderer, MatDialogModule, MatButtonModule],
   templateUrl: './team.component.html',
   styleUrls: ['./team.component.css']
 })

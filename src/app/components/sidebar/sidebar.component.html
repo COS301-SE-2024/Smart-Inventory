@@ -2,7 +2,7 @@
     <div #sidenav mode="side" opened="true" class="sidenav" [ngClass]="{ expanded: isExpanded }">
         <mat-toolbar color="primary">
             <!-- Adds a toolbar at the top of the sidenav -->
-            <button mat-icon-button (click)="toggleSidenav()">
+            <button mat-icon-button matTooltip="Toggle sidebar" (click)="toggleSidenav()">
                 <mat-icon>menu</mat-icon>
                 <!-- This is the menu icon -->
             </button>

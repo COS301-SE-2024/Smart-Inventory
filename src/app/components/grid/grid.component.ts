@@ -10,11 +10,10 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 import { AddComponent } from './add/add.component';
-import { RemoveComponent } from './remove/remove.component';
 import { CommonModule } from '@angular/common';
 import { MatSelectModule } from '@angular/material/select';
 import { CellValueChangedEvent, RowValueChangedEvent } from 'ag-grid-community';
-
+import { ActivatedRoute } from '@angular/router';
 @Component({
     selector: 'app-grid',
     standalone: true,
@@ -56,11 +55,18 @@ export class GridComponent implements OnInit {
     public rowSelection: 'single' | 'multiple' = 'multiple';
     public editType: 'fullRow' = 'fullRow';
 
-    constructor(public dialog: MatDialog) {}
+    constructor(
+        public dialog: MatDialog,
+        private route: ActivatedRoute,
+    ) {}
 
     ngOnInit(): void {
         this.filteredRowData = this.rowData;
         this.selectOptions = this.columnDefs.map((f: any) => f.field);
+    }
+
+    getCurrentRoute(v: string) {
+        return v === this.route.snapshot.url[0].path.toString();
     }
 
     onGridReady(params: any) {
@@ -122,7 +128,7 @@ export class GridComponent implements OnInit {
             this.gridApi.setData(this.filteredRowData);
             this.gridColumnAPI.setColumnDefs(this.filteredRowData);
         }
-    
+
         if (this.gridColumnAPI !== undefined) {
             this.gridApi.setData(this.filteredRowData);
             this.gridColumnAPI.setColumnDefs(this.filteredRowData);

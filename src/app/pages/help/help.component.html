@@ -1,271 +1,586 @@
-<div class="body">
-    <div class="content">
-      <div class="row first-row">
-        <h1>Help and Support</h1>
-        <div class="buttons">
-          <button mat-button class="save-button" (click)="onSave()">Save</button>
-          <button mat-button class="cancel-button" (click)="onCancel()">Cancel</button>
-        </div>
-      </div>
-
-      <div class="row second-row">
-        <div class="left-pane">
-  
-          <!-- NAVIGATION MENU -->
-          <div class="menu-buttons">
-            <button *ngFor="let item of menuItems"
-                    mat-button
-                    [ngClass]="{'selected': selectedMenuItem === item}"
-                    (click)="onItemSelected(item)">
-              {{ item.title }}
-            </button>
-          </div>
-  
-          <div class="mode-toggle">
-            <span>{{ isLightMode ? 'Dark Mode' : 'Light Mode' }}</span>
-            <mat-slide-toggle [checked]="isLightMode" (change)="toggleMode($event)"></mat-slide-toggle>
-          </div>
-
-        </div>
-        
-        <div class="vertical-line"></div>
-
-        <div class="right-pane">
-  
-          <!-- FAQs SECTION-->
-          <div *ngIf="selectedContent">
+<!-- <div class="body">
+    <mat-grid-list cols="5" rowHeight="10vh">
+        <mat-grid-tile [colspan]="4" [rowspan]="15"
+            >
+    <div class="content"> -->
+<!-- FAQs SECTION-->
+<!-- <div *ngIf="selectedContent">
             <ng-container *ngIf="selectedMenuItem?.title === 'FAQs'; else otherContent">
-              <div class="faq-section">
-                <div class="faq-row faq-row-one">
-                  <h2>FAQs</h2>
-                  <div class="filter-buttons">
-                    <button mat-button class="filter-button" *ngFor="let filter of faqFilters" (click)="onFilterClick(filter)">
-                      {{ filter }}
-                    </button>
-                  </div>
-                </div>
-                <div class="faq-row faq-row-two">
-                  <mat-accordion>
-                    <mat-expansion-panel *ngFor="let faq of filteredFaqs">
-                      <mat-expansion-panel-header>
-                        <mat-panel-title>
-                          {{ faq.question }}
-                        </mat-panel-title>
-                      </mat-expansion-panel-header>
-                      <p>{{ faq.answer }}</p>
-                    </mat-expansion-panel>
-                  </mat-accordion>
-                </div>
-                <div class="faq-row faq-row-three">
-                  <div class="faq-banner">
-                    <div class="banner-text">
-                      <h3>Still Have Questions?</h3>
-                      <p>Can't find what you're looking for? Get in touch with our friendly help service.</p>
+                <div class="faq-section">
+                    <div class="faq-row faq-row-one" style="padding: 10px">
+                        <div class="filter-buttons">
+                            <button
+                                class="test"
+                                mat-raised-button
+                                *ngFor="let filter of faqFilters"
+                                (click)="onFilterClick(filter)"
+                                style="border-radius: 5px; color: black; background-color: #f2f2f2"
+                            >
+                                {{ filter }}
+                            </button>
+                        </div>
                     </div>
-                    <button mat-button class="get-in-touch-button" (click)="onItemSelected(menuItems[3])">Get in Touch</button>
-                  </div>
+                    <div class="faq-row faq-row-two">
+                        <mat-accordion>
+                            <mat-expansion-panel *ngFor="let faq of filteredFaqs">
+                                <mat-expansion-panel-header>
+                                    <mat-panel-title>
+                                        {{ faq.question }}
+                                    </mat-panel-title>
+                                </mat-expansion-panel-header>
+                                <p>{{ faq.answer }}</p>
+                            </mat-expansion-panel>
+                        </mat-accordion>
+                    </div>
                 </div>
-              </div>
             </ng-container>
-          </div>
-  
-          <!-- TROUBLESHOOTING SECTION -->
-          <div *ngIf="selectedContent">
+        </div> -->
+
+<!-- TROUBLESHOOTING SECTION -->
+<!-- <div *ngIf="selectedContent">
             <ng-container *ngIf="selectedMenuItem?.title === 'Troubleshooting'; else otherContent">
-              <div class="troubleshooting-section">
-                <div class="troubleshooting-row-one">
-                  <h2>Troubleshooting</h2>
-                </div>
-                <div class="troubleshooting-row-two">
-                  <mat-accordion>
-                    <mat-expansion-panel *ngFor="let issue of troubleshootingIssues">
-                      <mat-expansion-panel-header>
-                        <mat-panel-title>
-                          {{ issue.title }}
-                        </mat-panel-title>
-                      </mat-expansion-panel-header>
-                      <p>{{ issue.description }}</p>
-                    </mat-expansion-panel>
-                  </mat-accordion>
-                </div>
-                <div class="troubleshooting-row-three">
-                  <div class="troubleshooting-banner">
-                    <div class="banner-text">
-                      <h3>Still Have Questions?</h3>
-                      <p>Can't find what you're looking for? Get in touch with our friendly help service</p>
+                <div class="troubleshooting-section">
+                    <div class="troubleshooting-row-two">
+                        <mat-accordion>
+                            <mat-expansion-panel *ngFor="let issue of troubleshootingIssues">
+                                <mat-expansion-panel-header>
+                                    <mat-panel-title>
+                                        {{ issue.title }}
+                                    </mat-panel-title>
+                                </mat-expansion-panel-header>
+                                <p>{{ issue.description }}</p>
+                            </mat-expansion-panel>
+                        </mat-accordion>
                     </div>
-                    <button mat-button class="get-in-touch-button" (click)="onItemSelected(menuItems[3])">Get in Touch</button>
-                  </div>
                 </div>
-              </div>
             </ng-container>
-          </div>
-  
-          <!-- CONTACT SUPPORT -->
-          <div *ngIf="selectedContent">
+        </div> -->
+
+<!-- CONTACT SUPPORT -->
+<!-- <div *ngIf="selectedContent">
             <ng-container *ngIf="selectedMenuItem?.title === 'Contact Support'; else otherContent">
-              <div class="customer-support-section">
-                <div class="customer-support-row-one">
-                  <h2>Contact Support</h2>
-                </div>
-                <div class="customer-support-row-two">
-                    
-                  <div class="column-one">
-                    <img src="assets/svg/Active-Support-amico.svg" alt="Support Image">
-                  </div>
-
-                  <div class="column-two">
-                    <form>
-                      <mat-form-field appearance="fill">
-                        <!-- <mat-label>Name</mat-label> -->
-                        <input matInput placeholder="Name" required>
-                      </mat-form-field>
-                      <mat-form-field appearance="fill">
-                        <!-- <mat-label>Email address</mat-label> -->
-                        <input matInput type="email" placeholder="Email Address" required>
-                      </mat-form-field>
-                      <mat-form-field appearance="fill">
-                        <!-- <mat-label>Message</mat-label> -->
-                        <textarea matInput placeholder="Message" required></textarea>
-                      </mat-form-field>
-                      <div class="button-container">
-                        <button mat-button class="send-button" (click)="onSend()">Send</button>
-                      </div>
-                    </form>
-                  </div>
-                  
-                </div>
-                <div class="customer-support-row-three">
-                  <div class="customer-support-banner">
-                    <div class="banner-text">
-                      <h3>Still Have Questions?</h3>
-                      <p>Can't find what you're looking for? Get in touch with our friendly help service</p>
-                    </div>
-                    <button mat-button class="get-in-touch-button" (click)="onItemSelected(menuItems[3])">Get in Touch</button>
-                  </div>
-                </div>
-              </div>
+                <div class="customer-support-row-two" style="display: flex">
+                    <mat-card class="column-two">
+                        <form style="padding: 20px; background-color: #f2f2f2">
+                            <mat-form-field appearance="fill" style="width: fit-content">
+                                <mat-label>Name</mat-label>
+                                <input matInput placeholder="Name" required />
+                            </mat-form-field>
+                            <mat-form-field appearance="fill">
+                                <mat-label>Email address</mat-label>
+                                <input matInput type="email" placeholder="Email Address" required />
+                            </mat-form-field>
+                            <mat-form-field appearance="fill">
+                                <mat-label>Message</mat-label>
+                                <textarea matInput placeholder="Message" required></textarea>
+                            </mat-form-field>
+                            <div class="button-container" style="display: ruby-text; padding-bottom: 20px">
+                                <button
+                                    mat-button-raised
+                                    (click)="onSend()"
+                                    style="
+                                        width: 50vh;
+                                        height: 10vh;
+                                        padding: 20px;
+                                        border-radius: 5px;
+                                        color: black;
+                                        background-color: #f2f2f2;
+                                    "
+                                >
+                                    Send
+                                </button>
+                            </div>
+                        </form>
+                    </mat-card> -->
+<!-- <div class="column-one" style="width: 100vh">
+                                <img
+                                    src="assets/svg/Active-Support-amico.svg"
+                                    alt="Support Image"
+                                    style="width: 50vh"
+                                />
+                            </div> -->
+<!-- </div>
             </ng-container>
-          </div>
-          
-          <!-- USER GUIDES -->
-          <div *ngIf="selectedContent">
+        </div> -->
+
+<!-- USER GUIDES -->
+<!-- <div *ngIf="selectedContent">
             <ng-container *ngIf="selectedMenuItem?.title === 'User Guides'; else otherContent">
-              <div class="user-guides-section">
-                <div class="user-guides-row-one">
-                  <h2>User Guides</h2>
-                </div>
-                <div class="user-guides-row-two">
-                  <div class="side-menu">
-                    <nav>
-                      <ul>
-                        <li>
-                          <a href="#" [class.active]="isActive('setup-guides')" (click)="navigateTo($event, 'setup-guides')">Setup Guides</a>
-                          <ul>
-                            <li><a href="#" [class.active]="isActive('initial-setup')" (click)="navigateTo($event, 'initial-setup')">Initial Setup</a></li>
-                            <li><a href="#" [class.active]="isActive('role-configuration')" (click)="navigateTo($event, 'role-configuration')">Role Configuration</a></li>
-                            <li><a href="#" [class.active]="isActive('integration-setup')" (click)="navigateTo($event, 'integration-setup')">Integration Setup</a></li>
-                          </ul>
-                        </li>
-                        <li>
-                          <a href="#" [class.active]="isActive('feature-guides')" (click)="navigateTo($event, 'feature-guides')">Feature Guides</a>
-                          <ul>
-                            <li><a href="#" [class.active]="isActive('dashboard-overview')" (click)="navigateTo($event, 'dashboard-overview')">Dashboard Overview</a></li>
-                            <li><a href="#" [class.active]="isActive('inventory-management')" (click)="navigateTo($event, 'inventory-management')">Inventory Management</a></li>
-                            <li><a href="#" [class.active]="isActive('reporting-analytics')" (click)="navigateTo($event, 'reporting-analytics')">Reporting and Analytics</a></li>
-                          </ul>
-                        </li>
-                        <li><a href="#" [class.active]="isActive('video-tutorial')" (click)="navigateTo($event, 'video-tutorial')">Video Tutorial</a></li>
-                      </ul>
-                    </nav>
-                  </div>
-                  <div class="article-content">
-                    <h2 id="setup-guides">Setup Guides</h2>
-                    <h3 id="initial-setup">Initial Setup</h3>
-                    <p>Content for Initial Setup...
-                      Lorem ipsum dolor sit amet. Ea labore ipsam At eveniet provident id cupiditate omnis nam galisum quia. Est inventore nihil vel dolorem labore est commodi ratione et labore Quis sit accusantium minus 33 ducimus distinctio.
-                      Qui deleniti eveniet qui iure officiis ab laudantium perferendis aut saepe architecto et nisi obcaecati ut accusantium eaque et dolorem deleniti. Est nobis laborum hic voluptatem tempora aut ullam doloribus eos iusto dolorem At nostrum assumenda est quidem nisi eos veniam doloribus. Qui quam modi eum error sunt ea accusamus adipisci est quasi veniam.
-                      Et sint ipsa qui aperiam recusandae et neque quaerat ut voluptatem quam sit omnis excepturi in minus omnis At velit atque. Eos quibusdam corrupti est adipisci ipsa aut iste praesentium ut maxime libero eum voluptas laudantium.
-                    </p>
-                    <h3 id="role-configuration">Role Configuration</h3>
-                    <p>Content for Role Configuration...
-                      Lorem ipsum dolor sit amet. Ea labore ipsam At eveniet provident id cupiditate omnis nam galisum quia. Est inventore nihil vel dolorem labore est commodi ratione et labore Quis sit accusantium minus 33 ducimus distinctio.
-                      Qui deleniti eveniet qui iure officiis ab laudantium perferendis aut saepe architecto et nisi obcaecati ut accusantium eaque et dolorem deleniti. Est nobis laborum hic voluptatem tempora aut ullam doloribus eos iusto dolorem At nostrum assumenda est quidem nisi eos veniam doloribus. Qui quam modi eum error sunt ea accusamus adipisci est quasi veniam.
-                      Et sint ipsa qui aperiam recusandae et neque quaerat ut voluptatem quam sit omnis excepturi in minus omnis At velit atque. Eos quibusdam corrupti est adipisci ipsa aut iste praesentium ut maxime libero eum voluptas laudantium.
-                    </p>
-                    <h3 id="integration-setup">Integration Setup</h3>
-                    <p>Content for Integration Setup...
-                      Lorem ipsum dolor sit amet. Ea labore ipsam At eveniet provident id cupiditate omnis nam galisum quia. Est inventore nihil vel dolorem labore est commodi ratione et labore Quis sit accusantium minus 33 ducimus distinctio.
-                      Qui deleniti eveniet qui iure officiis ab laudantium perferendis aut saepe architecto et nisi obcaecati ut accusantium eaque et dolorem deleniti. Est nobis laborum hic voluptatem tempora aut ullam doloribus eos iusto dolorem At nostrum assumenda est quidem nisi eos veniam doloribus. Qui quam modi eum error sunt ea accusamus adipisci est quasi veniam.
-                      Et sint ipsa qui aperiam recusandae et neque quaerat ut voluptatem quam sit omnis excepturi in minus omnis At velit atque. Eos quibusdam corrupti est adipisci ipsa aut iste praesentium ut maxime libero eum voluptas laudantium.
-                    </p>
-                    <h2 id="feature-guides">Feature Guides</h2>
-                    <h3 id="dashboard-overview">Dashboard Overview</h3>
-                    <p>Content for Dashboard Overview...
-                      Lorem ipsum dolor sit amet. Ea labore ipsam At eveniet provident id cupiditate omnis nam galisum quia. Est inventore nihil vel dolorem labore est commodi ratione et labore Quis sit accusantium minus 33 ducimus distinctio.
-                      Qui deleniti eveniet qui iure officiis ab laudantium perferendis aut saepe architecto et nisi obcaecati ut accusantium eaque et dolorem deleniti. Est nobis laborum hic voluptatem tempora aut ullam doloribus eos iusto dolorem At nostrum assumenda est quidem nisi eos veniam doloribus. Qui quam modi eum error sunt ea accusamus adipisci est quasi veniam.
-                      Et sint ipsa qui aperiam recusandae et neque quaerat ut voluptatem quam sit omnis excepturi in minus omnis At velit atque. Eos quibusdam corrupti est adipisci ipsa aut iste praesentium ut maxime libero eum voluptas laudantium.
-                    </p>
-                    <h3 id="inventory-management">Inventory Management</h3>
-                    <p>Content for Inventory Management...
-                      Lorem ipsum dolor sit amet. Ea labore ipsam At eveniet provident id cupiditate omnis nam galisum quia. Est inventore nihil vel dolorem labore est commodi ratione et labore Quis sit accusantium minus 33 ducimus distinctio.
-                      Qui deleniti eveniet qui iure officiis ab laudantium perferendis aut saepe architecto et nisi obcaecati ut accusantium eaque et dolorem deleniti. Est nobis laborum hic voluptatem tempora aut ullam doloribus eos iusto dolorem At nostrum assumenda est quidem nisi eos veniam doloribus. Qui quam modi eum error sunt ea accusamus adipisci est quasi veniam.
-                      Et sint ipsa qui aperiam recusandae et neque quaerat ut voluptatem quam sit omnis excepturi in minus omnis At velit atque. Eos quibusdam corrupti est adipisci ipsa aut iste praesentium ut maxime libero eum voluptas laudantium.
-                    </p>
-                    <h3 id="reporting-analytics">Reporting and Analytics</h3>
-                    <p>Content for Reporting and Analytics...
-                      Lorem ipsum dolor sit amet. Ea labore ipsam At eveniet provident id cupiditate omnis nam galisum quia. Est inventore nihil vel dolorem labore est commodi ratione et labore Quis sit accusantium minus 33 ducimus distinctio.
-                      Qui deleniti eveniet qui iure officiis ab laudantium perferendis aut saepe architecto et nisi obcaecati ut accusantium eaque et dolorem deleniti. Est nobis laborum hic voluptatem tempora aut ullam doloribus eos iusto dolorem At nostrum assumenda est quidem nisi eos veniam doloribus. Qui quam modi eum error sunt ea accusamus adipisci est quasi veniam.
-                      Et sint ipsa qui aperiam recusandae et neque quaerat ut voluptatem quam sit omnis excepturi in minus omnis At velit atque. Eos quibusdam corrupti est adipisci ipsa aut iste praesentium ut maxime libero eum voluptas laudantium.
-                    </p>
-                    <h2 id="video-tutorial">Video Tutorial</h2>
-                    <div class="video-frame">
-                      <iframe class="responsive-video" src="https://www.youtube.com/embed/XekMkIJ843w?si=CNs1FbQ4Cd88Z5Ek" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                <div class="user-guides-section">
+                    <div class="user-guides-row-two">
+                        <div class="side-menu">
+                            <nav>
+                                <ul>
+                                    <li>
+                                        <a
+                                            href="#"
+                                            [class.active]="isActive('setup-guides')"
+                                            (click)="navigateTo($event, 'setup-guides')"
+                                            >Setup Guides</a
+                                        >
+                                        <ul>
+                                            <li>
+                                                <a
+                                                    href="#"
+                                                    [class.active]="isActive('initial-setup')"
+                                                    (click)="navigateTo($event, 'initial-setup')"
+                                                    >Initial Setup</a
+                                                >
+                                            </li>
+                                            <li>
+                                                <a
+                                                    href="#"
+                                                    [class.active]="isActive('role-configuration')"
+                                                    (click)="navigateTo($event, 'role-configuration')"
+                                                    >Role Configuration</a
+                                                >
+                                            </li>
+                                            <li>
+                                                <a
+                                                    href="#"
+                                                    [class.active]="isActive('integration-setup')"
+                                                    (click)="navigateTo($event, 'integration-setup')"
+                                                    >Integration Setup</a
+                                                >
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <a
+                                            href="#"
+                                            [class.active]="isActive('feature-guides')"
+                                            (click)="navigateTo($event, 'feature-guides')"
+                                            >Feature Guides</a
+                                        >
+                                        <ul>
+                                            <li>
+                                                <a
+                                                    href="#"
+                                                    [class.active]="isActive('dashboard-overview')"
+                                                    (click)="navigateTo($event, 'dashboard-overview')"
+                                                    >Dashboard Overview</a
+                                                >
+                                            </li>
+                                            <li>
+                                                <a
+                                                    href="#"
+                                                    [class.active]="isActive('inventory-management')"
+                                                    (click)="navigateTo($event, 'inventory-management')"
+                                                    >Inventory Management</a
+                                                >
+                                            </li>
+                                            <li>
+                                                <a
+                                                    href="#"
+                                                    [class.active]="isActive('reporting-analytics')"
+                                                    (click)="navigateTo($event, 'reporting-analytics')"
+                                                    >Reporting and Analytics</a
+                                                >
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <a
+                                            href="#"
+                                            [class.active]="isActive('video-tutorial')"
+                                            (click)="navigateTo($event, 'video-tutorial')"
+                                            >Video Tutorial</a
+                                        >
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                        <div class="article-content">
+                            <h2 id="setup-guides">Setup Guides</h2>
+                            <h3 id="initial-setup">Initial Setup</h3>
+                            <p>
+                                Content for Initial Setup... Lorem ipsum dolor sit amet. Ea labore ipsam At eveniet
+                                provident id cupiditate omnis nam galisum quia. Est inventore nihil vel dolorem labore
+                                est commodi ratione et labore Quis sit accusantium minus 33 ducimus distinctio. Qui
+                                deleniti eveniet qui iure officiis ab laudantium perferendis aut saepe architecto et
+                                nisi obcaecati ut accusantium eaque et dolorem deleniti. Est nobis laborum hic
+                                voluptatem tempora aut ullam doloribus eos iusto dolorem At nostrum assumenda est quidem
+                                nisi eos veniam doloribus. Qui quam modi eum error sunt ea accusamus adipisci est quasi
+                                veniam. Et sint ipsa qui aperiam recusandae et neque quaerat ut voluptatem quam sit
+                                omnis excepturi in minus omnis At velit atque. Eos quibusdam corrupti est adipisci ipsa
+                                aut iste praesentium ut maxime libero eum voluptas laudantium.
+                            </p>
+                            <h3 id="role-configuration">Role Configuration</h3>
+                            <p>
+                                Content for Role Configuration... Lorem ipsum dolor sit amet. Ea labore ipsam At eveniet
+                                provident id cupiditate omnis nam galisum quia. Est inventore nihil vel dolorem labore
+                                est commodi ratione et labore Quis sit accusantium minus 33 ducimus distinctio. Qui
+                                deleniti eveniet qui iure officiis ab laudantium perferendis aut saepe architecto et
+                                nisi obcaecati ut accusantium eaque et dolorem deleniti. Est nobis laborum hic
+                                voluptatem tempora aut ullam doloribus eos iusto dolorem At nostrum assumenda est quidem
+                                nisi eos veniam doloribus. Qui quam modi eum error sunt ea accusamus adipisci est quasi
+                                veniam. Et sint ipsa qui aperiam recusandae et neque quaerat ut voluptatem quam sit
+                                omnis excepturi in minus omnis At velit atque. Eos quibusdam corrupti est adipisci ipsa
+                                aut iste praesentium ut maxime libero eum voluptas laudantium.
+                            </p>
+                            <h3 id="integration-setup">Integration Setup</h3>
+                            <p>
+                                Content for Integration Setup... Lorem ipsum dolor sit amet. Ea labore ipsam At eveniet
+                                provident id cupiditate omnis nam galisum quia. Est inventore nihil vel dolorem labore
+                                est commodi ratione et labore Quis sit accusantium minus 33 ducimus distinctio. Qui
+                                deleniti eveniet qui iure officiis ab laudantium perferendis aut saepe architecto et
+                                nisi obcaecati ut accusantium eaque et dolorem deleniti. Est nobis laborum hic
+                                voluptatem tempora aut ullam doloribus eos iusto dolorem At nostrum assumenda est quidem
+                                nisi eos veniam doloribus. Qui quam modi eum error sunt ea accusamus adipisci est quasi
+                                veniam. Et sint ipsa qui aperiam recusandae et neque quaerat ut voluptatem quam sit
+                                omnis excepturi in minus omnis At velit atque. Eos quibusdam corrupti est adipisci ipsa
+                                aut iste praesentium ut maxime libero eum voluptas laudantium.
+                            </p>
+                            <h2 id="feature-guides">Feature Guides</h2>
+                            <h3 id="dashboard-overview">Dashboard Overview</h3>
+                            <p>
+                                Content for Dashboard Overview... Lorem ipsum dolor sit amet. Ea labore ipsam At eveniet
+                                provident id cupiditate omnis nam galisum quia. Est inventore nihil vel dolorem labore
+                                est commodi ratione et labore Quis sit accusantium minus 33 ducimus distinctio. Qui
+                                deleniti eveniet qui iure officiis ab laudantium perferendis aut saepe architecto et
+                                nisi obcaecati ut accusantium eaque et dolorem deleniti. Est nobis laborum hic
+                                voluptatem tempora aut ullam doloribus eos iusto dolorem At nostrum assumenda est quidem
+                                nisi eos veniam doloribus. Qui quam modi eum error sunt ea accusamus adipisci est quasi
+                                veniam. Et sint ipsa qui aperiam recusandae et neque quaerat ut voluptatem quam sit
+                                omnis excepturi in minus omnis At velit atque. Eos quibusdam corrupti est adipisci ipsa
+                                aut iste praesentium ut maxime libero eum voluptas laudantium.
+                            </p>
+                            <h3 id="inventory-management">Inventory Management</h3>
+                            <p>
+                                Content for Inventory Management... Lorem ipsum dolor sit amet. Ea labore ipsam At
+                                eveniet provident id cupiditate omnis nam galisum quia. Est inventore nihil vel dolorem
+                                labore est commodi ratione et labore Quis sit accusantium minus 33 ducimus distinctio.
+                                Qui deleniti eveniet qui iure officiis ab laudantium perferendis aut saepe architecto et
+                                nisi obcaecati ut accusantium eaque et dolorem deleniti. Est nobis laborum hic
+                                voluptatem tempora aut ullam doloribus eos iusto dolorem At nostrum assumenda est quidem
+                                nisi eos veniam doloribus. Qui quam modi eum error sunt ea accusamus adipisci est quasi
+                                veniam. Et sint ipsa qui aperiam recusandae et neque quaerat ut voluptatem quam sit
+                                omnis excepturi in minus omnis At velit atque. Eos quibusdam corrupti est adipisci ipsa
+                                aut iste praesentium ut maxime libero eum voluptas laudantium.
+                            </p>
+                            <h3 id="reporting-analytics">Reporting and Analytics</h3>
+                            <p>
+                                Content for Reporting and Analytics... Lorem ipsum dolor sit amet. Ea labore ipsam At
+                                eveniet provident id cupiditate omnis nam galisum quia. Est inventore nihil vel dolorem
+                                labore est commodi ratione et labore Quis sit accusantium minus 33 ducimus distinctio.
+                                Qui deleniti eveniet qui iure officiis ab laudantium perferendis aut saepe architecto et
+                                nisi obcaecati ut accusantium eaque et dolorem deleniti. Est nobis laborum hic
+                                voluptatem tempora aut ullam doloribus eos iusto dolorem At nostrum assumenda est quidem
+                                nisi eos veniam doloribus. Qui quam modi eum error sunt ea accusamus adipisci est quasi
+                                veniam. Et sint ipsa qui aperiam recusandae et neque quaerat ut voluptatem quam sit
+                                omnis excepturi in minus omnis At velit atque. Eos quibusdam corrupti est adipisci ipsa
+                                aut iste praesentium ut maxime libero eum voluptas laudantium.
+                            </p>
+                            <h2 id="video-tutorial">Video Tutorial</h2>
+                            <div class="video-frame">
+                                <iframe
+                                    class="responsive-video"
+                                    src="https://www.youtube.com/embed/XekMkIJ843w?si=CNs1FbQ4Cd88Z5Ek"
+                                    title="YouTube video player"
+                                    frameborder="0"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                    referrerpolicy="strict-origin-when-cross-origin"
+                                    allowfullscreen
+                                ></iframe>
+                            </div>
+                        </div>
                     </div>
-                  </div>
                 </div>
-                <div class="user-guides-row-three">
-                  <div class="user-guides-banner">
-                    <div class="banner-text">
-                      <h3>Still Have Questions?</h3>
-                      <p>Can't find what you're looking for? Get in touch with our friendly help service</p>
-                    </div>
-                    <button class="get-in-touch-button" (click)="onContactSupport()">Get in Touch</button>
-                  </div>
-                </div>
-              </div>
             </ng-container>
-          </div>
-
-          <!-- RELEASE NOTES -->
-          <div *ngIf="selectedContent">
-            <ng-container *ngIf="selectedMenuItem?.title === 'Release Notes'; else otherContent">
-              <div class="release-notes-section">
-                <div class="release-notes-row release-notes-row-one">
-                  <h2>Release Notes</h2>
-                </div>
-                <div class="release-notes-row release-notes-row-two">
-                  <h1>Under Construction</h1>
-                  <img src="assets/svg/Under-construction-amico.svg">
-                </div>
-                <div class="release-notes-row release-notes-row-three">
-                  <div class="release-notes-banner">
-                    <div class="banner-text">
-                      <h3>Still Have Questions?</h3>
-                      <p>Can't find what you're looking for? Get in touch with our friendly help service.</p>
-                    </div>
-                    <button mat-button class="get-in-touch-button" (click)="onItemSelected(menuItems[3])">Get in Touch</button>
-                  </div>
-                </div>
-              </div>
-            </ng-container>
-          </div>
-          
-  
-          <ng-template #otherContent>
-            {{ selectedContent }}
-          </ng-template>
         </div>
-      </div>
+
+        <ng-template #otherContent>
+            {{ selectedContent }}
+        </ng-template>
     </div>
-  </div>
+    </mat-grid-tile>
+    <mat-grid-tile
+        [colspan]="1"
+        [rowspan]="1"
+        *ngFor="let item of menuItems"
+        [ngClass]="{ selected: selectedMenuItem === item }"
+        style="background-color: #f2f2f2"
+        ><button mat-button (click)="onItemSelected(item)" style="border-radius: 0; color: black">
+            {{ item.title }}
+        </button></mat-grid-tile
+    >
+    </mat-grid-list>
+</div> -->
+<div class="body" style="margin: 0px">
+    <mat-tab-group>
+        <mat-tab label="FAQs">
+            <ng-container>
+                <div class="faq-section" style="margin: 10px">
+                    <div class="faq-row faq-row-one" style="padding: 10px">
+                        <div class="filter-buttons">
+                            <button
+                                class="test"
+                                mat-raised-button
+                                *ngFor="let filter of faqFilters"
+                                (click)="onFilterClick(filter)"
+                                style="border-radius: 5px; color: black; background-color: #f2f2f2"
+                            >
+                                {{ filter }}
+                            </button>
+                        </div>
+                    </div>
+                    <div class="faq-row faq-row-two">
+                        <mat-accordion>
+                            <mat-expansion-panel *ngFor="let faq of filteredFaqs">
+                                <mat-expansion-panel-header>
+                                    <mat-panel-title>
+                                        {{ faq.question }}
+                                    </mat-panel-title>
+                                </mat-expansion-panel-header>
+                                <p>{{ faq.answer }}</p>
+                            </mat-expansion-panel>
+                        </mat-accordion>
+                    </div>
+                </div>
+            </ng-container>
+        </mat-tab>
+        <mat-tab label="Troubleshooting">
+            <ng-container>
+                <div class="troubleshooting-section" style="margin: 10px">
+                    <div class="troubleshooting-row-two">
+                        <mat-accordion>
+                            <mat-expansion-panel *ngFor="let issue of troubleshootingIssues">
+                                <mat-expansion-panel-header>
+                                    <mat-panel-title>
+                                        {{ issue.title }}
+                                    </mat-panel-title>
+                                </mat-expansion-panel-header>
+                                <p>{{ issue.description }}</p>
+                            </mat-expansion-panel>
+                        </mat-accordion>
+                    </div>
+                </div>
+            </ng-container>
+        </mat-tab>
+        <mat-tab label="User Guides">
+            <ng-container>
+                <div class="user-guides-section">
+                    <div class="user-guides-row-two">
+                        <div class="side-menu">
+                            <nav>
+                                <ul>
+                                    <li>
+                                        <a
+                                            href="#"
+                                            [class.active]="isActive('setup-guides')"
+                                            (click)="navigateTo($event, 'setup-guides')"
+                                            >Setup Guides</a
+                                        >
+                                        <ul>
+                                            <li>
+                                                <a
+                                                    href="#"
+                                                    [class.active]="isActive('initial-setup')"
+                                                    (click)="navigateTo($event, 'initial-setup')"
+                                                    >Initial Setup</a
+                                                >
+                                            </li>
+                                            <li>
+                                                <a
+                                                    href="#"
+                                                    [class.active]="isActive('role-configuration')"
+                                                    (click)="navigateTo($event, 'role-configuration')"
+                                                    >Role Configuration</a
+                                                >
+                                            </li>
+                                            <li>
+                                                <a
+                                                    href="#"
+                                                    [class.active]="isActive('integration-setup')"
+                                                    (click)="navigateTo($event, 'integration-setup')"
+                                                    >Integration Setup</a
+                                                >
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <a
+                                            href="#"
+                                            [class.active]="isActive('feature-guides')"
+                                            (click)="navigateTo($event, 'feature-guides')"
+                                            >Feature Guides</a
+                                        >
+                                        <ul>
+                                            <li>
+                                                <a
+                                                    href="#"
+                                                    [class.active]="isActive('dashboard-overview')"
+                                                    (click)="navigateTo($event, 'dashboard-overview')"
+                                                    >Dashboard Overview</a
+                                                >
+                                            </li>
+                                            <li>
+                                                <a
+                                                    href="#"
+                                                    [class.active]="isActive('inventory-management')"
+                                                    (click)="navigateTo($event, 'inventory-management')"
+                                                    >Inventory Management</a
+                                                >
+                                            </li>
+                                            <li>
+                                                <a
+                                                    href="#"
+                                                    [class.active]="isActive('reporting-analytics')"
+                                                    (click)="navigateTo($event, 'reporting-analytics')"
+                                                    >Reporting and Analytics</a
+                                                >
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <a
+                                            href="#"
+                                            [class.active]="isActive('video-tutorial')"
+                                            (click)="navigateTo($event, 'video-tutorial')"
+                                            >Video Tutorial</a
+                                        >
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                        <div class="article-content">
+                            <h2 id="setup-guides">Setup Guides</h2>
+                            <h3 id="initial-setup">Initial Setup</h3>
+                            <p>
+                                Content for Initial Setup... Lorem ipsum dolor sit amet. Ea labore ipsam At eveniet
+                                provident id cupiditate omnis nam galisum quia. Est inventore nihil vel dolorem labore
+                                est commodi ratione et labore Quis sit accusantium minus 33 ducimus distinctio. Qui
+                                deleniti eveniet qui iure officiis ab laudantium perferendis aut saepe architecto et
+                                nisi obcaecati ut accusantium eaque et dolorem deleniti. Est nobis laborum hic
+                                voluptatem tempora aut ullam doloribus eos iusto dolorem At nostrum assumenda est quidem
+                                nisi eos veniam doloribus. Qui quam modi eum error sunt ea accusamus adipisci est quasi
+                                veniam. Et sint ipsa qui aperiam recusandae et neque quaerat ut voluptatem quam sit
+                                omnis excepturi in minus omnis At velit atque. Eos quibusdam corrupti est adipisci ipsa
+                                aut iste praesentium ut maxime libero eum voluptas laudantium.
+                            </p>
+                            <h3 id="role-configuration">Role Configuration</h3>
+                            <p>
+                                Content for Role Configuration... Lorem ipsum dolor sit amet. Ea labore ipsam At eveniet
+                                provident id cupiditate omnis nam galisum quia. Est inventore nihil vel dolorem labore
+                                est commodi ratione et labore Quis sit accusantium minus 33 ducimus distinctio. Qui
+                                deleniti eveniet qui iure officiis ab laudantium perferendis aut saepe architecto et
+                                nisi obcaecati ut accusantium eaque et dolorem deleniti. Est nobis laborum hic
+                                voluptatem tempora aut ullam doloribus eos iusto dolorem At nostrum assumenda est quidem
+                                nisi eos veniam doloribus. Qui quam modi eum error sunt ea accusamus adipisci est quasi
+                                veniam. Et sint ipsa qui aperiam recusandae et neque quaerat ut voluptatem quam sit
+                                omnis excepturi in minus omnis At velit atque. Eos quibusdam corrupti est adipisci ipsa
+                                aut iste praesentium ut maxime libero eum voluptas laudantium.
+                            </p>
+                            <h3 id="integration-setup">Integration Setup</h3>
+                            <p>
+                                Content for Integration Setup... Lorem ipsum dolor sit amet. Ea labore ipsam At eveniet
+                                provident id cupiditate omnis nam galisum quia. Est inventore nihil vel dolorem labore
+                                est commodi ratione et labore Quis sit accusantium minus 33 ducimus distinctio. Qui
+                                deleniti eveniet qui iure officiis ab laudantium perferendis aut saepe architecto et
+                                nisi obcaecati ut accusantium eaque et dolorem deleniti. Est nobis laborum hic
+                                voluptatem tempora aut ullam doloribus eos iusto dolorem At nostrum assumenda est quidem
+                                nisi eos veniam doloribus. Qui quam modi eum error sunt ea accusamus adipisci est quasi
+                                veniam. Et sint ipsa qui aperiam recusandae et neque quaerat ut voluptatem quam sit
+                                omnis excepturi in minus omnis At velit atque. Eos quibusdam corrupti est adipisci ipsa
+                                aut iste praesentium ut maxime libero eum voluptas laudantium.
+                            </p>
+                            <h2 id="feature-guides">Feature Guides</h2>
+                            <h3 id="dashboard-overview">Dashboard Overview</h3>
+                            <p>
+                                Content for Dashboard Overview... Lorem ipsum dolor sit amet. Ea labore ipsam At eveniet
+                                provident id cupiditate omnis nam galisum quia. Est inventore nihil vel dolorem labore
+                                est commodi ratione et labore Quis sit accusantium minus 33 ducimus distinctio. Qui
+                                deleniti eveniet qui iure officiis ab laudantium perferendis aut saepe architecto et
+                                nisi obcaecati ut accusantium eaque et dolorem deleniti. Est nobis laborum hic
+                                voluptatem tempora aut ullam doloribus eos iusto dolorem At nostrum assumenda est quidem
+                                nisi eos veniam doloribus. Qui quam modi eum error sunt ea accusamus adipisci est quasi
+                                veniam. Et sint ipsa qui aperiam recusandae et neque quaerat ut voluptatem quam sit
+                                omnis excepturi in minus omnis At velit atque. Eos quibusdam corrupti est adipisci ipsa
+                                aut iste praesentium ut maxime libero eum voluptas laudantium.
+                            </p>
+                            <h3 id="inventory-management">Inventory Management</h3>
+                            <p>
+                                Content for Inventory Management... Lorem ipsum dolor sit amet. Ea labore ipsam At
+                                eveniet provident id cupiditate omnis nam galisum quia. Est inventore nihil vel dolorem
+                                labore est commodi ratione et labore Quis sit accusantium minus 33 ducimus distinctio.
+                                Qui deleniti eveniet qui iure officiis ab laudantium perferendis aut saepe architecto et
+                                nisi obcaecati ut accusantium eaque et dolorem deleniti. Est nobis laborum hic
+                                voluptatem tempora aut ullam doloribus eos iusto dolorem At nostrum assumenda est quidem
+                                nisi eos veniam doloribus. Qui quam modi eum error sunt ea accusamus adipisci est quasi
+                                veniam. Et sint ipsa qui aperiam recusandae et neque quaerat ut voluptatem quam sit
+                                omnis excepturi in minus omnis At velit atque. Eos quibusdam corrupti est adipisci ipsa
+                                aut iste praesentium ut maxime libero eum voluptas laudantium.
+                            </p>
+                            <h3 id="reporting-analytics">Reporting and Analytics</h3>
+                            <p>
+                                Content for Reporting and Analytics... Lorem ipsum dolor sit amet. Ea labore ipsam At
+                                eveniet provident id cupiditate omnis nam galisum quia. Est inventore nihil vel dolorem
+                                labore est commodi ratione et labore Quis sit accusantium minus 33 ducimus distinctio.
+                                Qui deleniti eveniet qui iure officiis ab laudantium perferendis aut saepe architecto et
+                                nisi obcaecati ut accusantium eaque et dolorem deleniti. Est nobis laborum hic
+                                voluptatem tempora aut ullam doloribus eos iusto dolorem At nostrum assumenda est quidem
+                                nisi eos veniam doloribus. Qui quam modi eum error sunt ea accusamus adipisci est quasi
+                                veniam. Et sint ipsa qui aperiam recusandae et neque quaerat ut voluptatem quam sit
+                                omnis excepturi in minus omnis At velit atque. Eos quibusdam corrupti est adipisci ipsa
+                                aut iste praesentium ut maxime libero eum voluptas laudantium.
+                            </p>
+                            <h2 id="video-tutorial">Video Tutorial</h2>
+                            <div class="video-frame">
+                                <iframe
+                                    class="responsive-video"
+                                    src="https://www.youtube.com/embed/XekMkIJ843w?si=CNs1FbQ4Cd88Z5Ek"
+                                    title="YouTube video player"
+                                    frameborder="0"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                    referrerpolicy="strict-origin-when-cross-origin"
+                                    allowfullscreen
+                                ></iframe>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </ng-container>
+        </mat-tab>
+        <mat-tab label="Contact Support">
+            <ng-container>
+                <div class="customer-support-row-two" style="display: flex; margin: 10px">
+                    <mat-card class="column-two">
+                        <form style="padding: 20px; background-color: #f2f2f2">
+                            <mat-form-field appearance="fill" style="width: fit-content">
+                                <mat-label>Name</mat-label>
+                                <input matInput placeholder="Name" required />
+                            </mat-form-field>
+                            <mat-form-field appearance="fill">
+                                <mat-label>Email address</mat-label>
+                                <input matInput type="email" placeholder="Email Address" required />
+                            </mat-form-field>
+                            <mat-form-field appearance="fill">
+                                <mat-label>Message</mat-label>
+                                <textarea matInput placeholder="Message" required></textarea>
+                            </mat-form-field>
+                            <div class="button-container" style="display: ruby-text; padding-bottom: 20px">
+                                <button
+                                    mat-button-raised
+                                    (click)="onSend()"
+                                    style="
+                                        width: 50vh;
+                                        height: 10vh;
+                                        padding: 20px;
+                                        border-radius: 5px;
+                                        color: black;
+                                        background-color: #f2f2f2;
+                                    "
+                                >
+                                    Send
+                                </button>
+                            </div>
+                        </form>
+                    </mat-card>
+                    <!-- <div class="column-one" style="width: 100vh">
+                        <img src="assets/svg/Active-Support-amico.svg" alt="Support Image" style="width: 50vh" />
+                    </div> -->
+                </div>
+            </ng-container>
+        </mat-tab>
+    </mat-tab-group>
+</div>

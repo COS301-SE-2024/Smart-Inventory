@@ -11,7 +11,10 @@
             <button mat-menu-item color="primary" (click)="downloadCSV()">Export Excel</button>
             <button mat-menu-item color="primary" (click)="importExcel()">Import Excel</button>
             <button mat-menu-item color="primary" (click)="addRow()">+ Add New</button>
-            <button mat-menu-item color="primary" (click)="deleteRow()">- Remove Selected</button>
+            <button mat-menu-item *ngIf="!getCurrentRoute('orders')" color="primary" (click)="deleteRow()">
+                - Remove Selected
+            </button>
+            <button mat-menu-item *ngIf="getCurrentRoute('inventory')" color="primary">Request Stock</button>
         </mat-menu>
     </div>
 </div>

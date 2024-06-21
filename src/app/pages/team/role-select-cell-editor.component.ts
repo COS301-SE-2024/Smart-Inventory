@@ -59,25 +59,27 @@ export class RoleSelectCellEditorComponent implements ICellRendererAngularComp {
     }
 
     onRoleChange(newRole: string): void {
-        const dialogRef = this.dialog.open(RoleChangeConfirmationDialogComponent, {
-            width: '350px',
-            data: {
-                given_name: this.params.data.given_name,
-                family_name: this.params.data.family_name,
-                email: this.params.data.email,
-                newRole: newRole,
-            },
-        });
-
-        dialogRef.afterClosed().subscribe((result) => {
-            if (result) {
-                // User confirmed, update the value
-                this.value = newRole;
-                this.params.api.stopEditing();
-            } else {
-                // User cancelled, revert the change
-                this.params.api.stopEditing();
-            }
-        });
+        if (newRole !== this.value) {
+            const dialogRef = this.dialog.open(RoleChangeConfirmationDialogComponent, {
+                width: '350px',
+                data: {
+                    given_name: this.params.data.given_name,
+                    family_name: this.params.data.family_name,
+                    email: this.params.data.email,
+                    newRole: newRole,
+                },
+            });
+    
+            dialogRef.afterClosed().subscribe((result) => {
+                if (result) {
+                    // User confirmed, update the value
+                    this.value = newRole;
+                    this.params.api.stopEditing();
+                } else {
+                    // User cancelled, revert the change
+                    this.params.api.stopEditing();
+                }
+            });
+        }
     }
 }

@@ -192,8 +192,8 @@ export class TeamComponent implements OnInit {
                 {
                     field: 'role',
                     headerName: 'Role',
-                    editable: true,
-                    cellEditor: RoleSelectCellEditorComponent,
+                    cellRenderer: RoleSelectCellEditorComponent,
+                    width: 250,
                   },
                 {
                     headerName: 'Actions',

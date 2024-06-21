@@ -19,11 +19,12 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { RoleChangeConfirmationDialogComponent } from './role-change-confirmation-dialog.component';
+import { RoleSelectCellEditorComponent } from './role-select-cell-editor.component';
 
 @Component({
     selector: 'app-team',
     standalone: true,
-    imports: [CommonModule, FormsModule, GridComponent, DeleteButtonRenderer, MatDialogModule, MatButtonModule, RoleChangeConfirmationDialogComponent],
+    imports: [CommonModule, FormsModule, GridComponent, DeleteButtonRenderer, MatDialogModule, MatButtonModule, RoleChangeConfirmationDialogComponent, RoleSelectCellEditorComponent],
     templateUrl: './team.component.html',
     styleUrls: ['./team.component.css'],
 })
@@ -192,11 +193,7 @@ export class TeamComponent implements OnInit {
                     field: 'role',
                     headerName: 'Role',
                     editable: true,
-                    cellEditor: 'agSelectCellEditor',
-                    cellEditorParams: {
-                      values: ['Admin', 'End User', 'Inventory Controller']
-                    },
-                    onCellValueChanged: this.onCellValueChanged.bind(this)
+                    cellEditor: RoleSelectCellEditorComponent,
                   },
                 {
                     headerName: 'Actions',

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { AgGridAngular } from 'ag-grid-angular';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
@@ -37,6 +37,7 @@ export class GridComponent implements OnInit {
     @Input() rowData: any;
     @Input() columnDefs: any;
     @Input() addButton: any;
+    @Output() addButtonClicked = new EventEmitter();
 
     filteredRowData: any[] = [];
 
@@ -70,6 +71,7 @@ export class GridComponent implements OnInit {
 
     addRow() {
         this.gridApi.applyTransaction({ add: [{}] });
+        this.addButtonClicked.emit();
     }
 
     deleteRow() {

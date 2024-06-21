@@ -1,8 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { ColDef } from 'ag-grid-community';
 import { GridComponent } from '../../components/grid/grid.component';
-import {MatButtonModule} from '@angular/material/button';
+import { MatButtonModule } from '@angular/material/button';
 import { TitleService } from '../../components/header/title.service';
+import { Amplify } from 'aws-amplify';
+import { fetchAuthSession } from 'aws-amplify/auth';
+import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
+import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
+import outputs from '../../../../amplify_outputs.json';
 
 @Component({
   selector: 'app-inventory',
@@ -12,52 +17,95 @@ import { TitleService } from '../../components/header/title.service';
   styleUrl: './inventory.component.css'
 })
 export class InventoryComponent implements OnInit {
+  rowData: any[] = [];
 
-  constructor(private titleService: TitleService){
-
+  constructor(private titleService: TitleService) {
+    Amplify.configure(outputs);
   }
 
-  ngOnInit(): void {
-      this.titleService.updateTitle('Inventory');
+  async ngOnInit(): Promise<void> {
+    this.titleService.updateTitle('Inventory');
+    await this.loadInventoryData();
   }
 
   addButton: any = {text: 'Add Items', button: true}
   removeButton: any = {text: 'Remove Items', button: true}
 
-  // Row Data: The data to be displayed.
-  rowData = [
-    { sku: "EX123", productId: "6a9c12a1-22fc-465d...", description: "TV-monitor", quantity: 50, supplier: "Amazon" },
-    { sku: "EX456", productId: "2b8f56c3-91bd-412e...", description: "Wireless Keyboard", quantity: 75, supplier: "Logitech" },
-    { sku: "EX789", productId: "9d4e63f8-5a2c-438f...", description: "Gaming Mouse", quantity: 100, supplier: "Razer" },
-    { sku: "EX321", productId: "7c6d41e9-3f8b-492a...", description: "Laptop", quantity: 25, supplier: "Dell" },
-    { sku: "EX654", productId: "1a5b92d7-8c4e-411d...", description: "Headphones", quantity: 60, supplier: "Bose" }
-  ];
-
-  // Column Definitions: Defines & controls grid columns. 
-  colDefs: any[] = [
-    { elementType: 'checkbox', field: "checkbox", checkboxSelection: true },
-    { elementType: 'input', field: "sku" },
-    { elementType: 'input', field: "productId" },
-    { elementType: 'input', field: "description" },
-    { elementType: 'input', field: "quantity" },
-    { elementType: 'input', field: "supplier" },
-    { elementType: 'button', field: "addColumn", cellRenderer: this.addColumnRenderer }
+  colDefs: ColDef[] = [
+    { field: "sku", headerName: "SKU" },
+    { field: "productId", headerName: "Product ID" },
+    { field: "description", headerName: "Description" },
+    { field: "quantity", headerName: "Quantity" },
+    { field: "supplier", headerName: "Supplier" }
   ];
 
   defaultColDef: ColDef = {
     flex: 1,
   }
 
-  addColumnRenderer() {
-    // Render add column button
+  async loadInventoryData() {
+    try {
+      const session = await fetchAuthSession();
+
+      const cognitoClient = new CognitoIdentityProviderClient({
+        region: outputs.auth.aws_region,
+        credentials: session.credentials,
+      });
+
+      const getUserCommand = new GetUserCommand({
+        AccessToken: session.tokens?.accessToken.toString(),
+      });
+      const getUserResponse = await cognitoClient.send(getUserCommand);
+
+      const tenantId = getUserResponse.UserAttributes?.find(
+        (attr) => attr.Name === 'custom:tenentId'
+      )?.Value;
+
+      if (!tenantId) {
+        console.error('TenantId not found in user attributes');
+        this.rowData = [];
+        return;
+      }
+
+      const lambdaClient = new LambdaClient({
+        region: outputs.auth.aws_region,
+        credentials: session.credentials,
+      });
+
+      const invokeCommand = new InvokeCommand({
+        FunctionName: 'Inventory-getItems',
+        Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: tenantId } })),
+      });
+
+      const lambdaResponse = await lambdaClient.send(invokeCommand);
+      const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+      console.log('Response from Lambda:', responseBody);
+
+      if (responseBody.statusCode === 200) {
+        const inventoryItems = JSON.parse(responseBody.body);
+        this.rowData = inventoryItems.map((item: any) => ({
+          sku: item.SKU,
+          productId: item.productID,
+          description: item.description,
+          quantity: item.quantity,
+          supplier: item.supplier
+        }));
+        console.log('Processed inventory items:', this.rowData);
+      } else {
+        console.error('Error fetching inventory data:', responseBody.body);
+        this.rowData = [];
+      }
+    } catch (error) {
+      console.error('Error in loadInventoryData:', error);
+      this.rowData = [];
+    }
   }
 
-  openAddItemsDialog(){
-    // Open dialog to add new inventory items  
+  openAddItemsDialog() {
+    // Implement dialog to add new inventory items
   }
   
-  openRemoveItemsDialog(){
-    // Open dialog to remove selected inventory items
+  openRemoveItemsDialog() {
+    // Implement dialog to remove selected inventory items
   }
-
 }

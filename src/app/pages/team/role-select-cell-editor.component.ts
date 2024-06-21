@@ -6,6 +6,13 @@ import { RoleChangeConfirmationDialogComponent } from './role-change-confirmatio
 import { CommonModule } from '@angular/common';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
+import {
+    AdminRemoveUserFromGroupCommand,
+    AdminAddUserToGroupCommand,
+    CognitoIdentityProviderClient,
+} from '@aws-sdk/client-cognito-identity-provider';
+import { fetchAuthSession } from 'aws-amplify/auth';
+import outputs from '../../../../amplify_outputs.json';
 
 @Component({
     selector: 'app-role-select-cell-editor',
@@ -58,7 +65,7 @@ export class RoleSelectCellEditorComponent implements ICellRendererAngularComp {
         return this.value;
     }
 
-    onRoleChange(newRole: string): void {
+    async onRoleChange(newRole: string): Promise<void> {
         if (newRole !== this.value) {
             const dialogRef = this.dialog.open(RoleChangeConfirmationDialogComponent, {
                 width: '350px',
@@ -70,13 +77,39 @@ export class RoleSelectCellEditorComponent implements ICellRendererAngularComp {
                     newRole: newRole,
                 },
             });
-    
-            dialogRef.afterClosed().subscribe((result) => {
+
+            dialogRef.afterClosed().subscribe(async (result) => {
                 if (result) {
-                    // User confirmed, update the value and log the old and new roles
-                    console.log(`User role changed from ${this.value} to ${newRole}`);
-                    this.value = newRole;
-                    this.params.api.stopEditing();
+                    try {
+                        const session = await fetchAuthSession();
+                        const client = new CognitoIdentityProviderClient({
+                            region: outputs.auth.aws_region,
+                            credentials: session.credentials,
+                        });
+
+                        // Remove user from the current group
+                        const removeFromGroupCommand = new AdminRemoveUserFromGroupCommand({
+                            GroupName: this.value.toLowerCase().replace(' ', ''),
+                            Username: this.params.data.email,
+                            UserPoolId: outputs.auth.user_pool_id,
+                        });
+                        await client.send(removeFromGroupCommand);
+
+                        // Add user to the new group
+                        const addToGroupCommand = new AdminAddUserToGroupCommand({
+                            GroupName: newRole.toLowerCase().replace(' ', ''),
+                            Username: this.params.data.email,
+                            UserPoolId: outputs.auth.user_pool_id,
+                        });
+                        await client.send(addToGroupCommand);
+
+                        console.log(`User role changed from ${this.value} to ${newRole}`);
+                        this.value = newRole;
+                        this.params.api.stopEditing();
+                    } catch (error) {
+                        console.error('Error changing user role:', error);
+                        this.params.api.stopEditing();
+                    }
                 } else {
                     // User cancelled, revert the change
                     this.params.api.stopEditing();

@@ -66,13 +66,15 @@ export class RoleSelectCellEditorComponent implements ICellRendererAngularComp {
                     given_name: this.params.data.given_name,
                     family_name: this.params.data.family_name,
                     email: this.params.data.email,
+                    oldRole: this.value,
                     newRole: newRole,
                 },
             });
     
             dialogRef.afterClosed().subscribe((result) => {
                 if (result) {
-                    // User confirmed, update the value
+                    // User confirmed, update the value and log the old and new roles
+                    console.log(`User role changed from ${this.value} to ${newRole}`);
                     this.value = newRole;
                     this.params.api.stopEditing();
                 } else {

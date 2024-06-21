@@ -11,7 +11,7 @@ import { CommonModule } from '@angular/common';
   template: `
     <h2 mat-dialog-title>Confirmation</h2>
     <div mat-dialog-content>
-      <p>{{ data.given_name }} {{ data.family_name }} : {{ data.email }}</p>
+      <p>{{ data.given_name }} {{ data.family_name }}: {{ data.email }}</p>
       <p>Are you sure you want to delete this user?</p>
     </div>
     <div mat-dialog-actions>

@@ -196,7 +196,7 @@ export class TeamComponent implements OnInit {
                     width: 250,
                   },
                 {
-                    headerName: 'Actions',
+                    headerName: 'Remove Member',
                     cellRenderer: DeleteButtonRenderer,
                     width: 100,
                 },

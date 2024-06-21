@@ -11,8 +11,8 @@ import { CommonModule } from '@angular/common';
   template: `
     <h2 mat-dialog-title>Confirm Role Change</h2>
     <div mat-dialog-content>
-      <p>{{ data.given_name }} {{ data.family_name }} : {{ data.email }}</p>
-      <p>Are you sure you want to change this user's role to {{ data.newRole }}?</p>
+      <p>{{ data.given_name }} {{ data.family_name }}: {{ data.email }}</p>
+      <p>Are you sure you want to change this user's role from {{ data.oldRole }} to {{ data.newRole }}?</p>
     </div>
     <div mat-dialog-actions>
       <button mat-button (click)="onNoClick()">Cancel</button>
@@ -23,7 +23,7 @@ import { CommonModule } from '@angular/common';
 export class RoleChangeConfirmationDialogComponent {
   constructor(
     public dialogRef: MatDialogRef<RoleChangeConfirmationDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { given_name: string, family_name: string, email: string, newRole: string }
+    @Inject(MAT_DIALOG_DATA) public data: { given_name: string, family_name: string, email: string, oldRole: string, newRole: string }
   ) {}
 
   onNoClick(): void {

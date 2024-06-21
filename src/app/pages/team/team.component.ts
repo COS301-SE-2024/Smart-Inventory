@@ -17,16 +17,18 @@ import { DeleteButtonRenderer } from './delete-button-renderer.component';
 import { DeleteConfirmationDialogComponent } from './delete-confirmation-dialog.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialog } from '@angular/material/dialog';
+import { RoleChangeConfirmationDialogComponent } from './role-change-confirmation-dialog.component';
 
 @Component({
     selector: 'app-team',
     standalone: true,
-    imports: [CommonModule, FormsModule, GridComponent, DeleteButtonRenderer, MatDialogModule, MatButtonModule],
+    imports: [CommonModule, FormsModule, GridComponent, DeleteButtonRenderer, MatDialogModule, MatButtonModule, RoleChangeConfirmationDialogComponent],
     templateUrl: './team.component.html',
     styleUrls: ['./team.component.css'],
 })
 export class TeamComponent implements OnInit {
-    constructor(private titleService: TitleService) {}
+    constructor(private titleService: TitleService, private dialog: MatDialog) {}
     showPopup = false;
     user = {
         name: '',
@@ -47,6 +49,31 @@ export class TeamComponent implements OnInit {
     closePopup() {
         this.showPopup = false;
     }
+
+    onCellValueChanged(event: any) {
+        if (event.column.colId === 'role') {
+          const dialogRef = this.dialog.open(RoleChangeConfirmationDialogComponent, {
+            width: '350px',
+            data: { 
+              given_name: event.data.given_name,
+              family_name: event.data.family_name,
+              email: event.data.email,
+              newRole: event.newValue
+            }
+          });
+      
+          dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+              // User confirmed, proceed with the change
+              console.log('Role change confirmed');
+              // Here you would typically update the backend
+            } else {
+              // User cancelled, revert the change
+              event.node.setDataValue('role', event.oldValue);
+            }
+          });
+        }
+      }
 
     async ngOnInit() {
         await this.fetchUsers();
@@ -161,7 +188,16 @@ export class TeamComponent implements OnInit {
                 { field: 'given_name', headerName: 'Given Name' },
                 { field: 'family_name', headerName: 'Family Name' },
                 { field: 'email', headerName: 'Email' },
-                { field: 'role', headerName: 'Role' },
+                {
+                    field: 'role',
+                    headerName: 'Role',
+                    editable: true,
+                    cellEditor: 'agSelectCellEditor',
+                    cellEditorParams: {
+                      values: ['Admin', 'End User', 'Inventory Controller']
+                    },
+                    onCellValueChanged: this.onCellValueChanged.bind(this)
+                  },
                 {
                     headerName: 'Actions',
                     cellRenderer: DeleteButtonRenderer,

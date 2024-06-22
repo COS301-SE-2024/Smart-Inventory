@@ -14,7 +14,7 @@ export const routes: Routes = [
     { path: 'dashboard', component: DashboardComponent },
     { path: 'inventory', component: InventoryComponent },
     { path: 'reports', component: ReportsComponent },
-    { path: 'team', component: ReportsComponent /*TeamComponent*/ },
+    { path: 'team', component: TeamComponent },
     { path: 'suppliers', component: SuppliersComponent },
     { path: 'orders', component: OrdersComponent },
     { path: 'settings', component: SettingsComponent },

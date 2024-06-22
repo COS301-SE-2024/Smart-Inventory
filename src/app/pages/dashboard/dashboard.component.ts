@@ -3,18 +3,19 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TitleService } from '../../components/header/title.service';
 import { MaterialModule } from '../../components/material/material.module';
 import { CommonModule } from '@angular/common';
-import { CompactType, GridsterModule } from 'angular-gridster2';
+import { CompactType, GridsterItemComponent, GridsterModule } from 'angular-gridster2';
 import { GridType, DisplayGrid } from 'angular-gridster2';
 import { GridsterConfig, GridsterItem } from 'angular-gridster2';
 import { AgChartsAngular } from 'ag-charts-angular';
 import { AgChartOptions } from 'ag-charts-community';
-import { LoaderComponent } from '../../components/loader/loader.component';
 import { AddmemberComponent } from '../../components/modal/addmember/addmember.component';
 import { BubblechartComponent } from '../../components/charts/bubblechart/bubblechart.component';
 import { SaleschartComponent } from '../../components/charts/saleschart/saleschart.component';
 import { BarchartComponent } from '../../components/charts/barchart/barchart.component';
 import { DonutchartComponent } from '../../components/charts/donutchart/donutchart.component';
 import { FilterService } from '../../services/filter.service';
+import { LoadingService } from '../../components/loader/loading.service';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 
 interface DashboardItem extends GridsterItem {
   type: string;
@@ -36,11 +37,13 @@ interface DashboardItem extends GridsterItem {
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css'],
   standalone: true,
-  imports: [MaterialModule, CommonModule, AddmemberComponent, GridsterModule, AgChartsAngular, BarchartComponent, DonutchartComponent, SaleschartComponent, BubblechartComponent, MatProgressSpinnerModule, LoaderComponent]
+  imports: [MaterialModule, HttpClientModule, CommonModule, AddmemberComponent, GridsterModule, AgChartsAngular, BarchartComponent, DonutchartComponent, SaleschartComponent, BubblechartComponent, MatProgressSpinnerModule]
 })
 export class DashboardComponent implements OnInit {
   isDeleteMode: boolean = false;
-  
+
+  data: any;
+
   options: GridsterConfig;
   charts: Type<any>[] = [];
   pendingDeletions: DashboardItem[] = [];
@@ -71,16 +74,18 @@ export class DashboardComponent implements OnInit {
 
   public chartOptions!: AgChartOptions;
 
-  constructor(private titleService: TitleService, private filterService: FilterService, private cdr: ChangeDetectorRef) {
+  constructor(private http: HttpClient, private loader: LoadingService, private titleService: TitleService, private filterService: FilterService, private cdr: ChangeDetectorRef) {
     this.options = {
       gridType: GridType.VerticalFixed,
       displayGrid: DisplayGrid.Always,
       compactType: CompactType.CompactUpAndLeft,
       draggable: {
-        enabled: true
+        enabled: true,
+        stop: event => this.saveState()
       },
       resizable: {
-        enabled: true
+        enabled: true,
+        stop: event => this.saveState()
       },
       pushItems: false,
       minCols: 4,
@@ -92,7 +97,7 @@ export class DashboardComponent implements OnInit {
       minItemCols: 1,  // Maximum columns an item can expand to
       minItemRows: 1,  // Maximum rows an item can expand to
       fixedRowHeight: 150,
-      addEmptyRowsCount: 10
+      addEmptyRowsCount: 10,
     };
 
     this.dashboard = [
@@ -104,8 +109,21 @@ export class DashboardComponent implements OnInit {
 
   }
 
-  get allItems() {
-    return [...this.dashboard, this.largeItem, this.newLargeItem, this.SalesvsTarget, this.Product];
+  saveState() {
+    localStorage.setItem('dashboardState', JSON.stringify(this.dashboard));
+  }
+
+  loadState() {
+    const savedState = localStorage.getItem('dashboardState');
+    if (savedState) {
+      this.dashboard = JSON.parse(savedState);
+    } else {
+      // Default dashboard configuration
+      this.dashboard = [
+        // initial configuration...
+      ];
+    }
+    this.cdr.detectChanges(); // Ensure the view is updated
   }
 
   toggleDeleteMode(): void {
@@ -115,7 +133,16 @@ export class DashboardComponent implements OnInit {
   markForDeletion(item: DashboardItem, event: MouseEvent | TouchEvent): void {
     event.preventDefault();
     event.stopPropagation();
-    const targetArray = this.dashboard.includes(item) ? this.pendingDeletions : this.standaloneDeletions;
+
+    // Determine if the item is part of the dashboard or standalone items
+    if (this.dashboard.includes(item)) {
+      this.toggleItemInArray(item, this.pendingDeletions);
+    } else {
+      this.toggleItemInArray(item, this.standaloneDeletions);
+    }
+  }
+
+  toggleItemInArray(item: DashboardItem, targetArray: DashboardItem[]): void {
     const index = targetArray.indexOf(item);
     if (index === -1) {
       targetArray.push(item);
@@ -124,13 +151,10 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-
   removeItem(item: DashboardItem): void {
     item.isActive = false;
     this.cdr.detectChanges(); // Refresh the view to reflect the removal
   }
-
-
 
   toggleItemDeletion(item: DashboardItem): void {
     const index = this.pendingDeletions.indexOf(item);
@@ -206,8 +230,23 @@ export class DashboardComponent implements OnInit {
     this.filterService.changeFilter(filter);
   }
 
+  fetchData() {
+    this.loader.setLoading(true);
+    this.http.get('https://api.example.com/data').subscribe({
+      next: (response) => {
+        this.data = response;
+        this.loader.setLoading(false);
+      },
+      error: (error) => {
+        console.error('Error fetching data:', error);
+        this.loader.setLoading(false);
+      }
+    });
+  }
+
   ngOnInit() {
     this.cdr.detectChanges();
     this.titleService.updateTitle('Dashboard');
+    this.fetchData();
   }
 }

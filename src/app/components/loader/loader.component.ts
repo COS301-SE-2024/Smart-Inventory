@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CommonModule } from '@angular/common';
+import { LoadingService } from './loading.service';
 @Component({
   selector: 'app-loader',
   standalone: true,
@@ -9,13 +10,11 @@ import { CommonModule } from '@angular/common';
   styleUrl: './loader.component.css'
 })
 export class LoaderComponent implements OnInit {
-  isLoading: boolean = false;
+
+  constructor(public loading: LoadingService){
+    
+  }
 
   ngOnInit() {
-    this.isLoading = true;
-    // Simulate loading data (e.g., from an API)
-    setTimeout(() => {
-      this.isLoading = false;
-    }, 2000); // Assume loading takes 2 seconds
   }
 }

@@ -1,0 +1,38 @@
+name: Cypress Tests
+
+on:
+  push:
+    branches: [feat/auto-tests]
+  pull_request:
+    branches: [develop]
+
+jobs:
+  cypress-run:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20.11.1
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install Cypress
+        run: npm install cypress@13.12.0
+
+      - name: Run Cypress component tests
+        run: |
+          npm run build
+          npx cypress run --component
+        continue-on-error: true
+
+      - name: List coverage directory
+        run: ls -R coverage
+
+      - name: Print coverage report
+        run: cat coverage/lcov.info

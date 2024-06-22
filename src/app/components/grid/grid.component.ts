@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { AgGridAngular } from 'ag-grid-angular';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
@@ -12,6 +12,7 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MatSelectModule } from '@angular/material/select';
 import { CellValueChangedEvent, RowValueChangedEvent } from 'ag-grid-community';
+import { RoleSelectCellEditorComponent } from '../../pages/team/role-select-cell-editor.component';
 
 @Component({
     selector: 'app-grid',
@@ -27,6 +28,7 @@ import { CellValueChangedEvent, RowValueChangedEvent } from 'ag-grid-community';
         CommonModule,
         MatSelectModule,
         MatIcon,
+        RoleSelectCellEditorComponent,
     ],
     templateUrl: './grid.component.html',
     styleUrl: './grid.component.css',
@@ -35,6 +37,7 @@ export class GridComponent implements OnInit {
     @Input() rowData: any;
     @Input() columnDefs: any;
     @Input() addButton: any;
+    @Output() addButtonClicked = new EventEmitter();
 
     filteredRowData: any[] = [];
 
@@ -68,6 +71,7 @@ export class GridComponent implements OnInit {
 
     addRow() {
         this.gridApi.applyTransaction({ add: [{}] });
+        this.addButtonClicked.emit();
     }
 
     deleteRow() {

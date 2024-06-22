@@ -34,6 +34,26 @@
     /* background-color: #e6e6e6; */
 }
 
+mat-select {
+    border: 1px solid grey;
+    border-radius: 5px;
+    margin-left: 10px;
+    align-content: center;
+    padding: 10px;
+    width: 200px;
+    height: 60px;
+    font-size: 15px;
+}
+
+::ng-deep .mat-mdc-select-value {
+    width: 100px;
+}
+
+span.mat-mdc-select-min-line {
+    font-size: 19px;
+    font-weight: 400;
+}
+
 .ag-chart-wrapper {
     position: fixed !important;  /* Overrides the position style */
     top: 50%;                    /* Center the chart vertically */

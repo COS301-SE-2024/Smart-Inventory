@@ -23,6 +23,7 @@ export class SidebarComponent {
         { label: 'Team', icon: 'people', routerLink: '/team' },
         { label: 'Suppliers', icon: 'local_shipping', routerLink: '/suppliers' },
         { label: 'Orders', icon: 'assignment', routerLink: '/orders' },
+        { label: 'Help', icon: 'help', routerLink: '/help' },
         { label: 'Settings', icon: 'settings', routerLink: '/settings' },
         { label: 'Log Out', icon: 'exit_to_app', click: true },
     ];

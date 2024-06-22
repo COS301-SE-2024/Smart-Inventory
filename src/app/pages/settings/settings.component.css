@@ -1,5 +1,15 @@
 /* SCROLL BAR */
-
+.mat-mdc-tab-group,
+.mat-mdc-tab-nav-bar {
+    --mat-tab-header-active-focus-label-text-color: #151414;
+    --mat-tab-header-active-label-text-color: #151414;
+    --mat-tab-header-inactive-label-text-color: rgb(0 0 0 / 60%);
+    --mat-tab-header-inactive-focus-label-text-color: black;
+    --mat-tab-header-inactive-hover-label-text-color: black;
+    --mdc-tab-indicator-active-indicator-color: #242022;
+    --mat-tab-header-active-hover-label-text-color: black;
+    --mat-tab-header-inactive-ripple-color: #232222;
+}
 /* width */
 ::-webkit-scrollbar {
     margin-left: 5px;
@@ -25,16 +35,15 @@
 }
 
 .body {
-    height: 100vh;
+    height: 100%;
     display: flex;
     flex-direction: column;
-    margin: 0 30px;
 }
 
 .content {
     display: flex;
     flex-direction: column;
-    height: 90%;
+    height: 100%;
 }
 
 .content .row {
@@ -81,12 +90,18 @@
 }
 
 .content .second-row {
-    height: 90%;
+    height: 100%;
+    width: 100%;
     display: flex;
-    background-color: #d1d1d1;
     overflow-y: auto;
+    flex-direction: column;
+    align-content: center;
 }
-
+mat-list {
+    flex-grow: 1;
+    border: 3px solid blue;
+    overflow: scroll;
+}
 /* LEFT PANE */
 
 .content .second-row .left-pane {
@@ -99,44 +114,12 @@
     margin: 0; /* Ensure there's no margin affecting positioning */
     box-sizing: border-box; /* Include padding and border in the element's total width and height */
 }
-
-/* NAVIGATION MENU */
-
-.content .second-row .left-pane .menu-buttons {
-    width: 100%;
-    margin-top: 0;
-    padding: 0; /* Ensure there's no padding affecting positioning */
-    box-sizing: border-box; /* Include padding and border in the element's total width and height */
-    margin-bottom: 40vh;
-}
-
-.content .second-row .left-pane .menu-buttons button {
-    width: 100%;
-    text-align: left;
-    background-color: #d1d1d1;
-    color: black;
-    font-size: 23px;
-    margin-bottom: 8px;
-    justify-content: left;
-    padding-left: 30px;
-    border-radius: 10px;
-    font-weight: 500;
-    padding-top: 10px;
-    padding-bottom: 10px;
-    box-sizing: border-box; /* Include padding and border in the element's total width and height */
-}
-
-.content .second-row .left-pane .menu-buttons button.selected {
-    background-color: #05ff00;
-    color: black;
-}
-
 /* LIGHT AND DARK MODE TOGGLE */
 
 .mode-toggle span {
-   font-size: 25px;
-   font-weight: 500;
-   padding-top: 40px;
+    font-size: 25px;
+    font-weight: 500;
+    padding-top: 40px;
 }
 
 .mode-toggle mat-slide-toggle {
@@ -162,7 +145,10 @@
 .content .second-row .right-pane .general-section {
     display: flex;
     flex-direction: column;
-    height: 100%;
+    /* height: 100%;
+    margin: 20px;
+    align-content: center;
+    text-align: center; */
 }
 
 .content .second-row .right-pane .general-section .general-row {
@@ -195,23 +181,23 @@
 
 .content .second-row .right-pane .general-section .general-row.general-row-two {
     height: 50vh;
-    overflow-y: auto;
+    overflow-y: scroll;
 }
 
 .content .second-row .right-pane .general-section .general-row.general-row-two h3 {
     font-size: 25px;
     font-weight: 500;
-    margin-bottom: 30px;
 }
 
 /* LIGHT AND DARK MODE SELECTION */
 
 .theme-selection-grid {
     display: flex;
-    justify-content: space-between;
-    margin-bottom: 40px;
-    margin-left: 5%;
-    width: 50%;
+    justify-content: space-around;
+    margin-bottom: 20px;
+    /* margin-left: 5%; */
+    width: 100%;
+    margin-top: 10px;
 }
 
 .theme-option {
@@ -352,7 +338,15 @@
     flex-direction: column; /* Ensures the sections are displayed in a column layout */
     height: 100%;
 }
-
+.notifications-row-two {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100%;
+    overflow-y: auto;
+    margin-left: 30px;
+    padding-right: 30px;
+}
 .notifications-row-one {
     height: 15vh;
 }
@@ -372,15 +366,6 @@
     background-color: #000;
     border: none;
     border-radius: 15px;
-}
-
-.notifications-row-two {
-    display: flex;
-    flex-direction: column; /* Ensures sections inside this container are displayed in a column layout */
-    height: 50vh;
-    overflow-y: auto;
-    margin-left: 30px;
-    padding-right: 30px;
 }
 
 /* Section One */
@@ -407,12 +392,12 @@
     position: relative !important;
     width: 100% !important;
     z-index: 1 !important;
-    background-color: #05ff00 !important;
+    background-color: black !important;
     border-radius: 50% !important;
 }
 
 .mdc-switch:enabled .mdc-switch__track::after {
-    background: #544C4C !important;
+    background: #544c4c !important;
 }
 
 .mdc-switch.mdc-switch--unselected:enabled .mdc-switch__icon {
@@ -420,7 +405,7 @@
 }
 
 .mdc-switch.mdc-switch--selected:enabled .mdc-switch__icon {
-    fill: #05ff00 !important;
+    fill: #000000 !important;
 }
 
 .mdc-switch:enabled .mdc-switch__track::before {
@@ -430,6 +415,9 @@
 .mdc-switch__track::before {
     border-width: var(--mat-switch-track-outline-width) !important;
     border-color: #ffffff !important;
+}
+.mdc-switch:enabled .mdc-switch__track::before {
+    background: #f1f1f1 !important;
 }
 
 .notifications-row-two div hr {
@@ -446,7 +434,6 @@
 }
 
 .notifications-section-two h3 {
-    margin: 0 0 20px 0;
     font-weight: 500;
 }
 
@@ -502,11 +489,24 @@ mat-label {
 
 /* Checkbox Styles */
 
-.mdc-checkbox__native-control:enabled:checked~.mdc-checkbox__background {
+.mdc-checkbox__native-control:enabled:checked ~ .mdc-checkbox__background {
     background-color: #03ad00 !important;
     border: #03ad00;
 }
-
+.mat-grid-tile-content {
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    position: absolute;
+    display: flex;
+    height: 100vh;
+    padding: 0;
+    margin: 0;
+    flex-direction: column;
+    width: 100%;
+    justify-content: center;
+}
 .mdc-checkbox__checkmark {
     color: #000 !important;
 }
@@ -546,14 +546,39 @@ mat-label {
 }
 
 .accounts-row-two {
-    overflow-y: auto;
-    max-height: 60vh;
+    overflow-y: scroll;
+    max-height: 80vh;
 }
-
+.mat-mdc-button .mat-mdc-button-touch-target {
+    position: absolute;
+    top: 50%;
+    height: 50px;
+    left: 0;
+    right: 0;
+    transform: translateY(-50%);
+    display: var(--mat-text-button-touch-target-display);
+    background-color: #f1f1f1;
+    border-radius: 5px;
+}
+.mat-mdc-form-field-infix {
+    flex: auto;
+    min-width: 0;
+    width: 180px;
+    position: relative;
+    box-sizing: border-box;
+    background-color: #f1f1f1;
+}
+.mat-mdc-text-field-wrapper.mdc-text-field.mdc-text-field--filled {
+    background-color: #f1f1f1;
+    border-radius: 15px;
+}
 /* EDIT PERSONAL INFORMATION */
 .form-container {
     display: flex;
     flex-direction: column;
+    align-content: center;
+    flex-wrap: wrap;
+    text-align: center;
 }
 
 .form-container h3 {
@@ -579,6 +604,7 @@ mat-label {
 }
 
 .form-field {
+    padding: 10px;
     flex: 1;
 }
 
@@ -593,9 +619,10 @@ button mat-button {
 }
 
 button.change-password-button {
-    color: #03ad00 !important;
+    color: black;
+    color: #000000 !important;
     margin-top: 10px !important;
-    font-size: 20px !important;
+    font-size: 15px !important;
 }
 
 button.cancel-password-button {
@@ -606,7 +633,7 @@ button.cancel-password-button {
 }
 
 button.delete-button {
-    background-color: #8f8f8f;
+    /* background-color: #8f8f8f; */
     width: 200px;
     height: 60px;
     color: #000 !important;

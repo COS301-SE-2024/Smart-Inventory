@@ -543,39 +543,24 @@
         </mat-tab>
         <mat-tab label="Contact Support">
             <ng-container>
-                <div class="customer-support-row-two" style="display: flex; margin: 10px">
-                    <mat-card class="column-two">
-                        <form style="padding: 20px; background-color: #f2f2f2">
-                            <mat-form-field appearance="fill" style="width: fit-content">
-                                <mat-label>Name</mat-label>
-                                <input matInput placeholder="Name" required />
-                            </mat-form-field>
-                            <mat-form-field appearance="fill">
-                                <mat-label>Email address</mat-label>
-                                <input matInput type="email" placeholder="Email Address" required />
-                            </mat-form-field>
-                            <mat-form-field appearance="fill">
-                                <mat-label>Message</mat-label>
-                                <textarea matInput placeholder="Message" required></textarea>
-                            </mat-form-field>
-                            <div class="button-container" style="display: ruby-text; padding-bottom: 20px">
-                                <button
-                                    mat-button-raised
-                                    (click)="onSend()"
-                                    style="
-                                        width: 50vh;
-                                        height: 10vh;
-                                        padding: 20px;
-                                        border-radius: 5px;
-                                        color: black;
-                                        background-color: #f2f2f2;
-                                    "
-                                >
-                                    Send
-                                </button>
-                            </div>
-                        </form>
-                    </mat-card>
+                <div class="form-container" style="display: flex; margin: 10px">
+                    <form style="padding: 20px">
+                        <mat-form-field appearance="fill">
+                            <mat-label>Name</mat-label>
+                            <input matInput placeholder="Name" required />
+                        </mat-form-field>
+                        <mat-form-field appearance="fill">
+                            <mat-label>Email address</mat-label>
+                            <input matInput type="email" placeholder="Email Address" required />
+                        </mat-form-field>
+                        <mat-form-field appearance="fill">
+                            <mat-label>Message</mat-label>
+                            <textarea matInput placeholder="Message" required></textarea>
+                        </mat-form-field>
+                        <div class="button-container" style="display: ruby-text; padding-bottom: 20px">
+                            <button mat-button (click)="onSend()" class="send-button">Send</button>
+                        </div>
+                    </form>
                     <!-- <div class="column-one" style="width: 100vh">
                         <img src="assets/svg/Active-Support-amico.svg" alt="Support Image" style="width: 50vh" />
                     </div> -->

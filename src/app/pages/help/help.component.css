@@ -753,6 +753,13 @@ p {
     width: 100%;
     border-radius: 15px;
 }
+.form-container {
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    flex-wrap: wrap;
+    text-align: center;
+}
 
 .banner-text h3 {
     margin: 0;
@@ -776,6 +783,29 @@ p {
     height: 70px;
     width: 150px;
     margin-left: auto;
+}
+.mat-mdc-button .mat-mdc-button-touch-target {
+    position: absolute;
+    top: 50%;
+    height: 50px;
+    left: 0;
+    right: 0;
+    transform: translateY(-50%);
+    display: var(--mat-text-button-touch-target-display);
+    background-color: #f1f1f1;
+    border-radius: 5px;
+}
+.mat-mdc-form-field-infix {
+    flex: auto;
+    min-width: 0;
+    width: 180px;
+    position: relative;
+    box-sizing: border-box;
+    background-color: #f1f1f1;
+}
+.mat-mdc-text-field-wrapper.mdc-text-field.mdc-text-field--filled {
+    background-color: #f1f1f1;
+    border-radius: 15px;
 }
 
 /* RELEASE NOTES SECTION */
@@ -887,4 +917,60 @@ p {
     height: 70px;
     width: 150px;
     margin-left: auto;
+}
+.form-row mat-form-field {
+    background-color: none;
+}
+button.send-button {
+    /* background-color: #8f8f8f; */
+    width: 200px;
+    height: 60px;
+    color: #000 !important;
+    font-size: 20px;
+    font-weight: 400;
+    margin-bottom: 20px;
+}
+/* FORM FIELD EDITING SH** TOOK LONG YALL */
+
+/* MAKE FORM FIELDS WHITE */
+mat-form-field .mdc-text-field--filled:not(.mdc-text-field--disabled) {
+    background-color: #fff;
+    border-radius: 15px;
+}
+
+/* REMOVE UNDERLINE IN FORM FIELDS */
+mat-form-field .mdc-line-ripple {
+    display: none;
+}
+
+.mat-form-field-flex {
+    background-color: white !important;
+    border-radius: 15px !important;
+}
+
+.mat-form-field-outline {
+    border-radius: 15px !important;
+}
+
+.mat-form-field-outline-start,
+.mat-form-field-outline-end {
+    border-radius: 15px !important;
+}
+
+.mat-form-field-outline-gap {
+    border-radius: 15px !important;
+}
+.form-field {
+    padding: 10px;
+    flex: 1;
+}
+
+button mat-button {
+    background-color: #8f8f8f;
+    justify-content: left;
+    width: 200px;
+    height: 60px;
+    color: #000;
+    font-size: 20px;
+    font-weight: 400;
 }

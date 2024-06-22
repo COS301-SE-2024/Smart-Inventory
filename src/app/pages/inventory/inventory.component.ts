@@ -12,7 +12,6 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 @Component({
-
   selector: 'app-inventory',
   standalone: true,
   imports: [GridComponent, MatButtonModule, CommonModule, FormsModule],
@@ -25,6 +24,7 @@ export class InventoryComponent implements OnInit {
   rowData: any[] = [];
   showAddPopup = false;
   showDeletePopup = false;
+  showRequestStockPopup = false;
   rowsToDelete: any[] = [];
   item = {
     productId: '',
@@ -33,6 +33,8 @@ export class InventoryComponent implements OnInit {
     sku: '',
     supplier: ''
   };
+  selectedItem: any = null;
+  requestQuantity: number | null = null;
 
   colDefs: ColDef[] = [
     { field: "inventoryID", headerName: "Inventory ID", hide: true },
@@ -129,6 +131,11 @@ export class InventoryComponent implements OnInit {
   }
 
   async onSubmit(formData: any) {
+    if (isNaN(formData.quantity)) {
+      alert("Please enter a valid quantity");
+      return;
+    }
+
     try {
       const session = await fetchAuthSession();
 
@@ -317,6 +324,40 @@ export class InventoryComponent implements OnInit {
       alert(`Error updating inventory item: ${(error as Error).message}`);
       // Revert the change in the grid
       this.gridComponent.updateRow(event.data);
+    }
+  }
+
+  openRequestStockPopup(item: any) {
+    this.selectedItem = item;
+    this.showRequestStockPopup = true;
+    this.requestQuantity = null;
+  }
+
+  closeRequestStockPopup() {
+    this.showRequestStockPopup = false;
+    this.selectedItem = null;
+    this.requestQuantity = null;
+  }
+
+  async requestStock() {
+    if (this.requestQuantity === null || isNaN(this.requestQuantity)) {
+      alert("Please enter a valid quantity");
+      return;
+    }
+
+    try {
+      const updatedQuantity = this.selectedItem.quantity + this.requestQuantity;
+      const event = {
+        data: this.selectedItem,
+        field: 'quantity',
+        newValue: updatedQuantity
+      };
+      await this.handleCellValueChanged(event);
+      this.closeRequestStockPopup();
+      await this.loadInventoryData();
+    } catch (error) {
+      console.error('Error requesting stock:', error);
+      alert(`Error requesting stock: ${(error as Error).message}`);
     }
   }
 }

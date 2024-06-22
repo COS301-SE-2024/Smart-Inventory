@@ -32,3 +32,23 @@
     height: 90px;
     /* background-color: #cccccc4d; */
 }
+
+mat-select {
+    border: 1px solid grey;
+    border-radius: 5px;
+    margin-left: 10px;
+    align-content: center;
+    padding: 10px;
+    width: 200px;
+    height: 60px;
+    font-size: 15px;
+}
+
+::ng-deep .mat-mdc-select-value {
+    width: 100px;
+}
+
+span.mat-mdc-select-min-line {
+    font-size: 19px;
+    font-weight: 400;
+}

@@ -8,7 +8,7 @@ import { GridType, DisplayGrid } from 'angular-gridster2';
 import { GridsterConfig, GridsterItem } from 'angular-gridster2';
 import { AgChartsAngular } from 'ag-charts-angular';
 import { AgChartOptions } from 'ag-charts-community';
-
+import { LoaderComponent } from '../../components/loader/loader.component';
 import { AddmemberComponent } from '../../components/modal/addmember/addmember.component';
 import { BubblechartComponent } from '../../components/charts/bubblechart/bubblechart.component';
 import { SaleschartComponent } from '../../components/charts/saleschart/saleschart.component';
@@ -36,11 +36,11 @@ interface DashboardItem extends GridsterItem {
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css'],
   standalone: true,
-  imports: [MaterialModule, CommonModule, AddmemberComponent, GridsterModule, AgChartsAngular, BarchartComponent, DonutchartComponent, SaleschartComponent, BubblechartComponent, MatProgressSpinnerModule]
+  imports: [MaterialModule, CommonModule, AddmemberComponent, GridsterModule, AgChartsAngular, BarchartComponent, DonutchartComponent, SaleschartComponent, BubblechartComponent, MatProgressSpinnerModule, LoaderComponent]
 })
 export class DashboardComponent implements OnInit {
   isDeleteMode: boolean = false;
-  isLoading: boolean = false;
+  
   options: GridsterConfig;
   charts: Type<any>[] = [];
   pendingDeletions: DashboardItem[] = [];
@@ -207,11 +207,6 @@ export class DashboardComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.isLoading = true;
-    // Simulate loading data (e.g., from an API)
-    setTimeout(() => {
-      this.isLoading = false;
-    }, 2000); // Assume loading takes 2 seconds
     this.cdr.detectChanges();
     this.titleService.updateTitle('Dashboard');
   }

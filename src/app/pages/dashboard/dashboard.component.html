@@ -1,6 +1,4 @@
-<div *ngIf="isLoading" class="loading">
-    <mat-spinner></mat-spinner>
-</div>
+<app-loader></app-loader>
 <div *ngIf="isDeleteMode" class="overlay">
     <div class="modal">
         <p>{{pendingDeletions.length}} widgets marked for deletion.</p>

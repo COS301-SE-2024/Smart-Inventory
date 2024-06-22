@@ -12,7 +12,6 @@ import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MatSelectModule } from '@angular/material/select';
-import { CellValueChangedEvent, RowValueChangedEvent } from 'ag-grid-community';
 import { RoleSelectCellEditorComponent } from '../../pages/team/role-select-cell-editor.component';
 
 @Component({

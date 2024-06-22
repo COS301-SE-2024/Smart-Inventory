@@ -1,5 +1,5 @@
 import { Component, OnInit, ChangeDetectorRef, Type } from '@angular/core';
-import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TitleService } from '../../components/header/title.service';
 import { MaterialModule } from '../../components/material/material.module';
 import { CommonModule } from '@angular/common';
@@ -40,6 +40,7 @@ interface DashboardItem extends GridsterItem {
 })
 export class DashboardComponent implements OnInit {
   isDeleteMode: boolean = false;
+  isLoading: boolean = false;
   options: GridsterConfig;
   charts: Type<any>[] = [];
   pendingDeletions: DashboardItem[] = [];
@@ -206,6 +207,11 @@ export class DashboardComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.isLoading = true;
+    // Simulate loading data (e.g., from an API)
+    setTimeout(() => {
+      this.isLoading = false;
+    }, 2000); // Assume loading takes 2 seconds
     this.cdr.detectChanges();
     this.titleService.updateTitle('Dashboard');
   }

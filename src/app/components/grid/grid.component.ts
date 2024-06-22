@@ -10,6 +10,11 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
+//import { AddComponent } from './add/add.component';
+//import { CommonModule } from '@angular/common';
+//import { MatSelectModule } from '@angular/material/select';
+//import { CellValueChangedEvent, RowValueChangedEvent } from 'ag-grid-community';
+import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatSelectModule } from '@angular/material/select';
 import { RoleSelectCellEditorComponent } from '../../pages/team/role-select-cell-editor.component';
@@ -58,7 +63,10 @@ export class GridComponent implements OnInit {
     public rowSelection: 'single' | 'multiple' = 'multiple';
     public editType: 'fullRow' = 'fullRow';
 
-    constructor(public dialog: MatDialog) {}
+    constructor(
+        public dialog: MatDialog,
+        private route: ActivatedRoute,
+    ) {}
 
     ngOnInit(): void {
         this.filteredRowData = [...this.rowData];
@@ -67,6 +75,12 @@ export class GridComponent implements OnInit {
         // Make all columns editable
         this.columnDefs = this.columnDefs.map(col => ({...col, editable: true}));
     }
+
+
+    getCurrentRoute(v: string) {
+        return v === this.route.snapshot.url[0].path.toString();
+    }
+
 
     onGridReady(params: GridReadyEvent) {
         this.gridApi = params.api;
@@ -128,6 +142,14 @@ export class GridComponent implements OnInit {
         } else {
             this.filteredRowData = [...this.rowData];
         }
+
+        /*
+        if (this.gridColumnAPI !== undefined) {
+            this.gridApi.setData(this.filteredRowData);
+            this.gridColumnAPI.setColumnDefs(this.filteredRowData);
+        }
+        */
+    
 
         if (this.gridColumnApi !== undefined) {
             this.gridApi.setRowData(this.filteredRowData);

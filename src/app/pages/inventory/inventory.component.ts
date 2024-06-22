@@ -12,6 +12,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 @Component({
+
   selector: 'app-inventory',
   standalone: true,
   imports: [GridComponent, MatButtonModule, CommonModule, FormsModule],

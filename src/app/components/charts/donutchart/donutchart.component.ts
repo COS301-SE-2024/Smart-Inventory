@@ -39,6 +39,16 @@ export class DonutchartComponent {
           innerRadiusRatio: 0.5,
         },
       ],
+      legend: {
+        position: 'right',  // Positions the legend to the right
+        item: {
+          marker: {
+            strokeWidth: 0  // Optional: Adjusts the marker stroke width if needed
+          },
+          paddingX: 16,  // Optional: Adjusts the horizontal padding of the legend items
+          paddingY: 5    // Optional: Adjusts the vertical padding of the legend items
+        }
+      }
     };
   }
 
@@ -54,7 +64,7 @@ export class DonutchartComponent {
           type: "donut",
           calloutLabelKey: "asset",
           angleKey: "amount",
-          innerRadiusRatio: 1,
+          innerRadiusRatio: 0.5,
         },
       ],
       legend: {

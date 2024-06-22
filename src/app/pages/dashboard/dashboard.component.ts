@@ -1,28 +1,29 @@
-import { Component, OnInit, ChangeDetectorRef, Type, ComponentFactoryResolver, ViewChild, ViewContainerRef } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { Component, OnInit, ChangeDetectorRef, Type } from '@angular/core';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TitleService } from '../../components/header/title.service';
 import { MaterialModule } from '../../components/material/material.module';
 import { CommonModule } from '@angular/common';
-import { GridsterModule } from 'angular-gridster2';
+import { CompactType, GridsterItemComponent, GridsterModule } from 'angular-gridster2';
 import { GridType, DisplayGrid } from 'angular-gridster2';
 import { GridsterConfig, GridsterItem } from 'angular-gridster2';
 import { AgChartsAngular } from 'ag-charts-angular';
 import { AgChartOptions } from 'ag-charts-community';
-
 import { AddmemberComponent } from '../../components/modal/addmember/addmember.component';
-import { TeamMember } from '../../components/model/team-member.model'; // Correct the import path
 import { BubblechartComponent } from '../../components/charts/bubblechart/bubblechart.component';
 import { SaleschartComponent } from '../../components/charts/saleschart/saleschart.component';
 import { BarchartComponent } from '../../components/charts/barchart/barchart.component';
 import { DonutchartComponent } from '../../components/charts/donutchart/donutchart.component';
 import { FilterService } from '../../services/filter.service';
+import { LoadingService } from '../../components/loader/loading.service';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 
-interface DashboardItem {
+interface DashboardItem extends GridsterItem {
   type: string;
   cols: number;
   rows: number;
   y: number;
   x: number;
+  isActive?: boolean;  // This flag will control the visibility
   name?: string;
   icon?: string;
   analytic?: string;
@@ -36,59 +37,55 @@ interface DashboardItem {
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css'],
   standalone: true,
-  imports: [MaterialModule, CommonModule, AddmemberComponent, GridsterModule, AgChartsAngular, BarchartComponent, DonutchartComponent, SaleschartComponent, BubblechartComponent]
+  imports: [MaterialModule, HttpClientModule, CommonModule, AddmemberComponent, GridsterModule, AgChartsAngular, BarchartComponent, DonutchartComponent, SaleschartComponent, BubblechartComponent, MatProgressSpinnerModule]
 })
 export class DashboardComponent implements OnInit {
+  isDeleteMode: boolean = false;
+
+  data: any;
 
   options: GridsterConfig;
   charts: Type<any>[] = [];
+  pendingDeletions: DashboardItem[] = [];
+  standaloneDeletions: DashboardItem[] = [];
+
   dashboard: DashboardItem[];
-  largeItem: GridsterItem = {
-    cols: 4, rows: 3, y: 1, x: 0
+  largeItem: DashboardItem = {
+    cols: 4, rows: 3, y: 1, x: 0,
+    type: 'large',
+    isActive: true
   };
-  newLargeItem: GridsterItem = {
-    cols: 4, rows: 4, y: 2, x: 0
+  newLargeItem: DashboardItem = {
+    cols: 4, rows: 4, y: 2, x: 0,
+    type: 'newLarge',
+    isActive: true
   };
-
-  SalesvsTarget: GridsterItem = {
-    cols: 2, rows: 4, y: 2, x: 0
+  SalesvsTarget: DashboardItem = {
+    cols: 2, rows: 4, y: 2, x: 0,
+    type: 'salesVsTarget',
+    isActive: true
   };
-
-  Product: GridsterItem = {
-    cols: 2, rows: 4, y: 2, x: 0
+  Product: DashboardItem = {
+    cols: 2, rows: 4, y: 2, x: 0,
+    type: 'product',
+    isActive: true
   };
-
-  @ViewChild('chartContainer', { read: ViewContainerRef }) chartContainer!: ViewContainerRef;
-  selectedPeriod = 'year';
-  periods = [
-    { name: 'This Year', value: 'year' },
-    { name: 'This Month', value: 'month' },
-    { name: 'This Week', value: 'week' }
-  ];
-  sidebarOpen  = false;
-  salesData = '450';
-  earningsData = '$23,500';
 
 
   public chartOptions!: AgChartOptions;
 
-  members: TeamMember[] = [
-    { id: 1, name: 'Alice Johnson', role: 'Analyst', selected: false },
-    { id: 2, name: 'Bob White', role: 'Engineer', selected: false },
-    { id: 3, name: 'Carol Blue', role: 'Manager', selected: false }
-  ];
-
-  teamMembers: TeamMember[] = [];
-
-  constructor(private componentFactoryResolver: ComponentFactoryResolver, private dialog: MatDialog, private titleService: TitleService, private filterService: FilterService, private cdr: ChangeDetectorRef) {
+  constructor(private http: HttpClient, private loader: LoadingService, private titleService: TitleService, private filterService: FilterService, private cdr: ChangeDetectorRef) {
     this.options = {
       gridType: GridType.VerticalFixed,
-      displayGrid: DisplayGrid.None,
+      displayGrid: DisplayGrid.Always,
+      compactType: CompactType.CompactUpAndLeft,
       draggable: {
-        enabled: true
+        enabled: true,
+        stop: event => this.saveState()
       },
       resizable: {
-        enabled: true
+        enabled: true,
+        stop: event => this.saveState()
       },
       pushItems: false,
       minCols: 4,
@@ -100,32 +97,102 @@ export class DashboardComponent implements OnInit {
       minItemCols: 1,  // Maximum columns an item can expand to
       minItemRows: 1,  // Maximum rows an item can expand to
       fixedRowHeight: 150,
-      addEmptyRowsCount: 10
+      addEmptyRowsCount: 10,
     };
 
     this.dashboard = [
-      { cols: 1, rows: 1, y: 0, x: 0, name: 'Orders', icon: 'shopping_cart', analytic: '7500', percentage: 0.05, type: 'card' },
-      { cols: 1, rows: 1, y: 0, x: 1, name: 'Sales', icon: 'trending_up', analytic: '450', percentage: -0.02, type: 'card' },
-      { cols: 1, rows: 1, y: 0, x: 2, name: 'Earnings', icon: 'account_balance_wallet', analytic: '$23,500', percentage: 0.10, type: 'card' },
-      { cols: 1, rows: 1, y: 0, x: 3, name: 'Commissions', icon: 'monetization_on', analytic: '$5,750', percentage: 0.03, type: 'card' },
+      { cols: 1, rows: 1, y: 0, x: 0, name: 'Orders', icon: 'shopping_cart', analytic: '7500', percentage: 0.05, type: 'card', isActive: true },
+      { cols: 1, rows: 1, y: 0, x: 1, name: 'Sales', icon: 'trending_up', analytic: '450', percentage: -0.02, type: 'card', isActive: true },
+      { cols: 1, rows: 1, y: 0, x: 2, name: 'Earnings', icon: 'account_balance_wallet', analytic: '$23,500', percentage: 0.10, type: 'card', isActive: true },
+      { cols: 1, rows: 1, y: 0, x: 3, name: 'Commissions', icon: 'monetization_on', analytic: '$5,750', percentage: 0.03, type: 'card', isActive: true },
     ];
 
   }
 
+  saveState() {
+    localStorage.setItem('dashboardState', JSON.stringify(this.dashboard));
+  }
+
+  loadState() {
+    const savedState = localStorage.getItem('dashboardState');
+    if (savedState) {
+      this.dashboard = JSON.parse(savedState);
+    } else {
+      // Default dashboard configuration
+      this.dashboard = [
+        // initial configuration...
+      ];
+    }
+    this.cdr.detectChanges(); // Ensure the view is updated
+  }
+
+  toggleDeleteMode(): void {
+    this.isDeleteMode = !this.isDeleteMode;
+  }
+
+  markForDeletion(item: DashboardItem, event: MouseEvent | TouchEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+
+    // Determine if the item is part of the dashboard or standalone items
+    if (this.dashboard.includes(item)) {
+      this.toggleItemInArray(item, this.pendingDeletions);
+    } else {
+      this.toggleItemInArray(item, this.standaloneDeletions);
+    }
+  }
+
+  toggleItemInArray(item: DashboardItem, targetArray: DashboardItem[]): void {
+    const index = targetArray.indexOf(item);
+    if (index === -1) {
+      targetArray.push(item);
+    } else {
+      targetArray.splice(index, 1);
+    }
+  }
+
+  removeItem(item: DashboardItem): void {
+    item.isActive = false;
+    this.cdr.detectChanges(); // Refresh the view to reflect the removal
+  }
+
+  toggleItemDeletion(item: DashboardItem): void {
+    const index = this.pendingDeletions.indexOf(item);
+    if (index > -1) {
+      this.pendingDeletions.splice(index, 1);  // Remove from deletions if already marked
+    } else {
+      this.pendingDeletions.push(item);  // Add to deletions if not already marked
+    }
+  }
+
+
+  finalizeDeletions(): void {
+    this.dashboard = this.dashboard.filter(item => !this.pendingDeletions.includes(item));
+    this.pendingDeletions = [];
+
+    // Toggle isActive for standalone items
+    [this.largeItem, this.newLargeItem, this.SalesvsTarget, this.Product].forEach(item => {
+      if (this.standaloneDeletions.includes(item)) {
+        item.isActive = false;  // Mark as inactive instead of deleting
+      }
+    });
+
+    this.standaloneDeletions = [];
+    this.toggleDeleteMode();
+  }
+
+
+
+  undoDeletions(): void {
+    [...this.pendingDeletions, ...this.standaloneDeletions].forEach(item => item.isActive = true);
+    this.pendingDeletions = [];
+    this.standaloneDeletions = [];
+    this.toggleDeleteMode();
+  }
+  sidebarOpen: boolean = false;
+
   toggleSidebar() {
     this.sidebarOpen = !this.sidebarOpen;
-  }
-
-  loadComponent(component: Type<any>) {
-    const componentFactory = this.componentFactoryResolver.resolveComponentFactory(component);
-    this.chartContainer.clear();
-    this.chartContainer.createComponent(componentFactory);
-  }
-
-
-  setPeriod(period: string) {
-    this.selectedPeriod = period;
-    // this.setChartData(period);
   }
 
   addChart(type: string): void {
@@ -163,39 +230,23 @@ export class DashboardComponent implements OnInit {
     this.filterService.changeFilter(filter);
   }
 
-
-
-  ngOnInit() {
-
-
-
-
-    this.cdr.detectChanges();
-    this.titleService.updateTitle('Dashboard');
-  }
-
-  openAddMemberDialog() {
-    const availableMembers = this.members.filter(member => !this.teamMembers.some(tm => tm.id === member.id));
-    const dialogRef = this.dialog.open(AddmemberComponent, {
-      width: '500px',
-      height: '500px',
-      data: { members: availableMembers }
-    });
-
-    dialogRef.afterClosed().subscribe(selectedMembers => {
-      if (selectedMembers) {
-        this.teamMembers = [...this.teamMembers, ...selectedMembers];
-        this.cdr.detectChanges();  // Force change detection
+  fetchData() {
+    this.loader.setLoading(true);
+    this.http.get('https://api.example.com/data').subscribe({
+      next: (response) => {
+        this.data = response;
+        this.loader.setLoading(false);
+      },
+      error: (error) => {
+        console.error('Error fetching data:', error);
+        this.loader.setLoading(false);
       }
     });
   }
 
-
-  isMemberAlreadyAdded(member: TeamMember): boolean {
-    return this.teamMembers.some(tm => tm.id === member.id);
-  }
-
-  removeMember(memberToRemove: TeamMember): void {
-    this.teamMembers = this.teamMembers.filter(member => member.id !== memberToRemove.id);
+  ngOnInit() {
+    this.cdr.detectChanges();
+    this.titleService.updateTitle('Dashboard');
+    this.fetchData();
   }
 }

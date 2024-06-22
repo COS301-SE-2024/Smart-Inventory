@@ -9,16 +9,13 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { HeaderComponent } from './components/header/header.component';
 import { GridComponent } from './components/grid/grid.component';
 import { LoadingService } from './components/loader/loading.service';
-
+Amplify.configure(outputs);
 @Component({
   selector: 'app-root',
   standalone: true,
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
   imports: [RouterOutlet, GridComponent, AmplifyAuthenticatorModule, SidebarComponent, HeaderComponent, LoaderComponent],
-
-Amplify.configure(outputs);
-
 })
 export class AppComponent implements OnInit {
     title = 'Smart-Inventory';

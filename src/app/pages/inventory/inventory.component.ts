@@ -33,17 +33,6 @@ export class InventoryComponent implements OnInit {
     supplier: ''
   };
 
-  constructor(private titleService: TitleService) {
-    Amplify.configure(outputs);
-  }
-
-  async ngOnInit(): Promise<void> {
-    this.titleService.updateTitle('Inventory');
-    await this.loadInventoryData();
-  }
-
-  addButton: any = { text: 'Add New' };
-
   colDefs: ColDef[] = [
     { field: "inventoryID", headerName: "Inventory ID", hide: true },
     { field: "sku", headerName: "SKU" },
@@ -53,9 +42,16 @@ export class InventoryComponent implements OnInit {
     { field: "supplier", headerName: "Supplier" }
   ];
 
-  defaultColDef: ColDef = {
-    flex: 1,
-  };
+  addButton = { text: 'Add New Item' };
+
+  constructor(private titleService: TitleService) {
+    Amplify.configure(outputs);
+  }
+
+  async ngOnInit(): Promise<void> {
+    this.titleService.updateTitle('Inventory');
+    await this.loadInventoryData();
+  }
 
   async loadInventoryData() {
     try {
@@ -260,6 +256,66 @@ export class InventoryComponent implements OnInit {
     } catch (error) {
       console.error('Error deleting inventory item:', error);
       alert(`Error deleting inventory item: ${(error as Error).message}`);
+    }
+  }
+
+  async handleCellValueChanged(event: {data: any, field: string, newValue: any}) {
+    try {
+      const session = await fetchAuthSession();
+
+      const cognitoClient = new CognitoIdentityProviderClient({
+        region: outputs.auth.aws_region,
+        credentials: session.credentials,
+      });
+
+      const getUserCommand = new GetUserCommand({
+        AccessToken: session.tokens?.accessToken.toString(),
+      });
+      const getUserResponse = await cognitoClient.send(getUserCommand);
+
+      const tenentId = getUserResponse.UserAttributes?.find(
+        (attr) => attr.Name === 'custom:tenentId'
+      )?.Value;
+
+      if (!tenentId) {
+        throw new Error('TenentId not found in user attributes');
+      }
+
+      const lambdaClient = new LambdaClient({
+        region: outputs.auth.aws_region,
+        credentials: session.credentials,
+      });
+
+      const updatedData = {
+        inventoryID: event.data.inventoryID,
+        tenentId: tenentId,
+        [event.field]: event.newValue
+      };
+
+      const invokeCommand = new InvokeCommand({
+        FunctionName: 'Inventory-updateItem',
+        Payload: new TextEncoder().encode(JSON.stringify({ body: JSON.stringify(updatedData) })),
+      });
+
+      const lambdaResponse = await lambdaClient.send(invokeCommand);
+      const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+
+      if (responseBody.statusCode === 200) {
+        console.log('Inventory item updated successfully');
+        // Update the local data to reflect the change
+        const updatedItem = JSON.parse(responseBody.body);
+        const index = this.rowData.findIndex(item => item.inventoryID === updatedItem.inventoryID);
+        if (index !== -1) {
+          this.rowData[index] = { ...this.rowData[index], ...updatedItem };
+        }
+      } else {
+        throw new Error(responseBody.body);
+      }
+    } catch (error) {
+      console.error('Error updating inventory item:', error);
+      alert(`Error updating inventory item: ${(error as Error).message}`);
+      // Revert the change in the grid
+      this.gridComponent.updateRow(event.data);
     }
   }
 }

@@ -1,5 +1,6 @@
 import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { AgGridAngular } from 'ag-grid-angular';
+import { ColDef, GridReadyEvent, CellValueChangedEvent, RowValueChangedEvent } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { MatButtonModule } from '@angular/material/button';
@@ -11,7 +12,6 @@ import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MatSelectModule } from '@angular/material/select';
-import { CellValueChangedEvent, RowValueChangedEvent } from 'ag-grid-community';
 
 @Component({
     selector: 'app-grid',
@@ -32,16 +32,17 @@ import { CellValueChangedEvent, RowValueChangedEvent } from 'ag-grid-community';
     styleUrl: './grid.component.css',
 })
 export class GridComponent implements OnInit {
-    @Input() rowData: any;
-    @Input() columnDefs: any;
-    @Input() addButton: any;
+    @Input() rowData: any[] = [];
+    @Input() columnDefs: ColDef[] = [];
+    @Input() addButton: { text: string } = { text: 'Add' };
     @Output() rowsToDelete = new EventEmitter<any[]>();
     @Output() addNewClicked = new EventEmitter<void>();
+    @Output() itemToUpdate = new EventEmitter<{data: any, field: string, newValue: any}>();
 
     filteredRowData: any[] = [];
 
     gridApi: any;
-    gridColumnAPI: any;
+    gridColumnApi: any;
 
     filterSelect: string = '';
     inputFilter: string = '';
@@ -58,13 +59,16 @@ export class GridComponent implements OnInit {
     constructor(public dialog: MatDialog) {}
 
     ngOnInit(): void {
-        this.filteredRowData = this.rowData;
+        this.filteredRowData = [...this.rowData];
         this.selectOptions = this.columnDefs.map((f: any) => f.field);
+        
+        // Make all columns editable
+        this.columnDefs = this.columnDefs.map(col => ({...col, editable: true}));
     }
 
-    onGridReady(params: any) {
+    onGridReady(params: GridReadyEvent) {
         this.gridApi = params.api;
-        this.gridColumnAPI = params.columnApi;
+        this.gridColumnApi = params.columnApi;
         this.gridApi.sizeColumnsToFit();
     }
 
@@ -83,6 +87,11 @@ export class GridComponent implements OnInit {
 
     onCellValueChanged(event: CellValueChangedEvent) {
         console.log('onCellValueChanged: ' + event.colDef.field + ' = ' + event.newValue);
+        this.itemToUpdate.emit({
+            data: event.data,
+            field: event.colDef.field!,
+            newValue: event.newValue
+        });
     }
 
     onRowValueChanged(event: RowValueChangedEvent) {
@@ -113,15 +122,19 @@ export class GridComponent implements OnInit {
             }
             this.filteredRowData = model;
         } else {
-            this.filteredRowData = this.rowData;
+            this.filteredRowData = [...this.rowData];
         }
 
-        if (this.gridColumnAPI !== undefined) {
+        if (this.gridColumnApi !== undefined) {
             this.gridApi.setRowData(this.filteredRowData);
         }
     }
 
     removeConfirmedRows(rowsToRemove: any[]) {
         this.gridApi.applyTransaction({ remove: rowsToRemove });
+    }
+
+    updateRow(updatedRow: any) {
+        this.gridApi.applyTransaction({ update: [updatedRow] });
     }
 }

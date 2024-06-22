@@ -33,7 +33,7 @@ mat-toolbar {
 }
 
 .profile-pic {
-    color: #666;
+    color: black;
     /* Icon color */
     font-size: 48px;
     /* Icon size, adjust as needed */
@@ -46,7 +46,6 @@ mat-toolbar {
     background-color: #eee;
     /* Background color, if needed */
 }
-
 
 .user-info {
     display: flex;

@@ -1,0 +1,116 @@
+.sidenav-container {
+    height: 100vh;
+    width: 100%; /* Ensures the sidenav container takes full available space */
+    height: 100vh;
+    width: 100%; /* Ensures the sidenav container takes full available space */
+}
+
+.sidenav {
+    height: 100vh;
+    width: 50px; /* Standard width for sidenav */
+    background-color: #f2f2f2; /* Light grey background */
+    color: black; /* Changes default text/icon color to black for visibility */
+    transition: width 0.8s;
+    transition-delay: 0s;
+    height: 100vh;
+    width: 50px; /* Standard width for sidenav */
+    background-color: #f2f2f2; /* Light grey background */
+    color: black; /* Changes default text/icon color to black for visibility */
+    transition: width 0.8s;
+    transition-delay: 0s;
+}
+
+p {
+    width: 0px;
+    overflow: hidden;
+    transition: width 0.8s;
+    transition-delay: 0s;
+    width: 0px;
+    overflow: hidden;
+    transition: width 0.8s;
+    transition-delay: 0s;
+}
+
+.expanded {
+    width: 100px;
+    transition-delay: 0s;
+    width: 100px;
+    transition-delay: 0s;
+}
+
+.expanded p {
+    width: 100px;
+    transition-delay: 0s;
+    width: 100px;
+    transition-delay: 0s;
+}
+
+.sidenav:hover {
+    width: 100px;
+    transition-delay: 1s;
+    width: 100px;
+    transition-delay: 1s;
+}
+
+.sidenav:hover p {
+    width: 100px;
+    transition-delay: 1s;
+    width: 100px;
+    transition-delay: 1s;
+}
+
+mat-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 64px; /* Standard toolbar height */
+    background-color: #e0e0e0; /* Slightly darker shade for the toolbar */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 64px; /* Standard toolbar height */
+    background-color: #e0e0e0; /* Slightly darker shade for the toolbar */
+}
+
+mat-icon {
+    display: block; /* Block display for icons */
+    margin: auto;
+    font-size: 24px; /* Standard Material icon size */
+    display: block; /* Block display for icons */
+    margin: auto;
+    font-size: 24px; /* Standard Material icon size */
+}
+
+a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    text-align: center;
+    text-decoration: none;
+    color: black; /* Ensures text is black */
+    transition: background-color 0.3s; /* Smooth transition for hover effect */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    text-align: center;
+    text-decoration: none;
+    color: black; /* Ensures text is black */
+    transition: background-color 0.3s; /* Smooth transition for hover effect */
+}
+
+a:hover {
+    background-color: #d6d6d6; /* Adds a hover effect */
+    background-color: #d6d6d6; /* Adds a hover effect */
+}
+
+a div {
+    margin-top: 5px;
+    margin-top: 5px;
+}
+
+a.mat-mdc-list-item.mdc-list-item.mat-mdc-list-item-interactive.mat-mdc-list-item-single-line.mdc-list-item--with-one-line {
+    height: 70px;
+}
+

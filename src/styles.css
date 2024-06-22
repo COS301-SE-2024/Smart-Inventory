@@ -1,66 +1,71 @@
-/* You can add global styles to this file, and also import other style files */
-body {
+/* SCROLL BAR */
+
+/* width */
+::-webkit-scrollbar {
+  margin-left: 5px;
+  width: 10px;
+  border-radius: 50px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 50px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 50px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+* {
     margin: 0;
-    background: linear-gradient(180deg, rgb(117, 81, 194), rgb(255, 255, 255));
-    display: flex;
-    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-    height: 100vh;
-    width: 100vw;
-    justify-content: center;
-    align-items: center;
-  }
+}
+
+[data-amplify-authenticator] {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 40%;
+    max-width: 500px;
+}
+
+/* body, html {
+  width: 100%; 
+  margin: 0; 
+  padding: 0; 
+}
+
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+*/
+[data-amplify-authenticator] {
+    --amplify-components-authenticator-router-box-shadow: 0 0 16px var(--amplify-colors-overlay-90);
+    --amplify-components-authenticator-router-border-width: 0;
+    --amplify-components-authenticator-form-padding: var(--amplify-space-medium) var(--amplify-space-xl)
+        var(--amplify-space-xl);
+    --amplify-components-button-primary-background-color: var(--amplify-colors-neutral-100);
+    --amplify-components-fieldcontrol-focus-box-shadow: 0 0 0 2px var(--amplify-colors-purple-60);
+    --amplify-components-tabs-item-active-border-color: var(--amplify-colors-neutral-100);
+    --amplify-components-tabs-item-color: var(--amplify-colors-overlay-90);
+    --amplify-components-tabs-item-active-color: var(--amplify-colors-overlay-90);
+    --amplify-components-button-link-color: var(--amplify-colors-overlay-90);
+    --amplify-components-button-link-hover-color: var(--amplify-colors-overlay-90);
+}
+.amplify-button--primary {
+    background: rgb(39, 39, 39);
+}
+
+body, html {
+  width: 100%; /* Ensure the body takes full width */
+  margin: 0; /* Reset default margin */
+  padding: 0; /* Reset default padding */
+  /* overflow-y: scroll; */
+}
   
-  main {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-  }
-  
-  button {
-    border-radius: 8px;
-    border: 1px solid transparent;
-    padding: 0.6em 1.2em;
-    font-size: 1em;
-    font-weight: 500;
-    font-family: inherit;
-    background-color: #1a1a1a;
-    cursor: pointer;
-    transition: border-color 0.25s;
-    color: white;
-  }
-  button:hover {
-    border-color: #646cff;
-  }
-  button:focus,
-  button:focus-visible {
-    outline: 4px auto -webkit-focus-ring-color;
-  }
-  
-  ul {
-    padding-inline-start: 0;
-    margin-block-start: 0;
-    margin-block-end: 0;
-    list-style-type: none;
-    display: flex;
-    flex-direction: column;
-    margin: 8px 0;
-    border: 1px solid black;
-    gap: 1px;
-    background-color: black;
-    border-radius: 8px;
-    overflow: auto;
-  }
-  
-  li {
-    background-color: white;
-    padding: 8px;
-  }
-  
-  li:hover {
-    background: #dadbf9;
-  }
-  
-  a {
-    font-weight: 800;
-    text-decoration: none;
-  }

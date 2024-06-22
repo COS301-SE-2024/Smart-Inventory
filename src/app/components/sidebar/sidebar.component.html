@@ -1,0 +1,23 @@
+<div class="sidenav-container">
+    <div #sidenav mode="side" opened="true" class="sidenav" [ngClass]="{ expanded: isExpanded }">
+        <mat-toolbar color="primary">
+            <!-- Adds a toolbar at the top of the sidenav -->
+            <button mat-icon-button (click)="toggleSidenav()">
+                <mat-icon style="font-weight: 700;">menu</mat-icon>
+                <!-- This is the menu icon -->
+            </button>
+        </mat-toolbar>
+        <mat-nav-list>
+            <div *ngFor="let item of menuItems">
+                <a mat-list-item *ngIf="!item.click" [routerLink]="item.routerLink"
+                    ><mat-icon>{{ item.icon }}</mat-icon>
+                    <p>{{ item.label }}</p></a
+                >
+                <a mat-list-item *ngIf="item.click" (click)="signOut()"
+                    ><mat-icon>{{ item.icon }}</mat-icon>
+                    <p>{{ item.label }}</p></a
+                >
+            </div>
+        </mat-nav-list>
+    </div>
+</div>

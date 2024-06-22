@@ -1,0 +1,63 @@
+mat-toolbar {
+    display: flex;
+    align-items: center;
+    background-color: #f2f2f2;
+    font-weight: 450;
+    font-size: 35px;
+}
+.flex-spacer {
+    flex: 1 1 auto;
+}
+
+.toolbar-icon {
+    margin-right: 24px;
+}
+
+.large-icon {
+    font-size: 30px;
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+}
+
+.profile-box {
+    display: flex;
+    align-items: center;
+    border-left: 1px solid grey;
+    padding: 11px;
+    height: 50px;
+    /* border-radius: 5px;
+    /* Optional: if you prefer rounded corners */
+}
+
+.profile-pic {
+    color: black;
+    /* Icon color */
+    font-size: 48px;
+    /* Icon size, adjust as needed */
+    width: 48px;
+    /* Match width to font-size or as needed */
+    height: 48px;
+    /* Match height to font-size or as needed */
+    border-radius: 50%;
+    /* Circular mask, if desired */
+    background-color: #eee;
+    /* Background color, if needed */
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.username {
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.role {
+    font-size: 14px;
+    color: gray;
+}

@@ -1,0 +1,687 @@
+/* SCROLL BAR */
+.mat-mdc-tab-group,
+.mat-mdc-tab-nav-bar {
+    --mat-tab-header-active-focus-label-text-color: #151414;
+    --mat-tab-header-active-label-text-color: #151414;
+    --mat-tab-header-inactive-label-text-color: rgb(0 0 0 / 60%);
+    --mat-tab-header-inactive-focus-label-text-color: black;
+    --mat-tab-header-inactive-hover-label-text-color: black;
+    --mdc-tab-indicator-active-indicator-color: #242022;
+    --mat-tab-header-active-hover-label-text-color: black;
+    --mat-tab-header-inactive-ripple-color: #232222;
+}
+/* width */
+::-webkit-scrollbar {
+    margin-left: 5px;
+    width: 10px;
+    border-radius: 50px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 50px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 50px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+.body {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.content .row {
+    display: flex;
+    align-items: center;
+    padding: 16px;
+}
+
+.content .first-row {
+    justify-content: space-between;
+    height: 10%;
+    font-size: 30px;
+}
+
+.content .first-row h1 {
+    margin: 0;
+    /* font-weight: 500; */
+    font-size: 70px;
+}
+
+.content .first-row .buttons {
+    display: flex;
+}
+
+.content .first-row .buttons button {
+    margin-left: 8px;
+    width: 130px;
+    height: 60px;
+    border-radius: 15px;
+}
+
+.content .first-row .buttons .save-button {
+    background-color: #05ff00;
+    color: black;
+    font-size: 30px;
+    font-weight: 500;
+}
+
+.content .first-row .buttons .cancel-button {
+    background-color: #8f8f8f;
+    color: black;
+    font-size: 30px;
+    font-weight: 500;
+}
+
+.content .second-row {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    overflow-y: auto;
+    flex-direction: column;
+    align-content: center;
+}
+mat-list {
+    flex-grow: 1;
+    border: 3px solid blue;
+    overflow: scroll;
+}
+/* LEFT PANE */
+
+.content .second-row .left-pane {
+    width: 20%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start; /* Ensure buttons start at the top */
+    padding: 0; /* Ensure there's no padding affecting positioning */
+    margin: 0; /* Ensure there's no margin affecting positioning */
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+}
+/* LIGHT AND DARK MODE TOGGLE */
+
+.mode-toggle span {
+    font-size: 25px;
+    font-weight: 500;
+    padding-top: 40px;
+}
+
+.mode-toggle mat-slide-toggle {
+    margin-left: 15vh;
+}
+
+.content .second-row .vertical-line {
+    width: 3px;
+    background-color: #000;
+    height: 95%;
+    margin-left: 10px;
+}
+
+/* RIGHT PANE */
+
+.content .second-row .right-pane {
+    width: 80%;
+    padding: 16px;
+}
+
+/* GENERAL SECTION */
+
+.content .second-row .right-pane .general-section {
+    display: flex;
+    flex-direction: column;
+    /* height: 100%;
+    margin: 20px;
+    align-content: center;
+    text-align: center; */
+}
+
+.content .second-row .right-pane .general-section .general-row {
+    width: 100%;
+}
+
+.content .second-row .right-pane .general-section .general-row.general-row-one {
+    height: 15vh;
+}
+
+.content .second-row .right-pane .general-section .general-row.general-row-one h2 {
+    margin: 0;
+    font-size: 60px;
+    margin-bottom: 10px;
+}
+
+.content .second-row .right-pane .general-section .general-row.general-row-one p {
+    margin-bottom: 20px;
+    font-weight: 500;
+    font-size: 20px;
+}
+
+.content .second-row .right-pane .general-section .general-row.general-row-one hr {
+    height: 4px;
+    box-shadow: none;
+    background-color: #000;
+    border: none;
+    border-radius: 15px;
+}
+
+.content .second-row .right-pane .general-section .general-row.general-row-two {
+    height: 50vh;
+    overflow-y: scroll;
+}
+
+.content .second-row .right-pane .general-section .general-row.general-row-two h3 {
+    font-size: 25px;
+    font-weight: 500;
+}
+
+/* LIGHT AND DARK MODE SELECTION */
+
+.theme-selection-grid {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+    /* margin-left: 5%; */
+    width: 100%;
+    margin-top: 10px;
+}
+
+.theme-option {
+    cursor: pointer;
+    justify-content: left;
+}
+
+.theme-option img {
+    width: 30vh;
+    height: auto;
+    border-radius: 15px;
+}
+
+.theme-selection-grid .theme-option.selected-theme {
+    outline: 7px solid #05ff00;
+    border-radius: 15px;
+}
+
+/* LANGUAGE, TIME AND DATE SETTINGS */
+.settings-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    row-gap: 10px; /* Adjusted to create proper spacing between rows */
+    column-gap: 20px; /* Adjusted to create proper spacing between columns */
+    align-items: start;
+    margin-left: 5%;
+}
+
+.settings-field mat-form-field {
+    /* background-color: #fff; */
+    border-radius: 15px;
+    width: 80%;
+    background-color: none;
+}
+
+.settings-field mat-form-field mat-select mat-option {
+    padding: none;
+    margin: none;
+}
+
+.settings-row {
+    display: contents;
+}
+
+.settings-description {
+    text-align: left;
+    font-weight: 700;
+    font-size: 20px;
+}
+
+.settings-field {
+    text-align: left;
+}
+
+::ng-deep .mdc-line-ripple,
+::ng-deep .mdc-line-ripple.ng-tns-c1534922977-12,
+::ng-deep .mdc-line-ripple--deactivating,
+::ng-deep .mdc-line-ripple.ng-star-inserted {
+    display: none !important;
+}
+
+.settings-field mat-form-field ::ng-deep .mat-mdc-select-value {
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding-top: 25px;
+}
+
+::ng-deep .mat-mdc-select-arrow svg {
+    margin-top: 15px;
+}
+
+/* Ensure the overlay panel has a high z-index */
+::ng-deep .cdk-overlay-container {
+    z-index: 1000;
+}
+
+/* PREFERENCES SECTION*/
+
+.content .second-row .right-pane .preferences-section {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.content .second-row .right-pane .preferences-section .preferences-row-one {
+    height: 15vh;
+}
+
+.content .second-row .right-pane .preferences-section .preferences-row-one h2 {
+    margin: 0;
+    font-size: 60px;
+    margin-bottom: 10px;
+}
+
+.content .second-row .right-pane .preferences-section .preferences-row.preferences-row-one p {
+    margin-bottom: 20px;
+    font-weight: 500;
+    font-size: 20px;
+}
+
+.content .second-row .right-pane .preferences-section .preferences-row.preferences-row-one hr {
+    height: 4px;
+    box-shadow: none;
+    background-color: #000;
+    border: none;
+    border-radius: 15px;
+}
+
+/* UNDER CONSTRUCTION */
+
+.content .second-row .right-pane .preferences-section .preferences-row-two {
+    height: 50vh;
+    /* overflow-y: auto; */
+    justify-content: center;
+}
+
+.content .second-row .right-pane .preferences-section .preferences-row-two img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+}
+
+.content .second-row .right-pane .preferences-section .preferences-row-two h1 {
+    font-size: 70px;
+    /* display: block; */
+    text-align: center;
+    /* background-color: red; */
+}
+
+/* NOTIFICATIONS */
+
+/* Notifications Section */
+.notifications-section {
+    display: flex;
+    flex-direction: column; /* Ensures the sections are displayed in a column layout */
+    height: 100%;
+}
+.notifications-row-two {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100%;
+    overflow-y: auto;
+    margin-left: 30px;
+    padding-right: 30px;
+}
+.notifications-row-one {
+    height: 15vh;
+}
+
+.notifications-row-one h2 {
+    font-size: 60px;
+}
+
+.notifications-row-one p {
+    margin-bottom: 20px;
+    font-weight: 500;
+    font-size: 20px;
+}
+
+.notifications-row-one hr {
+    height: 4px;
+    background-color: #000;
+    border: none;
+    border-radius: 15px;
+}
+
+/* Section One */
+.notifications-section-one .notification-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.notifications-section-one .notification-column {
+    flex: 1;
+}
+
+.notifications-section-one .notification-column h4 {
+    margin: 0;
+    font-size: 25px;
+    font-weight: 500;
+}
+
+/* Override Angular Material Styles for Toggle*/
+.mdc-switch__icons {
+    height: 100% !important;
+    position: relative !important;
+    width: 100% !important;
+    z-index: 1 !important;
+    background-color: black !important;
+    border-radius: 50% !important;
+}
+
+.mdc-switch:enabled .mdc-switch__track::after {
+    background: #544c4c !important;
+}
+
+.mdc-switch.mdc-switch--unselected:enabled .mdc-switch__icon {
+    display: none !important;
+}
+
+.mdc-switch.mdc-switch--selected:enabled .mdc-switch__icon {
+    fill: #000000 !important;
+}
+
+.mdc-switch:enabled .mdc-switch__track::before {
+    background: #fff !important;
+}
+
+.mdc-switch__track::before {
+    border-width: var(--mat-switch-track-outline-width) !important;
+    border-color: #ffffff !important;
+}
+.mdc-switch:enabled .mdc-switch__track::before {
+    background: #f1f1f1 !important;
+}
+
+.notifications-row-two div hr {
+    height: 4px;
+    background-color: #000;
+    border: none;
+    border-radius: 15px;
+    width: 98%;
+}
+
+/* Section Two */
+.notifications-section-two {
+    margin-top: 20px;
+}
+
+.notifications-section-two h3 {
+    font-weight: 500;
+}
+
+.notifications-section-two .trigger-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.notifications-section-two .trigger-checkbox-column {
+    width: 5%;
+}
+
+.notifications-section-two .trigger-text-column {
+    /* width: 95%; */
+}
+
+.notifications-section-two .trigger-text-column h4 {
+    margin: 0;
+    font-weight: 500;
+}
+
+.notifications-section-two .trigger-text-column p {
+    margin: 5px 0 0 0;
+}
+
+/* Mat-form-field Styles */
+mat-form-field {
+    width: 100%;
+    background-color: none !important;
+    border-radius: 15px;
+}
+
+.mdc-text-field--filled.mdc-text-field--disabled {
+    background-color: white !important;
+    border-radius: 15px !important;
+}
+
+mat-label {
+    color: #000 !important;
+}
+
+/* Ensuring the dropdown looks as specified */
+.mat-select {
+    background-color: white !important;
+    border: none !important;
+    border-radius: 15px !important;
+}
+
+.mat-select-trigger {
+    background-color: white !important;
+}
+
+/* Checkbox Styles */
+
+.mdc-checkbox__native-control:enabled:checked ~ .mdc-checkbox__background {
+    background-color: #03ad00 !important;
+    border: #03ad00;
+}
+.mat-grid-tile-content {
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    position: absolute;
+    display: flex;
+    height: 100vh;
+    padding: 0;
+    margin: 0;
+    flex-direction: column;
+    width: 100%;
+    justify-content: center;
+}
+.mdc-checkbox__checkmark {
+    color: #000 !important;
+}
+
+/* ACCOUNT SECTION */
+
+.accounts-section {
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    background-color: none;
+    border-radius: 8px;
+}
+
+.accounts-row-one {
+    margin-bottom: 20px;
+    margin-top: 60px;
+}
+
+.accounts-row-one h2 {
+    margin: 0;
+    font-size: 60px;
+    margin-bottom: 10px;
+}
+
+.accounts-row-one p {
+    margin: 8px 0 16px 0;
+    font-size: 20px;
+    font-weight: 500;
+}
+
+.accounts-row-one hr {
+    height: 4px;
+    background-color: #000;
+    border: none;
+    border-radius: 15px;
+}
+
+.accounts-row-two {
+    overflow-y: scroll;
+    max-height: 80vh;
+}
+.mat-mdc-button .mat-mdc-button-touch-target {
+    position: absolute;
+    top: 50%;
+    height: 50px;
+    left: 0;
+    right: 0;
+    transform: translateY(-50%);
+    display: var(--mat-text-button-touch-target-display);
+    background-color: #f1f1f1;
+    border-radius: 5px;
+}
+.mat-mdc-form-field-infix {
+    flex: auto;
+    min-width: 0;
+    width: 180px;
+    position: relative;
+    box-sizing: border-box;
+    background-color: #f1f1f1;
+}
+.mat-mdc-text-field-wrapper.mdc-text-field.mdc-text-field--filled {
+    background-color: #f1f1f1;
+    border-radius: 15px;
+}
+/* EDIT PERSONAL INFORMATION */
+.form-container {
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    flex-wrap: wrap;
+    text-align: center;
+}
+
+.form-container h3 {
+    font-size: 40px;
+}
+
+.form-container h4 {
+    font-size: 30px;
+}
+
+.form-row {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 16px;
+    width: 60%;
+}
+
+/* EDIT PASSWORD */
+
+.form-row.form-row-password {
+    width: 60%;
+    margin-right: 30px;
+}
+
+.form-field {
+    padding: 10px;
+    flex: 1;
+}
+
+button mat-button {
+    background-color: #8f8f8f;
+    justify-content: left;
+    width: 200px;
+    height: 60px;
+    color: #000;
+    font-size: 20px;
+    font-weight: 400;
+}
+
+button.change-password-button {
+    color: black;
+    color: #000000 !important;
+    margin-top: 10px !important;
+    font-size: 15px !important;
+}
+
+button.cancel-password-button {
+    background-color: transparent;
+    color: red !important;
+    margin-top: 10px !important;
+    font-size: 20px !important;
+}
+
+button.delete-button {
+    /* background-color: #8f8f8f; */
+    width: 200px;
+    height: 60px;
+    color: #000 !important;
+    font-size: 20px;
+    font-weight: 400;
+    margin-bottom: 20px;
+}
+
+/* CONFIRM DELETE ACCOUNT PASSWORD */
+.confirm-delete-button {
+    background-color: rgb(253, 58, 58) !important;
+    color: black !important;
+    font-size: 20px !important;
+    font-weight: 500 !important;
+}
+
+/* Custom Form Field Styling */
+.form-row mat-form-field {
+    background-color: none;
+}
+
+/* FORM FIELD EDITING SH** TOOK LONG YALL */
+
+/* MAKE FORM FIELDS WHITE */
+mat-form-field .mdc-text-field--filled:not(.mdc-text-field--disabled) {
+    background-color: #fff;
+    border-radius: 15px;
+}
+
+/* REMOVE UNDERLINE IN FORM FIELDS */
+mat-form-field .mdc-line-ripple {
+    display: none;
+}
+
+.mat-form-field-flex {
+    background-color: white !important;
+    border-radius: 15px !important;
+}
+
+.mat-form-field-outline {
+    border-radius: 15px !important;
+}
+
+.mat-form-field-outline-start,
+.mat-form-field-outline-end {
+    border-radius: 15px !important;
+}
+
+.mat-form-field-outline-gap {
+    border-radius: 15px !important;
+}

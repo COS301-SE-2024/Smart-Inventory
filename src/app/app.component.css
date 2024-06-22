@@ -1,0 +1,48 @@
+.container {
+    display: flex;
+    height: 100vh;
+    /* Ensures the container takes full viewport height */
+    width: 100%;
+    /* Ensures the container takes full width */
+    overflow: hidden;
+}
+
+.app-sidebar {
+    height: 100vh;
+    /* Sidebar takes full viewport height */
+    position: fixed;
+    /* Makes sidebar stay in place */
+    width: 200px;
+    /* Adjust the width as necessary */
+    z-index: 1000;
+    /* Ensures sidebar is above other content */
+    height: 100vh;
+    /* Sidebar takes full viewport height */
+    position: fixed;
+    /* Makes sidebar stay in place */
+    width: 200px;
+    /* Adjust the width as necessary */
+    z-index: 1000;
+    /* Ensures sidebar is above other content */
+}
+
+.app-header {
+    margin-left: 200px;
+    /* Pushes the header to the right of the sidebar */
+    width: calc(100% - 200px);
+    /* Adjusts the width to take the remaining space */
+    position: fixed;
+    /* Keeps the header at the top */
+    z-index: 1100;
+    /* Ensures header is above the sidebar for any overlapping content */
+    top: 0;
+}
+
+.content {
+    /* margin-left: 200px; */
+    margin-top: 0px;
+    width: 100%;
+    height: calc(100vh - 64px);
+    padding-right: 20px;
+    /* overflow-y: auto; */
+}

@@ -1,0 +1,976 @@
+/* SCROLL BAR */
+.mat-mdc-button-raised {
+    width: 30vh;
+}
+.test {
+    width: 30vh;
+    color: #1a1b1f;
+    background-color: #f2f2f2;
+    border: 1px solid grey;
+    border-radius: 5px;
+    margin-left: 10px;
+    align-content: center;
+    padding: 5px;
+    width: 200px;
+    height: 40px;
+    font-size: 15px;
+}
+/* width */
+::-webkit-scrollbar {
+    margin-left: 5px;
+    width: 10px;
+    border-radius: 50px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 50px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 50px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+.body {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    margin: 0 30px;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: max-content;
+}
+
+.content .row {
+    display: flex;
+    align-items: top;
+}
+
+.content .first-row {
+    justify-content: space-between;
+    height: 10%;
+    font-size: 30px;
+}
+
+.content .first-row h1 {
+    margin: 0;
+    /* font-weight: 500; */
+    font-size: 70px;
+}
+
+.content .first-row .buttons {
+    display: flex;
+    padding: 10px;
+}
+
+.content .first-row .buttons button {
+    width: 130px;
+    height: 60px;
+    border-radius: 15px;
+}
+
+.content .second-row {
+    height: 90%;
+    display: flex;
+    background-color: #d1d1d1;
+    overflow-y: auto;
+}
+
+/* LEFT PANE */
+
+.content .second-row .left-pane {
+    width: 20%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start; /* Ensure buttons start at the top */
+    padding: 0; /* Ensure there's no padding affecting positioning */
+    margin: 0; /* Ensure there's no margin affecting positioning */
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+}
+
+/* NAVIGATION MENU */
+
+.content .second-row .left-pane .menu-buttons {
+    width: 100%;
+    margin-top: 0;
+    padding: 0; /* Ensure there's no padding affecting positioning */
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+    margin-bottom: 40vh;
+}
+
+.content .second-row .left-pane .menu-buttons button {
+    width: 100%;
+    text-align: left;
+    background-color: #d1d1d1;
+    color: black;
+    font-size: 23px;
+    margin-bottom: 8px;
+    justify-content: left;
+    padding-left: 30px;
+    border-radius: 10px;
+    font-weight: 500;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+}
+
+/* .content[_ngcontent-ng-c2828906938][_ngcontent-ng-c2828906938]   .second-row[_ngcontent-ng-c2828906938][_ngcontent-ng-c2828906938]   .left-pane[_ngcontent-ng-c2828906938][_ngcontent-ng-c2828906938]   .menu-buttons[_ngcontent-ng-c2828906938][_ngcontent-ng-c2828906938]   button[_ngcontent-ng-c2828906938][_ngcontent-ng-c2828906938]{
+    justify-content: left;
+    padding-left: 25px;
+} */
+
+.content .second-row .left-pane .menu-buttons button.selected {
+    background-color: #05ff00;
+    color: black;
+}
+
+/* LIGHT AND DARK MODE TOGGLE */
+
+.mode-toggle span {
+    font-size: 25px;
+    font-weight: 500;
+    padding-top: 40px;
+}
+
+.mode-toggle mat-slide-toggle {
+    margin-left: 15vh;
+}
+
+.content .second-row .vertical-line {
+    width: 3px;
+    background-color: #000;
+    height: 95%;
+    margin-left: 10px;
+}
+
+/* Override Angular Material Styles for Toggle*/
+.mdc-switch__icons {
+    height: 100% !important;
+    position: relative !important;
+    width: 100% !important;
+    z-index: 1 !important;
+    background-color: #05ff00 !important;
+    border-radius: 50% !important;
+}
+
+.mdc-switch:enabled .mdc-switch__track::after {
+    background: #544c4c !important;
+}
+
+.mdc-switch.mdc-switch--unselected:enabled .mdc-switch__icon {
+    display: none !important;
+}
+
+.mdc-switch.mdc-switch--selected:enabled .mdc-switch__icon {
+    fill: #05ff00 !important;
+}
+
+.mdc-switch:enabled .mdc-switch__track::before {
+    background: #fff !important;
+}
+
+.mdc-switch__track::before {
+    border-width: var(--mat-switch-track-outline-width) !important;
+    border-color: #ffffff !important;
+}
+
+/* RIGHT PANE */
+
+.content .second-row .right-pane {
+    width: 80%;
+    padding: 16px;
+}
+
+/* FAQs SECTION */
+
+.content .second-row .right-pane .faq-section {
+    display: flex;
+    padding-top: 10px;
+    flex-direction: column;
+    height: 100%;
+}
+
+.content .second-row .right-pane .faq-section .faq-row {
+    width: 100%;
+}
+
+.content .second-row .right-pane .faq-section .faq-row.faq-row-one {
+    padding: auto;
+    height: 20vh;
+}
+
+.content .second-row .right-pane .faq-section .faq-row.faq-row-one h2 {
+    margin-bottom: 15px;
+    /* font-weight: 500; */
+    font-size: 60px;
+}
+
+.content .second-row .right-pane .faq-section .faq-row.faq-row-one .filter-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 10px;
+}
+
+.content .second-row .right-pane .faq-section .faq-row.faq-row-one .filter-buttons .filter-button {
+    margin-right: 8px;
+    margin-bottom: 8px;
+    height: 60px;
+    background-color: #05ff00;
+    color: black;
+    border-radius: 15px;
+    font-size: 20px;
+    font-weight: 500;
+    padding: 10px;
+}
+
+.content .second-row .right-pane .faq-section .faq-row.faq-row-two {
+    height: 40vh;
+    overflow-y: auto;
+    padding: 10px;
+}
+
+.content .second-row .right-pane .faq-section .faq-row.faq-row-two mat-accordion {
+    width: 100%;
+}
+
+.content .second-row .right-pane .faq-section .faq-row.faq-row-two mat-expansion-panel-header {
+    height: 10vh;
+}
+
+.content .second-row .right-pane .faq-section .faq-row.faq-row-two mat-panel-title {
+    font-size: 25px;
+    font-weight: 500;
+}
+
+.content .second-row .right-pane .faq-section .faq-row.faq-row-two mat-expansion-panel p {
+    font-size: 20px;
+    font-weight: 400;
+}
+
+.content .second-row .right-pane .faq-section .faq-row.faq-row-three {
+    margin-top: 20px;
+    height: 10%;
+    display: flex;
+    align-items: top;
+}
+
+/* BANNER  */
+
+.content .second-row .right-pane .faq-section .faq-row.faq-row-three .faq-banner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #05ff00;
+    padding: 16px;
+    width: 100%;
+    border-radius: 15px;
+}
+
+.content .second-row .right-pane .faq-section .faq-row.faq-row-three .faq-banner .banner-text h3 {
+    margin: 0;
+    margin-bottom: 5px;
+    font-size: 30px;
+}
+
+.content .second-row .right-pane .faq-section .faq-row.faq-row-three .faq-banner .banner-text p {
+    font-size: 20px;
+    margin: 0;
+    font-weight: 500;
+}
+
+.content .second-row .right-pane .faq-section .faq-row.faq-row-three .faq-banner .get-in-touch-button {
+    background-color: black;
+    color: white;
+    font-weight: 500;
+    font-size: 20px;
+    border-radius: 15px;
+    height: 70px;
+    width: 150px;
+    margin-left: auto;
+}
+
+/* TROUBLESHOOTING */
+
+.content .second-row .right-pane .troubleshooting-section {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.content .second-row .right-pane .troubleshooting-section .troubleshooting-row-one {
+    height: 10vh;
+}
+
+.content .second-row .right-pane .troubleshooting-section .troubleshooting-row-one h2 {
+    margin: 0;
+    font-size: 60px;
+}
+
+.content .second-row .right-pane .troubleshooting-section .troubleshooting-row-two {
+    height: 50vh;
+    overflow-y: auto;
+}
+
+.content .second-row .right-pane .troubleshooting-section .troubleshooting-row-two mat-accordion {
+    width: 100%;
+}
+
+.content .second-row .right-pane .troubleshooting-section .troubleshooting-row-two mat-expansion-panel-header {
+    height: 10vh;
+}
+
+.content .second-row .right-pane .troubleshooting-section .troubleshooting-row-two mat-expansion-panel p {
+    font-size: 20px;
+    font-weight: 400;
+}
+
+.content .second-row .right-pane .troubleshooting-section .troubleshooting-row-two mat-panel-title {
+    font-size: 25px;
+    font-weight: 500;
+}
+
+.content .second-row .right-pane .troubleshooting-section .troubleshooting-row-three {
+    /* height: 10%; */
+    display: flex;
+    align-items: center;
+}
+
+/* BANNER  */
+.mat-mdc-tab-group,
+.mat-mdc-tab-nav-bar {
+    --mat-tab-header-active-focus-label-text-color: #151414;
+    --mat-tab-header-active-label-text-color: #151414;
+    --mat-tab-header-inactive-label-text-color: rgb(0 0 0 / 60%);
+    --mat-tab-header-inactive-focus-label-text-color: black;
+    --mat-tab-header-inactive-hover-label-text-color: black;
+    --mdc-tab-indicator-active-indicator-color: #242022;
+    --mat-tab-header-active-hover-label-text-color: black;
+    --mat-tab-header-inactive-ripple-color: #232222;
+}
+.content .second-row .right-pane .troubleshooting-section .troubleshooting-row-three .troubleshooting-banner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #05ff00;
+    padding: 16px;
+    width: 100%;
+    border-radius: 15px;
+}
+
+.content
+    .second-row
+    .right-pane
+    .troubleshooting-section
+    .troubleshooting-row-three
+    .troubleshooting-banner
+    .banner-text
+    h3 {
+    margin: 0;
+    margin-bottom: 5px;
+    font-size: 30px;
+}
+
+.content
+    .second-row
+    .right-pane
+    .troubleshooting-section
+    .troubleshooting-row-three
+    .troubleshooting-banner
+    .banner-text
+    p {
+    font-size: 20px;
+    margin: 0;
+    font-weight: 500;
+}
+
+.content
+    .second-row
+    .right-pane
+    .troubleshooting-section
+    .troubleshooting-row-three
+    .troubleshooting-banner
+    .get-in-touch-button {
+    background-color: black;
+    color: white;
+    font-size: 20px;
+    border-radius: 15px;
+    height: 70px;
+    width: 150px;
+    margin-left: auto;
+    font-weight: 500;
+}
+
+/* CONTACT SUPPORT */
+
+/* .columnOne {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+.columnTwo {
+    display: flex;
+    flex-direction: column;
+} */
+.content .second-row .right-pane .customer-support-section {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.content .second-row .right-pane .customer-support-section .customer-support-row-one {
+    height: 10vh;
+}
+
+.content .second-row .right-pane .customer-support-section .customer-support-row-one h2 {
+    margin: 0;
+    font-size: 60px;
+}
+
+.content .second-row .right-pane .customer-support-section .customer-support-row-two {
+    height: 50vh;
+    display: flex;
+}
+
+.content .second-row .right-pane .customer-support-section .customer-support-row-two .column-one {
+    width: 50%;
+}
+
+.content .second-row .right-pane .customer-support-section .customer-support-row-two .column-one img {
+    width: 100%;
+    height: 100%;
+}
+
+/* FORM SUBMISSION */
+
+.content .second-row .right-pane .customer-support-section .customer-support-row-two .column-two {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center; /* Center the form in the column */
+    margin-left: 30px;
+}
+
+.content .second-row .right-pane .customer-support-section .customer-support-row-two .column-two form {
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+    /* background-color: white;  */
+    /* padding: 20px; */
+    box-shadow: none;
+    border-radius: 10px; /* Optional: Add border radius for better look */
+    max-width: fit-content;
+}
+
+.content .second-row .right-pane .customer-support-section .customer-support-row-two .column-two form mat-form-field {
+    margin-bottom: 15px;
+    background-color: none;
+    margin-top: 15px;
+    padding: none;
+    border-radius: 15px;
+}
+
+.content
+    .second-row
+    .right-pane
+    .customer-support-section
+    .customer-support-row-two
+    .column-two
+    form
+    mat-form-field
+    .mdc-text-field--filled:not(.mdc-text-field--disabled) {
+    background-color: #fff !important;
+    border-radius: 15px !important;
+    max-width: fit-content;
+}
+
+.mat-mdc-text-field-wrapper.mdc-text-field.mdc-text-field--filled.mdc-text-field--no-label {
+    background-color: #f1f1f1;
+}
+
+mat-form-field.mat-mdc-form-field.mat-mdc-form-field-type-mat-input.mat-form-field-appearance-fill.mat-primary.ng-star-inserted {
+    --mat-mdc-form-field-floating-label-scale: 0.75;
+    display: inline-flex;
+    flex-direction: column;
+    min-width: -webkit-fill-available;
+    text-align: left;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased;
+    font-family: var(--mat-form-field-container-text-font);
+    line-height: var(--mat-form-field-container-text-line-height);
+    font-size: var(--mat-form-field-container-text-size);
+    letter-spacing: var(--mat-form-field-container-text-tracking);
+    font-weight: var(--mat-form-field-container-text-weight);
+    padding-left: 20px;
+    padding-right: 20px;
+}
+/* REMOVE UNDERLINE IN FORM FIELDS */
+.content
+    .second-row
+    .right-pane
+    .customer-support-section
+    .customer-support-row-two
+    .column-two
+    form
+    mat-form-field
+    .mdc-line-ripple {
+    display: none;
+}
+
+.content
+    .second-row
+    .right-pane
+    .customer-support-section
+    .customer-support-row-two
+    .column-two
+    form
+    mat-form-field
+    textarea {
+    height: 120px;
+    background-color: #fff;
+}
+
+::ng-deep .mdc-line-ripple,
+::ng-deep .mdc-line-ripple.ng-tns-c1534922977-12,
+::ng-deep .mdc-line-ripple--deactivating,
+::ng-deep .mdc-line-ripple.ng-star-inserted {
+    display: none !important;
+}
+
+.content
+    .second-row
+    .right-pane
+    .customer-support-section
+    .customer-support-row-two
+    .column-two
+    form
+    .button-container {
+    display: flex;
+    justify-content: flex-end; /* Align the button to the right */
+}
+
+/* BANNER  */
+
+.content .second-row .right-pane .customer-support-section .customer-support-row-three {
+    height: 10%;
+    display: flex;
+    align-items: center;
+}
+
+.content .second-row .right-pane .customer-support-section .customer-support-row-three .customer-support-banner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #05ff00;
+    padding: 16px;
+    width: 100%;
+    border-radius: 15px;
+}
+
+.content
+    .second-row
+    .right-pane
+    .customer-support-section
+    .customer-support-row-three
+    .customer-support-banner
+    .banner-text
+    h3 {
+    margin: 0;
+    margin-bottom: 5px;
+    font-size: 30px;
+}
+
+.content
+    .second-row
+    .right-pane
+    .customer-support-section
+    .customer-support-row-three
+    .customer-support-banner
+    .banner-text
+    p {
+    font-size: 20px;
+    margin: 0;
+    font-weight: 500;
+}
+
+.content
+    .second-row
+    .right-pane
+    .customer-support-section
+    .customer-support-row-three
+    .customer-support-banner
+    .get-in-touch-button {
+    background-color: black;
+    color: white;
+    font-size: 20px;
+    border-radius: 15px;
+    height: 70px;
+    width: 150px;
+    margin-left: auto;
+    font-weight: 500;
+}
+
+/* USER GUIDES SECTION */
+
+.user-guides-section {
+    height: 100%;
+    overflow: scroll;
+    display: flex;
+    flex-direction: column;
+}
+
+.user-guides-row-one {
+    height: 10%;
+    display: flex;
+    align-items: center;
+    padding: 16px;
+}
+.mat-mdc-tab-body-content.ng-trigger.ng-trigger-translateTab {
+    height: 100vh;
+    overflow: scroll;
+}
+
+/* .user-guides-row-one h2 {
+    margin: 0;
+    font-size: 60px;
+} */
+
+.user-guides-row-two {
+    display: flex;
+    flex-direction: row;
+}
+.side-menu {
+    width: 20%;
+    position: relative;
+    /* top: 10%; */
+    background-color: #d9d9d9;
+    padding: 16px;
+    border-right: 1px solid #ccc;
+}
+
+.side-menu nav ul {
+    list-style-type: none;
+    padding: 0;
+    color: #000;
+    padding-top: 10px;
+}
+
+.side-menu nav ul li {
+    margin-bottom: 8px;
+    font-size: 20px;
+    padding-bottom: 10px;
+    padding-top: 10px;
+    font-weight: 500;
+}
+
+a {
+    text-decoration: none;
+}
+
+.side-menu nav ul li a:link {
+    color: #000;
+    font-weight: 500;
+}
+
+.side-menu nav ul li a:visited {
+    color: #000;
+    font-weight: 500;
+}
+
+.side-menu nav ul li a:hover {
+    color: blue;
+    font-weight: 500;
+}
+
+.side-menu nav ul li ul {
+    margin-left: 16px;
+}
+
+.article-content {
+    width: 80%;
+    padding: 16px;
+    background-color: #fff;
+    overflow-y: scroll;
+}
+
+.article-content h2,
+h3,
+p {
+    margin-bottom: 10px;
+}
+
+.video-container {
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    height: 100%; /* Full height of the parent container */
+}
+
+.video-frame {
+    position: relative;
+    width: 100%;
+    padding-top: 56.25%; /* 16:9 Aspect Ratio */
+    overflow: hidden;
+}
+
+.responsive-video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+/* .user-guides-row-three {
+    height: 10%;
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.user-guides-banner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #05ff00;
+    padding: 16px;
+    width: 100%;
+    border-radius: 15px;
+} */
+.form-container {
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    flex-wrap: wrap;
+    text-align: center;
+    border: black;
+}
+
+/* .banner-text h3 {
+    margin: 0;
+    margin-bottom: 5px;
+    font-size: 30px;
+} */
+
+/* .banner-text p {
+    font-size: 20px;
+    margin: 0;
+    font-weight: 500;
+} */
+
+/* .get-in-touch-button {
+    background-color: black;
+    color: white;
+    font-size: 20px;
+    font-weight: 500;
+    border-radius: 15px;
+    height: 70px;
+    width: 150px;
+    margin-left: auto;
+} */
+.mat-mdc-button .mat-mdc-button-touch-target {
+    position: absolute;
+    top: 50%;
+    height: 50px;
+    left: 0;
+    right: 0;
+    transform: translateY(-50%);
+    display: var(--mat-text-button-touch-target-display);
+    background-color: #f1f1f1;
+    border-radius: 5px;
+}
+.mat-mdc-form-field-infix {
+    flex: auto;
+    min-width: 0;
+    width: 180px;
+    position: relative;
+    box-sizing: border-box;
+    background-color: #f1f1f1;
+}
+.mat-mdc-text-field-wrapper.mdc-text-field.mdc-text-field--filled {
+    background-color: #f1f1f1;
+    border-radius: 15px;
+}
+
+/* RELEASE NOTES SECTION */
+
+.content .second-row .right-pane .release-notes-section {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.content .second-row .right-pane .release-notes-section .release-notes-row {
+    width: 100%;
+}
+
+.content .second-row .right-pane .release-notes-section .release-notes-row.release-notes-row-one {
+    height: 10vh;
+}
+
+.content .second-row .right-pane .release-notes-section .release-notes-row.release-notes-row-one h2 {
+    margin-bottom: 15px;
+    /* font-weight: 500; */
+    font-size: 60px;
+}
+
+.content .second-row .right-pane .release-notes-section .release-notes-row.release-notes-row-two {
+    height: 50vh;
+    overflow-y: auto;
+}
+
+.content .second-row .right-pane .release-notes-section .release-notes-row.release-notes-row-three {
+    margin-top: 20px;
+    height: 10%;
+    display: flex;
+    align-items: center;
+}
+
+/* UNDER CONSTRUCTION */
+
+.content .second-row .right-pane .release-notes-section .release-notes-row.release-notes-row-two img {
+    margin-left: auto;
+    margin-right: auto;
+    /* width: 50%; */
+    width: auto;
+    height: 100%;
+}
+
+/* .content .second-row .right-pane .release-notes-section .release-notes-row.release-notes-row-two h1 {
+    font-size: 70px;
+     display: block; 
+    text-align: center;
+    background-color: red; 
+} */
+
+/* BANNER  */
+
+/* .content
+    .second-row
+    .right-pane
+    .release-notes-section
+    .release-notes-row.release-notes-row-three
+    .release-notes-banner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #05ff00;
+    padding: 16px;
+    width: 100%;
+    border-radius: 15px;
+} */
+
+.content
+    .second-row
+    .right-pane
+    .release-notes-section
+    .release-notes-row.release-notes-row-three
+    .release-notes-banner
+    .banner-text
+    h3 {
+    margin: 0;
+    margin-bottom: 5px;
+    font-size: 30px;
+}
+
+.content
+    .second-row
+    .right-pane
+    .release-notes-section
+    .release-notes-row.release-notes-row-three
+    .release-notes-banner
+    .banner-text
+    p {
+    font-size: 20px;
+    margin: 0;
+    font-weight: 500;
+}
+
+/* .content
+    .second-row
+    .right-pane
+    .release-notes-section
+    .release-notes-row.release-notes-row-three
+    .release-notes-banner
+    .get-in-touch-button {
+    background-color: black;
+    color: white;
+    font-weight: 500;
+    font-size: 20px;
+    border-radius: 15px;
+    height: 70px;
+    width: 150px;
+    margin-left: auto;
+} */
+.form-row mat-form-field {
+    background-color: none;
+}
+button.send-button {
+    /* background-color: #8f8f8f; */
+    width: 200px;
+    height: 60px;
+    color: #000 !important;
+    font-size: 20px;
+    font-weight: 400;
+    margin-bottom: 20px;
+}
+/* FORM FIELD EDITING SH** TOOK LONG YALL */
+
+/* MAKE FORM FIELDS WHITE */
+mat-form-field .mdc-text-field--filled:not(.mdc-text-field--disabled) {
+    background-color: #fff;
+    border-radius: 15px;
+}
+
+/* REMOVE UNDERLINE IN FORM FIELDS */
+mat-form-field .mdc-line-ripple {
+    display: none;
+}
+
+.mat-form-field-flex {
+    background-color: white !important;
+    border-radius: 15px !important;
+}
+
+.mat-form-field-outline {
+    border-radius: 15px !important;
+}
+
+.mat-form-field-outline-start,
+.mat-form-field-outline-end {
+    border-radius: 15px !important;
+}
+
+.mat-form-field-outline-gap {
+    border-radius: 15px !important;
+}
+.form-field {
+    padding: 10px;
+    flex: 1;
+}
+
+button mat-button {
+    background-color: #8f8f8f;
+    justify-content: left;
+    width: 200px;
+    height: 60px;
+    color: #000;
+    font-size: 20px;
+    font-weight: 400;
+}

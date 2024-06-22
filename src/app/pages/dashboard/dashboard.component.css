@@ -1,0 +1,344 @@
+/* Hide scrollbar for Chrome, Safari and Opera */
+gridster.scrollVertical::-webkit-scrollbar {
+    display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+gridster.scrollVertical {
+    -ms-overflow-style: none;  
+    scrollbar-width: none;
+    overflow-y: auto;
+}
+
+gridster-item {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.15);
+    margin-left: 2px;
+    background: transparent !important;
+    border-radius: 10px;
+}
+
+.card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: white;
+    /* default background for non-Orders */
+    color: black;
+    border-radius: 8px;
+    padding: 20px;
+    z-index: 2;
+}
+
+.card.orders {
+    background-color: #66bb6a;
+    /* specific background for Orders */
+    color: white;
+}
+
+.icon-container {
+    flex-grow: 0;
+    flex-shrink: 0;
+    width: 140px;
+    height: 120px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.icon {
+    font-size: 60px;
+    /* color: rgb(255, 0, 0); */
+    border-radius: 50%;
+    padding: 20px;
+    display: flex;
+    align-items: inherit;
+    /* justify-content: right; */
+    height: 100%;
+    width: 100%;
+}
+
+.text-content {
+    flex-grow: 1;
+    padding-left: 20px;
+    /* space between icon and text */
+}
+
+
+h4 {
+    font-size: 16px;
+    /* larger font size */
+    margin: 0;
+}
+
+.analytic {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 5px 0;
+}
+
+.percentage {
+    font-size: 24px;
+    /* large percentage font size */
+    font-weight: bold;
+    margin-left: auto;
+    /* push to the right */
+}
+
+.increase {
+    color: #b2fab4;
+    /* lighter green for positive */
+}
+
+.decrease {
+    color: #ff8a65;
+    /* red for negative */
+}
+
+.full-width-card {
+    display: flex;
+    justify-content: space-between;
+    height: 100%;
+}
+
+.statistics {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+}
+
+.sales,
+.earnings {
+    flex: 1;
+    padding: 10px;
+}
+
+.chart {
+    width: 50%;
+}
+
+.new-full-width-card {
+    display: flex;
+    justify-content: space-between;
+    height: 100%;
+}
+
+.chart-section {
+    width: 50%;
+    /* Ensure there's enough space for the chart */
+}
+
+@media (max-width: 1024px) {
+    .icon-container {
+        display: none;
+        /* Hides the icon container */
+    }
+
+    .card {
+        justify-content: center;
+        /* Centers the text content and percentage in the card */
+        height: 100%;
+    }
+
+    .text-content,
+    .percentage {
+        flex-grow: 1;
+        /* Allows text content and percentage to fill the card evenly */
+        text-align: center;
+        /* Centers the text within their containers */
+    }
+}
+
+.info-section {
+    width: 50%;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.report-btn {
+    background-color: blue;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+gridster {
+    position: relative;
+    box-sizing: border-box;
+    background: rgb(255, 255, 255) !important;
+    width: 100%;
+    height: 100%;
+    -webkit-user-select: none;
+    user-select: none;
+    display: block;
+}
+
+.chart-card {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    padding: 10px;
+}
+
+.ag-chart-wrapper {
+    position: fixed !important;
+    /* Overrides the position style */
+    top: 50%;
+    /* Center the chart vertically */
+    left: 50%;
+    /* Center the chart horizontally */
+    transform: translate(-50%, -50%);
+    /* Adjusts the positioning to truly center it */
+    z-index: 1000;
+    /* Ensures it's above other content */
+    margin: 10px;
+    /* Adjust as needed */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    /* Optional: Adds shadow for better depth */
+    overflow: hidden;
+    /* Ensures no content spills out */
+}
+
+@media (max-width: 768px) {
+    gridster-item {
+        margin: 5px;
+        /* Smaller margins on smaller screens */
+    }
+
+    .card,
+    .full-width-card,
+    .new-full-width-card {
+        padding: 10px;
+        /* Smaller padding on smaller screens */
+    }
+}
+
+a#help-button {
+    position: absolute;
+    left: 92%;
+}
+
+/* gear-tab.component.css */
+.sidebar-container {
+    position: fixed;
+    top: 30%;
+    right: 0;
+    transform: translateY(-50%);
+    z-index: 1040;
+    /* Below help button, above dashboard */
+}
+
+.gear-icon {
+    position: absolute;
+    left: 80%;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: #f0f0f0;
+    border-radius: 41px;
+    width: 98px;
+    height: 67px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    cursor: pointer;
+    z-index: 1050;
+}
+
+.gear {
+    font-size: 30px;
+    color: #000;
+}
+
+.sidebar {
+    width: 300px;
+    background-color: #fff;
+    height: 100%;
+    transform: translateX(100%);
+    transition: transform 0.3s ease-in-out;
+    box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar.active {
+    transform: translateX(0);
+}
+
+.sidebar-header {
+    padding: 20px;
+    font-size: 20px;
+    border-bottom: 1px solid #ccc;
+}
+
+.sidebar-content {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+
+
+.main-container {
+    /* position: relative; */
+    height: 100vh;
+    /* Full viewport height */
+    /* width: 100vh; */
+    /* Full viewport width */
+}
+
+.help-button-container {
+    position: sticky;
+    top: 95%;
+    /* Adjust based on desired visibility */
+    /* right: 20px; */
+    /* Keeps it visible at the top-right */
+    z-index: 1050;
+    /* Above all other content */
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 104;  /* Overlay z-index */
+    pointer-events: none;  /* Allows clicks to pass through */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal {
+    background: white;
+    padding: 20px;
+    border-radius: 5px;
+    pointer-events: auto;  /* This enables interaction with the modal */
+    z-index: 101;  /* Ensures it is above the overlay */
+}
+
+.blur {
+    /* filter: blur(1px); */
+    z-index: 101;
+    pointer-events: auto;
+}
+
+.delete-icon {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 105;  /* Highest, so it's clickable */
+    pointer-events: auto;  /* Ensure they are clickable */
+    cursor: pointer;
+}

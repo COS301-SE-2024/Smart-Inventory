@@ -1,0 +1,52 @@
+<div class="btn-holder">
+    <div class="filter">
+        <input [(ngModel)]="inputFilter" (input)="filterGrid()" placeholder="Search..." />
+        <mat-select [(ngModel)]="filterSelect" placeholder="Select Column">
+            <mat-option *ngFor="let option of selectOptions" [value]="option">{{ option }}</mat-option>
+        </mat-select>
+    </div>
+    <div>
+        <button class="btnAdd" mat-raised-button [matMenuTriggerFor]="menu">Quick Actions</button>
+        <mat-menu #menu="matMenu">
+            <button mat-menu-item color="primary" (click)="downloadCSV()">Export Excel</button>
+            <button mat-menu-item color="primary" (click)="importExcel()">Import Excel</button>
+            <button mat-menu-item color="primary" (click)="addRow()" *ngIf="getCurrentRoute('inventory')">
+                + Add Item
+            </button>
+            <button mat-menu-item color="primary" (click)="addRow()" *ngIf="getCurrentRoute('team')">
+                + Add Member
+            </button>
+            <button mat-menu-item color="primary" (click)="addRow()" *ngIf="getCurrentRoute('suppliers')">
+                + Add Supplier
+            </button>
+            <button mat-menu-item color="primary" (click)="addRow()" *ngIf="getCurrentRoute('orders')">
+                + Place Order
+            </button>
+            <button mat-menu-item *ngIf="getCurrentRoute('inventory')" color="primary" (click)="deleteRow()">
+                - Remove Item
+            </button>
+            <button mat-menu-item *ngIf="getCurrentRoute('suppliers')" color="primary" (click)="deleteRow()">
+                - Remove Supplier
+            </button>
+            <button mat-menu-item *ngIf="getCurrentRoute('orders')" color="primary" (click)="deleteRow()">
+                - Cancel Order
+            </button>
+            <button mat-menu-item *ngIf="getCurrentRoute('inventory')" color="primary">Request Stock</button>
+        </mat-menu>
+    </div>
+</div>
+
+<div class="container">
+    <ag-grid-angular
+        [rowData]="filteredRowData"
+        [columnDefs]="columnDefs"
+        [rowSelection]="rowSelection"
+        [editType]="editType"
+        (cellValueChanged)="onCellValueChanged($event)"
+        (rowValueChanged)="onRowValueChanged($event)"
+        [rowData]="rowData"
+        class="ag-theme-quartz aggrid"
+        (gridReady)="onGridReady($event)"
+    >
+    </ag-grid-angular>
+</div>

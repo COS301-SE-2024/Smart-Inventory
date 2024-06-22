@@ -1,7 +1,7 @@
-<div class="body" style="margin: 0px">
+<div class="body" style="margin: 0px" style="position: fixed">
     <mat-tab-group>
         <mat-tab label="FAQs">
-            <ng-container ()="renameTitle('FAQs')">
+            <ng-container>
                 <div class="faq-section" style="margin: 10px">
                     <div class="faq-row faq-row-one" style="padding: 10px">
                         <div class="filter-buttons">
@@ -49,92 +49,10 @@
                 </div>
             </ng-container>
         </mat-tab>
-        <mat-tab label="User Guides" (click)="renameTitle('User Guides')">
+        <mat-tab label="User Guides">
             <ng-container>
                 <div class="user-guides-section">
                     <div class="user-guides-row-two">
-                        <div class="side-menu">
-                            <nav>
-                                <ul>
-                                    <li>
-                                        <a
-                                            href="#"
-                                            [class.active]="isActive('setup-guides')"
-                                            (click)="navigateTo($event, 'setup-guides')"
-                                            >Setup Guides</a
-                                        >
-                                        <ul>
-                                            <li>
-                                                <a
-                                                    href="#"
-                                                    [class.active]="isActive('initial-setup')"
-                                                    (click)="navigateTo($event, 'initial-setup')"
-                                                    >Initial Setup</a
-                                                >
-                                            </li>
-                                            <li>
-                                                <a
-                                                    href="#"
-                                                    [class.active]="isActive('role-configuration')"
-                                                    (click)="navigateTo($event, 'role-configuration')"
-                                                    >Role Configuration</a
-                                                >
-                                            </li>
-                                            <li>
-                                                <a
-                                                    href="#"
-                                                    [class.active]="isActive('integration-setup')"
-                                                    (click)="navigateTo($event, 'integration-setup')"
-                                                    >Integration Setup</a
-                                                >
-                                            </li>
-                                        </ul>
-                                    </li>
-                                    <li>
-                                        <a
-                                            href="#"
-                                            [class.active]="isActive('feature-guides')"
-                                            (click)="navigateTo($event, 'feature-guides')"
-                                            >Feature Guides</a
-                                        >
-                                        <ul>
-                                            <li>
-                                                <a
-                                                    href="#"
-                                                    [class.active]="isActive('dashboard-overview')"
-                                                    (click)="navigateTo($event, 'dashboard-overview')"
-                                                    >Dashboard Overview</a
-                                                >
-                                            </li>
-                                            <li>
-                                                <a
-                                                    href="#"
-                                                    [class.active]="isActive('inventory-management')"
-                                                    (click)="navigateTo($event, 'inventory-management')"
-                                                    >Inventory Management</a
-                                                >
-                                            </li>
-                                            <li>
-                                                <a
-                                                    href="#"
-                                                    [class.active]="isActive('reporting-analytics')"
-                                                    (click)="navigateTo($event, 'reporting-analytics')"
-                                                    >Reporting and Analytics</a
-                                                >
-                                            </li>
-                                        </ul>
-                                    </li>
-                                    <li>
-                                        <a
-                                            href="#"
-                                            [class.active]="isActive('video-tutorial')"
-                                            (click)="navigateTo($event, 'video-tutorial')"
-                                            >Video Tutorial</a
-                                        >
-                                    </li>
-                                </ul>
-                            </nav>
-                        </div>
                         <div class="article-content">
                             <h2 id="setup-guides">Setup Guides</h2>
                             <h3 id="initial-setup">Initial Setup</h3>
@@ -229,17 +147,98 @@
                                 ></iframe>
                             </div>
                         </div>
+                        <div class="side-menu">
+                            <nav>
+                                <ul>
+                                    <li>
+                                        <a
+                                            href="#"
+                                            [class.active]="isActive('setup-guides')"
+                                            (click)="navigateTo($event, 'setup-guides')"
+                                            >Setup Guides</a
+                                        >
+                                        <ul>
+                                            <li>
+                                                <a
+                                                    href="#"
+                                                    [class.active]="isActive('initial-setup')"
+                                                    (click)="navigateTo($event, 'initial-setup')"
+                                                    >Initial Setup</a
+                                                >
+                                            </li>
+                                            <li>
+                                                <a
+                                                    href="#"
+                                                    [class.active]="isActive('role-configuration')"
+                                                    (click)="navigateTo($event, 'role-configuration')"
+                                                    >Role Configuration</a
+                                                >
+                                            </li>
+                                            <li>
+                                                <a
+                                                    href="#"
+                                                    [class.active]="isActive('integration-setup')"
+                                                    (click)="navigateTo($event, 'integration-setup')"
+                                                    >Integration Setup</a
+                                                >
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <a
+                                            href="#"
+                                            [class.active]="isActive('feature-guides')"
+                                            (click)="navigateTo($event, 'feature-guides')"
+                                            >Feature Guides</a
+                                        >
+                                        <ul>
+                                            <li>
+                                                <a
+                                                    href="#"
+                                                    [class.active]="isActive('dashboard-overview')"
+                                                    (click)="navigateTo($event, 'dashboard-overview')"
+                                                    >Dashboard Overview</a
+                                                >
+                                            </li>
+                                            <li>
+                                                <a
+                                                    href="#"
+                                                    [class.active]="isActive('inventory-management')"
+                                                    (click)="navigateTo($event, 'inventory-management')"
+                                                    >Inventory Management</a
+                                                >
+                                            </li>
+                                            <li>
+                                                <a
+                                                    href="#"
+                                                    [class.active]="isActive('reporting-analytics')"
+                                                    (click)="navigateTo($event, 'reporting-analytics')"
+                                                    >Reporting and Analytics</a
+                                                >
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <a
+                                            href="#"
+                                            [class.active]="isActive('video-tutorial')"
+                                            (click)="navigateTo($event, 'video-tutorial')"
+                                            >Video Tutorial</a
+                                        >
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
                     </div>
                 </div>
             </ng-container>
         </mat-tab>
-        <mat-tab label="Contact Support" (click)="renameTitle('Contact Support')">
+        <mat-tab label="Contact Support">
             <ng-container>
-                <div class="form-container" style="display: flex; margin: 10px">
-                    <form style="padding: 20px">
+                <div class="form-container" style="width: 100%; padding: 10px">
+                    <form style="height: 100%; width: 40%">
                         <h4>How can we help?</h4>
-                        <hr />
-                        <mat-form-field appearance="fill">
+                        <mat-form-field appearance="fill" style="padding-top: 5px">
                             <mat-label>Name</mat-label>
                             <input matInput placeholder="Name" required />
                         </mat-form-field>
@@ -249,9 +248,9 @@
                         </mat-form-field>
                         <mat-form-field appearance="fill">
                             <mat-label>Message</mat-label>
-                            <textarea matInput placeholder="Message" required></textarea>
+                            <textarea matInput placeholder="Message" required style="height: 150px"></textarea>
                         </mat-form-field>
-                        <div class="button-container" style="display: ruby-text; padding-bottom: 20px">
+                        <div class="button-container">
                             <button mat-button (click)="onSend()" class="send-button">Send</button>
                         </div>
                     </form>

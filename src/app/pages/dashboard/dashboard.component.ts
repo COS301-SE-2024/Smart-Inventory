@@ -101,29 +101,52 @@ export class DashboardComponent implements OnInit {
     };
 
     this.dashboard = [
-      { cols: 1, rows: 1, y: 0, x: 0, name: 'Orders', icon: 'shopping_cart', analytic: '7500', percentage: 0.05, type: 'card', isActive: true },
-      { cols: 1, rows: 1, y: 0, x: 1, name: 'Sales', icon: 'trending_up', analytic: '450', percentage: -0.02, type: 'card', isActive: true },
-      { cols: 1, rows: 1, y: 0, x: 2, name: 'Earnings', icon: 'account_balance_wallet', analytic: '$23,500', percentage: 0.10, type: 'card', isActive: true },
-      { cols: 1, rows: 1, y: 0, x: 3, name: 'Commissions', icon: 'monetization_on', analytic: '$5,750', percentage: 0.03, type: 'card', isActive: true },
+
     ];
 
   }
 
   saveState() {
-    localStorage.setItem('dashboardState', JSON.stringify(this.dashboard));
+    const state = {
+      dashboard: this.dashboard,
+      standaloneItems: {
+        largeItem: this.largeItem,
+        newLargeItem: this.newLargeItem,
+        SalesvsTarget: this.SalesvsTarget,
+        Product: this.Product
+      }
+    };
+    localStorage.setItem('dashboardState', JSON.stringify(state));
   }
 
   loadState() {
     const savedState = localStorage.getItem('dashboardState');
     if (savedState) {
-      this.dashboard = JSON.parse(savedState);
+      const state = JSON.parse(savedState);
+      this.dashboard = state.dashboard;
+      this.largeItem = state.standaloneItems.largeItem;
+      this.newLargeItem = state.standaloneItems.newLargeItem;
+      this.SalesvsTarget = state.standaloneItems.SalesvsTarget;
+      this.Product = state.standaloneItems.Product;
     } else {
-      // Default dashboard configuration
-      this.dashboard = [
-        // initial configuration...
-      ];
+      // Default configuration if no state is saved
+
     }
     this.cdr.detectChanges(); // Ensure the view is updated
+  }
+
+  getDefaultDashboard() {
+    // return default dashboard setup
+    this.dashboard = [
+      { cols: 1, rows: 1, y: 0, x: 0, name: 'Orders', icon: 'shopping_cart', analytic: '7500', percentage: 0.05, type: 'card', isActive: true },
+      { cols: 1, rows: 1, y: 0, x: 1, name: 'Sales', icon: 'trending_up', analytic: '450', percentage: -0.02, type: 'card', isActive: true },
+      { cols: 1, rows: 1, y: 0, x: 2, name: 'Earnings', icon: 'account_balance_wallet', analytic: '$23,500', percentage: 0.10, type: 'card', isActive: true },
+      { cols: 1, rows: 1, y: 0, x: 3, name: 'Commissions', icon: 'monetization_on', analytic: '$5,750', percentage: 0.03, type: 'card', isActive: true },
+    ];
+    this.largeItem = { cols: 4, rows: 3, y: 1, x: 0, type: 'large', isActive: true };
+    this.newLargeItem = { cols: 4, rows: 4, y: 2, x: 0, type: 'newLarge', isActive: true };
+    this.SalesvsTarget = { cols: 2, rows: 4, y: 2, x: 0, type: 'salesVsTarget', isActive: true };
+    this.Product = { cols: 2, rows: 4, y: 2, x: 0, type: 'product', isActive: true };
   }
 
   toggleDeleteMode(): void {
@@ -180,8 +203,6 @@ export class DashboardComponent implements OnInit {
     this.standaloneDeletions = [];
     this.toggleDeleteMode();
   }
-
-
 
   undoDeletions(): void {
     [...this.pendingDeletions, ...this.standaloneDeletions].forEach(item => item.isActive = true);
@@ -245,7 +266,7 @@ export class DashboardComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.cdr.detectChanges();
+    this.loadState(); // Load the state on initialization
     this.titleService.updateTitle('Dashboard');
     this.fetchData();
   }

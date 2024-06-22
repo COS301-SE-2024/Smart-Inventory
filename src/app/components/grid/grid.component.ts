@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { AgGridAngular } from 'ag-grid-angular';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
@@ -35,6 +35,8 @@ export class GridComponent implements OnInit {
     @Input() rowData: any;
     @Input() columnDefs: any;
     @Input() addButton: any;
+    @Output() rowsToDelete = new EventEmitter<any[]>();
+    @Output() addNewClicked = new EventEmitter<void>();
 
     filteredRowData: any[] = [];
 
@@ -67,17 +69,16 @@ export class GridComponent implements OnInit {
     }
 
     addRow() {
-        this.gridApi.applyTransaction({ add: [{}] });
+        this.addNewClicked.emit();
     }
 
     deleteRow() {
-        // get the first child of the
         var selectedRows = this.gridApi.getSelectedRows();
         if (!selectedRows || selectedRows.length === 0) {
             console.log('No rows selected!');
             return;
         }
-        this.gridApi.applyTransaction({ remove: selectedRows });
+        this.rowsToDelete.emit(selectedRows);
     }
 
     onCellValueChanged(event: CellValueChangedEvent) {
@@ -116,13 +117,11 @@ export class GridComponent implements OnInit {
         }
 
         if (this.gridColumnAPI !== undefined) {
-            this.gridApi.setData(this.filteredRowData);
-            this.gridColumnAPI.setColumnDefs(this.filteredRowData);
+            this.gridApi.setRowData(this.filteredRowData);
         }
-    
-        if (this.gridColumnAPI !== undefined) {
-            this.gridApi.setData(this.filteredRowData);
-            this.gridColumnAPI.setColumnDefs(this.filteredRowData);
-        }
+    }
+
+    removeConfirmedRows(rowsToRemove: any[]) {
+        this.gridApi.applyTransaction({ remove: rowsToRemove });
     }
 }

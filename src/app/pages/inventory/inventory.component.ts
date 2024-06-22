@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ColDef } from 'ag-grid-community';
 import { GridComponent } from '../../components/grid/grid.component';
 import { MatButtonModule } from '@angular/material/button';
@@ -19,8 +19,12 @@ import { FormsModule } from '@angular/forms';
   styleUrls: ['./inventory.component.css']
 })
 export class InventoryComponent implements OnInit {
+  @ViewChild('gridComponent') gridComponent!: GridComponent;
+
   rowData: any[] = [];
-  showPopup = false;
+  showAddPopup = false;
+  showDeletePopup = false;
+  rowsToDelete: any[] = [];
   item = {
     productId: '',
     description: '',
@@ -38,10 +42,10 @@ export class InventoryComponent implements OnInit {
     await this.loadInventoryData();
   }
 
-  addButton: any = { text: 'Add Items', button: true };
-  removeButton: any = { text: 'Remove Items', button: true };
+  addButton: any = { text: 'Add New' };
 
   colDefs: ColDef[] = [
+    { field: "inventoryID", headerName: "Inventory ID", hide: true },
     { field: "sku", headerName: "SKU" },
     { field: "productId", headerName: "Product ID" },
     { field: "description", headerName: "Description" },
@@ -94,6 +98,7 @@ export class InventoryComponent implements OnInit {
       if (responseBody.statusCode === 200) {
         const inventoryItems = JSON.parse(responseBody.body);
         this.rowData = inventoryItems.map((item: any) => ({
+          inventoryID: item.inventoryID,
           sku: item.SKU,
           productId: item.productID,
           description: item.description,
@@ -112,11 +117,11 @@ export class InventoryComponent implements OnInit {
   }
 
   openAddItemPopup() {
-    this.showPopup = true;
+    this.showAddPopup = true;
   }
 
-  closePopup() {
-    this.showPopup = false;
+  closeAddPopup() {
+    this.showAddPopup = false;
     this.item = {
       productId: '',
       description: '',
@@ -175,13 +180,86 @@ export class InventoryComponent implements OnInit {
       if (responseBody.statusCode === 201) {
         console.log('Inventory item added successfully');
         await this.loadInventoryData();
-        this.closePopup();
+        this.closeAddPopup();
       } else {
         throw new Error(responseBody.body);
       }
     } catch (error) {
       console.error('Error:', (error as Error).message);
       alert(`Error: ${(error as Error).message}`);
+    }
+  }
+
+  handleRowsToDelete(rows: any[]) {
+    this.rowsToDelete = rows;
+    this.showDeletePopup = true;
+  }
+
+  async confirmDelete() {
+    if (this.rowsToDelete.length > 0) {
+      for (const row of this.rowsToDelete) {
+        await this.deleteInventoryItem(row.inventoryID);
+      }
+      this.gridComponent.removeConfirmedRows(this.rowsToDelete);
+      this.rowsToDelete = [];
+    }
+    this.showDeletePopup = false;
+    await this.loadInventoryData(); // Refresh the data after deletion
+  }
+
+  cancelDelete() {
+    this.showDeletePopup = false;
+    this.rowsToDelete = [];
+  }
+
+  async deleteInventoryItem(inventoryID: string) {
+    try {
+      const session = await fetchAuthSession();
+
+      const cognitoClient = new CognitoIdentityProviderClient({
+        region: outputs.auth.aws_region,
+        credentials: session.credentials,
+      });
+
+      const getUserCommand = new GetUserCommand({
+        AccessToken: session.tokens?.accessToken.toString(),
+      });
+      const getUserResponse = await cognitoClient.send(getUserCommand);
+
+      const tenantId = getUserResponse.UserAttributes?.find(
+        (attr) => attr.Name === 'custom:tenentId'
+      )?.Value;
+
+      if (!tenantId) {
+        throw new Error('TenantId not found in user attributes');
+      }
+
+      const lambdaClient = new LambdaClient({
+        region: outputs.auth.aws_region,
+        credentials: session.credentials,
+      });
+
+      const payload = JSON.stringify({
+        inventoryID: inventoryID,
+        tenentId: tenantId,
+      });
+
+      const invokeCommand = new InvokeCommand({
+        FunctionName: 'Inventory-removeItem',
+        Payload: new TextEncoder().encode(JSON.stringify({ body: payload })),
+      });
+
+      const lambdaResponse = await lambdaClient.send(invokeCommand);
+      const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+
+      if (responseBody.statusCode === 200) {
+        console.log('Inventory item deleted successfully');
+      } else {
+        throw new Error(responseBody.body);
+      }
+    } catch (error) {
+      console.error('Error deleting inventory item:', error);
+      alert(`Error deleting inventory item: ${(error as Error).message}`);
     }
   }
 }

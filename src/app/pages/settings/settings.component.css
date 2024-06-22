@@ -591,15 +591,16 @@ mat-label {
 
 .form-row {
     display: flex;
-    gap: 16px;
-    margin-bottom: 16px;
-    width: 60%;
+    gap: 0;
+    margin-bottom: 10px;
+    width: 100%;
+    flex-direction: column;
 }
 
 /* EDIT PASSWORD */
 
 .form-row.form-row-password {
-    width: 60%;
+    width: 100%;
     margin-right: 30px;
 }
 

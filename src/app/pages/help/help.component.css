@@ -410,6 +410,7 @@
     width: 150px;
     margin-left: auto;
     font-weight: 500;
+    border: #000;
 }
 
 /* CONTACT SUPPORT */
@@ -620,6 +621,7 @@ mat-form-field.mat-mdc-form-field.mat-mdc-form-field-type-mat-input.mat-form-fie
     width: 150px;
     margin-left: auto;
     font-weight: 500;
+    border: #000;
 }
 
 /* USER GUIDES SECTION */
@@ -791,8 +793,9 @@ p {
     right: 0;
     transform: translateY(-50%);
     display: var(--mat-text-button-touch-target-display);
-    background-color: #f1f1f1;
+    background-color: #f3f3f3;
     border-radius: 5px;
+    border: #000;
 }
 .mat-mdc-form-field-infix {
     flex: auto;
@@ -928,6 +931,7 @@ button.send-button {
     font-size: 20px;
     font-weight: 400;
     margin-bottom: 20px;
+    border: #000;
 }
 /* FORM FIELD EDITING SH** TOOK LONG YALL */
 

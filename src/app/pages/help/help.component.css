@@ -415,7 +415,7 @@
 
 /* CONTACT SUPPORT */
 
-.columnOne {
+/* .columnOne {
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -423,7 +423,7 @@
 .columnTwo {
     display: flex;
     flex-direction: column;
-}
+} */
 .content .second-row .right-pane .customer-support-section {
     display: flex;
     flex-direction: column;
@@ -643,10 +643,10 @@ mat-form-field.mat-mdc-form-field.mat-mdc-form-field-type-mat-input.mat-form-fie
     overflow: scroll;
 }
 
-.user-guides-row-one h2 {
+/* .user-guides-row-one h2 {
     margin: 0;
     font-size: 60px;
-}
+} */
 
 .user-guides-row-two {
     display: flex;
@@ -737,7 +737,7 @@ p {
     border: none;
 }
 
-.user-guides-row-three {
+/* .user-guides-row-three {
     height: 10%;
     display: flex;
     align-items: center;
@@ -752,29 +752,29 @@ p {
     padding: 16px;
     width: 100%;
     border-radius: 15px;
-}
+} */
 .form-container {
     display: flex;
     flex-direction: column;
     align-content: center;
     flex-wrap: wrap;
     text-align: center;
+    border: black;
 }
 
-.banner-text h3 {
+/* .banner-text h3 {
     margin: 0;
     margin-bottom: 5px;
     font-size: 30px;
-    /* font-weight: 500; */
-}
+} */
 
-.banner-text p {
+/* .banner-text p {
     font-size: 20px;
     margin: 0;
     font-weight: 500;
-}
+} */
 
-.get-in-touch-button {
+/* .get-in-touch-button {
     background-color: black;
     color: white;
     font-size: 20px;
@@ -783,7 +783,7 @@ p {
     height: 70px;
     width: 150px;
     margin-left: auto;
-}
+} */
 .mat-mdc-button .mat-mdc-button-touch-target {
     position: absolute;
     top: 50%;
@@ -852,16 +852,16 @@ p {
     height: 100%;
 }
 
-.content .second-row .right-pane .release-notes-section .release-notes-row.release-notes-row-two h1 {
+/* .content .second-row .right-pane .release-notes-section .release-notes-row.release-notes-row-two h1 {
     font-size: 70px;
-    /* display: block; */
+     display: block; 
     text-align: center;
-    /* background-color: red; */
-}
+    background-color: red; 
+} */
 
 /* BANNER  */
 
-.content
+/* .content
     .second-row
     .right-pane
     .release-notes-section
@@ -874,7 +874,7 @@ p {
     padding: 16px;
     width: 100%;
     border-radius: 15px;
-}
+} */
 
 .content
     .second-row
@@ -902,7 +902,7 @@ p {
     font-weight: 500;
 }
 
-.content
+/* .content
     .second-row
     .right-pane
     .release-notes-section
@@ -917,7 +917,7 @@ p {
     height: 70px;
     width: 150px;
     margin-left: auto;
-}
+} */
 .form-row mat-form-field {
     background-color: none;
 }

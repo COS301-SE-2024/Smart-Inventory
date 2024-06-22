@@ -25,16 +25,41 @@
 }
 
 * {
-  margin: 0;
+    margin: 0;
 }
 
 [data-amplify-authenticator] {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 40%;
-  max-width: 500px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 40%;
+    max-width: 500px;
+}
+
+/* body, html {
+  width: 100%; 
+  margin: 0; 
+  padding: 0; 
+}
+
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+*/
+[data-amplify-authenticator] {
+    --amplify-components-authenticator-router-box-shadow: 0 0 16px var(--amplify-colors-overlay-90);
+    --amplify-components-authenticator-router-border-width: 0;
+    --amplify-components-authenticator-form-padding: var(--amplify-space-medium) var(--amplify-space-xl)
+        var(--amplify-space-xl);
+    --amplify-components-button-primary-background-color: var(--amplify-colors-neutral-100);
+    --amplify-components-fieldcontrol-focus-box-shadow: 0 0 0 2px var(--amplify-colors-purple-60);
+    --amplify-components-tabs-item-active-border-color: var(--amplify-colors-neutral-100);
+    --amplify-components-tabs-item-color: var(--amplify-colors-overlay-90);
+    --amplify-components-tabs-item-active-color: var(--amplify-colors-overlay-90);
+    --amplify-components-button-link-color: var(--amplify-colors-overlay-90);
+    --amplify-components-button-link-hover-color: var(--amplify-colors-overlay-90);
+}
+.amplify-button--primary {
+    background: rgb(39, 39, 39);
 }
 
 body, html {
@@ -43,5 +68,4 @@ body, html {
   padding: 0; /* Reset default padding */
   /* overflow-y: scroll; */
 }
-
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+  

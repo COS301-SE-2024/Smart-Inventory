@@ -1,110 +1,132 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { AgGridAngular } from 'ag-grid-angular'; // Angular Data Grid Component
-import { ColDef } from 'ag-grid-community'; // Column Definition Type Interface
+import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
+import { AgGridAngular } from 'ag-grid-angular';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
-import {MatButtonModule} from '@angular/material/button';
-import {
-  MatDialog,
-  MAT_DIALOG_DATA,
-  MatDialogRef,
-  MatDialogTitle,
-  MatDialogContent,
-  MatDialogActions,
-  MatDialogClose,
-} from '@angular/material/dialog';
-import {MatMenuModule} from '@angular/material/menu';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatDialog } from '@angular/material/dialog';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
-import { AddComponent } from './add/add.component';
 import { CommonModule } from '@angular/common';
-import * as _ from 'lodash'; 
 import { MatSelectModule } from '@angular/material/select';
+import { CellValueChangedEvent, RowValueChangedEvent } from 'ag-grid-community';
+import { RoleSelectCellEditorComponent } from '../../pages/team/role-select-cell-editor.component';
 
 @Component({
-  selector: 'app-grid',
-  standalone: true,
-  imports: [
-    AgGridAngular, 
-    MatButtonModule,
-    MatFormFieldModule, 
-    MatInputModule, 
-    FormsModule, 
-    MatButtonModule,
-    AddComponent,
-    MatMenuModule,
-    CommonModule,
-    MatSelectModule
-  ],
-  templateUrl: './grid.component.html',
-  styleUrl: './grid.component.css'
+    selector: 'app-grid',
+    standalone: true,
+    imports: [
+        AgGridAngular,
+        MatButtonModule,
+        MatFormFieldModule,
+        MatInputModule,
+        FormsModule,
+        MatButtonModule,
+        MatMenuModule,
+        CommonModule,
+        MatSelectModule,
+        MatIcon,
+        RoleSelectCellEditorComponent,
+    ],
+    templateUrl: './grid.component.html',
+    styleUrl: './grid.component.css',
 })
 export class GridComponent implements OnInit {
-  @Input() rowData: any;
-  @Input() columnDefs: any;
-  @Input() addButton: any;
+    @Input() rowData: any;
+    @Input() columnDefs: any;
+    @Input() addButton: any;
+    @Output() addButtonClicked = new EventEmitter();
 
-  filteredRowData: any[] = [];
+    filteredRowData: any[] = [];
 
-  gridApi: any;
-  gridColumnAPI: any;
+    gridApi: any;
+    gridColumnAPI: any;
 
-  filterSelect: string = '';
-  inputFilter: string = '';
+    filterSelect: string = '';
+    inputFilter: string = '';
 
-  selectOptions: any = [];
+    selectOptions: any = [];
 
-  public autoSizeStrategy = {
-    type: "fitGridWidth",
-  }
+    public autoSizeStrategy = {
+        type: 'fitGridWidth',
+    };
 
-  constructor(public dialog: MatDialog){}
+    public rowSelection: 'single' | 'multiple' = 'multiple';
+    public editType: 'fullRow' = 'fullRow';
 
-  ngOnInit(): void {
-    this.filteredRowData = this.rowData;
-    this.selectOptions = this.columnDefs.map((f: any) => (f.field));
-  }
+    constructor(public dialog: MatDialog) {}
 
-
-  onGridReady(params: any){
-    this.gridApi = params.api;
-    this.gridColumnAPI = params.columnApi
-    this.gridApi.sizeColumnsToFit()
-  }
-
-  openAddDialog() {
-    const dialogRef = this.dialog.open(AddComponent, {data: this.columnDefs});
-
-    dialogRef.afterClosed().subscribe(result => {
-    });
-  }
-
-  importExcel(){
-
-  }
-
-  downloadCSV(){
-    this.gridApi.getDataAsCsv();
-  }
-
-  filterGrid(){
-    if(this.inputFilter !== '' && this.inputFilter !== null && this.inputFilter !== undefined){
-      let model: any[] = [];
-      for(let row of this.rowData){
-          if(row[this.filterSelect].toString().toUpperCase().includes(this.inputFilter.toUpperCase())){
-            model.push(row)
-          }
-      }
-      this.filteredRowData = model
-    }else{
-      this.filteredRowData = this.rowData
+    ngOnInit(): void {
+        this.filteredRowData = this.rowData;
+        this.selectOptions = this.columnDefs.map((f: any) => f.field);
     }
 
-    if(this.gridColumnAPI !== undefined){
-      this.gridApi.setData(this.filteredRowData)
-      this.gridColumnAPI.setColumnDefs(this.filteredRowData)
+    onGridReady(params: any) {
+        this.gridApi = params.api;
+        this.gridColumnAPI = params.columnApi;
+        this.gridApi.sizeColumnsToFit();
     }
+
+    addRow() {
+        this.gridApi.applyTransaction({ add: [{}] });
+        this.addButtonClicked.emit();
+    }
+
+    deleteRow() {
+        // get the first child of the
+        var selectedRows = this.gridApi.getSelectedRows();
+        if (!selectedRows || selectedRows.length === 0) {
+            console.log('No rows selected!');
+            return;
+        }
+        this.gridApi.applyTransaction({ remove: selectedRows });
+    }
+
+    onCellValueChanged(event: CellValueChangedEvent) {
+        console.log('onCellValueChanged: ' + event.colDef.field + ' = ' + event.newValue);
+    }
+
+    onRowValueChanged(event: RowValueChangedEvent) {
+        const data = event.data;
+        console.log(
+            'onRowValueChanged: (' + data.make + ', ' + data.model + ', ' + data.price + ', ' + data.field5 + ')',
+        );
+    }
+
+    importExcel() {
+        alert('Import Not completed');
+    }
+
+    downloadCSV() {
+        const params = {
+            fileName: 'orderExport.csv',
+        };
+        this.gridApi.exportDataAsCsv(params);
+    }
+
+    filterGrid() {
+        if (this.inputFilter !== '' && this.inputFilter !== null && this.inputFilter !== undefined) {
+            let model: any[] = [];
+            for (let row of this.rowData) {
+                if (row[this.filterSelect].toString().toUpperCase().includes(this.inputFilter.toUpperCase())) {
+                    model.push(row);
+                }
+            }
+            this.filteredRowData = model;
+        } else {
+            this.filteredRowData = this.rowData;
+        }
+
+        if (this.gridColumnAPI !== undefined) {
+            this.gridApi.setData(this.filteredRowData);
+            this.gridColumnAPI.setColumnDefs(this.filteredRowData);
+        }
     
-  }
+        if (this.gridColumnAPI !== undefined) {
+            this.gridApi.setData(this.filteredRowData);
+            this.gridColumnAPI.setColumnDefs(this.filteredRowData);
+        }
+    }
 }

@@ -1,4 +1,5 @@
-import { Component, OnInit, HostListener, ViewEncapsulation } from '@angular/core';
+// settings.component.ts
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -6,7 +7,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-// import { FormsModule } from '@angular/forms';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatListModule } from '@angular/material/list';
 import { FormControl, Validators } from '@angular/forms';
@@ -17,6 +17,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { TitleService } from '../../components/header/title.service';
 import { MatGridListModule } from '@angular/material/grid-list';
+import { CognitoService } from '../../_services/cognito.service';
+import { AuthenticatorService } from '@aws-amplify/ui-angular';
+import { Router } from '@angular/router';
 
 interface MenuItem {
     title: string;
@@ -47,22 +50,23 @@ interface MenuItem {
     ],
     templateUrl: './settings.component.html',
     styleUrl: './settings.component.css',
-    encapsulation: ViewEncapsulation.None, // Add this line
+    encapsulation: ViewEncapsulation.None,
 })
-export class SettingsComponent {
+export class SettingsComponent implements OnInit {
     selectedMenuItem: MenuItem | null = null;
     selectedContent: string = '';
     currentTheme = 'light';
-    timeZones = ['GMT', 'UTC', 'EST', 'PST']; // Example time zones
-    languages = ['English', 'Spanish', 'French', 'German']; // Example languages
-    dateTimeFormats = ['MM/DD/YYYY', 'DD/MM/YYYY', 'YYYY-MM-DD']; // Example date and time formats
+    timeZones = ['GMT', 'UTC', 'EST', 'PST'];
+    languages = ['English', 'Spanish', 'French', 'German'];
+    dateTimeFormats = ['MM/DD/YYYY', 'DD/MM/YYYY', 'YYYY-MM-DD'];
 
     constructor(
         private snackBar: MatSnackBar,
         private titleService: TitleService,
+        private cognitoService: CognitoService,
+        private authenticator: AuthenticatorService,
+        private router: Router
     ) {}
-
-    // ACCOUNT SECTION
 
     profile = {
         name: '',
@@ -92,7 +96,6 @@ export class SettingsComponent {
     emailFormControl = new FormControl('', [Validators.required, Validators.email]);
     mobileFormControl = new FormControl('', [Validators.pattern('\\(\\+27\\) \\d{2} \\d{3} \\d{4}')]);
 
-    // NOTIFICATIONS
     notificationTypes = [
         { title: 'Email Notifications', enabled: false, frequency: '' },
         { title: 'SMS Notifications', enabled: false, frequency: '' },
@@ -103,19 +106,27 @@ export class SettingsComponent {
         { title: 'Low Stock', enabled: false },
         { title: 'New Inventory Added', enabled: false },
         { title: 'Inventory Update', enabled: false },
-        { title: 'Inventory Update', enabled: false },
     ];
+
+    isChangePasswordVisible = false;
+    isDeleteAccountVisible = false;
+    changePasswordText = 'Change Password';
+
+    menuItems: MenuItem[] = [
+        { title: 'Notifications', content: ' ' },
+        { title: 'Account', content: ' ' },
+    ];
+
+    ngOnInit() {
+        this.onItemSelected(this.menuItems[0]);
+        this.titleService.updateTitle('Settings');
+    }
 
     toggleNotification(type: any) {
         if (!type.enabled) {
             type.frequency = '';
         }
     }
-
-    // CHANGE PASSWORD
-    isChangePasswordVisible = false;
-    isDeleteAccountVisible = false;
-    changePasswordText = 'Change Password';
 
     toggleChangePassword() {
         this.isChangePasswordVisible = !this.isChangePasswordVisible;
@@ -125,60 +136,35 @@ export class SettingsComponent {
     cancelChangePassword() {
         this.isChangePasswordVisible = false;
         this.changePasswordText = 'Change Password';
+        this.password.current = '';
+        this.password.new = '';
     }
 
-    // DELETE ACCOUNT
     toggleDeleteAccount() {
         this.isDeleteAccountVisible = !this.isDeleteAccountVisible;
     }
 
     confirmDeleteAccount() {
-        // Add account deletion logic here
         alert('Account deletion confirmed');
         this.isDeleteAccountVisible = false;
     }
 
-    // NAVIGATION MENU
-    menuItems: MenuItem[] = [
-        { title: 'Notifications', content: ' ' },
-        { title: 'Account', content: ' ' },
-    ];
-
-    // ON PAGE LOAD
-    ngOnInit() {
-        this.onItemSelected(this.menuItems[0]); // Select General by default
-        this.titleService.updateTitle('Settings');
-    }
-
-    // NAVIGATION MENU
     onItemSelected(item: MenuItem) {
         this.selectedMenuItem = item;
         this.selectedContent = item.content;
     }
 
-    // SAVE BUTTON
     onSave() {
         this.snackBar.open('Changes saved successfully', 'Close', {
             duration: 2000,
         });
     }
 
-    // CANCEL BUTTON
     onCancel() {
         this.snackBar.open('Changes not saved', 'Close', {
             duration: 2000,
         });
     }
-
-    // LIGHT AND DARK THEM IMAGE SELECTION
-    // selectTheme(theme: string) {
-    //   this.currentTheme = theme;
-    //   if (theme === 'light') {
-    //     this.applyLightTheme();
-    //   } else if (theme === 'dark') {
-    //     this.applyDarkTheme();
-    //   }
-    // }
 
     applyLightTheme() {
         document.body.classList.remove('dark-theme');
@@ -190,18 +176,14 @@ export class SettingsComponent {
         document.body.classList.add('dark-theme');
     }
 
-    // LIGHT AND DARK MODE TOGGLE
-
-    isLightMode = true; // Initial mode, set to true for Light Mode by default
+    isLightMode = true;
 
     toggleMode(event: any) {
         this.isLightMode = event.checked;
         if (this.isLightMode) {
-            // Logic to switch to light mode
             document.body.classList.remove('dark-mode');
             document.body.classList.add('light-mode');
         } else {
-            // Logic to switch to dark mode
             document.body.classList.remove('light-mode');
             document.body.classList.add('dark-mode');
         }
@@ -210,11 +192,58 @@ export class SettingsComponent {
     selectTheme(theme: string) {
         this.currentTheme = theme;
         if (theme === 'dark') {
-            this.isLightMode = true; // Update toggle state
+            this.isLightMode = true;
             this.applyLightTheme();
         } else if (theme === 'light') {
-            this.isLightMode = false; // Update toggle state
+            this.isLightMode = false;
             this.applyDarkTheme();
+        }
+    }
+
+    async handleResetPassword() {
+        if (!this.password.current || !this.password.new) {
+            this.snackBar.open('Please fill in all password fields', 'Close', { duration: 3000 });
+            return;
+        }
+
+        try {
+            await this.cognitoService.changePassword(this.password.current, this.password.new).toPromise();
+            this.snackBar.open('Password reset successful. Please sign in again with your new password.', 'Close', { duration: 5000 });
+            await this.authenticator.signOut();
+        } catch (error) {
+            console.error('Error resetting password:', error);
+            this.snackBar.open('Error resetting password. Please try again.', 'Close', { duration: 3000 });
+        }
+    }
+
+    async handleDeleteAccount() {
+        if (!this.password.currentDelete || !this.profile.confirmEmailDelete) {
+            this.snackBar.open('Please fill in all fields', 'Close', { duration: 3000 });
+            return;
+        }
+
+        if (this.profile.confirmEmailDelete !== this.profile.email) {
+            this.snackBar.open('Confirmation email does not match your email', 'Close', { duration: 3000 });
+            return;
+        }
+
+        try {
+            // First, verify the current password
+            const isPasswordValid = await this.cognitoService.verifyCurrentPassword(this.profile.email, this.password.currentDelete).toPromise();
+            
+            if (!isPasswordValid) {
+                this.snackBar.open('Current password is incorrect', 'Close', { duration: 3000 });
+                return;
+            }
+
+            // If password is valid, proceed with account deletion
+            await this.cognitoService.deleteAccount().toPromise();
+            this.snackBar.open('Your account has been deleted successfully', 'Close', { duration: 5000 });
+            await this.authenticator.signOut();
+            this.router.navigate(['/login']); // Adjust this route as needed
+        } catch (error) {
+            console.error('Error deleting account:', error);
+            this.snackBar.open('Error deleting account. Please try again.', 'Close', { duration: 3000 });
         }
     }
 }

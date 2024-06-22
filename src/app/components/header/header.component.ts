@@ -1,8 +1,9 @@
-import { Component, Output, EventEmitter, Input } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MaterialModule } from '../material/material.module';
-import { signOut } from 'aws-amplify/auth';
+import { signOut, fetchUserAttributes } from 'aws-amplify/auth';
 import { Router } from '@angular/router';
 import { TitleService } from './title.service';
+
 @Component({
   selector: 'app-header',
   standalone: true,
@@ -10,16 +11,26 @@ import { TitleService } from './title.service';
   templateUrl: './header.component.html',
   styleUrl: './header.component.css'
 })
-export class HeaderComponent {
+export class HeaderComponent implements OnInit {
   pageTitle: string = '';
-  user: string = 'John Doe';
+  userName: string = '';
+  userEmail: string = '';
 
-  ngOnInit() {
+  constructor(private router: Router, private titleService: TitleService) {}
+
+  async ngOnInit() {
     this.titleService.currentTitle.subscribe(title => {
       this.pageTitle = title;
     });
+
+    try {
+      const userAttributes = await fetchUserAttributes();
+      this.userName = `${userAttributes.given_name || ''} ${userAttributes.family_name || ''}`.trim();
+      this.userEmail = userAttributes.email || '';
+    } catch (error) {
+      console.error('Error fetching user attributes:', error);
+    }
   }
-  constructor(private router: Router, private titleService: TitleService) {}
 
   async logout() {
     try {

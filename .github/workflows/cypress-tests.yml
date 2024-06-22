@@ -1,17 +1,17 @@
-name: Cypress Tests
+name: Run Cypress Component Tests
 
 on:
   push:
-    branches: [feat/automated-tests]
+      branches: [feat/automated-tests]
   pull_request:
-    branches: [develop]
+      branches: [develop]
 
 jobs:
   cypress-run:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Set up Node.js
@@ -30,3 +30,17 @@ jobs:
           npm run build
           npx cypress run --component
         continue-on-error: true
+
+      - name: Archive test results
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: cypress-results
+          path: cypress/results
+      
+      # Optional: Upload test results as artifacts
+      - uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: cypress-screenshots
+          path: cypress/screenshots

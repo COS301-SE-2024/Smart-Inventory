@@ -31,6 +31,7 @@
     "angular-gridster2": "^18.0.1",
     "audit": "^0.0.6",
     "aws-amplify": "^6.3.4",
+    "aws-sdk": "^2.1646.0",
     "fix": "^0.0.3",
     "gridstack": "^10.2.0",
     "js-yaml": ">=3.13.1",

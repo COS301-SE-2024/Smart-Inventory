@@ -3,12 +3,11 @@ import { ColDef } from 'ag-grid-community';
 import { GridComponent } from '../../components/grid/grid.component';
 import { MatButtonModule } from '@angular/material/button';
 import { TitleService } from '../../components/header/title.service';
-import { NumericCellEditor } from '../../components/grid/row-button/numericCellEditor.component';
 
 @Component({
     selector: 'app-orders',
     standalone: true,
-    imports: [GridComponent, MatButtonModule, NumericCellEditor],
+    imports: [GridComponent, MatButtonModule],
     templateUrl: './orders.component.html',
     styleUrl: './orders.component.css',
 })

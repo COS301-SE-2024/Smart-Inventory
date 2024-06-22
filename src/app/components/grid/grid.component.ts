@@ -12,6 +12,8 @@ import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MatSelectModule } from '@angular/material/select';
+import { CellValueChangedEvent, RowValueChangedEvent } from 'ag-grid-community';
+import { RoleSelectCellEditorComponent } from '../../pages/team/role-select-cell-editor.component';
 
 @Component({
     selector: 'app-grid',
@@ -27,6 +29,7 @@ import { MatSelectModule } from '@angular/material/select';
         CommonModule,
         MatSelectModule,
         MatIcon,
+        RoleSelectCellEditorComponent,
     ],
     templateUrl: './grid.component.html',
     styleUrl: './grid.component.css',
@@ -74,6 +77,8 @@ export class GridComponent implements OnInit {
 
     addRow() {
         this.addNewClicked.emit();
+        //this.gridApi.applyTransaction({ add: [{}] });
+        //this.addButtonClicked.emit();
     }
 
     deleteRow() {

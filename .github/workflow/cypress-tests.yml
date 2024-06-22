@@ -30,9 +30,3 @@ jobs:
           npm run build
           npx cypress run --component
         continue-on-error: true
-
-      - name: List coverage directory
-        run: ls -R coverage
-
-      - name: Print coverage report
-        run: cat coverage/lcov.info

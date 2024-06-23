@@ -234,6 +234,7 @@ The search and select options can be found in the top left side of the page how 
   <h3>Suppliers</h3>
   <img src="/media/wireframes/CreateAcc_dark.png">
 </div>
+
 **Sidebar:**
 * To direct to the suppliers page a user should go to the sidebar and click on the supplier icon.
     
@@ -285,6 +286,7 @@ The search and select options can be found in the top left side of the page how 
   <h3>Suppliers</h3>
   <img src="/media/wireframes/CreateAcc_dark.png">
 </div>
+
 **Sidebar:**
 * To direct to the team page a user should go to the sidebar and click on the team icon.
     

@@ -12,7 +12,6 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 @Component({
-
   selector: 'app-inventory',
   standalone: true,
   imports: [GridComponent, MatButtonModule, CommonModule, FormsModule],
@@ -25,6 +24,7 @@ export class InventoryComponent implements OnInit {
   rowData: any[] = [];
   showAddPopup = false;
   showDeletePopup = false;
+  showRequestStockPopup = false;
   rowsToDelete: any[] = [];
   item = {
     productId: '',
@@ -33,6 +33,8 @@ export class InventoryComponent implements OnInit {
     sku: '',
     supplier: ''
   };
+  selectedItem: any = null;
+  requestQuantity: number | null = null;
 
   colDefs: ColDef[] = [
     { field: "inventoryID", headerName: "Inventory ID", hide: true },
@@ -129,6 +131,11 @@ export class InventoryComponent implements OnInit {
   }
 
   async onSubmit(formData: any) {
+    if (isNaN(formData.quantity)) {
+      alert("Please enter a valid quantity");
+      return;
+    }
+
     try {
       const session = await fetchAuthSession();
 
@@ -319,4 +326,91 @@ export class InventoryComponent implements OnInit {
       this.gridComponent.updateRow(event.data);
     }
   }
+
+  openRequestStockPopup(item: any) {
+    this.selectedItem = item;
+    this.showRequestStockPopup = true;
+    this.requestQuantity = null;
+  }
+
+  closeRequestStockPopup() {
+    this.showRequestStockPopup = false;
+    this.selectedItem = null;
+    this.requestQuantity = null;
+  }
+
+  async requestStock() {
+    if (this.requestQuantity === null || isNaN(this.requestQuantity)) {
+      alert("Please enter a valid quantity");
+      return;
+    }
+  
+    try {
+      const session = await fetchAuthSession();
+  
+      const cognitoClient = new CognitoIdentityProviderClient({
+        region: outputs.auth.aws_region,
+        credentials: session.credentials,
+      });
+  
+      const getUserCommand = new GetUserCommand({
+        AccessToken: session.tokens?.accessToken.toString(),
+      });
+      const getUserResponse = await cognitoClient.send(getUserCommand);
+  
+      const tenentId = getUserResponse.UserAttributes?.find(
+        (attr) => attr.Name === 'custom:tenentId'
+      )?.Value;
+  
+      if (!tenentId) {
+        throw new Error('TenentId not found in user attributes');
+      }
+  
+      const lambdaClient = new LambdaClient({
+        region: outputs.auth.aws_region,
+        credentials: session.credentials,
+      });
+  
+      // First, update the inventory
+      const updatedQuantity = this.selectedItem.quantity - this.requestQuantity;
+      const updateEvent = {
+        data: this.selectedItem,
+        field: 'quantity',
+        newValue: updatedQuantity
+      };
+      await this.handleCellValueChanged(updateEvent);
+  
+      // Then, create the stock request report
+      const reportPayload = {
+        tenentId: tenentId,
+        sku: this.selectedItem.sku,
+        supplier: this.selectedItem.supplier,
+        quantityRequested: this.requestQuantity.toString() // Ensure this is a string
+      };
+  
+      console.log('Report Payload:', reportPayload); // Add this for debugging
+  
+      const createReportCommand = new InvokeCommand({
+        FunctionName: 'Report-createItem',
+        Payload: new TextEncoder().encode(JSON.stringify({ body: JSON.stringify(reportPayload) })),
+      });
+  
+      const lambdaResponse = await lambdaClient.send(createReportCommand);
+      const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+  
+      console.log('Lambda Response:', responseBody); // Add this for debugging
+  
+      if (responseBody.statusCode === 201) {
+        console.log('Stock request report created successfully');
+        await this.loadInventoryData();
+        this.closeRequestStockPopup();
+      } else {
+        throw new Error(JSON.stringify(responseBody.body));
+      }
+    } catch (error) {
+      console.error('Error requesting stock:', error);
+      alert(`Error requesting stock: ${(error as Error).message}`);
+    }
+  }
+  
 }

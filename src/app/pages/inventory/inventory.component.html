@@ -6,6 +6,7 @@
     (rowsToDelete)="handleRowsToDelete($event)"
     (addNewClicked)="openAddItemPopup()"
     (itemToUpdate)="handleCellValueChanged($event)"
+    (requestStock)="openRequestStockPopup($event)"
     #gridComponent
   >
   </app-grid>
@@ -52,6 +53,22 @@
     <div class="button-group">
       <button (click)="confirmDelete()">Yes</button>
       <button (click)="cancelDelete()">No</button>
+    </div>
+  </div>
+</div>
+
+<!-- Request Stock Popup -->
+<div *ngIf="showRequestStockPopup" class="popup-overlay">
+  <div class="popup-content">
+    <h2>Request Stock</h2>
+    <p>How much stock of {{selectedItem?.sku}} from supplier {{selectedItem?.supplier}} would you like to request?</p>
+    <div class="form-group">
+      <label for="requestQuantity">Quantity</label>
+      <input type="number" id="requestQuantity" name="requestQuantity" [(ngModel)]="requestQuantity" required>
+    </div>
+    <div class="button-group">
+      <button (click)="requestStock()">Request</button>
+      <button (click)="closeRequestStockPopup()">Cancel</button>
     </div>
   </div>
 </div>

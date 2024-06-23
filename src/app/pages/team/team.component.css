@@ -99,3 +99,9 @@
     margin: 15px;
     width: 100%;
 }
+
+.error-message {
+    color: #ff4d4d;
+    font-size: 14px;
+    margin-top: 5px;
+}

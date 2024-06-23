@@ -9,16 +9,15 @@ The document aims to provide a clear roadmap for developers to translate the vis
 
 ## Wireframes
 
-### Sign in and Create Account
+### Sign in
 
 <div style="text-align: center;">
-    <img src="/media/wireframes/CreateAcc_dark.png" alt="Create Account">
-    <img src="/media/wireframes/CreateAcc_light.png" alt="Create Account">
+    <img src="/media/Pure Wireframes/CreateAccount.jpeg" alt="Create Account">
 </div>
 
+### Create Account
 <div style="text-align: center;">
-    <img src="/media/wireframes/SignIn_dark.png" alt="SignIn-dark">
-    <img src="/media/wireframes/SignIn_light.png" alt="SignIn-light">
+    <img src="/media/Pure Wireframes/SignIn.jpeg" alt="SignIn-dark">
 </div>
 
 ### Dashboard
@@ -28,40 +27,28 @@ The document aims to provide a clear roadmap for developers to translate the vis
     <img src="/media/wireframes/Dashboard_light.png" alt="Dashboard-light">
 </div>
 
+### Teams
+
+<div style="text-align: center;">
+    <img src="/media/Pure Wireframes/Team.jpeg" alt="Dashboard-dark">
+</div>
+
 ### Orders
 
 <div style="text-align: center;">
-    <img src="/media/wireframes/Orders-dark-mode.png" alt="Orders-dark">
-    <img src="/media/wireframes/Orders-light-mode.png" alt="Orders-light">
+    <img src="/media/Pure Wireframes/Orders.jpeg" alt="Orders-dark">
 </div>
 
 ### Inventory
 
 <div style="text-align: center;">
-    <img src="/media/wireframes/Inventory-dark-mode.png" alt="Inventory-dark">
-    <img src="/media/wireframes/Inventory-light-mode.png" alt="Inventory-light">
+    <img src="/media/Pure Wireframes/Inventory.jpeg" alt="Inventory-dark">
 </div>
 
 ### Settings
 
 <div style="text-align: center;">
-    <img src="/media/wireframes/Settings-General-dark-mode.png" alt="Settings-General-dark">
-    <img src="/media/wireframes/Settings-General-light-mode.png" alt="Settings-General-light">
-</div>
-
-<div style="text-align: center;">
-    <img src="/media/wireframes/Settings-Notifications-dark-mode.png" alt="Settings-Notifications-dark">
-    <img src="/media/wireframes/Settings-Notifications-light-mode.png" alt="Settings-Notifications-light">
-</div>
-
-<div style="text-align: center;">
-    <img src="/media/wireframes/Settings-UserPermissions-dark-mode.png" alt="Settings-UserPermissions-dark">
-    <img src="/media/wireframes/Settings-UserPermissions-light-mode.png" alt="Settings-UserPermissions-light">
-</div>
-
-<div style="text-align: center;">
-    <img src="/media/wireframes/Settings-Account-dark-mode.png" alt="Settings-Account-dark">
-    <img src="/media/wireframes/Settings-Account-light-mode.png" alt="Settings-Account-light">
+    <img src="/media/Updated_Wireframes/ForgetPassword2_WF.png" alt="Settings-General-light">
 </div>
 
 <div style="text-align: center;">
@@ -78,32 +65,35 @@ The document aims to provide a clear roadmap for developers to translate the vis
 
 
 ### Reports
-### Requests
 ### Suppliers
+
+<div style="text-align: center;">
+    <img src="/media/Pure Wireframes/Suppliers.jpeg" alt="Settings-General-light">
+</div>
 
 
 ## Database Design
 The SmartInventory system will utilize Amazon DynamoDB, a fully managed NoSQL database service provided by Amazon Web Services (AWS). DynamoDB offers high scalability, low latency, and flexible data modeling, making it suitable for the inventory management system. The key tables and their sample data are as follows:
 
-### Users Table:
-| userID | createdAt | email | name | passwordHash | Permissions | surname | updatedAt |
+### Users Table (Cognito):
+| User name | Email address | Email verified | First Name | Last Name | tenentId |
 |--------|------------|-------|------|--------------|-------------|---------|-----------|
-| 123e4567-e89b-12d3-a456-426614174000 | 1621234567890 | john.doe@gmail.com | John | asjsd92j$sk2 | ["manageInventory", "manageProducts", "requestStock"] | Doe | 1621234567890 |
+| 94d824c8-b001-70d4-2170-84e6f537d694 | u21491578@tuks.co.za | Yes | John | Doe | 17188901 |
 
 ### Suppliers Table:
 | supplierID | Address | contactEmail | contactPhone | createdAt | name | updatedAt |
 |------------|---------|--------------|--------------|-----------|------|-----------|
 | 2c918730-38ae-4a7b-ae13-04002f2b9283 | ["city: Pretoria", "street: 123 Street"] | supplier.name@gmail.com | 831234567 | 1621234567890 | Supplier Name | 1621234567890 |
 
-### Products Table:
-| productID | category | createdAt | description | name | sku | updatedAt |
-|-----------|----------|-----------|-------------|------|-----|-----------|
-| 6a9c12a1-22fc-4f6d-92ad-bc1c86c3466f | Electronics | 1621234567890 | ["100mm x 100mm", "Green", "Retractable"] | Example Item | EX123 | 1621234567890 |
-
 ### Inventory Table:
-| productID | supplierID | createdAt | expirationDate | quantity | updatedAt |
+| inventoryID | tenentId| createdAt | description | productID | quantity | SKU | supplier | updatedAt
 |-----------|------------|-----------|----------------|----------|-----------|
-| 6a9c12a1-22fc-4f6d-92ad-bc1c86c3466f | 2c918730-38ae-4a7b-ae13-04002f2b9283 | 1621234567890 | 2022-12-31 | 100 | 1621234567890 |
+| 556aedd4-8923-4ade-a57a-0f4d498c7371 | 1719070005737-id8nj | 2024-06-22T15:31:08.636Z | This is a test item | 34534435 | 100 | EX-123 | Amazon | 2024-06-22T15:31:08.636Z|
+
+### Stock Requests:
+| stockRequestedId | tenentId | createdAt | quantityRequested | SKU | supplier | type |
+|------------------|----------|-----------|-------------------|-----|----------|------|
+| 8b42b580-38d0-48e7-a25b-e2f31445aa87 | tenent-123 | 2024-06-22T19:39:10.024Z | 50 | SKU-789 | Supplier XYZ | STOCK_REQUEST |
 
 The sample data provided showcases the structure and attributes of each table. DynamoDB's flexible schema allows for storing complex data types, such as arrays and objects, within a single attribute (e.g., Permissions in the Users table and Address in the Suppliers table).
 
@@ -165,20 +155,3 @@ DynamoDB's powerful querying capabilities, such as the ability to query by parti
 - Lambda functions will have minimal necessary permissions (using IAM roles) to interact with other AWS services.
 - DynamoDB table access will be controlled through IAM policies.
 - Sensitive data will be stored in AWS Systems Manager Parameter Store or AWS Secrets Manager for secure storage and retrieval.
-
-### Interface Design
-
-
-#### UI and UX design:
-
-
-#### User-centric design:
-
-
-#### Intuitive navigation:
-
-
-#### Design consistency:
-
-
-#### Trends and historical considerations:

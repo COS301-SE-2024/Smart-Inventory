@@ -16,7 +16,6 @@ Amplify.configure(outputs);
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
   imports: [RouterOutlet, GridComponent, AmplifyAuthenticatorModule, SidebarComponent, HeaderComponent, LoaderComponent],
-
 })
 export class AppComponent implements OnInit {
     title = 'Smart-Inventory';

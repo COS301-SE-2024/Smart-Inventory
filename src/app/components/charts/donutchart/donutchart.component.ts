@@ -29,7 +29,7 @@ export class DonutchartComponent {
     this.chartOptions = {
       data: this.getData(),
       title: {
-        text: "Portfolio Composition",
+        text: "Inventory Composition by Category",
       },
       series: [
         {
@@ -57,7 +57,7 @@ export class DonutchartComponent {
     return {
       data: this.getData(),
       title: {
-        text: "Portfolio Composition",
+        text: "Inventory Composition by Category",
       },
       series: [
         {
@@ -82,11 +82,11 @@ export class DonutchartComponent {
 
   getData() {
     return [
-      { asset: "Stocks", amount: 60000 },
-      { asset: "Bonds", amount: 40000 },
-      { asset: "Cash", amount: 7000 },
-      { asset: "Real Estate", amount: 5000 },
-      { asset: "Commodities", amount: 3000 },
+      { asset: "Electronics", amount: 50000 },
+      { asset: "Clothing", amount: 35000 },
+      { asset: "Furniture", amount: 25000 },
+      { asset: "Home Appliances", amount: 15000 },
+      { asset: "Toys & Games", amount: 10000 },
     ];
   }
 

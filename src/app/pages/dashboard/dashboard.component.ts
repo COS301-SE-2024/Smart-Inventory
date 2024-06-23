@@ -16,6 +16,11 @@ import { DonutchartComponent } from '../../components/charts/donutchart/donutcha
 import { FilterService } from '../../services/filter.service';
 import { LoadingService } from '../../components/loader/loading.service';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { Subject } from 'rxjs';
+import { debounceTime } from 'rxjs/operators';
+import { RouterLink } from '@angular/router';
+import { Amplify } from 'aws-amplify';
+import outputs from '../../../../amplify_outputs.json';
 
 interface DashboardItem extends GridsterItem {
   type: string;
@@ -29,6 +34,7 @@ interface DashboardItem extends GridsterItem {
   analytic?: string;
   percentage?: number;  // Ensure this is defined as a number if using the percent pipe
   component?: any;
+  tooltip?: string;
 }
 
 
@@ -37,10 +43,11 @@ interface DashboardItem extends GridsterItem {
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css'],
   standalone: true,
-  imports: [MaterialModule, HttpClientModule, CommonModule, AddmemberComponent, GridsterModule, AgChartsAngular, BarchartComponent, DonutchartComponent, SaleschartComponent, BubblechartComponent, MatProgressSpinnerModule]
+  imports: [MaterialModule, HttpClientModule, RouterLink, CommonModule, AddmemberComponent, GridsterModule, AgChartsAngular, BarchartComponent, DonutchartComponent, SaleschartComponent, BubblechartComponent, MatProgressSpinnerModule]
 })
 export class DashboardComponent implements OnInit {
   isDeleteMode: boolean = false;
+  private saveTrigger = new Subject<void>();
 
   data: any;
 
@@ -75,6 +82,7 @@ export class DashboardComponent implements OnInit {
   public chartOptions!: AgChartOptions;
 
   constructor(private http: HttpClient, private loader: LoadingService, private titleService: TitleService, private filterService: FilterService, private cdr: ChangeDetectorRef) {
+    Amplify.configure(outputs);
     this.options = {
       gridType: GridType.VerticalFixed,
       displayGrid: DisplayGrid.Always,
@@ -101,29 +109,58 @@ export class DashboardComponent implements OnInit {
     };
 
     this.dashboard = [
-      { cols: 1, rows: 1, y: 0, x: 0, name: 'Orders', icon: 'shopping_cart', analytic: '7500', percentage: 0.05, type: 'card', isActive: true },
-      { cols: 1, rows: 1, y: 0, x: 1, name: 'Sales', icon: 'trending_up', analytic: '450', percentage: -0.02, type: 'card', isActive: true },
-      { cols: 1, rows: 1, y: 0, x: 2, name: 'Earnings', icon: 'account_balance_wallet', analytic: '$23,500', percentage: 0.10, type: 'card', isActive: true },
-      { cols: 1, rows: 1, y: 0, x: 3, name: 'Commissions', icon: 'monetization_on', analytic: '$5,750', percentage: 0.03, type: 'card', isActive: true },
     ];
 
+    this.saveTrigger.pipe(
+      debounceTime(1000)  // Adjust the time based on your needs, 1000 ms is just an example
+    ).subscribe(() => {
+      this.performSaveState();
+    });
+  }
+
+  performSaveState() {
+    console.log('Saving state:', this.dashboard);  // Log to debug
+    const state = {
+      dashboard: [...this.dashboard],  // Use spread to ensure a new array reference
+      standaloneItems: {
+        largeItem: this.largeItem,
+        newLargeItem: this.newLargeItem,
+        SalesvsTarget: this.SalesvsTarget,
+        Product: this.Product
+      }
+    };
+    localStorage.setItem('dashboardState', JSON.stringify(state));
   }
 
   saveState() {
-    localStorage.setItem('dashboardState', JSON.stringify(this.dashboard));
+    this.saveTrigger.next();
   }
 
   loadState() {
     const savedState = localStorage.getItem('dashboardState');
     if (savedState) {
-      this.dashboard = JSON.parse(savedState);
+      const state = JSON.parse(savedState);
+      this.dashboard = state.dashboard || this.getDefaultDashboard();  // Fallback to default
+      this.largeItem = state.standaloneItems.largeItem;
+      this.newLargeItem = state.standaloneItems.newLargeItem;
+      this.SalesvsTarget = state.standaloneItems.SalesvsTarget;
+      this.Product = state.standaloneItems.Product;
     } else {
-      // Default dashboard configuration
-      this.dashboard = [
-        // initial configuration...
-      ];
+      this.dashboard = this.getDefaultDashboard();
     }
-    this.cdr.detectChanges(); // Ensure the view is updated
+    this.cdr.detectChanges(); // Force change detection
+  }
+
+  getDefaultDashboard(): DashboardItem[] {
+    // return default dashboard setup
+    this.dashboard = [
+      { cols: 1, rows: 1, y: 0, x: 4, name: 'Inventory Levels', icon: 'storage', analytic: '1234', percentage: 0.04, type: 'card', isActive: true, tooltip: 'Current inventory stock count.' },
+      { cols: 1, rows: 1, y: 0, x: 5, name: 'Backorders', icon: 'assignment_return', analytic: '320', percentage: -0.01, type: 'card', isActive: true, tooltip: 'Orders pending due to lack of stock.' },
+      { cols: 1, rows: 1, y: 0, x: 6, name: 'Avg Fulfillment Time', icon: 'hourglass_full', analytic: '48 hrs', percentage: -0.05, type: 'card', isActive: true, tooltip: 'Average time taken from order placement to shipment.' },
+      { cols: 1, rows: 1, y: 0, x: 7, name: 'Top Seller', icon: 'star_rate', analytic: 'Product123', percentage: 0.12, type: 'card', isActive: true, tooltip: 'The product with the highest sales.' }
+    ];
+
+    return this.dashboard;
   }
 
   toggleDeleteMode(): void {
@@ -180,8 +217,6 @@ export class DashboardComponent implements OnInit {
     this.standaloneDeletions = [];
     this.toggleDeleteMode();
   }
-
-
 
   undoDeletions(): void {
     [...this.pendingDeletions, ...this.standaloneDeletions].forEach(item => item.isActive = true);
@@ -245,7 +280,7 @@ export class DashboardComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.cdr.detectChanges();
+    this.loadState(); // Load the state on initialization
     this.titleService.updateTitle('Dashboard');
     this.fetchData();
   }

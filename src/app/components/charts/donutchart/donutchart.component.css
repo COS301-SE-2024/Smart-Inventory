@@ -29,7 +29,7 @@
 }
 
 .chart-container {
-    height: 90px;
+    /* height: 80px; */
     z-index: 1;
     /* background-color: #e6e6e6; */
 }

@@ -1,181 +1,119 @@
 <mat-tab-group>
     <mat-tab label="Profile">
         <ng-container>
-            <div class="accounts-section">
-                <div class="accounts-row-two">
-                    <div class="form-container">
-                        <h4>Personal details</h4>
-                        <hr />
-                        <div class="form-row">
-                            <mat-form-field class="form-field">
-                                <mat-label>Name</mat-label>
-                                <input matInput placeholder="Name" [(ngModel)]="profile.name" />
-                            </mat-form-field>
-                            <mat-form-field class="form-field">
-                                <mat-label>Surname</mat-label>
-                                <input matInput placeholder="Surname" [(ngModel)]="profile.surname" />
-                            </mat-form-field>
-                        </div>
-                        <div class="form-row">
-                            <mat-form-field class="form-field">
-                                <mat-label>Email</mat-label>
-                                <input matInput placeholder="johndoe@mail.com" [(ngModel)]="profile.email" email />
-                                <mat-error *ngIf="emailFormControl.hasError('email')">
-                                    Please enter a valid email
-                                </mat-error>
-                            </mat-form-field>
-                        </div>
+            <div class="form-container">
+                <form style="height: 80vh; width: 40%">
+                    <h4>Personal details</h4>
+                    <hr />
+                    <div class="form-row">
+                        <mat-form-field class="form-field">
+                            <mat-label>Name</mat-label>
+                            <input matInput placeholder="Name" [(ngModel)]="profile.name" />
+                        </mat-form-field>
+                    </div>
+                    <div class="form-row">
+                        <mat-form-field class="form-field">
+                            <mat-label>Surname</mat-label>
+                            <input matInput placeholder="Surname" [(ngModel)]="profile.surname" />
+                        </mat-form-field>
+                    </div>
+                    <div class="form-row">
+                        <mat-form-field class="form-field">
+                            <mat-label>Email</mat-label>
+                            <input matInput placeholder="johndoe@mail.com" [(ngModel)]="profile.email" email />
+                            <mat-error *ngIf="emailFormControl.hasError('email')">
+                                Please enter a valid email
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
 
-                        <h4>Password</h4>
-                        <hr />
+                    <h4>Password</h4>
+                    <hr />
+                    <div class="form-row form-row-password">
+                        <mat-form-field class="form-field">
+                            <mat-label>Current Password</mat-label>
+                            <input
+                                matInput
+                                placeholder="Current Password"
+                                [(ngModel)]="password.current"
+                                type="password"
+                            />
+                        </mat-form-field>
+                        <button class="change-password-button" mat-button (click)="toggleChangePassword()">
+                            {{ changePasswordText }}
+                        </button>
+                        <button
+                            *ngIf="isChangePasswordVisible"
+                            class="cancel-password-button"
+                            mat-button
+                            (click)="cancelChangePassword()"
+                        >
+                            Cancel
+                        </button>
+                    </div>
+                    <div *ngIf="isChangePasswordVisible" class="form-row">
                         <div class="form-row form-row-password">
+                            <mat-form-field class="form-field">
+                                <mat-label>New Password</mat-label>
+                                <input matInput placeholder="New Password" [(ngModel)]="password.new" type="password" />
+                            </mat-form-field>
+                            <mat-form-field class="form-field">
+                                <mat-label>Confirm Email</mat-label>
+                                <input matInput placeholder="Confirm Email" [(ngModel)]="profile.confirmEmail" />
+                            </mat-form-field>
+                        </div>
+                    </div>
+
+                    <h4>Delete Account</h4>
+                    <hr />
+                    <button mat-button class="delete-button" (click)="toggleDeleteAccount()">Delete Account</button>
+                    <div *ngIf="isDeleteAccountVisible">
+                        <div class="form-row">
                             <mat-form-field class="form-field">
                                 <mat-label>Current Password</mat-label>
                                 <input
                                     matInput
                                     placeholder="Current Password"
-                                    [(ngModel)]="password.current"
+                                    [(ngModel)]="password.currentDelete"
                                     type="password"
                                 />
                             </mat-form-field>
-                            <button class="change-password-button" mat-button (click)="toggleChangePassword()">
-                                {{ changePasswordText }}
-                            </button>
-                            <button
-                                *ngIf="isChangePasswordVisible"
-                                class="cancel-password-button"
-                                mat-button
-                                (click)="cancelChangePassword()"
-                            >
-                                Cancel
-                            </button>
+                            <mat-form-field class="form-field">
+                                <mat-label>Confirm Email</mat-label>
+                                <input matInput placeholder="Confirm Email" [(ngModel)]="profile.confirmEmailDelete" />
+                            </mat-form-field>
                         </div>
-                        <div *ngIf="isChangePasswordVisible">
-                            <div class="form-row">
-                                <mat-form-field class="form-field">
-                                    <mat-label>New Password</mat-label>
-                                    <input
-                                        matInput
-                                        placeholder="New Password"
-                                        [(ngModel)]="password.new"
-                                        type="password"
-                                    />
-                                </mat-form-field>
-                                <mat-form-field class="form-field">
-                                    <mat-label>Confirm Email</mat-label>
-                                    <input matInput placeholder="Confirm Email" [(ngModel)]="profile.confirmEmail" />
-                                </mat-form-field>
-                            </div>
-                        </div>
-
-                        <h4>Delete Account</h4>
-                        <hr />
-                        <button mat-button class="delete-button" (click)="toggleDeleteAccount()">Delete Account</button>
-                        <div style="height: 10vh" *ngIf="isDeleteAccountVisible">
-                            <div class="form-row">
-                                <mat-form-field class="form-field">
-                                    <mat-label>Current Password</mat-label>
-                                    <input
-                                        matInput
-                                        placeholder="Current Password"
-                                        [(ngModel)]="password.currentDelete"
-                                        type="password"
-                                    />
-                                </mat-form-field>
-                                <mat-form-field class="form-field">
-                                    <mat-label>Confirm Email</mat-label>
-                                    <input
-                                        matInput
-                                        placeholder="Confirm Email"
-                                        [(ngModel)]="profile.confirmEmailDelete"
-                                    />
-                                </mat-form-field>
-                            </div>
-                            <button mat-raised-button class="confirm-delete-button" (click)="confirmDeleteAccount()">
-                                Confirm Delete
-                            </button>
-                        </div>
+                        <button mat-raised-button class="confirm-delete-button" (click)="confirmDeleteAccount()">
+                            Confirm Delete
+                        </button>
                     </div>
-                </div>
+                </form>
             </div>
         </ng-container>
     </mat-tab>
     <mat-tab label="Settings">
         <ng-container>
-            <mat-grid-list cols="1" rowHeight="10vh">
-                <mat-grid-tile rowspan="9">
-                    <div class="second-row">
-                        <div class="theme-selection-grid">
-                            <div
-                                class="theme-option"
-                                [ngClass]="{ 'selected-theme': currentTheme === 'light' }"
-                                (click)="selectTheme('light')"
-                            >
-                                <img src="assets/img/light-mode.png" alt="Light Mode" />
-                                <!-- <p>Light Mode</p> -->
-                            </div>
-                            <div
-                                class="theme-option"
-                                [ngClass]="{ 'selected-theme': currentTheme === 'dark' }"
-                                (click)="selectTheme('dark')"
-                            >
-                                <img src="assets/img/dark-mode.png" alt="Dark Mode" />
-                                <!-- <p>Dark Mode</p> -->
-                            </div>
-                        </div>
+            <div class="second-row" style="text-align: center">
+                <h4>Theme</h4>
+                <div class="theme-selection-grid">
+                    <div
+                        class="theme-option"
+                        [ngClass]="{ 'selected-theme': currentTheme === 'light' }"
+                        (click)="selectTheme('light')"
+                    >
+                        <img src="assets/img/light-mode.png" alt="Light Mode" />
+                        <!-- <p>Light Mode</p> -->
                     </div>
-                    <div class="notifications-row-two">
-                        <!-- Section One -->
-                        <div class="notifications-section-one">
-                            <div class="notification-row" *ngFor="let type of notificationTypes">
-                                <div class="notification-column">
-                                    <h4>{{ type.title }}</h4>
-                                </div>
-                                <div class="notification-column">
-                                    <mat-slide-toggle
-                                        [(ngModel)]="type.enabled"
-                                        color="primary"
-                                        (change)="toggleNotification(type)"
-                                    >
-                                        {{ type.enabled ? 'On' : 'Off' }}
-                                    </mat-slide-toggle>
-                                </div>
-                                <div class="notification-column">
-                                    <mat-form-field>
-                                        <mat-label>Select Option</mat-label>
-                                        <mat-select
-                                            class="make-this-white-please"
-                                            [disabled]="!type.enabled"
-                                            [(ngModel)]="type.frequency"
-                                        >
-                                            <mat-option value="daily">Daily</mat-option>
-                                            <mat-option value="immediate">Immediate</mat-option>
-                                            <mat-option value="weekly">Weekly</mat-option>
-                                        </mat-select>
-                                    </mat-form-field>
-                                </div>
-                            </div>
-                        </div>
-                        <div>
-                            <hr />
-                        </div>
-
-                        <!-- Section Two -->
-                        <div class="notifications-section-two">
-                            <h3>Notification Triggers</h3>
-                            <div class="trigger-row" *ngFor="let trigger of notificationTriggers">
-                                <div class="trigger-checkbox-column">
-                                    <mat-checkbox [(ngModel)]="trigger.enabled"> </mat-checkbox>
-                                </div>
-                                <div class="trigger-text-column">
-                                    <h4>{{ trigger.title }}</h4>
-                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-                                </div>
-                            </div>
-                        </div>
+                    <div
+                        class="theme-option"
+                        [ngClass]="{ 'selected-theme': currentTheme === 'dark' }"
+                        (click)="selectTheme('dark')"
+                    >
+                        <img src="assets/img/dark-mode.png" alt="Dark Mode" />
+                        <!-- <p>Dark Mode</p> -->
                     </div>
-                </mat-grid-tile>
-            </mat-grid-list>
+                </div>
+            </div>
         </ng-container>
     </mat-tab>
 </mat-tab-group>

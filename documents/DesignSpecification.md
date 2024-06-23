@@ -12,11 +12,11 @@ The document aims to provide a clear roadmap for developers to translate the vis
 ### Sign in and Create Account
 
 <div style="text-align: center;">
-    <img src="/media/Updated_Wireframes/CreateAccount2_WF.png" alt="Create Account">
+    <img src="/media/Pure Wireframes/CreateAccount.jpeg" alt="Create Account">
 </div>
 
 <div style="text-align: center;">
-    <img src="/media/Updated_Wireframes/SIgnin2_WF.png" alt="SignIn-dark">
+    <img src="/media/Pure Wireframes/SignIn.jpeg" alt="SignIn-dark">
 </div>
 
 ### Dashboard
@@ -29,19 +29,19 @@ The document aims to provide a clear roadmap for developers to translate the vis
 ### Teams
 
 <div style="text-align: center;">
-    <img src="/media/Updated_Wireframes/Team2_WF.png" alt="Dashboard-dark">
+    <img src="/media/Pure Wireframes/Team.jpeg" alt="Dashboard-dark">
 </div>
 
 ### Orders
 
 <div style="text-align: center;">
-    <img src="/media/Updated_Wireframes/Orders2_WF.png" alt="Orders-dark">
+    <img src="/media/Pure Wireframes/Orders.jpeg" alt="Orders-dark">
 </div>
 
 ### Inventory
 
 <div style="text-align: center;">
-    <img src="/media/Updated_Wireframes/Inventory2_WF.png" alt="Inventory-dark">
+    <img src="/media/Pure Wireframes/Inventory.jpeg" alt="Inventory-dark">
 </div>
 
 ### Settings
@@ -66,6 +66,10 @@ The document aims to provide a clear roadmap for developers to translate the vis
 ### Reports
 ### Requests
 ### Suppliers
+
+<div style="text-align: center;">
+    <img src="/media/Pure Wireframes/Suppliers.jpeg" alt="Settings-General-light">
+</div>
 
 
 ## Database Design

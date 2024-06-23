@@ -10,11 +10,13 @@ import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-c
 import outputs from '../../../../amplify_outputs.json';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { DeleteConfirmationDialogComponent } from './delete-confirmation-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
     selector: 'app-suppliers',
     standalone: true,
-    imports: [GridComponent, MatButtonModule, CommonModule, FormsModule],
+    imports: [GridComponent, MatButtonModule, CommonModule, FormsModule, DeleteConfirmationDialogComponent],
     templateUrl: './suppliers.component.html',
     styleUrl: './suppliers.component.css',
 })
@@ -64,7 +66,7 @@ export class SuppliersComponent implements OnInit {
 
     addButton = { text: 'Add New Supplier' };
 
-    constructor(private titleService: TitleService) {
+    constructor(private titleService: TitleService, private dialog: MatDialog) {
         Amplify.configure(outputs);
     }
 
@@ -177,75 +179,73 @@ export class SuppliersComponent implements OnInit {
         };
     }
 
-async onEditAddressSubmit(formData: any) {
-    try {
-      console.log('Updated address:', formData);
-  
-      const session = await fetchAuthSession();
-  
-      const cognitoClient = new CognitoIdentityProviderClient({
-        region: outputs.auth.aws_region,
-        credentials: session.credentials,
-      });
-  
-      const getUserCommand = new GetUserCommand({
-        AccessToken: session.tokens?.accessToken.toString(),
-      });
-      const getUserResponse = await cognitoClient.send(getUserCommand);
-  
-      const tenentId = getUserResponse.UserAttributes?.find(
-        (attr) => attr.Name === 'custom:tenentId'
-      )?.Value;
-  
-      if (!tenentId) {
-        throw new Error('TenentId not found in user attributes');
-      }
-  
-      const lambdaClient = new LambdaClient({
-        region: outputs.auth.aws_region,
-        credentials: session.credentials,
-      });
-  
-      const updatedData = {
-        supplierID: this.selectedSupplier.supplierID,
-        tenentId: tenentId,
-        address: formData,
-      };
-  
-      console.log('Updated data:', updatedData);
-  
-      const invokeCommand = new InvokeCommand({
-        FunctionName: 'editSupplier',
-        Payload: new TextEncoder().encode(JSON.stringify({ body: JSON.stringify(updatedData) })),
-      });
-  
-      console.log('Invoking editSupplier lambda function');
-  
-      const lambdaResponse = await lambdaClient.send(invokeCommand);
-      const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-  
-      console.log('Lambda response:', responseBody);
-  
-      if (responseBody.statusCode === 200) {
-        console.log('Supplier address updated successfully');
-        const updatedSupplier = JSON.parse(responseBody.body);
-        const index = this.rowData.findIndex((supplier) => supplier.supplierID === updatedSupplier.supplierID);
-        if (index !== -1) {
-          this.rowData[index].address = updatedSupplier.address;
-  
-          // Refresh the grid data
-          this.gridComponent.rowData = [...this.rowData];
+    async onEditAddressSubmit(formData: any) {
+        try {
+            console.log('Updated address:', formData);
+
+            const session = await fetchAuthSession();
+
+            const cognitoClient = new CognitoIdentityProviderClient({
+                region: outputs.auth.aws_region,
+                credentials: session.credentials,
+            });
+
+            const getUserCommand = new GetUserCommand({
+                AccessToken: session.tokens?.accessToken.toString(),
+            });
+            const getUserResponse = await cognitoClient.send(getUserCommand);
+
+            const tenentId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
+
+            if (!tenentId) {
+                throw new Error('TenentId not found in user attributes');
+            }
+
+            const lambdaClient = new LambdaClient({
+                region: outputs.auth.aws_region,
+                credentials: session.credentials,
+            });
+
+            const updatedData = {
+                supplierID: this.selectedSupplier.supplierID,
+                tenentId: tenentId,
+                address: formData,
+            };
+
+            console.log('Updated data:', updatedData);
+
+            const invokeCommand = new InvokeCommand({
+                FunctionName: 'editSupplier',
+                Payload: new TextEncoder().encode(JSON.stringify({ body: JSON.stringify(updatedData) })),
+            });
+
+            console.log('Invoking editSupplier lambda function');
+
+            const lambdaResponse = await lambdaClient.send(invokeCommand);
+            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+
+            console.log('Lambda response:', responseBody);
+
+            if (responseBody.statusCode === 200) {
+                console.log('Supplier address updated successfully');
+                const updatedSupplier = JSON.parse(responseBody.body);
+                const index = this.rowData.findIndex((supplier) => supplier.supplierID === updatedSupplier.supplierID);
+                if (index !== -1) {
+                    this.rowData[index].address = updatedSupplier.address;
+
+                    // Refresh the grid data
+                    this.gridComponent.rowData = [...this.rowData];
+                }
+                this.closeEditAddressPopup();
+            } else {
+                throw new Error(responseBody.body);
+            }
+        } catch (error) {
+            console.error('Error updating supplier address:', error);
+            alert(`Error updating supplier address: ${(error as Error).message}`);
         }
-        this.closeEditAddressPopup();
-      } else {
-        throw new Error(responseBody.body);
-      }
-    } catch (error) {
-      console.error('Error updating supplier address:', error);
-      alert(`Error updating supplier address: ${(error as Error).message}`);
     }
-  }
-  
+
     async onSubmit(formData: any) {
         try {
             const session = await fetchAuthSession();
@@ -310,19 +310,85 @@ async onEditAddressSubmit(formData: any) {
 
     handleRowsToDelete(rows: any[]) {
         this.rowsToDelete = rows;
-        this.showDeletePopup = true;
+        this.openDeleteConfirmationDialog();
+    }
+
+    openDeleteConfirmationDialog() {
+        if (this.rowsToDelete.length > 0) {
+            const dialogRef = this.dialog.open(DeleteConfirmationDialogComponent, {
+                width: '350px',
+                data: {
+                    given_name: this.rowsToDelete[0].company_name,
+                    family_name: '',
+                    email: this.rowsToDelete[0].contact_email,
+                },
+            });
+
+            dialogRef.componentInstance.deleteConfirmed.subscribe(() => {
+                this.confirmDelete();
+                dialogRef.close();
+            });
+        }
     }
 
     async confirmDelete() {
-        // Implement the logic to delete the selected suppliers
-        // You can iterate over the rowsToDelete array and make API calls
-        // or invoke lambda functions to delete each supplier
-        // After successful deletion, reload the suppliers data
-        // this.loadSuppliersData();
-        // Close the delete popup
-        // this.showDeletePopup = false;
-        // Clear the rowsToDelete array
-        // this.rowsToDelete = [];
+        if (this.rowsToDelete.length > 0) {
+            for (const row of this.rowsToDelete) {
+                await this.deleteSupplier(row.supplierID);
+            }
+            this.gridComponent.removeConfirmedRows(this.rowsToDelete);
+            this.rowsToDelete = [];
+            await this.loadSuppliersData(); // Refresh the data after deletion
+        }
+    }
+
+    async deleteSupplier(supplierID: string) {
+        try {
+            const session = await fetchAuthSession();
+
+            const cognitoClient = new CognitoIdentityProviderClient({
+                region: outputs.auth.aws_region,
+                credentials: session.credentials,
+            });
+
+            const getUserCommand = new GetUserCommand({
+                AccessToken: session.tokens?.accessToken.toString(),
+            });
+            const getUserResponse = await cognitoClient.send(getUserCommand);
+
+            const tenantId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
+
+            if (!tenantId) {
+                throw new Error('TenantId not found in user attributes');
+            }
+
+            const lambdaClient = new LambdaClient({
+                region: outputs.auth.aws_region,
+                credentials: session.credentials,
+            });
+
+            const payload = JSON.stringify({
+                supplierID: supplierID,
+                tenentId: tenantId,
+            });
+
+            const invokeCommand = new InvokeCommand({
+                FunctionName: 'deleteSupplier',
+                Payload: new TextEncoder().encode(JSON.stringify({ body: payload })),
+            });
+
+            const lambdaResponse = await lambdaClient.send(invokeCommand);
+            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+
+            if (responseBody.statusCode === 200) {
+                console.log('Supplier deleted successfully');
+            } else {
+                throw new Error(responseBody.body);
+            }
+        } catch (error) {
+            console.error('Error deleting supplier:', error);
+            alert(`Error deleting supplier: ${(error as Error).message}`);
+        }
     }
 
     cancelDelete() {
@@ -330,65 +396,61 @@ async onEditAddressSubmit(formData: any) {
         this.rowsToDelete = [];
     }
 
-async handleCellValueChanged(event: { data: any; field: string; newValue: any }) {
-    try {
-      const session = await fetchAuthSession();
-  
-      const cognitoClient = new CognitoIdentityProviderClient({
-        region: outputs.auth.aws_region,
-        credentials: session.credentials,
-      });
-  
-      const getUserCommand = new GetUserCommand({
-        AccessToken: session.tokens?.accessToken.toString(),
-      });
-      const getUserResponse = await cognitoClient.send(getUserCommand);
-  
-      const tenentId = getUserResponse.UserAttributes?.find(
-        (attr) => attr.Name === 'custom:tenentId'
-      )?.Value;
-  
-      if (!tenentId) {
-        throw new Error('TenentId not found in user attributes');
-      }
-  
-      const lambdaClient = new LambdaClient({
-        region: outputs.auth.aws_region,
-        credentials: session.credentials,
-      });
-  
-      const updatedData = {
-        supplierID: event.data.supplierID,
-        tenentId: tenentId,
-        [event.field]: event.newValue,
-      };
-  
-      const invokeCommand = new InvokeCommand({
-        FunctionName: 'editSupplier',
-        Payload: new TextEncoder().encode(JSON.stringify({ body: JSON.stringify(updatedData) })),
-      });
-  
-      const lambdaResponse = await lambdaClient.send(invokeCommand);
-      const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-  
-      if (responseBody.statusCode === 200) {
-        console.log('Supplier updated successfully');
-        // Update the local data to reflect the change
-        const updatedSupplier = JSON.parse(responseBody.body);
-        const index = this.rowData.findIndex((supplier) => supplier.supplierID === updatedSupplier.supplierID);
-        if (index !== -1) {
-          this.rowData[index] = { ...this.rowData[index], ...updatedSupplier };
-        }
-      } else {
-        throw new Error(responseBody.body);
-      }
-    } catch (error) {
-      console.error('Error updating supplier:', error);
-      alert(`Error updating supplier: ${(error as Error).message}`);
-      // Revert the change in the grid
-      this.gridComponent.updateRow(event.data);
-    }
-  }
-  
+    async handleCellValueChanged(event: { data: any; field: string; newValue: any }) {
+        try {
+            const session = await fetchAuthSession();
 
+            const cognitoClient = new CognitoIdentityProviderClient({
+                region: outputs.auth.aws_region,
+                credentials: session.credentials,
+            });
+
+            const getUserCommand = new GetUserCommand({
+                AccessToken: session.tokens?.accessToken.toString(),
+            });
+            const getUserResponse = await cognitoClient.send(getUserCommand);
+
+            const tenentId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
+
+            if (!tenentId) {
+                throw new Error('TenentId not found in user attributes');
+            }
+
+            const lambdaClient = new LambdaClient({
+                region: outputs.auth.aws_region,
+                credentials: session.credentials,
+            });
+
+            const updatedData = {
+                supplierID: event.data.supplierID,
+                tenentId: tenentId,
+                [event.field]: event.newValue,
+            };
+
+            const invokeCommand = new InvokeCommand({
+                FunctionName: 'editSupplier',
+                Payload: new TextEncoder().encode(JSON.stringify({ body: JSON.stringify(updatedData) })),
+            });
+
+            const lambdaResponse = await lambdaClient.send(invokeCommand);
+            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+
+            if (responseBody.statusCode === 200) {
+                console.log('Supplier updated successfully');
+                // Update the local data to reflect the change
+                const updatedSupplier = JSON.parse(responseBody.body);
+                const index = this.rowData.findIndex((supplier) => supplier.supplierID === updatedSupplier.supplierID);
+                if (index !== -1) {
+                    this.rowData[index] = { ...this.rowData[index], ...updatedSupplier };
+                }
+            } else {
+                throw new Error(responseBody.body);
+            }
+        } catch (error) {
+            console.error('Error updating supplier:', error);
+            alert(`Error updating supplier: ${(error as Error).message}`);
+            // Revert the change in the grid
+            this.gridComponent.updateRow(event.data);
+        }
+    }
 }

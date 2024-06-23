@@ -5,6 +5,7 @@
         [addButton]="addButton"
         (addNewClicked)="openAddSupplierPopup()"
         (itemToUpdate)="handleCellValueChanged($event)"
+        (rowsToDelete)="handleRowsToDelete($event)"
         #gridComponent
     >
     </app-grid>

@@ -25,6 +25,15 @@ export class SuppliersComponent implements OnInit {
     showAddPopup = false;
     showDeletePopup = false;
     rowsToDelete: any[] = [];
+    showEditAddressPopup = false;
+    editAddress = {
+        street: '',
+        city: '',
+        state_province: '',
+        postal_code: '',
+        country: '',
+    };
+    selectedSupplier: any;
     supplier = {
         company_name: '',
         contact_name: '',
@@ -49,6 +58,7 @@ export class SuppliersComponent implements OnInit {
             field: 'address',
             headerName: 'Address',
             valueGetter: (params: any) => this.getAddressString(params.data.address),
+            onCellClicked: (params: any) => this.onAddressCellClicked(params.data),
         },
     ];
 
@@ -128,6 +138,10 @@ export class SuppliersComponent implements OnInit {
         this.showAddPopup = true;
     }
 
+    onAddressCellClicked(supplier: any) {
+        this.openEditAddressPopup(supplier);
+    }
+
     closeAddPopup() {
         this.showAddPopup = false;
         this.supplier = {
@@ -143,6 +157,37 @@ export class SuppliersComponent implements OnInit {
                 country: '',
             },
         };
+    }
+
+    openEditAddressPopup(supplier: any) {
+        this.selectedSupplier = supplier;
+        this.editAddress = { ...supplier.address };
+        this.showEditAddressPopup = true;
+    }
+
+    closeEditAddressPopup() {
+        this.showEditAddressPopup = false;
+        this.selectedSupplier = null;
+        this.editAddress = {
+            street: '',
+            city: '',
+            state_province: '',
+            postal_code: '',
+            country: '',
+        };
+    }
+
+    async onEditAddressSubmit(formData: any) {
+        try {
+            console.log('Updated address:', formData);
+            // Implement the logic to update the supplier's address
+            // You can make an API call or invoke a lambda function to update the address
+            // After successful update, you can update the local rowData to reflect the changes
+            // Close the edit address popup
+            this.closeEditAddressPopup();
+        } catch (error) {
+            console.error('Error updating address:', error);
+        }
     }
 
     async onSubmit(formData: any) {
@@ -176,16 +221,16 @@ export class SuppliersComponent implements OnInit {
                 contact_email: formData.contact_email,
                 phone_number: formData.phone_number,
                 address: {
-                  street: formData.street,
-                  city: formData.city,
-                  state_province: formData.state_province,
-                  postal_code: formData.postal_code,
-                  country: formData.country,
+                    street: formData.street,
+                    city: formData.city,
+                    state_province: formData.state_province,
+                    postal_code: formData.postal_code,
+                    country: formData.country,
                 },
                 tenentId: tenantId,
-              };
+            };
 
-            console.log(payload);  
+            console.log(payload);
 
             const invokeCommand = new InvokeCommand({
                 FunctionName: 'addSupplier',

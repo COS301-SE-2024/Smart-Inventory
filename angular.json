@@ -30,6 +30,8 @@
             "styles": [
               "@angular/material/prebuilt-themes/azure-blue.css",
               "node_modules/@aws-amplify/ui-angular/theme.css",
+              "node_modules/ag-grid-community/styles/ag-grid.css",
+              "node_modules/ag-grid-community/styles/ag-theme-alpine.css",
               "src/styles.css"
             ],
             "scripts": []

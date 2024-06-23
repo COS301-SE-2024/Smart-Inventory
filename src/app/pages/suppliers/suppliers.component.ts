@@ -315,21 +315,20 @@ export class SuppliersComponent implements OnInit {
 
     openDeleteConfirmationDialog() {
         if (this.rowsToDelete.length > 0) {
-            const dialogRef = this.dialog.open(DeleteConfirmationDialogComponent, {
-                width: '350px',
-                data: {
-                    given_name: this.rowsToDelete[0].company_name,
-                    family_name: '',
-                    email: this.rowsToDelete[0].contact_email,
-                },
-            });
-
-            dialogRef.componentInstance.deleteConfirmed.subscribe(() => {
-                this.confirmDelete();
-                dialogRef.close();
-            });
+          const dialogRef = this.dialog.open(DeleteConfirmationDialogComponent, {
+            width: '350px',
+            data: {
+              company_name: this.rowsToDelete[0].company_name,
+              contact_email: this.rowsToDelete[0].contact_email,
+            },
+          });
+      
+          dialogRef.componentInstance.deleteConfirmed.subscribe(() => {
+            this.confirmDelete();
+            dialogRef.close();
+          });
         }
-    }
+      }
 
     async confirmDelete() {
         if (this.rowsToDelete.length > 0) {

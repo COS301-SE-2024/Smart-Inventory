@@ -1,13 +1,13 @@
-// delete-confirmation-dialog.component.ts
 import { Component, EventEmitter, Inject, Output } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { CommonModule } from '@angular/common';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-delete-confirmation-dialog',
   standalone: true,
-  imports: [CommonModule, MatButtonModule],
+  imports: [MatDialogModule, MatButtonModule, CommonModule],
   template: `
     <h2 mat-dialog-title>Confirmation</h2>
     <div mat-dialog-content>

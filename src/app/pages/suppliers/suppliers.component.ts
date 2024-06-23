@@ -30,7 +30,13 @@ export class SuppliersComponent implements OnInit {
         contact_name: '',
         contact_email: '',
         phone_number: '',
-        address: {},
+        address: {
+            street: '',
+            city: '',
+            state_province: '',
+            postal_code: '',
+            country: '',
+        },
     };
 
     colDefs: ColDef[] = [
@@ -39,7 +45,11 @@ export class SuppliersComponent implements OnInit {
         { field: 'contact_name', headerName: 'Contact Name' },
         { field: 'contact_email', headerName: 'Contact Email' },
         { field: 'phone_number', headerName: 'Phone Number' },
-        { field: 'address', headerName: 'Address', valueGetter: (params: any) => this.getAddressString(params.data.address) },
+        {
+            field: 'address',
+            headerName: 'Address',
+            valueGetter: (params: any) => this.getAddressString(params.data.address),
+        },
     ];
 
     addButton = { text: 'Add New Supplier' };
@@ -67,9 +77,7 @@ export class SuppliersComponent implements OnInit {
             });
             const getUserResponse = await cognitoClient.send(getUserCommand);
 
-            const tenantId = getUserResponse.UserAttributes?.find(
-                (attr) => attr.Name === 'custom:tenentId'
-            )?.Value;
+            const tenantId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
 
             if (!tenantId) {
                 console.error('TenantId not found in user attributes');
@@ -127,18 +135,76 @@ export class SuppliersComponent implements OnInit {
             contact_name: '',
             contact_email: '',
             phone_number: '',
-            address: {},
+            address: {
+                street: '',
+                city: '',
+                state_province: '',
+                postal_code: '',
+                country: '',
+            },
         };
     }
 
     async onSubmit(formData: any) {
-        // Implement the logic to submit the new supplier data
-        // You can use the formData object to access the form values
-        // and make an API call or invoke a lambda function to add the supplier
-        // After successful submission, reload the suppliers data
-        // this.loadSuppliersData();
-        // Close the add popup
-        // this.closeAddPopup();
+        try {
+            const session = await fetchAuthSession();
+
+            const cognitoClient = new CognitoIdentityProviderClient({
+                region: outputs.auth.aws_region,
+                credentials: session.credentials,
+            });
+
+            const getUserCommand = new GetUserCommand({
+                AccessToken: session.tokens?.accessToken.toString(),
+            });
+            const getUserResponse = await cognitoClient.send(getUserCommand);
+
+            const tenantId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
+
+            if (!tenantId) {
+                throw new Error('TenantId not found in user attributes');
+            }
+
+            const lambdaClient = new LambdaClient({
+                region: outputs.auth.aws_region,
+                credentials: session.credentials,
+            });
+
+            const payload = {
+                company_name: formData.company_name,
+                contact_name: formData.contact_name,
+                contact_email: formData.contact_email,
+                phone_number: formData.phone_number,
+                address: {
+                  street: formData.street,
+                  city: formData.city,
+                  state_province: formData.state_province,
+                  postal_code: formData.postal_code,
+                  country: formData.country,
+                },
+                tenentId: tenantId,
+              };
+
+            console.log(payload);  
+
+            const invokeCommand = new InvokeCommand({
+                FunctionName: 'addSupplier',
+                Payload: new TextEncoder().encode(JSON.stringify(payload)),
+            });
+
+            const lambdaResponse = await lambdaClient.send(invokeCommand);
+            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+
+            if (responseBody.statusCode === 201) {
+                console.log('Supplier added successfully');
+                await this.loadSuppliersData();
+                this.closeAddPopup();
+            } else {
+                throw new Error(responseBody.body);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
     }
 
     handleRowsToDelete(rows: any[]) {

@@ -173,6 +173,44 @@ This feature provides a flexible way to customize the dashboard to fit your spec
   <img src="/media/Pages/Settings/Settings - Profile.png">
 </div>
 
+**Settings:**
+The Settings page allows users to manage their personal details, account security, and application preferences. This guide provides step-by-step instructions on how to use each feature within the Settings page.
+
+## Profile Tab
+
+### Personal Details
+- **Updating Name and Email**:
+  1. Within the Profile tab, locate the fields for 'Name' and 'Email'.
+  2. Enter the new details into the appropriate fields.
+
+### Password
+- **Changing Your Password**:
+  1. In the 'Password' section, input your current password.
+  2. Type your new password and confirm it in the designated fields.
+  3. Click 'Change Password' to secure your account with the new password.
+
+### Delete Account
+- **How to Delete Your Account**:
+  1. Scroll to the 'Delete Account' button at the bottom of the Profile tab.
+  2. Click 'Delete Account' and confirm your decision with the correct details.
+  3. Please note that this action is irreversible.
+
+## Settings Tab
+
+### Theme Settings
+- **Choosing a Theme**:
+  1. Toggle between 'Light Mode' and 'Dark Mode' to suit your visual preference.
+  2. The interface will update immediately to reflect your choice.
+
+### Notification Triggers
+- **Setting Up Notifications**:
+  1. Under 'Notification Triggers', you can opt to receive notifications for specific inventory-related events.
+  2. Check the boxes next to events like 'Low Stock', 'New Inventory Added', or specific updates you wish to be alerted about.
+
+### Tips for Effective Configuration:
+- **Stay Updated**: Regularly review and update your personal information to ensure that all communications and notifications are correctly received.
+- **Enhance Security**: Change your password periodically to maintain account security.
+- **Customize Your Experience**: Adjust theme settings and notification preferences to make the app more comfortable and useful to you.
 
 
 <div align="center">
@@ -180,21 +218,13 @@ This feature provides a flexible way to customize the dashboard to fit your spec
   <!-- Container for images -->
   <div style="display: flex; flex-wrap: wrap; justify-content: space-around; align-items: center; gap: 20px; max-width: 800px; margin: auto;">
     <!-- First Row -->
-    <div style="flex: 1 1 50%; text-align: center;">
-      <img src="/media/Pages/Help/FAQs.png" style="width: 100%; max-width: 300px;">
+    <div style="flex: 1 1 50%; text-align: center; min-height: 300px;">
+      <img src="/media/Pages/Help/FAQs.png" style="width: 100%; max-width: 300px; max-height: 300px;">
     </div>
-    <div style="flex: 1 1 50%; text-align: center;">
-      <img src="/media/Pages/Help/UserGuides.png" style="width: 100%; max-width: 300px;">
-    </div>
-    <!-- Second Row -->
-    <div style="flex: 1 1 50%; text-align: center;">
-      <img src="/media/Pages/Help/Troubleshooting.png" style="width: 100%; max-width: 300px;">
-    </div>
-    <div style="flex: 1 1 50%; text-align: center;">
-      <img src="/media/Pages/Help/ContactSupport.png" style="width: 100%; max-width: 300px;">
-    </div>
+
   </div>
 </div>
+
 
 
 **Help:**
@@ -380,3 +410,4 @@ For direct assistance or when you encounter issues not covered in the manuals or
 
 
 The Help page is an essential resource for users to understand how to utilize the application effectively, troubleshoot issues, and get detailed instructions for specific tasks. Users are encouraged to explore this section to enhance their proficiency with the application.
+

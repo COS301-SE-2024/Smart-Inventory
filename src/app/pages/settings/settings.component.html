@@ -128,32 +128,7 @@
                         <!-- Section One -->
                         <div class="notifications-section-one">
                             <div class="notification-row" *ngFor="let type of notificationTypes">
-                                <div class="notification-column">
-                                    <h4>{{ type.title }}</h4>
-                                </div>
-                                <div class="notification-column">
-                                    <mat-slide-toggle
-                                        [(ngModel)]="type.enabled"
-                                        color="primary"
-                                        (change)="toggleNotification(type)"
-                                    >
-                                        {{ type.enabled ? 'On' : 'Off' }}
-                                    </mat-slide-toggle>
-                                </div>
-                                <div class="notification-column">
-                                    <mat-form-field>
-                                        <mat-label>Select Option</mat-label>
-                                        <mat-select
-                                            class="make-this-white-please"
-                                            [disabled]="!type.enabled"
-                                            [(ngModel)]="type.frequency"
-                                        >
-                                            <mat-option value="daily">Daily</mat-option>
-                                            <mat-option value="immediate">Immediate</mat-option>
-                                            <mat-option value="weekly">Weekly</mat-option>
-                                        </mat-select>
-                                    </mat-form-field>
-                                </div>
+                                
                             </div>
                         </div>
                         <div>

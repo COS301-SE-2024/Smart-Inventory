@@ -29,7 +29,8 @@ A user will be brought to this page either through an email link or when they op
 * If a user has not been given a password or has forgotten it they can press the 'forgot password?' link.
 * This will firstly send the email to the admin user of the team the email provided is apart of to make them aware of the sign in attempt.
 * The user asking for the change will also receive a mail to verify the account and to change the password.
-* If a user is signed in the can also change the password in their settings.
+* Then redirects them to the reset password page.
+  * There they should follow the reset password section of the manual.
 
 <br>
   
@@ -42,14 +43,12 @@ A user will be brought to this page either through an email link or when they op
 <div align="center">
   <h3>Create Account</h3>
   <img src="/media/wireframes/CreateAcc_dark.png">
-  <img src="/media/wireframes/CreateAcc_light.png">
 </div>
 
 **Create Account with details:**
 * An admin user will be brought to this page when they open the app at their own volition, allowing them to take further action.
 * The admin user will enter their name, surname, the companies name, their email or the companies email, a password and be asked to repeat that same password in the corresponding fields.
 * The admin is asked to repeat the password for validation purposes and to make sure correct password is given.
-* Once the admin user has filled in these details they should agree on the terms and conditions as well to consent to the apps terms and conditions.
 * The user will now be able to press the Create Account button to allow them to take further actions on the actual system(only if the details provided are correct).
 * If the details are incorrect the admin user will be notified with error messages over the field that they have provided incorrect details to.
 * The admin user can choose to try again to correctly input the details.
@@ -62,11 +61,18 @@ A user will be brought to this page either through an email link or when they op
 
 <br>
 
-**Dark or Light mode display:**
-* The user can also choose their page display setting through the toggle button in the bottom right corner according to their preference.
-* This display preference can be changed in settings in the actual system when account has been created.
+<div align="center">
+  <h3>Reset Password</h3>
+  <img src="/media/wireframes/CreateAcc_dark.png">
+</div>
 
-<br>
+**Reset Pasword:**
+A user will be brought to this page either through when "forgot password?" link is pressed on the sign in page.
+* The user will need to provide their email to get email for verification code.
+  *  Once input is provided and is correct they can press the send code button to recive the code to change their password.
+    
+**If a user wants to go back to sign in:**
+*  User should click on he "Back to sign in" link redirecting them to sign in.
 
 <div align="center">
   <h3>Dashboard</h3>

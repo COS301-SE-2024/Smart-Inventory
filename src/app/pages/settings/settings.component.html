@@ -1,4 +1,3 @@
-<!-- settings.component.html -->
 <mat-tab-group>
     <mat-tab label="Profile">
         <ng-container>
@@ -23,12 +22,15 @@
                             <div class="form-row">
                                 <mat-form-field class="form-field">
                                     <mat-label>Email</mat-label>
-                                    <input matInput placeholder="johndoe@mail.com" [(ngModel)]="profile.email" email name="email" />
+                                    <input matInput placeholder="johndoe@mail.com" [formControl]="emailFormControl" email name="email" />
                                     <mat-error *ngIf="emailFormControl.hasError('email')">
                                         Please enter a valid email
                                     </mat-error>
                                 </mat-form-field>
                             </div>
+                            <button mat-raised-button color="primary" (click)="saveProfileChanges()">
+                                Save Changes
+                            </button>
 
                             <h4>Password</h4>
                             <hr />
@@ -89,7 +91,7 @@
                                 </div>
                                 <button
                                     mat-raised-button
-                                    colour = "warn"
+                                    color="warn"
                                     class="confirm-delete-button"
                                     (click)="handleDeleteAccount()"
                                 >

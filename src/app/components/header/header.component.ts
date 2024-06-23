@@ -3,6 +3,8 @@ import { MaterialModule } from '../material/material.module';
 import { signOut, fetchUserAttributes } from 'aws-amplify/auth';
 import { Router } from '@angular/router';
 import { TitleService } from './title.service';
+import { CognitoService } from '../../_services/cognito.service';
+import { AuthenticatorService } from '@aws-amplify/ui-angular';
 
 @Component({
   selector: 'app-header',
@@ -16,20 +18,28 @@ export class HeaderComponent implements OnInit {
   userName: string = '';
   userEmail: string = '';
 
-  constructor(private router: Router, private titleService: TitleService) {}
+  constructor(
+    private titleService: TitleService,
+    private cognitoService: CognitoService,
+    private auth: AuthenticatorService,
+    private router: Router
+  ) {}
 
-  async ngOnInit() {
-    this.titleService.currentTitle.subscribe(title => {
-      this.pageTitle = title;
-    });
+  ngOnInit() {
+    this.titleService.currentTitle.subscribe(title => this.pageTitle = title);
+    this.loadUserInfo();
+  }
 
-    try {
-      const userAttributes = await fetchUserAttributes();
-      this.userName = `${userAttributes.given_name || ''} ${userAttributes.family_name || ''}`.trim();
-      this.userEmail = userAttributes.email || '';
-    } catch (error) {
-      console.error('Error fetching user attributes:', error);
-    }
+  loadUserInfo() {
+    this.cognitoService.getCurrentUserAttributes().subscribe(
+      (attributes) => {
+        this.userName = `${attributes['given_name'] || ''} ${attributes['family_name'] || ''}`.trim();
+        this.userEmail = attributes['email'] || '';
+      },
+      (error) => {
+        console.error('Error loading user info:', error);
+      }
+    );
   }
 
   async logout() {

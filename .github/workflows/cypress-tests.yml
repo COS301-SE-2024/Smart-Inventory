@@ -31,7 +31,7 @@ jobs:
 
       - name: Run Amplify sandbox
         run: |
-          npx ampx sandbox --outputs-format json --outputs-out-dir ./amplify-output --once
+          npx ampx sandbox --outputs-format json --outputs-out-dir ./ --once
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

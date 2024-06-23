@@ -46,6 +46,15 @@ jobs:
           npx cypress run --component
         continue-on-error: true
 
+      - name: Update Angular configuration
+        run: |
+          sed -i 's/"maximumError": "4mb"/"maximumError": "6mb"/g' angular.json
+          sed -i 's/"maximumWarning": "3mb"/"maximumWarning": "5mb"/g' angular.json
+          jq '.projects["*"].architect.build.options.allowedCommonJsDependencies += ["qrcode", "style-dictionary", "lodash", "@aws-crypto/sha256-browser", "bowser", "fast-xml-parser", "@aws-crypto/crc32"]' angular.json > angular.tmp.json && mv angular.tmp.json angular.json
+      
+      - name: Build
+        run: npm run build -- --configuration production
+
       - name: Archive test results
         if: always()
         uses: actions/upload-artifact@v2

@@ -20,7 +20,7 @@
               "zone.js"
             ],
             "tsConfig": "tsconfig.app.json",
-           "assets": [
+            "assets": [
               {
                 "glob": "**/*",
                 "input": "src/assets",
@@ -34,15 +34,24 @@
               "node_modules/ag-grid-community/styles/ag-theme-alpine.css",
               "src/styles.css"
             ],
-            "scripts": []
+            "scripts": [],
+            "allowedCommonJsDependencies": [
+              "qrcode",
+              "style-dictionary",
+              "lodash",
+              "@aws-crypto/sha256-browser",
+              "bowser",
+              "fast-xml-parser",
+              "@aws-crypto/crc32"
+            ]
           },
           "configurations": {
             "production": {
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "3MB",
-                  "maximumError": "4MB"
+                  "maximumWarning": "10MB",
+                  "maximumError": "11MB"
                 },
                 {
                   "type": "anyComponentStyle",

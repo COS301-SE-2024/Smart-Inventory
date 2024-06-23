@@ -29,23 +29,20 @@ export class BarchartComponent implements AfterViewInit {
     this.chartOptions = {
       data: seriesData.flatMap(series => series),
       title: {
-        text: "Direct VS Affliators",
-      },
-      footnote: {
-        text: "Source: Department for Digital, Culture, Media & Sport",
+        text: "Sales vs. Sales Target Comparison",
       },
       series: [
         {
           type: "bar",
           xKey: "month",
           yKey: "Direct",
-          yName: "Direct",
+          yName: "Actual Sales",
         },
         {
           type: "bar",
           xKey: "month",
-          yKey: "Affiliate Driven",
-          yName: "Affiliate Driven",
+          yKey: "Target",
+          yName: "Sales Target",
         },
       ],
       axes: [
@@ -60,7 +57,7 @@ export class BarchartComponent implements AfterViewInit {
           type: "number",
           position: "left",
           title: {
-            text: "Total Visitors",
+            text: "Sales Values",
           },
           label: {
             formatter: ({ value }) => this.formatNumber(value),
@@ -77,20 +74,20 @@ export class BarchartComponent implements AfterViewInit {
   getSeriesDataByYear(year: string) {
     const data: DataYearly = {
       '2024': [
-        { name: 'Direct', data: [450, 700, 300, 500, 800, 300, 700, 600, 300, 400, 900, 800] },
-        { name: 'Affiliate Driven', data: [200, 300, 150, 200, 350, 150, 200, 250, 150, 200, 350, 300] }
+        { name: 'Direct', data: [450, 700, 600, 520, 810, 680, 720, 760, 500, 600, 850, 890] },
+        { name: 'Target', data: [400, 680, 590, 500, 800, 670, 710, 750, 480, 590, 840, 880] }
       ],
       '2023': [
-        { name: 'Direct', data: [400, 600, 250, 450, 750, 250, 650, 550, 250, 350, 850, 750] },
-        { name: 'Affiliate Driven', data: [180, 250, 100, 150, 300, 100, 150, 200, 100, 150, 300, 250] }
+        { name: 'Direct', data: [400, 650, 550, 500, 750, 640, 700, 740, 480, 580, 830, 870] },
+        { name: 'Target', data: [380, 630, 530, 480, 730, 620, 690, 730, 460, 560, 820, 860] }
       ],
       '2022': [
-        { name: 'Direct', data: [350, 500, 200, 400, 700, 200, 600, 500, 200, 300, 800, 700] },
-        { name: 'Affiliate Driven', data: [160, 200, 90, 140, 250, 90, 140, 190, 90, 140, 250, 200] }
+        { name: 'Direct', data: [350, 600, 500, 450, 700, 590, 650, 690, 430, 530, 780, 820] },
+        { name: 'Target', data: [330, 580, 480, 430, 680, 570, 640, 680, 410, 510, 770, 810] }
       ],
       '2021': [
-        { name: 'Direct', data: [300, 450, 150, 350, 650, 150, 550, 450, 150, 250, 750, 650] },
-        { name: 'Affiliate Driven', data: [140, 180, 80, 130, 200, 80, 130, 180, 80, 130, 200, 180] }
+        { name: 'Direct', data: [300, 550, 450, 400, 650, 540, 600, 640, 380, 480, 730, 770] },
+        { name: 'Target', data: [280, 530, 430, 380, 630, 520, 590, 630, 360, 460, 720, 760] }
       ]
     };
     return data[year] || data['2024']; // Fallback to 2024 if year is not found
@@ -98,20 +95,20 @@ export class BarchartComponent implements AfterViewInit {
 
   getDataByYear(year: string) {
     const yearlyData = this.getSeriesDataByYear(year);
-    // We need to create a single array where each element has month, Direct, and Affiliate Driven keys
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     const combinedData = [];
-
+  
     for (let i = 0; i < 12; i++) {
       combinedData.push({
         month: months[i],
-        Direct: yearlyData[0].data[i], // assuming Direct is always the first array element
-        'Affiliate Driven': yearlyData[1].data[i] // assuming Affiliate Driven is always the second
+        Direct: yearlyData[0].data[i], // Direct sales
+        Target: yearlyData[1].data[i]  // Sales target
       });
     }
-
+  
     return combinedData;
   }
+  
 
   constructor(private renderer: Renderer2, private el: ElementRef) {
     this.chartOptions = {};

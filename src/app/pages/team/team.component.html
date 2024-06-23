@@ -1,9 +1,10 @@
-<div class="grid-container" *ngIf="colDefs.length > 0 && rowData.length > 0">
+<div class="grid-container">
     <app-grid
         [rowData]="rowData"
         [columnDefs]="colDefs"
         [addButton]="addButton"
-        (addButtonClicked)="openAddMemberPopup()"
+        (addNewClicked)="openAddMemberPopup()"
+        #gridComponent
     >
     </app-grid>
 </div>

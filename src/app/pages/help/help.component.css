@@ -203,7 +203,7 @@
 }
 
 .content .second-row .right-pane .faq-section .faq-row {
-    width: 100%;
+    width: fit-content;
 }
 
 .content .second-row .right-pane .faq-section .faq-row.faq-row-one {
@@ -642,8 +642,8 @@ mat-form-field.mat-mdc-form-field.mat-mdc-form-field-type-mat-input.mat-form-fie
 .mat-mdc-tab-body-content.ng-trigger.ng-trigger-translateTab {
     height: 100vh;
     overflow: scroll;
+    padding-right: 30px;
 }
-
 /* .user-guides-row-one h2 {
     margin: 0;
     font-size: 60px;

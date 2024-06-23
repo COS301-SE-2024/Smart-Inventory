@@ -94,12 +94,6 @@ Usability:
 Security:
 * Allowing layered controls like firewalls, access controls, and encryption at different layers make it harder to breach the system. Data protection as data is secured at rest and in transit using encryption. Allows for separation of duties limiting user access based on roles, minimizing damage from compromised accounts.
 
-#### Diagram
-
-<div align="center">
-   <img src="/media/ArchitecturalDiagrams/LayerArch.drawio.png">
-</div>
-
 ### Service-Oriented Architecture (SOA) 
 
 #### Description
@@ -115,12 +109,6 @@ Maintainability:
   
 Reliability:
 * Services can be designed with fault tolerance and redundancy in mind, ensuring the system remains operational even if individual components fail.
-
-#### Diagram
-
-<div align="center">
-   <img src="/media/ArchitecturalDiagrams/SOA.drawio.png">
-</div>
 
 ### Event-Driven Architecture (EDA)
 #### Description
@@ -162,12 +150,6 @@ Security Considerations while serverless architecture offers benefits, security 
   * Secure the API Gateway with authentication and authorization mechanisms to control access to system functionalities.
 * Data Security:
   * Utilize secure cloud storage services that offer encryption for data at rest and in transit.
- 
-#### Diagram
-
-<div align="center">
-   <img src="/media/ArchitecturalDiagrams/ServerlessArch.drawio.png">
-</div>
 
 ## Architectural Constraints
 A core architectural constraint for this project is the requirement to **utilize only open-source libraries**. This decision fosters an open-source development philosophy for the project itself. This contraint might actually provide greater advantages than disadvantages. Here's why this constraint is important:
@@ -205,14 +187,6 @@ While this constraint might limit the available options for libraries, the benef
 * Open-Source:
   * Angular is a mature open-source framework with a large and active community.
   * This aligns with the project's open-source constraint.
-
-#### Ionic
-* Efficiency and Maintainability:
-  * By using Ionic on top of Angular, the development team can create a single codebase that works seamlessly across web browsers and mobile devices.
-  * Reducing development time and adhering to the maintainability quality requirement.
-* Usability:
-  * Ionic leverages native device features to provide a look and feel consistent with the user's device.
-  * Enhancing usability across platforms.
 
 #### Typescript
 * Maintainability:

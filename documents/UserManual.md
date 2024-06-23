@@ -7,11 +7,10 @@ The purpose of this document is to assist users in becomming familiar with our a
 <hr>
 <div align="center">
   <h3>Sign in</h3>
-  <img src="/media/wireframes/SignIn_dark.png">
-  <img src="/media/wireframes/SignIn_light.png">
+  <img src="/media/wireframes/Signin2_dark.png">
 </div>
 
-**Signin with details:**
+**Sign In with details:**
 A user will be brought to this page either through an email link or when they open the app at their own volition, allowing them to take further action.
 * Through the link:
   * The link will be received from the team admin when they have created and account for their company and added you to the team through the interface. 
@@ -24,12 +23,6 @@ A user will be brought to this page either through an email link or when they op
   * If the details are incorrect the user will be notified with error messages over the field that they have provided incorrect details to.
   * The user can choose to try again to correctly input the details.
     
-<br>
-
-**Dark or Light mode display:**
-* The user can also choose their page display setting through the toggle button in the bottom right corner according to their preference.
-* This display preference can be changed in settings in the actual system when signed in.
-
 <br>
 
 **Forgot password:**

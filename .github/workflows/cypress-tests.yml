@@ -29,8 +29,15 @@ jobs:
           npm install esbuild
         continue-on-error: true
 
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: Global
+      
       - name: Run Amplify sandbox
-        run: npx ampx sandbox
+        run: npx ampx sandbox --Hawa
 
       - name: Install Cypress
         run: npm install cypress@13.12.0

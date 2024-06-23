@@ -4,7 +4,6 @@ The purpose of this document is to assist users in becomming familiar with our a
 
 ## Account Management
 
-<hr>
 <div align="center">
   <h3>Sign in</h3>
   <img src="/media/wireframes/Signin2_dark.png">
@@ -74,9 +73,11 @@ A user will be brought to this page either through an email link or when they op
 **If a user wants to go back to sign in:**
 *  User should click on he "Back to sign in" link redirecting them to sign in.
 
+## System Overview
+
 <div align="center">
   <h3>Dashboard</h3>
-  <img src="/media/Pages/Dashboard/Dashboard - Dark.png">
+  <!-- <img src="/media/Pages/Dashboard/Dashboard - Dark.png"> -->
   <img src="/media/Pages/Dashboard/Dashboard - Light.png">
 </div>
 
@@ -359,3 +360,248 @@ The search and select options can be found in the top left side of the page how 
 * To sort a column all a user has to do is click on the column heading of the column they want to sort according to.
 * The arrow will be visible so a user can be aware of if its ascendimg or decending order.
 * To filter the user must press on the filter icon that will be visible when hovering over the column heading and filter accrding to their choice.
+
+<div align="center">
+  <h3>Settings</h3>
+  <!-- <img src="/media/Pages/Dashboard/Dashboard - Dark.png"> -->
+  <img src="/media/Pages/Settings/Settings - Profile.png">
+</div>
+
+**Settings:**
+The Settings page allows users to manage their personal details, account security, and application preferences. This guide provides step-by-step instructions on how to use each feature within the Settings page.
+
+## Profile Tab
+
+### Personal Details
+- **Updating Name and Email**:
+  1. Within the Profile tab, locate the fields for 'Name' and 'Email'.
+  2. Enter the new details into the appropriate fields.
+
+### Password
+- **Changing Your Password**:
+  1. In the 'Password' section, input your current password.
+  2. Type your new password and confirm it in the designated fields.
+  3. Click 'Change Password' to secure your account with the new password.
+
+### Delete Account
+- **How to Delete Your Account**:
+  1. Scroll to the 'Delete Account' button at the bottom of the Profile tab.
+  2. Click 'Delete Account' and confirm your decision with the correct details.
+  3. Please note that this action is irreversible.
+
+## Settings Tab
+
+### Theme Settings
+- **Choosing a Theme**:
+  1. Toggle between 'Light Mode' and 'Dark Mode' to suit your visual preference.
+  2. The interface will update immediately to reflect your choice.
+
+### Notification Triggers
+- **Setting Up Notifications**:
+  1. Under 'Notification Triggers', you can opt to receive notifications for specific inventory-related events.
+  2. Check the boxes next to events like 'Low Stock', 'New Inventory Added', or specific updates you wish to be alerted about.
+
+### Tips for Effective Configuration:
+- **Stay Updated**: Regularly review and update your personal information to ensure that all communications and notifications are correctly received.
+- **Enhance Security**: Change your password periodically to maintain account security.
+- **Customize Your Experience**: Adjust theme settings and notification preferences to make the app more comfortable and useful to you.
+
+
+<div align="center">
+  <h3>Help</h3>
+  <!-- Container for images -->
+  <div style="display: flex; flex-wrap: wrap; justify-content: space-around; align-items: center; gap: 20px; max-width: 800px; margin: auto;">
+    <!-- First Row -->
+    <div style="flex: 1 1 50%; text-align: center; min-height: 300px;">
+      <img src="/media/Pages/Help/FAQs.png" style="width: 100%; max-width: 300px; max-height: 300px;">
+    </div>
+
+  </div>
+</div>
+
+
+
+**Help:**
+The Help page is designed to provide users with quick access to frequently asked questions (FAQs) and guides across various categories related to the application's functionality. 
+
+## Navigating the Help Page
+
+- **FAQs**: This section is divided into tabs corresponding to different aspects of the application, such as General, Dashboard, Inventory, Team, Suppliers, and Orders. Each tab contains a list of common questions related to that category.
+
+- **Troubleshooting**: Users can find solutions to common issues and troubleshooting tips to resolve common problems quickly.
+
+- **User Guides**: Detailed guides are available to assist users in navigating through the application's features and functionalities.
+
+## FAQs
+
+Here is a brief overview of the types of questions and guides you can find under each category:
+
+### General
+
+- **How to reset my password?**
+  - Navigate to settings in your profile and find the password section.
+  - Click on the "Change Password" button and fill in the required details to change your password.
+
+- **How to remember my password on sign in?**
+  - Currently, remembering a forgotten password is not possible, but you can replace it with a new one.
+  - Navigate to the login page, log out, and click on "forget password".
+  - You will receive an email with a verification code to change it.
+
+- **How to change my email?**
+  - Go to settings in your profile and locate the "Details" section.
+  - Click on the "Change Email" button and fill in the required details to update your email.
+
+- **How to change my name?**
+  - In your profile settings under the "Details" section, find the name input box.
+  - Type in your new name and save the changes.
+
+### Dashboard
+
+- **How to add a widget?**
+  - On the dashboard, click the "Help Options" button.
+  - From the dropdown menu, select "Add Widget" and choose the type of widget you want.
+  - The new widget will appear at the bottom of the page.
+
+- **How to move a widget?**
+  - Click and hold a widget, then drag it to a new location on the dashboard to rearrange for better visibility or workflow.
+
+- **How to remove a widget?**
+  - Click on the widget and while highlighted, click on "Help Options".
+  - Choose the delete option from the dropdown.
+
+### Inventory
+
+- **How to add inventory?**
+  - On the inventory page, click the "Quick Actions" button.
+  - Select "Add Item" from the dropdown, which opens a pop-up window where you can enter item details.
+  - Fill out the form and click "Submit".
+
+- **How to remove inventory?**
+  - On the inventory page, left click on the row you want to remove.
+  - Click "Quick Actions" and select "Remove Item" from the dropdown.
+  - Confirm the deletion in the pop-up window.
+
+- **How to edit inventory?**
+  - Double click on the cell you want to change.
+  - After editing, press enter to save the changes.
+
+### Team
+
+- **How to add a member to my team?**
+  - On the team page, click "Quick Actions".
+  - Choose "Add Member", fill in the details in the pop-up, and submit.
+
+- **How to remove a member from my team?**
+  - On the team page, select the delete option in the corresponding row of the person you want to remove.
+  - Confirm the deletion.
+
+- **How to edit a member of my team's details?**
+  - Double click on the cell you want to change.
+  - After editing, press enter to finalize the changes.
+
+### Suppliers
+
+- **How to add a supplier?**
+  - On the supplier page, click "Quick Actions".
+  - Choose "Add Supplier", fill in the details in the pop-up, and submit.
+
+- **How to remove a supplier?**
+  - On the supplier page, left click on the row you want to remove.
+  - Click "Quick Actions" and select "Remove Item" from the dropdown.
+  - Confirm the deletion in the pop-up window.
+
+- **How to edit supplier details?**
+  - Double click on the cell you want to change.
+  - After editing, press enter to finalize the changes.
+
+### Orders
+
+- **How to cancel orders?**
+  - Navigate to the orders page.
+  - Select the order you wish to cancel and follow the steps provided to cancel it.
+
+## Troubleshooting
+
+This section addresses common problems that users might encounter, providing clear instructions on how to resolve them.
+
+### Common Issues
+
+- **Cannot login**
+  - Ensure you have a good network connection.
+  - Verify that you are providing the correct login details.
+  - If the password is still reported as incorrect, click on "forgot password."
+  - For persistent issues, please contact us.
+
+- **Forget password verification code not sent**
+  - Confirm you are checking the correct email address.
+  - Ensure you have an internet connection.
+  - If the code does not arrive, click "resend code."
+  - If issues persist, please contact us.
+
+- **Cannot create an account**
+  - If you received a login link, there's no need to create an account as it has been created by your admin. Just verify your email and set your password.
+  - If you are an admin, ensure you are not using an email that's already registered.
+  - For additional help, please contact us.
+
+- **Cannot add or remove from tables**
+  - End-Users do not have the permission to modify tables.
+  - Inventory Controllers and Administrators should ensure they are following the correct procedures (refer to [FAQs](#faqs) or [User Guides](#user-guides)).
+  - For more complex issues, please contact us.
+
+- **Cannot add or remove team member**
+  - Only Administrators have the ability to manage team members.
+  - Verify that you are following the correct procedures (refer to [FAQs](#faqs) or [User Guides](#user-guides)).
+  - For unresolved issues, please contact us.
+
+- **Error Codes**
+  - **404**: Server is down or not found. Check the server status or URL.
+
+- **Bugs**
+  - If you identify a bug, please do contact us immediately so we can address the issue promptly.
+
+## User Guides
+
+Detailed step-by-step guides are provided for various functionalities of the system. These guides are designed to help users fully utilize all aspects of the software.
+
+### Key Areas Covered
+
+- **Introduction**
+  - Overview of SmartInventory capabilities and design philosophy.
+
+- **Roles**
+  - Detailed descriptions of different user roles and their permissions.
+
+- **Dashboard**
+  - Instructions on how to customize and manage the dashboard widgets.
+
+- **Inventory**
+  - Guidelines on how to manage inventory, including adding, editing, and removing items.
+
+- **Reports**
+  - How to generate various types of reports.
+
+- **Team**
+  - Managing team members including adding, removing, and editing team profiles.
+
+- **Suppliers**
+  - Steps for managing supplier information.
+
+- **Orders**
+  - Instructions on how to process orders, including modifications and cancellations.
+
+- **Video Tutorial**
+  - Links to video tutorials that provide visual guidance on using the system.
+
+## Contact Support
+
+For direct assistance or when you encounter issues not covered in the manuals or troubleshooting:
+
+- **How can we help?**
+  - Access the contact form to submit any queries directly to support.
+  - Fill out your name, email address, and a detailed message describing your issue or question.
+  - Click 'Send' to submit your request. Support staff will respond to your inquiries as quickly as possible.
+
+
+
+The Help page is an essential resource for users to understand how to utilize the application effectively, troubleshoot issues, and get detailed instructions for specific tasks. Users are encouraged to explore this section to enhance their proficiency with the application.
+

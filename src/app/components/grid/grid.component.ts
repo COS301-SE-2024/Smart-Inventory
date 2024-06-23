@@ -10,10 +10,6 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
-//import { AddComponent } from './add/add.component';
-//import { CommonModule } from '@angular/common';
-//import { MatSelectModule } from '@angular/material/select';
-//import { CellValueChangedEvent, RowValueChangedEvent } from 'ag-grid-community';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatSelectModule } from '@angular/material/select';
@@ -45,6 +41,7 @@ export class GridComponent implements OnInit {
     @Output() rowsToDelete = new EventEmitter<any[]>();
     @Output() addNewClicked = new EventEmitter<void>();
     @Output() itemToUpdate = new EventEmitter<{data: any, field: string, newValue: any}>();
+    @Output() requestStock = new EventEmitter<any>();
 
     filteredRowData: any[] = [];
 
@@ -76,11 +73,9 @@ export class GridComponent implements OnInit {
         this.columnDefs = this.columnDefs.map(col => ({...col, editable: true}));
     }
 
-
     getCurrentRoute(v: string) {
         return v === this.route.snapshot.url[0].path.toString();
     }
-
 
     onGridReady(params: GridReadyEvent) {
         this.gridApi = params.api;
@@ -90,8 +85,6 @@ export class GridComponent implements OnInit {
 
     addRow() {
         this.addNewClicked.emit();
-        //this.gridApi.applyTransaction({ add: [{}] });
-        //this.addButtonClicked.emit();
     }
 
     deleteRow() {
@@ -143,14 +136,6 @@ export class GridComponent implements OnInit {
             this.filteredRowData = [...this.rowData];
         }
 
-        /*
-        if (this.gridColumnAPI !== undefined) {
-            this.gridApi.setData(this.filteredRowData);
-            this.gridColumnAPI.setColumnDefs(this.filteredRowData);
-        }
-        */
-    
-
         if (this.gridColumnApi !== undefined) {
             this.gridApi.setRowData(this.filteredRowData);
         }
@@ -162,5 +147,15 @@ export class GridComponent implements OnInit {
 
     updateRow(updatedRow: any) {
         this.gridApi.applyTransaction({ update: [updatedRow] });
+    }
+
+    onRequestStock() {
+        const selectedRows = this.gridApi.getSelectedRows();
+        if (selectedRows && selectedRows.length > 0) {
+            this.requestStock.emit(selectedRows[0]);
+        } else {
+            console.log('No row selected for requesting stock');
+            // Optionally, you could show an alert or notification to the user
+        }
     }
 }

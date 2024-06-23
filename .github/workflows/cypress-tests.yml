@@ -29,6 +29,9 @@ jobs:
           npm install esbuild
         continue-on-error: true
 
+      - name: Run Amplify sandbox
+        run: npx ampx sandbox
+
       - name: Install Cypress
         run: npm install cypress@13.12.0
 
@@ -44,12 +47,5 @@ jobs:
         with:
           name: cypress-results
           path: cypress/results
-      
-      # Optional: Upload test results as artifacts
-      - uses: actions/upload-artifact@v3
-        if: failure()
-        with:
-          name: cypress-screenshots
-          path: cypress/screenshots
       
       

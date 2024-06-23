@@ -169,7 +169,7 @@ While this constraint might limit the available options for libraries, the benef
 ## Archtectural Diagram
 
 <div align="center">
-   <img src="/media/ArchitecturalDiagrams/Arch.drawio.png">
+   <img src="/media/ArchitecturalDiagrams/ArchDiagram.drawio.png">
 </div>
 
 ## Technology Decisions

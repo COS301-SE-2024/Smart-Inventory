@@ -2,9 +2,9 @@ name: Run Cypress Component Tests
 
 on:
   push:
-      branches: [feat/automated-tests]
+    branches: [feat/automated-tests]
   pull_request:
-      branches: [develop]
+    branches: [develop]
 
 jobs:
   cypress-run:
@@ -25,10 +25,13 @@ jobs:
       - name: Install Cypress
         run: npm install cypress@13.12.0
 
+      - name: Run Amplify sandbox
+        run: npx ampx sandbox
+
       - name: Run Cypress component tests
         run: |
           npm run build
-          npx cypress run --component
+          npx cypress run --component --config testFiles='**/*.cy.{js,jsx,ts,tsx}' --config-file cypress.config.js
         continue-on-error: true
 
       - name: Archive test results
@@ -37,10 +40,3 @@ jobs:
         with:
           name: cypress-results
           path: cypress/results
-      
-      # Optional: Upload test results as artifacts
-      - uses: actions/upload-artifact@v3
-        if: failure()
-        with:
-          name: cypress-screenshots
-          path: cypress/screenshots

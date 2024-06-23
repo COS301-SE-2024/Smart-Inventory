@@ -170,16 +170,32 @@ This feature provides a flexible way to customize the dashboard to fit your spec
 <div align="center">
   <h3>Settings</h3>
   <!-- <img src="/media/Pages/Dashboard/Dashboard - Dark.png"> -->
-  <img src="/media/Pages/Dashboard/Dashboard - Light.png">
+  <img src="/media/Pages/Settings/Settings - Profile.png">
 </div>
 
 
 
 <div align="center">
   <h3>Help</h3>
-  <!-- <img src="/media/Pages/Dashboard/Dashboard - Dark.png"> -->
-  <img src="/media/Pages/Dashboard/Dashboard - Light.png">
+  <!-- Container for images -->
+  <div style="display: flex; flex-wrap: wrap; justify-content: space-around; align-items: center; gap: 20px; max-width: 800px; margin: auto;">
+    <!-- First Row -->
+    <div style="flex: 1 1 50%; text-align: center;">
+      <img src="/media/Pages/Help/FAQs.png" style="width: 100%; max-width: 300px;">
+    </div>
+    <div style="flex: 1 1 50%; text-align: center;">
+      <img src="/media/Pages/Help/UserGuides.png" style="width: 100%; max-width: 300px;">
+    </div>
+    <!-- Second Row -->
+    <div style="flex: 1 1 50%; text-align: center;">
+      <img src="/media/Pages/Help/Troubleshooting.png" style="width: 100%; max-width: 300px;">
+    </div>
+    <div style="flex: 1 1 50%; text-align: center;">
+      <img src="/media/Pages/Help/ContactSupport.png" style="width: 100%; max-width: 300px;">
+    </div>
+  </div>
 </div>
+
 
 **Help:**
 The Help page is designed to provide users with quick access to frequently asked questions (FAQs) and guides across various categories related to the application's functionality. 

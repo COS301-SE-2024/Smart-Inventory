@@ -1,3 +1,95 @@
 <div class="supplierHolder">
-    <app-grid [rowData]="rowData" [columnDefs]="colDefs"> </app-grid>
+    <app-grid
+        [rowData]="rowData"
+        [columnDefs]="colDefs"
+        [addButton]="addButton"
+        (addNewClicked)="openAddSupplierPopup()"
+        #gridComponent
+    >
+    </app-grid>
+</div>
+
+<!-- Add Supplier Popup -->
+<div *ngIf="showAddPopup" class="popup-overlay">
+    <div class="popup-content">
+        <h2>Add Supplier</h2>
+        <form (ngSubmit)="onSubmit(supplierForm.value)" #supplierForm="ngForm">
+            <div class="form-group">
+                <label for="company_name">Company Name</label>
+                <input type="text" id="company_name" name="company_name" [(ngModel)]="supplier.company_name" required />
+            </div>
+            <div class="form-group">
+                <label for="contact_name">Contact Name</label>
+                <input type="text" id="contact_name" name="contact_name" [(ngModel)]="supplier.contact_name" required />
+            </div>
+            <div class="form-group">
+                <label for="contact_email">Contact Email</label>
+                <input
+                    type="email"
+                    id="contact_email"
+                    name="contact_email"
+                    [(ngModel)]="supplier.contact_email"
+                    required
+                    email
+                    #contactEmail="ngModel"
+                />
+                <div *ngIf="contactEmail.invalid && (contactEmail.dirty || contactEmail.touched)" class="error-message">
+                    <div *ngIf="contactEmail.errors?.['required']">Contact email is required.</div>
+                    <div *ngIf="contactEmail.errors?.['email']">Please enter a valid email address.</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="phone_number">Phone Number</label>
+                <input type="tel" id="phone_number" name="phone_number" [(ngModel)]="supplier.phone_number" required />
+            </div>
+            <div class="form-group">
+                <label for="street">Street</label>
+                <input type="text" id="street" name="street" [(ngModel)]="supplier.address.street" required />
+            </div>
+            <div class="form-group">
+                <label for="city">City</label>
+                <input type="text" id="city" name="city" [(ngModel)]="supplier.address.city" required />
+            </div>
+            <div class="form-group">
+                <label for="state_province">State/Province</label>
+                <input
+                    type="text"
+                    id="state_province"
+                    name="state_province"
+                    [(ngModel)]="supplier.address.state_province"
+                    required
+                />
+            </div>
+            <div class="form-group">
+                <label for="postal_code">Postal Code</label>
+                <input
+                    type="text"
+                    id="postal_code"
+                    name="postal_code"
+                    [(ngModel)]="supplier.address.postal_code"
+                    required
+                />
+            </div>
+            <div class="form-group">
+                <label for="country">Country</label>
+                <input type="text" id="country" name="country" [(ngModel)]="supplier.address.country" required />
+            </div>
+            <div class="button-group">
+                <button type="submit" [disabled]="!supplierForm.form.valid">Submit</button>
+                <button type="button" (click)="closeAddPopup()">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Delete Confirmation Popup -->
+<div *ngIf="showDeletePopup" class="popup-overlay">
+    <div class="popup-content">
+        <h2>Confirm Deletion</h2>
+        <p>Are you sure you want to delete the selected supplier(s)?</p>
+        <div class="button-group">
+            <button (click)="confirmDelete()">Yes</button>
+            <button (click)="cancelDelete()">No</button>
+        </div>
+    </div>
 </div>

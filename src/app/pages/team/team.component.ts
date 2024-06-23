@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { fetchAuthSession } from 'aws-amplify/auth';
 import {
     CognitoIdentityProviderClient,
@@ -24,7 +24,16 @@ import { RoleSelectCellEditorComponent } from './role-select-cell-editor.compone
 @Component({
     selector: 'app-team',
     standalone: true,
-    imports: [CommonModule, FormsModule, GridComponent, DeleteButtonRenderer, MatDialogModule, MatButtonModule, RoleChangeConfirmationDialogComponent, RoleSelectCellEditorComponent],
+    imports: [
+        CommonModule,
+        FormsModule,
+        GridComponent,
+        DeleteButtonRenderer,
+        MatDialogModule,
+        MatButtonModule,
+        RoleChangeConfirmationDialogComponent,
+        RoleSelectCellEditorComponent,
+    ],
     templateUrl: './team.component.html',
     styleUrls: ['./team.component.css'],
 })
@@ -38,10 +47,27 @@ export class TeamComponent implements OnInit {
         role: '',
     };
 
+    @ViewChild('gridComponent') gridComponent!: GridComponent;
+
     addButton = { text: 'Add Member' };
 
     rowData: any[] = [];
-    colDefs: ColDef[] = [];
+    colDefs: ColDef[] = [
+        { field: 'given_name', headerName: 'Name' },
+        { field: 'family_name', headerName: 'Surname' },
+        { field: 'email', headerName: 'Email' },
+        {
+            field: 'role',
+            headerName: 'Role',
+            cellRenderer: RoleSelectCellEditorComponent,
+            width: 100,
+        },
+        {
+            headerName: 'Remove Member',
+            cellRenderer: DeleteButtonRenderer,
+            width: 100,
+        },
+    ];
 
     openAddMemberPopup() {
         this.showPopup = true;
@@ -53,32 +79,32 @@ export class TeamComponent implements OnInit {
 
     onCellValueChanged(event: any) {
         if (event.column.colId === 'role') {
-          const dialogRef = this.dialog.open(RoleChangeConfirmationDialogComponent, {
-            width: '350px',
-            data: { 
-              given_name: event.data.given_name,
-              family_name: event.data.family_name,
-              email: event.data.email,
-              newRole: event.newValue
-            }
-          });
-      
-          dialogRef.afterClosed().subscribe(result => {
-            if (result) {
-              // User confirmed, proceed with the change
-              console.log('Role change confirmed');
-              // Here you would typically update the backend
-            } else {
-              // User cancelled, revert the change
-              event.node.setDataValue('role', event.oldValue);
-            }
-          });
+            const dialogRef = this.dialog.open(RoleChangeConfirmationDialogComponent, {
+                width: '350px',
+                data: {
+                    given_name: event.data.given_name,
+                    family_name: event.data.family_name,
+                    email: event.data.email,
+                    newRole: event.newValue,
+                },
+            });
+
+            dialogRef.afterClosed().subscribe((result) => {
+                if (result) {
+                    // User confirmed, proceed with the change
+                    console.log('Role change confirmed');
+                    // Here you would typically update the backend
+                } else {
+                    // User cancelled, revert the change
+                    event.node.setDataValue('role', event.oldValue);
+                }
+            });
         }
-      }
+    }
 
     async ngOnInit() {
-        await this.fetchUsers();
         this.titleService.updateTitle('Team');
+        await this.fetchUsers();
     }
 
     async onSubmit(formData: any) {
@@ -183,24 +209,6 @@ export class TeamComponent implements OnInit {
                 email: user.Attributes.find((attr: any) => attr.Name === 'email')?.Value,
                 role: user.Groups.length > 0 ? this.getRoleDisplayName(user.Groups[0].GroupName) : '',
             }));
-
-            // Set the colDefs after receiving the response from Lambda
-            this.colDefs = [
-                { field: 'given_name', headerName: 'Given Name' },
-                { field: 'family_name', headerName: 'Family Name' },
-                { field: 'email', headerName: 'Email' },
-                {
-                    field: 'role',
-                    headerName: 'Role',
-                    cellRenderer: RoleSelectCellEditorComponent,
-                    width: 250,
-                  },
-                {
-                    headerName: 'Remove Member',
-                    cellRenderer: DeleteButtonRenderer,
-                    width: 100,
-                },
-            ];
         } catch (error) {
             console.error('Error fetching users:', error);
         }

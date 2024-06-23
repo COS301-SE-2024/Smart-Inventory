@@ -167,7 +167,7 @@ Reviews focus on checking that coding standards are being followed and that any 
 
 ### ⚙️ Frontend:
 * Angular
-* Ionic
+* Material
 * Typescript
 
 ### ⚙️ Backend:

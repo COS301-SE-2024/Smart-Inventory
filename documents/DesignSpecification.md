@@ -12,12 +12,13 @@ The document aims to provide a clear roadmap for developers to translate the vis
 ### Sign in
 
 <div style="text-align: center;">
-    <img src="/media/Wireframes/CreateAccount.jpeg" alt="Create Account">
+    <img src="/media/Wireframes/SignIn.jpeg" alt="SignIn-dark">
 </div>
 
 ### Create Account
+
 <div style="text-align: center;">
-    <img src="/media/Wireframes/SignIn.jpeg" alt="SignIn-dark">
+    <img src="/media/Wireframes/CreateAccount.jpeg" alt="Create Account">
 </div>
 
 ### Reset Password 

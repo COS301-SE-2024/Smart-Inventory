@@ -4,6 +4,7 @@
         [columnDefs]="colDefs"
         [addButton]="addButton"
         (addNewClicked)="openAddMemberPopup()"
+        (nameCellValueChanged)="onNameCellValueChanged($event)"
         #gridComponent
     >
     </app-grid>

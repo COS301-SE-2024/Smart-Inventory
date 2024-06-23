@@ -5,6 +5,7 @@ import {
     AdminCreateUserCommand,
     AdminAddUserToGroupCommand,
     GetUserCommand,
+    AdminUpdateUserAttributesCommand,
 } from '@aws-sdk/client-cognito-identity-provider';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -101,6 +102,37 @@ export class TeamComponent implements OnInit {
             });
         }
     }
+
+    async onNameCellValueChanged(event: any) {
+        if (event.column.colId === 'given_name' || event.column.colId === 'family_name') {
+          try {
+            const session = await fetchAuthSession();
+      
+            const client = new CognitoIdentityProviderClient({
+              region: outputs.auth.aws_region,
+              credentials: session.credentials,
+            });
+      
+            const updateUserAttributesCommand = new AdminUpdateUserAttributesCommand({
+              UserPoolId: outputs.auth.user_pool_id,
+              Username: event.data.email,
+              UserAttributes: [
+                {
+                  Name: event.column.colId,
+                  Value: event.newValue,
+                },
+              ],
+            });
+      
+            await client.send(updateUserAttributesCommand);
+            console.log('User attribute updated successfully');
+          } catch (error) {
+            console.error('Error updating user attribute:', error);
+            // Revert the change in the grid
+            event.node.setDataValue(event.column.colId, event.oldValue);
+          }
+        }
+      }
 
     async ngOnInit() {
         this.titleService.updateTitle('Team');

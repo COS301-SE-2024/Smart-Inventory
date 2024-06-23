@@ -9,12 +9,13 @@ The document aims to provide a clear roadmap for developers to translate the vis
 
 ## Wireframes
 
-### Sign in and Create Account
+### Sign in
 
 <div style="text-align: center;">
     <img src="/media/Pure Wireframes/CreateAccount.jpeg" alt="Create Account">
 </div>
 
+### Create Account
 <div style="text-align: center;">
     <img src="/media/Pure Wireframes/SignIn.jpeg" alt="SignIn-dark">
 </div>
@@ -64,7 +65,6 @@ The document aims to provide a clear roadmap for developers to translate the vis
 
 
 ### Reports
-### Requests
 ### Suppliers
 
 <div style="text-align: center;">

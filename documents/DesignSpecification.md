@@ -12,37 +12,42 @@ The document aims to provide a clear roadmap for developers to translate the vis
 ### Sign in
 
 <div style="text-align: center;">
-    <img src="/media/Pure Wireframes/CreateAccount.jpeg" alt="Create Account">
+    <img src="/media/Wireframes/CreateAccount.jpeg" alt="Create Account">
 </div>
 
 ### Create Account
 <div style="text-align: center;">
-    <img src="/media/Pure Wireframes/SignIn.jpeg" alt="SignIn-dark">
+    <img src="/media/Wireframes/SignIn.jpeg" alt="SignIn-dark">
 </div>
+
+### Reset Password 
+<div style="text-align: center;">
+    <img src="/media/Wireframes/ResetPassword.jpeg" alt="SignIn-dark">
+</div
 
 ### Dashboard
 
 <div style="text-align: center;">
-    <img src="/media/wireframes/Dashboard_dark.png" alt="Dashboard-dark">
-    <img src="/media/wireframes/Dashboard_light.png" alt="Dashboard-light">
+    <img src="/media/Wireframes/Dashboard - Light.png" alt="Dashboard-dark">
+
 </div>
 
 ### Teams
 
 <div style="text-align: center;">
-    <img src="/media/Pure Wireframes/Team.jpeg" alt="Dashboard-dark">
+    <img src="/media/Wireframes/Team.jpeg" alt="Dashboard-dark">
 </div>
 
 ### Orders
 
 <div style="text-align: center;">
-    <img src="/media/Pure Wireframes/Orders.jpeg" alt="Orders-dark">
+    <img src="/media/Wireframes/Orders.jpeg" alt="Orders-dark">
 </div>
 
 ### Inventory
 
 <div style="text-align: center;">
-    <img src="/media/Pure Wireframes/Inventory.jpeg" alt="Inventory-dark">
+    <img src="/media/Wireframes/Inventory.jpeg" alt="Inventory-dark">
 </div>
 
 ### Settings
@@ -68,7 +73,7 @@ The document aims to provide a clear roadmap for developers to translate the vis
 ### Suppliers
 
 <div style="text-align: center;">
-    <img src="/media/Pure Wireframes/Suppliers.jpeg" alt="Settings-General-light">
+    <img src="/media/Wireframes/Suppliers.jpeg" alt="Settings-General-light">
 </div>
 
 

@@ -2,7 +2,7 @@ name: Run Cypress Component Tests
 
 on:
   push:
-    branches: [feat/automated-tests]
+    branches: [feat/tests]
   pull_request:
     branches: [develop]
 

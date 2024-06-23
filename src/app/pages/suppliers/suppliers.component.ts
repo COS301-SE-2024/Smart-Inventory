@@ -113,7 +113,7 @@ export class SuppliersComponent implements OnInit {
     }
 
     getAddressString(address: any): string {
-        return `${address.street}, ${address.city}, ${address.country}, ${address.postal_code}, ${address.street}`;
+        return `${address.street}, ${address.city}, ${address.country}, ${address.postal_code}`;
     }
 
     openAddSupplierPopup() {

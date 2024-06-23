@@ -1,92 +1,105 @@
 <mat-tab-group>
     <mat-tab label="Profile">
         <ng-container>
-            <div class="form-container">
-                <form style="height: 80vh; width: 40%">
-                    <h4>Personal details</h4>
-                    <hr />
-                    <div class="form-row">
-                        <mat-form-field class="form-field">
-                            <mat-label>Name</mat-label>
-                            <input matInput placeholder="Name" [(ngModel)]="profile.name" />
-                        </mat-form-field>
-                    </div>
-                    <div class="form-row">
-                        <mat-form-field class="form-field">
-                            <mat-label>Surname</mat-label>
-                            <input matInput placeholder="Surname" [(ngModel)]="profile.surname" />
-                        </mat-form-field>
-                    </div>
-                    <div class="form-row">
-                        <mat-form-field class="form-field">
-                            <mat-label>Email</mat-label>
-                            <input matInput placeholder="johndoe@mail.com" [(ngModel)]="profile.email" email />
-                            <mat-error *ngIf="emailFormControl.hasError('email')">
-                                Please enter a valid email
-                            </mat-error>
-                        </mat-form-field>
-                    </div>
+            <div class="accounts-section">
+                <div class="accounts-row-two">
+                    <div class="form-container">
+                        <form style="height: 100%; width: 40%">
+                            <h4>Personal details</h4>
+                            <hr />
+                            <div class="form-row" style="padding-top: 10px;">
+                                <mat-form-field class="form-field">
+                                    <mat-label>Name</mat-label>
+                                    <input matInput placeholder="Name" [(ngModel)]="profile.name" name="name" />
+                                </mat-form-field>
+                            </div>
+                            <div class="form-row">
+                                <mat-form-field class="form-field">
+                                    <mat-label>Surname</mat-label>
+                                    <input matInput placeholder="Surname" [(ngModel)]="profile.surname" name="surname" />
+                                </mat-form-field>
+                            </div>
+                            <div class="form-row">
+                                <mat-form-field class="form-field">
+                                    <mat-label>Email</mat-label>
+                                    <input matInput placeholder="johndoe@mail.com" [formControl]="emailFormControl" email name="email" />
+                                    <mat-error *ngIf="emailFormControl.hasError('email')">
+                                        Please enter a valid email
+                                    </mat-error>
+                                </mat-form-field>
+                            </div>
+                            <button mat-button class="change-password-button" color="primary" (click)="saveProfileChanges()">
+                                Save Changes
+                            </button>
 
-                    <h4>Password</h4>
-                    <hr />
-                    <div class="form-row form-row-password">
-                        <mat-form-field class="form-field">
-                            <mat-label>Current Password</mat-label>
-                            <input
-                                matInput
-                                placeholder="Current Password"
-                                [(ngModel)]="password.current"
-                                type="password"
-                            />
-                        </mat-form-field>
-                        <button class="change-password-button" mat-button (click)="toggleChangePassword()">
-                            {{ changePasswordText }}
-                        </button>
-                        <button
-                            *ngIf="isChangePasswordVisible"
-                            class="cancel-password-button"
-                            mat-button
-                            (click)="cancelChangePassword()"
-                        >
-                            Cancel
-                        </button>
-                    </div>
-                    <div *ngIf="isChangePasswordVisible" class="form-row">
-                        <div class="form-row form-row-password">
-                            <mat-form-field class="form-field">
-                                <mat-label>New Password</mat-label>
-                                <input matInput placeholder="New Password" [(ngModel)]="password.new" type="password" />
-                            </mat-form-field>
-                            <mat-form-field class="form-field">
-                                <mat-label>Confirm Email</mat-label>
-                                <input matInput placeholder="Confirm Email" [(ngModel)]="profile.confirmEmail" />
-                            </mat-form-field>
-                        </div>
-                    </div>
+                            <h4 style="padding-top: 10px;">Password</h4>
+                            <hr />
+                            <div class="form-row form-row-password" style="padding-top: 10px;">
+                                <mat-form-field class="form-field">
+                                    <mat-label>Current Password</mat-label>
+                                    <input
+                                        matInput
+                                        placeholder="Current Password"
+                                        [(ngModel)]="password.current"
+                                        type="password"
+                                        name="currentPassword"
+                                    />
+                                </mat-form-field>
+                            </div>
+                            <div class="form-row form-row-password" >
+                                <mat-form-field class="form-field">
+                                    <mat-label>New Password</mat-label>
+                                    <input
+                                        matInput
+                                        placeholder="New Password"
+                                        [(ngModel)]="password.new"
+                                        type="password"
+                                        name="newPassword"
+                                    />
+                                </mat-form-field>
+                            </div>
+                            <button mat-button class="change-password-button" color="primary" (click)="handleResetPassword()">
+                                Change Password
+                            </button>
 
-                    <h4>Delete Account</h4>
-                    <hr />
-                    <button mat-button class="delete-button" (click)="toggleDeleteAccount()">Delete Account</button>
-                    <div *ngIf="isDeleteAccountVisible">
-                        <div class="form-row">
-                            <mat-form-field class="form-field">
-                                <mat-label>Current Password</mat-label>
-                                <input
-                                    matInput
-                                    placeholder="Current Password"
-                                    [(ngModel)]="password.currentDelete"
-                                    type="password"
-                                />
-                            </mat-form-field>
-                            <mat-form-field class="form-field">
-                                <mat-label>Confirm Email</mat-label>
-                                <input matInput placeholder="Confirm Email" [(ngModel)]="profile.confirmEmailDelete" />
-                            </mat-form-field>
-                        </div>
-                        <button mat-raised-button class="confirm-delete-button" (click)="confirmDeleteAccount()">
-                            Confirm Delete
-                        </button>
-                    </div>
+                            <h4 style="padding-top: 10px;" >Delete Account</h4>
+                            <hr />
+                            <button mat-button class="delete-button" (click)="toggleDeleteAccount()">
+                                Delete Account
+                            </button>
+                            <div *ngIf="isDeleteAccountVisible">
+                                <div class="form-row">
+                                    <mat-form-field class="form-field">
+                                        <mat-label>Current Password</mat-label>
+                                        <input
+                                            matInput
+                                            placeholder="Current Password"
+                                            [(ngModel)]="password.currentDelete"
+                                            type="password"
+                                            name="currentDeletePassword"
+                                        />
+                                    </mat-form-field>
+                                    <mat-form-field class="form-field">
+                                        <mat-label>Confirm Email</mat-label>
+                                        <input
+                                            matInput
+                                            placeholder="Confirm Email"
+                                            [(ngModel)]="profile.confirmEmailDelete"
+                                            name="confirmEmailDelete"
+                                        />
+                                    </mat-form-field>
+                                </div>
+                                <button
+                                    mat-raised-button
+                                    color="warn"
+                                    class="confirm-delete-button"
+                                    (click)="handleDeleteAccount()"
+                                >
+                                    Confirm Delete
+                                </button>
+                            </div>
+                        </form>
+                  </div>
                 </form>
             </div>
         </ng-container>
@@ -102,7 +115,6 @@
                         (click)="selectTheme('light')"
                     >
                         <img src="assets/img/light-mode.png" alt="Light Mode" />
-                        <!-- <p>Light Mode</p> -->
                     </div>
                     <div
                         class="theme-option"
@@ -110,7 +122,6 @@
                         (click)="selectTheme('dark')"
                     >
                         <img src="assets/img/dark-mode.png" alt="Dark Mode" />
-                        <!-- <p>Dark Mode</p> -->
                     </div>
                 </div>
             </div>

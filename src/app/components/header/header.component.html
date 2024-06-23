@@ -2,24 +2,18 @@
 <mat-toolbar>
     <span>{{ pageTitle }}</span>
     <span class="flex-spacer"></span>
-    <!-- Icons -->
-    <!-- <button mat-icon-button aria-label="Filter tasks" class="toolbar-icon">
-        <mat-icon class="large-icon">filter_list</mat-icon>
-    </button>
-    <button mat-icon-button aria-label="Notifications" class="toolbar-icon">
-        <mat-icon class="large-icon">notifications</mat-icon>
-    </button> -->
     <!-- User profile -->
     <div class="user-profile" [matMenuTriggerFor]="menu">
         <div class="profile-box">
             <mat-icon class="profile-pic">account_circle</mat-icon>
             <div class="user-info">
-                <span class="username">{{ user }}</span>
-                <span class="role">Admin</span>
+                <span class="username">{{ userName }}</span>
+                <span class="role">{{ userEmail }}</span>
             </div>
         </div>
     </div>    
     <mat-menu #menu="matMenu">
         <button mat-menu-item>Profile</button>
+        <button mat-menu-item (click)="logout()">Logout</button>
     </mat-menu>
 </mat-toolbar>

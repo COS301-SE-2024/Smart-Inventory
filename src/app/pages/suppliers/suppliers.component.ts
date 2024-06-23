@@ -177,19 +177,75 @@ export class SuppliersComponent implements OnInit {
         };
     }
 
-    async onEditAddressSubmit(formData: any) {
-        try {
-            console.log('Updated address:', formData);
-            // Implement the logic to update the supplier's address
-            // You can make an API call or invoke a lambda function to update the address
-            // After successful update, you can update the local rowData to reflect the changes
-            // Close the edit address popup
-            this.closeEditAddressPopup();
-        } catch (error) {
-            console.error('Error updating address:', error);
+async onEditAddressSubmit(formData: any) {
+    try {
+      console.log('Updated address:', formData);
+  
+      const session = await fetchAuthSession();
+  
+      const cognitoClient = new CognitoIdentityProviderClient({
+        region: outputs.auth.aws_region,
+        credentials: session.credentials,
+      });
+  
+      const getUserCommand = new GetUserCommand({
+        AccessToken: session.tokens?.accessToken.toString(),
+      });
+      const getUserResponse = await cognitoClient.send(getUserCommand);
+  
+      const tenentId = getUserResponse.UserAttributes?.find(
+        (attr) => attr.Name === 'custom:tenentId'
+      )?.Value;
+  
+      if (!tenentId) {
+        throw new Error('TenentId not found in user attributes');
+      }
+  
+      const lambdaClient = new LambdaClient({
+        region: outputs.auth.aws_region,
+        credentials: session.credentials,
+      });
+  
+      const updatedData = {
+        supplierID: this.selectedSupplier.supplierID,
+        tenentId: tenentId,
+        address: formData,
+      };
+  
+      console.log('Updated data:', updatedData);
+  
+      const invokeCommand = new InvokeCommand({
+        FunctionName: 'editSupplier',
+        Payload: new TextEncoder().encode(JSON.stringify({ body: JSON.stringify(updatedData) })),
+      });
+  
+      console.log('Invoking editSupplier lambda function');
+  
+      const lambdaResponse = await lambdaClient.send(invokeCommand);
+      const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+  
+      console.log('Lambda response:', responseBody);
+  
+      if (responseBody.statusCode === 200) {
+        console.log('Supplier address updated successfully');
+        const updatedSupplier = JSON.parse(responseBody.body);
+        const index = this.rowData.findIndex((supplier) => supplier.supplierID === updatedSupplier.supplierID);
+        if (index !== -1) {
+          this.rowData[index].address = updatedSupplier.address;
+  
+          // Refresh the grid data
+          this.gridComponent.rowData = [...this.rowData];
         }
+        this.closeEditAddressPopup();
+      } else {
+        throw new Error(responseBody.body);
+      }
+    } catch (error) {
+      console.error('Error updating supplier address:', error);
+      alert(`Error updating supplier address: ${(error as Error).message}`);
     }
-
+  }
+  
     async onSubmit(formData: any) {
         try {
             const session = await fetchAuthSession();

@@ -45,6 +45,8 @@ export class GridComponent implements OnInit {
     @Output() rowsToDelete = new EventEmitter<any[]>();
     @Output() addNewClicked = new EventEmitter<void>();
     @Output() itemToUpdate = new EventEmitter<{data: any, field: string, newValue: any}>();
+    @Output() nameCellValueChanged = new EventEmitter<any>();
+
 
     filteredRowData: any[] = [];
 
@@ -105,11 +107,15 @@ export class GridComponent implements OnInit {
 
     onCellValueChanged(event: CellValueChangedEvent) {
         console.log('onCellValueChanged: ' + event.colDef.field + ' = ' + event.newValue);
-        this.itemToUpdate.emit({
+        if (event.colDef.field !== 'given_name' && event.colDef.field !== 'family_name') {
+          this.itemToUpdate.emit({
             data: event.data,
             field: event.colDef.field!,
             newValue: event.newValue
-        });
+          });
+        } else {
+          this.nameCellValueChanged.emit(event);
+        }
     }
 
     onRowValueChanged(event: RowValueChangedEvent) {

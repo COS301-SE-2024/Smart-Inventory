@@ -182,32 +182,32 @@ This feature provides a flexible way to customize the dashboard to fit your spec
     
 **Quick Actions:**
 The "Quick Actions" button is located in the top right corner. Most of the functionality for all pages can be found here. More information on the actions can be found below:
-*  Export To Excel:
+* Export To Excel:
   * To export to excel the user should click on quick actions to see the drop down.
   * Then they should select the "Export to excel" option.
   * This will automatically download the file to thier downloads on their device.
-*  Import To Excel:
+* Import To Excel:
   * To import to excel the user should click on quick actions to see the drop down.
   * Then they should select the "Import to excel" option.
   * This will open a pop up for the user to select a file to import into the table.
-*  Add Item:
+* Add Item:
   * To add an item to inventory the user should click on quick actions to see the drop down.
   * Then they should select the "Add iTem" option.
   * This will open a pop up for the user to add details regarding the item they would like to add.
   * Once filled in the user can enter the tem by clicking the submit button.
-*  Remove Item
+* Remove Item
   * Firstly a user should click on the item they would like to remove. Once the row is highlighted in blue. 
   * To remove an item from inventory the user should click on quick actions to see the drop down.
   * Then they should select the "Remove Item" option.
   * This will open a pop up for the user to verify that they want to delete the item.
   * If user does want to delete the item they can click on yes otherwise no.
-*  Remove Multiple Items
+* Remove Multiple Items
   * Firstly a user should "CTRL" click the items they would like to remove. Once the rows are highlighted in blue. 
   * To remove the items from inventory the user should click on quick actions to see the drop down.
   * Then they should select the "Remove Item" option.
   * This will open a pop up for the user to verify that they want to delete the item.
   * If user does want to delete the item they can click on yes otherwise no.
-*  Request Item:
+* Request Item:
   * Firstly a user should click on the item they would like to request. Once the row is highlighted in blue.
   * To request an item to inventory the user should click on quick actions to see the drop down.
   * Then they should select the "Request Item" option.
@@ -239,26 +239,26 @@ The search and select options can be found in the top left side of the page how 
     
 **Quick Actions:**
 The "Quick Actions" button is located in the top right corner. Most of the functionality for all pages can be found here. More information on the actions can be found below:
-*  Export To Excel:
+* Export To Excel:
   * To export to excel the user should click on quick actions to see the drop down.
   * Then they should select the "Export to excel" option.
   * This will automatically download the file to thier downloads on their device.
-*  Import To Excel:
+* Import To Excel:
   * To import to excel the user should click on quick actions to see the drop down.
   * Then they should select the "Import to excel" option.
   * This will open a pop up for the user to select a file to import into the table.
-*  Add Supplier:
+* Add Supplier:
   * To add an item to inventory the user should click on quick actions to see the drop down.
   * Then they should select the "Add Supplier" option.
   * This will open a pop up for the user to add details regarding the supplier they would like to add.
   * Once filled in the user can enter the supplier by clicking the submit button.
-*  Remove Supplier
+* Remove Supplier
   * Firstly a user should click on the supplier they would like to remove. Once the row is highlighted in blue. 
   * To remove an supplier from suppliers the user should click on quick actions to see the drop down.
   * Then they should select the "Remove Supplier" option.
   * This will open a pop up for the user to verify that they want to delete the supplier.
   * If user does want to delete the supplier they can click on yes otherwise no.
-*  Remove Multiple Supplier
+* Remove Multiple Supplier
   * Firstly a user should "CTRL" click the suppliers they would like to remove. Once the rows are highlighted in blue. 
   * To remove the suppliers from suppliers table the user should click on quick actions to see the drop down.
   * Then they should select the "Remove Supplier" option.
@@ -290,11 +290,11 @@ The search and select options can be found in the top left side of the page how 
     
 **Quick Actions:**
 The "Quick Actions" button is located in the top right corner. Most of the functionality for all pages can be found here. More information on the actions can be found below:
-*  Export To Excel:
+* Export To Excel:
   * To export to excel the user should click on quick actions to see the drop down.
   * Then they should select the "Export to excel" option.
   * This will automatically download the file to thier downloads on their device.
-*  Add Member:
+* Add Member:
   * To add an Member to team the user should click on quick actions to see the drop down.
   * Then they should select the "Add Member" option.
   * This will open a pop up for the user to add details regarding the Member they would like to add.
@@ -340,7 +340,7 @@ The "Quick Actions" button is located in the top right corner. Most of the funct
   * Then they should select the "Create Order" option.
   * This will open a pop up for the user to add details regarding the order they would like to create.
   * Once filled in the user can enter the order by clicking the submit button.
-*  Cancel Order:
+* Cancel Order:
   * Firstly a user should click on the order they would like to cancel. Once the row is highlighted in blue. 
   * To cancel the order the user should click on quick actions to see the drop down.
   * Then they should select the "Cancel Order" option.

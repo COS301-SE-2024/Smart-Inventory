@@ -88,3 +88,9 @@
 .button-group button[type="submit"]:hover {
     background-color: #666666;
 }
+
+.error-message {
+    color: #ff4d4d;
+    font-size: 14px;
+    margin-top: 5px;
+}

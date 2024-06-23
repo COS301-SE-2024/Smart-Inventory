@@ -12,13 +12,11 @@ The document aims to provide a clear roadmap for developers to translate the vis
 ### Sign in and Create Account
 
 <div style="text-align: center;">
-    <img src="/media/wireframes/CreateAcc_dark.png" alt="Create Account">
-    <img src="/media/wireframes/CreateAcc_light.png" alt="Create Account">
+    <img src="/media/Updated_Wireframes/CreateAccount2_WF.png" alt="Create Account">
 </div>
 
 <div style="text-align: center;">
-    <img src="/media/wireframes/SignIn_dark.png" alt="SignIn-dark">
-    <img src="/media/wireframes/SignIn_light.png" alt="SignIn-light">
+    <img src="/media/Updated_Wireframes/SIgnin2_WF.png" alt="SignIn-dark">
 </div>
 
 ### Dashboard
@@ -28,40 +26,28 @@ The document aims to provide a clear roadmap for developers to translate the vis
     <img src="/media/wireframes/Dashboard_light.png" alt="Dashboard-light">
 </div>
 
+### Teams
+
+<div style="text-align: center;">
+    <img src="/media/Updated_Wireframes/Team2_WF.png" alt="Dashboard-dark">
+</div>
+
 ### Orders
 
 <div style="text-align: center;">
-    <img src="/media/wireframes/Orders-dark-mode.png" alt="Orders-dark">
-    <img src="/media/wireframes/Orders-light-mode.png" alt="Orders-light">
+    <img src="/media/Updated_Wireframes/Orders2_WF.png" alt="Orders-dark">
 </div>
 
 ### Inventory
 
 <div style="text-align: center;">
-    <img src="/media/wireframes/Inventory-dark-mode.png" alt="Inventory-dark">
-    <img src="/media/wireframes/Inventory-light-mode.png" alt="Inventory-light">
+    <img src="/media/Updated_Wireframes/Inventory2_WF.png" alt="Inventory-dark">
 </div>
 
 ### Settings
 
 <div style="text-align: center;">
-    <img src="/media/wireframes/Settings-General-dark-mode.png" alt="Settings-General-dark">
-    <img src="/media/wireframes/Settings-General-light-mode.png" alt="Settings-General-light">
-</div>
-
-<div style="text-align: center;">
-    <img src="/media/wireframes/Settings-Notifications-dark-mode.png" alt="Settings-Notifications-dark">
-    <img src="/media/wireframes/Settings-Notifications-light-mode.png" alt="Settings-Notifications-light">
-</div>
-
-<div style="text-align: center;">
-    <img src="/media/wireframes/Settings-UserPermissions-dark-mode.png" alt="Settings-UserPermissions-dark">
-    <img src="/media/wireframes/Settings-UserPermissions-light-mode.png" alt="Settings-UserPermissions-light">
-</div>
-
-<div style="text-align: center;">
-    <img src="/media/wireframes/Settings-Account-dark-mode.png" alt="Settings-Account-dark">
-    <img src="/media/wireframes/Settings-Account-light-mode.png" alt="Settings-Account-light">
+    <img src="/media/Updated_Wireframes/ForgetPassword2_WF.png" alt="Settings-General-light">
 </div>
 
 <div style="text-align: center;">

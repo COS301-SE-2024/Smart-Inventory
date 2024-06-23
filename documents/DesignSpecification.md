@@ -31,7 +31,6 @@ The document aims to provide a clear roadmap for developers to translate the vis
 
 <div style="text-align: center;">
     <img src="/media/Wireframes/Dashboard - Light.png" alt="Dashboard-dark">
-
 </div>
 
 ### Teams

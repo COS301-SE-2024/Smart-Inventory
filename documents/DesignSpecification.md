@@ -22,6 +22,7 @@ The document aims to provide a clear roadmap for developers to translate the vis
 </div>
 
 ### Reset Password 
+
 <div style="text-align: center;">
     <img src="/media/Wireframes/ResetPassword.jpeg" alt="SignIn-dark">
 </div

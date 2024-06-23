@@ -70,16 +70,16 @@ A user will be brought to this page either through an email link or when they op
 
 <div align="center">
   <h3>Dashboard</h3>
-  <img src="/media/wireframes/Dashboard_dark.png">
-  <img src="/media/wireframes/Dashboard_light.png">
+  <img src="/media/Pages/Dashboard/Dashboard - Dark.png">
+  <img src="/media/Pages/Dashboard/Dashboard - Light.png">
 </div>
 
 **Dashboard:**
-Once an account is created or a user signs in they will be taken to the Dashboard page. It is similar to a home page but gives an overview of whats happening between team and their activities as well as with the activities within the bussiness. 
-Below the functionalities possible on the page is discussed.
+Once an account is created or a user signs in they will be taken to the Dashboard page. It provides a comprehensive view of key performance indicators and metrics essential for managing inventory and order fulfillment. Below is a detailed explanation of each section and its functionality:
+
 <br>
 
-**Side Bar:**
+## Navigation
 The side bar can be found on the left hand side of the page. 
 * Close Sidebar:
   * The sidebars default is to be open to close it for more space you can click the hamburger button at the top of it which should colapse it.
@@ -98,13 +98,70 @@ The side bar can be found on the left hand side of the page.
   * To use the sidebar to navigate all that is needed to do is if the sidebar is closed open it.
   * When the sidebar is open read which of the above choices you would like to navigate to click on it and it will navigate you to the page.
 
-<br>
-**Team:**
-<br>
-**Summary:**
-<br>
-**Quick Actions:**
-<br>
-**Add Widget:**
+## Top Metrics
 
-<br>
+For each of the top metrics, when the mouse is placed above their respective icons, a tooltip that describe in short the metric will appear
+
+- **Inventory Levels**: Displays the current inventory count. Clicking n its icon, can send a user to the inventory page for further details.
+- **Avg Fulfillment Time**: Shows the average time taken to fulfill orders, measured in hours. A lower time indicates more efficient processing.
+- **Backorders**: Indicates the number of orders that are currently backlogged and awaiting fulfillment.
+- **Top Seller**: Highlights the top-selling product for quick reference.
+
+## Graphs and Reports
+
+### Requests
+- **Total Requests**: Indicates the total number of requests received.
+- **Fulfilled Requests**: Shows the number and percentage of requests that have been successfully fulfilled.
+- **Pending Requests**: Displays the number of requests that are still being processed.
+
+### Backorders
+- **Current Backorders**: The number of orders that have not yet been fulfilled and are delayed.
+- **Average Delay**: The average time delay, in days, that backordered items are experiencing.
+- **Longest Backorder Item**: The specific item that has been backordered the longest, along with the number of days delayed.
+
+### Detailed Monthly Report
+- This bar chart displays the monthly distribution of requests or backorders, giving a month-by-month analysis that helps in forecasting and planning.
+
+## Action Buttons
+
+- **See Reports**: This button allows users to access more detailed reports and data analytics for deeper insights into the inventory and sales metrics.
+
+## User Information
+
+- The top right corner displays the current user's name (e.g., John Doe) and role (e.g., Admin), indicating who is logged into the dashboard.
+
+## Help Options
+
+The "Help Options" button located in the bottom right of the dashboard offers quick access to various support and configuration tools. Here's a breakdown of each option available in the menu:
+
+### Chart Options
+- **Bar Chart**: Select this option to add a bar chart widget to your dashboard.
+- **Donut Chart**: Choose this option to add a donut chart widget to your dashboard.
+- **Area Chart**: Select this to add an area chart widget to the dashboard.
+
+### Widget Management
+- **Add a Widget**: Hover over this option to see further choices such as 'Bar Chart', 'Donut Chart', and 'Area Chart' to add these specific widgets to the dashboard.
+#### Delete a Widget
+The "Delete a Widget" option allows you to remove widgets you no longer need from the dashboard. This action helps streamline your dashboard's interface by keeping only the most useful information visible. Here’s how to use this feature:
+
+1. **Access the Widget Deletion Interface**: Select the "Delete a Widget" option from the Help Options menu. This will trigger a modal where all dashboard widgets are displayed.
+
+2. **Mark Widgets for Deletion**:
+   - Each widget in the deletion interface will have a small trash can icon next to it. 
+   - Click the trash can icon for each widget you wish to delete. Clicking the icon will mark the widget for deletion, indicated by a visual change (such as the widget being greyed out or a checkmark appearing on the icon).
+
+3. **Confirm or Undo Deletions**:
+   - After selecting the widgets you want to delete, you have two options:
+     - **Confirm Deletions**: Click the "Confirm Deletions" button to permanently remove the marked widgets from your dashboard.
+     - **Undo**: If you change your mind, you can click the "Undo" button to unmark any widgets selected for deletion and keep them on your dashboard.
+
+4. **Completion**:
+   - Upon confirming the deletions, the widgets will be removed, and a user will be taken back to the dashboard.
+   - If you choose to undo the deletion, the widgets will remain on your dashboard as before, and no changes will be made.
+
+This feature provides a flexible way to customize the dashboard to fit your specific needs, ensuring that only relevant and necessary widgets are displayed.
+
+
+### Additional Tools
+- **Help**: By taking the user to the help page. Users will access detailed documentation and support resources to assist with any queries or issues you may encounter while using the dashboard.
+- **Settings**: By taking the user to the settings page. Adjust settings related to your account and dashboard preferences.

@@ -9,12 +9,13 @@ The document aims to provide a clear roadmap for developers to translate the vis
 
 ## Wireframes
 
-### Sign in and Create Account
+### Sign in
 
 <div style="text-align: center;">
     <img src="/media/Updated_Wireframes/CreateAccount2_WF.png" alt="Create Account">
 </div>
 
+### Create Account
 <div style="text-align: center;">
     <img src="/media/Updated_Wireframes/SIgnin2_WF.png" alt="SignIn-dark">
 </div>

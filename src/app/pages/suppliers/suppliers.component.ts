@@ -274,10 +274,65 @@ export class SuppliersComponent implements OnInit {
         this.rowsToDelete = [];
     }
 
-    async handleCellValueChanged(event: { data: any; field: string; newValue: any }) {
-        // Implement the logic to update the supplier data when a cell value is changed
-        // You can use the event object to access the updated data and field
-        // and make an API call or invoke a lambda function to update the supplier
-        // After successful update, you can update the local rowData to reflect the changes
+async handleCellValueChanged(event: { data: any; field: string; newValue: any }) {
+    try {
+      const session = await fetchAuthSession();
+  
+      const cognitoClient = new CognitoIdentityProviderClient({
+        region: outputs.auth.aws_region,
+        credentials: session.credentials,
+      });
+  
+      const getUserCommand = new GetUserCommand({
+        AccessToken: session.tokens?.accessToken.toString(),
+      });
+      const getUserResponse = await cognitoClient.send(getUserCommand);
+  
+      const tenentId = getUserResponse.UserAttributes?.find(
+        (attr) => attr.Name === 'custom:tenentId'
+      )?.Value;
+  
+      if (!tenentId) {
+        throw new Error('TenentId not found in user attributes');
+      }
+  
+      const lambdaClient = new LambdaClient({
+        region: outputs.auth.aws_region,
+        credentials: session.credentials,
+      });
+  
+      const updatedData = {
+        supplierID: event.data.supplierID,
+        tenentId: tenentId,
+        [event.field]: event.newValue,
+      };
+  
+      const invokeCommand = new InvokeCommand({
+        FunctionName: 'editSupplier',
+        Payload: new TextEncoder().encode(JSON.stringify({ body: JSON.stringify(updatedData) })),
+      });
+  
+      const lambdaResponse = await lambdaClient.send(invokeCommand);
+      const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+  
+      if (responseBody.statusCode === 200) {
+        console.log('Supplier updated successfully');
+        // Update the local data to reflect the change
+        const updatedSupplier = JSON.parse(responseBody.body);
+        const index = this.rowData.findIndex((supplier) => supplier.supplierID === updatedSupplier.supplierID);
+        if (index !== -1) {
+          this.rowData[index] = { ...this.rowData[index], ...updatedSupplier };
+        }
+      } else {
+        throw new Error(responseBody.body);
+      }
+    } catch (error) {
+      console.error('Error updating supplier:', error);
+      alert(`Error updating supplier: ${(error as Error).message}`);
+      // Revert the change in the grid
+      this.gridComponent.updateRow(event.data);
     }
+  }
+  
+
 }

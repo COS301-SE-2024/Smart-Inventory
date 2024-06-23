@@ -4,6 +4,7 @@
         [columnDefs]="colDefs"
         [addButton]="addButton"
         (addNewClicked)="openAddSupplierPopup()"
+        (itemToUpdate)="handleCellValueChanged($event)"
         #gridComponent
     >
     </app-grid>

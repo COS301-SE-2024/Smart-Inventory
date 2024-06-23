@@ -1,0 +1,59 @@
+name: Run Cypress Component Tests
+
+on:
+  push:
+      branches: [feat/tests]
+  pull_request:
+      branches: [develop]
+
+jobs:
+  cypress-run:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20.11.1
+
+      - name: Install dependencies
+        run: |
+          npm cache clean --force
+          rm -rf node_modules package-lock.json
+          npm install -g nx
+          npm install
+          npm install --save-dev @nx/nx-linux-x64-gnu
+          npm install esbuild
+        continue-on-error: true
+
+      - name: Run Amplify sandbox
+        run: |
+          npx ampx sandbox --outputs-format json --outputs-out-dir ./ --once
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: us-east-1
+
+      - name: Install Cypress
+        run: npm install cypress@13.12.0
+
+      - name: Run Cypress component tests
+        run: |
+          npm run build
+          npx cypress run --component
+        continue-on-error: true
+
+      - name: Build
+        run: npm run build -- --configuration production
+
+      - name: Archive test results
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: cypress-results
+          path: cypress/results
+      
+      

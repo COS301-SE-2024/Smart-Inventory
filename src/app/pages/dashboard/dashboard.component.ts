@@ -157,7 +157,7 @@ export class DashboardComponent implements OnInit {
       { cols: 1, rows: 1, y: 0, x: 4, name: 'Inventory Levels', icon: 'storage', analytic: '1234', percentage: 0.04, type: 'card', isActive: true, tooltip: 'Current inventory stock count.' },
       { cols: 1, rows: 1, y: 0, x: 5, name: 'Backorders', icon: 'assignment_return', analytic: '320', percentage: -0.01, type: 'card', isActive: true, tooltip: 'Orders pending due to lack of stock.' },
       { cols: 1, rows: 1, y: 0, x: 6, name: 'Avg Fulfillment Time', icon: 'hourglass_full', analytic: '48 hrs', percentage: -0.05, type: 'card', isActive: true, tooltip: 'Average time taken from order placement to shipment.' },
-      { cols: 1, rows: 1, y: 0, x: 7, name: 'Top Seller', icon: 'star_rate', analytic: 'Product123', percentage: 0.12, type: 'card', isActive: true, tooltip: 'The product with the highest sales.' }
+      { cols: 1, rows: 1, y: 0, x: 7, name: 'Top Seller', icon: 'star_rate', analytic: 'Product123', percentage: 0.12, type: 'card', isActive: true, tooltip: 'The product with the highest requests.' }
     ];
 
     return this.dashboard;

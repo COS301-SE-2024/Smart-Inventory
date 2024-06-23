@@ -331,15 +331,15 @@ The search and select options can be found in the top left side of the page how 
     
 **Quick Actions:**
 The "Quick Actions" button is located in the top right corner. Most of the functionality for all pages can be found here. More information on the actions can be found below:
-*  Export To Excel:
-  - To export to excel the user should click on quick actions to see the drop down.
-  - Then they should select the "Export to excel" option.
-  - This will automatically download the file to thier downloads on their device.
-*  Create Order:
-  *  To create an order the user should click on quick actions to see the drop down.
-  *  Then they should select the "Create Order" option.
-  *  This will open a pop up for the user to add details regarding the order they would like to create.
-  *  Once filled in the user can enter the order by clicking the submit button.
+* Export To Excel:
+  * To export to excel the user should click on quick actions to see the drop down.
+  * Then they should select the "Export to excel" option.
+  * This will automatically download the file to thier downloads on their device.
+* Create Order:
+  * To create an order the user should click on quick actions to see the drop down.
+  * Then they should select the "Create Order" option.
+  * This will open a pop up for the user to add details regarding the order they would like to create.
+  * Once filled in the user can enter the order by clicking the submit button.
 *  Cancel Order:
   * Firstly a user should click on the order they would like to cancel. Once the row is highlighted in blue. 
   * To cancel the order the user should click on quick actions to see the drop down.

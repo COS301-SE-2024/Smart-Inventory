@@ -94,12 +94,6 @@ Usability:
 Security:
 * Allowing layered controls like firewalls, access controls, and encryption at different layers make it harder to breach the system. Data protection as data is secured at rest and in transit using encryption. Allows for separation of duties limiting user access based on roles, minimizing damage from compromised accounts.
 
-#### Diagram
-
-<div align="center">
-   <img src="/media/ArchitecturalDiagrams/LayerArch.drawio.png">
-</div>
-
 ### Service-Oriented Architecture (SOA) 
 
 #### Description

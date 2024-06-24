@@ -113,9 +113,7 @@ export class GridComponent implements OnInit {
 
     onRowValueChanged(event: RowValueChangedEvent) {
         const data = event.data;
-        console.log(
-            'onRowValueChanged: (' + data.make + ', ' + data.model + ', ' + data.price + ', ' + data.field5 + ')',
-        );
+        console.log(data);
     }
 
     importExcel() {

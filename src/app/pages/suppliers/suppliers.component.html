@@ -4,6 +4,8 @@
         [columnDefs]="colDefs"
         [addButton]="addButton"
         (addNewClicked)="openAddSupplierPopup()"
+        (itemToUpdate)="handleCellValueChanged($event)"
+        (rowsToDelete)="handleRowsToDelete($event)"
         #gridComponent
     >
     </app-grid>
@@ -93,3 +95,36 @@
         </div>
     </div>
 </div>
+
+<!-- Edit Address Popup -->
+<div *ngIf="showEditAddressPopup" class="popup-overlay">
+    <div class="popup-content">
+      <h2>Edit Supplier Address</h2>
+      <form (ngSubmit)="onEditAddressSubmit(editAddressForm.value)" #editAddressForm="ngForm">
+        <div class="form-group">
+          <label for="edit_street">Street</label>
+          <input type="text" id="edit_street" name="street" [(ngModel)]="editAddress.street" required />
+        </div>
+        <div class="form-group">
+          <label for="edit_city">City</label>
+          <input type="text" id="edit_city" name="city" [(ngModel)]="editAddress.city" required />
+        </div>
+        <div class="form-group">
+          <label for="edit_state_province">State/Province</label>
+          <input type="text" id="edit_state_province" name="state_province" [(ngModel)]="editAddress.state_province" required />
+        </div>
+        <div class="form-group">
+          <label for="edit_postal_code">Postal Code</label>
+          <input type="text" id="edit_postal_code" name="postal_code" [(ngModel)]="editAddress.postal_code" required />
+        </div>
+        <div class="form-group">
+          <label for="edit_country">Country</label>
+          <input type="text" id="edit_country" name="country" [(ngModel)]="editAddress.country" required />
+        </div>
+        <div class="button-group">
+          <button type="submit">Submit</button>
+          <button type="button" (click)="closeEditAddressPopup()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>

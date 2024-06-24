@@ -45,6 +45,10 @@ jobs:
         env:
           NX_SKIP_NX_CACHE: true
 
+      - name: Remove amplify_outputs.json imports
+        run: |
+          find src -type f -name "*.ts" -exec sed -i 's/import outputs from.*amplify_outputs.json.*;//g' {} +
+
       - name: Build Codebase
         run: |
           npm run build -- --configuration=production

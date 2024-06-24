@@ -158,7 +158,7 @@ Reviews focus on checking that coding standards are being followed and that any 
   
   ##
 
-  <a href="/documents/SmartInventory-Demo1.pdf">
+  <a href="/documents/SmartInventory-Demo2.pdf">
     Helix - Demo 1 Presentation Slides
   </a>
 <hr>

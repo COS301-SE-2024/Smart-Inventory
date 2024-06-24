@@ -40,10 +40,9 @@
 }
 
 .body {
-    height: 100vh;
+    width: 100%;
     display: flex;
     flex-direction: column;
-    margin: 0 30px;
 }
 
 .content {
@@ -204,7 +203,7 @@
 }
 
 .content .second-row .right-pane .faq-section .faq-row {
-    width: 100%;
+    width: fit-content;
 }
 
 .content .second-row .right-pane .faq-section .faq-row.faq-row-one {
@@ -411,6 +410,7 @@
     width: 150px;
     margin-left: auto;
     font-weight: 500;
+    border: #000;
 }
 
 /* CONTACT SUPPORT */
@@ -621,6 +621,7 @@ mat-form-field.mat-mdc-form-field.mat-mdc-form-field-type-mat-input.mat-form-fie
     width: 150px;
     margin-left: auto;
     font-weight: 500;
+    border: #000;
 }
 
 /* USER GUIDES SECTION */
@@ -641,8 +642,8 @@ mat-form-field.mat-mdc-form-field.mat-mdc-form-field-type-mat-input.mat-form-fie
 .mat-mdc-tab-body-content.ng-trigger.ng-trigger-translateTab {
     height: 100vh;
     overflow: scroll;
+    padding-right: 30px;
 }
-
 /* .user-guides-row-one h2 {
     margin: 0;
     font-size: 60px;
@@ -656,9 +657,9 @@ mat-form-field.mat-mdc-form-field.mat-mdc-form-field-type-mat-input.mat-form-fie
     width: 20%;
     position: relative;
     /* top: 10%; */
-    background-color: #d9d9d9;
+    background-color: #f1f1f1;
     padding: 16px;
-    border-right: 1px solid #ccc;
+    border-right: 1px solid #000000;
 }
 
 .side-menu nav ul {
@@ -792,8 +793,9 @@ p {
     right: 0;
     transform: translateY(-50%);
     display: var(--mat-text-button-touch-target-display);
-    background-color: #f1f1f1;
+    background-color: #f3f3f3;
     border-radius: 5px;
+    border: #000;
 }
 .mat-mdc-form-field-infix {
     flex: auto;
@@ -929,6 +931,7 @@ button.send-button {
     font-size: 20px;
     font-weight: 400;
     margin-bottom: 20px;
+    border: #000;
 }
 /* FORM FIELD EDITING SH** TOOK LONG YALL */
 
@@ -966,7 +969,7 @@ mat-form-field .mdc-line-ripple {
 }
 
 button mat-button {
-    background-color: #8f8f8f;
+    background-color: #f1f1f1;
     justify-content: left;
     width: 200px;
     height: 60px;

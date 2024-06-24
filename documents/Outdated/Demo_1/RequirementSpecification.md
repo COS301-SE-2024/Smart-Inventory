@@ -34,13 +34,30 @@ In today's dynamic business world, empowering your employees is crucial for effi
 
 ### User Stories
 
+#### Authentication and Authorization
 <table>
   <tbody>
     <tr><td>As an administrator, I want to be able to securely login, and manage user accounts. So that I can ensure appropriate access levels are maintained.</td></tr>
     <tr><td>As an administrator, I want to manage user roles and permissions, so that users have appropriate access rights within the system.</td></tr>
     <tr><td>As an employee, I want to be able to securely sign in, and manage my own account settings. So that I can be able to adjust the application according to what I want.</td></tr>
+  </tbody>
+</table>
+
+#### Team Management
+<table>
+  <tbody>
+    <tr><td>As an administrator, I want to add new team members to the system, providing their name, surname, email, and role. So that I can manage user access and permissions effectively.</td></tr>
+    <tr><td>As an administrator, I want to view a list of all team members, including their name, surname, email, and role. So that I can have an overview of the team structure and contact information.</td></tr>
+    <tr><td>As an administrator, I want to edit team member details, such as name and surname. So that I can keep user information up to date.</td></tr>
+    <tr><td>As an administrator, I want to change a team member's role, with a confirmation dialog to ensure the change is intentional. So that I can manage user permissions and adapt to changing responsibilities.</td></tr>
+    <tr><td>As an administrator, I want to remove team members from the system, with a confirmation dialog to prevent accidental deletion. So that I can revoke access for users who no longer require it.</td></tr>
+  </tbody>
+</table>
+
+#### Inventory Management
+<table>
+  <tbody>
     <tr><td>As an inventory controller, I want to be able to manage products and stock levels, so that I can ensure accurate inventory records.</td></tr>
-    <tr><td>As a user responsible for inventory monitoring, I want the system to generate alerts when stock levels reach predefined thresholds. So that I can take timely action to replenish inventory</td></tr>
     <tr><td>As an administrator, of the inventory management system, I want to view a real-time dashboard showing current stock levels. So that I can have immediate visibility into inventory status.</td></tr>
     <tr><td>As a user managing inventory, I want to search for specific stock items by name, SKU, or supplier and sort them by name, SKU, quantity, or expiration date. So that I can quickly locate and organize inventory items.</td></tr>
     <tr><td>As an authorized user, I want to edit stock details for inventory items and have all edits logged in the stock transaction history. So that changes to inventory are accurately tracked.</td></tr>
@@ -48,88 +65,25 @@ In today's dynamic business world, empowering your employees is crucial for effi
   </tbody>
 </table>
 
-## Use Cases
+#### Stock Request
+<table>
+  <tbody>
+    <tr><td>As an employee, I want to request stock from the inventory, providing the item details, quantity, and purpose. So that I can obtain the necessary items for my work.</td></tr>
+    <tr><td>As an inventory controller, I want to be notified of stock requests and have the ability to approve or reject them. So that I can manage stock distribution effectively.</td></tr>
+    <tr><td>As an administrator, I want to view an audit trail of all stock requests, including the requester, item, quantity, purpose, and approval status. So that I can monitor stock usage and maintain accountability.</td></tr>
+  </tbody>
+</table>
 
-### Use Case 1: User Modification
-
-#### Actors:
-- Administrator
-
-#### Description:
-Enable administrators to modify existing user accounts, such as updating user roles or permissions.
-
-#### Preconditions:
-- The administrator is logged into the dashboard.
-- The administrator has the necessary permissions to modify user accounts.
-
-#### Post-Conditions:
-- The user account is updated with the new roles or permissions.
-
-#### Normal Flow:
-1. The administrator logs into the dashboard.
-2. The administrator navigates to the user management section.
-3. The administrator selects the user account to modify.
-4. The administrator updates the user roles or permissions.
-5. The administrator saves the changes.
-6. The system confirms that the user account has been successfully updated.
-
-#### Alternative Flow:
-- If the administrator does not have the necessary permissions, the system displays an error message indicating insufficient permissions.
-
-### Use Case 2: Password Change
-
-#### Actors:
-- User
-
-#### Description:
-Allow users to change their password while logged into their account.
-
-#### Preconditions:
-- The user is logged into their account.
-- The user knows their current password.
-
-#### Post-Conditions:
-- The user's password is updated.
-
-#### Normal Flow:
-1. The user logs into their account.
-2. The user navigates to the profile page.
-3. The user selects the option to change their password.
-4. The user enters their current password.
-5. The user enters the new password and confirms it.
-6. The user submits the password change request.
-7. The system validates the current password and updates to the new password.
-8. The system confirms that the password has been successfully changed.
-
-#### Alternative Flow:
-- If the current password is incorrect, the system displays an error message and does not update the password.
-
-### Use Case 3: User Deactivation
-
-#### Actors:
-- Administrator
-
-#### Description:
-Implement the functionality for administrators to deactivate user accounts, preventing them from accessing the system.
-
-#### Preconditions:
-- The administrator is logged into the dashboard.
-- The administrator has the necessary permissions to deactivate user accounts.
-
-#### Post-Conditions:
-- The user account is deactivated and the user can no longer access the system.
-
-#### Normal Flow:
-1. The administrator logs into the dashboard.
-2. The administrator navigates to the user management section.
-3. The administrator selects the user account to deactivate.
-4. The administrator selects the option to deactivate the account.
-5. The administrator confirms the deactivation.
-6. The system deactivates the user account.
-7. The system confirms that the user account has been successfully deactivated.
-
-#### Alternative Flow:
-- If the administrator does not have the necessary permissions, the system displays an error message indicating insufficient permissions.
+#### Supplier Management
+<table>
+  <tbody>
+    <tr><td>As an administrator, I want to add new suppliers to the system, providing their company name, contact name, contact email, phone number, and address details. So that I can maintain a comprehensive supplier database.</td></tr>
+    <tr><td>As an administrator or inventory controller, I want to view a list of all suppliers, including their company name, contact name, contact email, phone number, and address. So that I can quickly access supplier information when needed.</td></tr>
+    <tr><td>As an administrator or inventory controller, I want to edit supplier details, such as company name, contact name, contact email, and phone number. So that I can keep supplier information current and accurate.</td></tr>
+    <tr><td>As an administrator or inventory controller, I want to update a supplier's address details in a separate popup window. So that I can make address changes easily without modifying other supplier information.</td></tr>
+    <tr><td>As an administrator, I want to remove suppliers from the system, with a confirmation dialog to prevent accidental deletion. So that I can maintain an accurate supplier database.</td></tr>
+  </tbody>
+</table>
 
 ## Subsystems
 ### 1. Authentication and Authorization Subsystem
@@ -517,6 +471,19 @@ Implement the functionality for administrators to deactivate user accounts, prev
 </li>
   </br>
 </ol>
+
+## UML Class Diagram
+
+![UML Diagram](/media/uml_diagram.png)
+
+The above UML diagram represents the architecture and relationships of the components and Lambda functions in the system. It showcases the following key elements:
+
+- The `GridComponent` is used by the `InventoryComponent`, `SuppliersComponent`, and `TeamComponent` to display and manage data in a grid format.
+- The `InventoryComponent` interacts with the `Inventory-updateItem`, `Inventory-removeItem`, `Inventory-CreateItem`, and `Inventory-getItems` Lambda functions to perform CRUD operations on inventory items.
+- The `SuppliersComponent` invokes the `deleteSupplier`, `editSupplier`, `addSupplier`, and `getSuppliers` Lambda functions to manage supplier data.
+- The `TeamComponent` invokes the `getUsers` Lambda function to retrieve user information.
+
+The diagram provides a visual representation of the system's architecture and helps in understanding the relationships and dependencies between the components and Lambda functions.
 
 ## Use Case Diagrams
 

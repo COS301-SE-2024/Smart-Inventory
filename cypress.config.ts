@@ -1,19 +1,15 @@
-// import { defineConfig } from "cypress";
-
-// export default defineConfig({
-//   component: {
-//     devServer: {
-//       framework: "angular",
-//       bundler: "webpack",
-//     },
-//     specPattern: "**/*.cy.ts",
-//   },
-// });
-
 import { defineConfig } from 'cypress';
 
 export default defineConfig({
+    viewportWidth: 1280,
+    viewportHeight: 720,
+    setupNodeEvents(on, config) {},
+    experimentalModifyObstructiveThirdPartyCode: true,
+    chromeWebSecurity: false,
     component: {
+        env: {
+            commandDelay: 1
+        },
         devServer: {
             framework: 'angular',
             bundler: 'webpack',

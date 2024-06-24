@@ -1,3 +1,7 @@
+![GitHub pull requests](https://img.shields.io/github/issues-pr/COS301-SE-2024/Smart-Inventory)
+![GitHub issues](https://img.shields.io/github/issues/COS301-SE-2024/Smart-Inventory)
+![Code Coverage](https://img.shields.io/codecov/c/github/COS301-SE-2024/Smart-Inventory?branch=automated-tests)
+
 # Helix - SmartInventory - Smart Inventory System to track and organise inventory
 
 <div align="center">
@@ -173,25 +177,19 @@ Reviews focus on checking that coding standards are being followed and that any 
 ##
 
   <a href="https://drive.google.com/file/d/1GA5bhGj_Fdi55wLu19L-26e7DdXcXDOk/view?usp=drive_link">
-    Helix - Demo 1 Front-end Recording
-  </a>
-  
-##
-
-  <a href="https://drive.google.com/file/d/1G6dcJYH6jVXE5t6YGfHJ_d8GVBYD4hXB/view?usp=drive_link">
-    Helix - Demo 1 Back-end Recording
+    Helix - Demo 2 App Recording
   </a>
   
 ##
 
   <a href="https://drive.google.com/file/d/1iGT_RBSD6WArLD1bJzuDQxNmeEPE8L8b/view?usp=sharing">
-    Helix - Demo 1 Recording
+    Helix - Demo 2 Recording
   </a>
   
   ##
 
-  <a href="/documents/SmartInventory-Demo1.pdf">
-    Helix - Demo 1 Presentation Slides
+  <a href="/documents/SmartInventory-Demo2.pdf">
+    Helix - Demo 2 Presentation Slides
   </a>
 <hr>
 </br>
@@ -203,7 +201,7 @@ Reviews focus on checking that coding standards are being followed and that any 
 
 ### ⚙️ Frontend:
 * Angular
-* Ionic
+* Material
 * Typescript
 
 ### ⚙️ Backend:

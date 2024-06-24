@@ -10,12 +10,23 @@ import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-c
 import outputs from '../../../../amplify_outputs.json';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { LoadingSpinnerComponent } from '../../components/loader/loading-spinner.component';
+import { MatDialog } from '@angular/material/dialog';
+import { InventoryDeleteConfirmationDialogComponent } from './inventory-delete-confirmation-dialogue.component';
+import { MatDialogModule } from '@angular/material/dialog';
 
 @Component({
-
   selector: 'app-inventory',
   standalone: true,
-  imports: [GridComponent, MatButtonModule, CommonModule, FormsModule],
+  imports: [
+    GridComponent, 
+    MatButtonModule, 
+    CommonModule, 
+    FormsModule, 
+    LoadingSpinnerComponent, 
+    MatDialogModule,
+    InventoryDeleteConfirmationDialogComponent
+  ],
   templateUrl: './inventory.component.html',
   styleUrls: ['./inventory.component.css']
 })
@@ -24,8 +35,8 @@ export class InventoryComponent implements OnInit {
 
   rowData: any[] = [];
   showAddPopup = false;
-  showDeletePopup = false;
-  rowsToDelete: any[] = [];
+  showRequestStockPopup = false;
+  isLoading = true;
   item = {
     productId: '',
     description: '',
@@ -33,6 +44,8 @@ export class InventoryComponent implements OnInit {
     sku: '',
     supplier: ''
   };
+  selectedItem: any = null;
+  requestQuantity: number | null = null;
 
   colDefs: ColDef[] = [
     { field: "inventoryID", headerName: "Inventory ID", hide: true },
@@ -45,7 +58,7 @@ export class InventoryComponent implements OnInit {
 
   addButton = { text: 'Add New Item' };
 
-  constructor(private titleService: TitleService) {
+  constructor(private titleService: TitleService, private dialog: MatDialog) {
     Amplify.configure(outputs);
   }
 
@@ -110,6 +123,8 @@ export class InventoryComponent implements OnInit {
     } catch (error) {
       console.error('Error in loadInventoryData:', error);
       this.rowData = [];
+    } finally {
+      this.isLoading = false;
     }
   }
 
@@ -129,6 +144,11 @@ export class InventoryComponent implements OnInit {
   }
 
   async onSubmit(formData: any) {
+    if (isNaN(formData.quantity)) {
+      alert("Please enter a valid quantity");
+      return;
+    }
+
     try {
       const session = await fetchAuthSession();
 
@@ -188,25 +208,20 @@ export class InventoryComponent implements OnInit {
   }
 
   handleRowsToDelete(rows: any[]) {
-    this.rowsToDelete = rows;
-    this.showDeletePopup = true;
-  }
+    if (rows.length > 0) {
+      const dialogRef = this.dialog.open(InventoryDeleteConfirmationDialogComponent, {
+        width: '300px',
+        data: { sku: rows[0].sku },
+      });
 
-  async confirmDelete() {
-    if (this.rowsToDelete.length > 0) {
-      for (const row of this.rowsToDelete) {
-        await this.deleteInventoryItem(row.inventoryID);
-      }
-      this.gridComponent.removeConfirmedRows(this.rowsToDelete);
-      this.rowsToDelete = [];
+      dialogRef.componentInstance.deleteConfirmed.subscribe(async () => {
+        for (const row of rows) {
+          await this.deleteInventoryItem(row.inventoryID);
+        }
+        this.gridComponent.removeConfirmedRows(rows);
+        await this.loadInventoryData(); // Refresh the data after deletion
+      });
     }
-    this.showDeletePopup = false;
-    await this.loadInventoryData(); // Refresh the data after deletion
-  }
-
-  cancelDelete() {
-    this.showDeletePopup = false;
-    this.rowsToDelete = [];
   }
 
   async deleteInventoryItem(inventoryID: string) {
@@ -317,6 +332,92 @@ export class InventoryComponent implements OnInit {
       alert(`Error updating inventory item: ${(error as Error).message}`);
       // Revert the change in the grid
       this.gridComponent.updateRow(event.data);
+    }
+  }
+
+  openRequestStockPopup(item: any) {
+    this.selectedItem = item;
+    this.showRequestStockPopup = true;
+    this.requestQuantity = null;
+  }
+
+  closeRequestStockPopup() {
+    this.showRequestStockPopup = false;
+    this.selectedItem = null;
+    this.requestQuantity = null;
+  }
+
+  async requestStock() {
+    if (this.requestQuantity === null || isNaN(this.requestQuantity)) {
+      alert("Please enter a valid quantity");
+      return;
+    }
+  
+    try {
+      const session = await fetchAuthSession();
+  
+      const cognitoClient = new CognitoIdentityProviderClient({
+        region: outputs.auth.aws_region,
+        credentials: session.credentials,
+      });
+  
+      const getUserCommand = new GetUserCommand({
+        AccessToken: session.tokens?.accessToken.toString(),
+      });
+      const getUserResponse = await cognitoClient.send(getUserCommand);
+  
+      const tenentId = getUserResponse.UserAttributes?.find(
+        (attr) => attr.Name === 'custom:tenentId'
+      )?.Value;
+  
+      if (!tenentId) {
+        throw new Error('TenentId not found in user attributes');
+      }
+  
+      const lambdaClient = new LambdaClient({
+        region: outputs.auth.aws_region,
+        credentials: session.credentials,
+      });
+  
+      // First, update the inventory
+      const updatedQuantity = this.selectedItem.quantity - this.requestQuantity;
+      const updateEvent = {
+        data: this.selectedItem,
+        field: 'quantity',
+        newValue: updatedQuantity
+      };
+      await this.handleCellValueChanged(updateEvent);
+  
+      // Then, create the stock request report
+      const reportPayload = {
+        tenentId: tenentId,
+        sku: this.selectedItem.sku,
+        supplier: this.selectedItem.supplier,
+        quantityRequested: this.requestQuantity.toString() // Ensure this is a string
+      };
+  
+      console.log('Report Payload:', reportPayload); // Add this for debugging
+  
+      const createReportCommand = new InvokeCommand({
+        FunctionName: 'Report-createItem',
+        Payload: new TextEncoder().encode(JSON.stringify({ body: JSON.stringify(reportPayload) })),
+      });
+  
+      const lambdaResponse = await lambdaClient.send(createReportCommand);
+      const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+  
+      console.log('Lambda Response:', responseBody); // Add this for debugging
+  
+      if (responseBody.statusCode === 201) {
+        console.log('Stock request report created successfully');
+        await this.loadInventoryData();
+        this.closeRequestStockPopup();
+      } else {
+        throw new Error(JSON.stringify(responseBody.body));
+      }
+    } catch (error) {
+      console.error('Error requesting stock:', error);
+      alert(`Error requesting stock: ${(error as Error).message}`);
     }
   }
 }

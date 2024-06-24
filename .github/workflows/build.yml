@@ -64,4 +64,4 @@ jobs:
       - name: Ending
         id: init
         run: |
-          echo "${{ github.repository }} has been successfully built"
+          echo "${{ github.repository }} has been successfully built" 

@@ -10,11 +10,12 @@ import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-c
 import outputs from '../../../../amplify_outputs.json';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { LoadingSpinnerComponent } from '../../components/loader/loading-spinner.component';
 
 @Component({
   selector: 'app-inventory',
   standalone: true,
-  imports: [GridComponent, MatButtonModule, CommonModule, FormsModule],
+  imports: [GridComponent, MatButtonModule, CommonModule, FormsModule, LoadingSpinnerComponent],
   templateUrl: './inventory.component.html',
   styleUrls: ['./inventory.component.css']
 })
@@ -25,6 +26,7 @@ export class InventoryComponent implements OnInit {
   showAddPopup = false;
   showDeletePopup = false;
   showRequestStockPopup = false;
+  isLoading = true;
   rowsToDelete: any[] = [];
   item = {
     productId: '',
@@ -112,6 +114,8 @@ export class InventoryComponent implements OnInit {
     } catch (error) {
       console.error('Error in loadInventoryData:', error);
       this.rowData = [];
+    } finally {
+      this.isLoading = false;
     }
   }
 

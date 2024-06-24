@@ -21,6 +21,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { RoleChangeConfirmationDialogComponent } from './role-change-confirmation-dialog.component';
 import { RoleSelectCellEditorComponent } from './role-select-cell-editor.component';
+import { LoadingSpinnerComponent } from '../../components/loader/loading-spinner.component';
 
 @Component({
     selector: 'app-team',
@@ -34,6 +35,7 @@ import { RoleSelectCellEditorComponent } from './role-select-cell-editor.compone
         MatButtonModule,
         RoleChangeConfirmationDialogComponent,
         RoleSelectCellEditorComponent,
+        LoadingSpinnerComponent,
     ],
     templateUrl: './team.component.html',
     styleUrls: ['./team.component.css'],
@@ -51,7 +53,7 @@ export class TeamComponent implements OnInit {
     @ViewChild('gridComponent') gridComponent!: GridComponent;
 
     addButton = { text: 'Add Member' };
-
+    isLoading = true;
     rowData: any[] = [];
     colDefs: ColDef[] = [
         { field: 'given_name', headerName: 'Name' },
@@ -243,6 +245,8 @@ export class TeamComponent implements OnInit {
             }));
         } catch (error) {
             console.error('Error fetching users:', error);
+        } finally {
+            this.isLoading = false;
         }
     }
 

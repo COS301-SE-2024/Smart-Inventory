@@ -40,7 +40,7 @@ Monorepo approach with `client`, `server`, `config`, `docs`, and `scripts` direc
 
 | Aspect | JS/TS (Angular) | CSS/SCSS | JSON/YAML |
 |--------|-----------------|----------|-----------|
-| Indentation | 2 spaces | 2 spaces | 2 spaces |
+| Indentation | 4 spaces | 2 spaces | 2 spaces |
 | Line Length | 80 characters | 80 characters | 80 characters |
 | Braces | Same line opening, new line closing | Same as Angular | N/A |
 

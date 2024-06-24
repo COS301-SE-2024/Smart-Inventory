@@ -436,6 +436,10 @@ The Help page is designed to provide users with quick access to frequently asked
 
 Here is a brief overview of the types of questions and guides you can find under each category:
 
+<div style="flex: 1 1 50%; text-align: center; min-height: 300px;">
+      <img src="/media/Pages/Help/FAQs.png" style="width: 100%; max-width: 300px; max-height: 300px;">
+    </div>
+
 ### General
 
 - **How to reset my password?**
@@ -524,6 +528,10 @@ Here is a brief overview of the types of questions and guides you can find under
 
 This section addresses common problems that users might encounter, providing clear instructions on how to resolve them.
 
+<div style="flex: 1 1 50%; text-align: center; min-height: 300px;">
+      <img src="/media/Pages/Help/Troubleshooting.png" style="width: 100%; max-width: 300px; max-height: 300px;">
+    </div>
+
 ### Common Issues
 
 - **Cannot login**
@@ -563,6 +571,10 @@ This section addresses common problems that users might encounter, providing cle
 
 Detailed step-by-step guides are provided for various functionalities of the system. These guides are designed to help users fully utilize all aspects of the software.
 
+<div style="flex: 1 1 50%; text-align: center; min-height: 300px;">
+  <img src="/media/Pages/Help/UserGuides.png" style="width: 100%; max-width: 300px; max-height: 300px;">
+</div>
+
 ### Key Areas Covered
 
 - **Introduction**
@@ -595,6 +607,10 @@ Detailed step-by-step guides are provided for various functionalities of the sys
 ## Contact Support
 
 For direct assistance or when you encounter issues not covered in the manuals or troubleshooting:
+
+<div style="flex: 1 1 50%; text-align: center; min-height: 300px;">
+  <img src="/media/Pages/Help/ContactSupport.png" style="width: 100%; max-width: 300px; max-height: 300px;">
+</div>
 
 - **How can we help?**
   - Access the contact form to submit any queries directly to support.

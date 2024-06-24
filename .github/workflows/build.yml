@@ -39,15 +39,24 @@ jobs:
           rm -rf node_modules
           rm -f package-lock.json
 
+      - name: Create mock amplify_outputs.json
+        run: |
+          echo '{
+            "auth": {
+              "aws_region": "us-east-1",
+              "user_pool_id": "mock-user-pool-id"
+            }
+          }' > amplify_outputs.json
+
+      - name: Update TypeScript files to use mock outputs
+        run: |
+          find src -type f -name "*.ts" -exec sed -i 's/import outputs from.*amplify_outputs.json.*/import outputs from "\.\/amplify_outputs.json";/g' {} +
+
       - name: Install dependencies
         run: |
           npm install --no-package-lock
         env:
           NX_SKIP_NX_CACHE: true
-
-      - name: Remove amplify_outputs.json imports
-        run: |
-          find src -type f -name "*.ts" -exec sed -i 's/import outputs from.*amplify_outputs.json.*;//g' {} +
 
       - name: Build Codebase
         run: |

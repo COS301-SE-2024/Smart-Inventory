@@ -39,16 +39,13 @@ jobs:
 
       - name: Install dependencies
         run: |
-          npm install --no-optional
+          npm install --omit=optional --no-package-lock
         env:
           NX_SKIP_NX_CACHE: true
 
-      - name: Install Nx globally
-        run: npm install -g nx
-
       - name: Build Codebase
         run: |
-          npx nx build --configuration=production
+          npm run build --configuration=production
 
   end:
     name: The end

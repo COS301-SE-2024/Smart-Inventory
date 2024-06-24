@@ -39,18 +39,12 @@ jobs:
           rm -rf node_modules
           rm -f package-lock.json
 
-      - name: Create mock amplify_outputs.ts
+      - name: Comment out outputs usage
         run: |
-          echo 'export default {
-            auth: {
-              aws_region: "us-east-1",
-              user_pool_id: "mock-user-pool-id"
-            }
-          };' > src/amplify_outputs.ts
-
-      - name: Update TypeScript files to use mock outputs
-        run: |
-          find src -type f -name "*.ts" -exec sed -i 's/import outputs from.*amplify_outputs.json.*/import outputs from "\.\/amplify_outputs";/g' {} +
+          find src -type f -name "*.ts" -exec sed -i 's/import.*outputs.*;//g' {} +
+          find src -type f -name "*.ts" -exec sed -i 's/outputs\.auth\.aws_region/"us-east-1"/g' {} +
+          find src -type f -name "*.ts" -exec sed -i 's/outputs\.auth\.user_pool_id/"mock-user-pool-id"/g' {} +
+          find src -type f -name "*.ts" -exec sed -i 's/Amplify\.configure(outputs);//g' {} +
 
       - name: Install dependencies
         run: |

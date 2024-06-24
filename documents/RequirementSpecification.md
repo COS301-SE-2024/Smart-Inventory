@@ -476,7 +476,7 @@ In today's dynamic business world, empowering your employees is crucial for effi
 
 ## UML Class Diagram
 
-![UML Diagram](media/uml_diagram.png)
+![UML Diagram](/media/uml_diagram.png)
 
 The above UML diagram represents the architecture and relationships of the components and Lambda functions in the system. It showcases the following key elements:
 

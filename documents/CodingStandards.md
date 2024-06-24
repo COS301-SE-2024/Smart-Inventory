@@ -59,3 +59,16 @@ Monorepo approach with `client`, `server`, `config`, `docs`, and `scripts` direc
 - Follow language-specific indentation and spacing rules.
 - Use consistent naming conventions and document functions.
 - For CSS/SCSS, use BEM methodology and responsive design principles.
+
+## Linting rules
+- We use prettier as our code formatter to maintain consistent code styles across our projects
+- This configuration ensures:
+    - A maximum line width of 120 characters
+    - Indentation using 4 spaces (not tabs)
+    - Semicolons at the end of statements
+    - Single quotes for strings
+    - Spaces inside object literal braces
+    - Parentheses around arrow function parameters
+    - Unix-style line endings (LF)
+- By adhering to these formatting rules, we maintain clean, consistent, and readable code across our codebase. All team members should integrate
+- this Prettier configuration into their development environment to ensure uniformity in code style.

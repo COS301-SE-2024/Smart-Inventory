@@ -12,11 +12,12 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DeleteConfirmationDialogComponent } from './delete-confirmation-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
+import { LoadingSpinnerComponent } from '../../components/loader/loading-spinner.component';
 
 @Component({
     selector: 'app-suppliers',
     standalone: true,
-    imports: [GridComponent, MatButtonModule, CommonModule, FormsModule, DeleteConfirmationDialogComponent],
+    imports: [GridComponent, MatButtonModule, CommonModule, FormsModule, DeleteConfirmationDialogComponent, LoadingSpinnerComponent],
     templateUrl: './suppliers.component.html',
     styleUrl: './suppliers.component.css',
 })
@@ -26,6 +27,7 @@ export class SuppliersComponent implements OnInit {
     rowData: any[] = [];
     showAddPopup = false;
     showDeletePopup = false;
+    isLoading = true;
     rowsToDelete: any[] = [];
     showEditAddressPopup = false;
     editAddress = {
@@ -129,6 +131,8 @@ export class SuppliersComponent implements OnInit {
         } catch (error) {
             console.error('Error in loadSuppliersData:', error);
             this.rowData = [];
+        } finally {
+            this.isLoading = false;
         }
     }
 

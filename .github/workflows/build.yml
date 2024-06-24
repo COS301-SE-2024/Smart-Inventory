@@ -31,11 +31,20 @@ jobs:
         with:
           node-version: '18.19.1'
 
+      - name: Clear npm cache
+        run: npm cache clean --force
+
+      - name: Remove node_modules
+        run: rm -rf node_modules
+
       - name: Install dependencies
         run: |
-          npm install --legacy-peer-deps
+          npm install --no-optional
         env:
           NX_SKIP_NX_CACHE: true
+
+      - name: Install Nx globally
+        run: npm install -g nx
 
       - name: Build Codebase
         run: |

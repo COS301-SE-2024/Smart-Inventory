@@ -39,15 +39,15 @@ jobs:
           rm -rf node_modules
           rm -f package-lock.json
 
-      - name: Install dependencies without Nx
+      - name: Install dependencies
         run: |
-          npm install --omit=optional --no-package-lock --ignore-scripts
+          npm install --no-package-lock
         env:
           NX_SKIP_NX_CACHE: true
 
       - name: Build Codebase
         run: |
-          npm run build --configuration=production
+          npm run build -- --configuration=production
 
   end:
     name: The end

@@ -117,6 +117,30 @@
                     >
                         <img src="assets/img/light-mode.png" alt="Light Mode" />
                     </div>
+                    <div class="notifications-row-two">
+                        <!-- Section One -->
+                        <div class="notifications-section-one">
+                            <div class="notification-row" *ngFor="let type of notificationTypes">
+                                
+                            </div>
+                        </div>
+                        <div>
+                            <hr />
+                        </div>
+
+                        <!-- Section Two -->
+                        <div class="notifications-section-two">
+                            <h3>Notification Triggers</h3>
+                            <div class="trigger-row" *ngFor="let trigger of notificationTriggers">
+                                <div class="trigger-checkbox-column">
+                                    <mat-checkbox [(ngModel)]="trigger.enabled"> </mat-checkbox>
+                                </div>
+                                <div class="trigger-text-column">
+                                    <h4>{{ trigger.title }}</h4>
+                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                                </div>
+                            </div>
+                        </div>
                     <div
                         class="theme-option"
                         [ngClass]="{ 'selected-theme': currentTheme === 'dark' }"

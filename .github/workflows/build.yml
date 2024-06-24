@@ -32,12 +32,15 @@ jobs:
           node-version: '18.19.1'
 
       - name: Install dependencies
-        run:  |
+        run: |
+          npm install -g nx
           npm ci
+        env:
+          NX_SKIP_NX_CACHE: true
 
       - name: Build Codebase
-        run:  |
-          npm run build --configuration=production
+        run: |
+          npx nx build --configuration=production
 
   end:
     name: The end

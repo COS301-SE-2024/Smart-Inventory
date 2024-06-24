@@ -54,12 +54,13 @@ The document aims to provide a clear roadmap for developers to translate the vis
 ### Settings
 
 <div style="text-align: center;">
-    <img src="/media/Updated_Wireframes/ForgetPassword2_WF.png" alt="Settings-General-light">
+    <img src="/media/Updated_Wireframes/Settings-Profile-Light.png" alt="Settings-General-light">
 </div>
 
 <div style="text-align: center;">
-    <img src="/media/wireframes/Settings-Account-2-dark-mode.png" alt="Settings-Account-dark">
-    <img src="/media/wireframes/Settings-Account-2-light-mode.png" alt="Settings-Account-light">
+    <img src="/media/Updated_Wireframes/Settings-Profile-Dark.png" alt="Settings-Profile-dark">
+    <img src="/media/Updated_Wireframes/Settings-Account-Light.png" alt="Settings-Account-light">
+    <img src="/media/Updated_Wireframes/Settings-Account-Dark.png" alt="Settings-Account-light">
 </div>
 
 ### Help
@@ -82,9 +83,9 @@ The document aims to provide a clear roadmap for developers to translate the vis
 The SmartInventory system will utilize Amazon DynamoDB, a fully managed NoSQL database service provided by Amazon Web Services (AWS). DynamoDB offers high scalability, low latency, and flexible data modeling, making it suitable for the inventory management system. The key tables and their sample data are as follows:
 
 ### Users Table (Cognito):
-| User name | Email address | Email verified | First Name | Last Name | tenentId |
-|--------|------------|-------|------|--------------|-------------|---------|-----------|
-| 94d824c8-b001-70d4-2170-84e6f537d694 | u21491578@tuks.co.za | Yes | John | Doe | 17188901 |
+| User name                           | Email address        | Email verified | First Name | Last Name | Tenant ID                |
+|-------------------------------------|----------------------|----------------|------------|-----------|--------------------------|
+| 94d824c8-b001-70d4-2170-84e6f537d694 | u21491578@tuks.co.za | Yes            | John       | Doe       | 17188901                 |
 
 ### Suppliers Table:
 | supplierID | Address | contactEmail | contactPhone | createdAt | name | updatedAt |
@@ -92,9 +93,9 @@ The SmartInventory system will utilize Amazon DynamoDB, a fully managed NoSQL da
 | 2c918730-38ae-4a7b-ae13-04002f2b9283 | ["city: Pretoria", "street: 123 Street"] | supplier.name@gmail.com | 831234567 | 1621234567890 | Supplier Name | 1621234567890 |
 
 ### Inventory Table:
-| inventoryID | tenentId| createdAt | description | productID | quantity | SKU | supplier | updatedAt
-|-----------|------------|-----------|----------------|----------|-----------|
-| 556aedd4-8923-4ade-a57a-0f4d498c7371 | 1719070005737-id8nj | 2024-06-22T15:31:08.636Z | This is a test item | 34534435 | 100 | EX-123 | Amazon | 2024-06-22T15:31:08.636Z|
+| inventoryID                       | tenentId          | createdAt                  | description    | productID | quantity | SKU   | supplier | updatedAt                  |
+|-----------------------------------|-------------------|----------------------------|----------------|-----------|----------|-------|----------|----------------------------|
+| 556aedd4-8923-4ade-a57a-0f4d498c7371 | 1719070005737-id8nj | 2024-06-22T15:31:08.636Z | This is a test item | 34534435  | 100      | EX-123 | Amazon   | 2024-06-22T15:31:08.636Z |
 
 ### Stock Requests:
 | stockRequestedId | tenentId | createdAt | quantityRequested | SKU | supplier | type |

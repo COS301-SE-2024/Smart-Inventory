@@ -58,7 +58,6 @@ In today's dynamic business world, empowering your employees is crucial for effi
 <table>
   <tbody>
     <tr><td>As an inventory controller, I want to be able to manage products and stock levels, so that I can ensure accurate inventory records.</td></tr>
-    <tr><td>As a user responsible for inventory monitoring, I want the system to generate alerts when stock levels reach predefined thresholds. So that I can take timely action to replenish inventory</td></tr>
     <tr><td>As an administrator, of the inventory management system, I want to view a real-time dashboard showing current stock levels. So that I can have immediate visibility into inventory status.</td></tr>
     <tr><td>As a user managing inventory, I want to search for specific stock items by name, SKU, or supplier and sort them by name, SKU, quantity, or expiration date. So that I can quickly locate and organize inventory items.</td></tr>
     <tr><td>As an authorized user, I want to edit stock details for inventory items and have all edits logged in the stock transaction history. So that changes to inventory are accurately tracked.</td></tr>
@@ -473,6 +472,19 @@ In today's dynamic business world, empowering your employees is crucial for effi
 </li>
   </br>
 </ol>
+
+## UML Class Diagram
+
+![UML Diagram](/media/uml_diagram.png)
+
+The above UML diagram represents the architecture and relationships of the components and Lambda functions in the system. It showcases the following key elements:
+
+- The `GridComponent` is used by the `InventoryComponent`, `SuppliersComponent`, and `TeamComponent` to display and manage data in a grid format.
+- The `InventoryComponent` interacts with the `Inventory-updateItem`, `Inventory-removeItem`, `Inventory-CreateItem`, and `Inventory-getItems` Lambda functions to perform CRUD operations on inventory items.
+- The `SuppliersComponent` invokes the `deleteSupplier`, `editSupplier`, `addSupplier`, and `getSuppliers` Lambda functions to manage supplier data.
+- The `TeamComponent` invokes the `getUsers` Lambda function to retrieve user information.
+
+The diagram provides a visual representation of the system's architecture and helps in understanding the relationships and dependencies between the components and Lambda functions.
 
 ## Use Case Diagrams
 

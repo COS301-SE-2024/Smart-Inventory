@@ -11,11 +11,22 @@ import outputs from '../../../../amplify_outputs.json';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LoadingSpinnerComponent } from '../../components/loader/loading-spinner.component';
+import { MatDialog } from '@angular/material/dialog';
+import { InventoryDeleteConfirmationDialogComponent } from './inventory-delete-confirmation-dialogue.component';
+import { MatDialogModule } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-inventory',
   standalone: true,
-  imports: [GridComponent, MatButtonModule, CommonModule, FormsModule, LoadingSpinnerComponent],
+  imports: [
+    GridComponent, 
+    MatButtonModule, 
+    CommonModule, 
+    FormsModule, 
+    LoadingSpinnerComponent, 
+    MatDialogModule,
+    InventoryDeleteConfirmationDialogComponent
+  ],
   templateUrl: './inventory.component.html',
   styleUrls: ['./inventory.component.css']
 })
@@ -24,10 +35,8 @@ export class InventoryComponent implements OnInit {
 
   rowData: any[] = [];
   showAddPopup = false;
-  showDeletePopup = false;
   showRequestStockPopup = false;
   isLoading = true;
-  rowsToDelete: any[] = [];
   item = {
     productId: '',
     description: '',
@@ -49,7 +58,7 @@ export class InventoryComponent implements OnInit {
 
   addButton = { text: 'Add New Item' };
 
-  constructor(private titleService: TitleService) {
+  constructor(private titleService: TitleService, private dialog: MatDialog) {
     Amplify.configure(outputs);
   }
 
@@ -199,25 +208,20 @@ export class InventoryComponent implements OnInit {
   }
 
   handleRowsToDelete(rows: any[]) {
-    this.rowsToDelete = rows;
-    this.showDeletePopup = true;
-  }
+    if (rows.length > 0) {
+      const dialogRef = this.dialog.open(InventoryDeleteConfirmationDialogComponent, {
+        width: '300px',
+        data: { sku: rows[0].sku },
+      });
 
-  async confirmDelete() {
-    if (this.rowsToDelete.length > 0) {
-      for (const row of this.rowsToDelete) {
-        await this.deleteInventoryItem(row.inventoryID);
-      }
-      this.gridComponent.removeConfirmedRows(this.rowsToDelete);
-      this.rowsToDelete = [];
+      dialogRef.componentInstance.deleteConfirmed.subscribe(async () => {
+        for (const row of rows) {
+          await this.deleteInventoryItem(row.inventoryID);
+        }
+        this.gridComponent.removeConfirmedRows(rows);
+        await this.loadInventoryData(); // Refresh the data after deletion
+      });
     }
-    this.showDeletePopup = false;
-    await this.loadInventoryData(); // Refresh the data after deletion
-  }
-
-  cancelDelete() {
-    this.showDeletePopup = false;
-    this.rowsToDelete = [];
   }
 
   async deleteInventoryItem(inventoryID: string) {
@@ -416,5 +420,4 @@ export class InventoryComponent implements OnInit {
       alert(`Error requesting stock: ${(error as Error).message}`);
     }
   }
-  
 }

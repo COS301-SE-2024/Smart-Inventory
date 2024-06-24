@@ -153,8 +153,6 @@ Reliability:
 Scalability:
 * The event-driven approach enables the system to scale efficiently by processing events in parallel and distributing the workload across multiple components.
 
-#### Diagram
-
 ### Serverless Architecture
 #### Description
 The SmartInventory system can benefit from a serverless architecture by leveraging cloud-based services to handle backend logic and infrastructure management. This approach eliminates the need to provision and manage servers, reducing operational overhead and costs. Here's how serverless architecture can be implemented in the SmartInventory system:

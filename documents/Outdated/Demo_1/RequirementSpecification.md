@@ -315,7 +315,6 @@ In today's dynamic business world, empowering your employees is crucial for effi
 <ol>
   <li>Store inventory item details in a database:</li>
   <ol>
-    <li>Allow admin or inventory controller to decide on table columns of choice</li>
     <li>Allow user to import excel or csv spreedsheet to initialise database</li>
     <li>Allow user to record supplier information</li>
     <li>Allow user to record Expiration dates</li>

@@ -6,7 +6,7 @@ The purpose of this document is to assist users in becomming familiar with our a
 
 <div align="center">
   <h3>Sign in</h3>
-  <img src="/media/wireframes/Signin2_dark.png">
+  <img src="/media/Screenshots/SignIn.jpeg">
 </div>
 
 **Sign In with details:**
@@ -41,7 +41,7 @@ A user will be brought to this page either through an email link or when they op
 
 <div align="center">
   <h3>Create Account</h3>
-  <img src="/media/wireframes/CreateAcc_dark.png">
+  <img src="/media/Screenshots/createAcc.jpeg">
 </div>
 
 **Create Account with details:**
@@ -78,7 +78,7 @@ A user will be brought to this page either through an email link or when they op
 <div align="center">
   <h3>Dashboard</h3>
   <!-- <img src="/media/Pages/Dashboard/Dashboard - Dark.png"> -->
-  <img src="/media/Pages/Dashboard/Dashboard - Light.png">
+  <img src="/media/Screenshots/Dashboard.PNG">
 </div>
 
 **Dashboard:**
@@ -175,7 +175,7 @@ This feature provides a flexible way to customize the dashboard to fit your spec
 
 <div align="center">
   <h3>Inventory</h3>
-  <img src="/media/wireframes/CreateAcc_dark.png">
+  <img src="/media/Screenshots/Inventory.jpeg">
 </div>
 
 **Sidebar:**
@@ -233,7 +233,7 @@ The search and select options can be found in the top left side of the page how 
 
 <div align="center">
   <h3>Suppliers</h3>
-  <img src="/media/wireframes/CreateAcc_dark.png">
+  <img src="/media/Screenshots/Suppliers.PNG">
 </div>
 
 **Sidebar:**
@@ -284,8 +284,8 @@ The search and select options can be found in the top left side of the page how 
 * Once a user is satisfied the user should press enter to update the value.
 
 <div align="center">
-  <h3>Suppliers</h3>
-  <img src="/media/wireframes/CreateAcc_dark.png">
+  <h3>Teams</h3>
+  <img src="/media/Screenshots/Teams screenshot.jpeg">
 </div>
 
 **Sidebar:**
@@ -326,7 +326,7 @@ The search and select options can be found in the top left side of the page how 
  
 <div align="center">
   <h3>Orders</h3>
-  <img src="/media/wireframes/CreateAcc_dark.png">
+  <img src="/media/Screenshots/Orders.PNG">
 </div>
 
 **Sidebar:**

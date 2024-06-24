@@ -66,8 +66,15 @@ The document aims to provide a clear roadmap for developers to translate the vis
 ### Help
 
 <div style="text-align: center;">
-    <img src="/media/wireframes/HelpAndSupportCentre-dark-mode.png" alt="HelpAndSupportCentre-dark">
-    <img src="/media/wireframes/HelpAndSupportCentre-light-mode.png" alt="HelpAndSupportCentre-light">
+    <img src="/media/Updated_Wireframes/faqs dark.png" alt="Settings-Account-light">
+    <img src="/media/Updated_Wireframes/faqs light.png" alt="Settings-Account-dar">
+    <img src="/media/Updated_Wireframes/troublshooting dark.png" alt="Settings-Account-light">
+    <img src="/media/Updated_Wireframes/troubleshooting light.png" alt="Settings-Account-light">
+    <img src="/media/Updated_Wireframes/contact support dark.png" alt="Settings-Account-light">
+    <img src="/media/Updated_Wireframes/contact support light.png" alt="Settings-Account-light">
+    <img src="/media/Updated_Wireframes/user guides dark.png" alt="Settings-Account-light">
+    <img src="/media/Updated_Wireframes/user guides light.png" alt="Settings-Account-light">
+    
 </div>
 
 

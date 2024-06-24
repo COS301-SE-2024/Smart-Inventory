@@ -34,17 +34,55 @@ In today's dynamic business world, empowering your employees is crucial for effi
 
 ### User Stories
 
+#### Authentication and Authorization
 <table>
   <tbody>
     <tr><td>As an administrator, I want to be able to securely login, and manage user accounts. So that I can ensure appropriate access levels are maintained.</td></tr>
     <tr><td>As an administrator, I want to manage user roles and permissions, so that users have appropriate access rights within the system.</td></tr>
     <tr><td>As an employee, I want to be able to securely sign in, and manage my own account settings. So that I can be able to adjust the application according to what I want.</td></tr>
+  </tbody>
+</table>
+
+#### Team Management
+<table>
+  <tbody>
+    <tr><td>As an administrator, I want to add new team members to the system, providing their name, surname, email, and role. So that I can manage user access and permissions effectively.</td></tr>
+    <tr><td>As an administrator, I want to view a list of all team members, including their name, surname, email, and role. So that I can have an overview of the team structure and contact information.</td></tr>
+    <tr><td>As an administrator, I want to edit team member details, such as name and surname. So that I can keep user information up to date.</td></tr>
+    <tr><td>As an administrator, I want to change a team member's role, with a confirmation dialog to ensure the change is intentional. So that I can manage user permissions and adapt to changing responsibilities.</td></tr>
+    <tr><td>As an administrator, I want to remove team members from the system, with a confirmation dialog to prevent accidental deletion. So that I can revoke access for users who no longer require it.</td></tr>
+  </tbody>
+</table>
+
+#### Inventory Management
+<table>
+  <tbody>
     <tr><td>As an inventory controller, I want to be able to manage products and stock levels, so that I can ensure accurate inventory records.</td></tr>
     <tr><td>As a user responsible for inventory monitoring, I want the system to generate alerts when stock levels reach predefined thresholds. So that I can take timely action to replenish inventory</td></tr>
     <tr><td>As an administrator, of the inventory management system, I want to view a real-time dashboard showing current stock levels. So that I can have immediate visibility into inventory status.</td></tr>
     <tr><td>As a user managing inventory, I want to search for specific stock items by name, SKU, or supplier and sort them by name, SKU, quantity, or expiration date. So that I can quickly locate and organize inventory items.</td></tr>
     <tr><td>As an authorized user, I want to edit stock details for inventory items and have all edits logged in the stock transaction history. So that changes to inventory are accurately tracked.</td></tr>
     <tr><td>As a user of the inventory management system, I want the system to automatically detect when orders should be created based on predefined rules considering product usage and expiration dates. So that I can ensure timely replenishment of inventory.</td></tr>
+  </tbody>
+</table>
+
+#### Stock Request
+<table>
+  <tbody>
+    <tr><td>As an employee, I want to request stock from the inventory, providing the item details, quantity, and purpose. So that I can obtain the necessary items for my work.</td></tr>
+    <tr><td>As an inventory controller, I want to be notified of stock requests and have the ability to approve or reject them. So that I can manage stock distribution effectively.</td></tr>
+    <tr><td>As an administrator, I want to view an audit trail of all stock requests, including the requester, item, quantity, purpose, and approval status. So that I can monitor stock usage and maintain accountability.</td></tr>
+  </tbody>
+</table>
+
+#### Supplier Management
+<table>
+  <tbody>
+    <tr><td>As an administrator, I want to add new suppliers to the system, providing their company name, contact name, contact email, phone number, and address details. So that I can maintain a comprehensive supplier database.</td></tr>
+    <tr><td>As an administrator or inventory controller, I want to view a list of all suppliers, including their company name, contact name, contact email, phone number, and address. So that I can quickly access supplier information when needed.</td></tr>
+    <tr><td>As an administrator or inventory controller, I want to edit supplier details, such as company name, contact name, contact email, and phone number. So that I can keep supplier information current and accurate.</td></tr>
+    <tr><td>As an administrator or inventory controller, I want to update a supplier's address details in a separate popup window. So that I can make address changes easily without modifying other supplier information.</td></tr>
+    <tr><td>As an administrator, I want to remove suppliers from the system, with a confirmation dialog to prevent accidental deletion. So that I can maintain an accurate supplier database.</td></tr>
   </tbody>
 </table>
 

@@ -5,7 +5,7 @@ This is the outline for the architectural blueprint for the SmartInventory syste
 
 ### Objectives
 The primary objective of this document is to guide stakeholders involved in the development of the Smart Inventory System. It aims to define the architectural framework, constraints and technologies used to successfully implement the desired features and functionalities. This document details the system architecture that will ensure:
-* Efficiency
+* Reliability
 * Scalability
 * Security
 * Usability
@@ -17,6 +17,11 @@ The primary objective of this document is to guide stakeholders involved in the 
 
 The system must ensure data protection through end-to-end encryption, secure user authentication, and role-based access control to prevent unauthorized access and maintain data confidentiality.
 
+#### How to quantify security
+* Role based access control should be prevelant in all ends of the app including help and settings.
+  
+#### Measures to acheive Security 
+
 API gateways: 
 * Implement a central point of entry for all API calls. This enables enforcement of authentication and authorization policies before requests reach individual services.
   
@@ -27,6 +32,11 @@ Data encryption:
 
 The system should be reliable in terms of accurately tracking inventory levels, generating timely alerts, order placement and generating accurate reports.
 
+#### How to quantify reliability
+* A mean time between failures of two times within the same 30 days for two hours.
+* Mean time to repair of lesss than five hours is our expectation.
+  
+#### Measures to acheive Reliability 
 Fault tolerance: 
 * Design the system to be fault-tolerant, meaning it can continue to operate even if some components fail.
   
@@ -37,6 +47,15 @@ Error handling:
 
 The web interface should be user-friendly and intuitive for administrators, inventory controllers, and end users to perform their respective tasks efficiently.
 
+#### How to quantify usability
+* success rate whether users can perform the task at all
+  * A success rate of at least 70% will be expected of our app when tested.
+* time a task requires
+  * A time of acheiving a simple task should take no more than 2 minutes for a new user to acheive.
+* users' subjective satisfaction
+  * A 1-5 scale of how satisfied a user was using the app. A average higher than 3.7 is the goal.
+
+#### Measures to acheive Usability 
 User-centered design: 
 * Involve potential users in the design process to understand their needs and preferences.
   
@@ -49,6 +68,12 @@ API design:
 ### 4. Scalability
 
 The system should be designed to handle growth in inventory, users, and transactions, ensuring that performance remains optimal as the business expands.
+
+#### How to quantify scalability
+* The system is designed to handle 40 user requests per second.
+* The system must also have at least an 80% success rate with more than 20 users.
+  
+#### Measures to acheive scalability 
 Scalable architecture: 
 * Choose an architecture that can be easily scaled horizontally (adding more servers) or vertically (adding more resources to existing servers) as needed.
   
@@ -61,6 +86,12 @@ Database optimization:
 ### 5. Maintainability
 
 The system should be developed using best practices, such as modular design and comprehensive documentation, to facilitate easy maintenance, updates, and troubleshooting.
+
+#### How to quantify Maintainability 
+* fixing a bug should not cause more than two hours of un-needed time due to un-maintainable code.
+* Adding a new feature should not cause more than two hours of un-needed time due to un-maintainable code.
+
+#### Measures to Maintainability 
 
 Clear documentation: 
 * Document the system architecture, APIs, and code clearly.
@@ -94,12 +125,6 @@ Usability:
 Security:
 * Allowing layered controls like firewalls, access controls, and encryption at different layers make it harder to breach the system. Data protection as data is secured at rest and in transit using encryption. Allows for separation of duties limiting user access based on roles, minimizing damage from compromised accounts.
 
-#### Diagram
-
-<div align="center">
-   <img src="/media/ArchitecturalDiagrams/LayerArch.drawio.png">
-</div>
-
 ### Service-Oriented Architecture (SOA) 
 
 #### Description
@@ -115,12 +140,6 @@ Maintainability:
   
 Reliability:
 * Services can be designed with fault tolerance and redundancy in mind, ensuring the system remains operational even if individual components fail.
-
-#### Diagram
-
-<div align="center">
-   <img src="/media/ArchitecturalDiagrams/SOA.drawio.png">
-</div>
 
 ### Event-Driven Architecture (EDA)
 #### Description
@@ -162,12 +181,6 @@ Security Considerations while serverless architecture offers benefits, security 
   * Secure the API Gateway with authentication and authorization mechanisms to control access to system functionalities.
 * Data Security:
   * Utilize secure cloud storage services that offer encryption for data at rest and in transit.
- 
-#### Diagram
-
-<div align="center">
-   <img src="/media/ArchitecturalDiagrams/ServerlessArch.drawio.png">
-</div>
 
 ## Architectural Constraints
 A core architectural constraint for this project is the requirement to **utilize only open-source libraries**. This decision fosters an open-source development philosophy for the project itself. This contraint might actually provide greater advantages than disadvantages. Here's why this constraint is important:
@@ -187,7 +200,7 @@ While this constraint might limit the available options for libraries, the benef
 ## Archtectural Diagram
 
 <div align="center">
-   <img src="/media/ArchitecturalDiagrams/Arch.drawio.png">
+   <img src="/media/ArchitecturalDiagrams/ArchDiagram.drawio.png">
 </div>
 
 ## Technology Decisions
@@ -205,14 +218,6 @@ While this constraint might limit the available options for libraries, the benef
 * Open-Source:
   * Angular is a mature open-source framework with a large and active community.
   * This aligns with the project's open-source constraint.
-
-#### Ionic
-* Efficiency and Maintainability:
-  * By using Ionic on top of Angular, the development team can create a single codebase that works seamlessly across web browsers and mobile devices.
-  * Reducing development time and adhering to the maintainability quality requirement.
-* Usability:
-  * Ionic leverages native device features to provide a look and feel consistent with the user's device.
-  * Enhancing usability across platforms.
 
 #### Typescript
 * Maintainability:

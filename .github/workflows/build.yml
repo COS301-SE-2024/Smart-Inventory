@@ -1,0 +1,73 @@
+name: Build Codebase
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+permissions:
+  contents: read
+
+jobs:
+  start:
+    name: Initial Setup
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Starting Job
+        run: |
+          echo "Beginning to Build ${{ github.repository }}"
+
+  run_tests:
+    name: Build Codebase
+    needs: start
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout "${{ github.repository }}"
+        uses: actions/checkout@v4
+
+      - name: Set up Node v18.19.1
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18.19.1'
+
+      - name: Clear npm cache
+        run: npm cache clean --force
+
+      - name: Remove node_modules and package-lock.json
+        run: |
+          rm -rf node_modules
+          rm -f package-lock.json
+
+      - name: Create mock amplify_outputs.json
+        run: |
+          echo '{
+            "auth": {
+              "aws_region": "us-east-1",
+              "user_pool_id": "mock-user-pool-id"
+            }
+          }' > amplify_outputs.json
+
+      - name: Update TypeScript files to use mock outputs
+        run: |
+          find src -type f -name "*.ts" -exec sed -i 's/import outputs from.*amplify_outputs.json.*/import outputs from "\.\/amplify_outputs.json";/g' {} +
+
+      - name: Install dependencies
+        run: |
+          npm install --no-package-lock
+        env:
+          NX_SKIP_NX_CACHE: true
+
+      - name: Build Codebase
+        run: |
+          npm run build -- --configuration=production
+
+  end:
+    name: The end
+    runs-on: ubuntu-latest
+    needs: [start, run_tests]
+    steps:
+      - name: Ending
+        id: init
+        run: |
+          echo "${{ github.repository }} has been successfully built"

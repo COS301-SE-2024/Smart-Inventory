@@ -17,7 +17,7 @@ export const routes: Routes = [
     { path: 'team', component: TeamComponent },
     { path: 'suppliers', component: SuppliersComponent },
     { path: 'orders', component: OrdersComponent },
-    { path: 'settings', component: SettingsComponent },
     { path: 'help', component: HelpComponent },
+    { path: 'settings', component: SettingsComponent },
     { path: 'grid', component: GridComponent },
 ];

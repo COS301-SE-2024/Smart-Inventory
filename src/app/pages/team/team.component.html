@@ -1,9 +1,11 @@
-<div class="grid-container" *ngIf="colDefs.length > 0 && rowData.length > 0">
+<div class="grid-container">
     <app-grid
         [rowData]="rowData"
         [columnDefs]="colDefs"
         [addButton]="addButton"
-        (addButtonClicked)="openAddMemberPopup()"
+        (addNewClicked)="openAddMemberPopup()"
+        (nameCellValueChanged)="onNameCellValueChanged($event)"
+        #gridComponent
     >
     </app-grid>
 </div>
@@ -22,7 +24,19 @@
             </div>
             <div class="form-group">
                 <label for="email">Email</label>
-                <input type="email" id="email" name="email" [(ngModel)]="user.email" required />
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    [(ngModel)]="user.email"
+                    required
+                    email
+                    #userEmail="ngModel"
+                />
+                <div *ngIf="userEmail.invalid && (userEmail.dirty || userEmail.touched)" class="error-message">
+                    <div *ngIf="userEmail.errors?.['required']">Email is required.</div>
+                    <div *ngIf="userEmail.errors?.['email']">Please enter a valid email address.</div>
+                </div>
             </div>
             <div class="form-group">
                 <label for="role">Role</label>
@@ -39,4 +53,8 @@
             </div>
         </form>
     </div>
+</div>
+
+<div *ngIf="isLoading" class="loading-overlay">
+    <app-loading-spinner></app-loading-spinner>
 </div>

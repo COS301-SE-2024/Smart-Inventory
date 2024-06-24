@@ -9,101 +9,105 @@ The document aims to provide a clear roadmap for developers to translate the vis
 
 ## Wireframes
 
-### Sign in and Create Account
+### Sign in
 
 <div style="text-align: center;">
-    <img src="/media/wireframes/CreateAcc_dark.png" alt="Create Account">
-    <img src="/media/wireframes/CreateAcc_light.png" alt="Create Account">
+    <img src="/media/Wireframes/SignIn.jpeg" alt="SignIn-dark">
 </div>
 
+### Create Account
+
 <div style="text-align: center;">
-    <img src="/media/wireframes/SignIn_dark.png" alt="SignIn-dark">
-    <img src="/media/wireframes/SignIn_light.png" alt="SignIn-light">
+    <img src="/media/Wireframes/CreateAccount.jpeg" alt="Create Account">
 </div>
+
+### Reset Password 
+
+<div style="text-align: center;">
+    <img src="/media/Wireframes/ResetPassword.jpeg" alt="SignIn-dark">
+</div
 
 ### Dashboard
 
 <div style="text-align: center;">
-    <img src="/media/wireframes/Dashboard_dark.png" alt="Dashboard-dark">
-    <img src="/media/wireframes/Dashboard_light.png" alt="Dashboard-light">
+    <img src="/media/Wireframes/Dashboard - Light.png" alt="Dashboard-dark">
+</div>
+
+### Teams
+
+<div style="text-align: center;">
+    <img src="/media/Wireframes/Team.jpeg" alt="Dashboard-dark">
 </div>
 
 ### Orders
 
 <div style="text-align: center;">
-    <img src="/media/wireframes/Orders-dark-mode.png" alt="Orders-dark">
-    <img src="/media/wireframes/Orders-light-mode.png" alt="Orders-light">
+    <img src="/media/Wireframes/Orders.jpeg" alt="Orders-dark">
 </div>
 
 ### Inventory
 
 <div style="text-align: center;">
-    <img src="/media/wireframes/Inventory-dark-mode.png" alt="Inventory-dark">
-    <img src="/media/wireframes/Inventory-light-mode.png" alt="Inventory-light">
+    <img src="/media/Wireframes/Inventory.jpeg" alt="Inventory-dark">
 </div>
 
 ### Settings
 
 <div style="text-align: center;">
-    <img src="/media/wireframes/Settings-General-dark-mode.png" alt="Settings-General-dark">
-    <img src="/media/wireframes/Settings-General-light-mode.png" alt="Settings-General-light">
+    <img src="/media/Updated_Wireframes/Settings-Profile-Light.png" alt="Settings-General-light">
 </div>
 
 <div style="text-align: center;">
-    <img src="/media/wireframes/Settings-Notifications-dark-mode.png" alt="Settings-Notifications-dark">
-    <img src="/media/wireframes/Settings-Notifications-light-mode.png" alt="Settings-Notifications-light">
-</div>
-
-<div style="text-align: center;">
-    <img src="/media/wireframes/Settings-UserPermissions-dark-mode.png" alt="Settings-UserPermissions-dark">
-    <img src="/media/wireframes/Settings-UserPermissions-light-mode.png" alt="Settings-UserPermissions-light">
-</div>
-
-<div style="text-align: center;">
-    <img src="/media/wireframes/Settings-Account-dark-mode.png" alt="Settings-Account-dark">
-    <img src="/media/wireframes/Settings-Account-light-mode.png" alt="Settings-Account-light">
-</div>
-
-<div style="text-align: center;">
-    <img src="/media/wireframes/Settings-Account-2-dark-mode.png" alt="Settings-Account-dark">
-    <img src="/media/wireframes/Settings-Account-2-light-mode.png" alt="Settings-Account-light">
+    <img src="/media/Updated_Wireframes/Settings-Profile-Dark.png" alt="Settings-Profile-dark">
+    <img src="/media/Updated_Wireframes/Settings-Account-Light.png" alt="Settings-Account-light">
+    <img src="/media/Updated_Wireframes/Settings-Account-Dark.png" alt="Settings-Account-light">
 </div>
 
 ### Help
 
 <div style="text-align: center;">
-    <img src="/media/wireframes/HelpAndSupportCentre-dark-mode.png" alt="HelpAndSupportCentre-dark">
-    <img src="/media/wireframes/HelpAndSupportCentre-light-mode.png" alt="HelpAndSupportCentre-light">
+    <img src="/media/Updated_Wireframes/faqs dark.png" alt="Settings-Account-light">
+    <img src="/media/Updated_Wireframes/faqs light.png" alt="Settings-Account-dar">
+    <img src="/media/Updated_Wireframes/troublshooting dark.png" alt="Settings-Account-light">
+    <img src="/media/Updated_Wireframes/troubleshooting light.png" alt="Settings-Account-light">
+    <img src="/media/Updated_Wireframes/contact support dark.png" alt="Settings-Account-light">
+    <img src="/media/Updated_Wireframes/contact support light.png" alt="Settings-Account-light">
+    <img src="/media/Updated_Wireframes/user guides dark.png" alt="Settings-Account-light">
+    <img src="/media/Updated_Wireframes/user guides light.png" alt="Settings-Account-light">
+    
 </div>
 
 
 ### Reports
-### Requests
 ### Suppliers
+
+<div style="text-align: center;">
+    <img src="/media/Wireframes/Suppliers.jpeg" alt="Settings-General-light">
+</div>
 
 
 ## Database Design
 The SmartInventory system will utilize Amazon DynamoDB, a fully managed NoSQL database service provided by Amazon Web Services (AWS). DynamoDB offers high scalability, low latency, and flexible data modeling, making it suitable for the inventory management system. The key tables and their sample data are as follows:
 
-### Users Table:
-| userID | createdAt | email | name | passwordHash | Permissions | surname | updatedAt |
-|--------|------------|-------|------|--------------|-------------|---------|-----------|
-| 123e4567-e89b-12d3-a456-426614174000 | 1621234567890 | john.doe@gmail.com | John | asjsd92j$sk2 | ["manageInventory", "manageProducts", "requestStock"] | Doe | 1621234567890 |
+### Users Table (Cognito):
+| User name                           | Email address        | Email verified | First Name | Last Name | Tenant ID                |
+|-------------------------------------|----------------------|----------------|------------|-----------|--------------------------|
+| 94d824c8-b001-70d4-2170-84e6f537d694 | u21491578@tuks.co.za | Yes            | John       | Doe       | 17188901                 |
 
 ### Suppliers Table:
 | supplierID | Address | contactEmail | contactPhone | createdAt | name | updatedAt |
 |------------|---------|--------------|--------------|-----------|------|-----------|
 | 2c918730-38ae-4a7b-ae13-04002f2b9283 | ["city: Pretoria", "street: 123 Street"] | supplier.name@gmail.com | 831234567 | 1621234567890 | Supplier Name | 1621234567890 |
 
-### Products Table:
-| productID | category | createdAt | description | name | sku | updatedAt |
-|-----------|----------|-----------|-------------|------|-----|-----------|
-| 6a9c12a1-22fc-4f6d-92ad-bc1c86c3466f | Electronics | 1621234567890 | ["100mm x 100mm", "Green", "Retractable"] | Example Item | EX123 | 1621234567890 |
-
 ### Inventory Table:
-| productID | supplierID | createdAt | expirationDate | quantity | updatedAt |
-|-----------|------------|-----------|----------------|----------|-----------|
-| 6a9c12a1-22fc-4f6d-92ad-bc1c86c3466f | 2c918730-38ae-4a7b-ae13-04002f2b9283 | 1621234567890 | 2022-12-31 | 100 | 1621234567890 |
+| inventoryID                       | tenentId          | createdAt                  | description    | productID | quantity | SKU   | supplier | updatedAt                  |
+|-----------------------------------|-------------------|----------------------------|----------------|-----------|----------|-------|----------|----------------------------|
+| 556aedd4-8923-4ade-a57a-0f4d498c7371 | 1719070005737-id8nj | 2024-06-22T15:31:08.636Z | This is a test item | 34534435  | 100      | EX-123 | Amazon   | 2024-06-22T15:31:08.636Z |
+
+### Stock Requests:
+| stockRequestedId | tenentId | createdAt | quantityRequested | SKU | supplier | type |
+|------------------|----------|-----------|-------------------|-----|----------|------|
+| 8b42b580-38d0-48e7-a25b-e2f31445aa87 | tenent-123 | 2024-06-22T19:39:10.024Z | 50 | SKU-789 | Supplier XYZ | STOCK_REQUEST |
 
 The sample data provided showcases the structure and attributes of each table. DynamoDB's flexible schema allows for storing complex data types, such as arrays and objects, within a single attribute (e.g., Permissions in the Users table and Address in the Suppliers table).
 
@@ -165,20 +169,3 @@ DynamoDB's powerful querying capabilities, such as the ability to query by parti
 - Lambda functions will have minimal necessary permissions (using IAM roles) to interact with other AWS services.
 - DynamoDB table access will be controlled through IAM policies.
 - Sensitive data will be stored in AWS Systems Manager Parameter Store or AWS Secrets Manager for secure storage and retrieval.
-
-### Interface Design
-
-
-#### UI and UX design:
-
-
-#### User-centric design:
-
-
-#### Intuitive navigation:
-
-
-#### Design consistency:
-
-
-#### Trends and historical considerations:

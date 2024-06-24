@@ -75,18 +75,29 @@
                 <mat-icon>delete_outline</mat-icon>
             </button>
             <div class="full-width-card">
-                <div class="statistics">
+                <div class="statistics" style="width: 45%; background-color: white; padding: 20px;">
                     <div class="sales">
-                        <h3>Sales</h3>
-                        <!-- Insert sales analytics content here -->
+                        <h3 style="color: #333; margin-bottom: 10px;">Requests</h3>
+                        <ul style="list-style: none; padding: 0; margin: 0;">
+                            <li style="padding: 8px 0; border-bottom: 1px solid #eee;">Total Requests: 320</li>
+                            <li style="padding: 8px 0; border-bottom: 1px solid #eee;">Fulfilled Requests: 280 (87.5%)
+                            </li>
+                            <li style="padding: 8px 0;">Pending Requests: 40</li>
+                        </ul>
                     </div>
+                    <hr>
                     <div class="earnings">
-                        <h3>Earnings</h3>
-                        <!-- Insert earnings analytics content here -->
+                        <h3 style="color: #333; margin-bottom: 10px;">Backorders</h3>
+                        <ul style="list-style: none; padding: 0; margin: 0;">
+                            <li style="padding: 8px 0; border-bottom: 1px solid #eee;">Current Backorders: 75</li>
+                            <li style="padding: 8px 0; border-bottom: 1px solid #eee;">Average Delay: 8 days</li>
+                            <li style="padding: 8px 0;">Longest Backorder Item: Product X - 15 days</li>
+                        </ul>
                     </div>
                 </div>
                 <app-saleschart class="chart"></app-saleschart>
             </div>
+
         </gridster-item>
         <gridster-item *ngIf="newLargeItem.isActive" [item]="newLargeItem">
             <button *ngIf="isDeleteMode" mat-mini-fab color="warn" class="delete-icon"

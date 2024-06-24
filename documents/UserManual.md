@@ -62,7 +62,7 @@ A user will be brought to this page either through an email link or when they op
 
 <div align="center">
   <h3>Reset Password</h3>
-  <img src="/media/wireframes/CreateAcc_dark.png">
+  <img src="/media/Screenshots/Reset Password.PNG">
 </div>
 
 **Reset Pasword:**

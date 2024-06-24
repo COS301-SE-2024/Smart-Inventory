@@ -45,18 +45,6 @@
   </div>
 </div>
 
-<!-- Delete Confirmation Popup -->
-<div *ngIf="showDeletePopup" class="popup-overlay">
-  <div class="popup-content">
-    <h2>Confirm Deletion</h2>
-    <p>Are you sure you want to delete the selected item(s)?</p>
-    <div class="button-group">
-      <button (click)="confirmDelete()">Yes</button>
-      <button (click)="cancelDelete()">No</button>
-    </div>
-  </div>
-</div>
-
 <!-- Request Stock Popup -->
 <div *ngIf="showRequestStockPopup" class="popup-overlay">
   <div class="popup-content">

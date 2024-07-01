@@ -3,15 +3,15 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root',
 })
 export class FilterService {
-  private filterSource = new BehaviorSubject<string>('year');
-  currentFilter = this.filterSource.asObservable();
+    private filterSource = new BehaviorSubject<string>('year');
+    currentFilter = this.filterSource.asObservable();
 
-  constructor() { }
+    constructor() {}
 
-  changeFilter(filter: string) {
-    this.filterSource.next(filter);
-  }
+    changeFilter(filter: string) {
+        this.filterSource.next(filter);
+    }
 }

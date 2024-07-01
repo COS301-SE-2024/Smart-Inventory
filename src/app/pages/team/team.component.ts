@@ -14,7 +14,7 @@ import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
 import { GridComponent } from '../../components/grid/grid.component';
 import { ColDef } from 'ag-grid-community';
 import { TitleService } from '../../components/header/title.service';
-import { DeleteButtonRenderer } from './delete-button-renderer.component';
+import { DeleteButtonRendererComponent } from './delete-button-renderer.component';
 import { DeleteConfirmationDialogComponent } from './delete-confirmation-dialog.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
@@ -30,7 +30,7 @@ import { LoadingSpinnerComponent } from '../../components/loader/loading-spinner
         CommonModule,
         FormsModule,
         GridComponent,
-        DeleteButtonRenderer,
+        DeleteButtonRendererComponent,
         MatDialogModule,
         MatButtonModule,
         RoleChangeConfirmationDialogComponent,
@@ -67,7 +67,7 @@ export class TeamComponent implements OnInit {
         },
         {
             headerName: 'Remove Member',
-            cellRenderer: DeleteButtonRenderer,
+            cellRenderer: DeleteButtonRendererComponent,
             width: 100,
         },
     ];
@@ -107,34 +107,34 @@ export class TeamComponent implements OnInit {
 
     async onNameCellValueChanged(event: any) {
         if (event.column.colId === 'given_name' || event.column.colId === 'family_name') {
-          try {
-            const session = await fetchAuthSession();
-      
-            const client = new CognitoIdentityProviderClient({
-              region: outputs.auth.aws_region,
-              credentials: session.credentials,
-            });
-      
-            const updateUserAttributesCommand = new AdminUpdateUserAttributesCommand({
-              UserPoolId: outputs.auth.user_pool_id,
-              Username: event.data.email,
-              UserAttributes: [
-                {
-                  Name: event.column.colId,
-                  Value: event.newValue,
-                },
-              ],
-            });
-      
-            await client.send(updateUserAttributesCommand);
-            console.log('User attribute updated successfully');
-          } catch (error) {
-            console.error('Error updating user attribute:', error);
-            // Revert the change in the grid
-            event.node.setDataValue(event.column.colId, event.oldValue);
-          }
+            try {
+                const session = await fetchAuthSession();
+
+                const client = new CognitoIdentityProviderClient({
+                    region: outputs.auth.aws_region,
+                    credentials: session.credentials,
+                });
+
+                const updateUserAttributesCommand = new AdminUpdateUserAttributesCommand({
+                    UserPoolId: outputs.auth.user_pool_id,
+                    Username: event.data.email,
+                    UserAttributes: [
+                        {
+                            Name: event.column.colId,
+                            Value: event.newValue,
+                        },
+                    ],
+                });
+
+                await client.send(updateUserAttributesCommand);
+                console.log('User attribute updated successfully');
+            } catch (error) {
+                console.error('Error updating user attribute:', error);
+                // Revert the change in the grid
+                event.node.setDataValue(event.column.colId, event.oldValue);
+            }
         }
-      }
+    }
 
     async ngOnInit() {
         this.titleService.updateTitle('Team');

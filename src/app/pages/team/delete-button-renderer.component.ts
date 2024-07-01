@@ -34,7 +34,7 @@ import { fetchAuthSession } from 'aws-amplify/auth';
         `,
     ],
 })
-export class DeleteButtonRenderer implements ICellRendererAngularComp {
+export class DeleteButtonRendererComponent implements ICellRendererAngularComp {
     private params!: ICellRendererParams;
 
     constructor(private dialog: MatDialog) {}

@@ -11,19 +11,26 @@ import { GridComponent } from './components/grid/grid.component';
 import { LoadingService } from './components/loader/loading.service';
 Amplify.configure(outputs);
 @Component({
-  selector: 'app-root',
-  standalone: true,
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.css',
-  imports: [RouterOutlet, GridComponent, AmplifyAuthenticatorModule, SidebarComponent, HeaderComponent, LoaderComponent],
+    selector: 'app-root',
+    standalone: true,
+    templateUrl: './app.component.html',
+    styleUrl: './app.component.css',
+    imports: [
+        RouterOutlet,
+        GridComponent,
+        AmplifyAuthenticatorModule,
+        SidebarComponent,
+        HeaderComponent,
+        LoaderComponent,
+    ],
 })
 export class AppComponent implements OnInit {
     title = 'Smart-Inventory';
     sidebarCollapsed = false;
 
-  constructor(public authenticator: AuthenticatorService, public loader: LoadingService) {
-    // Amplify.configure(outputs);
-  }
+    constructor(public authenticator: AuthenticatorService, public loader: LoadingService) {
+        // Amplify.configure(outputs);
+    }
 
     ngOnInit() {
         this.logAuthSession();

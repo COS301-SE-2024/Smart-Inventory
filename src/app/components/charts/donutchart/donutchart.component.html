@@ -5,17 +5,16 @@
             <div class="chart-header">
                 <!-- <h2>Most Popular Products</h2> -->
                 <!-- <mat-form-field appearance="fill" class="year-dropdown"> -->
-                    <!-- <mat-label>Select Year</mat-label> -->
-                    <mat-select [(ngModel)]="selectedYear" (selectionChange)="updateChartData(selectedYear)">
-                        <mat-option value="2024">This year</mat-option>
-                        <mat-option value="2023">2023</mat-option>
-                        <mat-option value="2022">2022</mat-option>
-                        <mat-option value="2021">2021</mat-option>
-                    </mat-select>
+                <!-- <mat-label>Select Year</mat-label> -->
+                <mat-select [(ngModel)]="selectedYear" (selectionChange)="updateChartData(selectedYear)">
+                    <mat-option value="2024">This year</mat-option>
+                    <mat-option value="2023">2023</mat-option>
+                    <mat-option value="2022">2022</mat-option>
+                    <mat-option value="2021">2021</mat-option>
+                </mat-select>
                 <!-- </mat-form-field> -->
             </div>
         </div>
     </div>
-    
 </div>
 <ag-charts-angular [options]="chartOptions"></ag-charts-angular>

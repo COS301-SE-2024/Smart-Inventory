@@ -7,7 +7,7 @@
                         <form style="height: 100%; width: 40%">
                             <h4>Personal details</h4>
                             <hr />
-                            <div class="form-row" style="padding-top: 10px;">
+                            <div class="form-row" style="padding-top: 10px">
                                 <mat-form-field class="form-field">
                                     <mat-label>Name</mat-label>
                                     <input matInput placeholder="Name" [(ngModel)]="profile.name" name="name" />
@@ -16,25 +16,41 @@
                             <div class="form-row">
                                 <mat-form-field class="form-field">
                                     <mat-label>Surname</mat-label>
-                                    <input matInput placeholder="Surname" [(ngModel)]="profile.surname" name="surname" />
+                                    <input
+                                        matInput
+                                        placeholder="Surname"
+                                        [(ngModel)]="profile.surname"
+                                        name="surname"
+                                    />
                                 </mat-form-field>
                             </div>
                             <div class="form-row">
                                 <mat-form-field class="form-field">
                                     <mat-label>Email</mat-label>
-                                    <input matInput placeholder="johndoe@mail.com" [formControl]="emailFormControl" email name="email" />
+                                    <input
+                                        matInput
+                                        placeholder="johndoe@mail.com"
+                                        [formControl]="emailFormControl"
+                                        email
+                                        name="email"
+                                    />
                                     <mat-error *ngIf="emailFormControl.hasError('email')">
                                         Please enter a valid email
                                     </mat-error>
                                 </mat-form-field>
                             </div>
-                            <button mat-button class="change-password-button" color="primary" (click)="saveProfileChanges()">
+                            <button
+                                mat-button
+                                class="change-password-button"
+                                color="primary"
+                                (click)="saveProfileChanges()"
+                            >
                                 Save Changes
                             </button>
 
-                            <h4 style="padding-top: 10px;">Password</h4>
+                            <h4 style="padding-top: 10px">Password</h4>
                             <hr />
-                            <div class="form-row form-row-password" style="padding-top: 10px;">
+                            <div class="form-row form-row-password" style="padding-top: 10px">
                                 <mat-form-field class="form-field">
                                     <mat-label>Current Password</mat-label>
                                     <input
@@ -46,7 +62,7 @@
                                     />
                                 </mat-form-field>
                             </div>
-                            <div class="form-row form-row-password" >
+                            <div class="form-row form-row-password">
                                 <mat-form-field class="form-field">
                                     <mat-label>New Password</mat-label>
                                     <input
@@ -58,11 +74,16 @@
                                     />
                                 </mat-form-field>
                             </div>
-                            <button mat-button class="change-password-button" color="primary" (click)="handleResetPassword()">
+                            <button
+                                mat-button
+                                class="change-password-button"
+                                color="primary"
+                                (click)="handleResetPassword()"
+                            >
                                 Change Password
                             </button>
 
-                            <h4 style="padding-top: 10px;" >Delete Account</h4>
+                            <h4 style="padding-top: 10px">Delete Account</h4>
                             <hr />
                             <button mat-button class="delete-button" (click)="toggleDeleteAccount()">
                                 Delete Account

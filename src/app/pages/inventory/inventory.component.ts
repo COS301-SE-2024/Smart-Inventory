@@ -16,408 +16,398 @@ import { InventoryDeleteConfirmationDialogComponent } from './inventory-delete-c
 import { MatDialogModule } from '@angular/material/dialog';
 
 @Component({
-  selector: 'app-inventory',
-  standalone: true,
-  imports: [
-    GridComponent, 
-    MatButtonModule, 
-    CommonModule, 
-    FormsModule, 
-    LoadingSpinnerComponent, 
-    MatDialogModule,
-    InventoryDeleteConfirmationDialogComponent
-  ],
-  templateUrl: './inventory.component.html',
-  styleUrls: ['./inventory.component.css']
+    selector: 'app-inventory',
+    standalone: true,
+    imports: [
+        GridComponent,
+        MatButtonModule,
+        CommonModule,
+        FormsModule,
+        LoadingSpinnerComponent,
+        MatDialogModule,
+        InventoryDeleteConfirmationDialogComponent,
+    ],
+    templateUrl: './inventory.component.html',
+    styleUrls: ['./inventory.component.css'],
 })
 export class InventoryComponent implements OnInit {
-  @ViewChild('gridComponent') gridComponent!: GridComponent;
+    @ViewChild('gridComponent') gridComponent!: GridComponent;
 
-  rowData: any[] = [];
-  showAddPopup = false;
-  showRequestStockPopup = false;
-  isLoading = true;
-  item = {
-    productId: '',
-    description: '',
-    quantity: 0,
-    sku: '',
-    supplier: ''
-  };
-  selectedItem: any = null;
-  requestQuantity: number | null = null;
-
-  colDefs: ColDef[] = [
-    { field: "inventoryID", headerName: "Inventory ID", hide: true },
-    { field: "sku", headerName: "SKU" },
-    { field: "productId", headerName: "Product ID" },
-    { field: "description", headerName: "Description" },
-    { field: "quantity", headerName: "Quantity" },
-    { field: "supplier", headerName: "Supplier" }
-  ];
-
-  addButton = { text: 'Add New Item' };
-
-  constructor(private titleService: TitleService, private dialog: MatDialog) {
-    Amplify.configure(outputs);
-  }
-
-  async ngOnInit(): Promise<void> {
-    this.titleService.updateTitle('Inventory');
-    await this.loadInventoryData();
-  }
-
-  async loadInventoryData() {
-    try {
-      const session = await fetchAuthSession();
-
-      const cognitoClient = new CognitoIdentityProviderClient({
-        region: outputs.auth.aws_region,
-        credentials: session.credentials,
-      });
-
-      const getUserCommand = new GetUserCommand({
-        AccessToken: session.tokens?.accessToken.toString(),
-      });
-      const getUserResponse = await cognitoClient.send(getUserCommand);
-
-      const tenantId = getUserResponse.UserAttributes?.find(
-        (attr) => attr.Name === 'custom:tenentId'
-      )?.Value;
-
-      if (!tenantId) {
-        console.error('TenantId not found in user attributes');
-        this.rowData = [];
-        return;
-      }
-
-      const lambdaClient = new LambdaClient({
-        region: outputs.auth.aws_region,
-        credentials: session.credentials,
-      });
-
-      const invokeCommand = new InvokeCommand({
-        FunctionName: 'Inventory-getItems',
-        Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: tenantId } })),
-      });
-
-      const lambdaResponse = await lambdaClient.send(invokeCommand);
-      const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-      console.log('Response from Lambda:', responseBody);
-
-      if (responseBody.statusCode === 200) {
-        const inventoryItems = JSON.parse(responseBody.body);
-        this.rowData = inventoryItems.map((item: any) => ({
-          inventoryID: item.inventoryID,
-          sku: item.SKU,
-          productId: item.productID,
-          description: item.description,
-          quantity: item.quantity,
-          supplier: item.supplier
-        }));
-        console.log('Processed inventory items:', this.rowData);
-      } else {
-        console.error('Error fetching inventory data:', responseBody.body);
-        this.rowData = [];
-      }
-    } catch (error) {
-      console.error('Error in loadInventoryData:', error);
-      this.rowData = [];
-    } finally {
-      this.isLoading = false;
-    }
-  }
-
-  openAddItemPopup() {
-    this.showAddPopup = true;
-  }
-
-  closeAddPopup() {
-    this.showAddPopup = false;
-    this.item = {
-      productId: '',
-      description: '',
-      quantity: 0,
-      sku: '',
-      supplier: ''
+    rowData: any[] = [];
+    showAddPopup = false;
+    showRequestStockPopup = false;
+    isLoading = true;
+    item = {
+        productId: '',
+        description: '',
+        quantity: 0,
+        sku: '',
+        supplier: '',
     };
-  }
+    selectedItem: any = null;
+    requestQuantity: number | null = null;
 
-  async onSubmit(formData: any) {
-    if (isNaN(formData.quantity)) {
-      alert("Please enter a valid quantity");
-      return;
+    colDefs: ColDef[] = [
+        { field: 'inventoryID', headerName: 'Inventory ID', hide: true },
+        { field: 'sku', headerName: 'SKU' },
+        { field: 'productId', headerName: 'Product ID' },
+        { field: 'description', headerName: 'Description' },
+        { field: 'quantity', headerName: 'Quantity' },
+        { field: 'supplier', headerName: 'Supplier' },
+    ];
+
+    addButton = { text: 'Add New Item' };
+
+    constructor(private titleService: TitleService, private dialog: MatDialog) {
+        Amplify.configure(outputs);
     }
 
-    try {
-      const session = await fetchAuthSession();
-
-      const cognitoClient = new CognitoIdentityProviderClient({
-        region: outputs.auth.aws_region,
-        credentials: session.credentials,
-      });
-
-      const getUserCommand = new GetUserCommand({
-        AccessToken: session.tokens?.accessToken.toString(),
-      });
-      const getUserResponse = await cognitoClient.send(getUserCommand);
-
-      const tenantId = getUserResponse.UserAttributes?.find(
-        (attr) => attr.Name === 'custom:tenentId'
-      )?.Value;
-
-      if (!tenantId) {
-        throw new Error('TenantId not found in user attributes');
-      }
-
-      const lambdaClient = new LambdaClient({
-        region: outputs.auth.aws_region,
-        credentials: session.credentials,
-      });
-
-      const payload = JSON.stringify({
-        productID: formData.productId,
-        description: formData.description,
-        quantity: formData.quantity,
-        sku: formData.sku,
-        supplier: formData.supplier,
-        tenentId: tenantId,
-      });
-      
-      console.log('Payload:', payload);
-
-      const invokeCommand = new InvokeCommand({
-        FunctionName: 'Inventory-CreateItem',
-        Payload: new TextEncoder().encode(JSON.stringify({ body: payload })),
-      });
-
-      const lambdaResponse = await lambdaClient.send(invokeCommand);
-      const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
-      if (responseBody.statusCode === 201) {
-        console.log('Inventory item added successfully');
+    async ngOnInit(): Promise<void> {
+        this.titleService.updateTitle('Inventory');
         await this.loadInventoryData();
-        this.closeAddPopup();
-      } else {
-        throw new Error(responseBody.body);
-      }
-    } catch (error) {
-      console.error('Error:', (error as Error).message);
-      alert(`Error: ${(error as Error).message}`);
     }
-  }
 
-  handleRowsToDelete(rows: any[]) {
-    if (rows.length > 0) {
-      const dialogRef = this.dialog.open(InventoryDeleteConfirmationDialogComponent, {
-        width: '300px',
-        data: { sku: rows[0].sku },
-      });
+    async loadInventoryData() {
+        try {
+            const session = await fetchAuthSession();
 
-      dialogRef.componentInstance.deleteConfirmed.subscribe(async () => {
-        for (const row of rows) {
-          await this.deleteInventoryItem(row.inventoryID);
+            const cognitoClient = new CognitoIdentityProviderClient({
+                region: outputs.auth.aws_region,
+                credentials: session.credentials,
+            });
+
+            const getUserCommand = new GetUserCommand({
+                AccessToken: session.tokens?.accessToken.toString(),
+            });
+            const getUserResponse = await cognitoClient.send(getUserCommand);
+
+            const tenantId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
+
+            if (!tenantId) {
+                console.error('TenantId not found in user attributes');
+                this.rowData = [];
+                return;
+            }
+
+            const lambdaClient = new LambdaClient({
+                region: outputs.auth.aws_region,
+                credentials: session.credentials,
+            });
+
+            const invokeCommand = new InvokeCommand({
+                FunctionName: 'Inventory-getItems',
+                Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: tenantId } })),
+            });
+
+            const lambdaResponse = await lambdaClient.send(invokeCommand);
+            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+            console.log('Response from Lambda:', responseBody);
+
+            if (responseBody.statusCode === 200) {
+                const inventoryItems = JSON.parse(responseBody.body);
+                this.rowData = inventoryItems.map((item: any) => ({
+                    inventoryID: item.inventoryID,
+                    sku: item.SKU,
+                    productId: item.productID,
+                    description: item.description,
+                    quantity: item.quantity,
+                    supplier: item.supplier,
+                }));
+                console.log('Processed inventory items:', this.rowData);
+            } else {
+                console.error('Error fetching inventory data:', responseBody.body);
+                this.rowData = [];
+            }
+        } catch (error) {
+            console.error('Error in loadInventoryData:', error);
+            this.rowData = [];
+        } finally {
+            this.isLoading = false;
         }
-        this.gridComponent.removeConfirmedRows(rows);
-        await this.loadInventoryData(); // Refresh the data after deletion
-      });
     }
-  }
 
-  async deleteInventoryItem(inventoryID: string) {
-    try {
-      const session = await fetchAuthSession();
-
-      const cognitoClient = new CognitoIdentityProviderClient({
-        region: outputs.auth.aws_region,
-        credentials: session.credentials,
-      });
-
-      const getUserCommand = new GetUserCommand({
-        AccessToken: session.tokens?.accessToken.toString(),
-      });
-      const getUserResponse = await cognitoClient.send(getUserCommand);
-
-      const tenantId = getUserResponse.UserAttributes?.find(
-        (attr) => attr.Name === 'custom:tenentId'
-      )?.Value;
-
-      if (!tenantId) {
-        throw new Error('TenantId not found in user attributes');
-      }
-
-      const lambdaClient = new LambdaClient({
-        region: outputs.auth.aws_region,
-        credentials: session.credentials,
-      });
-
-      const payload = JSON.stringify({
-        inventoryID: inventoryID,
-        tenentId: tenantId,
-      });
-
-      const invokeCommand = new InvokeCommand({
-        FunctionName: 'Inventory-removeItem',
-        Payload: new TextEncoder().encode(JSON.stringify({ body: payload })),
-      });
-
-      const lambdaResponse = await lambdaClient.send(invokeCommand);
-      const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
-      if (responseBody.statusCode === 200) {
-        console.log('Inventory item deleted successfully');
-      } else {
-        throw new Error(responseBody.body);
-      }
-    } catch (error) {
-      console.error('Error deleting inventory item:', error);
-      alert(`Error deleting inventory item: ${(error as Error).message}`);
+    openAddItemPopup() {
+        this.showAddPopup = true;
     }
-  }
 
-  async handleCellValueChanged(event: {data: any, field: string, newValue: any}) {
-    try {
-      const session = await fetchAuthSession();
+    closeAddPopup() {
+        this.showAddPopup = false;
+        this.item = {
+            productId: '',
+            description: '',
+            quantity: 0,
+            sku: '',
+            supplier: '',
+        };
+    }
 
-      const cognitoClient = new CognitoIdentityProviderClient({
-        region: outputs.auth.aws_region,
-        credentials: session.credentials,
-      });
-
-      const getUserCommand = new GetUserCommand({
-        AccessToken: session.tokens?.accessToken.toString(),
-      });
-      const getUserResponse = await cognitoClient.send(getUserCommand);
-
-      const tenentId = getUserResponse.UserAttributes?.find(
-        (attr) => attr.Name === 'custom:tenentId'
-      )?.Value;
-
-      if (!tenentId) {
-        throw new Error('TenentId not found in user attributes');
-      }
-
-      const lambdaClient = new LambdaClient({
-        region: outputs.auth.aws_region,
-        credentials: session.credentials,
-      });
-
-      const updatedData = {
-        inventoryID: event.data.inventoryID,
-        tenentId: tenentId,
-        [event.field]: event.newValue
-      };
-
-      const invokeCommand = new InvokeCommand({
-        FunctionName: 'Inventory-updateItem',
-        Payload: new TextEncoder().encode(JSON.stringify({ body: JSON.stringify(updatedData) })),
-      });
-
-      const lambdaResponse = await lambdaClient.send(invokeCommand);
-      const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
-      if (responseBody.statusCode === 200) {
-        console.log('Inventory item updated successfully');
-        // Update the local data to reflect the change
-        const updatedItem = JSON.parse(responseBody.body);
-        const index = this.rowData.findIndex(item => item.inventoryID === updatedItem.inventoryID);
-        if (index !== -1) {
-          this.rowData[index] = { ...this.rowData[index], ...updatedItem };
+    async onSubmit(formData: any) {
+        if (isNaN(formData.quantity)) {
+            alert('Please enter a valid quantity');
+            return;
         }
-      } else {
-        throw new Error(responseBody.body);
-      }
-    } catch (error) {
-      console.error('Error updating inventory item:', error);
-      alert(`Error updating inventory item: ${(error as Error).message}`);
-      // Revert the change in the grid
-      this.gridComponent.updateRow(event.data);
-    }
-  }
 
-  openRequestStockPopup(item: any) {
-    this.selectedItem = item;
-    this.showRequestStockPopup = true;
-    this.requestQuantity = null;
-  }
+        try {
+            const session = await fetchAuthSession();
 
-  closeRequestStockPopup() {
-    this.showRequestStockPopup = false;
-    this.selectedItem = null;
-    this.requestQuantity = null;
-  }
+            const cognitoClient = new CognitoIdentityProviderClient({
+                region: outputs.auth.aws_region,
+                credentials: session.credentials,
+            });
 
-  async requestStock() {
-    if (this.requestQuantity === null || isNaN(this.requestQuantity)) {
-      alert("Please enter a valid quantity");
-      return;
+            const getUserCommand = new GetUserCommand({
+                AccessToken: session.tokens?.accessToken.toString(),
+            });
+            const getUserResponse = await cognitoClient.send(getUserCommand);
+
+            const tenantId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
+
+            if (!tenantId) {
+                throw new Error('TenantId not found in user attributes');
+            }
+
+            const lambdaClient = new LambdaClient({
+                region: outputs.auth.aws_region,
+                credentials: session.credentials,
+            });
+
+            const payload = JSON.stringify({
+                productID: formData.productId,
+                description: formData.description,
+                quantity: formData.quantity,
+                sku: formData.sku,
+                supplier: formData.supplier,
+                tenentId: tenantId,
+            });
+
+            console.log('Payload:', payload);
+
+            const invokeCommand = new InvokeCommand({
+                FunctionName: 'Inventory-CreateItem',
+                Payload: new TextEncoder().encode(JSON.stringify({ body: payload })),
+            });
+
+            const lambdaResponse = await lambdaClient.send(invokeCommand);
+            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+
+            if (responseBody.statusCode === 201) {
+                console.log('Inventory item added successfully');
+                await this.loadInventoryData();
+                this.closeAddPopup();
+            } else {
+                throw new Error(responseBody.body);
+            }
+        } catch (error) {
+            console.error('Error:', (error as Error).message);
+            alert(`Error: ${(error as Error).message}`);
+        }
     }
-  
-    try {
-      const session = await fetchAuthSession();
-  
-      const cognitoClient = new CognitoIdentityProviderClient({
-        region: outputs.auth.aws_region,
-        credentials: session.credentials,
-      });
-  
-      const getUserCommand = new GetUserCommand({
-        AccessToken: session.tokens?.accessToken.toString(),
-      });
-      const getUserResponse = await cognitoClient.send(getUserCommand);
-  
-      const tenentId = getUserResponse.UserAttributes?.find(
-        (attr) => attr.Name === 'custom:tenentId'
-      )?.Value;
-  
-      if (!tenentId) {
-        throw new Error('TenentId not found in user attributes');
-      }
-  
-      const lambdaClient = new LambdaClient({
-        region: outputs.auth.aws_region,
-        credentials: session.credentials,
-      });
-  
-      // First, update the inventory
-      const updatedQuantity = this.selectedItem.quantity - this.requestQuantity;
-      const updateEvent = {
-        data: this.selectedItem,
-        field: 'quantity',
-        newValue: updatedQuantity
-      };
-      await this.handleCellValueChanged(updateEvent);
-  
-      // Then, create the stock request report
-      const reportPayload = {
-        tenentId: tenentId,
-        sku: this.selectedItem.sku,
-        supplier: this.selectedItem.supplier,
-        quantityRequested: this.requestQuantity.toString() // Ensure this is a string
-      };
-  
-      console.log('Report Payload:', reportPayload); // Add this for debugging
-  
-      const createReportCommand = new InvokeCommand({
-        FunctionName: 'Report-createItem',
-        Payload: new TextEncoder().encode(JSON.stringify({ body: JSON.stringify(reportPayload) })),
-      });
-  
-      const lambdaResponse = await lambdaClient.send(createReportCommand);
-      const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-  
-      console.log('Lambda Response:', responseBody); // Add this for debugging
-  
-      if (responseBody.statusCode === 201) {
-        console.log('Stock request report created successfully');
-        await this.loadInventoryData();
-        this.closeRequestStockPopup();
-      } else {
-        throw new Error(JSON.stringify(responseBody.body));
-      }
-    } catch (error) {
-      console.error('Error requesting stock:', error);
-      alert(`Error requesting stock: ${(error as Error).message}`);
+
+    handleRowsToDelete(rows: any[]) {
+        if (rows.length > 0) {
+            const dialogRef = this.dialog.open(InventoryDeleteConfirmationDialogComponent, {
+                width: '300px',
+                data: { sku: rows[0].sku },
+            });
+
+            dialogRef.componentInstance.deleteConfirmed.subscribe(async () => {
+                for (const row of rows) {
+                    await this.deleteInventoryItem(row.inventoryID);
+                }
+                this.gridComponent.removeConfirmedRows(rows);
+                await this.loadInventoryData(); // Refresh the data after deletion
+            });
+        }
     }
-  }
+
+    async deleteInventoryItem(inventoryID: string) {
+        try {
+            const session = await fetchAuthSession();
+
+            const cognitoClient = new CognitoIdentityProviderClient({
+                region: outputs.auth.aws_region,
+                credentials: session.credentials,
+            });
+
+            const getUserCommand = new GetUserCommand({
+                AccessToken: session.tokens?.accessToken.toString(),
+            });
+            const getUserResponse = await cognitoClient.send(getUserCommand);
+
+            const tenantId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
+
+            if (!tenantId) {
+                throw new Error('TenantId not found in user attributes');
+            }
+
+            const lambdaClient = new LambdaClient({
+                region: outputs.auth.aws_region,
+                credentials: session.credentials,
+            });
+
+            const payload = JSON.stringify({
+                inventoryID: inventoryID,
+                tenentId: tenantId,
+            });
+
+            const invokeCommand = new InvokeCommand({
+                FunctionName: 'Inventory-removeItem',
+                Payload: new TextEncoder().encode(JSON.stringify({ body: payload })),
+            });
+
+            const lambdaResponse = await lambdaClient.send(invokeCommand);
+            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+
+            if (responseBody.statusCode === 200) {
+                console.log('Inventory item deleted successfully');
+            } else {
+                throw new Error(responseBody.body);
+            }
+        } catch (error) {
+            console.error('Error deleting inventory item:', error);
+            alert(`Error deleting inventory item: ${(error as Error).message}`);
+        }
+    }
+
+    async handleCellValueChanged(event: { data: any; field: string; newValue: any }) {
+        try {
+            const session = await fetchAuthSession();
+
+            const cognitoClient = new CognitoIdentityProviderClient({
+                region: outputs.auth.aws_region,
+                credentials: session.credentials,
+            });
+
+            const getUserCommand = new GetUserCommand({
+                AccessToken: session.tokens?.accessToken.toString(),
+            });
+            const getUserResponse = await cognitoClient.send(getUserCommand);
+
+            const tenentId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
+
+            if (!tenentId) {
+                throw new Error('TenentId not found in user attributes');
+            }
+
+            const lambdaClient = new LambdaClient({
+                region: outputs.auth.aws_region,
+                credentials: session.credentials,
+            });
+
+            const updatedData = {
+                inventoryID: event.data.inventoryID,
+                tenentId: tenentId,
+                [event.field]: event.newValue,
+            };
+
+            const invokeCommand = new InvokeCommand({
+                FunctionName: 'Inventory-updateItem',
+                Payload: new TextEncoder().encode(JSON.stringify({ body: JSON.stringify(updatedData) })),
+            });
+
+            const lambdaResponse = await lambdaClient.send(invokeCommand);
+            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+
+            if (responseBody.statusCode === 200) {
+                console.log('Inventory item updated successfully');
+                // Update the local data to reflect the change
+                const updatedItem = JSON.parse(responseBody.body);
+                const index = this.rowData.findIndex((item) => item.inventoryID === updatedItem.inventoryID);
+                if (index !== -1) {
+                    this.rowData[index] = { ...this.rowData[index], ...updatedItem };
+                }
+            } else {
+                throw new Error(responseBody.body);
+            }
+        } catch (error) {
+            console.error('Error updating inventory item:', error);
+            alert(`Error updating inventory item: ${(error as Error).message}`);
+            // Revert the change in the grid
+            this.gridComponent.updateRow(event.data);
+        }
+    }
+
+    openRequestStockPopup(item: any) {
+        this.selectedItem = item;
+        this.showRequestStockPopup = true;
+        this.requestQuantity = null;
+    }
+
+    closeRequestStockPopup() {
+        this.showRequestStockPopup = false;
+        this.selectedItem = null;
+        this.requestQuantity = null;
+    }
+
+    async requestStock() {
+        if (this.requestQuantity === null || isNaN(this.requestQuantity)) {
+            alert('Please enter a valid quantity');
+            return;
+        }
+
+        try {
+            const session = await fetchAuthSession();
+
+            const cognitoClient = new CognitoIdentityProviderClient({
+                region: outputs.auth.aws_region,
+                credentials: session.credentials,
+            });
+
+            const getUserCommand = new GetUserCommand({
+                AccessToken: session.tokens?.accessToken.toString(),
+            });
+            const getUserResponse = await cognitoClient.send(getUserCommand);
+
+            const tenentId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
+
+            if (!tenentId) {
+                throw new Error('TenentId not found in user attributes');
+            }
+
+            const lambdaClient = new LambdaClient({
+                region: outputs.auth.aws_region,
+                credentials: session.credentials,
+            });
+
+            // First, update the inventory
+            const updatedQuantity = this.selectedItem.quantity - this.requestQuantity;
+            const updateEvent = {
+                data: this.selectedItem,
+                field: 'quantity',
+                newValue: updatedQuantity,
+            };
+            await this.handleCellValueChanged(updateEvent);
+
+            // Then, create the stock request report
+            const reportPayload = {
+                tenentId: tenentId,
+                sku: this.selectedItem.sku,
+                supplier: this.selectedItem.supplier,
+                quantityRequested: this.requestQuantity.toString(), // Ensure this is a string
+            };
+
+            console.log('Report Payload:', reportPayload); // Add this for debugging
+
+            const createReportCommand = new InvokeCommand({
+                FunctionName: 'Report-createItem',
+                Payload: new TextEncoder().encode(JSON.stringify({ body: JSON.stringify(reportPayload) })),
+            });
+
+            const lambdaResponse = await lambdaClient.send(createReportCommand);
+            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+
+            console.log('Lambda Response:', responseBody); // Add this for debugging
+
+            if (responseBody.statusCode === 201) {
+                console.log('Stock request report created successfully');
+                await this.loadInventoryData();
+                this.closeRequestStockPopup();
+            } else {
+                throw new Error(JSON.stringify(responseBody.body));
+            }
+        } catch (error) {
+            console.error('Error requesting stock:', error);
+            alert(`Error requesting stock: ${(error as Error).message}`);
+        }
+    }
 }

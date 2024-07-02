@@ -43,9 +43,11 @@ export class InventoryComponent implements OnInit {
         quantity: 0,
         sku: '',
         supplier: '',
+        expirationDate: '',
     };
     selectedItem: any = null;
     requestQuantity: number | null = null;
+    suppliers: any[] = [];
 
     colDefs: ColDef[] = [
         { field: 'inventoryID', headerName: 'Inventory ID', hide: true },
@@ -54,6 +56,7 @@ export class InventoryComponent implements OnInit {
         { field: 'description', headerName: 'Description' },
         { field: 'quantity', headerName: 'Quantity' },
         { field: 'supplier', headerName: 'Supplier' },
+        { field: 'expirationDate', headerName: 'Expiration Date' },
     ];
 
     addButton = { text: 'Add New Item' };
@@ -65,6 +68,7 @@ export class InventoryComponent implements OnInit {
     async ngOnInit(): Promise<void> {
         this.titleService.updateTitle('Inventory');
         await this.loadInventoryData();
+        await this.loadSuppliers();
     }
 
     async loadInventoryData() {
@@ -112,6 +116,7 @@ export class InventoryComponent implements OnInit {
                     description: item.description,
                     quantity: item.quantity,
                     supplier: item.supplier,
+                    expirationDate: item.expirationDate,
                 }));
                 console.log('Processed inventory items:', this.rowData);
             } else {
@@ -123,6 +128,53 @@ export class InventoryComponent implements OnInit {
             this.rowData = [];
         } finally {
             this.isLoading = false;
+        }
+    }
+
+    async loadSuppliers() {
+        try {
+            const session = await fetchAuthSession();
+
+            const cognitoClient = new CognitoIdentityProviderClient({
+                region: outputs.auth.aws_region,
+                credentials: session.credentials,
+            });
+
+            const getUserCommand = new GetUserCommand({
+                AccessToken: session.tokens?.accessToken.toString(),
+            });
+            const getUserResponse = await cognitoClient.send(getUserCommand);
+
+            const tenantId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
+
+            if (!tenantId) {
+                console.error('TenantId not found in user attributes');
+                this.suppliers = [];
+                return;
+            }
+
+            const lambdaClient = new LambdaClient({
+                region: outputs.auth.aws_region,
+                credentials: session.credentials,
+            });
+
+            const invokeCommand = new InvokeCommand({
+                FunctionName: 'getSuppliers',
+                Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: tenantId } })),
+            });
+
+            const lambdaResponse = await lambdaClient.send(invokeCommand);
+            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+
+            if (responseBody.statusCode === 200) {
+                this.suppliers = JSON.parse(responseBody.body);
+            } else {
+                console.error('Error fetching suppliers data:', responseBody.body);
+                this.suppliers = [];
+            }
+        } catch (error) {
+            console.error('Error in loadSuppliers:', error);
+            this.suppliers = [];
         }
     }
 
@@ -138,6 +190,7 @@ export class InventoryComponent implements OnInit {
             quantity: 0,
             sku: '',
             supplier: '',
+            expirationDate: '',
         };
     }
 
@@ -178,6 +231,7 @@ export class InventoryComponent implements OnInit {
                 sku: formData.sku,
                 supplier: formData.supplier,
                 tenentId: tenantId,
+                expirationDate: formData.expirationDate,
             });
 
             console.log('Payload:', payload);
@@ -378,36 +432,36 @@ export class InventoryComponent implements OnInit {
             };
             await this.handleCellValueChanged(updateEvent);
 
-            // Then, create the stock request report
-            const reportPayload = {
-                tenentId: tenentId,
-                sku: this.selectedItem.sku,
-                supplier: this.selectedItem.supplier,
-                quantityRequested: this.requestQuantity.toString(), // Ensure this is a string
-            };
+// Then, create the stock request report
+const reportPayload = {
+    tenentId: tenentId,
+    sku: this.selectedItem.sku,
+    supplier: this.selectedItem.supplier,
+    quantityRequested: this.requestQuantity.toString(), // Ensure this is a string
+};
 
-            console.log('Report Payload:', reportPayload); // Add this for debugging
+console.log('Report Payload:', reportPayload); // Add this for debugging
 
-            const createReportCommand = new InvokeCommand({
-                FunctionName: 'Report-createItem',
-                Payload: new TextEncoder().encode(JSON.stringify({ body: JSON.stringify(reportPayload) })),
-            });
+const createReportCommand = new InvokeCommand({
+    FunctionName: 'Report-createItem',
+    Payload: new TextEncoder().encode(JSON.stringify({ body: JSON.stringify(reportPayload) })),
+});
 
-            const lambdaResponse = await lambdaClient.send(createReportCommand);
-            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+const lambdaResponse = await lambdaClient.send(createReportCommand);
+const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
 
-            console.log('Lambda Response:', responseBody); // Add this for debugging
+console.log('Lambda Response:', responseBody); // Add this for debugging
 
-            if (responseBody.statusCode === 201) {
-                console.log('Stock request report created successfully');
-                await this.loadInventoryData();
-                this.closeRequestStockPopup();
-            } else {
-                throw new Error(JSON.stringify(responseBody.body));
-            }
-        } catch (error) {
-            console.error('Error requesting stock:', error);
-            alert(`Error requesting stock: ${(error as Error).message}`);
-        }
-    }
+if (responseBody.statusCode === 201) {
+    console.log('Stock request report created successfully');
+    await this.loadInventoryData();
+    this.closeRequestStockPopup();
+} else {
+    throw new Error(JSON.stringify(responseBody.body));
+}
+} catch (error) {
+console.error('Error requesting stock:', error);
+alert(`Error requesting stock: ${(error as Error).message}`);
+}
+}
 }

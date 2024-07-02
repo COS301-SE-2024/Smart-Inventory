@@ -31,7 +31,9 @@
             <button mat-menu-item *ngIf="getCurrentRoute('orders')" color="primary" (click)="deleteRow()">
                 - Cancel Order
             </button>
-            <button mat-menu-item *ngIf="getCurrentRoute('inventory')" color="primary" (click)="onRequestStock()">Request Stock</button>
+            <button mat-menu-item *ngIf="getCurrentRoute('inventory')" color="primary" (click)="onRequestStock()">
+                Request Stock
+            </button>
         </mat-menu>
     </div>
 </div>

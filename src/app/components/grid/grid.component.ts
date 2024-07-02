@@ -40,7 +40,7 @@ export class GridComponent implements OnInit {
     @Input() addButton: { text: string } = { text: 'Add' };
     @Output() rowsToDelete = new EventEmitter<any[]>();
     @Output() addNewClicked = new EventEmitter<void>();
-    @Output() itemToUpdate = new EventEmitter<{data: any, field: string, newValue: any}>();
+    @Output() itemToUpdate = new EventEmitter<{ data: any; field: string; newValue: any }>();
     @Output() nameCellValueChanged = new EventEmitter<any>();
 
     @Output() requestStock = new EventEmitter<any>();
@@ -62,17 +62,14 @@ export class GridComponent implements OnInit {
     public rowSelection: 'single' | 'multiple' = 'multiple';
     public editType: 'fullRow' = 'fullRow';
 
-    constructor(
-        public dialog: MatDialog,
-        private route: ActivatedRoute,
-    ) {}
+    constructor(public dialog: MatDialog, private route: ActivatedRoute) {}
 
     ngOnInit(): void {
         this.filteredRowData = [...this.rowData];
         this.selectOptions = this.columnDefs.map((f: any) => f.field);
-        
+
         // Make all columns editable
-        this.columnDefs = this.columnDefs.map(col => ({...col, editable: true}));
+        this.columnDefs = this.columnDefs.map((col) => ({ ...col, editable: true }));
     }
 
     getCurrentRoute(v: string) {
@@ -101,13 +98,13 @@ export class GridComponent implements OnInit {
     onCellValueChanged(event: CellValueChangedEvent) {
         console.log('onCellValueChanged: ' + event.colDef.field + ' = ' + event.newValue);
         if (event.colDef.field !== 'given_name' && event.colDef.field !== 'family_name') {
-          this.itemToUpdate.emit({
-            data: event.data,
-            field: event.colDef.field!,
-            newValue: event.newValue
-          });
+            this.itemToUpdate.emit({
+                data: event.data,
+                field: event.colDef.field!,
+                newValue: event.newValue,
+            });
         } else {
-          this.nameCellValueChanged.emit(event);
+            this.nameCellValueChanged.emit(event);
         }
     }
 

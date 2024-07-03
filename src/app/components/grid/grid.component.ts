@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { AgGridAngular } from 'ag-grid-angular';
-import { ColDef, GridReadyEvent, CellValueChangedEvent, RowValueChangedEvent } from 'ag-grid-community';
+import { ColDef, GridReadyEvent, CellValueChangedEvent, RowValueChangedEvent, GridApi } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { MatButtonModule } from '@angular/material/button';
@@ -48,7 +48,7 @@ export class GridComponent implements OnInit {
     filteredRowData: any[] = [];
 
     gridApi: any;
-    gridColumnApi: any;
+    // gridColumnApi: any;
 
     filterSelect: string = '';
     inputFilter: string = '';
@@ -78,7 +78,6 @@ export class GridComponent implements OnInit {
 
     onGridReady(params: GridReadyEvent) {
         this.gridApi = params.api;
-        this.gridColumnApi = params.columnApi;
         this.gridApi.sizeColumnsToFit();
     }
 
@@ -137,7 +136,7 @@ export class GridComponent implements OnInit {
             this.filteredRowData = [...this.rowData];
         }
 
-        if (this.gridColumnApi !== undefined) {
+        if (this.gridApi !== undefined) {
             this.gridApi.setRowData(this.filteredRowData);
         }
     }

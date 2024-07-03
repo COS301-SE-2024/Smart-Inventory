@@ -30,11 +30,31 @@ export class AppComponent implements OnInit {
 
     constructor(public authenticator: AuthenticatorService, public loader: LoadingService) {
         // Amplify.configure(outputs);
+        this.loadTheme();
     }
 
     ngOnInit() {
         this.logAuthSession();
     }
+
+    //
+
+    toggleTheme(): void {
+        if (document.body.getAttribute('data-theme') === 'dark') {
+            document.body.setAttribute('data-theme', 'light');
+            localStorage.setItem('theme', 'light');
+        } else {
+            document.body.setAttribute('data-theme', 'dark');
+            localStorage.setItem('theme', 'dark');
+        }
+    }
+
+    loadTheme(): void {
+        const storedTheme = localStorage.getItem('theme');
+        document.body.setAttribute('data-theme', storedTheme || 'light');
+    }
+
+    //
 
     async logAuthSession() {
         try {

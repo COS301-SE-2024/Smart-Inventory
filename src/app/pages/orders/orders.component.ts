@@ -3,14 +3,11 @@ import { ColDef } from 'ag-grid-community';
 import { GridComponent } from '../../components/grid/grid.component';
 import { MatButtonModule } from '@angular/material/button';
 import { TitleService } from '../../components/header/title.service';
-import { ViewQuoteButtonRendererComponent } from './view-quote-button-renderer.component';
-import { ViewReceivedQuotesButtonRendererComponent } from './view-received-quotes-button-renderer.component';
-import { ActionsRendererComponent } from './actions-renderer.component';
 
 @Component({
     selector: 'app-orders',
     standalone: true,
-    imports: [GridComponent, MatButtonModule, ViewQuoteButtonRendererComponent, ViewReceivedQuotesButtonRendererComponent, ActionsRendererComponent],
+    imports: [GridComponent, MatButtonModule],
     templateUrl: './orders.component.html',
     styleUrl: './orders.component.css',
 })
@@ -71,16 +68,7 @@ export class OrdersComponent implements OnInit{
         { field: 'Selected_Supplier', filter: 'agSetColumnFilter' },
         { field: 'Expected_Delivery_Date', filter: 'agDateColumnFilter' },
         { field: 'Actual_Delivery_Date', filter: 'agDateColumnFilter' },
-        {
-            headerName: 'Actions',
-            cellRenderer: ActionsRendererComponent,
-            minWidth: 300,
-        },
     ];
-
-    frameworkComponents = {
-        actionsRenderer: ActionsRendererComponent,
-    };
 
     defaultColDef: ColDef = {
         flex: 1,

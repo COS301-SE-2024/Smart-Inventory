@@ -19,17 +19,26 @@
             <button mat-menu-item color="primary" (click)="addRow()" *ngIf="getCurrentRoute('suppliers')">
                 + Add Supplier
             </button>
-            <button mat-menu-item color="primary" (click)="addRow()" *ngIf="getCurrentRoute('orders')">
-                + Place Order
+            <button mat-menu-item *ngIf="getCurrentRoute('orders')" color="primary" (click)="addRow()">
+                + Create Order
+            </button>
+            <button mat-menu-item *ngIf="getCurrentRoute('orders')" color="primary" (click)="deleteRow()">
+                - Delete Order
+            </button>
+            <button mat-menu-item *ngIf="getCurrentRoute('orders')" color="primary">
+                View Generated Quote
+            </button>
+            <button mat-menu-item *ngIf="getCurrentRoute('orders')" color="primary">
+                View Received Quotes
+            </button>
+            <button mat-menu-item *ngIf="getCurrentRoute('orders')" color="primary">
+                Mark Order As Received
             </button>
             <button mat-menu-item *ngIf="getCurrentRoute('inventory')" color="primary" (click)="deleteRow()">
                 - Remove Item
             </button>
             <button mat-menu-item *ngIf="getCurrentRoute('suppliers')" color="primary" (click)="deleteRow()">
                 - Remove Supplier
-            </button>
-            <button mat-menu-item *ngIf="getCurrentRoute('orders')" color="primary" (click)="deleteRow()">
-                - Cancel Order
             </button>
             <button mat-menu-item *ngIf="getCurrentRoute('inventory')" color="primary" (click)="onRequestStock()">
                 Request Stock

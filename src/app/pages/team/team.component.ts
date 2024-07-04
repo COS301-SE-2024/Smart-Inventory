@@ -54,6 +54,7 @@ export class TeamComponent implements OnInit {
 
     addButton = { text: 'Add Member' };
     isLoading = true;
+    isDataReady = false;
     rowData: any[] = [];
     colDefs: ColDef[] = [
         { field: 'given_name', headerName: 'Name' },
@@ -243,8 +244,10 @@ export class TeamComponent implements OnInit {
                 email: user.Attributes.find((attr: any) => attr.Name === 'email')?.Value,
                 role: user.Groups.length > 0 ? this.getRoleDisplayName(user.Groups[0].GroupName) : '',
             }));
+            this.isDataReady = true;
         } catch (error) {
             console.error('Error fetching users:', error);
+            this.rowData = [];
         } finally {
             this.isLoading = false;
         }

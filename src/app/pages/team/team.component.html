@@ -1,4 +1,4 @@
-<div class="grid-container">
+<div class="grid-container" *ngIf="!isLoading && isDataReady">
     <app-grid
         [rowData]="rowData"
         [columnDefs]="colDefs"

@@ -29,8 +29,6 @@ mat-toolbar {
     border-left: 1px solid var(--header-bg-color);
     padding: 11px;
     height: 50px;
-    /* border-radius: 5px;
-    /* Optional: if you prefer rounded corners */
 }
 
 .theme-svg circle,

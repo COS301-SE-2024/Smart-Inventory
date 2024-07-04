@@ -192,10 +192,7 @@ export class HelpComponent implements OnInit {
     selectedContent: string = '';
     activeSection: string = '';
 
-    constructor(
-        private snackBar: MatSnackBar,
-        private titleService: TitleService,
-    ) {}
+    constructor(private snackBar: MatSnackBar, private titleService: TitleService) {}
 
     ngOnInit() {
         this.onItemSelected(this.menuItems[0]); // Select FAQs by default

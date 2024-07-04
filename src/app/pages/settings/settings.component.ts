@@ -93,26 +93,26 @@ export class SettingsComponent implements OnInit {
 
     saveProfileChanges() {
         const updatedAttributes: Record<string, string> = {
-          ['given_name']: this.profile.name,
-          ['family_name']: this.profile.surname,
-          ['email']:this.profile.email
+            ['given_name']: this.profile.name,
+            ['family_name']: this.profile.surname,
+            ['email']: this.profile.email,
         };
-      
+
         if (this.emailFormControl.value) {
-          updatedAttributes['email'] = this.emailFormControl.value;
+            updatedAttributes['email'] = this.emailFormControl.value;
         }
-      
+
         this.cognitoService.updateUserAttribute(updatedAttributes).subscribe(
-          (result) => {
-            console.log('Update result:', result); // Log the result for debugging
-            this.snackBar.open('Profile updated successfully', 'Close', { duration: 3000 });
-          },
-          (error) => {
-            console.error('Error updating profile:', error);
-            this.snackBar.open('Error updating profile. Please try again.', 'Close', { duration: 3000 });
-          }
+            (result) => {
+                console.log('Update result:', result); // Log the result for debugging
+                this.snackBar.open('Profile updated successfully', 'Close', { duration: 3000 });
+            },
+            (error) => {
+                console.error('Error updating profile:', error);
+                this.snackBar.open('Error updating profile. Please try again.', 'Close', { duration: 3000 });
+            }
         );
-      }
+    }
 
     handleResetPassword() {
         if (!this.password.current || !this.password.new) {
@@ -159,7 +159,9 @@ export class SettingsComponent implements OnInit {
                         },
                         (error) => {
                             console.error('Error deleting account:', error);
-                            this.snackBar.open('Error deleting account. Please try again.', 'Close', { duration: 3000 });
+                            this.snackBar.open('Error deleting account. Please try again.', 'Close', {
+                                duration: 3000,
+                            });
                         }
                     );
                 } else {

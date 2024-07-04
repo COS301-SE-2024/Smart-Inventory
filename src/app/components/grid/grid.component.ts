@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { AgGridAngular } from 'ag-grid-angular';
-import { ColDef, GridReadyEvent, CellValueChangedEvent, RowValueChangedEvent } from 'ag-grid-community';
+import { ColDef, GridReadyEvent, CellValueChangedEvent, RowValueChangedEvent, GridApi } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { MatButtonModule } from '@angular/material/button';
@@ -40,7 +40,7 @@ export class GridComponent implements OnInit {
     @Input() addButton: { text: string } = { text: 'Add' };
     @Output() rowsToDelete = new EventEmitter<any[]>();
     @Output() addNewClicked = new EventEmitter<void>();
-    @Output() itemToUpdate = new EventEmitter<{data: any, field: string, newValue: any}>();
+    @Output() itemToUpdate = new EventEmitter<{ data: any; field: string; newValue: any }>();
     @Output() nameCellValueChanged = new EventEmitter<any>();
 
     @Output() requestStock = new EventEmitter<any>();
@@ -48,7 +48,7 @@ export class GridComponent implements OnInit {
     filteredRowData: any[] = [];
 
     gridApi: any;
-    gridColumnApi: any;
+    // gridColumnApi: any;
 
     filterSelect: string = '';
     inputFilter: string = '';
@@ -62,17 +62,14 @@ export class GridComponent implements OnInit {
     public rowSelection: 'single' | 'multiple' = 'multiple';
     public editType: 'fullRow' = 'fullRow';
 
-    constructor(
-        public dialog: MatDialog,
-        private route: ActivatedRoute,
-    ) {}
+    constructor(public dialog: MatDialog, private route: ActivatedRoute) {}
 
     ngOnInit(): void {
         this.filteredRowData = [...this.rowData];
         this.selectOptions = this.columnDefs.map((f: any) => f.field);
-        
+
         // Make all columns editable
-        this.columnDefs = this.columnDefs.map(col => ({...col, editable: true}));
+        this.columnDefs = this.columnDefs.map((col) => ({ ...col, editable: true }));
     }
 
     getCurrentRoute(v: string) {
@@ -81,7 +78,6 @@ export class GridComponent implements OnInit {
 
     onGridReady(params: GridReadyEvent) {
         this.gridApi = params.api;
-        this.gridColumnApi = params.columnApi;
         this.gridApi.sizeColumnsToFit();
     }
 
@@ -101,13 +97,13 @@ export class GridComponent implements OnInit {
     onCellValueChanged(event: CellValueChangedEvent) {
         console.log('onCellValueChanged: ' + event.colDef.field + ' = ' + event.newValue);
         if (event.colDef.field !== 'given_name' && event.colDef.field !== 'family_name') {
-          this.itemToUpdate.emit({
-            data: event.data,
-            field: event.colDef.field!,
-            newValue: event.newValue
-          });
+            this.itemToUpdate.emit({
+                data: event.data,
+                field: event.colDef.field!,
+                newValue: event.newValue,
+            });
         } else {
-          this.nameCellValueChanged.emit(event);
+            this.nameCellValueChanged.emit(event);
         }
     }
 
@@ -140,7 +136,7 @@ export class GridComponent implements OnInit {
             this.filteredRowData = [...this.rowData];
         }
 
-        if (this.gridColumnApi !== undefined) {
+        if (this.gridApi !== undefined) {
             this.gridApi.setRowData(this.filteredRowData);
         }
     }

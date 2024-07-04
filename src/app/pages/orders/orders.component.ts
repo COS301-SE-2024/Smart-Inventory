@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ColDef } from 'ag-grid-community';
 import { GridComponent } from '../../components/grid/grid.component';
 import { MatButtonModule } from '@angular/material/button';
@@ -11,23 +11,63 @@ import { TitleService } from '../../components/header/title.service';
     templateUrl: './orders.component.html',
     styleUrl: './orders.component.css',
 })
-export class OrdersComponent {
+export class OrdersComponent implements OnInit{
     constructor(private titleService: TitleService) {}
 
     // Row Data: The data to be displayed.
     rowData = [
-        { Order_ID: '#101', Date: '01/01/2002', Supplier: 'Amazon', Items: 10 },
-        { Order_ID: '#102', Date: '01/01/2002', Supplier: 'Takealot', Items: 4 },
-        { Order_ID: '#104', Date: '01/01/2002', Supplier: 'Gumtree', Items: 5 },
-        { Order_ID: '#108', Date: '01/01/2002', Supplier: 'Pnp', Items: 2 },
+        {
+            Order_ID: '#101',
+            Order_Date: '2024-07-01',
+            Order_Status: 'Pending Approval',
+            Quote_ID: 'Q001',
+            Quote_Status: 'Draft',
+            Selected_Supplier: '',
+            Expected_Delivery_Date: '',
+            Actual_Delivery_Date: '',
+        },
+        {
+            Order_ID: '#102',
+            Order_Date: '2024-07-02',
+            Order_Status: 'Quote Sent to Suppliers',
+            Quote_ID: 'Q002',
+            Quote_Status: 'Sent',
+            Selected_Supplier: '',
+            Expected_Delivery_Date: '',
+            Actual_Delivery_Date: '',
+        },
+        {
+            Order_ID: '#103',
+            Order_Date: '2024-07-03',
+            Order_Status: 'Awaiting Arrival',
+            Quote_ID: 'Q003',
+            Quote_Status: 'Accepted',
+            Selected_Supplier: 'Takealot',
+            Expected_Delivery_Date: '2024-07-10',
+            Actual_Delivery_Date: '',
+        },
+        {
+            Order_ID: '#104',
+            Order_Date: '2024-07-04',
+            Order_Status: 'Received',
+            Quote_ID: 'Q004',
+            Quote_Status: 'Accepted',
+            Selected_Supplier: 'Amazon',
+            Expected_Delivery_Date: '2024-07-08',
+            Actual_Delivery_Date: '2024-07-07',
+        },
     ];
 
     // Column Definitions: Defines & controls grid columns.
-    colDefs: any[] = [
-        { field: 'Order_ID', filter: 'agSetColumnFilter', editable: true },
-        { field: 'Date', filter: 'agSetColumnFilter', editable: true },
-        { field: 'Supplier', filter: 'agSetColumnFilter', editable: true },
-        { field: 'Items', filter: 'agSetColumnFilter', editable: true },
+    colDefs: ColDef[] = [
+        { field: 'Order_ID', filter: 'agSetColumnFilter' },
+        { field: 'Order_Date', filter: 'agDateColumnFilter' },
+        { field: 'Order_Status', filter: 'agSetColumnFilter' },
+        { field: 'Quote_ID', filter: 'agSetColumnFilter' },
+        { field: 'Quote_Status', filter: 'agSetColumnFilter' },
+        { field: 'Selected_Supplier', filter: 'agSetColumnFilter' },
+        { field: 'Expected_Delivery_Date', filter: 'agDateColumnFilter' },
+        { field: 'Actual_Delivery_Date', filter: 'agDateColumnFilter' },
     ];
 
     defaultColDef: ColDef = {

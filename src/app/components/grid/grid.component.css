@@ -23,6 +23,7 @@ input {
     width: 350px;
     padding: 5px;
 }
+
 mat-select {
     border: 1px solid grey;
     border-radius: 5px;
@@ -32,6 +33,14 @@ mat-select {
     width: 200px;
     height: 40px;
     font-size: 15px;
+}
+
+mat-select {
+    color: var(--text-color);
+}
+
+.mat-mdc-select-placeholder {
+    color: white !important;
 }
 
 ::ng-deep .mat-mdc-select-value {

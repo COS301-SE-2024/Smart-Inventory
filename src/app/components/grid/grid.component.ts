@@ -1,8 +1,9 @@
-import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, Output, EventEmitter } from '@angular/core';
 import { AgGridAngular } from 'ag-grid-angular';
 import { ColDef, GridReadyEvent, CellValueChangedEvent, RowValueChangedEvent } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
+import 'ag-grid-community/styles/ag-theme-material.css';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
@@ -34,7 +35,7 @@ import { RoleSelectCellEditorComponent } from '../../pages/team/role-select-cell
     templateUrl: './grid.component.html',
     styleUrl: './grid.component.css',
 })
-export class GridComponent implements OnInit {
+export class GridComponent implements OnInit, OnDestroy  {
     @Input() rowData: any[] = [];
     @Input() columnDefs: ColDef[] = [];
     @Input() addButton: { text: string } = { text: 'Add' };
@@ -44,6 +45,9 @@ export class GridComponent implements OnInit {
     @Output() nameCellValueChanged = new EventEmitter<any>();
 
     @Output() requestStock = new EventEmitter<any>();
+    private themeObserver!: MutationObserver;
+
+    public themeClass: string = 'ag-theme-material'; // Default to light theme
 
     filteredRowData: any[] = [];
 
@@ -62,7 +66,28 @@ export class GridComponent implements OnInit {
     public rowSelection: 'single' | 'multiple' = 'multiple';
     public editType: 'fullRow' = 'fullRow';
 
-    constructor(public dialog: MatDialog, private route: ActivatedRoute) {}
+    constructor(public dialog: MatDialog, private route: ActivatedRoute) {
+        this.setupThemeObserver();
+    }
+
+    private setupThemeObserver() {
+        this.themeObserver = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.attributeName === 'data-theme') {
+                    this.applyCurrentTheme();
+                }
+            });
+        });
+        this.themeObserver.observe(document.body, { attributes: true });
+    }
+
+    private applyCurrentTheme() {
+        const theme = document.body.getAttribute('data-theme') === 'dark' ? 'ag-theme-material-dark' : 'ag-theme-quartz';
+        this.themeClass = theme;
+        if (this.gridApi) {
+            this.gridApi.redrawRows(); // Redraw rows to apply the new CSS class for the theme change
+        }
+    }
 
     ngOnInit(): void {
         this.filteredRowData = [...this.rowData];
@@ -70,6 +95,10 @@ export class GridComponent implements OnInit {
 
         // Make all columns editable
         this.columnDefs = this.columnDefs.map((col) => ({ ...col, editable: true }));
+    }
+
+    ngAfterViewInit() {
+        this.applyCurrentTheme();
     }
 
     getCurrentRoute(v: string) {
@@ -80,6 +109,13 @@ export class GridComponent implements OnInit {
         this.gridApi = params.api;
         // this.gridColumnApi = params.columnApi;
         this.gridApi.sizeColumnsToFit();
+        this.applyCurrentTheme();
+    }
+
+    ngOnDestroy(): void {
+        if (this.themeObserver) {
+            this.themeObserver.disconnect();
+        }
     }
 
     addRow() {

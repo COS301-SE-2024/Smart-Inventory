@@ -78,7 +78,7 @@ export class GridComponent implements OnInit {
 
     onGridReady(params: GridReadyEvent) {
         this.gridApi = params.api;
-        this.gridColumnApi = params.columnApi;
+        // this.gridColumnApi = params.columnApi;
         this.gridApi.sizeColumnsToFit();
     }
 

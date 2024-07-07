@@ -9,6 +9,7 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { HeaderComponent } from './components/header/header.component';
 import { GridComponent } from './components/grid/grid.component';
 import { LoadingService } from './components/loader/loading.service';
+import { ThemeService } from './services/theme.service';
 Amplify.configure(outputs);
 @Component({
     selector: 'app-root',
@@ -28,13 +29,27 @@ export class AppComponent implements OnInit {
     title = 'Smart-Inventory';
     sidebarCollapsed = false;
 
-    constructor(public authenticator: AuthenticatorService, public loader: LoadingService) {
+    constructor(public authenticator: AuthenticatorService, public loader: LoadingService, private themeService: ThemeService) {
         // Amplify.configure(outputs);
+        this.loadTheme();
     }
 
     ngOnInit() {
         this.logAuthSession();
     }
+
+    //
+
+    toggleTheme(): void {
+        const newTheme = this.themeService.getTheme() === 'dark' ? 'light' : 'dark';
+        this.themeService.setTheme(newTheme);
+    }
+
+    loadTheme(): void {
+        this.themeService.setTheme(this.themeService.getTheme());
+    }
+
+    //
 
     async logAuthSession() {
         try {

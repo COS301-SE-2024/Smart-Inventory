@@ -34,6 +34,18 @@
     background: #555;
 }
 
+.mat-mdc-tab-group,
+.mat-mdc-tab-nav-bar {
+    --mat-tab-header-active-focus-label-text-color: var(--tab-active-color);
+    --mat-tab-header-active-label-text-color: var(--tab-active-color);
+    --mat-tab-header-inactive-label-text-color: var(--tab-inactive-color);
+    --mat-tab-header-inactive-focus-label-text-color: var(--tab-hover-color);
+    --mat-tab-header-inactive-hover-label-text-color: var(--tab-hover-color);
+    --mdc-tab-indicator-active-indicator-color: var(--tab-indicator-color);
+    --mat-tab-header-active-hover-label-text-color: var(--tab-hover-color);
+    --mat-tab-header-inactive-ripple-color: var(--tab-ripple-color);
+}
+
 .body {
     height: 100%;
     display: flex;

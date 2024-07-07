@@ -18,6 +18,7 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import { CognitoService } from '../../_services/cognito.service';
 import { AuthenticatorService } from '@aws-amplify/ui-angular';
 import { Router } from '@angular/router';
+import { ThemeService } from '../../services/theme.service';
 
 @Component({
     selector: 'app-settings',
@@ -68,12 +69,14 @@ export class SettingsComponent implements OnInit {
         private titleService: TitleService,
         private cognitoService: CognitoService,
         private authenticator: AuthenticatorService,
-        private router: Router
+        private router: Router,
+        private themeService: ThemeService
     ) {}
 
     ngOnInit() {
         this.titleService.updateTitle('Settings');
         this.loadUserProfile();
+        this.currentTheme = this.themeService.getTheme();
     }
 
     loadUserProfile() {
@@ -175,8 +178,8 @@ export class SettingsComponent implements OnInit {
         );
     }
 
-    selectTheme(theme: string) {
+    selectTheme(theme: string): void {
         this.currentTheme = theme;
-        // Implement theme change logic here
+        this.themeService.setTheme(theme);
     }
 }

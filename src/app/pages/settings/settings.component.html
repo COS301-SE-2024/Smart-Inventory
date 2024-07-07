@@ -16,35 +16,22 @@
                             <div class="form-row">
                                 <mat-form-field class="form-field">
                                     <mat-label>Surname</mat-label>
-                                    <input
-                                        matInput
-                                        placeholder="Surname"
-                                        [(ngModel)]="profile.surname"
-                                        name="surname"
-                                    />
+                                    <input matInput placeholder="Surname" [(ngModel)]="profile.surname"
+                                        name="surname" />
                                 </mat-form-field>
                             </div>
                             <div class="form-row">
                                 <mat-form-field class="form-field">
                                     <mat-label>Email</mat-label>
-                                    <input
-                                        matInput
-                                        placeholder="johndoe@mail.com"
-                                        [formControl]="emailFormControl"
-                                        email
-                                        name="email"
-                                    />
+                                    <input matInput placeholder="johndoe@mail.com" [formControl]="emailFormControl"
+                                        email name="email" />
                                     <mat-error *ngIf="emailFormControl.hasError('email')">
                                         Please enter a valid email
                                     </mat-error>
                                 </mat-form-field>
                             </div>
-                            <button
-                                mat-button
-                                class="change-password-button"
-                                color="primary"
-                                (click)="saveProfileChanges()"
-                            >
+                            <button mat-button class="change-password-button" color="primary"
+                                (click)="saveProfileChanges()">
                                 Save Changes
                             </button>
 
@@ -53,33 +40,19 @@
                             <div class="form-row form-row-password" style="padding-top: 10px">
                                 <mat-form-field class="form-field">
                                     <mat-label>Current Password</mat-label>
-                                    <input
-                                        matInput
-                                        placeholder="Current Password"
-                                        [(ngModel)]="password.current"
-                                        type="password"
-                                        name="currentPassword"
-                                    />
+                                    <input matInput placeholder="Current Password" [(ngModel)]="password.current"
+                                        type="password" name="currentPassword" />
                                 </mat-form-field>
                             </div>
                             <div class="form-row form-row-password">
                                 <mat-form-field class="form-field">
                                     <mat-label>New Password</mat-label>
-                                    <input
-                                        matInput
-                                        placeholder="New Password"
-                                        [(ngModel)]="password.new"
-                                        type="password"
-                                        name="newPassword"
-                                    />
+                                    <input matInput placeholder="New Password" [(ngModel)]="password.new"
+                                        type="password" name="newPassword" />
                                 </mat-form-field>
                             </div>
-                            <button
-                                mat-button
-                                class="change-password-button"
-                                color="primary"
-                                (click)="handleResetPassword()"
-                            >
+                            <button mat-button class="change-password-button" color="primary"
+                                (click)="handleResetPassword()">
                                 Change Password
                             </button>
 
@@ -92,30 +65,18 @@
                                 <div class="form-row">
                                     <mat-form-field class="form-field">
                                         <mat-label>Current Password</mat-label>
-                                        <input
-                                            matInput
-                                            placeholder="Current Password"
-                                            [(ngModel)]="password.currentDelete"
-                                            type="password"
-                                            name="currentDeletePassword"
-                                        />
+                                        <input matInput placeholder="Current Password"
+                                            [(ngModel)]="password.currentDelete" type="password"
+                                            name="currentDeletePassword" />
                                     </mat-form-field>
                                     <mat-form-field class="form-field">
                                         <mat-label>Confirm Email</mat-label>
-                                        <input
-                                            matInput
-                                            placeholder="Confirm Email"
-                                            [(ngModel)]="profile.confirmEmailDelete"
-                                            name="confirmEmailDelete"
-                                        />
+                                        <input matInput placeholder="Confirm Email"
+                                            [(ngModel)]="profile.confirmEmailDelete" name="confirmEmailDelete" />
                                     </mat-form-field>
                                 </div>
-                                <button
-                                    mat-raised-button
-                                    color="warn"
-                                    class="confirm-delete-button"
-                                    (click)="handleDeleteAccount()"
-                                >
+                                <button mat-raised-button color="warn" class="confirm-delete-button"
+                                    (click)="handleDeleteAccount()">
                                     Confirm Delete
                                 </button>
                             </div>
@@ -131,18 +92,12 @@
                 <h4>Theme</h4>
                 <hr />
                 <div class="theme-selection-grid">
-                    <div
-                        class="theme-option"
-                        [ngClass]="{ 'selected-theme': currentTheme === 'light' }"
-                        (click)="selectTheme('light')"
-                    >
+                    <div class="theme-option" [ngClass]="{ 'selected-theme': currentTheme === 'light' }"
+                        (click)="selectTheme('light')">
                         <img src="assets/img/light-mode.png" alt="Light Mode" />
                     </div>
-                    <div
-                        class="theme-option"
-                        [ngClass]="{ 'selected-theme': currentTheme === 'dark' }"
-                        (click)="selectTheme('dark')"
-                    >
+                    <div class="theme-option" [ngClass]="{ 'selected-theme': currentTheme === 'dark' }"
+                        (click)="selectTheme('dark')">
                         <img src="assets/img/dark-mode.png" alt="Dark Mode" />
                     </div>
                 </div>

@@ -9,6 +9,7 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { HeaderComponent } from './components/header/header.component';
 import { GridComponent } from './components/grid/grid.component';
 import { LoadingService } from './components/loader/loading.service';
+import { ThemeService } from './services/theme.service';
 Amplify.configure(outputs);
 @Component({
     selector: 'app-root',
@@ -28,7 +29,7 @@ export class AppComponent implements OnInit {
     title = 'Smart-Inventory';
     sidebarCollapsed = false;
 
-    constructor(public authenticator: AuthenticatorService, public loader: LoadingService) {
+    constructor(public authenticator: AuthenticatorService, public loader: LoadingService, private themeService: ThemeService) {
         // Amplify.configure(outputs);
         this.loadTheme();
     }
@@ -40,18 +41,12 @@ export class AppComponent implements OnInit {
     //
 
     toggleTheme(): void {
-        if (document.body.getAttribute('data-theme') === 'dark') {
-            document.body.setAttribute('data-theme', 'light');
-            localStorage.setItem('theme', 'light');
-        } else {
-            document.body.setAttribute('data-theme', 'dark');
-            localStorage.setItem('theme', 'dark');
-        }
+        const newTheme = this.themeService.getTheme() === 'dark' ? 'light' : 'dark';
+        this.themeService.setTheme(newTheme);
     }
 
     loadTheme(): void {
-        const storedTheme = localStorage.getItem('theme');
-        document.body.setAttribute('data-theme', storedTheme || 'light');
+        this.themeService.setTheme(this.themeService.getTheme());
     }
 
     //

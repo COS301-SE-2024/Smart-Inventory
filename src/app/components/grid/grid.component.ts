@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, OnDestroy, Output, EventEmitter } from '@angular/core';
 import { Renderer2, ElementRef, AfterViewInit, ViewEncapsulation  } from '@angular/core';
 import { AgGridAngular } from 'ag-grid-angular';
-import { ColDef, GridReadyEvent, CellValueChangedEvent, RowValueChangedEvent } from 'ag-grid-community';
+import { ColDef, GridReadyEvent, CellValueChangedEvent, RowValueChangedEvent, GridApi } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
 import 'ag-grid-community/styles/ag-theme-material.css';
@@ -54,7 +54,7 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit   {
     filteredRowData: any[] = [];
 
     gridApi: any;
-    gridColumnApi: any;
+    // gridColumnApi: any;
 
     filterSelect: string = '';
     inputFilter: string = '';
@@ -112,7 +112,6 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit   {
 
     onGridReady(params: GridReadyEvent) {
         this.gridApi = params.api;
-        // this.gridColumnApi = params.columnApi;
         this.gridApi.sizeColumnsToFit();
         this.applyCurrentTheme();
     }
@@ -178,7 +177,7 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit   {
             this.filteredRowData = [...this.rowData];
         }
 
-        if (this.gridColumnApi !== undefined) {
+        if (this.gridApi !== undefined) {
             this.gridApi.setRowData(this.filteredRowData);
         }
     }

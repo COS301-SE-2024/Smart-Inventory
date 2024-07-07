@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, AfterViewInit } from '@angular/core';
 import { AgChartsAngular } from 'ag-charts-angular';
 import { AgChartOptions, AgCharts, AgChartTheme } from 'ag-charts-community';
 import { FilterService } from '../../../services/filter.service';
@@ -22,7 +22,7 @@ interface YearlyData {
     templateUrl: './saleschart.component.html',
     styleUrl: './saleschart.component.css',
 })
-export class SaleschartComponent implements OnInit, OnDestroy {
+export class SaleschartComponent implements OnInit, OnDestroy, AfterViewInit {
     public chartOptions: AgChartOptions;
     private chart: any;
     private filterSubscription!: Subscription;
@@ -60,12 +60,14 @@ export class SaleschartComponent implements OnInit, OnDestroy {
             });
         });
         this.themeObserver.observe(document.body, {
-            attributes: true // Configure observer to watch only attributes.
+            attributes: true
         });
     }
+    
 
     private applyCurrentTheme() {
-        const currentTheme = document.body.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+        // Retrieve the theme setting directly from the body attribute
+        const currentTheme = document.body.getAttribute('data-theme') || 'light'; // Default to 'light' if undefined
         this.chartOptions = this.getChartOptions(currentTheme);
         if (this.chart) {
             AgCharts.update(this.chart, this.chartOptions);
@@ -73,20 +75,16 @@ export class SaleschartComponent implements OnInit, OnDestroy {
             this.chart = AgCharts.create(this.chartOptions);
         }
     }
-
+    
+    
     private getChartOptions(theme: string): AgChartOptions {
+        // Determine the theme settings based on the passed theme string
         const themeSettings = theme === 'dark' ? this.darkTheme : this.lightTheme;
         return {
-            ...this.chartOptions, // spread existing settings to maintain other configurations
-            theme: themeSettings
+            ...this.chartOptions, // Use spread to maintain any existing configurations
+            theme: themeSettings  // Apply the determined theme settings
         };
     }
-
-    private initializeChart() {
-        this.chartOptions = this.getChartOptions(document.body.getAttribute('data-theme') || 'light');
-        this.chart = AgCharts.create(this.chartOptions);
-    }
-
 
     private yearlyData: YearlyData = {
         year: {
@@ -174,6 +172,7 @@ export class SaleschartComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
+        this.applyCurrentTheme(); // Set the theme when the component loads
         this.filterSubscription = this.filterService.currentFilter.subscribe((filter) => {
             this.updateChartData(filter);
         });
@@ -181,12 +180,17 @@ export class SaleschartComponent implements OnInit, OnDestroy {
         this.updateChartData('year');
     }
 
+    ngAfterViewInit() {
+        // Ensure the theme is applied after the view initializes, catching any late DOM updates
+        this.applyCurrentTheme();
+    }
+
     ngOnDestroy() {
         if (this.filterSubscription) {
             this.filterSubscription.unsubscribe();
         }
         if (this.chart) {
-            // AgCharts.destroy(this.chart); // Proper cleanup
+            this.chart = null; // Proper cleanup
         }
         if (this.themeObserver) {
             this.themeObserver.disconnect();

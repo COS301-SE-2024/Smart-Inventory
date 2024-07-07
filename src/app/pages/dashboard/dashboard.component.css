@@ -162,7 +162,7 @@ h4 {
 }
 
 .report-btn {
-    background-color: blue;
+    background-color: var(--report-bg-color);
     color: white;
     padding: 10px 20px;
     border: none;

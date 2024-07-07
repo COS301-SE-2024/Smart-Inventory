@@ -103,6 +103,7 @@ body, html {
   --help-accordion-bg-color: #fdfbff;
   --help-accordion-text-color: black;
   --user-guides-bg-color: white;
+  --report-bg-color: #0A93F6;
 }
 
 [data-theme='dark'] {
@@ -133,4 +134,5 @@ body, html {
   --help-accordion-text-color: white;
   --user-guides-bg-color: #232323;
   --user-guides-sidebar-bg-color: #1E1E1E;
+  --report-bg-color: #131313;
 }

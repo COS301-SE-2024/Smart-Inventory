@@ -1,4 +1,5 @@
 import { Component, Input, OnInit, OnDestroy, Output, EventEmitter } from '@angular/core';
+import { Renderer2, ElementRef, AfterViewInit, ViewEncapsulation  } from '@angular/core';
 import { AgGridAngular } from 'ag-grid-angular';
 import { ColDef, GridReadyEvent, CellValueChangedEvent, RowValueChangedEvent } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
@@ -34,8 +35,9 @@ import { RoleSelectCellEditorComponent } from '../../pages/team/role-select-cell
     ],
     templateUrl: './grid.component.html',
     styleUrl: './grid.component.css',
+    encapsulation: ViewEncapsulation.None  // This line turns off encapsulation
 })
-export class GridComponent implements OnInit, OnDestroy  {
+export class GridComponent implements OnInit, OnDestroy, AfterViewInit   {
     @Input() rowData: any[] = [];
     @Input() columnDefs: ColDef[] = [];
     @Input() addButton: { text: string } = { text: 'Add' };
@@ -66,7 +68,7 @@ export class GridComponent implements OnInit, OnDestroy  {
     public rowSelection: 'single' | 'multiple' = 'multiple';
     public editType: 'fullRow' = 'fullRow';
 
-    constructor(public dialog: MatDialog, private route: ActivatedRoute) {
+    constructor(public dialog: MatDialog, private route: ActivatedRoute, private renderer: Renderer2, private el: ElementRef) {
         this.setupThemeObserver();
     }
 
@@ -99,6 +101,9 @@ export class GridComponent implements OnInit, OnDestroy  {
 
     ngAfterViewInit() {
         this.applyCurrentTheme();
+
+        const selectPlaceholder = this.el.nativeElement.querySelector('.mat-select-placeholder');
+        this.renderer.setStyle(selectPlaceholder, 'color', 'var(--text-color)');
     }
 
     getCurrentRoute(v: string) {

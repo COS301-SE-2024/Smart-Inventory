@@ -39,12 +39,17 @@ mat-select {
     color: var(--text-color);
 }
 
-.mat-mdc-select-placeholder {
-    color: white !important;
+/* For global styles.css */
+.mat-form-field-type-mat-select .mat-form-field-label {
+    color: var(--text-color) !important;
 }
 
 ::ng-deep .mat-mdc-select-value {
     width: 100px;
+}
+
+:host ::ng-deep .mat-form-field-type-mat-select .mat-form-field-label {
+    color: var(--text-color) !important;
 }
 
 .filter {

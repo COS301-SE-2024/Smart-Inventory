@@ -1,9 +1,7 @@
-
-![GitHub pull requests](https://img.shields.io/github/issues-pr/COS301-SE-2024/Smart-Inventory)
+<div align="center">
+  ![GitHub pull requests](https://img.shields.io/github/issues-pr/COS301-SE-2024/Smart-Inventory)
 ![GitHub issues](https://img.shields.io/github/issues/COS301-SE-2024/Smart-Inventory)
 ![Code Coverage](https://img.shields.io/codecov/c/github/COS301-SE-2024/Smart-Inventory?branch=automated-tests)
-
-<div align="center">
     <img src="/media/Logo.jpg" width="30%" height="20%">
 </div>
 

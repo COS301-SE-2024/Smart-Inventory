@@ -6,6 +6,7 @@
 
 </div>
 <div align="center">
+  <h1>Helix</h1>
     <img src="/media/Logo.jpg" width="20%" height="20%">
 </div>
 

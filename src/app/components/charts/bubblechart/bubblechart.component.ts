@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, AfterViewInit } from '@angular/core';
 import { AgChartsAngular } from 'ag-charts-angular';
-import { AgChartOptions } from 'ag-charts-community';
+import { AgChartOptions, AgChartTheme } from 'ag-charts-community';
 
 @Component({
     selector: 'app-bubblechart',
@@ -9,10 +9,36 @@ import { AgChartOptions } from 'ag-charts-community';
     templateUrl: './bubblechart.component.html',
     styleUrl: './bubblechart.component.css',
 })
-export class BubblechartComponent implements OnInit {
+
+export class BubblechartComponent implements OnInit, OnDestroy, AfterViewInit  {
     public chartOptions: AgChartOptions;
+    private themeObserver!: MutationObserver;
+    
+    private lightTheme: AgChartTheme = {
+        palette: {
+            fills: ['#5C2983', '#0076C5', '#21B372'],
+            strokes: ['#333333'],
+        },
+        baseTheme: 'ag-default',
+    };
+    
+    private darkTheme: AgChartTheme = {
+        palette: {
+            fills: ['#8860D0', '#4098D7', '#56CF87'],
+            strokes: ['#aaaaaa'],
+        },
+        baseTheme: 'ag-material-dark',
+        overrides: {
+            common: {
+                background: {
+                    fill: '#1E1E1E'
+                }
+            }
+        }
+    };
 
     constructor() {
+        
         this.chartOptions = {
             data: [
                 { category: 'Electronics', sales: 20000, target: 25000 },
@@ -66,6 +92,38 @@ export class BubblechartComponent implements OnInit {
     }
 
     ngOnInit() {}
+
+    ngAfterViewInit(){
+        this.setupThemeObserver();
+        this.applyCurrentTheme();
+    }
+
+    ngOnDestroy() {
+        if (this.themeObserver) {
+            this.themeObserver.disconnect();
+        }
+    }
+
+    private setupThemeObserver() {
+        this.themeObserver = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.attributeName === 'data-theme') {
+                    this.applyCurrentTheme();
+                }
+            });
+        });
+        this.themeObserver.observe(document.body, {
+            attributes: true // Only observe attribute changes
+        });
+    }
+
+    private applyCurrentTheme() {
+        const theme = document.body.getAttribute('data-theme') === 'dark' ? this.darkTheme : this.lightTheme;
+        this.chartOptions = {
+            ...this.chartOptions, // Reapply chart options with new theme
+            theme: theme
+        };
+    }
 
     generateBubbleData(baseval: number, range: number, count: number, yrange: number, zrange: number) {
         const data = [];

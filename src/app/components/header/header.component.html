@@ -1,11 +1,18 @@
 <!-- Header component HTML -->
 <mat-toolbar>
-    <span>{{ pageTitle }}</span>
+    <span class="pageTitle">{{ pageTitle }}</span>
     <span class="flex-spacer"></span>
     <!-- User profile -->
     <div class="user-profile" [matMenuTriggerFor]="menu">
         <div class="profile-box">
-            <mat-icon class="profile-pic">account_circle</mat-icon>
+            <!-- <mat-icon class="profile-pic">account_circle</mat-icon> -->
+            <svg width="50" height="50" viewBox="0 0 35 35" fill="none" xmlns="http://www.w3.org/2000/svg" class="theme-svg">
+                <circle cx="17.5" cy="14.5833" r="4.375"  stroke-linecap="round"/>
+                <circle cx="17.5" cy="17.5" r="13.125" />
+                <path d="M26.25 27.2794C25.7339 25.729 24.5966 24.359 23.0146 23.3818C21.4325 22.4046 19.4941 21.875 17.5 21.875C15.5059 21.875 13.5675 22.4046 11.9854 23.3818C10.4034 24.3589 9.26612 25.729 8.75 27.2794"  stroke-linecap="round"/>
+            </svg>
+                
+
             <div class="user-info">
                 <span class="username">{{ userName }}</span>
                 <span class="role">{{ userEmail }}</span>

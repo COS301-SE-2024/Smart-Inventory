@@ -46,3 +46,16 @@
     padding-right: 20px;
     /* overflow-y: auto; */
 }
+
+.container, .app-sidebar, .app-header, .content {
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+.app-sidebar {
+    background-color: var(--sidebar-bg-color);
+}
+
+.app-header {
+    background-color: var(--header-bg-color);
+}

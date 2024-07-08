@@ -4,8 +4,7 @@
 ![Code Coverage](https://img.shields.io/codecov/c/github/COS301-SE-2024/Smart-Inventory?branch=automated-tests)
 
 <div align="center">
-  <h1>Helix</h1>
-    <img src="/media/Logo.jpg" width="20%" height="20%">
+    <img src="/media/Logo.jpg" width="30%" height="30%">
 </div>
 
 

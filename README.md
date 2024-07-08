@@ -5,6 +5,7 @@
 
 <div align="center">
     <img src="/media/Logo.jpg" width="30%" height="30%">
+  <h1>Smart Inventory</h1>
 </div>
 
 

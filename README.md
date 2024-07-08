@@ -64,60 +64,6 @@ Reviews focus on checking that coding standards are being followed and that any 
 <hr>
 </br>
 
-## 🚧 Current Capabilities
-### 1. Sign In and Create Account
-* Sign in with email and password.
-* Create account for a team.
-* Receive temporary pin for secure access.
-* Forgot password
-  
-### 2. Team Management
-* Add team member.
-* Remove team member.
-* Assign roles.
-* Edit roles.
-* Export Table
-* Search and sort table
-
-### 3. Inventory Management
-* Add Item
-* Remove Item
-* Remove Multiple Items
-* Edit Item
-* Export Table
-* Search and sort table
-* Request Items
-  
-### 4. Supplier Management
-* Add Supplier
-* Remove Supplier
-* Edit supplier details
-* Export Table
-* Search and sort table
-
-### 5. Dashboard
-* Add Widget(graph, summary, table)
-* Remove widget
-* Reposistion widget
-* Save state
-  
-### 6. Help
-* FAQ
-* Troubleshooting
-* User Quides
-* Contact Us
-
-### 7. Settings
-* Profile:
-  * Change Password
-  * Change details(name, surname, email)
-  * Delete Account
-* General:
-  * Dark/Light mode
-
-<hr>
-</br>
-
 ## 📂Documents
   📄
   <a href="documents/Outdated/Demo_1/RequirementSpecification.md">
@@ -191,6 +137,60 @@ Reviews focus on checking that coding standards are being followed and that any 
   <a href="/documents/SmartInventory-Demo2.pdf">
     Helix - Demo 2 Presentation Slides
   </a>
+<hr>
+</br>
+
+## 🚧 Current Capabilities
+### 1. Sign In and Create Account
+* Sign in with email and password.
+* Create account for a team.
+* Receive temporary pin for secure access.
+* Forgot password
+  
+### 2. Team Management
+* Add team member.
+* Remove team member.
+* Assign roles.
+* Edit roles.
+* Export Table
+* Search and sort table
+
+### 3. Inventory Management
+* Add Item
+* Remove Item
+* Remove Multiple Items
+* Edit Item
+* Export Table
+* Search and sort table
+* Request Items
+  
+### 4. Supplier Management
+* Add Supplier
+* Remove Supplier
+* Edit supplier details
+* Export Table
+* Search and sort table
+
+### 5. Dashboard
+* Add Widget(graph, summary, table)
+* Remove widget
+* Reposistion widget
+* Save state
+  
+### 6. Help
+* FAQ
+* Troubleshooting
+* User Quides
+* Contact Us
+
+### 7. Settings
+* Profile:
+  * Change Password
+  * Change details(name, surname, email)
+  * Delete Account
+* General:
+  * Dark/Light mode
+
 <hr>
 </br>
 

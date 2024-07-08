@@ -4,7 +4,7 @@
 ![Code Coverage](https://img.shields.io/codecov/c/github/COS301-SE-2024/Smart-Inventory?branch=automated-tests)
 
 <div align="center">
-    <img src="/media/Logo.png" width="30%" height="20%">
+    <img src="/media/Logo.jpg" width="30%" height="20%">
 </div>
 
 

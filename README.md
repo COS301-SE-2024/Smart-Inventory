@@ -413,7 +413,7 @@ That's it! You should now have the Angular app with AWS Amplify integration runn
         <a href="https://github.com/TristanU21442615">
           <img src="/media/githubPic.png" width="24" height="24"/>
         </a>
-        <a href="www.linkedin.com/in/tristan-sutherland-87ba92238">
+        <a href="https://www.linkedin.com/in/hawa-ibrahim-75619b215?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app">
           <img src="/media/linkedinPic.png" width="24" height="24"/>
         </a>
       </td>

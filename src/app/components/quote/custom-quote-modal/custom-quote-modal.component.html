@@ -26,12 +26,12 @@
           <mat-label>Quantity</mat-label>
           <input matInput type="number" [(ngModel)]="item.quantity" min="1">
         </mat-form-field>
-        <button mat-icon-button color="warn" (click)="removeItem(i)" aria-label="Remove item">
+        <button mat-icon-button (click)="removeItem(i)" aria-label="Remove item" class="remove-item-button">
           <mat-icon>remove_circle</mat-icon>
         </button>
       </div>
     </div>
-    <button mat-raised-button color="primary" (click)="addItem()">
+    <button mat-raised-button (click)="addItem()" class="add-item-button">
       <mat-icon>add</mat-icon> Add Item
     </button>
   </div>

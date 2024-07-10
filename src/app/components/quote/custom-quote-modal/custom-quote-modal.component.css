@@ -94,3 +94,12 @@
   .search-field:not(:has(.clear-button)) .search-icon {
     right: 5px; /* Keep the search icon in the same position */
   }
+
+  .add-item-button {
+    color: darkgreen;
+    background-color: #f2f2f2;
+  }
+  
+  .remove-item-button {
+    color: maroon;
+  }

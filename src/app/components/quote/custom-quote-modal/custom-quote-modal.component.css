@@ -58,10 +58,6 @@
     flex-wrap: wrap;
     gap: 8px;
   }
-
-  mat-select {
-    padding-right: 30px; /* Make room for the dropdown arrow */
-  }
   
   .mat-select-search-input {
     padding-left: 8px;

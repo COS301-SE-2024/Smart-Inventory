@@ -6,7 +6,7 @@
       <div *ngFor="let item of quoteItems; let i = index" class="item-row">
         <mat-form-field appearance="outline">
           <mat-label>Item</mat-label>
-          <mat-select [(ngModel)]="item.item" [formControl]="inventoryControl">
+          <mat-select [(ngModel)]="item.item">
             <mat-option>
               <ngx-mat-select-search [formControl]="inventoryControl" placeholderLabel="Search items..." noEntriesFoundLabel="No matching items found"></ngx-mat-select-search>
             </mat-option>
@@ -31,7 +31,7 @@
     <h3>Suppliers</h3>
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Select Suppliers</mat-label>
-      <mat-select [(ngModel)]="selectedSuppliers" multiple [formControl]="supplierControl">
+      <mat-select [(ngModel)]="selectedSuppliers" multiple #supplierSelect>
         <mat-option>
           <ngx-mat-select-search [formControl]="supplierControl" placeholderLabel="Search suppliers..." noEntriesFoundLabel="No matching suppliers found"></ngx-mat-select-search>
         </mat-option>

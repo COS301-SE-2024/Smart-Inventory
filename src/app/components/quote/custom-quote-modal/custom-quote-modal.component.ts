@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
@@ -8,9 +8,10 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
-import { Observable } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
+import { Observable, ReplaySubject, Subject } from 'rxjs';
+import { map, startWith, takeUntil } from 'rxjs/operators';
 import { FormControl } from '@angular/forms';
+import { MatSelect } from '@angular/material/select';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 
 @Component({
@@ -27,7 +28,7 @@ import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
     MatButtonModule,
     MatIconModule,
     MatChipsModule,
-    NgxMatSelectSearchModule,
+    NgxMatSelectSearchModule
   ],
   templateUrl: './custom-quote-modal.component.html',
   styleUrls: ['./custom-quote-modal.component.css']
@@ -35,14 +36,18 @@ import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 export class CustomQuoteModalComponent implements OnInit {
   quoteItems: { item: string, quantity: number }[] = [];
   selectedSuppliers: string[] = [];
-  inventoryItems: string[] = ['Laptop', 'Mouse', 'Keyboard', 'Monitor', 'Headphones', 'Docking Station', 'Webcam', 'Microphone', 'Speakers', 'Tablet']; // Mock inventory items
-  suppliers: string[] = ['Supplier A', 'Supplier B', 'Supplier C', 'Supplier D', 'Supplier E', 'Supplier F', 'Supplier G', 'Supplier H', 'Supplier I', 'Supplier J']; // Mock suppliers
+  inventoryItems: string[] = ['Laptop', 'Mouse', 'Keyboard', 'Monitor', 'Headphones', 'Docking Station', 'Webcam', 'Microphone', 'Speakers', 'Tablet'];
+  suppliers: string[] = ['Supplier A', 'Supplier B', 'Supplier C', 'Supplier D', 'Supplier E', 'Supplier F', 'Supplier G', 'Supplier H', 'Supplier I', 'Supplier J'];
 
   inventoryControl = new FormControl();
   supplierControl = new FormControl();
 
   filteredInventoryItems: Observable<string[]>;
-  filteredSuppliers: Observable<string[]>;
+  filteredSuppliers: ReplaySubject<string[]> = new ReplaySubject<string[]>(1);
+
+  @ViewChild('supplierSelect') supplierSelect!: MatSelect;
+
+  protected _onDestroy = new Subject<void>();
 
   constructor(
     public dialogRef: MatDialogRef<CustomQuoteModalComponent>,
@@ -52,15 +57,37 @@ export class CustomQuoteModalComponent implements OnInit {
       startWith(''),
       map(value => this._filter(value || '', this.inventoryItems))
     );
-
-    this.filteredSuppliers = this.supplierControl.valueChanges.pipe(
-      startWith(''),
-      map(value => this._filter(value || '', this.suppliers))
-    );
   }
 
   ngOnInit() {
-    this.addItem(); // Add an initial empty item
+    this.addItem();
+    this.filteredSuppliers.next(this.suppliers.slice());
+    this.supplierControl.valueChanges
+      .pipe(takeUntil(this._onDestroy))
+      .subscribe(() => {
+        this.filterSuppliers();
+      });
+  }
+
+  ngOnDestroy() {
+    this._onDestroy.next();
+    this._onDestroy.complete();
+  }
+
+  private filterSuppliers() {
+    if (!this.suppliers) {
+      return;
+    }
+    let search = this.supplierControl.value;
+    if (!search) {
+      this.filteredSuppliers.next(this.suppliers.slice());
+      return;
+    } else {
+      search = search.toLowerCase();
+    }
+    this.filteredSuppliers.next(
+      this.suppliers.filter(supplier => supplier.toLowerCase().indexOf(search) > -1)
+    );
   }
 
   private _filter(value: string, options: string[]): string[] {

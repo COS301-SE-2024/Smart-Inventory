@@ -1,0 +1,72 @@
+:host {
+    display: block;
+    width: 100%;
+    max-width: 600px;
+  }
+  
+  .quote-content {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  
+  .items-section, .suppliers-section {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  h3 {
+    margin-bottom: 8px;
+    color: #333;
+  }
+  
+  .item-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .item-row {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+  }
+  
+  .item-row mat-form-field {
+    flex: 1;
+  }
+  
+  .full-width {
+    width: 100%;
+  }
+  
+  mat-dialog-actions {
+    padding-top: 16px;
+  }
+  
+  button[mat-raised-button] {
+    margin-left: 8px;
+  }
+
+  .selected-suppliers {
+    margin-top: 16px;
+  }
+  
+  mat-chip-listbox {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  mat-select {
+    padding-right: 30px; /* Make room for the dropdown arrow */
+  }
+  
+  .mat-select-search-input {
+    padding-left: 8px;
+  }
+  
+  .mat-select-panel {
+    max-height: 300px !important;
+  }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ColDef } from 'ag-grid-community';
 import { GridComponent } from '../../components/grid/grid.component';
 import { MatButtonModule } from '@angular/material/button';
@@ -12,6 +12,7 @@ import { TitleService } from '../../components/header/title.service';
     styleUrl: './orders.component.css',
 })
 export class OrdersComponent implements OnInit{
+    @ViewChild(GridComponent) gridComponent!: GridComponent;
     constructor(private titleService: TitleService) {}
 
     // Row Data: The data to be displayed.
@@ -80,4 +81,22 @@ export class OrdersComponent implements OnInit{
     ngOnInit() {
         this.titleService.updateTitle('Orders');
     }
+
+      // Add this method to handle the new custom quote
+  handleNewCustomQuote(quote: any) {
+    const newOrder = {
+      Order_ID: `#${this.rowData.length + 101}`,
+      Order_Date: new Date().toISOString().split('T')[0],
+      Order_Status: 'Pending Approval',
+      Quote_ID: `Q${this.rowData.length + 1}`.padStart(3, '0'),
+      Quote_Status: 'Draft',
+      Selected_Supplier: quote.suppliers.join(', '),
+      Expected_Delivery_Date: '',
+      Actual_Delivery_Date: '',
+      // You might want to add more fields to store the quote items
+    };
+
+    this.rowData = [...this.rowData, newOrder];
+    this.gridComponent.gridApi.setRowData(this.rowData);
+  }
 }

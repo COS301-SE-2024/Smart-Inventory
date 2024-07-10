@@ -19,7 +19,7 @@
             <button mat-menu-item color="primary" (click)="addRow()" *ngIf="getCurrentRoute('suppliers')">
                 + Add Supplier
             </button>
-            <button mat-menu-item *ngIf="getCurrentRoute('orders')" color="primary" (click)="addRow()">
+            <button mat-menu-item *ngIf="getCurrentRoute('orders')" color="primary" (click)="openCustomQuoteModal()">
                 + Create Order
             </button>
             <button mat-menu-item *ngIf="getCurrentRoute('orders')" color="primary" (click)="deleteRow()">

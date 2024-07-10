@@ -2,6 +2,7 @@
     <app-grid 
     [rowData]="rowData"
     [columnDefs]="colDefs"
+    (newCustomQuote)="handleNewCustomQuote($event)"
     #gridComponent
     >
     </app-grid>

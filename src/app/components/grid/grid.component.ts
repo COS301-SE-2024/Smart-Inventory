@@ -14,7 +14,7 @@ import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatSelectModule } from '@angular/material/select';
 import { RoleSelectCellEditorComponent } from '../../pages/team/role-select-cell-editor.component';
-
+import { CustomQuoteModalComponent } from '../quote/custom-quote-modal/custom-quote-modal.component';
 @Component({
     selector: 'app-grid',
     standalone: true,
@@ -44,6 +44,8 @@ export class GridComponent implements OnInit {
     @Output() nameCellValueChanged = new EventEmitter<any>();
 
     @Output() requestStock = new EventEmitter<any>();
+    @Output() newCustomQuote = new EventEmitter<any>();
+
 
     filteredRowData: any[] = [];
 
@@ -157,5 +159,20 @@ export class GridComponent implements OnInit {
             console.log('No row selected for requesting stock');
             // Optionally, you could show an alert or notification to the user
         }
+    }
+
+    openCustomQuoteModal() {
+        const dialogRef = this.dialog.open(CustomQuoteModalComponent, {
+          width: '500px',
+          data: {} // You can pass data to the modal if needed
+        });
+    
+        dialogRef.afterClosed().subscribe(result => {
+          if (result) {
+            console.log('Custom quote created:', result);
+            this.newCustomQuote.emit(result);
+            // Handle the created quote (e.g., add it to the grid)
+          }
+        });
     }
 }

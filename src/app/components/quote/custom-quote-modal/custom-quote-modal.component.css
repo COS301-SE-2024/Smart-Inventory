@@ -62,3 +62,35 @@
     max-height: 300px !important;
   }
 
+  .search-field {
+    position: relative;
+  }
+  
+  .search-field .mat-mdc-text-field-wrapper {
+    padding-right: 80px; /* Adjust based on the combined width of icons */
+  }
+  
+  .search-field .mat-mdc-form-field-icon-suffix {
+    display: flex;
+    align-items: center;
+  }
+  
+  .search-field .search-icon {
+    position: absolute;
+    right: 5px; /* Adjust as needed */
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+  }
+  
+  .search-field .clear-button {
+    position: absolute;
+    right: 40px; /* Position to the left of the search icon */
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  
+  /* When clear button is not visible */
+  .search-field:not(:has(.clear-button)) .search-icon {
+    right: 5px; /* Keep the search icon in the same position */
+  }

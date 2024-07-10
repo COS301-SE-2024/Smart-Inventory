@@ -11,6 +11,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { ReplaySubject, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 interface QuoteItem {
   item: string;
@@ -51,7 +52,8 @@ export class CustomQuoteModalComponent implements OnInit {
 
   constructor(
     public dialogRef: MatDialogRef<CustomQuoteModalComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit() {
@@ -121,5 +123,17 @@ export class CustomQuoteModalComponent implements OnInit {
 
   removeSupplier(supplier: string) {
     this.selectedSuppliers = this.selectedSuppliers.filter(s => s !== supplier);
+  }
+
+  saveDraft() {
+    const draft = {
+      items: this.quoteItems.map(({ item, quantity }) => ({ item, quantity })),
+      suppliers: this.selectedSuppliers
+    };
+    // Here you would typically save the draft to a service or local storage
+    console.log('Saving draft:', draft);
+    // Optionally, you can show a snackbar or some other notification to the user
+    this.snackBar.open('Draft saved successfully', 'Close', { duration: 3000 });
+    this.dialogRef.close();
   }
 }

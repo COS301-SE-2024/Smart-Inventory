@@ -2,8 +2,16 @@
 <mat-dialog-content class="quote-content">
   <div class="items-section">
     <h3>Quote Items</h3>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Search Quote Items</mat-label>
+      <input matInput type="text" [(ngModel)]="quoteItemSearchTerm" (input)="filterQuoteItems()">
+      <mat-icon matSuffix>search</mat-icon>
+      <button mat-button *ngIf="quoteItemSearchTerm" matSuffix mat-icon-button aria-label="Clear" (click)="quoteItemSearchTerm=''; filterQuoteItems()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </mat-form-field>
     <div class="item-list">
-      <div *ngFor="let item of quoteItems; let i = index" class="item-row">
+      <div *ngFor="let item of filteredQuoteItems; let i = index" class="item-row">
         <mat-form-field appearance="outline">
           <mat-label>Item</mat-label>
           <mat-select [(ngModel)]="item.item">

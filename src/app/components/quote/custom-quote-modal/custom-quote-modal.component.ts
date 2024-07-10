@@ -41,6 +41,8 @@ interface QuoteItem {
 })
 export class CustomQuoteModalComponent implements OnInit {
   quoteItems: QuoteItem[] = [];
+  filteredQuoteItems: QuoteItem[] = [];
+  quoteItemSearchTerm: string = '';
   selectedSuppliers: string[] = [];
   inventoryItems: string[] = ['Laptop', 'Mouse', 'Keyboard', 'Monitor', 'Headphones', 'Docking Station', 'Webcam', 'Microphone', 'Speakers', 'Tablet'];
   suppliers: string[] = ['Supplier A', 'Supplier B', 'Supplier C', 'Supplier D', 'Supplier E', 'Supplier F', 'Supplier G', 'Supplier H', 'Supplier I', 'Supplier J'];
@@ -64,6 +66,7 @@ export class CustomQuoteModalComponent implements OnInit {
       .subscribe(() => {
         this.filterSuppliers();
       });
+    this.filteredQuoteItems = this.quoteItems;
   }
 
   ngOnDestroy() {
@@ -97,16 +100,30 @@ export class CustomQuoteModalComponent implements OnInit {
   addItem() {
     const newFilteredItems = new ReplaySubject<string[]>(1);
     newFilteredItems.next(this.inventoryItems.slice());
-    this.quoteItems.push({ 
+    const newItem = { 
       item: '', 
       quantity: 1, 
       filteredItems: newFilteredItems,
       searchControl: new FormControl()
-    });
+    };
+    this.quoteItems.push(newItem);
+    this.filterQuoteItems();
   }
 
   removeItem(index: number) {
     this.quoteItems.splice(index, 1);
+    this.filterQuoteItems();
+  }
+
+  filterQuoteItems() {
+    if (!this.quoteItemSearchTerm) {
+      this.filteredQuoteItems = this.quoteItems;
+    } else {
+      const searchTerm = this.quoteItemSearchTerm.toLowerCase();
+      this.filteredQuoteItems = this.quoteItems.filter(item => 
+        item.item.toLowerCase().includes(searchTerm)
+      );
+    }
   }
 
   createQuote() {

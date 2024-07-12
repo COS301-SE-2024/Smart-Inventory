@@ -3,7 +3,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TitleService } from '../../components/header/title.service';
 import { MaterialModule } from '../../components/material/material.module';
 import { CommonModule } from '@angular/common';
-import { CompactType, GridsterItemComponent, GridsterModule } from 'angular-gridster2';
+import { CompactType, GridsterModule } from 'angular-gridster2';
 import { GridType, DisplayGrid } from 'angular-gridster2';
 import { GridsterConfig, GridsterItem } from 'angular-gridster2';
 import { AgChartsAngular } from 'ag-charts-angular';
@@ -20,6 +20,9 @@ import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { RouterLink } from '@angular/router';
 import { Amplify } from 'aws-amplify';
+import { fetchAuthSession } from 'aws-amplify/auth';
+import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
+import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
 import outputs from '../../../../amplify_outputs.json';
 
 interface DashboardItem extends GridsterItem {
@@ -62,6 +65,10 @@ export class DashboardComponent implements OnInit {
     private saveTrigger = new Subject<void>();
 
     data: any;
+    rowData: any[] = [];
+    dashboardInfo: any[] = [];
+    inventoryCount: number = 0;
+    userCount: number = 0;
 
     options: GridsterConfig;
     charts: Type<any>[] = [];
@@ -147,6 +154,173 @@ export class DashboardComponent implements OnInit {
                 this.performSaveState();
             });
     }
+
+    // Integration
+
+    async dashboardData() {
+        try {
+            const session = await fetchAuthSession();
+
+            const cognitoClient = new CognitoIdentityProviderClient({
+                region: outputs.auth.aws_region,
+                credentials: session.credentials,
+            });
+
+            const getUserCommand = new GetUserCommand({
+                AccessToken: session.tokens?.accessToken.toString(),
+            });
+            const getUserResponse = await cognitoClient.send(getUserCommand);
+
+            const tenantId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
+            
+            if (!tenantId) {
+                console.error('TenantId not found in user attributes');
+                this.rowData = [];
+                return;
+            }
+    
+            const lambdaClient = new LambdaClient({
+                region: outputs.auth.aws_region,
+                credentials: session.credentials,
+            });
+    
+            // Including tableName in the payload. You need to specify the correct table name here.
+            const tableName = 'inventory'; // Replace 'YourTableName' with your actual table name
+    
+            const invokeCommand = new InvokeCommand({
+                FunctionName: 'getDashboardData',
+                Payload: new TextEncoder().encode(JSON.stringify({
+                    pathParameters: {
+                        tenentId: tenantId, // Spelling as expected by the Lambda function
+                        tableName: tableName // Added tableName to the payload
+                    }
+                })),
+            });
+    
+            const lambdaResponse = await lambdaClient.send(invokeCommand);
+            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+            console.log('Response from Lambda:', responseBody);
+    
+            if (responseBody.statusCode === 200) {
+                const dashboardData = JSON.parse(responseBody.body);
+                this.dashboardInfo = dashboardData.map((data: any) => ({
+                    metric: data.metric,
+                    value: data.value,
+                    timestamp: data.timestamp,
+                }));
+                console.log('Processed dashboard data:', this.dashboardInfo);
+            } else {
+                console.error('Error fetching dashboard data:', responseBody.body);
+                this.dashboardInfo = [];
+            }
+        } catch (error) {
+            console.error('Error in dashboardData:', error);
+            this.dashboardInfo = [];
+        }
+    }
+    
+
+    async loadInventoryData() {
+        try {
+            const session = await fetchAuthSession();
+    
+            const cognitoClient = new CognitoIdentityProviderClient({
+                region: outputs.auth.aws_region,
+                credentials: session.credentials,
+            });
+    
+            const getUserCommand = new GetUserCommand({
+                AccessToken: session.tokens?.accessToken.toString(),
+            });
+    
+            const getUserResponse = await cognitoClient.send(getUserCommand);
+    
+            const tenantId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
+    
+            if (!tenantId) {
+                console.error('TenantId not found in user attributes');
+                this.inventoryCount = 0; // Updated to manage count
+                return;
+            }
+    
+            const lambdaClient = new LambdaClient({
+                region: outputs.auth.aws_region,
+                credentials: session.credentials,
+            });
+    
+            const invokeCommand = new InvokeCommand({
+                FunctionName: 'Inventory-getItems',
+                Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: tenantId } })),
+            });
+    
+            const lambdaResponse = await lambdaClient.send(invokeCommand);
+            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+            // console.log('Response from Lambda:', responseBody);
+    
+            if (responseBody.statusCode === 200) {
+                const inventoryItems = JSON.parse(responseBody.body);
+                this.inventoryCount = inventoryItems.length; // Setting the count of inventory items
+                console.log('Inventory items count:', this.inventoryCount);
+            } else {
+                console.error('Error fetching inventory data:', responseBody.body);
+                this.inventoryCount = 0; // Updated to manage count
+            }
+        } catch (error) {
+            console.error('Error in loadInventoryData:', error);
+            this.inventoryCount = 0; // Updated to manage count
+        }
+    }
+    
+
+    async fetchUsers() { 
+        try {
+            const session = await fetchAuthSession();
+    
+            const lambdaClient = new LambdaClient({
+                region: outputs.auth.aws_region,
+                credentials: session.credentials,
+            });
+    
+            // Retrieve the custom attribute using GetUserCommand
+            const client = new CognitoIdentityProviderClient({
+                region: outputs.auth.aws_region,
+                credentials: session.credentials,
+            });
+    
+            const getUserCommand = new GetUserCommand({
+                AccessToken: session.tokens?.accessToken.toString(),
+            });
+            const getUserResponse = await client.send(getUserCommand);
+    
+            const adminUniqueAttribute = getUserResponse.UserAttributes?.find(
+                (attr) => attr.Name === 'custom:tenentId'
+            )?.Value;
+    
+            const payload = JSON.stringify({
+                userPoolId: outputs.auth.user_pool_id,
+                tenentId: adminUniqueAttribute,
+            });
+    
+            const invokeCommand = new InvokeCommand({
+                FunctionName: 'getUsers',
+                Payload: new TextEncoder().encode(payload),
+            });
+    
+            const lambdaResponse = await lambdaClient.send(invokeCommand);
+            const users = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+            // console.log('Users received from Lambda:', users);
+    
+            this.userCount = Array.isArray(users) ? users.length : 0;
+            console.log('Number of users received:', this.userCount);
+        } catch (error) {
+            console.error('Error fetching users:', error);
+            this.userCount = 0; // Ensure user count is set to 0 in case of errors
+        }
+    }
+    
+
+
+    //
 
     performSaveState() {
         console.log('Saving state:', this.dashboard); // Log to debug
@@ -355,9 +529,12 @@ export class DashboardComponent implements OnInit {
         });
     }
 
-    ngOnInit() {
+    async ngOnInit() {
         this.loadState(); // Load the state on initialization
         this.titleService.updateTitle('Dashboard');
         this.fetchData();
+        await this.loadInventoryData();
+        await this.fetchUsers();
+        await this.dashboardData();
     }
 }

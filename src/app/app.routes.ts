@@ -7,7 +7,8 @@ import { SuppliersComponent } from './pages/suppliers/suppliers.component';
 import { OrdersComponent } from './pages/orders/orders.component';
 import { SettingsComponent } from './pages/settings/settings.component';
 import { HelpComponent } from './pages/help/help.component';
-import { GridComponent } from './components/grid/grid.component';
+import { InventoryReportComponent } from './components/reports/inventory-report/inventory-report.component';
+import { OrderReportComponent } from './components/reports/order-report/order-report.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
@@ -19,5 +20,8 @@ export const routes: Routes = [
     { path: 'orders', component: OrdersComponent },
     { path: 'help', component: HelpComponent },
     { path: 'settings', component: SettingsComponent },
-    { path: 'grid', component: GridComponent },
+    { path: 'inventoryReport', component: InventoryReportComponent },
+    { path: 'orderReport', component: OrderReportComponent },
+    { path: 'supplierReport', component: InventoryReportComponent },
+    { path: 'activityReport', component: InventoryReportComponent },
 ];

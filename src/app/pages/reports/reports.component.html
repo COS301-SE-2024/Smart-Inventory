@@ -1,0 +1,38 @@
+<div style="height: 100%; display: block; overflow-y: scroll">
+    <mat-grid-list cols="2" rowHeight="2:1" gutterSize="10px">
+        <mat-grid-tile *ngFor="let report of reports | keyvalue">
+            <div style="height: 100%; width: 100%; padding: 10px">
+                <mat-card style="height: 100%; width: 100%">
+                    <mat-card-header style="height: 35%; padding: 10px">
+                        <mat-card-title>{{ report.value.title }}</mat-card-title>
+                        <mat-card-subtitle> {{ report.value.subtitle }}</mat-card-subtitle>
+                    </mat-card-header>
+                    <mat-card-content style="align-items: center">
+                        <div class="sales">
+                            <ul style="list-style: none; padding: 0; margin: 0">
+                                <li style="padding: 8px 0; border-bottom: 1px solid #eee">
+                                    {{ report.value.metric_1 }} 320
+                                </li>
+                                <li style="padding: 8px 0; border-bottom: 1px solid #eee">
+                                    {{ report.value.metric_2 }} 87.5%
+                                </li>
+                                <li style="padding: 8px 0; border-bottom: 1px solid #eee">
+                                    {{ report.value.metric_3 }} 40
+                                </li>
+                            </ul>
+                        </div>
+                    </mat-card-content>
+                    <mat-card-actions>
+                        <button
+                            mat-button
+                            style="width: 100%; background-color: #f1f1f1; color: black"
+                            (click)="viewFullReport(report.key)"
+                        >
+                            View Full Report
+                        </button>
+                    </mat-card-actions>
+                </mat-card>
+            </div>
+        </mat-grid-tile>
+    </mat-grid-list>
+</div>

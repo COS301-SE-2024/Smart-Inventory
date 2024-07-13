@@ -53,15 +53,21 @@ export class OrdersComponent implements OnInit {
   }
 
   onRowSelected(row: any) {
-    this.selectedOrder = row;
+    if (row) {
+      this.selectedOrder = row;
+      console.log('Selected order:', this.selectedOrder);
+    } else {
+      this.selectedOrder = null;
+      console.log('No order selected');
+    }
   }
 
   async viewGeneratedQuote() {
+    console.log('Current selected order:', this.selectedOrder);
     if (!this.selectedOrder) {
       alert('Please select an order first');
       return;
     }
-
     try {
       const quoteDetails = await this.fetchQuoteDetails(this.selectedOrder.Quote_ID);
       this.openCustomQuoteModal(quoteDetails);
@@ -115,6 +121,7 @@ export class OrdersComponent implements OnInit {
           this.updateQuote(result.data);
         }
       }
+      this.refreshGridSelection();
     });
   }
 
@@ -305,6 +312,19 @@ export class OrdersComponent implements OnInit {
     } catch (error) {
       console.error('Error in loadOrdersData:', error);
       this.rowData = [];
+    }
+  }
+
+  refreshGridSelection() {
+    if (this.gridComponent && this.gridComponent.gridApi) {
+      const selectedRows = this.gridComponent.gridApi.getSelectedRows();
+      if (selectedRows.length > 0) {
+        this.selectedOrder = selectedRows[0];
+        console.log('Refreshed selected order:', this.selectedOrder);
+      } else {
+        this.selectedOrder = null;
+        console.log('No order selected after refresh');
+      }
     }
   }
 

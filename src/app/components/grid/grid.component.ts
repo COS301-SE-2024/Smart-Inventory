@@ -123,14 +123,25 @@ export class GridComponent implements OnInit {
     }
 
     onRowSelected(event: any) {
-        if (event.node.isSelected()) {
-            this.selectedRow = event.data;
-            this.rowSelected.emit(this.selectedRow);
+        if (event && event.node && event.node.isSelected()) {
+          this.selectedRow = event.data;
+          this.rowSelected.emit(this.selectedRow);
         } else {
-            this.selectedRow = null;
-            this.rowSelected.emit(null);
+          this.selectedRow = null;
+          this.rowSelected.emit(null);
         }
-    }
+      }
+
+      onSelectionChanged(event: any) {
+        const selectedRows = this.gridApi.getSelectedRows();
+        if (selectedRows.length > 0) {
+          this.selectedRow = selectedRows[0];
+          this.rowSelected.emit(this.selectedRow);
+        } else {
+          this.selectedRow = null;
+          this.rowSelected.emit(null);
+        }
+      }
 
     importExcel() {
         alert('Import Not completed');

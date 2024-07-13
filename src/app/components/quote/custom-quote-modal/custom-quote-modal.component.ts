@@ -13,6 +13,12 @@ import { takeUntil } from 'rxjs/operators';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
+import { Amplify } from 'aws-amplify';
+import { fetchAuthSession } from 'aws-amplify/auth';
+import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
+import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
+import outputs from '../../../../../amplify_outputs.json';
+
 interface QuoteItem {
   item: string;
   quantity: number;
@@ -44,8 +50,8 @@ export class CustomQuoteModalComponent implements OnInit {
   filteredQuoteItems: QuoteItem[] = [];
   quoteItemSearchTerm: string = '';
   selectedSuppliers: string[] = [];
-  inventoryItems: string[] = ['Laptop', 'Mouse', 'Keyboard', 'Monitor', 'Headphones', 'Docking Station', 'Webcam', 'Microphone', 'Speakers', 'Tablet'];
-  suppliers: string[] = ['Supplier A', 'Supplier B', 'Supplier C', 'Supplier D', 'Supplier E', 'Supplier F', 'Supplier G', 'Supplier H', 'Supplier I', 'Supplier J'];
+  suppliers: string[] = [];
+  inventoryItems: string[] = [];
 
   supplierControl = new FormControl();
   filteredSuppliers: ReplaySubject<string[]> = new ReplaySubject<string[]>(1);
@@ -58,8 +64,10 @@ export class CustomQuoteModalComponent implements OnInit {
     private snackBar: MatSnackBar
   ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
     this.addItem();
+    await this.loadSuppliers();
+    await this.loadInventoryItems();
     this.filteredSuppliers.next(this.suppliers.slice());
     this.supplierControl.valueChanges
       .pipe(takeUntil(this._onDestroy))
@@ -89,7 +97,7 @@ export class CustomQuoteModalComponent implements OnInit {
       this.suppliers.filter(supplier => supplier.toLowerCase().indexOf(search) > -1)
     );
   }
-
+  
   filterItems(value: string, index: number) {
     const filterValue = value.toLowerCase();
     this.quoteItems[index].filteredItems.next(
@@ -152,5 +160,87 @@ export class CustomQuoteModalComponent implements OnInit {
     // Optionally, you can show a snackbar or some other notification to the user
     this.snackBar.open('Draft saved successfully', 'Close', { duration: 3000 });
     this.dialogRef.close();
+  }
+
+  async loadSuppliers() {
+    try {
+      const session = await fetchAuthSession();
+      const tenantId = await this.getTenantId(session);
+  
+      const lambdaClient = new LambdaClient({
+        region: outputs.auth.aws_region,
+        credentials: session.credentials,
+      });
+  
+      const invokeCommand = new InvokeCommand({
+        FunctionName: 'getSuppliers',
+        Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: tenantId } })),
+      });
+  
+      const lambdaResponse = await lambdaClient.send(invokeCommand);
+      const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+  
+      if (responseBody.statusCode === 200) {
+        const suppliers = JSON.parse(responseBody.body);
+        this.suppliers = suppliers.map((supplier: any) => supplier.company_name);
+      } else {
+        console.error('Error fetching suppliers data:', responseBody.body);
+        this.suppliers = [];
+      }
+    } catch (error) {
+      console.error('Error in loadSuppliers:', error);
+      this.suppliers = [];
+    }
+  }
+  
+  async loadInventoryItems() {
+    try {
+      const session = await fetchAuthSession();
+      const tenantId = await this.getTenantId(session);
+  
+      const lambdaClient = new LambdaClient({
+        region: outputs.auth.aws_region,
+        credentials: session.credentials,
+      });
+  
+      const invokeCommand = new InvokeCommand({
+        FunctionName: 'Inventory-getItems',
+        Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: tenantId } })),
+      });
+  
+      const lambdaResponse = await lambdaClient.send(invokeCommand);
+      const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+  
+      if (responseBody.statusCode === 200) {
+        const inventoryItems = JSON.parse(responseBody.body);
+        this.inventoryItems = inventoryItems.map((item: any) => item.SKU);
+      } else {
+        console.error('Error fetching inventory data:', responseBody.body);
+        this.inventoryItems = [];
+      }
+    } catch (error) {
+      console.error('Error in loadInventoryItems:', error);
+      this.inventoryItems = [];
+    }
+  }
+  
+  async getTenantId(session: any): Promise<string> {
+    const cognitoClient = new CognitoIdentityProviderClient({
+      region: outputs.auth.aws_region,
+      credentials: session.credentials,
+    });
+  
+    const getUserCommand = new GetUserCommand({
+      AccessToken: session.tokens?.accessToken.toString(),
+    });
+    const getUserResponse = await cognitoClient.send(getUserCommand);
+  
+    const tenantId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
+  
+    if (!tenantId) {
+      throw new Error('TenantId not found in user attributes');
+    }
+  
+    return tenantId;
   }
 }

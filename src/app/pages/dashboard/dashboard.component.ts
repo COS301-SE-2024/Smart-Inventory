@@ -160,6 +160,7 @@ export class DashboardComponent implements OnInit {
     async dashboardData() {
         try {
             const session = await fetchAuthSession();
+            this.loader.setLoading(false);
 
             const cognitoClient = new CognitoIdentityProviderClient({
                 region: outputs.auth.aws_region,
@@ -172,369 +173,370 @@ export class DashboardComponent implements OnInit {
             const getUserResponse = await cognitoClient.send(getUserCommand);
 
             const tenantId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
-            
+
             if (!tenantId) {
                 console.error('TenantId not found in user attributes');
                 this.rowData = [];
                 return;
             }
-    
+
             const lambdaClient = new LambdaClient({
                 region: outputs.auth.aws_region,
                 credentials: session.credentials,
             });
-    
-            // Including tableName in the payload. You need to specify the correct table name here.
-            const tableName = 'inventory'; // Replace 'YourTableName' with your actual table name
-    
+
+
             const invokeCommand = new InvokeCommand({
                 FunctionName: 'getDashboardData',
                 Payload: new TextEncoder().encode(JSON.stringify({
                     pathParameters: {
                         tenentId: tenantId, // Spelling as expected by the Lambda function
-                        tableName: tableName // Added tableName to the payload
                     }
                 })),
             });
-    
+
             const lambdaResponse = await lambdaClient.send(invokeCommand);
             const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
             console.log('Response from Lambda:', responseBody);
-    
+
+
             if (responseBody.statusCode === 200) {
                 const dashboardData = JSON.parse(responseBody.body);
-                this.dashboardInfo = dashboardData.map((data: any) => ({
-                    metric: data.metric,
-                    value: data.value,
-                    timestamp: data.timestamp,
-                }));
+                console.log('Dashboard Data:', dashboardData); // Log to check the structure
+
+                // Directly use the object to set dashboardInfo
+                this.dashboardInfo = [{
+                    metric: 'Inventory Levels',
+                    value: dashboardData.inventoryLevels,
+                    timestamp: new Date().toISOString() // Assuming current time for demo purposes
+                }, {
+                    metric: 'Backorders',
+                    value: dashboardData.backorders,
+                    timestamp: new Date().toISOString() // Assuming current time for demo purposes
+                }, {
+                    metric: 'Average Fulfillment Time',
+                    value: dashboardData.avgFulfillmentTime,
+                    timestamp: new Date().toISOString() // Assuming current time for demo purposes
+                }, {
+                    metric: 'Top Seller',
+                    value: dashboardData.topSeller,
+                    timestamp: new Date().toISOString() // Assuming current time for demo purposes
+                }];
                 console.log('Processed dashboard data:', this.dashboardInfo);
             } else {
                 console.error('Error fetching dashboard data:', responseBody.body);
                 this.dashboardInfo = [];
             }
-        } catch (error) {
-            console.error('Error in dashboardData:', error);
-            this.dashboardInfo = [];
-        }
+    } catch(error) {
+        console.error('Error in dashboardData:', error);
+        this.dashboardInfo = [];
     }
+}
     
 
     async loadInventoryData() {
-        try {
-            const session = await fetchAuthSession();
-    
-            const cognitoClient = new CognitoIdentityProviderClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
-    
-            const getUserCommand = new GetUserCommand({
-                AccessToken: session.tokens?.accessToken.toString(),
-            });
-    
-            const getUserResponse = await cognitoClient.send(getUserCommand);
-    
-            const tenantId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
-    
-            if (!tenantId) {
-                console.error('TenantId not found in user attributes');
-                this.inventoryCount = 0; // Updated to manage count
-                return;
-            }
-    
-            const lambdaClient = new LambdaClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
-    
-            const invokeCommand = new InvokeCommand({
-                FunctionName: 'Inventory-getItems',
-                Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: tenantId } })),
-            });
-    
-            const lambdaResponse = await lambdaClient.send(invokeCommand);
-            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-            // console.log('Response from Lambda:', responseBody);
-    
-            if (responseBody.statusCode === 200) {
-                const inventoryItems = JSON.parse(responseBody.body);
-                this.inventoryCount = inventoryItems.length; // Setting the count of inventory items
-                console.log('Inventory items count:', this.inventoryCount);
-            } else {
-                console.error('Error fetching inventory data:', responseBody.body);
-                this.inventoryCount = 0; // Updated to manage count
-            }
-        } catch (error) {
-            console.error('Error in loadInventoryData:', error);
+    try {
+        const session = await fetchAuthSession();
+
+        const cognitoClient = new CognitoIdentityProviderClient({
+            region: outputs.auth.aws_region,
+            credentials: session.credentials,
+        });
+
+        const getUserCommand = new GetUserCommand({
+            AccessToken: session.tokens?.accessToken.toString(),
+        });
+
+        const getUserResponse = await cognitoClient.send(getUserCommand);
+
+        const tenantId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
+
+        if (!tenantId) {
+            console.error('TenantId not found in user attributes');
+            this.inventoryCount = 0; // Updated to manage count
+            return;
+        }
+
+        const lambdaClient = new LambdaClient({
+            region: outputs.auth.aws_region,
+            credentials: session.credentials,
+        });
+
+        const invokeCommand = new InvokeCommand({
+            FunctionName: 'Inventory-getItems',
+            Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: tenantId } })),
+        });
+
+        const lambdaResponse = await lambdaClient.send(invokeCommand);
+        const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+        // console.log('Response from Lambda:', responseBody);
+
+        if (responseBody.statusCode === 200) {
+            const inventoryItems = JSON.parse(responseBody.body);
+            this.inventoryCount = inventoryItems.length; // Setting the count of inventory items
+            console.log('Inventory items count:', this.inventoryCount);
+        } else {
+            console.error('Error fetching inventory data:', responseBody.body);
             this.inventoryCount = 0; // Updated to manage count
         }
+    } catch (error) {
+        console.error('Error in loadInventoryData:', error);
+        this.inventoryCount = 0; // Updated to manage count
     }
+}
     
 
-    async fetchUsers() { 
-        try {
-            const session = await fetchAuthSession();
-    
-            const lambdaClient = new LambdaClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
-    
-            // Retrieve the custom attribute using GetUserCommand
-            const client = new CognitoIdentityProviderClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
-    
-            const getUserCommand = new GetUserCommand({
-                AccessToken: session.tokens?.accessToken.toString(),
-            });
-            const getUserResponse = await client.send(getUserCommand);
-    
-            const adminUniqueAttribute = getUserResponse.UserAttributes?.find(
-                (attr) => attr.Name === 'custom:tenentId'
-            )?.Value;
-    
-            const payload = JSON.stringify({
-                userPoolId: outputs.auth.user_pool_id,
-                tenentId: adminUniqueAttribute,
-            });
-    
-            const invokeCommand = new InvokeCommand({
-                FunctionName: 'getUsers',
-                Payload: new TextEncoder().encode(payload),
-            });
-    
-            const lambdaResponse = await lambdaClient.send(invokeCommand);
-            const users = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-            // console.log('Users received from Lambda:', users);
-    
-            this.userCount = Array.isArray(users) ? users.length : 0;
-            console.log('Number of users received:', this.userCount);
-        } catch (error) {
-            console.error('Error fetching users:', error);
-            this.userCount = 0; // Ensure user count is set to 0 in case of errors
-        }
-    }
-    
+    async fetchUsers() {
+    try {
+        const session = await fetchAuthSession();
 
-
-    //
-
-    performSaveState() {
-        console.log('Saving state:', this.dashboard); // Log to debug
-        const state = {
-            dashboard: [...this.dashboard], // Use spread to ensure a new array reference
-            standaloneItems: {
-                largeItem: this.largeItem,
-                newLargeItem: this.newLargeItem,
-                SalesvsTarget: this.SalesvsTarget,
-                Product: this.Product,
-            },
-        };
-        localStorage.setItem('dashboardState', JSON.stringify(state));
-    }
-
-    saveState() {
-        this.saveTrigger.next();
-    }
-
-    loadState() {
-        const savedState = localStorage.getItem('dashboardState');
-        if (savedState) {
-            const state = JSON.parse(savedState);
-            this.dashboard = state.dashboard || this.getDefaultDashboard(); // Fallback to default
-            this.largeItem = state.standaloneItems.largeItem;
-            this.newLargeItem = state.standaloneItems.newLargeItem;
-            this.SalesvsTarget = state.standaloneItems.SalesvsTarget;
-            this.Product = state.standaloneItems.Product;
-        } else {
-            this.dashboard = this.getDefaultDashboard();
-        }
-        this.cdr.detectChanges(); // Force change detection
-    }
-
-    getDefaultDashboard(): DashboardItem[] {
-        // return default dashboard setup
-        this.dashboard = [
-            {
-                cols: 1,
-                rows: 1,
-                y: 0,
-                x: 4,
-                name: 'Inventory Levels',
-                icon: 'storage',
-                analytic: '1234',
-                percentage: 0.04,
-                type: 'card',
-                isActive: true,
-                tooltip: 'Current inventory stock count.',
-            },
-            {
-                cols: 1,
-                rows: 1,
-                y: 0,
-                x: 5,
-                name: 'Backorders',
-                icon: 'assignment_return',
-                analytic: '320',
-                percentage: -0.01,
-                type: 'card',
-                isActive: true,
-                tooltip: 'Orders pending due to lack of stock.',
-            },
-            {
-                cols: 1,
-                rows: 1,
-                y: 0,
-                x: 6,
-                name: 'Avg Fulfillment Time',
-                icon: 'hourglass_full',
-                analytic: '48 hrs',
-                percentage: -0.05,
-                type: 'card',
-                isActive: true,
-                tooltip: 'Average time taken from order placement to shipment.',
-            },
-            {
-                cols: 1,
-                rows: 1,
-                y: 0,
-                x: 7,
-                name: 'Top Seller',
-                icon: 'star_rate',
-                analytic: 'Product123',
-                percentage: 0.12,
-                type: 'card',
-                isActive: true,
-                tooltip: 'The product with the highest requests.',
-            },
-        ];
-
-        return this.dashboard;
-    }
-
-    toggleDeleteMode(): void {
-        this.isDeleteMode = !this.isDeleteMode;
-    }
-
-    markForDeletion(item: DashboardItem, event: MouseEvent | TouchEvent): void {
-        event.preventDefault();
-        event.stopPropagation();
-
-        // Determine if the item is part of the dashboard or standalone items
-        if (this.dashboard.includes(item)) {
-            this.toggleItemInArray(item, this.pendingDeletions);
-        } else {
-            this.toggleItemInArray(item, this.standaloneDeletions);
-        }
-    }
-
-    toggleItemInArray(item: DashboardItem, targetArray: DashboardItem[]): void {
-        const index = targetArray.indexOf(item);
-        if (index === -1) {
-            targetArray.push(item);
-        } else {
-            targetArray.splice(index, 1);
-        }
-    }
-
-    removeItem(item: DashboardItem): void {
-        item.isActive = false;
-        this.cdr.detectChanges(); // Refresh the view to reflect the removal
-    }
-
-    toggleItemDeletion(item: DashboardItem): void {
-        const index = this.pendingDeletions.indexOf(item);
-        if (index > -1) {
-            this.pendingDeletions.splice(index, 1); // Remove from deletions if already marked
-        } else {
-            this.pendingDeletions.push(item); // Add to deletions if not already marked
-        }
-    }
-
-    finalizeDeletions(): void {
-        this.dashboard = this.dashboard.filter((item) => !this.pendingDeletions.includes(item));
-        this.pendingDeletions = [];
-
-        // Toggle isActive for standalone items
-        [this.largeItem, this.newLargeItem, this.SalesvsTarget, this.Product].forEach((item) => {
-            if (this.standaloneDeletions.includes(item)) {
-                item.isActive = false; // Mark as inactive instead of deleting
-            }
+        const lambdaClient = new LambdaClient({
+            region: outputs.auth.aws_region,
+            credentials: session.credentials,
         });
 
-        this.standaloneDeletions = [];
-        this.toggleDeleteMode();
-    }
-
-    undoDeletions(): void {
-        [...this.pendingDeletions, ...this.standaloneDeletions].forEach((item) => (item.isActive = true));
-        this.pendingDeletions = [];
-        this.standaloneDeletions = [];
-        this.toggleDeleteMode();
-    }
-    sidebarOpen: boolean = false;
-
-    toggleSidebar() {
-        this.sidebarOpen = !this.sidebarOpen;
-    }
-
-    addChart(type: string): void {
-        let component: Type<any> | null = null;
-
-        if (type === 'bar') {
-            component = BarchartComponent;
-        } else if (type === 'donut') {
-            component = DonutchartComponent;
-        } else if (type === 'area') {
-            component = SaleschartComponent;
-        }
-
-        if (component) {
-            // Calculate new position, assume each card takes 1 column and starts at row 0
-            const positionX = this.dashboard.length % 4; // This will place new chart in next available column
-            const positionY = Math.floor(this.dashboard.length / 4); // This increases the row number every 4 charts
-
-            this.dashboard.push({
-                cols: 2, // You might want to standardize or customize this based on type
-                rows: 3, // Same as above
-                y: positionY,
-                x: positionX,
-                name: type.charAt(0).toUpperCase() + type.slice(1) + ' Chart',
-                type: 'chart',
-
-                component: component,
-            });
-        } else {
-            console.error('Invalid chart type:', type);
-        }
-    }
-    setFilter(filter: string): void {
-        this.filterService.changeFilter(filter);
-    }
-
-    fetchData() {
-        this.loader.setLoading(true);
-        this.http.get('https://api.example.com/data').subscribe({
-            next: (response) => {
-                this.data = response;
-                this.loader.setLoading(false);
-            },
-            error: (error) => {
-                console.error('Error fetching data:', error);
-                this.loader.setLoading(false);
-            },
+        // Retrieve the custom attribute using GetUserCommand
+        const client = new CognitoIdentityProviderClient({
+            region: outputs.auth.aws_region,
+            credentials: session.credentials,
         });
+
+        const getUserCommand = new GetUserCommand({
+            AccessToken: session.tokens?.accessToken.toString(),
+        });
+        const getUserResponse = await client.send(getUserCommand);
+
+        const adminUniqueAttribute = getUserResponse.UserAttributes?.find(
+            (attr) => attr.Name === 'custom:tenentId'
+        )?.Value;
+
+        const payload = JSON.stringify({
+            userPoolId: outputs.auth.user_pool_id,
+            tenentId: adminUniqueAttribute,
+        });
+
+        const invokeCommand = new InvokeCommand({
+            FunctionName: 'getUsers',
+            Payload: new TextEncoder().encode(payload),
+        });
+
+        const lambdaResponse = await lambdaClient.send(invokeCommand);
+        const users = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+        // console.log('Users received from Lambda:', users);
+
+        this.userCount = Array.isArray(users) ? users.length : 0;
+        console.log('Number of users received:', this.userCount);
+    } catch (error) {
+        console.error('Error fetching users:', error);
+        this.userCount = 0; // Ensure user count is set to 0 in case of errors
     }
+}
+
+
+
+//
+
+performSaveState() {
+    console.log('Saving state:', this.dashboard); // Log to debug
+    const state = {
+        dashboard: [...this.dashboard], // Use spread to ensure a new array reference
+        standaloneItems: {
+            largeItem: this.largeItem,
+            newLargeItem: this.newLargeItem,
+            SalesvsTarget: this.SalesvsTarget,
+            Product: this.Product,
+        },
+    };
+    localStorage.setItem('dashboardState', JSON.stringify(state));
+}
+
+saveState() {
+    this.saveTrigger.next();
+}
+
+loadState() {
+    const savedState = localStorage.getItem('dashboardState');
+    if (savedState) {
+        const state = JSON.parse(savedState);
+        this.dashboard = state.dashboard || this.getDefaultDashboard(); // Fallback to default
+        this.largeItem = state.standaloneItems.largeItem;
+        this.newLargeItem = state.standaloneItems.newLargeItem;
+        this.SalesvsTarget = state.standaloneItems.SalesvsTarget;
+        this.Product = state.standaloneItems.Product;
+    } else {
+        this.dashboard = this.getDefaultDashboard();
+    }
+    this.cdr.detectChanges(); // Force change detection
+}
+
+getDefaultDashboard(): DashboardItem[] {
+    // return default dashboard setup
+    this.dashboard = [
+        {
+            cols: 1,
+            rows: 1,
+            y: 0,
+            x: 4,
+            name: 'Inventory Levels',
+            icon: 'storage',
+            analytic: '1234',
+            percentage: 0.04,
+            type: 'card',
+            isActive: true,
+            tooltip: 'Current inventory stock count.',
+        },
+        {
+            cols: 1,
+            rows: 1,
+            y: 0,
+            x: 5,
+            name: 'Backorders',
+            icon: 'assignment_return',
+            analytic: '320',
+            percentage: -0.01,
+            type: 'card',
+            isActive: true,
+            tooltip: 'Orders pending due to lack of stock.',
+        },
+        {
+            cols: 1,
+            rows: 1,
+            y: 0,
+            x: 6,
+            name: 'Avg Fulfillment Time',
+            icon: 'hourglass_full',
+            analytic: '48 hrs',
+            percentage: -0.05,
+            type: 'card',
+            isActive: true,
+            tooltip: 'Average time taken from order placement to shipment.',
+        },
+        {
+            cols: 1,
+            rows: 1,
+            y: 0,
+            x: 7,
+            name: 'Top Seller',
+            icon: 'star_rate',
+            analytic: 'Product123',
+            percentage: 0.12,
+            type: 'card',
+            isActive: true,
+            tooltip: 'The product with the highest requests.',
+        },
+    ];
+
+    return this.dashboard;
+}
+
+toggleDeleteMode(): void {
+    this.isDeleteMode = !this.isDeleteMode;
+}
+
+markForDeletion(item: DashboardItem, event: MouseEvent | TouchEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+
+    // Determine if the item is part of the dashboard or standalone items
+    if(this.dashboard.includes(item)) {
+    this.toggleItemInArray(item, this.pendingDeletions);
+} else {
+    this.toggleItemInArray(item, this.standaloneDeletions);
+}
+    }
+
+toggleItemInArray(item: DashboardItem, targetArray: DashboardItem[]): void {
+    const index = targetArray.indexOf(item);
+    if(index === -1) {
+    targetArray.push(item);
+} else {
+    targetArray.splice(index, 1);
+}
+    }
+
+removeItem(item: DashboardItem): void {
+    item.isActive = false;
+    this.cdr.detectChanges(); // Refresh the view to reflect the removal
+}
+
+toggleItemDeletion(item: DashboardItem): void {
+    const index = this.pendingDeletions.indexOf(item);
+    if(index > -1) {
+    this.pendingDeletions.splice(index, 1); // Remove from deletions if already marked
+} else {
+    this.pendingDeletions.push(item); // Add to deletions if not already marked
+}
+    }
+
+finalizeDeletions(): void {
+    this.dashboard = this.dashboard.filter((item) => !this.pendingDeletions.includes(item));
+    this.pendingDeletions = [];
+
+    // Toggle isActive for standalone items
+    [this.largeItem, this.newLargeItem, this.SalesvsTarget, this.Product].forEach((item) => {
+        if (this.standaloneDeletions.includes(item)) {
+            item.isActive = false; // Mark as inactive instead of deleting
+        }
+    });
+
+    this.standaloneDeletions = [];
+    this.toggleDeleteMode();
+}
+
+undoDeletions(): void {
+    [...this.pendingDeletions, ...this.standaloneDeletions].forEach((item) => (item.isActive = true));
+    this.pendingDeletions = [];
+    this.standaloneDeletions = [];
+    this.toggleDeleteMode();
+}
+sidebarOpen: boolean = false;
+
+toggleSidebar() {
+    this.sidebarOpen = !this.sidebarOpen;
+}
+
+addChart(type: string): void {
+    let component: Type<any> | null = null;
+
+    if(type === 'bar') {
+    component = BarchartComponent;
+} else if (type === 'donut') {
+    component = DonutchartComponent;
+} else if (type === 'area') {
+    component = SaleschartComponent;
+}
+
+if (component) {
+    // Calculate new position, assume each card takes 1 column and starts at row 0
+    const positionX = this.dashboard.length % 4; // This will place new chart in next available column
+    const positionY = Math.floor(this.dashboard.length / 4); // This increases the row number every 4 charts
+
+    this.dashboard.push({
+        cols: 2, // You might want to standardize or customize this based on type
+        rows: 3, // Same as above
+        y: positionY,
+        x: positionX,
+        name: type.charAt(0).toUpperCase() + type.slice(1) + ' Chart',
+        type: 'chart',
+
+        component: component,
+    });
+} else {
+    console.error('Invalid chart type:', type);
+}
+    }
+setFilter(filter: string): void {
+    this.filterService.changeFilter(filter);
+}
+
+
 
     async ngOnInit() {
-        this.loadState(); // Load the state on initialization
-        this.titleService.updateTitle('Dashboard');
-        this.fetchData();
-        await this.loadInventoryData();
-        await this.fetchUsers();
-        await this.dashboardData();
-    }
+    this.loadState(); // Load the state on initialization
+    this.titleService.updateTitle('Dashboard');
+
+    await this.loadInventoryData();
+    await this.fetchUsers();
+    await this.dashboardData();
+}
 }

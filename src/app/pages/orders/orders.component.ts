@@ -11,16 +11,21 @@ import outputs from '../../../../amplify_outputs.json';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { Amplify } from 'aws-amplify';
 import { CustomQuoteModalComponent } from '../../components/quote/custom-quote-modal/custom-quote-modal.component';
+import { CommonModule } from '@angular/common';
+import { LoadingSpinnerComponent } from '../../components/loader/loading-spinner.component';
 
 @Component({
   selector: 'app-orders',
   standalone: true,
-  imports: [GridComponent, MatButtonModule, MatDialogModule],
+  imports: [GridComponent, MatButtonModule, MatDialogModule, CommonModule, LoadingSpinnerComponent],
   templateUrl: './orders.component.html',
   styleUrl: './orders.component.css',
 })
 export class OrdersComponent implements OnInit {
   @ViewChild(GridComponent) gridComponent!: GridComponent;
+
+  isLoading = true;
+
   constructor(private titleService: TitleService, private dialog: MatDialog) {
     Amplify.configure(outputs);
   }
@@ -257,6 +262,7 @@ export class OrdersComponent implements OnInit {
   }
 
   async loadOrdersData() {
+    this.isLoading = true;
     try {
       const session = await fetchAuthSession();
 
@@ -312,6 +318,8 @@ export class OrdersComponent implements OnInit {
     } catch (error) {
       console.error('Error in loadOrdersData:', error);
       this.rowData = [];
+    } finally {
+      this.isLoading = false;
     }
   }
 

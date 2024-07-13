@@ -15,11 +15,20 @@
       <div *ngFor="let item of filteredQuoteItems; let i = index" class="item-row">
         <mat-form-field appearance="outline">
           <mat-label>Item</mat-label>
-          <mat-select [(ngModel)]="item.item">
+          <mat-select [(ngModel)]="item.item" [compareWith]="compareItems">
             <mat-option>
-              <ngx-mat-select-search [formControl]="item.searchControl" placeholderLabel="Search items..." noEntriesFoundLabel="No matching items found" (input)="filterItems($any($event).target.value, i)"></ngx-mat-select-search>
+              <ngx-mat-select-search [formControl]="item.searchControl" 
+                                     placeholderLabel="Search items..." 
+                                     noEntriesFoundLabel="No matching items found" 
+                                     (input)="filterItems($any($event).target.value, i)">
+              </ngx-mat-select-search>
             </mat-option>
-            <mat-option *ngFor="let invItem of item.filteredItems | async" [value]="invItem">{{invItem}}</mat-option>
+            <mat-option *ngFor="let invItem of item.filteredItems | async" [value]="invItem">
+              <div class="item-option">
+                <div class="item-sku">{{invItem.sku}}</div>
+                <div class="item-description">{{invItem.description}}</div>
+              </div>
+            </mat-option>
           </mat-select>
         </mat-form-field>
         <mat-form-field appearance="outline">

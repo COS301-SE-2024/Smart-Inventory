@@ -103,3 +103,17 @@
   .remove-item-button {
     color: maroon;
   }
+
+  .item-option {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .item-sku {
+    font-weight: bold;
+  }
+  
+  .item-description {
+    font-size: 0.8em;
+    color: #666;
+  }

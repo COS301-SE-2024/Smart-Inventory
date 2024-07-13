@@ -22,7 +22,7 @@ import outputs from '../../../../../amplify_outputs.json';
 interface QuoteItem {
   item: string;
   quantity: number;
-  filteredItems: ReplaySubject<string[]>;
+  filteredItems: ReplaySubject<{ sku: string; description: string }[]>;
   searchControl: FormControl;
 }
 
@@ -51,7 +51,7 @@ export class CustomQuoteModalComponent implements OnInit {
   quoteItemSearchTerm: string = '';
   selectedSuppliers: string[] = [];
   suppliers: string[] = [];
-  inventoryItems: string[] = [];
+  inventoryItems: { sku: string; description: string }[] = [];
 
   supplierControl = new FormControl();
   filteredSuppliers: ReplaySubject<string[]> = new ReplaySubject<string[]>(1);
@@ -101,14 +101,17 @@ export class CustomQuoteModalComponent implements OnInit {
   filterItems(value: string, index: number) {
     const filterValue = value.toLowerCase();
     this.quoteItems[index].filteredItems.next(
-      this.inventoryItems.filter(item => item.toLowerCase().includes(filterValue))
+      this.inventoryItems.filter(item => 
+        item.sku.toLowerCase().includes(filterValue) || 
+        item.description.toLowerCase().includes(filterValue)
+      )
     );
   }
 
   addItem() {
-    const newFilteredItems = new ReplaySubject<string[]>(1);
+    const newFilteredItems = new ReplaySubject<{sku: string; description: string}[]>(1);
     newFilteredItems.next(this.inventoryItems.slice());
-    const newItem = { 
+    const newItem: QuoteItem = { 
       item: '', 
       quantity: 1, 
       filteredItems: newFilteredItems,
@@ -213,7 +216,10 @@ export class CustomQuoteModalComponent implements OnInit {
   
       if (responseBody.statusCode === 200) {
         const inventoryItems = JSON.parse(responseBody.body);
-        this.inventoryItems = inventoryItems.map((item: any) => item.SKU);
+        this.inventoryItems = inventoryItems.map((item: any) => ({
+          sku: item.SKU,
+          description: item.description
+        }));
       } else {
         console.error('Error fetching inventory data:', responseBody.body);
         this.inventoryItems = [];
@@ -242,5 +248,9 @@ export class CustomQuoteModalComponent implements OnInit {
     }
   
     return tenantId;
+  }
+
+  compareItems(item1: any, item2: any): boolean {
+    return item1 && item2 ? item1.sku === item2.sku : item1 === item2;
   }
 }

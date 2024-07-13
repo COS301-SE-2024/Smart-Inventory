@@ -168,11 +168,15 @@ export class GridComponent implements OnInit {
         });
     
         dialogRef.afterClosed().subscribe(result => {
-          if (result) {
-            console.log('Custom quote created:', result);
-            this.newCustomQuote.emit(result);
-            // Handle the created quote (e.g., add it to the grid)
-          }
-        });
+            if (result) {
+              if (result.action === 'saveDraft') {
+                console.log('Saving draft:', result.data);
+                this.newCustomQuote.emit({ type: 'draft', data: result.data });
+              } else if (result.action === 'createQuote') {
+                console.log('Creating quote:', result.data);
+                this.newCustomQuote.emit({ type: 'quote', data: result.data });
+              }
+            }
+          });
     }
 }

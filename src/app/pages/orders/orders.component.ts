@@ -3,6 +3,13 @@ import { ColDef } from 'ag-grid-community';
 import { GridComponent } from '../../components/grid/grid.component';
 import { MatButtonModule } from '@angular/material/button';
 import { TitleService } from '../../components/header/title.service';
+import { fetchAuthSession } from 'aws-amplify/auth';
+import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
+import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
+import outputs from '../../../../amplify_outputs.json';
+
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { Amplify } from 'aws-amplify';
 
 @Component({
     selector: 'app-orders',
@@ -13,7 +20,9 @@ import { TitleService } from '../../components/header/title.service';
 })
 export class OrdersComponent implements OnInit{
     @ViewChild(GridComponent) gridComponent!: GridComponent;
-    constructor(private titleService: TitleService) {}
+    constructor(private titleService: TitleService, private dialog: MatDialog) {
+        Amplify.configure(outputs);
+    }
 
     // Row Data: The data to be displayed.
     rowData = [
@@ -83,20 +92,81 @@ export class OrdersComponent implements OnInit{
     }
 
       // Add this method to handle the new custom quote
-  handleNewCustomQuote(quote: any) {
-    const newOrder = {
-      Order_ID: `#${this.rowData.length + 101}`,
-      Order_Date: new Date().toISOString().split('T')[0],
-      Order_Status: 'Pending Approval',
-      Quote_ID: `Q${this.rowData.length + 1}`.padStart(3, '0'),
-      Quote_Status: 'Draft',
-      Selected_Supplier: quote.suppliers.join(', '),
-      Expected_Delivery_Date: '',
-      Actual_Delivery_Date: '',
-      // You might want to add more fields to store the quote items
-    };
+      async handleNewCustomQuote(event: { type: string, data: any }) {
+        if (event.type === 'draft') {
+          await this.createNewOrder(event.data, 'Draft');
+        } else if (event.type === 'quote') {
+          await this.createNewOrder(event.data, 'Sent');
+        }
+      }
+    
+      async createNewOrder(quoteData: any, status: string) {
+        try {
+          const session = await fetchAuthSession();
+          const tenentId = await this.getTenentId(session);
+          console.log(tenentId);
+    
+          const lambdaClient = new LambdaClient({
+            region: outputs.auth.aws_region,
+            credentials: session.credentials,
+          });
+    
+          const newOrder = {
+            Order_Date: new Date().toISOString().split('T')[0],
+            Order_Status: 'Pending Approval',
+            Quote_Status: status,
+            Selected_Supplier: null,
+            Expected_Delivery_Date: null,
+            Actual_Delivery_Date: null,
+            tenentId: tenentId,
+            quoteItems: quoteData.items,
+            suppliers: quoteData.suppliers
+          };
+    
+          const invokeCommand = new InvokeCommand({
+            FunctionName: 'createOrder',
+            Payload: new TextEncoder().encode(JSON.stringify({ body: JSON.stringify(newOrder) })),
+          });
+    
+          const lambdaResponse = await lambdaClient.send(invokeCommand);
+          const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+    
+          if (responseBody.statusCode === 201) {
+            console.log('Order created successfully');
+            await this.loadOrdersData();
+          } else {
+            throw new Error(responseBody.body);
+          }
+        } catch (error) {
+          console.error('Error creating order:', error);
+          alert(`Error creating order: ${(error as Error).message}`);
+        }
+      }
+  
+  async getTenentId(session: any): Promise<string> {
+    const cognitoClient = new CognitoIdentityProviderClient({
+      region: outputs.auth.aws_region,
+      credentials: session.credentials,
+    });
+  
+    const getUserCommand = new GetUserCommand({
+      AccessToken: session.tokens?.accessToken.toString(),
+    });
+    const getUserResponse = await cognitoClient.send(getUserCommand);
+  
+    const tenentId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
+  
+    if (!tenentId) {
+      throw new Error('TenentId not found in user attributes');
+    }
 
-    this.rowData = [...this.rowData, newOrder];
-    this.gridComponent.gridApi.setRowData(this.rowData);
+    console.log(tenentId);
+  
+    return tenentId;
+  }
+  
+  async loadOrdersData() {
+    // Implement this method to fetch orders from the database
+    // Similar to how you've implemented loadInventoryData() in other components
   }
 }

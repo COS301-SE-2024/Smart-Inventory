@@ -14,7 +14,7 @@ import { Amplify } from 'aws-amplify';
 @Component({
     selector: 'app-orders',
     standalone: true,
-    imports: [GridComponent, MatButtonModule],
+    imports: [GridComponent, MatButtonModule, MatDialogModule],
     templateUrl: './orders.component.html',
     styleUrl: './orders.component.css',
 })
@@ -24,49 +24,7 @@ export class OrdersComponent implements OnInit{
         Amplify.configure(outputs);
     }
 
-    // Row Data: The data to be displayed.
-    rowData = [
-        {
-            Order_ID: '#101',
-            Order_Date: '2024-07-01',
-            Order_Status: 'Pending Approval',
-            Quote_ID: 'Q001',
-            Quote_Status: 'Draft',
-            Selected_Supplier: '',
-            Expected_Delivery_Date: '',
-            Actual_Delivery_Date: '',
-        },
-        {
-            Order_ID: '#102',
-            Order_Date: '2024-07-02',
-            Order_Status: 'Quote Sent to Suppliers',
-            Quote_ID: 'Q002',
-            Quote_Status: 'Sent',
-            Selected_Supplier: '',
-            Expected_Delivery_Date: '',
-            Actual_Delivery_Date: '',
-        },
-        {
-            Order_ID: '#103',
-            Order_Date: '2024-07-03',
-            Order_Status: 'Awaiting Arrival',
-            Quote_ID: 'Q003',
-            Quote_Status: 'Accepted',
-            Selected_Supplier: 'Takealot',
-            Expected_Delivery_Date: '2024-07-10',
-            Actual_Delivery_Date: '',
-        },
-        {
-            Order_ID: '#104',
-            Order_Date: '2024-07-04',
-            Order_Status: 'Received',
-            Quote_ID: 'Q004',
-            Quote_Status: 'Accepted',
-            Selected_Supplier: 'Amazon',
-            Expected_Delivery_Date: '2024-07-08',
-            Actual_Delivery_Date: '2024-07-07',
-        },
-    ];
+    rowData: any[] = [];
 
     // Column Definitions: Defines & controls grid columns.
     colDefs: ColDef[] = [
@@ -87,8 +45,9 @@ export class OrdersComponent implements OnInit{
 
     openAddDialog() {}
 
-    ngOnInit() {
+    async ngOnInit() {
         this.titleService.updateTitle('Orders');
+        await this.loadOrdersData();
     }
 
       // Add this method to handle the new custom quote
@@ -166,7 +125,63 @@ export class OrdersComponent implements OnInit{
   }
   
   async loadOrdersData() {
-    // Implement this method to fetch orders from the database
-    // Similar to how you've implemented loadInventoryData() in other components
+    try {
+        const session = await fetchAuthSession();
+
+        const cognitoClient = new CognitoIdentityProviderClient({
+            region: outputs.auth.aws_region,
+            credentials: session.credentials,
+        });
+
+        const getUserCommand = new GetUserCommand({
+            AccessToken: session.tokens?.accessToken.toString(),
+        });
+        const getUserResponse = await cognitoClient.send(getUserCommand);
+
+        const tenantId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
+
+        if (!tenantId) {
+            console.error('TenantId not found in user attributes');
+            this.rowData = [];
+            return;
+        }
+
+        const lambdaClient = new LambdaClient({
+            region: outputs.auth.aws_region,
+            credentials: session.credentials,
+        });
+
+        const invokeCommand = new InvokeCommand({
+            FunctionName: 'getOrders',
+            Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: tenantId } })),
+        });
+
+        const lambdaResponse = await lambdaClient.send(invokeCommand);
+        const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+        console.log('Response from Lambda:', responseBody);
+
+        if (responseBody.statusCode === 200) {
+            const orders = JSON.parse(responseBody.body);
+            this.rowData = orders.map((order: any) => ({
+                Order_ID: order.Order_ID,
+                Order_Date: order.Order_Date,
+                Order_Status: order.Order_Status,
+                Quote_ID: order.Quote_ID,
+                Quote_Status: order.Quote_Status,
+                Selected_Supplier: order.Selected_Supplier,
+                Expected_Delivery_Date: order.Expected_Delivery_Date,
+                Actual_Delivery_Date: order.Actual_Delivery_Date,
+            }));
+            console.log('Processed orders:', this.rowData);
+        } else {
+            console.error('Error fetching orders data:', responseBody.body);
+            this.rowData = [];
+        }
+    } catch (error) {
+        console.error('Error in loadOrdersData:', error);
+        this.rowData = [];
+    }
   }
+
+  
 }

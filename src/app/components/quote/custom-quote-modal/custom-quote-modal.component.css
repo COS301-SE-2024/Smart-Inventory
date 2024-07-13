@@ -8,6 +8,7 @@
     display: flex;
     flex-direction: column;
     gap: 24px;
+    min-height: 500px; 
   }
   
   .items-section, .suppliers-section {
@@ -116,4 +117,17 @@
   .item-description {
     font-size: 0.8em;
     color: #666;
+  }
+
+  .loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
   }

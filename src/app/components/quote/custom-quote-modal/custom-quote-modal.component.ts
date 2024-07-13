@@ -18,6 +18,7 @@ import { fetchAuthSession } from 'aws-amplify/auth';
 import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
 import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
 import outputs from '../../../../../amplify_outputs.json';
+import { LoadingSpinnerComponent } from '../../loader/loading-spinner.component';
 
 interface QuoteItem {
   item: { sku: string; description: string };
@@ -40,12 +41,14 @@ interface QuoteItem {
     MatButtonModule,
     MatIconModule,
     MatChipsModule,
-    NgxMatSelectSearchModule
+    NgxMatSelectSearchModule,
+    LoadingSpinnerComponent,
   ],
   templateUrl: './custom-quote-modal.component.html',
   styleUrls: ['./custom-quote-modal.component.css']
 })
 export class CustomQuoteModalComponent implements OnInit {
+  isLoading = true;
   quoteItems: QuoteItem[] = [];
   filteredQuoteItems: QuoteItem[] = [];
   quoteItemSearchTerm: string = '';
@@ -72,22 +75,26 @@ export class CustomQuoteModalComponent implements OnInit {
   }
 
   async ngOnInit() {
-    await this.loadInventoryItems();
-    await this.loadSuppliers();
-
-    if (this.isEditing && this.data.quoteDetails) {
-      this.initializeQuoteData(this.data.quoteDetails);
-    } else {
-      this.addItem();
+    this.isLoading = true;
+    try {
+      await Promise.all([this.loadInventoryItems(), this.loadSuppliers()]);
+  
+      if (this.isEditing && this.data.quoteDetails) {
+        this.initializeQuoteData(this.data.quoteDetails);
+      } else {
+        this.addItem();
+      }
+  
+      this.filteredSuppliers.next(this.suppliers.slice());
+      this.supplierControl.valueChanges
+        .pipe(takeUntil(this._onDestroy))
+        .subscribe(() => {
+          this.filterSuppliers();
+        });
+      this.filteredQuoteItems = this.quoteItems;
+    } finally {
+      this.isLoading = false;
     }
-
-    this.filteredSuppliers.next(this.suppliers.slice());
-    this.supplierControl.valueChanges
-      .pipe(takeUntil(this._onDestroy))
-      .subscribe(() => {
-        this.filterSuppliers();
-      });
-    this.filteredQuoteItems = this.quoteItems;
   }
 
   initializeQuoteData(quoteDetails: any) {

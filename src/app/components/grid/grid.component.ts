@@ -45,6 +45,8 @@ export class GridComponent implements OnInit {
 
     @Output() requestStock = new EventEmitter<any>();
     @Output() newCustomQuote = new EventEmitter<any>();
+    @Output() viewGeneratedQuoteClicked = new EventEmitter<void>();
+    @Output() rowSelected = new EventEmitter<any>();
 
 
     filteredRowData: any[] = [];
@@ -61,10 +63,12 @@ export class GridComponent implements OnInit {
         type: 'fitGridWidth',
     };
 
+    selectedRow: any = null;
+
     public rowSelection: 'single' | 'multiple' = 'multiple';
     public editType: 'fullRow' = 'fullRow';
 
-    constructor(public dialog: MatDialog, private route: ActivatedRoute) {}
+    constructor(public dialog: MatDialog, private route: ActivatedRoute) { }
 
     ngOnInit(): void {
         this.filteredRowData = [...this.rowData];
@@ -81,6 +85,10 @@ export class GridComponent implements OnInit {
     onGridReady(params: GridReadyEvent) {
         this.gridApi = params.api;
         this.gridApi.sizeColumnsToFit();
+    }
+
+    onViewGeneratedQuoteClick() {
+        this.viewGeneratedQuoteClicked.emit();
     }
 
     addRow() {
@@ -112,6 +120,16 @@ export class GridComponent implements OnInit {
     onRowValueChanged(event: RowValueChangedEvent) {
         const data = event.data;
         console.log(data);
+    }
+
+    onRowSelected(event: any) {
+        if (event.node.isSelected()) {
+            this.selectedRow = event.data;
+            this.rowSelected.emit(this.selectedRow);
+        } else {
+            this.selectedRow = null;
+            this.rowSelected.emit(null);
+        }
     }
 
     importExcel() {
@@ -163,20 +181,20 @@ export class GridComponent implements OnInit {
 
     openCustomQuoteModal() {
         const dialogRef = this.dialog.open(CustomQuoteModalComponent, {
-          width: '500px',
-          data: {} // You can pass data to the modal if needed
+            width: '500px',
+            data: { isNewQuote: true } // Set isNewQuote to true for creating a new order
         });
-    
+
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
-              if (result.action === 'saveDraft') {
-                console.log('Saving draft:', result.data);
-                this.newCustomQuote.emit({ type: 'draft', data: result.data });
-              } else if (result.action === 'createQuote') {
-                console.log('Creating quote:', result.data);
-                this.newCustomQuote.emit({ type: 'quote', data: result.data });
-              }
+                if (result.action === 'saveDraft') {
+                    console.log('Saving draft:', result.data);
+                    this.newCustomQuote.emit({ type: 'draft', data: result.data });
+                } else if (result.action === 'createQuote') {
+                    console.log('Creating quote:', result.data);
+                    this.newCustomQuote.emit({ type: 'quote', data: result.data });
+                }
             }
-          });
+        });
     }
 }

@@ -5,22 +5,21 @@
     <mat-form-field appearance="outline" class="full-width search-field">
       <mat-label>Search Quote Items</mat-label>
       <input matInput type="text" [(ngModel)]="quoteItemSearchTerm" (input)="filterQuoteItems()">
-      <button *ngIf="quoteItemSearchTerm" matSuffix mat-icon-button aria-label="Clear" 
-              (click)="quoteItemSearchTerm=''; filterQuoteItems()" class="clear-button">
+      <button *ngIf="quoteItemSearchTerm" matSuffix mat-icon-button aria-label="Clear"
+        (click)="quoteItemSearchTerm=''; filterQuoteItems()" class="clear-button">
         <mat-icon>close</mat-icon>
       </button>
       <mat-icon matSuffix class="search-icon">search</mat-icon>
     </mat-form-field>
     <div class="item-list">
+      <!-- ... existing HTML ... -->
       <div *ngFor="let item of filteredQuoteItems; let i = index" class="item-row">
         <mat-form-field appearance="outline">
           <mat-label>Item</mat-label>
           <mat-select [(ngModel)]="item.item" [compareWith]="compareItems">
             <mat-option>
-              <ngx-mat-select-search [formControl]="item.searchControl" 
-                                     placeholderLabel="Search items..." 
-                                     noEntriesFoundLabel="No matching items found" 
-                                     (input)="filterItems($any($event).target.value, i)">
+              <ngx-mat-select-search [formControl]="item.searchControl" placeholderLabel="Search items..."
+                noEntriesFoundLabel="No matching items found" (input)="filterItems($any($event).target.value, i)">
               </ngx-mat-select-search>
             </mat-option>
             <mat-option *ngFor="let invItem of item.filteredItems | async" [value]="invItem">
@@ -39,6 +38,7 @@
           <mat-icon>remove_circle</mat-icon>
         </button>
       </div>
+      <!-- ... rest of the HTML ... -->
     </div>
     <button mat-raised-button (click)="addItem()" class="add-item-button">
       <mat-icon>add</mat-icon> Add Item
@@ -51,7 +51,8 @@
       <mat-label>Select Suppliers</mat-label>
       <mat-select [(ngModel)]="selectedSuppliers" multiple>
         <mat-option>
-          <ngx-mat-select-search [formControl]="supplierControl" placeholderLabel="Search suppliers..." noEntriesFoundLabel="No matching suppliers found"></ngx-mat-select-search>
+          <ngx-mat-select-search [formControl]="supplierControl" placeholderLabel="Search suppliers..."
+            noEntriesFoundLabel="No matching suppliers found"></ngx-mat-select-search>
         </mat-option>
         <mat-option *ngFor="let supplier of filteredSuppliers | async" [value]="supplier">{{supplier}}</mat-option>
       </mat-select>
@@ -70,6 +71,6 @@
 </mat-dialog-content>
 <mat-dialog-actions align="end">
   <button mat-button (click)="cancel()">Cancel</button>
-  <button mat-button (click)="saveDraft()">Save Draft</button>
-  <button mat-raised-button color="primary" (click)="createQuote()">Send Quote</button>
+  <button mat-raised-button color="primary" *ngIf="isNewQuote" (click)="saveDraft()">Save Draft</button>
+  <button mat-raised-button color="primary" *ngIf="!isNewQuote" (click)="saveChanges()">Save Changes</button>
 </mat-dialog-actions>

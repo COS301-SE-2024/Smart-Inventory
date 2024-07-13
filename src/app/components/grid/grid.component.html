@@ -25,7 +25,8 @@
             <button mat-menu-item *ngIf="getCurrentRoute('orders')" color="primary" (click)="deleteRow()">
                 - Delete Order
             </button>
-            <button mat-menu-item *ngIf="getCurrentRoute('orders')" color="primary">
+            <button mat-menu-item *ngIf="getCurrentRoute('orders')" color="primary"
+                (click)="onViewGeneratedQuoteClick()">
                 View Generated Quote
             </button>
             <button mat-menu-item *ngIf="getCurrentRoute('orders')" color="primary">
@@ -48,17 +49,9 @@
 </div>
 
 <div class="container">
-    <ag-grid-angular
-        [rowData]="filteredRowData"
-        [columnDefs]="columnDefs"
-        [rowSelection]="rowSelection"
-        [editType]="editType"
-        (cellValueChanged)="onCellValueChanged($event)"
-        (rowValueChanged)="onRowValueChanged($event)"
-        [rowData]="rowData"
-        class="ag-theme-quartz aggrid"
-        (gridReady)="onGridReady($event)"
-        style="height: 83vh;"
-    >
+    <ag-grid-angular [rowData]="filteredRowData" [columnDefs]="columnDefs" [rowSelection]="rowSelection"
+        [editType]="editType" (cellValueChanged)="onCellValueChanged($event)"
+        (rowValueChanged)="onRowValueChanged($event)" (rowSelected)="onRowSelected($event)" [rowData]="rowData"
+        class="ag-theme-quartz aggrid" (gridReady)="onGridReady($event)" style="height: 83vh;">
     </ag-grid-angular>
 </div>

@@ -3,6 +3,8 @@
     [rowData]="rowData"
     [columnDefs]="colDefs"
     (newCustomQuote)="handleNewCustomQuote($event)"
+    (viewGeneratedQuoteClicked)="viewGeneratedQuote()"
+    (rowSelected)="onRowSelected($event)"
     #gridComponent
     >
     </app-grid>

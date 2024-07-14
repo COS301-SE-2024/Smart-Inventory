@@ -7,13 +7,14 @@
 </div> -->
 
 
-  
+
 <div class="main-container gridster-container">
     <div class="help-button-container">
         <a id="help-button">
             <button mat-raised-button [matMenuTriggerFor]="mainMenu">Help Options</button>
             <mat-menu #mainMenu="matMenu" yPosition="above">
-                <button mat-menu-item [matMenuTriggerFor]="widgetMenu">Add a Widget</button>
+                <button mat-button (click)="toggleSidePanel()">Add a Widget</button>
+                <app-sidepanel *ngIf="sidePanelOpen"></app-sidepanel>
                 <button mat-menu-item (click)="toggleDeleteMode()">Delete a Widget</button>
                 <button mat-menu-item routerLink="/help">Help</button>
                 <button mat-menu-item routerLink="/settings">Settings</button>
@@ -26,12 +27,19 @@
             </mat-menu>
         </a>
     </div>
-    <mat-drawer-container class="example-container" autosize>
-        <mat-drawer #drawer mode="side" opened="false">Your Charts will go here</mat-drawer>
-        <div class="example-sidenav-content">
-          <button mat-raised-button (click)="drawer.toggle()">Add a Widget</button>
+    <!-- <div class="sidebar-container">
+        <div class="gear-icon" (click)="toggleSidebar()">
+            <mat-icon class="gear">settings</mat-icon>
         </div>
-      </mat-drawer-container>
+        <div class="sidebar" [class.active]="sidebarOpen">
+            <div class="sidebar-header">SIDEBAR FILTERS</div>
+            <div class="sidebar-content">
+                <button mat-button>Download Free</button>
+                <button mat-button>Buy Pro</button>
+                <button mat-button>View Documentation</button>
+            </div>
+        </div>
+    </div> -->
     <gridster [options]="options">
         <gridster-item [item]="item" *ngFor="let item of dashboard">
             <!-- Use ngSwitch to differentiate between card types -->

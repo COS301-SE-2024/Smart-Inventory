@@ -3,6 +3,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TitleService } from '../../components/header/title.service';
 import { MaterialModule } from '../../components/material/material.module';
 import { CommonModule } from '@angular/common';
+import { SidepanelComponent } from '../../components/sidepanel/sidepanel.component';
 import { CompactType, GridsterModule } from 'angular-gridster2';
 import { GridType, DisplayGrid } from 'angular-gridster2';
 import { GridsterConfig, GridsterItem } from 'angular-gridster2';
@@ -58,10 +59,18 @@ interface DashboardItem extends GridsterItem {
         SaleschartComponent,
         BubblechartComponent,
         MatProgressSpinnerModule,
+        SidepanelComponent
     ],
 })
 export class DashboardComponent implements OnInit {
     isDeleteMode: boolean = false;
+    sidePanelOpen: boolean = false;
+
+    toggleSidePanel(): void {
+        this.sidePanelOpen = !this.sidePanelOpen;
+    }
+
+
     private saveTrigger = new Subject<void>();
 
     data: any;
@@ -160,11 +169,11 @@ export class DashboardComponent implements OnInit {
 
     enableDragging(item: GridsterItem) {
         item.dragEnabled = true;
-      }
-    
-      disableDragging(item: GridsterItem) {
+    }
+
+    disableDragging(item: GridsterItem) {
         item.dragEnabled = false;
-      }
+    }
 
     // Integration
 

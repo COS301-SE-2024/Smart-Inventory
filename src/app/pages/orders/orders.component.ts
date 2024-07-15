@@ -156,7 +156,7 @@ export class OrdersComponent implements OnInit {
       const payload = {
         pathParameters: {
           tenentId: tenentId,
-          quoteId: updatedQuote.quoteId // Use the quoteId from the updated quote data
+          quoteId: updatedQuote.quoteId
         },
         body: JSON.stringify({
           items: updatedQuote.items.map((item: any) => ({
@@ -181,6 +181,14 @@ export class OrdersComponent implements OnInit {
   
       if (responseBody.statusCode === 200) {
         console.log('Quote updated successfully');
+        
+        // Show success snackbar
+        this.snackBar.open('Changes saved successfully', 'Close', {
+          duration: 6000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+        });
+  
         // Refresh the orders data
         await this.loadOrdersData();
       } else {
@@ -188,7 +196,13 @@ export class OrdersComponent implements OnInit {
       }
     } catch (error) {
       console.error('Error updating quote:', error);
-      alert(`Error updating quote: ${(error as Error).message}`);
+      
+      // Show error snackbar
+      this.snackBar.open(`Error saving changes: ${(error as Error).message}`, 'Close', {
+        duration: 5000,
+        horizontalPosition: 'center',
+        verticalPosition: 'top',
+      });
     }
   }
 
@@ -235,9 +249,9 @@ export class OrdersComponent implements OnInit {
         
         // Show success snackbar
         this.snackBar.open('Order created successfully', 'Close', {
-          duration: 3000,
+          duration: 6000,
           horizontalPosition: 'center',
-          verticalPosition: 'bottom',
+          verticalPosition: 'top',
         });
   
         await this.loadOrdersData();
@@ -268,7 +282,7 @@ export class OrdersComponent implements OnInit {
       this.snackBar.open(`Error creating order: ${(error as Error).message}`, 'Close', {
         duration: 5000,
         horizontalPosition: 'center',
-        verticalPosition: 'bottom',
+        verticalPosition: 'top',
       });
     }
   }
@@ -430,7 +444,7 @@ export class OrdersComponent implements OnInit {
           this.snackBar.open('Order deleted successfully', 'Close', {
             duration: 6000, // Duration in milliseconds
             horizontalPosition: 'center',
-            verticalPosition: 'bottom',
+            verticalPosition: 'top',
           });
 
           await this.loadOrdersData();
@@ -446,7 +460,7 @@ export class OrdersComponent implements OnInit {
         this.snackBar.open(`Error deleting order: ${(error as Error).message}`, 'Close', {
           duration: 5000, // Longer duration for error messages
           horizontalPosition: 'center',
-          verticalPosition: 'bottom',
+          verticalPosition: 'top',
         });
       }
     }

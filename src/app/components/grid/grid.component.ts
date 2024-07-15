@@ -1,8 +1,10 @@
-import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, Output, EventEmitter } from '@angular/core';
+import { Renderer2, ElementRef, AfterViewInit, ViewEncapsulation  } from '@angular/core';
 import { AgGridAngular } from 'ag-grid-angular';
 import { ColDef, GridReadyEvent, CellValueChangedEvent, RowValueChangedEvent, GridApi } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
+import 'ag-grid-community/styles/ag-theme-material.css';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
@@ -33,8 +35,9 @@ import { CustomQuoteModalComponent } from '../quote/custom-quote-modal/custom-qu
     ],
     templateUrl: './grid.component.html',
     styleUrl: './grid.component.css',
+    encapsulation: ViewEncapsulation.None  // This line turns off encapsulation
 })
-export class GridComponent implements OnInit {
+export class GridComponent implements OnInit, OnDestroy, AfterViewInit   {
     @Input() rowData: any[] = [];
     @Input() columnDefs: ColDef[] = [];
     @Input() addButton: { text: string } = { text: 'Add' };
@@ -48,6 +51,9 @@ export class GridComponent implements OnInit {
     @Output() viewGeneratedQuoteClicked = new EventEmitter<void>();
     @Output() rowSelected = new EventEmitter<any>();
     @Output() deleteOrderClicked = new EventEmitter<any>();
+    private themeObserver!: MutationObserver;
+
+    public themeClass: string = 'ag-theme-material'; // Default to light theme
 
     filteredRowData: any[] = [];
 
@@ -68,7 +74,28 @@ export class GridComponent implements OnInit {
     public rowSelection: 'single' | 'multiple' = 'multiple';
     public editType: 'fullRow' = 'fullRow';
 
-    constructor(public dialog: MatDialog, private route: ActivatedRoute) { }
+    constructor(public dialog: MatDialog, private route: ActivatedRoute, private renderer: Renderer2, private el: ElementRef) {
+        this.setupThemeObserver();
+    }
+
+    private setupThemeObserver() {
+        this.themeObserver = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.attributeName === 'data-theme') {
+                    this.applyCurrentTheme();
+                }
+            });
+        });
+        this.themeObserver.observe(document.body, { attributes: true });
+    }
+
+    private applyCurrentTheme() {
+        const theme = document.body.getAttribute('data-theme') === 'dark' ? 'ag-theme-material-dark' : 'ag-theme-quartz';
+        this.themeClass = theme;
+        if (this.gridApi) {
+            this.gridApi.redrawRows(); // Redraw rows to apply the new CSS class for the theme change
+        }
+    }
 
     ngOnInit(): void {
         this.filteredRowData = [...this.rowData];
@@ -78,6 +105,13 @@ export class GridComponent implements OnInit {
         this.columnDefs = this.columnDefs.map((col) => ({ ...col, editable: true }));
     }
 
+    ngAfterViewInit() {
+        this.applyCurrentTheme();
+
+        const selectPlaceholder = this.el.nativeElement.querySelector('.mat-select-placeholder');
+        this.renderer.setStyle(selectPlaceholder, 'color', 'var(--text-color)');
+    }
+
     getCurrentRoute(v: string) {
         return v === this.route.snapshot.url[0].path.toString();
     }
@@ -85,6 +119,13 @@ export class GridComponent implements OnInit {
     onGridReady(params: GridReadyEvent) {
         this.gridApi = params.api;
         this.gridApi.sizeColumnsToFit();
+        this.applyCurrentTheme();
+    }
+
+    ngOnDestroy(): void {
+        if (this.themeObserver) {
+            this.themeObserver.disconnect();
+        }
     }
 
     onViewGeneratedQuoteClick() {

@@ -59,6 +59,7 @@
     (rowSelected)="onRowSelected($event)" 
     (selectionChanged)="onSelectionChanged($event)"
     [rowData]="rowData"
+    [class]="themeClass"
     class="ag-theme-quartz aggrid" 
     (gridReady)="onGridReady($event)" style="height: 83vh;">
     </ag-grid-angular>

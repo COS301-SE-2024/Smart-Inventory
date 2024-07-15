@@ -35,7 +35,15 @@
             </div>
             <div class="form-group">
                 <label for="supplier">Supplier</label>
-                <input type="text" id="supplier" name="supplier" [(ngModel)]="item.supplier" required />
+                <select id="supplier" name="supplier" [(ngModel)]="item.supplier" required>
+                    <option *ngFor="let supplier of suppliers" [value]="supplier.company_name">
+                        {{supplier.company_name}}
+                    </option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="expirationDate">Expiration Date</label>
+                <input type="date" id="expirationDate" name="expirationDate" [(ngModel)]="item.expirationDate" required />
             </div>
             <div class="button-group">
                 <button type="submit" [disabled]="!itemForm.form.valid">Submit</button>

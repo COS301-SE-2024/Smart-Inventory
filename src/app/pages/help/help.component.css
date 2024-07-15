@@ -2,6 +2,7 @@
 .mat-mdc-button-raised {
     width: 30vh;
 }
+
 .test {
     width: 30vh;
     color: #1a1b1f;
@@ -15,6 +16,7 @@
     height: 40px;
     font-size: 15px;
 }
+
 /* width */
 ::-webkit-scrollbar {
     margin-left: 5px;
@@ -94,10 +96,14 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    justify-content: flex-start; /* Ensure buttons start at the top */
-    padding: 0; /* Ensure there's no padding affecting positioning */
-    margin: 0; /* Ensure there's no margin affecting positioning */
-    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+    justify-content: flex-start;
+    /* Ensure buttons start at the top */
+    padding: 0;
+    /* Ensure there's no padding affecting positioning */
+    margin: 0;
+    /* Ensure there's no margin affecting positioning */
+    box-sizing: border-box;
+    /* Include padding and border in the element's total width and height */
 }
 
 /* NAVIGATION MENU */
@@ -105,8 +111,10 @@
 .content .second-row .left-pane .menu-buttons {
     width: 100%;
     margin-top: 0;
-    padding: 0; /* Ensure there's no padding affecting positioning */
-    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+    padding: 0;
+    /* Ensure there's no padding affecting positioning */
+    box-sizing: border-box;
+    /* Include padding and border in the element's total width and height */
     margin-bottom: 40vh;
 }
 
@@ -123,7 +131,8 @@
     font-weight: 500;
     padding-top: 10px;
     padding-bottom: 10px;
-    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+    box-sizing: border-box;
+    /* Include padding and border in the element's total width and height */
 }
 
 /* .content[_ngcontent-ng-c2828906938][_ngcontent-ng-c2828906938]   .second-row[_ngcontent-ng-c2828906938][_ngcontent-ng-c2828906938]   .left-pane[_ngcontent-ng-c2828906938][_ngcontent-ng-c2828906938]   .menu-buttons[_ngcontent-ng-c2828906938][_ngcontent-ng-c2828906938]   button[_ngcontent-ng-c2828906938][_ngcontent-ng-c2828906938]{
@@ -350,15 +359,16 @@
 /* BANNER  */
 .mat-mdc-tab-group,
 .mat-mdc-tab-nav-bar {
-    --mat-tab-header-active-focus-label-text-color: #151414;
-    --mat-tab-header-active-label-text-color: #151414;
-    --mat-tab-header-inactive-label-text-color: rgb(0 0 0 / 60%);
-    --mat-tab-header-inactive-focus-label-text-color: black;
-    --mat-tab-header-inactive-hover-label-text-color: black;
-    --mdc-tab-indicator-active-indicator-color: #242022;
-    --mat-tab-header-active-hover-label-text-color: black;
-    --mat-tab-header-inactive-ripple-color: #232222;
+    --mat-tab-header-active-focus-label-text-color: var(--tab-active-color);
+    --mat-tab-header-active-label-text-color: var(--tab-active-color);
+    --mat-tab-header-inactive-label-text-color: var(--tab-inactive-color);
+    --mat-tab-header-inactive-focus-label-text-color: var(--tab-hover-color);
+    --mat-tab-header-inactive-hover-label-text-color: var(--tab-hover-color);
+    --mdc-tab-indicator-active-indicator-color: var(--tab-indicator-color);
+    --mat-tab-header-active-hover-label-text-color: var(--tab-hover-color);
+    --mat-tab-header-inactive-ripple-color: var(--tab-ripple-color);
 }
+
 .content .second-row .right-pane .troubleshooting-section .troubleshooting-row-three .troubleshooting-banner {
     display: flex;
     justify-content: space-between;
@@ -369,39 +379,19 @@
     border-radius: 15px;
 }
 
-.content
-    .second-row
-    .right-pane
-    .troubleshooting-section
-    .troubleshooting-row-three
-    .troubleshooting-banner
-    .banner-text
-    h3 {
+.content .second-row .right-pane .troubleshooting-section .troubleshooting-row-three .troubleshooting-banner .banner-text h3 {
     margin: 0;
     margin-bottom: 5px;
     font-size: 30px;
 }
 
-.content
-    .second-row
-    .right-pane
-    .troubleshooting-section
-    .troubleshooting-row-three
-    .troubleshooting-banner
-    .banner-text
-    p {
+.content .second-row .right-pane .troubleshooting-section .troubleshooting-row-three .troubleshooting-banner .banner-text p {
     font-size: 20px;
     margin: 0;
     font-weight: 500;
 }
 
-.content
-    .second-row
-    .right-pane
-    .troubleshooting-section
-    .troubleshooting-row-three
-    .troubleshooting-banner
-    .get-in-touch-button {
+.content .second-row .right-pane .troubleshooting-section .troubleshooting-row-three .troubleshooting-banner .get-in-touch-button {
     background-color: black;
     color: white;
     font-size: 20px;
@@ -460,7 +450,8 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center; /* Center the form in the column */
+    align-items: center;
+    /* Center the form in the column */
     margin-left: 30px;
 }
 
@@ -471,7 +462,8 @@
     /* background-color: white;  */
     /* padding: 20px; */
     box-shadow: none;
-    border-radius: 10px; /* Optional: Add border radius for better look */
+    border-radius: 10px;
+    /* Optional: Add border radius for better look */
     max-width: fit-content;
 }
 
@@ -483,15 +475,7 @@
     border-radius: 15px;
 }
 
-.content
-    .second-row
-    .right-pane
-    .customer-support-section
-    .customer-support-row-two
-    .column-two
-    form
-    mat-form-field
-    .mdc-text-field--filled:not(.mdc-text-field--disabled) {
+.content .second-row .right-pane .customer-support-section .customer-support-row-two .column-two form mat-form-field .mdc-text-field--filled:not(.mdc-text-field--disabled) {
     background-color: #fff !important;
     border-radius: 15px !important;
     max-width: fit-content;
@@ -517,28 +501,13 @@ mat-form-field.mat-mdc-form-field.mat-mdc-form-field-type-mat-input.mat-form-fie
     padding-left: 20px;
     padding-right: 20px;
 }
+
 /* REMOVE UNDERLINE IN FORM FIELDS */
-.content
-    .second-row
-    .right-pane
-    .customer-support-section
-    .customer-support-row-two
-    .column-two
-    form
-    mat-form-field
-    .mdc-line-ripple {
+.content .second-row .right-pane .customer-support-section .customer-support-row-two .column-two form mat-form-field .mdc-line-ripple {
     display: none;
 }
 
-.content
-    .second-row
-    .right-pane
-    .customer-support-section
-    .customer-support-row-two
-    .column-two
-    form
-    mat-form-field
-    textarea {
+.content .second-row .right-pane .customer-support-section .customer-support-row-two .column-two form mat-form-field textarea {
     height: 120px;
     background-color: #fff;
 }
@@ -550,16 +519,10 @@ mat-form-field.mat-mdc-form-field.mat-mdc-form-field-type-mat-input.mat-form-fie
     display: none !important;
 }
 
-.content
-    .second-row
-    .right-pane
-    .customer-support-section
-    .customer-support-row-two
-    .column-two
-    form
-    .button-container {
+.content .second-row .right-pane .customer-support-section .customer-support-row-two .column-two form .button-container {
     display: flex;
-    justify-content: flex-end; /* Align the button to the right */
+    justify-content: flex-end;
+    /* Align the button to the right */
 }
 
 /* BANNER  */
@@ -580,39 +543,19 @@ mat-form-field.mat-mdc-form-field.mat-mdc-form-field-type-mat-input.mat-form-fie
     border-radius: 15px;
 }
 
-.content
-    .second-row
-    .right-pane
-    .customer-support-section
-    .customer-support-row-three
-    .customer-support-banner
-    .banner-text
-    h3 {
+.content .second-row .right-pane .customer-support-section .customer-support-row-three .customer-support-banner .banner-text h3 {
     margin: 0;
     margin-bottom: 5px;
     font-size: 30px;
 }
 
-.content
-    .second-row
-    .right-pane
-    .customer-support-section
-    .customer-support-row-three
-    .customer-support-banner
-    .banner-text
-    p {
+.content .second-row .right-pane .customer-support-section .customer-support-row-three .customer-support-banner .banner-text p {
     font-size: 20px;
     margin: 0;
     font-weight: 500;
 }
 
-.content
-    .second-row
-    .right-pane
-    .customer-support-section
-    .customer-support-row-three
-    .customer-support-banner
-    .get-in-touch-button {
+.content .second-row .right-pane .customer-support-section .customer-support-row-three .customer-support-banner .get-in-touch-button {
     background-color: black;
     color: white;
     font-size: 20px;
@@ -639,11 +582,13 @@ mat-form-field.mat-mdc-form-field.mat-mdc-form-field-type-mat-input.mat-form-fie
     align-items: center;
     padding: 16px;
 }
+
 .mat-mdc-tab-body-content.ng-trigger.ng-trigger-translateTab {
     height: 100vh;
     overflow: scroll;
     padding-right: 30px;
 }
+
 /* .user-guides-row-one h2 {
     margin: 0;
     font-size: 60px;
@@ -653,11 +598,12 @@ mat-form-field.mat-mdc-form-field.mat-mdc-form-field-type-mat-input.mat-form-fie
     display: flex;
     flex-direction: row;
 }
+
 .side-menu {
     width: 20%;
     position: relative;
     /* top: 10%; */
-    background-color: #f1f1f1;
+    background-color: var(--user-guides-sidebar-bg-color);
     padding: 16px;
     border-right: 1px solid #000000;
 }
@@ -682,7 +628,7 @@ a {
 }
 
 .side-menu nav ul li a:link {
-    color: #000;
+    color: var(--text-color);
     font-weight: 500;
 }
 
@@ -692,7 +638,7 @@ a {
 }
 
 .side-menu nav ul li a:hover {
-    color: blue;
+    color: var(--text-color-hover);
     font-weight: 500;
 }
 
@@ -703,7 +649,7 @@ a {
 .article-content {
     width: 80%;
     padding: 16px;
-    background-color: #fff;
+    background-color: var(--user-guides-bg-color);
     overflow-y: scroll;
 }
 
@@ -715,15 +661,19 @@ p {
 
 .video-container {
     display: flex;
-    justify-content: center; /* Center horizontally */
-    align-items: center; /* Center vertically */
-    height: 100%; /* Full height of the parent container */
+    justify-content: center;
+    /* Center horizontally */
+    align-items: center;
+    /* Center vertically */
+    height: 100%;
+    /* Full height of the parent container */
 }
 
 .video-frame {
     position: relative;
     width: 100%;
-    padding-top: 56.25%; /* 16:9 Aspect Ratio */
+    padding-top: 56.25%;
+    /* 16:9 Aspect Ratio */
     overflow: hidden;
 }
 
@@ -797,6 +747,7 @@ p {
     border-radius: 5px;
     border: #000;
 }
+
 .mat-mdc-form-field-infix {
     flex: auto;
     min-width: 0;
@@ -805,6 +756,7 @@ p {
     box-sizing: border-box;
     background-color: #f1f1f1;
 }
+
 .mat-mdc-text-field-wrapper.mdc-text-field.mdc-text-field--filled {
     background-color: #f1f1f1;
     border-radius: 15px;
@@ -878,27 +830,13 @@ p {
     border-radius: 15px;
 } */
 
-.content
-    .second-row
-    .right-pane
-    .release-notes-section
-    .release-notes-row.release-notes-row-three
-    .release-notes-banner
-    .banner-text
-    h3 {
+.content .second-row .right-pane .release-notes-section .release-notes-row.release-notes-row-three .release-notes-banner .banner-text h3 {
     margin: 0;
     margin-bottom: 5px;
     font-size: 30px;
 }
 
-.content
-    .second-row
-    .right-pane
-    .release-notes-section
-    .release-notes-row.release-notes-row-three
-    .release-notes-banner
-    .banner-text
-    p {
+.content .second-row .right-pane .release-notes-section .release-notes-row.release-notes-row-three .release-notes-banner .banner-text p {
     font-size: 20px;
     margin: 0;
     font-weight: 500;
@@ -923,6 +861,7 @@ p {
 .form-row mat-form-field {
     background-color: none;
 }
+
 button.send-button {
     /* background-color: #8f8f8f; */
     width: 200px;
@@ -933,6 +872,7 @@ button.send-button {
     margin-bottom: 20px;
     border: #000;
 }
+
 /* FORM FIELD EDITING SH** TOOK LONG YALL */
 
 /* MAKE FORM FIELDS WHITE */
@@ -963,6 +903,7 @@ mat-form-field .mdc-line-ripple {
 .mat-form-field-outline-gap {
     border-radius: 15px !important;
 }
+
 .form-field {
     padding: 10px;
     flex: 1;
@@ -976,4 +917,31 @@ button mat-button {
     color: #000;
     font-size: 20px;
     font-weight: 400;
+}
+
+
+.mat-expansion-panel {
+    box-sizing: content-box;
+    display: block;
+    margin: 0;
+    overflow: hidden;
+    transition: margin 225ms cubic-bezier(0.4, 0, 0.2, 1), box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    background: var(--help-accordion-bg-color) !important;
+    color: var(--help-accordion-text-color) !important;
+    border-radius: var(--mat-expansion-container-shape);
+}
+
+.mat-expansion-panel-header-title {
+    color: var(--help-accordion-text-color) !important;
+}
+
+.mat-expansion-indicator svg {
+    width: 24px;
+    height: 24px;
+    margin: 0 -8px;
+    vertical-align: middle;
+    fill: var(--help-accordion-text-color) !important;
+    display: none;
+    display: var(--mat-expansion-header-indicator-display, none);
 }

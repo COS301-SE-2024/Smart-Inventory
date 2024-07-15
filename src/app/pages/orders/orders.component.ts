@@ -75,11 +75,29 @@ export class OrdersComponent implements OnInit {
     }
     try {
       const quoteDetails = await this.fetchQuoteDetails(this.selectedOrder.Quote_ID);
-      this.openCustomQuoteModal(quoteDetails);
+      this.openCustomQuoteModal(quoteDetails, this.selectedOrder.Order_ID, this.selectedOrder.Quote_ID);
     } catch (error) {
       console.error('Error fetching quote details:', error);
       alert('Error fetching quote details');
     }
+  }
+  
+  openCustomQuoteModal(quoteDetails: any, orderId: string, quoteId: string) {
+    console.log('Opening modal with orderId:', orderId, 'and quoteId:', quoteId); // Add this log
+    const dialogRef = this.dialog.open(CustomQuoteModalComponent, {
+      width: '500px',
+      data: {
+        quoteDetails: {
+          ...quoteDetails,
+          orderId: orderId,
+          quoteId: quoteId
+        },
+        isEditing: !!quoteDetails,
+        isNewQuote: !quoteDetails
+      }
+    });
+  
+    // ... rest of the method remains the same
   }
 
   async fetchQuoteDetails(quoteId: string) {
@@ -106,28 +124,6 @@ export class OrdersComponent implements OnInit {
     } else {
       throw new Error(responseBody.body);
     }
-  }
-
-  openCustomQuoteModal(quoteDetails: any) {
-    const dialogRef = this.dialog.open(CustomQuoteModalComponent, {
-      width: '500px',
-      data: {
-        quoteDetails: quoteDetails,
-        isEditing: !!quoteDetails,
-        isNewQuote: !quoteDetails
-      }
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        if (result.action === 'saveDraft') {
-          this.createNewOrder(result.data);
-        } else if (result.action === 'saveChanges') {
-          this.updateQuote(result.data);
-        }
-      }
-      this.refreshGridSelection();
-    });
   }
 
   async updateQuote(updatedQuote: any) {

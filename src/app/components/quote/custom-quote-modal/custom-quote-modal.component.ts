@@ -62,8 +62,11 @@ export class CustomQuoteModalComponent implements OnInit {
   isEditing: boolean = false;
   isNewQuote: boolean = false;
 
+  orderId: string | null = null;
+  quoteId: string | null = null;
+
   protected _onDestroy = new Subject<void>();
-  quoteId: string;
+
   constructor(
     public dialogRef: MatDialogRef<CustomQuoteModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -71,7 +74,11 @@ export class CustomQuoteModalComponent implements OnInit {
   ) {
     this.isEditing = data.isEditing || false;
     this.isNewQuote = data.isNewQuote || false;
-    this.quoteId = data.quoteDetails?.quoteId;
+    this.quoteId = data.quoteDetails?.quoteId || null;
+    this.orderId = data.quoteDetails?.orderId || null;
+    
+    console.log('Received data in modal:', data); // Add this log
+    console.log('orderId:', this.orderId, 'quoteId:', this.quoteId); // Add this log
   }
 
   async ngOnInit() {

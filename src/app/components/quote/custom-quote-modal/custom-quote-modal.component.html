@@ -1,4 +1,12 @@
-<h2 mat-dialog-title>Create Custom Quote</h2>
+<ng-container *ngIf="isNewQuote">
+  <h2 mat-dialog-title>Create Custom Quote</h2>
+</ng-container>
+<ng-container *ngIf="!isNewQuote">
+  <div class="quote-header">
+    <div>Order ID: {{orderId}}</div>
+    <div>Quote ID: {{quoteId}}</div>
+  </div>
+</ng-container>
 <mat-dialog-content class="quote-content">
   <div *ngIf="isLoading" class="loading-overlay">
     <app-loading-spinner></app-loading-spinner>

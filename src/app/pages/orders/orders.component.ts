@@ -146,16 +146,16 @@ export class OrdersComponent implements OnInit {
     try {
       const session = await fetchAuthSession();
       const tenentId = await this.getTenentId(session);
-
+  
       const lambdaClient = new LambdaClient({
         region: outputs.auth.aws_region,
         credentials: session.credentials,
       });
-
+  
       const payload = {
         pathParameters: {
           tenentId: tenentId,
-          quoteId: this.selectedOrder.Quote_ID
+          quoteId: updatedQuote.quoteId // Use the quoteId from the updated quote data
         },
         body: JSON.stringify({
           items: updatedQuote.items.map((item: any) => ({
@@ -165,19 +165,19 @@ export class OrdersComponent implements OnInit {
           suppliers: updatedQuote.suppliers
         })
       };
-
+  
       console.log('Updating quote with payload:', JSON.stringify(payload, null, 2));
-
+  
       const invokeCommand = new InvokeCommand({
         FunctionName: 'updateQuoteDetails',
         Payload: new TextEncoder().encode(JSON.stringify(payload)),
       });
-
+  
       const lambdaResponse = await lambdaClient.send(invokeCommand);
       const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
+  
       console.log('Lambda response:', JSON.stringify(responseBody, null, 2));
-
+  
       if (responseBody.statusCode === 200) {
         console.log('Quote updated successfully');
         // Refresh the orders data

@@ -108,6 +108,12 @@ export class OrdersComponent implements OnInit {
         isNewQuote: false
       }
     });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result && result.action === 'saveChanges') {
+        this.updateQuote(result.data);
+      }
+    });
   }
 
   async fetchQuoteDetails(quoteId: string) {
@@ -139,7 +145,7 @@ export class OrdersComponent implements OnInit {
   async updateQuote(updatedQuote: any) {
     try {
       const session = await fetchAuthSession();
-      const tenantId = await this.getTenentId(session);
+      const tenentId = await this.getTenentId(session);
 
       const lambdaClient = new LambdaClient({
         region: outputs.auth.aws_region,
@@ -148,7 +154,7 @@ export class OrdersComponent implements OnInit {
 
       const payload = {
         pathParameters: {
-          tenentId: tenantId,
+          tenentId: tenentId,
           quoteId: this.selectedOrder.Quote_ID
         },
         body: JSON.stringify({

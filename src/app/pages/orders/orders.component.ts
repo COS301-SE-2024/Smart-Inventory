@@ -14,6 +14,9 @@ import { CustomQuoteModalComponent } from '../../components/quote/custom-quote-m
 import { CommonModule } from '@angular/common';
 import { LoadingSpinnerComponent } from '../../components/loader/loading-spinner.component';
 
+import { SendQuoteConfirmationDialogComponent } from '../../components/quote/custom-quote-modal/send-quote-confirmation-dialog.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
+
 @Component({
   selector: 'app-orders',
   standalone: true,
@@ -26,7 +29,12 @@ export class OrdersComponent implements OnInit {
 
   isLoading = true;
 
-  constructor(private titleService: TitleService, private dialog: MatDialog) {
+  constructor(
+    private titleService: TitleService, 
+    private dialog: MatDialog,
+    private snackBar: MatSnackBar
+
+  ) {
     Amplify.configure(outputs);
   }
 
@@ -334,6 +342,28 @@ export class OrdersComponent implements OnInit {
         console.log('No order selected after refresh');
       }
     }
+  }
+
+  sendQuoteToSuppliers() {
+    if (!this.selectedOrder) {
+      alert('Please select an order first');
+      return;
+    }
+  
+    const dialogRef = this.dialog.open(SendQuoteConfirmationDialogComponent, {
+      width: '350px',
+      data: { quoteId: this.selectedOrder.Quote_ID }
+    });
+  
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        // Here you would implement the actual sending of the quote
+        // For now, we'll just show a success message
+        this.snackBar.open('Quote sent successfully to suppliers', 'Close', {
+          duration: 3000,
+        });
+      }
+    });
   }
 
 

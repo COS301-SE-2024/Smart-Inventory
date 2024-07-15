@@ -13,6 +13,7 @@ import { Amplify } from 'aws-amplify';
 import { CustomQuoteModalComponent } from '../../components/quote/custom-quote-modal/custom-quote-modal.component';
 import { CommonModule } from '@angular/common';
 import { LoadingSpinnerComponent } from '../../components/loader/loading-spinner.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-orders',
@@ -26,7 +27,7 @@ export class OrdersComponent implements OnInit {
 
   isLoading = true;
 
-  constructor(private titleService: TitleService, private dialog: MatDialog) {
+  constructor(private titleService: TitleService, private dialog: MatDialog, private snackBar: MatSnackBar ) {
     Amplify.configure(outputs);
   }
 
@@ -373,55 +374,69 @@ export class OrdersComponent implements OnInit {
     }
   }
 
-async deleteOrderRow() {
-  if (!this.selectedOrder) {
-    alert('Please select an order to delete');
-    return;
-  }
+  async deleteOrderRow() {
+    if (!this.selectedOrder) {
+      alert('Please select an order to delete');
+      return;
+    }
 
-  if (this.selectedOrder.Quote_Status !== 'Draft') {
-    alert('Only orders with Draft quote status can be deleted');
-    return;
-  }
+    if (this.selectedOrder.Quote_Status !== 'Draft') {
+      alert('Only orders with Draft quote status can be deleted');
+      return;
+    }
 
-  if (confirm('Are you sure you want to delete this order?')) {
-    try {
-      const session = await fetchAuthSession();
-      const tenentId = await this.getTenentId(session);
+    if (confirm('Are you sure you want to delete this order?')) {
+      try {
+        const session = await fetchAuthSession();
+        const tenentId = await this.getTenentId(session);
 
-      const lambdaClient = new LambdaClient({
-        region: outputs.auth.aws_region,
-        credentials: session.credentials,
-      });
+        const lambdaClient = new LambdaClient({
+          region: outputs.auth.aws_region,
+          credentials: session.credentials,
+        });
 
-      const invokeCommand = new InvokeCommand({
-        FunctionName: 'deleteOrder',
-        Payload: new TextEncoder().encode(JSON.stringify({
-          pathParameters: {
-            tenentId: tenentId,
-            orderId: this.selectedOrder.Order_ID,
-            quoteId: this.selectedOrder.Quote_ID
-          }
-        })),
-      });
+        const invokeCommand = new InvokeCommand({
+          FunctionName: 'deleteOrder',
+          Payload: new TextEncoder().encode(JSON.stringify({
+            pathParameters: {
+              tenentId: tenentId,
+              orderId: this.selectedOrder.Order_ID,
+              quoteId: this.selectedOrder.Quote_ID
+            }
+          })),
+        });
 
-      const lambdaResponse = await lambdaClient.send(invokeCommand);
-      const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+        const lambdaResponse = await lambdaClient.send(invokeCommand);
+        const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
 
-      if (responseBody.statusCode === 200) {
-        console.log('Order deleted successfully');
-        await this.loadOrdersData();
-        this.selectedOrder = null;
-        this.refreshGridSelection();
-      } else {
-        throw new Error(responseBody.body || 'Unknown error occurred');
+        if (responseBody.statusCode === 200) {
+          console.log('Order deleted successfully');
+          
+          // Show success snackbar
+          this.snackBar.open('Order deleted successfully', 'Close', {
+            duration: 6000, // Duration in milliseconds
+            horizontalPosition: 'center',
+            verticalPosition: 'bottom',
+          });
+
+          await this.loadOrdersData();
+          this.selectedOrder = null;
+          this.refreshGridSelection();
+        } else {
+          throw new Error(responseBody.body || 'Unknown error occurred');
+        }
+      } catch (error) {
+        console.error('Error deleting order:', error);
+        
+        // Show error snackbar
+        this.snackBar.open(`Error deleting order: ${(error as Error).message}`, 'Close', {
+          duration: 5000, // Longer duration for error messages
+          horizontalPosition: 'center',
+          verticalPosition: 'bottom',
+        });
       }
-    } catch (error) {
-      console.error('Error deleting order:', error);
-      alert(`Error deleting order: ${(error as Error).message}`);
     }
   }
-}
 
 
 }

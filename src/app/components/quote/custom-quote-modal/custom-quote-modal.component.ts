@@ -200,6 +200,7 @@ export class CustomQuoteModalComponent implements OnInit {
 
   removeSupplier(supplier: string) {
     this.selectedSuppliers = this.selectedSuppliers.filter(s => s !== supplier);
+    this.onQuoteChanged();
   }
 
   async loadSuppliers() {

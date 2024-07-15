@@ -42,7 +42,7 @@ export class GridComponent implements OnInit {
     @Output() addNewClicked = new EventEmitter<void>();
     @Output() itemToUpdate = new EventEmitter<{ data: any; field: string; newValue: any }>();
     @Output() nameCellValueChanged = new EventEmitter<any>();
-    @Output() sendQuoteClicked = new EventEmitter<void>();
+
     @Output() requestStock = new EventEmitter<any>();
     @Output() newCustomQuote = new EventEmitter<any>();
     @Output() viewGeneratedQuoteClicked = new EventEmitter<void>();
@@ -207,9 +207,5 @@ export class GridComponent implements OnInit {
                 }
             }
         });
-    }
-
-    sendQuoteToSuppliers() {
-        this.sendQuoteClicked.emit();
     }
 }

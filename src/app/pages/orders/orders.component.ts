@@ -37,12 +37,25 @@ export class OrdersComponent implements OnInit {
   colDefs: ColDef[] = [
     { field: 'Order_ID', filter: 'agSetColumnFilter' },
     { field: 'Order_Date', filter: 'agDateColumnFilter' },
+    { 
+      field: 'Creation_Time', 
+      headerName: 'Creation Time',
+      filter: 'agTextColumnFilter',
+      valueFormatter: (params) => {
+        if (params.value) {
+          const date = new Date(params.value);
+          return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        }
+        return '';
+      }
+    },
     { field: 'Order_Status', filter: 'agSetColumnFilter' },
     { field: 'Quote_ID', filter: 'agSetColumnFilter' },
     { field: 'Quote_Status', filter: 'agSetColumnFilter' },
     { field: 'Selected_Supplier', filter: 'agSetColumnFilter' },
     { field: 'Expected_Delivery_Date', filter: 'agDateColumnFilter' },
     { field: 'Actual_Delivery_Date', filter: 'agDateColumnFilter' },
+
   ];
 
   defaultColDef: ColDef = {
@@ -190,6 +203,7 @@ export class OrdersComponent implements OnInit {
         Expected_Delivery_Date: null,
         Actual_Delivery_Date: null,
         tenentId: tenentId,
+        Creation_Time: new Date().toISOString(), // Add this line
         quoteItems: quoteData.items.map((item: any) => ({
           ItemSKU: item.ItemSKU,
           Quantity: item.Quantity
@@ -325,6 +339,7 @@ export class OrdersComponent implements OnInit {
           Selected_Supplier: order.Selected_Supplier,
           Expected_Delivery_Date: order.Expected_Delivery_Date,
           Actual_Delivery_Date: order.Actual_Delivery_Date,
+          Creation_Time: order.Creation_Time // Add this line
         }));
         console.log('Processed orders:', this.rowData);
       } else {

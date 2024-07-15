@@ -105,10 +105,10 @@ export class OrdersComponent implements OnInit {
           quoteId: quoteId
         },
         isEditing: false,
-        isNewQuote: false
+        isNewQuote: !orderId // Set to true if there's no orderId
       }
     });
-
+  
     dialogRef.afterClosed().subscribe(result => {
       if (result && result.action === 'saveChanges') {
         this.updateQuote(result.data);

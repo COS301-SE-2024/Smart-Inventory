@@ -12,7 +12,7 @@ import { ReplaySubject, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { MatSnackBar } from '@angular/material/snack-bar';
-
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { Amplify } from 'aws-amplify';
 import { fetchAuthSession } from 'aws-amplify/auth';
 import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
@@ -43,6 +43,7 @@ interface QuoteItem {
     MatChipsModule,
     NgxMatSelectSearchModule,
     LoadingSpinnerComponent,
+    MatTooltipModule,
   ],
   templateUrl: './custom-quote-modal.component.html',
   styleUrls: ['./custom-quote-modal.component.css']
@@ -320,6 +321,14 @@ export class CustomQuoteModalComponent implements OnInit {
 
   cancel() {
     this.dialogRef.close({ action: 'cancel' });
+  }
+
+  sendQuote() {
+    if (!this.isNewQuote) {
+      // Implement the logic to send the quote
+      console.log('Sending quote...');
+      // You may want to call a service method here or emit an event
+    }
   }
 
 }

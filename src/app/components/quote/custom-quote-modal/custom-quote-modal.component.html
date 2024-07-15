@@ -84,5 +84,5 @@
   <button mat-button (click)="cancel()">Cancel</button>
   <button mat-raised-button color="primary" *ngIf="isNewQuote" (click)="createOrder()">Create Order</button>
   <button mat-raised-button color="primary" *ngIf="!isNewQuote" (click)="saveChanges()">Save Changes</button>
-  <button mat-raised-button color="primary">Send Quote</button>
+  <button mat-raised-button color="primary" *ngIf="!isNewQuote" (click)="sendQuote()">Send Quote</button>
 </mat-dialog-actions>

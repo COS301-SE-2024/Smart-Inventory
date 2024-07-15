@@ -252,19 +252,20 @@ export class OrdersComponent implements OnInit {
         
         // Show success snackbar
         this.snackBar.open('Order created successfully', 'Close', {
-          duration: 6000,
+          duration: 3000,
           horizontalPosition: 'center',
           verticalPosition: 'top',
         });
   
-        await this.loadOrdersData();
-        
         // Parse the response body to get the orderId and quoteId
         const { orderId, quoteId } = JSON.parse(responseBody.body);
         
         console.log('Created order ID:', orderId);
         console.log('Created quote ID:', quoteId);
   
+        // Refresh the orders data
+        await this.loadOrdersData();
+        
         // Prepare the quote details for the modal
         const quoteDetails = {
           orderId: orderId,
@@ -273,8 +274,10 @@ export class OrdersComponent implements OnInit {
           suppliers: quoteData.suppliers
         };
         
-        // Open the generated quote modal
-        this.openCustomQuoteModal(quoteDetails, orderId, quoteId);
+        // Open the generated quote modal after a delay
+        setTimeout(() => {
+          this.openCustomQuoteModal(quoteDetails, orderId, quoteId);
+        }, 3000);
       } else {
         throw new Error(responseBody.body || 'Unknown error occurred');
       }

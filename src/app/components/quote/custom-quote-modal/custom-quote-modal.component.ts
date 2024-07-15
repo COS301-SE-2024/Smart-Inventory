@@ -86,7 +86,7 @@ export class CustomQuoteModalComponent implements OnInit {
     try {
       await Promise.all([this.loadInventoryItems(), this.loadSuppliers()]);
   
-      if (this.isEditing && this.data.quoteDetails) {
+      if (this.data.quoteDetails) {
         this.initializeQuoteData(this.data.quoteDetails);
       } else {
         this.addItem();
@@ -98,28 +98,40 @@ export class CustomQuoteModalComponent implements OnInit {
         .subscribe(() => {
           this.filterSuppliers();
         });
-      this.filteredQuoteItems = this.quoteItems;
     } finally {
       this.isLoading = false;
     }
   }
 
   initializeQuoteData(quoteDetails: any) {
-    this.quoteItems = quoteDetails.items.map((item: any) => {
-      const inventoryItem = this.inventoryItems.find(invItem => invItem.sku === item.ItemSKU);
-      return {
-        item: inventoryItem || { sku: item.ItemSKU, description: 'Unknown Item' },
-        quantity: item.Quantity,
-        filteredItems: new ReplaySubject<{ sku: string; description: string }[]>(1),
-        searchControl: new FormControl()
-      };
-    });
-    this.selectedSuppliers = quoteDetails.suppliers;
-
+    console.log('Initializing quote data:', quoteDetails); // Add this log
+  
+    this.orderId = quoteDetails.orderId || null;
+    this.quoteId = quoteDetails.quoteId || null;
+  
+    if (quoteDetails.items && Array.isArray(quoteDetails.items)) {
+      this.quoteItems = quoteDetails.items.map((item: any) => {
+        const inventoryItem = this.inventoryItems.find(invItem => invItem.sku === item.ItemSKU);
+        return {
+          item: inventoryItem || { sku: item.ItemSKU, description: 'Unknown Item' },
+          quantity: item.Quantity,
+          filteredItems: new ReplaySubject<{ sku: string; description: string }[]>(1),
+          searchControl: new FormControl()
+        };
+      });
+    } else {
+      console.warn('No items found in quote details');
+      this.quoteItems = [];
+    }
+  
+    this.selectedSuppliers = quoteDetails.suppliers || [];
+  
     // Initialize filtered items for each quote item
     this.quoteItems.forEach(quoteItem => {
       quoteItem.filteredItems.next(this.inventoryItems.slice());
     });
+  
+    this.filteredQuoteItems = this.quoteItems;
   }
 
 
@@ -281,17 +293,6 @@ export class CustomQuoteModalComponent implements OnInit {
     return item1 && item2 ? item1.sku === item2.sku : item1 === item2;
   }
 
-  saveDraft() {
-    const draft = {
-      items: this.quoteItems.map(({ item, quantity }) => ({
-        ItemSKU: item.sku,
-        Quantity: quantity
-      })),
-      suppliers: this.selectedSuppliers,
-      Quote_Status: 'Draft'
-    };
-    this.dialogRef.close({ action: 'saveDraft', data: draft });
-  }
 
   saveChanges() {
     const updatedQuote = {
@@ -305,13 +306,17 @@ export class CustomQuoteModalComponent implements OnInit {
     this.dialogRef.close({ action: 'saveChanges', data: updatedQuote });
   }
 
-  createQuote() {
-    const quote = {
-      items: this.quoteItems.map(({ item, quantity }) => ({ item, quantity })),
-      suppliers: this.selectedSuppliers
+  createOrder() {
+    const order = {
+        items: this.quoteItems.map(({ item, quantity }) => ({
+            ItemSKU: item.sku,
+            Quantity: quantity
+        })),
+        suppliers: this.selectedSuppliers,
+        Quote_Status: 'Draft'
     };
-    this.dialogRef.close({ action: 'createQuote', data: quote });
-  }
+    this.dialogRef.close({ action: 'createOrder', data: order });
+}
 
   cancel() {
     this.dialogRef.close({ action: 'cancel' });

@@ -193,17 +193,14 @@ export class GridComponent implements OnInit {
     openCustomQuoteModal() {
         const dialogRef = this.dialog.open(CustomQuoteModalComponent, {
             width: '500px',
-            data: { isNewQuote: true } // Set isNewQuote to true for creating a new order
+            data: { isNewQuote: true }
         });
-
+    
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
-                if (result.action === 'saveDraft') {
-                    console.log('Saving draft:', result.data);
-                    this.newCustomQuote.emit({ type: 'draft', data: result.data });
-                } else if (result.action === 'createQuote') {
-                    console.log('Creating quote:', result.data);
-                    this.newCustomQuote.emit({ type: 'quote', data: result.data });
+                if (result.action === 'createOrder') {
+                    console.log('Creating order:', result.data);
+                    this.newCustomQuote.emit({ type: 'order', data: result.data });
                 }
             }
         });

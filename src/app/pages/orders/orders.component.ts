@@ -83,7 +83,6 @@ export class OrdersComponent implements OnInit {
   }
   
   openCustomQuoteModal(quoteDetails: any, orderId: string, quoteId: string) {
-    console.log('Opening modal with orderId:', orderId, 'and quoteId:', quoteId); // Add this log
     const dialogRef = this.dialog.open(CustomQuoteModalComponent, {
       width: '500px',
       data: {
@@ -92,12 +91,10 @@ export class OrdersComponent implements OnInit {
           orderId: orderId,
           quoteId: quoteId
         },
-        isEditing: !!quoteDetails,
-        isNewQuote: !quoteDetails
+        isEditing: false,
+        isNewQuote: false
       }
     });
-  
-    // ... rest of the method remains the same
   }
 
   async fetchQuoteDetails(quoteId: string) {
@@ -174,16 +171,17 @@ export class OrdersComponent implements OnInit {
       alert(`Error updating quote: ${(error as Error).message}`);
     }
   }
+
   async createNewOrder(quoteData: any) {
     try {
       const session = await fetchAuthSession();
       const tenentId = await this.getTenentId(session);
-
+  
       const lambdaClient = new LambdaClient({
         region: outputs.auth.aws_region,
         credentials: session.credentials,
       });
-
+  
       const newOrder = {
         Order_Date: new Date().toISOString().split('T')[0],
         Order_Status: 'Pending Approval',
@@ -198,22 +196,41 @@ export class OrdersComponent implements OnInit {
         })),
         suppliers: quoteData.suppliers
       };
-
-      console.log('New Order Data:', newOrder); // Add this for debugging
-
+  
+      console.log('New Order Data:', newOrder);
+  
       const invokeCommand = new InvokeCommand({
         FunctionName: 'createOrder',
         Payload: new TextEncoder().encode(JSON.stringify({ body: JSON.stringify(newOrder) })),
       });
-
+  
       const lambdaResponse = await lambdaClient.send(invokeCommand);
       const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
+  
+      console.log('Lambda response:', responseBody);
+  
       if (responseBody.statusCode === 201) {
         console.log('Order created successfully');
         await this.loadOrdersData();
+        
+        // Parse the response body to get the orderId and quoteId
+        const { orderId, quoteId } = JSON.parse(responseBody.body);
+        
+        console.log('Created order ID:', orderId);
+        console.log('Created quote ID:', quoteId);
+  
+        // Prepare the quote details for the modal
+        const quoteDetails = {
+          orderId: orderId,
+          quoteId: quoteId,
+          items: quoteData.items,
+          suppliers: quoteData.suppliers
+        };
+        
+        // Open the generated quote modal
+        this.openCustomQuoteModal(quoteDetails, orderId, quoteId);
       } else {
-        throw new Error(responseBody.body);
+        throw new Error(responseBody.body || 'Unknown error occurred');
       }
     } catch (error) {
       console.error('Error creating order:', error);
@@ -222,6 +239,9 @@ export class OrdersComponent implements OnInit {
   }
 
   async handleNewCustomQuote(event: { type: string, data: any }) {
+    if (event.type === 'order') {
+      await this.createNewOrder(event.data);
+    }
     if (event.type === 'draft') {
       await this.createNewOrder({
         ...event.data,

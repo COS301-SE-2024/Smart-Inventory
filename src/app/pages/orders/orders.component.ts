@@ -210,7 +210,7 @@ export class OrdersComponent implements OnInit {
         Expected_Delivery_Date: null,
         Actual_Delivery_Date: null,
         tenentId: tenentId,
-        Creation_Time: new Date().toISOString(), // Add this line
+        Creation_Time: new Date().toISOString(),
         quoteItems: quoteData.items.map((item: any) => ({
           ItemSKU: item.ItemSKU,
           Quantity: item.Quantity
@@ -232,6 +232,14 @@ export class OrdersComponent implements OnInit {
   
       if (responseBody.statusCode === 201) {
         console.log('Order created successfully');
+        
+        // Show success snackbar
+        this.snackBar.open('Order created successfully', 'Close', {
+          duration: 3000,
+          horizontalPosition: 'center',
+          verticalPosition: 'bottom',
+        });
+  
         await this.loadOrdersData();
         
         // Parse the response body to get the orderId and quoteId
@@ -255,7 +263,13 @@ export class OrdersComponent implements OnInit {
       }
     } catch (error) {
       console.error('Error creating order:', error);
-      alert(`Error creating order: ${(error as Error).message}`);
+      
+      // Show error snackbar
+      this.snackBar.open(`Error creating order: ${(error as Error).message}`, 'Close', {
+        duration: 5000,
+        horizontalPosition: 'center',
+        verticalPosition: 'bottom',
+      });
     }
   }
 

@@ -106,13 +106,16 @@ export class OrdersComponent implements OnInit {
           quoteId: quoteId
         },
         isEditing: false,
-        isNewQuote: !orderId // Set to true if there's no orderId
-      }
+        isNewQuote: !orderId
+      },
+      disableClose: true // Prevent closing on backdrop click or ESC key
     });
   
     dialogRef.afterClosed().subscribe(result => {
       if (result && result.action === 'saveChanges') {
         this.updateQuote(result.data);
+      } else if (result && result.action === 'sendQuote') {
+        this.sendQuote(result.data);
       }
     });
   }
@@ -463,6 +466,32 @@ export class OrdersComponent implements OnInit {
           verticalPosition: 'top',
         });
       }
+    }
+  }
+
+  async sendQuote(quoteData: any) {
+    try {
+      // Implement the logic to send the quote
+      console.log('Sending quote:', quoteData);
+      
+      // Show success snackbar
+      this.snackBar.open('Quote sent successfully', 'Close', {
+        duration: 6000,
+        horizontalPosition: 'center',
+        verticalPosition: 'top',
+      });
+  
+      // Refresh the orders data
+      await this.loadOrdersData();
+    } catch (error) {
+      console.error('Error sending quote:', error);
+      
+      // Show error snackbar
+      this.snackBar.open(`Error sending quote: ${(error as Error).message}`, 'Close', {
+        duration: 5000,
+        horizontalPosition: 'center',
+        verticalPosition: 'top',
+      });
     }
   }
 

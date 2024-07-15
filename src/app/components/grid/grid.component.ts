@@ -35,6 +35,7 @@ import { CustomQuoteModalComponent } from '../quote/custom-quote-modal/custom-qu
     ],
     templateUrl: './grid.component.html',
     styleUrl: './grid.component.css',
+    encapsulation: ViewEncapsulation.Emulated
 })
 export class GridComponent implements OnInit, OnDestroy, AfterViewInit   {
     @Input() rowData: any[] = [];

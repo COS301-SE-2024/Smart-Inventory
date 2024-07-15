@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, AfterViewInit, SimpleChanges, Input, OnChanges } from '@angular/core';
 import { AgChartsAngular } from 'ag-charts-angular';
 import { AgChartOptions, AgChartTheme } from 'ag-charts-community';
 
@@ -10,9 +10,16 @@ import { AgChartOptions, AgChartTheme } from 'ag-charts-community';
     styleUrl: './bubblechart.component.css',
 })
 
-export class BubblechartComponent implements OnInit, OnDestroy, AfterViewInit  {
+export class BubblechartComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges  {
     public chartOptions: AgChartOptions;
     private themeObserver!: MutationObserver;
+    @Input() chartTitle?: string;
+
+    ngOnChanges(changes: SimpleChanges) {
+        if (changes['chartTitle']) {
+            // Code to update the chart's title, perhaps by redrawing the chart
+        }
+    }
     
     private lightTheme: AgChartTheme = {
         palette: {

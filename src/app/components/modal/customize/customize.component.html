@@ -1,0 +1,16 @@
+<div class="modal-header">
+    <h2>{{ data.chartTitle }}</h2>
+    <button mat-icon-button (click)="close()">
+        <mat-icon>close</mat-icon>
+    </button>
+</div>
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="modal-form">
+    <mat-form-field appearance="fill" class="full-width-input">
+        <mat-label>Chart Name</mat-label>
+        <input matInput formControlName="chartName">
+    </mat-form-field>
+    <div class="modal-actions">
+        <button mat-button mat-raised-button color="primary" type="submit">Save</button>
+        <button mat-button (click)="close()">Close</button>
+    </div>
+</form>

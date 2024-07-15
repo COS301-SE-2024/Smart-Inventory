@@ -13,33 +13,36 @@
         <a id="help-button">
             <button mat-raised-button [matMenuTriggerFor]="mainMenu">Help Options</button>
             <mat-menu #mainMenu="matMenu" yPosition="above">
-                <button mat-button (click)="toggleSidePanel()">Add a Widget</button>
-                <app-sidepanel *ngIf="sidePanelOpen"></app-sidepanel>
+                <button mat-menu-item (click)="openSidePanel()">Add a Widget</button>
                 <button mat-menu-item (click)="toggleDeleteMode()">Delete a Widget</button>
                 <button mat-menu-item routerLink="/help">Help</button>
                 <button mat-menu-item routerLink="/settings">Settings</button>
             </mat-menu>
-
-            <mat-menu #widgetMenu="matMenu" yPosition="above">
-                <button mat-menu-item (click)="addChart('bar')">Bar Chart</button>
-                <button mat-menu-item (click)="addChart('donut')">Donut Chart</button>
-                <button mat-menu-item (click)="addChart('area')">Area Chart</button>
-            </mat-menu>
         </a>
     </div>
-    <!-- <div class="sidebar-container">
-        <div class="gear-icon" (click)="toggleSidebar()">
-            <mat-icon class="gear">settings</mat-icon>
-        </div>
-        <div class="sidebar" [class.active]="sidebarOpen">
-            <div class="sidebar-header">SIDEBAR FILTERS</div>
-            <div class="sidebar-content">
-                <button mat-button>Download Free</button>
-                <button mat-button>Buy Pro</button>
-                <button mat-button>View Documentation</button>
+    <mat-sidenav-container class="sidenav-container">
+        <mat-sidenav #sidenav mode="side" opened="false" position="end" style="width: 25%;padding: 19px;">
+            <!-- Header with close button -->
+            <div class="sidenav-header">
+                <h3>Select Widget</h3>
+                <button mat-icon-button (click)="closeSidePanel()">
+                    <mat-icon>close</mat-icon>
+                </button>
             </div>
-        </div>
-    </div> -->
+            <!-- Container for charts -->
+            <div class="charts-container">
+                <app-saleschart class="sidenav-chart" [chartTitle]="chartTitles['salesChart']" (click)="openCustomizeModal('salesChart')"></app-saleschart>
+                <app-barchart class="sidenav-chart" [chartTitle]="chartTitles['barChartTitle']" (click)="openCustomizeModal('Bar Chart')"></app-barchart>
+                <app-bubblechart class="sidenav-chart" [chartTitle]="chartTitles['bubbleChartTitle']" (click)="openCustomizeModal('Bubble Chart')"></app-bubblechart>
+            </div>
+            
+        </mat-sidenav>
+        <mat-sidenav-content>
+            <!-- Main content -->
+            <!-- <button [matMenuTriggerFor]="mainMenu">Help Options</button> -->
+        </mat-sidenav-content>
+    </mat-sidenav-container>
+
     <gridster [options]="options">
         <gridster-item [item]="item" *ngFor="let item of dashboard">
             <!-- Use ngSwitch to differentiate between card types -->

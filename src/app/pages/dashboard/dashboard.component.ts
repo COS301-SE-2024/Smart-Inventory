@@ -1,4 +1,5 @@
-import { Component, OnInit, ChangeDetectorRef, Type } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, Type, ViewChild } from '@angular/core';
+import { MatSidenav } from '@angular/material/sidenav';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TitleService } from '../../components/header/title.service';
 import { MaterialModule } from '../../components/material/material.module';
@@ -25,6 +26,8 @@ import { fetchAuthSession } from 'aws-amplify/auth';
 import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
 import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
 import outputs from '../../../../amplify_outputs.json';
+import { MatDialog } from '@angular/material/dialog';
+import { CustomizeComponent } from '../../components/modal/customize/customize.component';
 
 interface DashboardItem extends GridsterItem {
     type: string;
@@ -64,12 +67,15 @@ interface DashboardItem extends GridsterItem {
 })
 export class DashboardComponent implements OnInit {
     isDeleteMode: boolean = false;
-    sidePanelOpen: boolean = false;
+    @ViewChild('sidenav') sidenav!: MatSidenav;
 
-    toggleSidePanel(): void {
-        this.sidePanelOpen = !this.sidePanelOpen;
+    openSidePanel() {
+        this.sidenav.open();
     }
 
+    closeSidePanel() {
+        this.sidenav.close();
+    }
 
     private saveTrigger = new Subject<void>();
 
@@ -126,7 +132,8 @@ export class DashboardComponent implements OnInit {
         private loader: LoadingService,
         private titleService: TitleService,
         private filterService: FilterService,
-        private cdr: ChangeDetectorRef
+        private cdr: ChangeDetectorRef,
+        private dialog: MatDialog
     ) {
         Amplify.configure(outputs);
         this.options = {
@@ -165,6 +172,24 @@ export class DashboardComponent implements OnInit {
             .subscribe(() => {
                 this.performSaveState();
             });
+    }
+
+    // Titles for each chart
+    chartTitles: { [key: string]: string } = {
+        salesChart: 'Initial Sales Chart Title',
+        barChart: 'Initial Bar Chart Title',
+        bubbleChart: 'Initial Bubble Chart Title'
+    };
+
+    openCustomizeModal(chartType: string) {
+        const dialogRef = this.dialog.open(CustomizeComponent, {
+            width: '400px',
+            data: { chartTitle: this.chartTitles[chartType] }
+        });
+        
+        dialogRef.componentInstance.updateChartName.subscribe((newTitle: string) => {
+            this.chartTitles[chartType] = newTitle;  // Directly use chartType to index into the mapping object
+        });
     }
 
     enableDragging(item: GridsterItem) {

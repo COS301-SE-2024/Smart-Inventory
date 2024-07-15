@@ -3,7 +3,7 @@ import { MaterialModule } from '../material/material.module';
 import { ChartService } from '../../services/chart.service';
 import { CommonModule } from '@angular/common';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { ChartComponent } from '../modal/chart/chart.component';
+// import { ChartComponent } from '../modal/chart/chart.component';
 import { MatDialog } from '@angular/material/dialog';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 @Component({
@@ -31,7 +31,7 @@ export class SidepanelComponent implements OnInit{
 
   charts: any[] = [];
 
-  constructor(private chartService: ChartService, public dialogRef: MatDialogRef<ChartComponent>,
+  constructor(private chartService: ChartService, public dialogRef: MatDialogRef<SidepanelComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,private dialog: MatDialog) { }
 
   ngOnInit() {
@@ -39,7 +39,7 @@ export class SidepanelComponent implements OnInit{
   }
 
   openChart(chart: any) {
-    this.dialog.open(ChartComponent, {
+    this.dialog.open(SidepanelComponent, {
       width: '250px',
       data: { chart: chart }
     });

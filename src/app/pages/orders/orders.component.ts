@@ -373,5 +373,55 @@ export class OrdersComponent implements OnInit {
     }
   }
 
+async deleteOrderRow() {
+  if (!this.selectedOrder) {
+    alert('Please select an order to delete');
+    return;
+  }
+
+  if (this.selectedOrder.Quote_Status !== 'Draft') {
+    alert('Only orders with Draft quote status can be deleted');
+    return;
+  }
+
+  if (confirm('Are you sure you want to delete this order?')) {
+    try {
+      const session = await fetchAuthSession();
+      const tenentId = await this.getTenentId(session);
+
+      const lambdaClient = new LambdaClient({
+        region: outputs.auth.aws_region,
+        credentials: session.credentials,
+      });
+
+      const invokeCommand = new InvokeCommand({
+        FunctionName: 'deleteOrder',
+        Payload: new TextEncoder().encode(JSON.stringify({
+          pathParameters: {
+            tenentId: tenentId,
+            orderId: this.selectedOrder.Order_ID,
+            quoteId: this.selectedOrder.Quote_ID
+          }
+        })),
+      });
+
+      const lambdaResponse = await lambdaClient.send(invokeCommand);
+      const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+
+      if (responseBody.statusCode === 200) {
+        console.log('Order deleted successfully');
+        await this.loadOrdersData();
+        this.selectedOrder = null;
+        this.refreshGridSelection();
+      } else {
+        throw new Error(responseBody.body || 'Unknown error occurred');
+      }
+    } catch (error) {
+      console.error('Error deleting order:', error);
+      alert(`Error deleting order: ${(error as Error).message}`);
+    }
+  }
+}
+
 
 }

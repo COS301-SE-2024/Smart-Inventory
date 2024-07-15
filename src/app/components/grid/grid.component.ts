@@ -47,7 +47,7 @@ export class GridComponent implements OnInit {
     @Output() newCustomQuote = new EventEmitter<any>();
     @Output() viewGeneratedQuoteClicked = new EventEmitter<void>();
     @Output() rowSelected = new EventEmitter<any>();
-
+    @Output() deleteOrderClicked = new EventEmitter<any>();
 
     filteredRowData: any[] = [];
 
@@ -102,6 +102,10 @@ export class GridComponent implements OnInit {
             return;
         }
         this.rowsToDelete.emit(selectedRows);
+    }
+
+    deleteOrder() {
+        this.deleteOrderClicked.emit();
     }
 
     onCellValueChanged(event: CellValueChangedEvent) {

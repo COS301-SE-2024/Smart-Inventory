@@ -28,7 +28,7 @@ import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-c
 import outputs from '../../../../amplify_outputs.json';
 import { MatDialog } from '@angular/material/dialog';
 import { CustomizeComponent } from '../../components/modal/customize/customize.component';
-
+import { TemplatechartComponent } from '../../components/charts/templatechart/templatechart.component';
 interface DashboardItem extends GridsterItem {
     type: string;
     cols: number;
@@ -62,6 +62,7 @@ interface DashboardItem extends GridsterItem {
         SaleschartComponent,
         BubblechartComponent,
         MatProgressSpinnerModule,
+        TemplatechartComponent
     ],
 })
 export class DashboardComponent implements OnInit {
@@ -121,7 +122,6 @@ export class DashboardComponent implements OnInit {
         x: 0,
         type: 'product',
         isActive: true,
-        dragEnabled: false
     };
 
     public chartOptions!: AgChartOptions;
@@ -141,8 +141,6 @@ export class DashboardComponent implements OnInit {
             compactType: CompactType.CompactUpAndLeft,
             draggable: {
                 enabled: true,
-                ignoreContent: true, // Important to allow dragging only via handle
-                dragHandleClass: 'drag-handle', // Use this class as the drag handle
                 stop: (event) => this.saveState(),
             },
             resizable: {
@@ -182,17 +180,16 @@ export class DashboardComponent implements OnInit {
 
     openCustomizeModal(chartType: string) {
         const dialogRef = this.dialog.open(CustomizeComponent, {
-          width: '400px',
-          data: { 
-            chartTitle: `New ${chartType}`,
-            chartType: chartType,
-          }
+            width: '400px',
+            data: {
+                chartType: chartType,
+            }
         });
-      
+
         dialogRef.afterClosed().subscribe(result => {
-          if (result) {
-            this.addNewChartToDashboard(result);
-          }
+            if (result) {
+                this.addNewChartToDashboard(result);
+            }
         });
     }
 
@@ -576,37 +573,21 @@ export class DashboardComponent implements OnInit {
     }
 
     addNewChartToDashboard(chartConfig: any) {
-        let component: Type<any>;
-        switch (chartConfig.type) {
-          case 'bar':
-            component = BarchartComponent;
-            break;
-          case 'line':
-            component = SaleschartComponent; // Assuming this is your line chart
-            break;
-          case 'pie':
-            component = DonutchartComponent;
-            break;
-          // Add more cases as needed
-          default:
-            console.error('Unknown chart type');
-            return;
-        }
-      
         const newChartItem: DashboardItem = {
-          cols: 2,
-          rows: 2,
-          y: 0,
-          x: 0,
-          type: 'chart',
-          name: chartConfig.name,
-          component: component,
-          // Add more properties as needed
+            cols: 2,
+            rows: 2,
+            y: 0,
+            x: 0,
+            type: 'chart',
+            name: chartConfig.title,
+            chartType: chartConfig.chartType,
+            chartData: chartConfig.data,
+            // You might want to add more properties here
         };
-      
+
         this.dashboard.push(newChartItem);
-        // Optionally, you might want to save the new state
         this.saveState();
+        this.sidenav.close(); // Close the side panel after adding the chart
     }
 
     setFilter(filter: string): void {

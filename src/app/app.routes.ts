@@ -8,6 +8,8 @@ import { OrdersComponent } from './pages/orders/orders.component';
 import { SettingsComponent } from './pages/settings/settings.component';
 import { HelpComponent } from './pages/help/help.component';
 import { GridComponent } from './components/grid/grid.component';
+import { SupplierFormComponent } from './components/supplier-form/supplier-form.component';
+import { PublicSupplierFormComponent } from './components/supplier-form/public-supplier-form.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
@@ -20,4 +22,6 @@ export const routes: Routes = [
     { path: 'help', component: HelpComponent },
     { path: 'settings', component: SettingsComponent },
     { path: 'grid', component: GridComponent },
+    { path: 'supplier-form', component: SupplierFormComponent },
+    { path: 'public-supplier-form', component: PublicSupplierFormComponent },
 ];

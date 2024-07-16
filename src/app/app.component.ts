@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Router, RouterOutlet } from '@angular/router';
 import { AmplifyAuthenticatorModule, AuthenticatorService } from '@aws-amplify/ui-angular';
 import { Amplify } from 'aws-amplify';
 import { LoaderComponent } from './components/loader/loader.component';
@@ -10,6 +10,7 @@ import { HeaderComponent } from './components/header/header.component';
 import { GridComponent } from './components/grid/grid.component';
 import { LoadingService } from './components/loader/loading.service';
 import { ThemeService } from './services/theme.service';
+import { CommonModule } from '@angular/common';
 Amplify.configure(outputs);
 @Component({
     selector: 'app-root',
@@ -23,13 +24,14 @@ Amplify.configure(outputs);
         SidebarComponent,
         HeaderComponent,
         LoaderComponent,
+        CommonModule,
     ],
 })
 export class AppComponent implements OnInit {
     title = 'Smart-Inventory';
     sidebarCollapsed = false;
 
-    constructor(public authenticator: AuthenticatorService, public loader: LoadingService, private themeService: ThemeService) {
+    constructor(public authenticator: AuthenticatorService, public loader: LoadingService, private themeService: ThemeService, private router: Router) {
         // Amplify.configure(outputs);
         this.loadTheme();
     }
@@ -49,7 +51,9 @@ export class AppComponent implements OnInit {
         this.themeService.setTheme(this.themeService.getTheme());
     }
 
-    //
+    isPublicRoute(): boolean {
+        return this.router.url === '/public-supplier-form';
+    }
 
     async logAuthSession() {
         try {

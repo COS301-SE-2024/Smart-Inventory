@@ -31,11 +31,10 @@
             </div>
             <!-- Container for charts -->
             <div class="charts-container">
-                <app-saleschart class="sidenav-chart" [chartTitle]="chartTitles['salesChart']" (click)="openCustomizeModal('salesChart')"></app-saleschart>
-                <app-barchart class="sidenav-chart" [chartTitle]="chartTitles['barChartTitle']" (click)="openCustomizeModal('Bar Chart')"></app-barchart>
-                <app-bubblechart class="sidenav-chart" [chartTitle]="chartTitles['bubbleChartTitle']" (click)="openCustomizeModal('Bubble Chart')"></app-bubblechart>
-            </div>
-            
+                <app-saleschart class="sidenav-chart" [chartTitle]="'Sales Chart'" (click)="openCustomizeModal('line')"></app-saleschart>
+                <app-barchart class="sidenav-chart" [chartTitle]="'Bar Chart'" (click)="openCustomizeModal('bar')"></app-barchart>
+                <app-bubblechart class="sidenav-chart" [chartTitle]="'Bubble Chart'" (click)="openCustomizeModal('bubble')"></app-bubblechart>
+            </div>            
         </mat-sidenav>
         <mat-sidenav-content>
             <!-- Main content -->

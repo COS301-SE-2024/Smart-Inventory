@@ -62,7 +62,6 @@ interface DashboardItem extends GridsterItem {
         SaleschartComponent,
         BubblechartComponent,
         MatProgressSpinnerModule,
-        SidepanelComponent
     ],
 })
 export class DashboardComponent implements OnInit {
@@ -183,12 +182,17 @@ export class DashboardComponent implements OnInit {
 
     openCustomizeModal(chartType: string) {
         const dialogRef = this.dialog.open(CustomizeComponent, {
-            width: '400px',
-            data: { chartTitle: this.chartTitles[chartType] }
+          width: '400px',
+          data: { 
+            chartTitle: `New ${chartType}`,
+            chartType: chartType,
+          }
         });
-        
-        dialogRef.componentInstance.updateChartName.subscribe((newTitle: string) => {
-            this.chartTitles[chartType] = newTitle;  // Directly use chartType to index into the mapping object
+      
+        dialogRef.afterClosed().subscribe(result => {
+          if (result) {
+            this.addNewChartToDashboard(result);
+          }
         });
     }
 
@@ -570,6 +574,41 @@ export class DashboardComponent implements OnInit {
             console.error('Invalid chart type:', type);
         }
     }
+
+    addNewChartToDashboard(chartConfig: any) {
+        let component: Type<any>;
+        switch (chartConfig.type) {
+          case 'bar':
+            component = BarchartComponent;
+            break;
+          case 'line':
+            component = SaleschartComponent; // Assuming this is your line chart
+            break;
+          case 'pie':
+            component = DonutchartComponent;
+            break;
+          // Add more cases as needed
+          default:
+            console.error('Unknown chart type');
+            return;
+        }
+      
+        const newChartItem: DashboardItem = {
+          cols: 2,
+          rows: 2,
+          y: 0,
+          x: 0,
+          type: 'chart',
+          name: chartConfig.name,
+          component: component,
+          // Add more properties as needed
+        };
+      
+        this.dashboard.push(newChartItem);
+        // Optionally, you might want to save the new state
+        this.saveState();
+    }
+
     setFilter(filter: string): void {
         this.filterService.changeFilter(filter);
     }

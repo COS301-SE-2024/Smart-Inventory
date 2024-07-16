@@ -1,5 +1,5 @@
 <div class="modal-header">
-    <h2>{{ data.chartTitle }}</h2>
+    <h2>Customize Chart</h2>
     <button mat-icon-button (click)="close()">
         <mat-icon>close</mat-icon>
     </button>
@@ -9,8 +9,18 @@
         <mat-label>Chart Name</mat-label>
         <input matInput formControlName="chartName">
     </mat-form-field>
+    <mat-form-field appearance="fill" class="full-width-input">
+        <mat-label>Chart Type</mat-label>
+        <mat-select formControlName="chartType">
+            <mat-option value="bar">Bar Chart</mat-option>
+            <mat-option value="line">Line Chart</mat-option>
+            <mat-option value="pie">Pie Chart</mat-option>
+            <!-- Add more chart types as needed -->
+        </mat-select>
+    </mat-form-field>
+    <!-- Add more form fields for data customization -->
     <div class="modal-actions">
-        <button mat-button mat-raised-button color="primary" type="submit">Save</button>
-        <button mat-button (click)="close()">Close</button>
+        <button mat-button mat-raised-button color="primary" type="submit">Add Chart</button>
+        <button mat-button (click)="close()">Cancel</button>
     </div>
 </form>

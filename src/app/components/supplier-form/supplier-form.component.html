@@ -1,1 +1,42 @@
-<p>supplier-form works!</p>
+<div class="supplier-quote-container">
+    <h2>Supplier Quote Form</h2>
+    <div class="currency-selector">
+      <label for="currency">Select Currency:</label>
+      <select id="currency" [(ngModel)]="selectedCurrency" (change)="updateCurrency()">
+        <option *ngFor="let currency of currencies" [value]="currency.code">
+          {{currency.code}} - {{currency.name}}
+        </option>
+      </select>
+    </div>
+    <table class="quote-table">
+      <thead>
+        <tr>
+          <th>Description</th>
+          <th>SKU</th>
+          <th>Quantity</th>
+          <th>Unit Cost</th>
+          <th>Total Cost</th>
+          <th>Discount (%)</th>
+          <th>Total Price</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of quoteItems; let i = index">
+          <td><input type="text" [(ngModel)]="item.description" required></td>
+          <td><input type="text" [(ngModel)]="item.sku" required></td>
+          <td><input type="number" [(ngModel)]="item.quantity" (change)="updateTotals(i)" required></td>
+          <td><input type="number" [(ngModel)]="item.unitCost" (change)="updateTotals(i)" required></td>
+          <td>{{ item.totalCost | customCurrency:selectedCurrency }}</td>
+          <td><input type="number" [(ngModel)]="item.discount" (change)="updateTotals(i)"></td>
+          <td>{{ item.totalPrice | customCurrency:selectedCurrency }}</td>
+          <td><button (click)="removeItem(i)" class="remove-btn">Remove</button></td>
+        </tr>
+      </tbody>
+    </table>
+    <button (click)="addItem()" class="add-btn">Add Item</button>
+    <div class="quote-summary">
+      <p><strong>Total Quote Value:</strong> {{ getTotalQuoteValue() | customCurrency:selectedCurrency }}</p>
+    </div>
+    <button (click)="submitQuote()" class="submit-btn">Submit Quote</button>
+  </div>

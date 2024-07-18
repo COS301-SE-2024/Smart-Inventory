@@ -8,33 +8,50 @@
       </option>
     </select>
   </div>
-  <table class="quote-table">
-    <thead>
-      <tr>
-        <th>Description</th>
-        <th>SKU</th>
-        <th>Quantity</th>
-        <th>Unit Cost</th>
-        <th>Total Cost</th>
-        <th>Discount (%)</th>
-        <th>Total Price</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let item of quoteItems; let i = index">
-        <td><input type="text" [(ngModel)]="item.description" required></td>
-        <td><input type="text" [(ngModel)]="item.sku" required></td>
-        <td><input type="number" [(ngModel)]="item.quantity" (change)="updateTotals(i)" required></td>
-        <td><input type="number" [(ngModel)]="item.unitCost" (change)="updateTotals(i)" required></td>
-        <td>{{ item.totalCost | customCurrency:selectedCurrency }}</td>
-        <td><input type="number" [(ngModel)]="item.discount" (change)="updateTotals(i)"></td>
-        <td>{{ item.totalPrice | customCurrency:selectedCurrency }}</td>
-        <td><button (click)="removeItem(i)" class="remove-btn">Remove</button></td>
-      </tr>
-    </tbody>
-  </table>
-  <button (click)="addItem()" class="add-btn">Add Item</button>
+  <div class="table-container">
+    <table class="quote-table">
+      <thead>
+        <tr>
+          <th>Description</th>
+          <th>SKU</th>
+          <th>Requested Quantity</th>
+          <th>Availability</th>
+          <th>Available Quantity</th>
+          <th>Unit Cost</th>
+          <th>Total Cost</th>
+          <th>Discount (%)</th>
+          <th>Total Price</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of quoteItems; let i = index">
+          <td>{{item.description}}</td>
+          <td>{{item.sku}}</td>
+          <td>{{item.requestedQuantity}}</td>
+          <td>
+            <div class="availability-checkbox">
+              <input type="checkbox" [(ngModel)]="item.isAvailable" 
+                     (change)="onAvailabilityChange(i)" id="isAvailable{{i}}">
+            </div>
+          </td>
+          <td>
+            <input type="number" [(ngModel)]="item.availableQuantity" 
+                   (change)="updateTotals(i)" [disabled]="!item.isAvailable">
+          </td>
+          <td class="unit-cost">
+            <input type="number" [(ngModel)]="item.unitCost" 
+                   (change)="updateTotals(i)" [disabled]="!item.isAvailable">
+          </td>
+          <td class="total-cost">{{ item.totalCost | customCurrency:selectedCurrency }}</td>
+          <td>
+            <input type="number" [(ngModel)]="item.discount" 
+                   (change)="updateTotals(i)" [disabled]="!item.isAvailable">
+          </td>
+          <td class="total-price">{{ item.totalPrice | customCurrency:selectedCurrency }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
   <div class="quote-summary">
     <p><strong>Total Quote Value:</strong> {{ getTotalQuoteValue() | customCurrency:selectedCurrency }}</p>
   </div>

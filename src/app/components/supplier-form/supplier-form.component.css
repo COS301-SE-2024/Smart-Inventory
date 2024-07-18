@@ -85,3 +85,7 @@
     border-radius: 4px;
     border: 1px solid #ddd;
   }
+
+  td, .quote-summary p {
+    white-space: nowrap;
+  }

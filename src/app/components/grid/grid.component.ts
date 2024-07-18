@@ -62,7 +62,10 @@ export class GridComponent implements OnInit {
     public rowSelection: 'single' | 'multiple' = 'multiple';
     public editType: 'fullRow' = 'fullRow';
 
-    constructor(public dialog: MatDialog, private route: ActivatedRoute) {}
+    constructor(
+        public dialog: MatDialog,
+        private route: ActivatedRoute,
+    ) {}
 
     ngOnInit(): void {
         this.filteredRowData = [...this.rowData];

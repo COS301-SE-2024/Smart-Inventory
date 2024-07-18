@@ -9,6 +9,8 @@ import { SettingsComponent } from './pages/settings/settings.component';
 import { HelpComponent } from './pages/help/help.component';
 import { InventoryReportComponent } from './components/reports/inventory-report/inventory-report.component';
 import { OrderReportComponent } from './components/reports/order-report/order-report.component';
+import { SupplierReportComponent } from './components/reports/supplier-report/supplier-report.component';
+import { ActivityReportComponent } from './components/reports/activity-report/activity-report.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
@@ -22,6 +24,6 @@ export const routes: Routes = [
     { path: 'settings', component: SettingsComponent },
     { path: 'inventoryReport', component: InventoryReportComponent },
     { path: 'orderReport', component: OrderReportComponent },
-    { path: 'supplierReport', component: InventoryReportComponent },
-    { path: 'activityReport', component: InventoryReportComponent },
+    { path: 'supplierReport', component: SupplierReportComponent },
+    { path: 'activityReport', component: ActivityReportComponent },
 ];

@@ -1,9 +1,12 @@
 .inventoryHolder {
     margin: 15px;
     width: 100%;
-  }
-  
-  .add-item-button {
+    height: 100%;
+    display: block;
+    overflow: scroll;
+}
+
+.add-item-button {
     padding: 10px 20px;
     background-color: #4a4a4a;
     color: white;
@@ -12,13 +15,13 @@
     font-size: 16px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-  }
-  
-  .add-item-button:hover {
+}
+
+.add-item-button:hover {
     background-color: #333333;
-  }
-  
-  .popup-overlay {
+}
+
+.popup-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -29,54 +32,54 @@
     justify-content: center;
     align-items: center;
     z-index: 9999;
-  }
-  
-  .popup-content {
+}
+
+.popup-content {
     background-color: white;
     padding: 20px;
     border-radius: 4px;
     max-width: 400px;
     width: 100%;
     z-index: 10000;
-  }
-  
-  .popup-content h2 {
+}
+
+.popup-content h2 {
     margin-top: 0;
     color: #333333;
-  }
-  
-  .form-group {
+}
+
+.form-group {
     margin-bottom: 20px;
-  }
-  
-  .form-group label {
+}
+
+.form-group label {
     display: block;
     margin-bottom: 5px;
     color: #4a4a4a;
-  }
-  
-  .form-group input,
-  .form-group select {
+}
+
+.form-group input,
+.form-group select {
     width: 100%;
     padding: 8px;
     border: 1px solid #cccccc;
     border-radius: 4px;
     font-size: 14px;
-  }
-  
-  .form-group input:focus,
-  .form-group select:focus {
+}
+
+.form-group input:focus,
+.form-group select:focus {
     outline: none;
     border-color: #888888;
-  }
-  
-  .button-group {
+}
+
+.button-group {
     display: flex;
     justify-content: flex-end;
     margin-top: 20px;
-  }
-  
-  .button-group button {
+}
+
+.button-group button {
     padding: 8px 16px;
     background-color: #4a4a4a;
     color: white;
@@ -86,21 +89,21 @@
     cursor: pointer;
     transition: background-color 0.3s ease;
     margin-left: 10px;
-  }
-  
-  .button-group button:hover {
-    background-color: #333333;
-  }
-  
-  .button-group button[type="submit"] {
-    background-color: #888888;
-  }
-  
-  .button-group button[type="submit"]:hover {
-    background-color: #666666;
-  }
+}
 
-  .loading-overlay {
+.button-group button:hover {
+    background-color: #333333;
+}
+
+.button-group button[type='submit'] {
+    background-color: #888888;
+}
+
+.button-group button[type='submit']:hover {
+    background-color: #666666;
+}
+
+.loading-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -111,4 +114,4 @@
     justify-content: center;
     align-items: center;
     z-index: 9999;
-  }
+}

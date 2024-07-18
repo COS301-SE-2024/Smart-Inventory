@@ -8,7 +8,6 @@ import { MatCardModule } from '@angular/material/card';
 import { GridComponent } from '../../grid/grid.component';
 import { ColDef } from 'ag-grid-community';
 import { SaleschartComponent } from '../../charts/saleschart/saleschart.component';
-import { DynamicGraphComponent } from '../../charts/dynamic-graph/dynamic-graph.component';
 import { ActivatedRoute, Router } from '@angular/router';
 @Component({
     selector: 'app-order-report',
@@ -21,7 +20,6 @@ import { ActivatedRoute, Router } from '@angular/router';
         CommonModule,
         MatProgressSpinnerModule,
         SaleschartComponent,
-        DynamicGraphComponent,
     ],
     templateUrl: './order-report.component.html',
     styleUrl: './order-report.component.css',
@@ -70,14 +68,9 @@ export class OrderReportComponent implements OnInit {
             { field: 'description', headerName: 'Description' },
             { field: 'Address', headerName: 'Address' },
             { field: 'supplier', headerName: 'Supplier' },
-            { field: 'automated', headerName: 'Automated' },
+            { field: 'supplier', headerName: 'Supplier' },
         ];
         return 'Order Report';
-    }
-
-    calculateAverage(): number {
-        const sum = this.rowData.reduce((acc, row) => acc + row['price'], 0);
-        return sum / this.rowData.length;
     }
 
     back() {

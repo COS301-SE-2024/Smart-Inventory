@@ -141,12 +141,10 @@
                 <mat-icon>delete_outline</mat-icon>
             </button>
             <app-donutchart></app-donutchart>
-            <div *ngFor="let config of newCharts">
-                <app-templatechart [chartType]="config.chartType" [chartData]="config.data"
-                    [chartTitle]="config.title" style="width: 100px; height: 100px;"></app-templatechart>
-            </div>
         </gridster-item>
-            
-
     </gridster>
+    <div *ngFor="let config of newCharts">
+        <app-templatechart [chartType]="config.chartType" [chartData]="config.data"
+            [chartTitle]="config.title" style="width: 400px; height: 400px;"></app-templatechart>
+    </div>
 </div>

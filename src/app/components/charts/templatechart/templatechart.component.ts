@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, Input, ElementRef, OnChanges, OnInit, ViewChild, SimpleChanges, EventEmitter, Output } from '@angular/core';
+import { Component, AfterViewInit, Input, ElementRef, OnChanges, OnInit, ViewChild, SimpleChanges, EventEmitter, Output, ChangeDetectorRef } from '@angular/core';
 import * as echarts from 'echarts';
 type EChartsOption = echarts.EChartsOption;
 @Component({
@@ -8,13 +8,17 @@ type EChartsOption = echarts.EChartsOption;
   styleUrl: './templatechart.component.css'
 })
 export class TemplatechartComponent implements AfterViewInit, OnInit, OnChanges {
-  @Input() chartType: string = 'bar';
+  @Input() chartType: string = '';
   @Input() chartData: any;
   @Input() chartTitle: string = '';
   @Output() chartSelected = new EventEmitter<any>();
   @ViewChild('chartContainer', { static: true }) chartContainer!: ElementRef;
 
   private chart?: echarts.ECharts;
+
+  constructor(private cdr: ChangeDetectorRef){
+
+  }
 
   ngOnInit(): void {
     // Initialization is moved to ngAfterViewInit
@@ -26,8 +30,10 @@ export class TemplatechartComponent implements AfterViewInit, OnInit, OnChanges 
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    console.log("something")
     if (this.chart) {
       this.updateChart();
+      this.cdr.detectChanges();  // Manually trigger change detection
     }
   }
 
@@ -40,6 +46,7 @@ export class TemplatechartComponent implements AfterViewInit, OnInit, OnChanges 
   }
 
   private getChartOption(): echarts.EChartsOption {
+    console.log(this.chartType)
     switch (this.chartType) {
       case 'sunburst':
         return this.getSunburstOption();

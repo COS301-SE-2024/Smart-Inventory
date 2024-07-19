@@ -79,7 +79,12 @@ export class DashboardComponent implements OnInit {
 
     private saveTrigger = new Subject<void>();
 
-    data: any;
+    chartConfigs = [
+        { type: 'bar', data: { categories: ['Jan', 'Feb', 'Mar'], values: [5, 10, 15] }, title: 'Monthly Sales' },
+        { type: 'line', data: { categories: ['Jan', 'Feb', 'Mar'], values: [3, 6, 9] }, title: 'Quarterly Revenue' },
+        { type: 'pie', data: [{ name: 'Item A', value: 30 }, { name: 'Item B', value: 70 }], title: 'Market Share' },
+        { type: 'sunburst', data: [], title: 'Inventory Breakdown' } // Populate with appropriate data
+    ];
     rowData: any[] = [];
     dashboardInfo: any[] = [];
     inventoryCount: number = 0;
@@ -178,7 +183,7 @@ export class DashboardComponent implements OnInit {
         bubbleChart: 'Initial Bubble Chart Title'
     };
 
-    openCustomizeModal(chartType: string) {
+    openCustomizeModal(chartType: any) {
         const dialogRef = this.dialog.open(CustomizeComponent, {
             width: '400px',
             data: {
@@ -188,7 +193,8 @@ export class DashboardComponent implements OnInit {
 
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
-                this.addNewChartToDashboard(result);
+                console.log('The dialog was closed', result);
+                this.updateChartConfigs(result);
             }
         });
     }
@@ -570,6 +576,14 @@ export class DashboardComponent implements OnInit {
         } else {
             console.error('Invalid chart type:', type);
         }
+    }
+
+    newCharts: any[] = [];
+
+    updateChartConfigs(newConfig: any): void {
+        this.newCharts.push(newConfig);
+        this.dashboard.push(newConfig);
+        this.saveState();
     }
 
     addNewChartToDashboard(chartConfig: any) {

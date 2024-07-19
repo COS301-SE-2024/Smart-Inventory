@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, Input, ElementRef, OnChanges, OnInit, ViewChild, SimpleChanges } from '@angular/core';
+import { Component, AfterViewInit, Input, ElementRef, OnChanges, OnInit, ViewChild, SimpleChanges, EventEmitter, Output } from '@angular/core';
 import * as echarts from 'echarts';
 type EChartsOption = echarts.EChartsOption;
 @Component({
@@ -11,6 +11,7 @@ export class TemplatechartComponent implements AfterViewInit, OnInit, OnChanges 
   @Input() chartType: string = 'bar';
   @Input() chartData: any;
   @Input() chartTitle: string = '';
+  @Output() chartSelected = new EventEmitter<any>();
   @ViewChild('chartContainer', { static: true }) chartContainer!: ElementRef;
 
   private chart?: echarts.ECharts;
@@ -105,6 +106,7 @@ export class TemplatechartComponent implements AfterViewInit, OnInit, OnChanges 
 
   private getLineOption(): echarts.EChartsOption {
     // Implement line chart option
+    console.log("gimme something");
     return {
       title: { text: this.chartTitle },
       xAxis: { type: 'category', data: this.chartData?.categories || [] },
@@ -128,5 +130,13 @@ export class TemplatechartComponent implements AfterViewInit, OnInit, OnChanges 
     return {
       title: { text: 'Unsupported Chart Type' }
     };
+  }
+
+  onChartClick(): void {
+    this.chartSelected.emit({
+      type: this.chartType,
+      data: this.chartData,
+      title: this.chartTitle
+    });
   }
 }

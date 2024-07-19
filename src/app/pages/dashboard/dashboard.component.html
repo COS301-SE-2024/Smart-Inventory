@@ -22,41 +22,34 @@
     </div>
     <mat-sidenav-container class="sidenav-container">
         <mat-sidenav #sidenav mode="side" opened="false" position="end" style="width: 25%;padding: 19px;">
-          <div class="sidenav-header">
-            <h3>Select Widget</h3>
-            <button mat-icon-button (click)="closeSidePanel()">
-              <mat-icon>close</mat-icon>
-            </button>
-          </div>
-          <div class="charts-container">
-            <div class="chart-preview" (click)="openCustomizeModal('bar')">
-              <!-- Add a preview of bar chart here -->
-              <h4>Bar Chart</h4>
+            <div class="sidenav-header">
+                <h3>Select Widget</h3>
+                <button mat-icon-button (click)="closeSidePanel()">
+                    <mat-icon>close</mat-icon>
+                </button>
             </div>
-            <div class="chart-preview" (click)="openCustomizeModal('line')">
-              <!-- Add a preview of line chart here -->
-              <h4>Line Chart</h4>
+            <div class="charts-container">
+                <!-- Add more chart previews as needed -->
+                <div *ngFor="let config of chartConfigs">
+                    <app-templatechart [chartType]="config.type" [chartData]="config.data" [chartTitle]="config.title"
+                        (chartSelected)="openCustomizeModal($event)"></app-templatechart>
+                </div>
+
             </div>
-            <div class="chart-preview" (click)="openCustomizeModal('pie')">
-              <!-- Add a preview of pie chart here -->
-              <h4>Pie Chart</h4>
-            </div>
-            <!-- Add more chart previews as needed -->
-          </div>
         </mat-sidenav>
         <mat-sidenav-content>
-          <!-- Your main dashboard content here -->
-          <gridster [options]="options">
-            <gridster-item [item]="item" *ngFor="let item of dashboard">
-              <ng-container *ngIf="item.type === 'chart'">
-                <!-- You'll need to create a component that can render different chart types -->
-                <app-templatechart></app-templatechart>
-              </ng-container>
-              <!-- Other gridster items -->
-            </gridster-item>
-          </gridster>
+            <!-- Your main dashboard content here -->
+            <!-- <gridster [options]="options"> -->
+            <!-- <gridster-item [item]="item" *ngFor="let item of dashboard"> -->
+            <!-- <ng-container *ngIf="item.type === 'chart'"> -->
+            <!-- You'll need to create a component that can render different chart types -->
+            <!-- <app-templatechart></app-templatechart> -->
+            <!-- </ng-container> -->
+            <!-- Other gridster items -->
+            <!-- </gridster-item> -->
+            <!-- </gridster> -->
         </mat-sidenav-content>
-      </mat-sidenav-container>
+    </mat-sidenav-container>
 
     <gridster [options]="options">
         <gridster-item [item]="item" *ngFor="let item of dashboard">
@@ -148,6 +141,12 @@
                 <mat-icon>delete_outline</mat-icon>
             </button>
             <app-donutchart></app-donutchart>
+            <div *ngFor="let config of newCharts">
+                <app-templatechart [chartType]="config.chartType" [chartData]="config.data"
+                    [chartTitle]="config.title" style="width: 100px; height: 100px;"></app-templatechart>
+            </div>
         </gridster-item>
+            
+
     </gridster>
 </div>

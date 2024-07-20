@@ -30,7 +30,7 @@ export class SupplierReportComponent implements OnInit {
         private titleService: TitleService,
         private router: Router,
         private route: ActivatedRoute,
-    ) {}
+    ) { }
 
     rowData: any[] = [];
 
@@ -54,6 +54,25 @@ export class SupplierReportComponent implements OnInit {
         },
         graphs: [],
     };
+
+    tiles = [
+        { icon: 'schedule', iconLabel: 'On-Time Delivery', metricName: 'On-Time Delivery Rate', value: '95%', additionalInfo: 'High reliability' },
+        { icon: 'check_circle', iconLabel: 'Order Accuracy', metricName: 'Order Accuracy Rate', value: '98%', additionalInfo: 'Very accurate' },
+        { icon: 'repeat', iconLabel: 'Reorder Level', metricName: 'Reorder Level', value: '50 units', additionalInfo: 'Low stock warning' },
+        { icon: 'attach_money', iconLabel: 'Total Spend', metricName: 'Total Spend', value: '$25,000', additionalInfo: 'Last quarter' },
+        { icon: 'money_off', iconLabel: 'Outstanding Payments', metricName: 'Outstanding Payments', value: '$5,000', additionalInfo: 'Due next month' },
+        { icon: 'warning', iconLabel: 'Risk Score', metricName: 'Risk Score', value: 'Low Risk', additionalInfo: 'Stable' }
+    ];
+
+    currentIndex = 0;
+
+    showNextTiles() {
+      this.currentIndex += 3;
+      if (this.currentIndex >= this.tiles.length) {
+        this.currentIndex = 0;  // Wrap around to the start
+      }
+    }
+
     ngOnInit() {
         this.titleService.updateTitle(this.getCurrentRoute());
     }

@@ -4,6 +4,28 @@
             Back to reports
         </button>
     </mat-toolbar>
+
+    <!-- <div class="grid-container"> -->
+    <div class="arrow-container"  (click)="showNextTiles()">
+        <mat-icon class="arrow-icon">keyboard_arrow_down</mat-icon>
+    </div>
+    <mat-grid-list cols="3" rowHeight="210px">
+
+        <mat-grid-tile *ngFor="let tile of tiles.slice(currentIndex, currentIndex + 3)" class="tile">
+            <div class="icon-container">
+                <mat-icon [attr.aria-label]="tile.iconLabel" class="metric-icon">{{ tile.icon }}</mat-icon>
+            </div>
+            <div class="content">
+                <h3 class="metric-title">{{ tile.metricName }}</h3>
+                <div class="details">
+                    <p class="metric-value">{{ tile.value }}</p>
+                    <span class="metric-info">{{ tile.additionalInfo }}</span>
+                </div>
+            </div>
+        </mat-grid-tile>
+    </mat-grid-list>
+
+    <!-- </div> -->
     <mat-grid-list cols="8" rowHeight="25vh" gutterSize="20px">
         <mat-grid-tile [colspan]="6" [rowspan]="2">
             <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
@@ -15,12 +37,12 @@
         <mat-grid-tile [colspan]="2" [rowspan]="6">
             <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
                 <mat-card style="height: 100%; width: 100%">
+                    <mat-card-title style="margin-left: 15px; margin-top: 15px; font-size: 25px;"> {{
+                        SupplierReport.title }} </mat-card-title>
                     <mat-card-content style="align-items: center">
                         <ul style="list-style: none; padding: 0; margin: 0">
-                            <li
-                                *ngFor="let metric of SupplierReport.metrics | keyvalue"
-                                style="font-size: 15px; padding: 8px 0; border-bottom: 1px solid lightgrey"
-                            >
+                            <li *ngFor="let metric of SupplierReport.metrics | keyvalue"
+                                style="font-size: 15px; padding: 8px 0; border-bottom: 1px solid lightgrey">
                                 {{ metric.value }}
                             </li>
                         </ul>
@@ -28,17 +50,17 @@
                 </mat-card>
             </div>
         </mat-grid-tile>
-        <mat-grid-tile [colspan]="3" [rowspan]="2">
+        <!-- <mat-grid-tile [colspan]="3" [rowspan]="2">
             <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
                 <mat-card style="height: 100%; width: 100%">
                     <app-saleschart style="height: 100%"></app-saleschart>
                 </mat-card>
             </div>
-        </mat-grid-tile>
-        <mat-grid-tile [colspan]="3" [rowspan]="2">
-            <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
-                <!-- <app-dynamic-graph></app-dynamic-graph> -->
-            </div>
-        </mat-grid-tile>
+        </mat-grid-tile> -->
+        <!-- <mat-grid-tile [colspan]="3" [rowspan]="2"> -->
+        <!-- <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%"> -->
+        <!-- <app-dynamic-graph></app-dynamic-graph> -->
+        <!-- </div> -->
+        <!-- </mat-grid-tile> -->
     </mat-grid-list>
 </div>

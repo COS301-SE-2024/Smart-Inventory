@@ -2,12 +2,11 @@ import { TitleService } from '../../header/title.service';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MaterialModule } from '../../material/material.module';
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatCardModule } from '@angular/material/card';
 import { GridComponent } from '../../grid/grid.component';
-import { ColDef, GridApi, RowNode } from 'ag-grid-community';
-import { DynamicBarComponent } from '../../charts/dynamic-bar/dynamic-bar.component';
+import { ColDef } from 'ag-grid-community';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ChartDataService } from '../../../services/chart-data.service';
 import { AgChartsAngular } from 'ag-charts-angular';
@@ -23,7 +22,6 @@ import { AgChartOptions } from 'ag-charts-community';
         MaterialModule,
         CommonModule,
         MatProgressSpinnerModule,
-        DynamicBarComponent,
         AgChartsAngular,
     ],
     templateUrl: './inventory-report.component.html',
@@ -44,6 +42,7 @@ export class InventoryReportComponent implements OnInit {
     options2!: AgChartOptions;
     options3!: AgChartOptions;
     options4!: AgChartOptions;
+    options5!: AgChartOptions;
     constructor(
         private titleService: TitleService,
         private router: Router,
@@ -66,6 +65,9 @@ export class InventoryReportComponent implements OnInit {
             this.calculateCategoryTotalRequests(),
             'Requests Quantity per Category',
         );
+        this.options5 = this.service.setAreaData(
+            'Yearly correlation between requests, quantity of requests and stock level',
+        );
         this.InventoryReport = {
             title: 'Inventory Report',
             subtitle:
@@ -75,7 +77,7 @@ export class InventoryReportComponent implements OnInit {
                 metric_2: 'Total Requests: ' + this.calculateTotal('requests'),
                 metric_3: 'Total Stock Quantity Requested: ' + this.calculateTotal('requestsQuantity'),
                 metric_4: 'Total Low Stock Items: ' + this.calculateTotalEmpty(),
-                metric_5: 'Inventory Accuracy: ',
+                metric_5: 'Inventory Accuracy: ' + this.calculateAccuracy() + '%',
                 metric_6: 'Stock to Request Ratio: ' + this.calculateRatio(),
                 metric_7: 'Fulfilled requests: ',
                 metric_8: 'Pending/Failed requests: ',
@@ -99,7 +101,7 @@ export class InventoryReportComponent implements OnInit {
             { field: 'requestsQuantity', headerName: 'Requests Quantity' },
             { field: 'expiration', headerName: 'Expiration' },
             { field: 'inaccurateFix', headerName: 'Inaccuracy Quantity of Fix' },
-            { field: 'timeEmpty', headerName: 'Time Empty' },
+            { field: 'timeEmpty', headerName: 'Time Empty(days)' },
         ];
         for (let i = 1; i <= 100; i++) {
             this.rowData.push({
@@ -109,9 +111,21 @@ export class InventoryReportComponent implements OnInit {
                 quantity: Math.floor(Math.random() * 100), // Random quantity between 0 and 99
                 requests: Math.floor(Math.random() * 10), // Random requests between 0 and 9
                 requestsQuantity: Math.floor(Math.random() * 50),
+                expiration: this.getRandomExpirationDate(1),
+                inaccurateFix: Math.floor(Math.random() * 10),
+                timeEmpty: Math.floor(Math.random() * 4),
             });
         }
         return 'Inventory Report';
+    }
+
+    getRandomExpirationDate(minDays: number): Date {
+        const today = new Date();
+        const daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
+        const randomDay = Math.floor(Math.random() * (daysInMonth - minDays + 1)) + minDays;
+
+        // Set date to random day within the current month
+        return new Date(today.getFullYear(), today.getMonth(), randomDay);
     }
 
     calculateRatio() {
@@ -143,6 +157,11 @@ export class InventoryReportComponent implements OnInit {
             case 'requestsQuantity':
                 this.rowData.forEach((element) => {
                     this.sum += element.requestsQuantity;
+                });
+                break;
+            case 'inaccurateFix':
+                this.rowData.forEach((element) => {
+                    this.sum += element.inaccurateFix;
                 });
                 break;
             default:
@@ -192,6 +211,12 @@ export class InventoryReportComponent implements OnInit {
             categoryTotals.set(category, currentTotal + element.requestsQuantity);
         });
         return categoryTotals;
+    }
+
+    calculateAccuracy() {
+        const inacc = this.calculateTotal('inaccurateFix');
+        const total = this.calculateTotal('quantity');
+        return ((1 - inacc / total) * 100).toFixed(2);
     }
 
     back() {

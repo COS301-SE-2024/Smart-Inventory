@@ -113,7 +113,7 @@ export class SupplierFormComponent implements OnInit {
         requestedQuantity: 10,
         isAvailable: true,
         availableQuantity: 10,
-        unitCost: 15000,
+        unitCost: 150,
         totalCost: 150000,
         discount: 5,
         totalPrice: 142500
@@ -124,7 +124,7 @@ export class SupplierFormComponent implements OnInit {
         requestedQuantity: 20,
         isAvailable: true,
         availableQuantity: 18,
-        unitCost: 2000,
+        unitCost: 200,
         totalCost: 36000,
         discount: 10,
         totalPrice: 32400
@@ -146,7 +146,7 @@ export class SupplierFormComponent implements OnInit {
         requestedQuantity: 15,
         isAvailable: true,
         availableQuantity: 12,
-        unitCost: 5000,
+        unitCost: 500,
         totalCost: 60000,
         discount: 7,
         totalPrice: 55800
@@ -179,7 +179,7 @@ export class SupplierFormComponent implements OnInit {
         requestedQuantity: 5,
         isAvailable: true,
         availableQuantity: 5,
-        unitCost: 1000,
+        unitCost: 100,
         totalCost: 5000,
         discount: 5,
         totalPrice: 4750

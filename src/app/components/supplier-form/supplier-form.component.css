@@ -94,21 +94,58 @@ h2 {
 .total-cost, .total-price, .unit-cost {
   font-weight: bold;
   color: #333;
-  min-width: 120px; /* Increase the minimum width */
-  white-space: nowrap; /* Prevent wrapping */
+  min-width: 120px;
+  white-space: nowrap;
 }
 
 .quote-summary {
   text-align: right;
   font-size: 18px;
-  margin: 20px 0;
+  margin: 30px 0;
   color: #333;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.summary-row label {
+  margin-right: 10px;
+  font-weight: bold;
+}
+
+.summary-input {
+  width: 150px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.summary-value {
+  min-width: 120px;
+  display: inline-block;
+  text-align: right;
+  font-weight: bold;
+}
+
+input[type="date"].summary-input {
+  font-family: Arial, sans-serif;
+  color: #333;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  color: #333;
+  font-size: 16px;
 }
 
 .submit-btn {
   display: block;
   width: 200px;
-  margin: 0 auto;
+  margin: 20px auto 0;
   padding: 12px;
   background-color: #6d6d6d;
   color: white;

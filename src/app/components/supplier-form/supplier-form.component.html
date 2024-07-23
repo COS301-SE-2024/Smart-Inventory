@@ -52,27 +52,31 @@
   <div class="quote-summary">
     <div class="summary-row">
       <label for="vatPercentage">VAT (%):</label>
-      <input type="number" id="vatPercentage" [(ngModel)]="vatPercentage" (ngModelChange)="updateTotalQuoteValue()">
+      <input type="number" id="vatPercentage" [(ngModel)]="vatPercentage" (ngModelChange)="updateTotalQuoteValue()" class="summary-input">
     </div>
     <div class="summary-row">
       <label for="deliveryDate">Delivery Date:</label>
-      <input type="date" id="deliveryDate" [(ngModel)]="deliveryDate">
+      <input type="date" id="deliveryDate" [(ngModel)]="deliveryDate" class="summary-input">
     </div>
     <div class="summary-row">
       <label for="deliveryCost">Delivery Cost:</label>
-      <input type="number" id="deliveryCost" [(ngModel)]="deliveryCost" (ngModelChange)="updateTotalQuoteValue()">
+      <input type="number" id="deliveryCost" [(ngModel)]="deliveryCost" (ngModelChange)="updateTotalQuoteValue()" class="summary-input">
     </div>
     <div class="summary-row">
-      <strong>Subtotal:</strong> {{getSubtotal() | customCurrency:selectedCurrency}}
+      <strong>Subtotal:</strong> 
+      <span class="summary-value">{{getSubtotal() | customCurrency:selectedCurrency}}</span>
     </div>
     <div class="summary-row">
-      <strong>VAT Amount:</strong> {{getVatAmount() | customCurrency:selectedCurrency}}
+      <strong>VAT Amount:</strong> 
+      <span class="summary-value">{{getVatAmount() | customCurrency:selectedCurrency}}</span>
     </div>
     <div class="summary-row">
-      <strong>Delivery Cost:</strong> {{deliveryCost | customCurrency:selectedCurrency}}
+      <strong>Delivery Cost:</strong> 
+      <span class="summary-value">{{deliveryCost | customCurrency:selectedCurrency}}</span>
     </div>
     <div class="summary-row total">
-      <strong>Total Quote Value:</strong> {{getTotalQuoteValue() | customCurrency:selectedCurrency}}
+      <strong>Total Quote Value:</strong> 
+      <span class="summary-value">{{getTotalQuoteValue() | customCurrency:selectedCurrency}}</span>
     </div>
   </div>
 

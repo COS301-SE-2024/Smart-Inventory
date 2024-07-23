@@ -283,3 +283,19 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   color: #333;
   font-size: 18px;
 }
+
+.delivery-address .contact-information {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #cbcbcb;
+}
+
+.delivery-address h3 {
+  color: #333;
+  font-size: 18px;
+}
+
+.delivery-address p {
+  margin: 10px 0;
+  color: #555;
+}

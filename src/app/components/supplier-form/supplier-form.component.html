@@ -4,7 +4,7 @@
 
   <div class="supplier-info">
     <div class="supplier-details">
-      <p><strong>Supplier:</strong> {{supplierInfo.companyName}}</p>
+      <h3> {{supplierInfo.companyName}}</h3>
       <p><strong>Contact:</strong> {{supplierInfo.contactPerson}}</p>
       <p><strong>Email:</strong> {{supplierInfo.email}}</p>
       <p><strong>Phone:</strong> {{supplierInfo.phone}}</p>
@@ -19,10 +19,13 @@
     <p><strong>Company:</strong> {{deliveryAddress.company}}</p>
     <p><strong>Address:</strong> {{deliveryAddress.street}}, {{deliveryAddress.city}}, {{deliveryAddress.state}} {{deliveryAddress.postalCode}}, {{deliveryAddress.country}}</p>
     <p><strong>Delivery Instructions:</strong> {{deliveryAddress.instructions}}</p>
-    <h3>Contact Information</h3>
-    <p><strong>Contact Name:</strong> {{deliveryAddress.contactName}}</p>
-    <p><strong>Email:</strong> {{deliveryAddress.email}}</p>
-    <p><strong>Phone:</strong> {{deliveryAddress.phone}}</p>
+    
+    <div class="contact-information">
+      <h3>Contact Information</h3>
+      <p><strong>Contact Name:</strong> {{deliveryAddress.contactName}}</p>
+      <p><strong>Email:</strong> {{deliveryAddress.email}}</p>
+      <p><strong>Phone:</strong> {{deliveryAddress.phone}}</p>
+    </div>
   </div>
 
   <div class="currency-selector">

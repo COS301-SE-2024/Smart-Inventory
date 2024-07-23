@@ -1,5 +1,6 @@
 <div class="supplier-quote-container">
   <h2>Supplier Quote Form</h2>
+
   <div class="currency-selector">
     <label for="currency">Select Currency:</label>
     <select id="currency" [(ngModel)]="selectedCurrency" (change)="updateCurrency()">
@@ -8,6 +9,7 @@
       </option>
     </select>
   </div>
+
   <div class="table-container">
     <table class="quote-table">
       <thead>
@@ -28,32 +30,51 @@
           <td>{{item.description}}</td>
           <td>{{item.sku}}</td>
           <td>{{item.requestedQuantity}}</td>
-          <td>
-            <div class="availability-checkbox">
-              <input type="checkbox" [(ngModel)]="item.isAvailable" 
-                     (change)="onAvailabilityChange(i)" id="isAvailable{{i}}">
-            </div>
+          <td class="availability-checkbox">
+            <input type="checkbox" [(ngModel)]="item.isAvailable" (change)="onAvailabilityChange(i)">
           </td>
           <td>
-            <input type="number" [(ngModel)]="item.availableQuantity" 
-                   (change)="updateTotals(i)" [disabled]="!item.isAvailable">
+            <input type="number" [(ngModel)]="item.availableQuantity" (ngModelChange)="updateTotals(i)" [disabled]="!item.isAvailable">
           </td>
-          <td class="unit-cost">
-            <input type="number" [(ngModel)]="item.unitCost" 
-                   (change)="updateTotals(i)" [disabled]="!item.isAvailable">
-          </td>
-          <td class="total-cost">{{ item.totalCost | customCurrency:selectedCurrency }}</td>
           <td>
-            <input type="number" [(ngModel)]="item.discount" 
-                   (change)="updateTotals(i)" [disabled]="!item.isAvailable">
+            <input type="number" [(ngModel)]="item.unitCost" (ngModelChange)="updateTotals(i)" [disabled]="!item.isAvailable">
           </td>
-          <td class="total-price">{{ item.totalPrice | customCurrency:selectedCurrency }}</td>
+          <td class="total-cost">{{item.totalCost | customCurrency:selectedCurrency}}</td>
+          <td>
+            <input type="number" [(ngModel)]="item.discount" (ngModelChange)="updateTotals(i)" [disabled]="!item.isAvailable">
+          </td>
+          <td class="total-price">{{item.totalPrice | customCurrency:selectedCurrency}}</td>
         </tr>
       </tbody>
     </table>
   </div>
+
   <div class="quote-summary">
-    <p><strong>Total Quote Value:</strong> {{ getTotalQuoteValue() | customCurrency:selectedCurrency }}</p>
+    <div class="summary-row">
+      <label for="vatPercentage">VAT (%):</label>
+      <input type="number" id="vatPercentage" [(ngModel)]="vatPercentage" (ngModelChange)="updateTotalQuoteValue()">
+    </div>
+    <div class="summary-row">
+      <label for="deliveryDate">Delivery Date:</label>
+      <input type="date" id="deliveryDate" [(ngModel)]="deliveryDate">
+    </div>
+    <div class="summary-row">
+      <label for="deliveryCost">Delivery Cost:</label>
+      <input type="number" id="deliveryCost" [(ngModel)]="deliveryCost" (ngModelChange)="updateTotalQuoteValue()">
+    </div>
+    <div class="summary-row">
+      <strong>Subtotal:</strong> {{getSubtotal() | customCurrency:selectedCurrency}}
+    </div>
+    <div class="summary-row">
+      <strong>VAT Amount:</strong> {{getVatAmount() | customCurrency:selectedCurrency}}
+    </div>
+    <div class="summary-row">
+      <strong>Delivery Cost:</strong> {{deliveryCost | customCurrency:selectedCurrency}}
+    </div>
+    <div class="summary-row total">
+      <strong>Total Quote Value:</strong> {{getTotalQuoteValue() | customCurrency:selectedCurrency}}
+    </div>
   </div>
-  <button (click)="submitQuote()" class="submit-btn">Submit Quote</button>
+
+  <button class="submit-btn" (click)="submitQuote()">Submit Quote</button>
 </div>

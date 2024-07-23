@@ -39,8 +39,12 @@ export class SupplierFormComponent implements OnInit {
     { code: 'CAD', name: 'Canadian Dollar' },
   ];
 
+  vatPercentage: number = 15; // Default VAT percentage
+  deliveryDate: string = ''; // Will store the selected delivery date
+  deliveryCost: number = 0; // Will store the delivery cost
+
   ngOnInit() {
-    // Initialize with mock data
+    // Initialize with mock data (same as before)
     this.quoteItems = [
       {
         description: 'High-Performance Laptop',
@@ -121,6 +125,13 @@ export class SupplierFormComponent implements OnInit {
       }
     ];
     this.updateAllTotals();
+    this.setDefaultDeliveryDate();
+  }
+
+  setDefaultDeliveryDate() {
+    const today = new Date();
+    const twoWeeksFromNow = new Date(today.setDate(today.getDate() + 14));
+    this.deliveryDate = twoWeeksFromNow.toISOString().split('T')[0];
   }
 
   updateTotals(index: number) {
@@ -133,6 +144,7 @@ export class SupplierFormComponent implements OnInit {
       item.totalCost = 0;
       item.totalPrice = 0;
     }
+    this.updateTotalQuoteValue();
   }
 
   updateAllTotals() {
@@ -151,13 +163,32 @@ export class SupplierFormComponent implements OnInit {
     this.updateTotals(index);
   }
 
-  getTotalQuoteValue(): number {
+  getSubtotal(): number {
     return this.quoteItems.reduce((total, item) => total + item.totalPrice, 0);
   }
 
+  getVatAmount(): number {
+    return this.getSubtotal() * (this.vatPercentage / 100);
+  }
+
+  getTotalQuoteValue(): number {
+    return this.getSubtotal() + this.getVatAmount() + this.deliveryCost;
+  }
+
+  updateTotalQuoteValue() {
+    // This method is called whenever VAT or delivery cost changes
+    // The actual calculation is done in getTotalQuoteValue()
+  }
+
   submitQuote() {
-    console.log('Quote submitted:', this.quoteItems);
-    console.log('Selected currency:', this.selectedCurrency);
+    console.log('Quote submitted:', {
+      items: this.quoteItems,
+      currency: this.selectedCurrency,
+      vatPercentage: this.vatPercentage,
+      deliveryDate: this.deliveryDate,
+      deliveryCost: this.deliveryCost,
+      totalValue: this.getTotalQuoteValue()
+    });
     // Here you would typically send the data to a server
   }
 

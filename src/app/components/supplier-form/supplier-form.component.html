@@ -79,6 +79,21 @@
       <span class="summary-value">{{getTotalQuoteValue() | customCurrency:selectedCurrency}}</span>
     </div>
   </div>
+    <div class="additional-info">
+      <h3>Additional Comments</h3>
+      <textarea id="additionalComments" [(ngModel)]="additionalComments" rows="4" placeholder="Enter any additional information or notes here"></textarea>
+    </div>
+    <div class="attachments">
+      <h3>Attachments</h3>
+      <input type="file" id="attachments" (change)="onFileSelected($event)" multiple>
+      <p class="file-info">Accepted file types: PDF, DOC, DOCX, XLS, XLSX (Max size: 10MB per file)</p>
+      <ul class="file-list" *ngIf="selectedFiles.length > 0">
+        <li *ngFor="let file of selectedFiles">
+          {{ file.name }} ({{ (file.size / 1024 / 1024).toFixed(2) }} MB)
+          <button class="remove-file" (click)="removeFile(file)">Remove</button>
+        </li>
+      </ul>
+    </div>
 
   <button class="submit-btn" (click)="submitQuote()">Submit Quote</button>
 </div>

@@ -28,6 +28,8 @@ interface Currency {
   styleUrl: './supplier-form.component.css'
 })
 export class SupplierFormComponent implements OnInit {
+  additionalComments: string = '';
+  selectedFiles: File[] = [];
   quoteItems: QuoteItem[] = [];
   selectedCurrency: string = 'ZAR';
   currencies: Currency[] = [
@@ -187,7 +189,9 @@ export class SupplierFormComponent implements OnInit {
       vatPercentage: this.vatPercentage,
       deliveryDate: this.deliveryDate,
       deliveryCost: this.deliveryCost,
-      totalValue: this.getTotalQuoteValue()
+      totalValue: this.getTotalQuoteValue(),
+      additionalComments: this.additionalComments,
+      attachments: this.selectedFiles.map(file => file.name)
     });
     // Here you would typically send the data to a server
   }
@@ -196,4 +200,34 @@ export class SupplierFormComponent implements OnInit {
     console.log('Currency updated to:', this.selectedCurrency);
     // You can add any currency conversion logic here if needed
   }
+
+  onFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files) {
+      for (let i = 0; i < input.files.length; i++) {
+        const file = input.files[i];
+        if (this.isValidFile(file)) {
+          this.selectedFiles.push(file);
+        } else {
+          console.warn(`File ${file.name} is not valid and was not added.`);
+          // You might want to show an error message to the user here
+        }
+      }
+    }
+  }
+  
+  removeFile(file: File) {
+    const index = this.selectedFiles.indexOf(file);
+    if (index > -1) {
+      this.selectedFiles.splice(index, 1);
+    }
+  }
+  
+  isValidFile(file: File): boolean {
+    const validTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
+    const maxSize = 10 * 1024 * 1024; // 10MB
+  
+    return validTypes.includes(file.type) && file.size <= maxSize;
+  }
+
 }

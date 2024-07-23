@@ -55,7 +55,7 @@ export class SupplierFormComponent implements OnInit {
   submissionDeadline: string = '2024-08-15T17:00:00'; 
 
   deliveryAddress: DeliveryAddress = {
-    company: 'Example Company',
+    company: 'Checkers',
     street: '123 Main St',
     city: 'Exampleville',
     state: 'State',
@@ -65,7 +65,7 @@ export class SupplierFormComponent implements OnInit {
   };
 
   supplierInfo = {
-    companyName: 'Supplier Company Name',
+    companyName: 'Douglasdale',
     contactPerson: 'John Doe',
     email: 'john.doe@suppliercompany.com',
     phone: '+1 234 567 8900',

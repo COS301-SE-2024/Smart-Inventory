@@ -29,6 +29,9 @@ interface DeliveryAddress {
   postalCode: string;
   country: string;
   instructions: string;
+  contactName: string;
+  email: string;
+  phone: string;
 }
 
 @Component({
@@ -61,7 +64,10 @@ export class SupplierFormComponent implements OnInit {
     state: 'State',
     postalCode: '12345',
     country: 'Country',
-    instructions: 'Please deliver to the loading dock between 9 AM and 5 PM.'
+    instructions: 'Please deliver to the loading dock between 9 AM and 5 PM.',
+    contactName: 'Jane Smith',
+    email: 'jane.smith@checkers.com',
+    phone: '+1 234 567 8901'
   };
 
   supplierInfo = {

@@ -81,7 +81,7 @@ h2 {
 }
 
 .availability-checkbox {
-  text-align: center;
+  text-align: center !important;
 }
 
 .availability-checkbox input[type="checkbox"] {

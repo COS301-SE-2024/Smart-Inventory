@@ -16,7 +16,7 @@ import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatSelectModule } from '@angular/material/select';
 import { RoleSelectCellEditorComponent } from '../../pages/team/role-select-cell-editor.component';
-
+import { CustomQuoteModalComponent } from '../quote/custom-quote-modal/custom-quote-modal.component';
 @Component({
     selector: 'app-grid',
     standalone: true,
@@ -35,7 +35,7 @@ import { RoleSelectCellEditorComponent } from '../../pages/team/role-select-cell
     ],
     templateUrl: './grid.component.html',
     styleUrl: './grid.component.css',
-    encapsulation: ViewEncapsulation.None  // This line turns off encapsulation
+    encapsulation: ViewEncapsulation.Emulated
 })
 export class GridComponent implements OnInit, OnDestroy, AfterViewInit   {
     @Input() rowData: any[] = [];
@@ -47,6 +47,10 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit   {
     @Output() nameCellValueChanged = new EventEmitter<any>();
 
     @Output() requestStock = new EventEmitter<any>();
+    @Output() newCustomQuote = new EventEmitter<any>();
+    @Output() viewGeneratedQuoteClicked = new EventEmitter<void>();
+    @Output() rowSelected = new EventEmitter<any>();
+    @Output() deleteOrderClicked = new EventEmitter<any>();
     private themeObserver!: MutationObserver;
 
     public themeClass: string = 'ag-theme-material'; // Default to light theme
@@ -64,6 +68,8 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit   {
     public autoSizeStrategy = {
         type: 'fitGridWidth',
     };
+
+    selectedRow: any = null;
 
     public rowSelection: 'single' | 'multiple' = 'multiple';
     public editType: 'fullRow' = 'fullRow';
@@ -122,6 +128,10 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit   {
         }
     }
 
+    onViewGeneratedQuoteClick() {
+        this.viewGeneratedQuoteClicked.emit();
+    }
+
     addRow() {
         this.addNewClicked.emit();
     }
@@ -133,6 +143,10 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit   {
             return;
         }
         this.rowsToDelete.emit(selectedRows);
+    }
+
+    deleteOrder() {
+        this.deleteOrderClicked.emit();
     }
 
     onCellValueChanged(event: CellValueChangedEvent) {
@@ -152,6 +166,27 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit   {
         const data = event.data;
         console.log(data);
     }
+
+    onRowSelected(event: any) {
+        if (event && event.node && event.node.isSelected()) {
+          this.selectedRow = event.data;
+          this.rowSelected.emit(this.selectedRow);
+        } else {
+          this.selectedRow = null;
+          this.rowSelected.emit(null);
+        }
+      }
+
+      onSelectionChanged(event: any) {
+        const selectedRows = this.gridApi.getSelectedRows();
+        if (selectedRows.length > 0) {
+          this.selectedRow = selectedRows[0];
+          this.rowSelected.emit(this.selectedRow);
+        } else {
+          this.selectedRow = null;
+          this.rowSelected.emit(null);
+        }
+      }
 
     importExcel() {
         alert('Import Not completed');
@@ -198,5 +233,21 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit   {
             console.log('No row selected for requesting stock');
             // Optionally, you could show an alert or notification to the user
         }
+    }
+
+    openCustomQuoteModal() {
+        const dialogRef = this.dialog.open(CustomQuoteModalComponent, {
+            width: '500px',
+            data: { isNewQuote: true }
+        });
+    
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                if (result.action === 'createOrder') {
+                    console.log('Creating order:', result.data);
+                    this.newCustomQuote.emit({ type: 'order', data: result.data });
+                }
+            }
+        });
     }
 }

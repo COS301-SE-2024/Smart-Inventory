@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CustomCurrencyPipe } from './custom-currency.pipe';
-import { NgModel } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { UpdateContactConfirmationComponent } from './update-contact-confirmation.component';
 
 interface QuoteItem {
   description: string;
@@ -42,6 +43,27 @@ interface DeliveryAddress {
   styleUrl: './supplier-form.component.css'
 })
 export class SupplierFormComponent implements OnInit {
+
+  constructor(private dialog: MatDialog) {}
+
+  openUpdateContactModal() {
+    const dialogRef = this.dialog.open(UpdateContactConfirmationComponent, {
+      width: '350px'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.sendUpdateContactRequest();
+      }
+    });
+  }
+
+  sendUpdateContactRequest() {
+    // Implement the logic to send the update contact request
+    console.log('Sending update contact request');
+    // You would typically make an API call here
+  }
+
   additionalComments: string = '';
   selectedFiles: File[] = [];
   quoteItems: QuoteItem[] = [];

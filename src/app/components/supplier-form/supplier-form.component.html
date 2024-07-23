@@ -4,11 +4,12 @@
 
   <div class="supplier-info">
     <div class="supplier-details">
-      <h3> {{supplierInfo.companyName}}</h3>
+      <h3>{{supplierInfo.companyName}}</h3>
       <p><strong>Contact:</strong> {{supplierInfo.contactPerson}}</p>
       <p><strong>Email:</strong> {{supplierInfo.email}}</p>
       <p><strong>Phone:</strong> {{supplierInfo.phone}}</p>
       <p><strong>Address:</strong> {{supplierInfo.address}}</p>
+      <button class="update-contact-btn" (click)="openUpdateContactModal()">Update Contact Information</button>
     </div>
   </div>
 

@@ -1,5 +1,7 @@
 <div class="supplier-quote-container">
 
+  <p class="submission-deadline">Submission Deadline: {{submissionDeadline | date:'EEEE, MMMM d, y, h:mm a'}}</p>
+
   <div class="supplier-info">
     <div class="supplier-details">
       <p><strong>Company:</strong> {{supplierInfo.companyName}}</p>
@@ -17,7 +19,6 @@
     <p><strong>Company:</strong> {{deliveryAddress.company}}</p>
     <p><strong>Address:</strong> {{deliveryAddress.street}}, {{deliveryAddress.city}}, {{deliveryAddress.state}} {{deliveryAddress.postalCode}}, {{deliveryAddress.country}}</p>
     <p><strong>Delivery Instructions:</strong> {{deliveryAddress.instructions}}</p>
-    <p class="deadline"><strong>Submission Deadline:</strong> {{submissionDeadline | date:'EEEE, MMMM d, y, h:mm a'}}</p>
   </div>
 
   <div class="currency-selector">

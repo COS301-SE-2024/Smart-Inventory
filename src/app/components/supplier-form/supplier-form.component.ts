@@ -64,6 +64,14 @@ export class SupplierFormComponent implements OnInit {
     instructions: 'Please deliver to the loading dock between 9 AM and 5 PM.'
   };
 
+  supplierInfo = {
+    companyName: 'Supplier Company Name',
+    contactPerson: 'John Doe',
+    email: 'john.doe@suppliercompany.com',
+    phone: '+1 234 567 8900',
+    address: '456 Supplier St, Supplier City, SC 12345, Country'
+  };
+
   vatPercentage: number = 15; // Default VAT percentage
   deliveryDate: string = ''; // Will store the selected delivery date
   deliveryCost: number = 0; // Will store the delivery cost

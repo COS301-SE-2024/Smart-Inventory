@@ -1,5 +1,24 @@
 <div class="supplier-quote-container">
+
+  <div class="supplier-info">
+    <div class="supplier-details">
+      <p><strong>Company:</strong> {{supplierInfo.companyName}}</p>
+      <p><strong>Contact:</strong> {{supplierInfo.contactPerson}}</p>
+      <p><strong>Email:</strong> {{supplierInfo.email}}</p>
+      <p><strong>Phone:</strong> {{supplierInfo.phone}}</p>
+      <p><strong>Address:</strong> {{supplierInfo.address}}</p>
+    </div>
+  </div>
+
   <h2>QUOTATION</h2>
+
+  <div class="delivery-address">
+    <h3>Delivery Address</h3>
+    <p><strong>Company:</strong> {{deliveryAddress.company}}</p>
+    <p><strong>Address:</strong> {{deliveryAddress.street}}, {{deliveryAddress.city}}, {{deliveryAddress.state}} {{deliveryAddress.postalCode}}, {{deliveryAddress.country}}</p>
+    <p><strong>Delivery Instructions:</strong> {{deliveryAddress.instructions}}</p>
+    <p class="deadline"><strong>Submission Deadline:</strong> {{submissionDeadline | date:'EEEE, MMMM d, y, h:mm a'}}</p>
+  </div>
 
   <div class="currency-selector">
     <label for="currency">Select Currency:</label>
@@ -8,14 +27,6 @@
         {{currency.code}} - {{currency.name}}
       </option>
     </select>
-  </div>
-
-  <div class="delivery-address">
-    <h3>Delivery Address</h3>
-    <p><strong>Company:</strong> {{deliveryAddress.company}}</p>
-    <p><strong>Address:</strong> {{deliveryAddress.street}}, {{deliveryAddress.city}}, {{deliveryAddress.state}} {{deliveryAddress.postalCode}}, {{deliveryAddress.country}}</p>
-    <p><strong>Delivery Instructions:</strong> {{deliveryAddress.instructions}}</p>
-    <p class="deadline"><strong>Submission Deadline:</strong> {{submissionDeadline | date:'EEEE, MMMM d, y, h:mm a'}}</p>
   </div>
 
   <div class="table-container">

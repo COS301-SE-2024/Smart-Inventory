@@ -236,7 +236,11 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 .delivery-address {
-  margin-bottom: 40px;
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
 
 .delivery-address h3 {
@@ -250,3 +254,27 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   color: #555;
 }
 
+.supplier-info {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 30px;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.supplier-details {
+  flex: 1;
+}
+
+.supplier-details h3 {
+  margin-top: 0;
+  color: #333;
+  font-size: 18px;
+}
+
+.supplier-details p {
+  margin: 5px 0;
+  color: #555;
+}

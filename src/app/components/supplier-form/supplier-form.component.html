@@ -1,5 +1,5 @@
 <div class="supplier-quote-container">
-  <h2>Supplier Quote Form</h2>
+  <h2>QUOTATION</h2>
 
   <div class="currency-selector">
     <label for="currency">Select Currency:</label>
@@ -8,6 +8,14 @@
         {{currency.code}} - {{currency.name}}
       </option>
     </select>
+  </div>
+
+  <div class="delivery-address">
+    <h3>Delivery Address</h3>
+    <p><strong>Company:</strong> {{deliveryAddress.company}}</p>
+    <p><strong>Address:</strong> {{deliveryAddress.street}}, {{deliveryAddress.city}}, {{deliveryAddress.state}} {{deliveryAddress.postalCode}}, {{deliveryAddress.country}}</p>
+    <p><strong>Delivery Instructions:</strong> {{deliveryAddress.instructions}}</p>
+    <p class="deadline"><strong>Submission Deadline:</strong> {{submissionDeadline | date:'EEEE, MMMM d, y, h:mm a'}}</p>
   </div>
 
   <div class="table-container">
@@ -79,6 +87,7 @@
       <span class="summary-value">{{getTotalQuoteValue() | customCurrency:selectedCurrency}}</span>
     </div>
   </div>
+  
     <div class="additional-info">
       <h3>Additional Comments</h3>
       <textarea id="additionalComments" [(ngModel)]="additionalComments" rows="4" placeholder="Enter any additional information or notes here"></textarea>

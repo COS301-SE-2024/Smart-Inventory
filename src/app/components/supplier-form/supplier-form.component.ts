@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CustomCurrencyPipe } from './custom-currency.pipe';
+import { NgModel } from '@angular/forms';
 
 interface QuoteItem {
   description: string;
@@ -18,6 +19,16 @@ interface QuoteItem {
 interface Currency {
   code: string;
   name: string;
+}
+
+interface DeliveryAddress {
+  company: string;
+  street: string;
+  city: string;
+  state: string;
+  postalCode: string;
+  country: string;
+  instructions: string;
 }
 
 @Component({
@@ -40,6 +51,18 @@ export class SupplierFormComponent implements OnInit {
     { code: 'JPY', name: 'Japanese Yen' },
     { code: 'CAD', name: 'Canadian Dollar' },
   ];
+
+  submissionDeadline: string = '2024-08-15T17:00:00'; 
+
+  deliveryAddress: DeliveryAddress = {
+    company: 'Example Company',
+    street: '123 Main St',
+    city: 'Exampleville',
+    state: 'State',
+    postalCode: '12345',
+    country: 'Country',
+    instructions: 'Please deliver to the loading dock between 9 AM and 5 PM.'
+  };
 
   vatPercentage: number = 15; // Default VAT percentage
   deliveryDate: string = ''; // Will store the selected delivery date
@@ -229,5 +252,7 @@ export class SupplierFormComponent implements OnInit {
   
     return validTypes.includes(file.type) && file.size <= maxSize;
   }
+
+  
 
 }

@@ -235,3 +235,18 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   background-color: #565656;
 }
 
+.delivery-address {
+  margin-bottom: 40px;
+}
+
+.delivery-address h3 {
+  margin-top: 0;
+  color: #333;
+  font-size: 18px;
+}
+
+.delivery-address p {
+  margin: 10px 0;
+  color: #555;
+}
+

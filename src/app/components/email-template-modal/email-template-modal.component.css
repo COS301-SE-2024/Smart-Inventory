@@ -1,0 +1,14 @@
+:host {
+    display: block;
+    width: 100%;
+    max-width: 600px;
+  }
+  
+  mat-form-field {
+    width: 100%;
+    margin-bottom: 15px;
+  }
+  
+  textarea {
+    min-height: 60px;
+  }

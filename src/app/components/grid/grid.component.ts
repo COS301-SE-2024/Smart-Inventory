@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnDestroy, Output, EventEmitter } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, Output, EventEmitter, output } from '@angular/core';
 import { Renderer2, ElementRef, AfterViewInit, ViewEncapsulation  } from '@angular/core';
 import { AgGridAngular } from 'ag-grid-angular';
 import { ColDef, GridReadyEvent, CellValueChangedEvent, RowValueChangedEvent, GridApi } from 'ag-grid-community';
@@ -51,6 +51,8 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit   {
     @Output() viewGeneratedQuoteClicked = new EventEmitter<void>();
     @Output() rowSelected = new EventEmitter<any>();
     @Output() deleteOrderClicked = new EventEmitter<any>();
+    @Output() viewEmailTemplateClicked = new EventEmitter<void>();
+    @Output() viewDeliveryInfoClicked = new EventEmitter<void>();
     private themeObserver!: MutationObserver;
 
     public themeClass: string = 'ag-theme-material'; // Default to light theme
@@ -249,5 +251,13 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit   {
                 }
             }
         });
+    }
+
+    onViewEmailTemplate() {
+        this.viewEmailTemplateClicked.emit();
+    }
+
+    onViewDeliveryInfo() {
+        this.viewDeliveryInfoClicked.emit();
     }
 }

@@ -40,10 +40,13 @@ export class InventoryComponent implements OnInit {
     item = {
         productId: '',
         description: '',
+        category: '',
         quantity: 0,
         sku: '',
         supplier: '',
         expirationDate: '',
+        lowStockThreshold: 0,
+        reorderFreq: 0,
     };
     selectedItem: any = null;
     requestQuantity: number | null = null;
@@ -54,9 +57,12 @@ export class InventoryComponent implements OnInit {
         { field: 'sku', headerName: 'SKU' },
         { field: 'productId', headerName: 'Product ID' },
         { field: 'description', headerName: 'Description' },
+        { field: 'category', headerName: 'Category' },
         { field: 'quantity', headerName: 'Quantity' },
         { field: 'supplier', headerName: 'Supplier' },
         { field: 'expirationDate', headerName: 'Expiration Date' },
+        { field: 'lowStockThreshold', headerName: 'Low Stock Threshold' },
+        { field: 'reorderFreq', headerName: 'Reorder Frequency' },
     ];
 
     addButton = { text: 'Add New Item' };
@@ -112,11 +118,14 @@ export class InventoryComponent implements OnInit {
                 this.rowData = inventoryItems.map((item: any) => ({
                     inventoryID: item.inventoryID,
                     sku: item.SKU,
+                    category: item.category,
                     productId: item.productID,
                     description: item.description,
                     quantity: item.quantity,
                     supplier: item.supplier,
                     expirationDate: item.expirationDate,
+                    lowStockThreshold: item.lowStockThreshold,
+                    reorderFreq : item.reorderFreq
                 }));
                 console.log('Processed inventory items:', this.rowData);
             } else {
@@ -190,13 +199,17 @@ export class InventoryComponent implements OnInit {
             quantity: 0,
             sku: '',
             supplier: '',
+            category: '',
+            lowStockThreshold: 0,
+            reorderFreq: 0,
             expirationDate: '',
         };
     }
 
+    
     async onSubmit(formData: any) {
-        if (isNaN(formData.quantity)) {
-            alert('Please enter a valid quantity');
+        if (isNaN(formData.quantity) || isNaN(formData.lowStockThreshold) || isNaN(formData.reorderFreq)) {
+            alert('Please enter valid numeric values for Quantity, Low Stock Threshold, and Reorder Frequency');
             return;
         }
 
@@ -227,11 +240,14 @@ export class InventoryComponent implements OnInit {
             const payload = JSON.stringify({
                 productID: formData.productId,
                 description: formData.description,
+                category: formData.category,
                 quantity: formData.quantity,
                 sku: formData.sku,
                 supplier: formData.supplier,
                 tenentId: tenantId,
                 expirationDate: formData.expirationDate,
+                lowStockThreshold: formData.lowStockThreshold,
+                reorderFreq: formData.reorderFreq,
             });
 
             console.log('Payload:', payload);

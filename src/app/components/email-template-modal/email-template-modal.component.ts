@@ -5,6 +5,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
+import { MatTabsModule } from '@angular/material/tabs';
 
 @Component({
   selector: 'app-email-template-modal',
@@ -15,7 +16,8 @@ import { MatButtonModule } from '@angular/material/button';
     MatDialogModule,
     MatFormFieldModule,
     MatInputModule,
-    MatButtonModule
+    MatButtonModule,
+    MatTabsModule
   ],
   templateUrl: './email-template-modal.component.html',
   styleUrl: './email-template-modal.component.css'
@@ -31,10 +33,9 @@ export class EmailTemplateModalComponent {
     this.emailForm = this.fb.group({
       greeting: ['Dear Supplier,', Validators.required],
       explanation: ['We are requesting a quote for the following items:', Validators.required],
-      items: ['', Validators.required],
       requirements: ['Please provide your best price and delivery time for these items.', Validators.required],
-      instructions: ['Submit your quote through our web form at [Your Web Form URL]', Validators.required],
-      contactInfo: ['If you have any questions, please contact us at [Your Contact Information]', Validators.required]
+      instructions: ['Submit your quote through our web form.', Validators.required],
+      contactInfo: ['If you have any questions, please contact us.', Validators.required]
     });
 
     if (data && data.emailTemplate) {
@@ -50,5 +51,13 @@ export class EmailTemplateModalComponent {
 
   onCancel() {
     this.dialogRef.close();
+  }
+
+  getErrorMessage(controlName: string): string {
+    const control = this.emailForm.get(controlName);
+    if (control?.hasError('required')) {
+      return 'This field is required';
+    }
+    return '';
   }
 }

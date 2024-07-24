@@ -1,14 +1,55 @@
 :host {
-    display: block;
-    width: 100%;
-    max-width: 600px;
-  }
-  
-  mat-form-field {
-    width: 100%;
-    margin-bottom: 15px;
-  }
-  
-  textarea {
-    min-height: 60px;
-  }
+  display: block;
+  width: 100%;
+  max-width: 800px;
+}
+
+.email-form {
+  padding-top: 20px;
+}
+
+mat-tab-group {
+  height: 100%;
+}
+
+mat-dialog-content {
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+mat-form-field {
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+textarea {
+  min-height: 60px;
+}
+
+mat-dialog-actions {
+  padding: 20px;
+}
+
+button {
+  margin-left: 8px;
+}
+
+.email-preview {
+  padding: 20px;
+  border-radius: 4px;
+}
+
+.preview-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.preview-content pre {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  background-color: #f9f9f9;
+  padding: 10px;
+  border-radius: 4px;
+}

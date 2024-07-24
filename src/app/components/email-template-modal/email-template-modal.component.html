@@ -1,36 +1,52 @@
 <h2 mat-dialog-title>Email Template</h2>
 <mat-dialog-content>
-  <form [formGroup]="emailForm">
-    <mat-form-field appearance="fill">
-      <mat-label>Greeting</mat-label>
-      <input matInput formControlName="greeting">
-    </mat-form-field>
+  <mat-tab-group>
+    <mat-tab label="Edit">
+      <form [formGroup]="emailForm" class="email-form">
+        <mat-form-field appearance="outline">
+          <mat-label>Greeting</mat-label>
+          <input matInput formControlName="greeting">
+          <mat-error *ngIf="emailForm.get('greeting')?.invalid">{{getErrorMessage('greeting')}}</mat-error>
+        </mat-form-field>
 
-    <mat-form-field appearance="fill">
-      <mat-label>Explanation</mat-label>
-      <textarea matInput formControlName="explanation" rows="3"></textarea>
-    </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Explanation</mat-label>
+          <textarea matInput formControlName="explanation"></textarea>
+          <mat-error *ngIf="emailForm.get('explanation')?.invalid">{{getErrorMessage('explanation')}}</mat-error>
+        </mat-form-field>
 
-    <mat-form-field appearance="fill">
-      <mat-label>Items</mat-label>
-      <textarea matInput formControlName="items" rows="5" placeholder="Enter items, SKUs, and quantities"></textarea>
-    </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Requirements</mat-label>
+          <textarea matInput formControlName="requirements"></textarea>
+          <mat-error *ngIf="emailForm.get('requirements')?.invalid">{{getErrorMessage('requirements')}}</mat-error>
+        </mat-form-field>
 
-    <mat-form-field appearance="fill">
-      <mat-label>Requirements</mat-label>
-      <textarea matInput formControlName="requirements" rows="3"></textarea>
-    </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Instructions</mat-label>
+          <textarea matInput formControlName="instructions"></textarea>
+          <mat-error *ngIf="emailForm.get('instructions')?.invalid">{{getErrorMessage('instructions')}}</mat-error>
+        </mat-form-field>
 
-    <mat-form-field appearance="fill">
-      <mat-label>Instructions</mat-label>
-      <textarea matInput formControlName="instructions" rows="2"></textarea>
-    </mat-form-field>
-
-    <mat-form-field appearance="fill">
-      <mat-label>Contact Information</mat-label>
-      <textarea matInput formControlName="contactInfo" rows="2"></textarea>
-    </mat-form-field>
-  </form>
+        <mat-form-field appearance="outline">
+          <mat-label>Contact Information</mat-label>
+          <textarea matInput formControlName="contactInfo"></textarea>
+          <mat-error *ngIf="emailForm.get('contactInfo')?.invalid">{{getErrorMessage('contactInfo')}}</mat-error>
+        </mat-form-field>
+      </form>
+    </mat-tab>
+    <mat-tab label="Preview">
+      <div class="email-preview">
+        <div class="preview-content">
+          <p>{{emailForm.get('greeting')?.value}}</p>
+          <p>{{emailForm.get('explanation')?.value}}</p>
+          <p>[Items will be inserted here]</p>
+          <p>{{emailForm.get('requirements')?.value}}</p>
+          <p>{{emailForm.get('instructions')?.value}}</p>
+          <p>{{emailForm.get('contactInfo')?.value}}</p>
+        </div>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
   <button mat-button (click)="onCancel()">Cancel</button>

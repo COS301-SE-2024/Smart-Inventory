@@ -1,55 +1,78 @@
 <h2 mat-dialog-title>Delivery Information</h2>
 <mat-dialog-content>
-  <form [formGroup]="deliveryForm">
-    <mat-form-field appearance="fill">
-      <mat-label>Company</mat-label>
-      <input matInput formControlName="company">
-    </mat-form-field>
+  <form [formGroup]="deliveryForm" class="delivery-form">
+    <div class="form-row">
+      <mat-form-field appearance="outline">
+        <mat-label>Company</mat-label>
+        <input matInput formControlName="company">
+        <mat-error *ngIf="deliveryForm.get('company')?.invalid">{{getErrorMessage('company')}}</mat-error>
+      </mat-form-field>
+    </div>
 
-    <mat-form-field appearance="fill">
-      <mat-label>Street</mat-label>
-      <input matInput formControlName="street">
-    </mat-form-field>
+    <div class="form-row">
+      <mat-form-field appearance="outline">
+        <mat-label>Street</mat-label>
+        <input matInput formControlName="street">
+        <mat-error *ngIf="deliveryForm.get('street')?.invalid">{{getErrorMessage('street')}}</mat-error>
+      </mat-form-field>
+    </div>
 
-    <mat-form-field appearance="fill">
-      <mat-label>City</mat-label>
-      <input matInput formControlName="city">
-    </mat-form-field>
+    <div class="form-row three-col">
+      <mat-form-field appearance="outline">
+        <mat-label>City</mat-label>
+        <input matInput formControlName="city">
+        <mat-error *ngIf="deliveryForm.get('city')?.invalid">{{getErrorMessage('city')}}</mat-error>
+      </mat-form-field>
 
-    <mat-form-field appearance="fill">
-      <mat-label>State</mat-label>
-      <input matInput formControlName="state">
-    </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>State</mat-label>
+        <input matInput formControlName="state">
+        <mat-error *ngIf="deliveryForm.get('state')?.invalid">{{getErrorMessage('state')}}</mat-error>
+      </mat-form-field>
 
-    <mat-form-field appearance="fill">
-      <mat-label>Postal Code</mat-label>
-      <input matInput formControlName="postalCode">
-    </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Postal Code</mat-label>
+        <input matInput formControlName="postalCode">
+        <mat-error *ngIf="deliveryForm.get('postalCode')?.invalid">{{getErrorMessage('postalCode')}}</mat-error>
+      </mat-form-field>
+    </div>
 
-    <mat-form-field appearance="fill">
-      <mat-label>Country</mat-label>
-      <input matInput formControlName="country">
-    </mat-form-field>
+    <div class="form-row">
+      <mat-form-field appearance="outline">
+        <mat-label>Country</mat-label>
+        <input matInput formControlName="country">
+        <mat-error *ngIf="deliveryForm.get('country')?.invalid">{{getErrorMessage('country')}}</mat-error>
+      </mat-form-field>
+    </div>
 
-    <mat-form-field appearance="fill">
-      <mat-label>Delivery Instructions</mat-label>
-      <textarea matInput formControlName="instructions" rows="3"></textarea>
-    </mat-form-field>
+    <div class="form-row">
+      <mat-form-field appearance="outline">
+        <mat-label>Delivery Instructions</mat-label>
+        <textarea matInput formControlName="instructions" rows="3"></textarea>
+      </mat-form-field>
+    </div>
 
-    <mat-form-field appearance="fill">
-      <mat-label>Contact Name</mat-label>
-      <input matInput formControlName="contactName">
-    </mat-form-field>
+    <div class="form-row">
+      <mat-form-field appearance="outline">
+        <mat-label>Contact Name</mat-label>
+        <input matInput formControlName="contactName">
+        <mat-error *ngIf="deliveryForm.get('contactName')?.invalid">{{getErrorMessage('contactName')}}</mat-error>
+      </mat-form-field>
+    </div>
 
-    <mat-form-field appearance="fill">
-      <mat-label>Email</mat-label>
-      <input matInput formControlName="email" type="email">
-    </mat-form-field>
+    <div class="form-row two-col">
+      <mat-form-field appearance="outline">
+        <mat-label>Email</mat-label>
+        <input matInput formControlName="email" type="email">
+        <mat-error *ngIf="deliveryForm.get('email')?.invalid">{{getErrorMessage('email')}}</mat-error>
+      </mat-form-field>
 
-    <mat-form-field appearance="fill">
-      <mat-label>Phone</mat-label>
-      <input matInput formControlName="phone">
-    </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Phone</mat-label>
+        <input matInput formControlName="phone">
+        <mat-error *ngIf="deliveryForm.get('phone')?.invalid">{{getErrorMessage('phone')}}</mat-error>
+      </mat-form-field>
+    </div>
   </form>
 </mat-dialog-content>
 <mat-dialog-actions align="end">

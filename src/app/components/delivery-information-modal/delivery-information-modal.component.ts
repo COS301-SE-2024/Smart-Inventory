@@ -64,4 +64,15 @@ export class DeliveryInformationModalComponent {
   onCancel() {
     this.dialogRef.close();
   }
+
+  getErrorMessage(field: string): string {
+    const control = this.deliveryForm.get(field);
+    if (control?.hasError('required')) {
+      return 'This field is required';
+    }
+    if (control?.hasError('email')) {
+      return 'Please enter a valid email address';
+    }
+    return '';
+  }
 }

@@ -14,6 +14,7 @@ import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatSelectModule } from '@angular/material/select';
 import { RoleSelectCellEditorComponent } from '../../pages/team/role-select-cell-editor.component';
+import { DateSelectCellEditorComponent } from '../reports/supplier-report/date-select-cell-editor.component';
 
 @Component({
     selector: 'app-grid',
@@ -30,6 +31,7 @@ import { RoleSelectCellEditorComponent } from '../../pages/team/role-select-cell
         MatSelectModule,
         MatIcon,
         RoleSelectCellEditorComponent,
+        DateSelectCellEditorComponent,
     ],
     templateUrl: './grid.component.html',
     styleUrl: './grid.component.css',

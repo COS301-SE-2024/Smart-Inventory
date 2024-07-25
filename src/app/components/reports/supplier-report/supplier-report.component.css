@@ -1,3 +1,10 @@
+.ag-body-vertical-scroll-container {
+    width: 100%;
+    display: none !important;
+}
+
+
+
 .tile {
     display: flex;
     align-items: center;

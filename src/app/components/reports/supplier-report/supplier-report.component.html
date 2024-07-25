@@ -1,4 +1,4 @@
-<div style="height: 100%; display: block; overflow: scroll">
+<div style="height: 100%; display: block; overflow: scroll; overflow-x: hidden;">
     <mat-toolbar style="width: 100%">
         <button mat-button style="width: 100%; background-color: #f1f1f1; color: black" (click)="back()">
             Back to reports
@@ -26,8 +26,8 @@
     <!-- </mat-grid-list> -->
 
     <!-- </div> -->
-    <mat-grid-list cols="9" rowHeight="25vh" gutterSize="20px">
-        <mat-grid-tile *ngFor="let tile of tiles.slice(currentIndex, currentIndex + 3)" class="tile" gutterSize="15px" [colspan]="2" [rowspan]="1">
+    <mat-grid-list cols="8" rowHeight="29vh" gutterSize="20px">
+        <mat-grid-tile *ngFor="let tile of tiles.slice(currentIndex, currentIndex + 4)" class="tile" gutterSize="10px" [colspan]="2" [rowspan]="1">
             <div class="icon-container">
                 <mat-icon [attr.aria-label]="tile.iconLabel" class="metric-icon">{{ tile.icon }}</mat-icon>
             </div>
@@ -39,14 +39,14 @@
                 </div>
             </div>
         </mat-grid-tile>
-        <mat-grid-tile [colspan]="6" [rowspan]="2">
-            <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">  
+        <mat-grid-tile [colspan]="8" [rowspan]="3">
+            <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
                 <div class="inventoryHolder">
-                    <app-grid [rowData]="rowData" [columnDefs]="colDefs" #gridComponent> </app-grid>
+                    <app-grid [rowData]="rowData" [columnDefs]="colDefs" #gridComponent></app-grid>
                 </div>
             </div>
         </mat-grid-tile>
-        <mat-grid-tile [colspan]="2" [rowspan]="6">
+        <mat-grid-tile [colspan]="2" [rowspan]="4">
             <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
                 <mat-card style="height: 100%; width: 100%">
                     <mat-card-title style="margin-left: 15px; margin-top: 15px; font-size: 25px;"> {{
@@ -62,20 +62,37 @@
                 </mat-card>
             </div>
         </mat-grid-tile>
-        <!-- <mat-grid-tile [colspan]="3" [rowspan]="2">
+        <mat-grid-tile [colspan]="6" [rowspan]="2">
             <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
                 <mat-card style="height: 100%; width: 100%">
-                    <app-saleschart style="height: 100%"></app-saleschart>
+                    <app-line-bar></app-line-bar>
                 </mat-card>
             </div>
-        </mat-grid-tile> -->
+        </mat-grid-tile>
+
+        <mat-grid-tile [colspan]="3" [rowspan]="2">
+            <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
+                <mat-card style="height: 100%; width: 100%">
+                    <app-saleschart></app-saleschart>
+                </mat-card>
+            </div>
+        </mat-grid-tile>
+
+        <mat-grid-tile [colspan]="3" [rowspan]="2">
+            <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
+                <mat-card style="height: 100%; width: 100%">
+                    <app-saleschart></app-saleschart>
+                </mat-card>
+            </div>
+        </mat-grid-tile>
+        
         <!-- <mat-grid-tile [colspan]="3" [rowspan]="2"> -->
         <!-- <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%"> -->
         <!-- <app-dynamic-graph></app-dynamic-graph> -->
         <!-- </div> -->
-        <!-- </mat-grid-tile> -->
+        <!-- </mat-grid-tile>
     </mat-grid-list>
-</div>
+ </div> -->
 
 <div *ngIf="isLoading" class="loading-overlay">
     <app-loading-spinner></app-loading-spinner>

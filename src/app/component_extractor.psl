@@ -1,5 +1,5 @@
 # Use the following command to run the script:
-# .\component_extractor.ps1 email-template-modal team app.component.html
+# .\component_extractor.ps1 team grid inventory
 
 # You might need to adjust the powershell execution policy to run scripts. 
 # Run powershell as administrator and run the following command:

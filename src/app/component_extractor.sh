@@ -1,6 +1,11 @@
 #!/bin/bash
 
-./component_extractor.sh email-template-modal app.component.html app.routes.ts
+# Run command to give the script executable permission
+# chmod +x component_extractor.sh 
+
+# Run command with arguments of which folders to use
+#./component_extractor.sh email-template-modal app.component.html app.routes.ts
+
 
 # Check if at least one argument is provided
 if [ $# -eq 0 ]; then

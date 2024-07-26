@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { CustomCurrencyPipe } from './custom-currency.pipe';
 import { MatDialog } from '@angular/material/dialog';
 import { UpdateContactConfirmationComponent } from './update-contact-confirmation.component';
+import { ActivatedRoute } from '@angular/router';
 
 interface QuoteItem {
   description: string;
@@ -44,7 +45,11 @@ interface DeliveryAddress {
 })
 export class SupplierFormComponent implements OnInit {
 
-  constructor(private dialog: MatDialog) {}
+  supplierID: string = '';
+  orderID: string = '';
+
+
+  constructor(private dialog: MatDialog, private route: ActivatedRoute) {}
 
   openUpdateContactModal() {
     const dialogRef = this.dialog.open(UpdateContactConfirmationComponent, {
@@ -105,6 +110,19 @@ export class SupplierFormComponent implements OnInit {
   deliveryCost: number = 0; // Will store the delivery cost
 
   ngOnInit() {
+
+    this.route.params.subscribe(params => {
+      this.supplierID = params['supplierID'] || '';
+      this.orderID = params['orderID'] || '';
+      console.log('Supplier ID:', this.supplierID);
+      console.log('Order ID:', this.orderID);
+      
+      if (this.supplierID && this.orderID) {
+        // this.loadSupplierData(this.supplierID);
+        // this.loadOrderData(this.orderID);
+      }
+    });
+
     // Initialize with mock data (same as before)
     this.quoteItems = [
       {

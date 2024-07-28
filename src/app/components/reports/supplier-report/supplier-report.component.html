@@ -5,10 +5,10 @@
         </button>
     </mat-toolbar>
 
-    <!-- <div class="grid-container"> -->
+    <!-- <div class="grid-container">
     <div class="arrow-container"  (click)="showNextTiles()">
         <mat-icon class="arrow-icon">keyboard_arrow_down</mat-icon>
-    </div>
+    </div> -->
     <!-- <mat-grid-list cols="3" rowHeight="210px"> -->
 
         <!-- <mat-grid-tile *ngFor="let tile of tiles.slice(currentIndex, currentIndex + 3)" class="tile" gutterSize="15px">
@@ -24,21 +24,29 @@
             </div>
         </mat-grid-tile> -->
     <!-- </mat-grid-list> -->
-
+    <div class="carousel-navigation">
+        <button mat-icon-button (click)="scrollTiles('left')"><mat-icon>chevron_left</mat-icon></button>
+        <button mat-icon-button (click)="scrollTiles('right')"><mat-icon>chevron_right</mat-icon></button>
+    </div>
     <!-- </div> -->
     <mat-grid-list cols="8" rowHeight="29vh" gutterSize="20px">
-        <mat-grid-tile *ngFor="let tile of tiles.slice(currentIndex, currentIndex + 4)" class="tile" gutterSize="10px" [colspan]="2" [rowspan]="1">
-            <div class="icon-container">
-                <mat-icon [attr.aria-label]="tile.iconLabel" class="metric-icon">{{ tile.icon }}</mat-icon>
+        
+        <div class="carousel-wrapper">
+            <div #carousel class="tile-wrapper">
+                <mat-grid-tile *ngFor="let tile of visibleTiles" class="tile" gutterSize="10px" [colspan]="1" [rowspan]="1">
+                    <div class="icon-container">
+                        <mat-icon [attr.aria-label]="tile.iconLabel" class="metric-icon">{{ tile.icon }}</mat-icon>
+                    </div>
+                    <div class="content">
+                        <h3 class="metric-title">{{ tile.metricName }}</h3>
+                        <div class="details">
+                            <p class="metric-value">{{ tile.value }}</p>
+                            <span class="metric-info">{{ tile.additionalInfo }}</span>
+                        </div>
+                    </div>
+                </mat-grid-tile>
             </div>
-            <div class="content">
-                <h3 class="metric-title">{{ tile.metricName }}</h3>
-                <div class="details">
-                    <p class="metric-value">{{ tile.value }}</p>
-                    <span class="metric-info">{{ tile.additionalInfo }}</span>
-                </div>
-            </div>
-        </mat-grid-tile>
+        </div>
         <mat-grid-tile [colspan]="8" [rowspan]="3">
             <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
                 <div class="inventoryHolder">
@@ -90,9 +98,9 @@
         <!-- <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%"> -->
         <!-- <app-dynamic-graph></app-dynamic-graph> -->
         <!-- </div> -->
-        <!-- </mat-grid-tile>
-    </mat-grid-list>
- </div> -->
+        <!-- </mat-grid-tile> -->
+    <!-- </mat-grid-list> -->
+ <!-- </div>  -->
 
 <div *ngIf="isLoading" class="loading-overlay">
     <app-loading-spinner></app-loading-spinner>

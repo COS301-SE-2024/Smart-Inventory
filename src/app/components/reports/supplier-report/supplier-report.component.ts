@@ -16,7 +16,11 @@ import outputs from '../../../../../amplify_outputs.json';
 import { Amplify } from 'aws-amplify';
 import { LoadingSpinnerComponent } from '../../loader/loading-spinner.component';
 import { DateSelectCellEditorComponent } from './date-select-cell-editor.component';
+import { RoleSelectCellEditorComponent } from '../../../pages/team/role-select-cell-editor.component';
 import { LineBarComponent } from '../../charts/line-bar/line-bar.component';
+import { RowNode } from 'ag-grid-community';
+import { AgGridAngular } from 'ag-grid-angular';
+
 @Component({
     selector: 'app-supplier-report',
     standalone: true,
@@ -31,6 +35,7 @@ import { LineBarComponent } from '../../charts/line-bar/line-bar.component';
         LoadingSpinnerComponent,
         LineBarComponent,
         DateSelectCellEditorComponent,
+        RoleSelectCellEditorComponent
     ],
     templateUrl: './supplier-report.component.html',
     styleUrl: './supplier-report.component.css',
@@ -42,10 +47,27 @@ export class SupplierReportComponent implements OnInit {
         private route: ActivatedRoute,
     ) {
         Amplify.configure(outputs);
+
+    }
+
+    visibleTiles: any[] = []; // Holds the tiles currently being displayed
+    currentIndex = 0;
+
+    updateVisibleTiles() {
+        this.visibleTiles = this.tiles.slice(this.currentIndex, this.currentIndex + 4);
+    }
+
+    scrollTiles(direction: 'left' | 'right') {
+        if (direction === 'left' && this.currentIndex > 0) {
+            this.currentIndex--;
+        } else if (direction === 'right' && this.currentIndex < this.tiles.length - 4) {
+            this.currentIndex++;
+        }
+        this.updateVisibleTiles();
     }
 
     automation: boolean = true;
-
+    @ViewChild('gridComponent') gridComponent!: GridComponent;
     // rowData: any[] = [];
     supplierIds: any[] = [];
     isLoading = true;
@@ -73,7 +95,7 @@ export class SupplierReportComponent implements OnInit {
 
     tiles: any[] = [];
 
-    currentIndex = 0;
+    // currentIndex = 0;
 
     showNextTiles() {
         this.currentIndex += 3;
@@ -87,22 +109,26 @@ export class SupplierReportComponent implements OnInit {
         await this.loadSuppliersData();
 
         this.loadSupplierMetrics();
-        await this.fetchMetrics(this.rowData = this.processRowData(this.rowData));
+        await this.fetchMetrics(this.rowData);
+        console.log(this.getMostAverageSupplier()['Supplier ID']);
+        console.log(this.getWorstPerformingSupplier()['Supplier ID'])
+        console.log(this.calculateAverageDeliveryRate(this.originalData))
+        console.log(this.calculateOnTimeOrderCompletionRate(this.originalData))
+        this.updateVisibleTiles();
+        // console.log(this.visibleTiles);
     }
 
     colDefs!: ColDef[];
+    originalData: any[] = [];
 
     getCurrentRoute() {
         this.colDefs = [
             { field: 'Supplier ID', headerName: 'Supplier ID' },
             {
                 field: 'Date',
-                headerName: 'Date',
-                cellEditor: 'dateSelectCellEditor', // Use the alias registered in the module imports
-                editable: true, // Make sure this column is editable
-                cellEditorParams: {
-                    availableDates: (params: any) => this.getAvailableDates(params.data['Supplier ID']),
-                }
+                headerName: 'Role',
+                cellEditor: DateSelectCellEditorComponent,  // Make sure this is set if it should be editable
+                cellRenderer: DateSelectCellEditorComponent
             },
             { field: 'On Time Delivery Rate', headerName: 'On Time Delivery Rate' },
             { field: 'Order Accuracy Rate', headerName: 'Order Accuracy Rate' },
@@ -114,17 +140,58 @@ export class SupplierReportComponent implements OnInit {
         return 'Supplier Report';
     }
 
+    getUniqueSuppliers(data: any[]): any[] {
+        const uniqueSuppliers: any[] = [];
+        data.forEach(item => {
+            if (!uniqueSuppliers[item['Supplier ID']]) {
+                uniqueSuppliers[item['Supplier ID']] = item;
+            }
+        });
+        return Object.values(uniqueSuppliers);
+    }
+
+    getAvailableDates(supplierId: string): string[] {
+        return this.originalData
+            .filter(item => item['Supplier ID'] === supplierId)
+            .map(item => item['Date']);
+    }
+
+    onDateChange(supplierId: string, newDate: string): void {
+        // const updatedData = this.originalData.find(item =>
+        //     item['Supplier ID'] === supplierId && item['Date'] === newDate
+        // );
+
+        // if (updatedData) {
+        //     const rowIndex = this.rowData.findIndex(row => row['Supplier ID'] === supplierId);
+        //     if (rowIndex !== -1) {
+        //         this.rowData[rowIndex] = { ...updatedData };
+
+        //         const rowNode = this.gridComponent.api.getRowNode(rowIndex.toString());
+        //         if (rowNode) {
+        //             this.gridComponent.api.refreshCells({
+        //                 rowNodes: [rowNode],
+        //                 force: true
+        //             });
+        //         } else {
+        //             console.warn(`Row node not found for index ${rowIndex}`);
+        //             // Optionally, refresh the entire grid if the specific row can't be found
+        //             this.gridComponent.api.refreshCells({ force: true });
+        //         }
+        //     }
+        // }
+    }
+
     // Function to fetch data based on date and supplier ID
     fetchDataForDate(supplierId: string, date: string): any {
         // Mock function to simulate fetching data for a specific date
         return this.rowData.find(row => row['Supplier ID'] === supplierId && row.Date === date);
     }
 
-    getAvailableDates(supplierId: string): string[] {
-        return this.rowData
-            .filter(row => row['Supplier ID'] === supplierId)
-            .map(row => row.Date);
-    }
+    // getAvailableDates(supplierId: string): string[] {
+    //     return this.rowData
+    //         .filter(row => row['Supplier ID'] === supplierId)
+    //         .map(row => row.Date);
+    // }
 
 
     async fetchMetrics(data: any[]) {
@@ -192,6 +259,142 @@ export class SupplierReportComponent implements OnInit {
         }
     }
 
+    calculateAverages(suppliers: any[]): any {
+        // console.log("Received suppliers:", suppliers);
+
+        const total = suppliers.reduce((acc, curr) => {
+            // console.log("Current item:", curr); // Check what each supplier item looks like
+
+            // Access properties correctly using bracket notation if they include spaces
+            const onTimeRate = typeof curr['On Time Delivery Rate'] === 'number' ? curr['On Time Delivery Rate'] : 0;
+            const accuracyRate = typeof curr['Order Accuracy Rate'] === 'number' ? curr['Order Accuracy Rate'] : 0;
+
+            if (onTimeRate === 0 || accuracyRate === 0) {
+                console.error("Invalid data for supplier:", curr);
+            }
+
+            return {
+                onTimeDeliveryRate: acc.onTimeDeliveryRate + onTimeRate,
+                orderAccuracyRate: acc.orderAccuracyRate + accuracyRate,
+            };
+        }, { onTimeDeliveryRate: 0, orderAccuracyRate: 0 });
+
+        if (suppliers.length === 0) {
+            console.error("No suppliers provided to calculate averages.");
+            return { onTimeDeliveryRate: 0, orderAccuracyRate: 0 }; // Return zero or handle appropriately
+        }
+
+        const averages = {
+            onTimeDeliveryRate: total.onTimeDeliveryRate / suppliers.length,
+            orderAccuracyRate: total.orderAccuracyRate / suppliers.length,
+        };
+
+        // console.log("Calculated averages:", averages);
+        return averages;
+    }
+
+    // Determine average suppliers based on a threshold percentage
+    getMostAverageSupplier(): any {
+        const suppliers = this.originalData;
+        // console.log('The suppliers:', suppliers);
+
+        const averages = this.calculateAverages(suppliers);
+        // console.log("My averages:", averages);
+
+        let mostAverageSupplier = null;
+        let smallestDifference = Infinity; // Start with a large number that any real difference will be smaller than
+
+        suppliers.forEach(supplier => {
+            // Safely access properties
+            const onTimeRate = typeof supplier['On Time Delivery Rate'] === 'number' ? supplier['On Time Delivery Rate'] : null;
+            const accuracyRate = typeof supplier['Order Accuracy Rate'] === 'number' ? supplier['Order Accuracy Rate'] : null;
+
+            if (onTimeRate === null || accuracyRate === null) {
+                console.error("Invalid data encountered, skipping supplier:", supplier);
+                return; // Continue to the next supplier in the forEach loop
+            }
+
+            // Calculate the absolute percentage differences
+            const onTimeDiff = Math.abs((onTimeRate - averages.onTimeDeliveryRate) / averages.onTimeDeliveryRate * 100);
+            const accuracyDiff = Math.abs((accuracyRate - averages.orderAccuracyRate) / averages.orderAccuracyRate * 100);
+            const totalDifference = onTimeDiff + accuracyDiff; // Simple sum of differences
+
+            // Check if this supplier has the smallest difference so far
+            if (totalDifference < smallestDifference) {
+                smallestDifference = totalDifference;
+                mostAverageSupplier = supplier;
+            }
+        });
+
+        // console.log("Most Average Supplier:", mostAverageSupplier);
+        return mostAverageSupplier;
+    }
+
+    getWorstPerformingSupplier(): any {
+        const suppliers = this.originalData;
+        console.log('The suppliers:', suppliers);
+
+        let worstSupplier = null;
+        let highestScore = -Infinity; // Start with a very low score that any real score will be higher than
+
+        suppliers.forEach(supplier => {
+            // Calculating performance score
+            // We could also include risk assessment based on 'RiskScore' and 'Out Standing Payments'
+            let performanceScore = (100 - supplier['On Time Delivery Rate']) +
+                (100 - supplier['Order Accuracy Rate']) +
+                (supplier['Out Standing Payments'] / 1000); // Example of scaling outstanding payments
+
+            // Consider RiskScore effect
+            let riskFactor = 0;
+            switch (supplier['RiskScore'].toLowerCase()) {
+                case 'low':
+                    riskFactor = 1; // lower risk adds less to the score
+                    break;
+                case 'moderate':
+                    riskFactor = 2;
+                    break;
+                case 'high':
+                    riskFactor = 3; // higher risk adds more to the score
+                    break;
+            }
+            performanceScore += riskFactor * 5; // Weight the risk score
+
+            // Check if this supplier has the highest performance score so far (i.e., worst performance)
+            if (performanceScore > highestScore) {
+                highestScore = performanceScore;
+                worstSupplier = supplier;
+            }
+        });
+
+        // console.log("Worst Performing Supplier:", worstSupplier);
+        return worstSupplier;
+    }
+
+    calculateAverageDeliveryRate(suppliers: any[]): number {
+        // Initialize the sum and count variables
+        let totalDeliveryRate = 0;
+        let count = 0;
+
+        // Iterate over each supplier entry
+        suppliers.forEach(supplier => {
+            // Check if the "On Time Delivery Rate" is present and is a number
+            if (supplier && typeof supplier['On Time Delivery Rate'] === 'number') {
+                totalDeliveryRate += supplier['On Time Delivery Rate'];
+                count++;
+            }
+        });
+
+        // Calculate the average delivery rate
+        // Ensure we do not divide by zero
+        const averageDeliveryRate = count > 0 ? totalDeliveryRate / count : 0;
+        return averageDeliveryRate;
+    }
+
+    calculateOnTimeOrderCompletionRate(suppliers: any[]): number {
+        const totalRate = suppliers.reduce((sum, supplier) => sum + supplier['On Time Delivery Rate'], 0);
+        return totalRate / suppliers.length;
+    }
+
     async loadSuppliersData() {
         try {
             const session = await fetchAuthSession();
@@ -233,7 +436,7 @@ export class SupplierReportComponent implements OnInit {
                 // this.supplierIds = suppliers.map((supplier: any) => ({
                 //     supplierID: supplier.supplierID,
                 // }));
-                this.rowData = [
+                this.originalData = [
                     {
                         "Supplier ID": "S001",
                         "Date": "2021-07-23",
@@ -325,6 +528,9 @@ export class SupplierReportComponent implements OnInit {
                         "TotalSpent": 105000
                     }
                 ]
+
+                this.rowData = this.processRowData(this.originalData);
+
                 console.log('Processed suppliers:', this.supplierIds);
             } else {
                 console.error('Error fetching suppliers data:', responseBody.body);
@@ -338,9 +544,7 @@ export class SupplierReportComponent implements OnInit {
         }
     }
 
-    rowData: any[] = [
-        
-    ];
+    rowData: any[] = [];
 
     processRowData(rawData: any[]): any[] {
         const groupedData = this.groupDataBySupplier(rawData);
@@ -413,14 +617,14 @@ export class SupplierReportComponent implements OnInit {
             const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
             console.log('Response from Lambda:', responseBody);
 
-            if (responseBody.statusCode === 200) {
-                const inventoryItems = JSON.parse(responseBody.body);
-                // this.rowData = this.data;
-                console.log('Processed inventory items:', this.rowData);
-            } else {
-                console.error('Error fetching inventory data:', responseBody.body);
-                this.rowData = [];
-            }
+            // if (responseBody.statusCode === 200) {
+            //     const inventoryItems = JSON.parse(responseBody.body);
+            //     // this.rowData = this.data;
+            //     console.log('Processed inventory items:', this.rowData);
+            // } else {
+            //     console.error('Error fetching inventory data:', responseBody.body);
+            //     this.rowData = [];
+            // }
         } catch (error) {
             console.error('Error in loadInventoryData:', error);
             this.rowData = [];
@@ -433,6 +637,7 @@ export class SupplierReportComponent implements OnInit {
         const sum = this.rowData.reduce((acc, row) => acc + row[column], 0);
         return sum / this.rowData.length;
     }
+
     calculateTotal(column: any): number {
         const sum = this.rowData.reduce((acc, row) => acc + row[column], 0);
         return sum;

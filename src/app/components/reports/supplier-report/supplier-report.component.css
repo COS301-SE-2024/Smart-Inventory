@@ -4,6 +4,31 @@
 }
 
 
+.carousel-wrapper {
+    overflow-x: hidden;
+    display: flex;
+    scroll-behavior: smooth;
+}
+
+.carousel-navigation {
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+    width: 100%;
+    top: 22%;
+    z-index: 10;
+    transform: translateY(-50%);
+}
+
+.carousel-wrapper mat-grid-list {
+    flex: 0 0 auto;
+}
+
+.tile-wrapper{
+    position: absolute;
+    width: 195%;
+    left: 1%;
+}
 
 .tile {
     display: flex;

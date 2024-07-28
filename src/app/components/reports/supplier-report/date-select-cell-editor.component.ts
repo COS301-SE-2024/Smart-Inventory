@@ -1,52 +1,120 @@
 import { Component } from '@angular/core';
-import { ICellEditorAngularComp, ICellRendererAngularComp } from 'ag-grid-angular';
+import { ICellRendererAngularComp } from 'ag-grid-angular';
+import { ICellRendererParams } from 'ag-grid-community';
+import { MatDialog } from '@angular/material/dialog';
+import { RoleChangeConfirmationDialogComponent } from '../../../pages/team/role-change-confirmation-dialog.component';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { ICellEditorParams, ICellRendererParams } from 'ag-grid-community';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatButtonModule } from '@angular/material/button';
+import {
+    AdminRemoveUserFromGroupCommand,
+    AdminAddUserToGroupCommand,
+    CognitoIdentityProviderClient,
+} from '@aws-sdk/client-cognito-identity-provider';
+import { fetchAuthSession } from 'aws-amplify/auth';
+import outputs from '../../../../../amplify_outputs.json';
 
 @Component({
     selector: 'app-date-select-cell-editor',
     standalone: true,
-    imports: [CommonModule, FormsModule],
+    imports: [CommonModule, MatMenuModule, MatButtonModule],
     template: `
-    <select [(ngModel)]="selectedDate" (change)="onDateChange()" class="date-select">
-      <option *ngFor="let date of availableDates" [ngValue]="date">{{ date }}</option>
-    </select>
+        <button mat-button [matMenuTriggerFor]="roleMenu" class="role-button">
+            {{ value }}
+        </button>
+        <mat-menu #roleMenu="matMenu">
+            <button mat-menu-item *ngFor="let role of roles" (click)="onRoleChange(role)">
+                {{ role }}
+            </button>
+        </mat-menu>
     `,
-    styles: [`
-      .date-select {
-        width: 100%;
-        border: none;
-        background-color: transparent;
-        padding: 5px;
-        height: 30px;
-      }
-    `]
+    styles: [
+        `
+            .role-button {
+                border-radius: 0;
+                width: 100%;
+                color: #000;
+                font-weight: inherit;
+                font-size: inherit;
+                text-align: left;
+                justify-content: flex-start;
+                padding-left: 5px;
+            }
+        `,
+    ],
 })
-export class DateSelectCellEditorComponent implements ICellRendererAngularComp, ICellEditorAngularComp {
-    private params!: ICellRendererParams | ICellEditorParams;
-    public selectedDate!: string;
-    public availableDates: string[] = [];
+export class DateSelectCellEditorComponent implements ICellRendererAngularComp {
+    private params!: ICellRendererParams;
+    public value!: string;
+    public roles: string[] = ['Admin', 'End User', 'Inventory Controller'];
 
-    agInit(params: ICellRendererParams | ICellEditorParams): void {
-      this.params = params;
-      this.selectedDate = 'Date' in params.data ? params.data.Date : '';
-      this.availableDates = params.context.componentParent.getAvailableDates(params.data['Supplier ID']);
+    constructor(private dialog: MatDialog) {}
+
+    agInit(params: ICellRendererParams): void {
+        this.params = params;
+        this.value = this.params.value;
+    }
+
+    refresh(params: ICellRendererParams): boolean {
+        this.params = params;
+        this.value = this.params.value;
+        return true;
     }
 
     getValue(): string {
-      return this.selectedDate;
+        return this.value;
     }
 
-    onDateChange(): void {
-      const newData = this.params.context.componentParent.fetchDataForDate(this.params.data['Supplier ID'], this.selectedDate);
-      if ('node' in this.params) {
-        this.params.node.setData(newData);
-        this.params.api.refreshCells({ rowNodes: [this.params.node], force: true });
-      }
-    }
+    async onRoleChange(newRole: string): Promise<void> {
+        if (newRole !== this.value) {
+            const dialogRef = this.dialog.open(RoleChangeConfirmationDialogComponent, {
+                width: '350px',
+                data: {
+                    given_name: this.params.data.given_name,
+                    family_name: this.params.data.family_name,
+                    email: this.params.data.email,
+                    oldRole: this.value,
+                    newRole: newRole,
+                },
+            });
 
-    refresh(params: ICellRendererParams | ICellEditorParams): boolean {
-      return false; // Return false to indicate that the component does not need to be rerendered
+            dialogRef.afterClosed().subscribe(async (result) => {
+                if (result) {
+                    try {
+                        const session = await fetchAuthSession();
+                        const client = new CognitoIdentityProviderClient({
+                            region: outputs.auth.aws_region,
+                            credentials: session.credentials,
+                        });
+
+                        // Remove user from the current group
+                        const removeFromGroupCommand = new AdminRemoveUserFromGroupCommand({
+                            GroupName: this.value.toLowerCase().replace(' ', ''),
+                            Username: this.params.data.email,
+                            UserPoolId: outputs.auth.user_pool_id,
+                        });
+                        await client.send(removeFromGroupCommand);
+
+                        // Add user to the new group
+                        const addToGroupCommand = new AdminAddUserToGroupCommand({
+                            GroupName: newRole.toLowerCase().replace(' ', ''),
+                            Username: this.params.data.email,
+                            UserPoolId: outputs.auth.user_pool_id,
+                        });
+                        await client.send(addToGroupCommand);
+
+                        console.log(`User role changed from ${this.value} to ${newRole}`);
+                        this.value = newRole;
+                        this.params.api.stopEditing();
+                    } catch (error) {
+                        console.error('Error changing user role:', error);
+                        this.params.api.stopEditing();
+                    }
+                } else {
+                    // User cancelled, revert the change
+                    this.params.api.stopEditing();
+                }
+            });
+        }
     }
 }

@@ -1,3 +1,15 @@
 <div class="orderHolder">
-    <app-grid [rowData]="rowData" [columnDefs]="colDefs"> </app-grid>
+    <app-grid 
+    [rowData]="rowData"
+    [columnDefs]="colDefs"
+    (newCustomQuote)="handleNewCustomQuote($event)"
+    (viewGeneratedQuoteClicked)="viewGeneratedQuote()"
+    (rowSelected)="onRowSelected($event)"
+    (deleteOrderClicked)="deleteOrderRow()"
+    #gridComponent
+    >
+    </app-grid>
+</div>
+<div *ngIf="isLoading" class="loading-overlay">
+    <app-loading-spinner></app-loading-spinner>
 </div>

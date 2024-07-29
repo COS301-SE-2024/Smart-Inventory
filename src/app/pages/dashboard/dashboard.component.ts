@@ -71,7 +71,7 @@ export class DashboardComponent implements OnInit {
     dashboard: DashboardItem[];
     largeItem: DashboardItem = {
         cols: 4,
-        rows: 3,
+        rows: 4,
         y: 1,
         x: 0,
         type: 'large',
@@ -87,7 +87,7 @@ export class DashboardComponent implements OnInit {
     };
     SalesvsTarget: DashboardItem = {
         cols: 2,
-        rows: 4,
+        rows: 3,
         y: 2,
         x: 0,
         type: 'salesVsTarget',
@@ -114,7 +114,7 @@ export class DashboardComponent implements OnInit {
         Amplify.configure(outputs);
         this.options = {
             gridType: GridType.VerticalFixed,
-            displayGrid: DisplayGrid.Always,
+            displayGrid: DisplayGrid.None,
             compactType: CompactType.CompactUpAndLeft,
             draggable: {
                 enabled: true,

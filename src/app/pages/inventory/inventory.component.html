@@ -13,33 +13,61 @@
 </div>
 
 <!-- Add Item Popup -->
-<div *ngIf="showAddPopup" class="popup-overlay">
-    <div class="popup-content">
-        <h2>Add Inventory Item</h2>
-        <form (ngSubmit)="onSubmit(itemForm.value)" #itemForm="ngForm">
-            <div class="form-group">
-                <label for="productId">Product ID</label>
-                <input type="text" id="productId" name="productId" [(ngModel)]="item.productId" required />
+<div *ngIf="showAddPopup" class="popup-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center;">
+    <div class="popup-content" style="background: white; padding: 20px; border-radius: 5px; max-width: 600px; width: 100%;">
+        <h2 style="margin-top: 0;">Add Inventory Item</h2>
+        <form (ngSubmit)="onSubmit(itemForm.value)" #itemForm="ngForm" style="display: flex; flex-direction: column;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+                <div style="flex: 1; margin-right: 10px;">
+                    <label for="productId" style="display: block; margin-bottom: 5px;">Product ID</label>
+                    <input type="text" id="productId" name="productId" [(ngModel)]="item.productId" required style="width: 100%; padding: 5px;" />
+                </div>
+                <div style="flex: 1;">
+                    <label for="sku" style="display: block; margin-bottom: 5px;">SKU</label>
+                    <input type="text" id="sku" name="sku" [(ngModel)]="item.sku" required style="width: 100%; padding: 5px;" />
+                </div>
             </div>
-            <div class="form-group">
-                <label for="description">Description</label>
-                <input type="text" id="description" name="description" [(ngModel)]="item.description" required />
+            <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+                <div style="flex: 1; margin-right: 10px;">
+                    <label for="description" style="display: block; margin-bottom: 5px;">Description</label>
+                    <input type="text" id="description" name="description" [(ngModel)]="item.description" required style="width: 100%; padding: 5px;" />
+                </div>
+                <div style="flex: 1;">
+                    <label for="category" style="display: block; margin-bottom: 5px;">Category</label>
+                    <input type="text" id="category" name="category" [(ngModel)]="item.category" required style="width: 100%; padding: 5px;" />
+                </div>
             </div>
-            <div class="form-group">
-                <label for="quantity">Quantity</label>
-                <input type="number" id="quantity" name="quantity" [(ngModel)]="item.quantity" required />
+            <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+                <div style="flex: 1; margin-right: 10px;">
+                    <label for="quantity" style="display: block; margin-bottom: 5px;">Quantity</label>
+                    <input type="number" id="quantity" name="quantity" [(ngModel)]="item.quantity" required style="width: 100%; padding: 5px;" />
+                </div>
+                <div style="flex: 1; margin-right: 10px;">
+                    <label for="lowStockThreshold" style="display: block; margin-bottom: 5px;">Low Stock Threshold</label>
+                    <input type="number" id="lowStockThreshold" name="lowStockThreshold" [(ngModel)]="item.lowStockThreshold" required style="width: 100%; padding: 5px;" />
+                </div>
+                <div style="flex: 1;">
+                    <label for="reorderFreq" style="display: block; margin-bottom: 5px;">Reorder Frequency</label>
+                    <input type="number" id="reorderFreq" name="reorderFreq" [(ngModel)]="item.reorderFreq" required style="width: 100%; padding: 5px;" />
+                </div>
             </div>
-            <div class="form-group">
-                <label for="sku">SKU</label>
-                <input type="text" id="sku" name="sku" [(ngModel)]="item.sku" required />
-            </div>
-            <div class="form-group">
-                <label for="supplier">Supplier</label>
-                <input type="text" id="supplier" name="supplier" [(ngModel)]="item.supplier" required />
+            <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+                <div style="flex: 1; margin-right: 10px;">
+                    <label for="supplier" style="display: block; justify-content: center; margin-bottom: 5px;">Supplier</label>
+                    <select id="supplier" name="supplier" [(ngModel)]="item.supplier" required style="width: 100%; padding: 5px;">
+                        <option *ngFor="let supplier of suppliers" [value]="supplier.company_name">
+                            {{supplier.company_name}}
+                        </option>
+                    </select>
+                </div>
+                <div style="flex: 1;">
+                    <label for="expirationDate" style="display: block; margin-bottom: 5px;">Expiration Date</label>
+                    <input type="date" id="expirationDate" name="expirationDate" [(ngModel)]="item.expirationDate" required style="width: 100%; padding: 5px;" />
+                </div>
             </div>
             <div class="button-group">
-                <button type="submit" [disabled]="!itemForm.form.valid">Submit</button>
-                <button type="button" (click)="closeAddPopup()">Cancel</button>
+                <button type="submit" [disabled]="!itemForm.form.valid" class="add-item-button">Submit</button>
+                <button type="button" (click)="closeAddPopup()" class="add-item-button">Cancel</button>
             </div>
         </form>
     </div>

@@ -15,7 +15,11 @@
     </mat-form-field>
     <mat-form-field appearance="fill">
       <mat-label>Category</mat-label>
-      <input matInput formControlName="category">
+      <mat-select formControlName="category">
+        <mat-option *ngFor="let category of categories" [value]="category">
+          {{category}}
+        </mat-option>
+      </mat-select>
     </mat-form-field>
     <mat-form-field appearance="fill">
       <mat-label>Quantity</mat-label>

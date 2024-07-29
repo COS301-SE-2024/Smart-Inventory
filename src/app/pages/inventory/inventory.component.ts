@@ -15,7 +15,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { InventoryDeleteConfirmationDialogComponent } from './inventory-delete-confirmation-dialogue.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { AddInventoryModalComponent } from './add-inventory-modal/add-inventory-modal.component';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { RequestStockModalComponent } from './request-stock-modal/request-stock-modal.component';
+import { MatNativeDateModule } from '@angular/material/core';
 
 @Component({
     selector: 'app-inventory',
@@ -30,6 +32,8 @@ import { RequestStockModalComponent } from './request-stock-modal/request-stock-
         InventoryDeleteConfirmationDialogComponent,
         AddInventoryModalComponent,
         RequestStockModalComponent,
+        MatNativeDateModule,
+        MatDatepickerModule,
     ],
     templateUrl: './inventory.component.html',
     styleUrls: ['./inventory.component.css'],

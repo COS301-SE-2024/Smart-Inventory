@@ -4,15 +4,34 @@
             Back to reports
         </button>
     </mat-toolbar>
-    <mat-grid-list cols="8" rowHeight="25vh" gutterSize="20px">
-        <mat-grid-tile [colspan]="6" [rowspan]="2">
+    <mat-grid-list cols="9" rowHeight="20vh" gutterSize="15px">
+        <mat-grid-tile [colspan]="3" [rowspan]="2">
+            <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
+                <mat-card style="height: 100%; width: 100%"
+                    ><ag-charts-angular [options]="options1" style="height: 100%"></ag-charts-angular>
+                </mat-card>
+            </div>
+        </mat-grid-tile>
+        <mat-grid-tile [colspan]="3" [rowspan]="2">
+            <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
+                <mat-card style="height: 100%; width: 100%"
+                    ><ag-charts-angular [options]="options2" style="height: 100%"></ag-charts-angular>
+                </mat-card>
+            </div>
+        </mat-grid-tile>
+        <mat-grid-tile [colspan]="3" [rowspan]="2">
+            <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
+                <mat-card style="height: 100%; width: 100%"></mat-card>
+            </div>
+        </mat-grid-tile>
+        <mat-grid-tile [colspan]="9" [rowspan]="4">
             <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
                 <div class="inventoryHolder">
                     <app-grid [rowData]="rowData" [columnDefs]="colDefs" #gridComponent> </app-grid>
                 </div>
             </div>
         </mat-grid-tile>
-        <mat-grid-tile [colspan]="2" [rowspan]="6">
+        <mat-grid-tile [colspan]="3" [rowspan]="5">
             <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
                 <mat-card style="height: 100%; width: 100%">
                     <mat-card-content style="align-items: center">
@@ -26,18 +45,6 @@
                         </ul>
                     </mat-card-content>
                 </mat-card>
-            </div>
-        </mat-grid-tile>
-        <mat-grid-tile [colspan]="3" [rowspan]="2">
-            <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
-                <mat-card style="height: 100%; width: 100%"
-                    ><app-saleschart style="height: 100%"></app-saleschart
-                ></mat-card>
-            </div>
-        </mat-grid-tile>
-        <mat-grid-tile [colspan]="3" [rowspan]="2">
-            <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
-                <!-- <app-dynamic-graph></app-dynamic-graph> -->
             </div>
         </mat-grid-tile>
     </mat-grid-list>

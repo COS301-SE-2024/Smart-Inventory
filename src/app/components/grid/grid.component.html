@@ -19,17 +19,33 @@
             <button mat-menu-item color="primary" (click)="addRow()" *ngIf="getCurrentRoute('suppliers')">
                 + Add Supplier
             </button>
-            <button mat-menu-item color="primary" (click)="addRow()" *ngIf="getCurrentRoute('orders')">
-                + Place Order
+            <button mat-menu-item *ngIf="getCurrentRoute('orders')" color="primary" (click)="openCustomQuoteModal()">
+                + Create Order
+            </button>
+            <button mat-menu-item *ngIf="getCurrentRoute('orders')" color="primary" (click)="deleteOrder()">
+                - Delete Order
+              </button>
+            <button mat-menu-item *ngIf="getCurrentRoute('orders')" color="primary"
+                (click)="onViewGeneratedQuoteClick()">
+                View Generated Quote
+            </button>
+            <button mat-menu-item *ngIf="getCurrentRoute('orders')" color="primary">
+                View Received Quotes
+            </button>
+            <button mat-menu-item *ngIf="getCurrentRoute('orders')" color="primary">
+                Mark Order As Received
+            </button>
+            <button mat-menu-item *ngIf="getCurrentRoute('orders')" color="primary" (click)="onViewEmailTemplate()">
+                View Email Template
+              </button>
+            <button mat-menu-item *ngIf="getCurrentRoute('orders')" color="primary" (click)="onViewDeliveryInfo()">
+            View Delivery Info
             </button>
             <button mat-menu-item *ngIf="getCurrentRoute('inventory')" color="primary" (click)="deleteRow()">
                 - Remove Item
             </button>
             <button mat-menu-item *ngIf="getCurrentRoute('suppliers')" color="primary" (click)="deleteRow()">
                 - Remove Supplier
-            </button>
-            <button mat-menu-item *ngIf="getCurrentRoute('orders')" color="primary" (click)="deleteRow()">
-                - Cancel Order
             </button>
             <button mat-menu-item *ngIf="getCurrentRoute('inventory')" color="primary" (click)="onRequestStock()">
                 Request Stock
@@ -39,16 +55,18 @@
 </div>
 
 <div class="container">
-    <ag-grid-angular
-        [rowData]="filteredRowData"
-        [columnDefs]="columnDefs"
-        [rowSelection]="rowSelection"
-        [editType]="editType"
-        (cellValueChanged)="onCellValueChanged($event)"
-        (rowValueChanged)="onRowValueChanged($event)"
-        [rowData]="rowData"
-        class="ag-theme-quartz aggrid"
-        (gridReady)="onGridReady($event)"
-    >
+    <ag-grid-angular 
+    [rowData]="filteredRowData" 
+    [columnDefs]="columnDefs" 
+    [rowSelection]="rowSelection"
+    [editType]="editType" 
+    (cellValueChanged)="onCellValueChanged($event)"
+    (rowValueChanged)="onRowValueChanged($event)" 
+    (rowSelected)="onRowSelected($event)" 
+    (selectionChanged)="onSelectionChanged($event)"
+    [rowData]="rowData"
+    [class]="themeClass"
+    class="ag-theme-quartz aggrid" 
+    (gridReady)="onGridReady($event)" style="height: 83vh;">
     </ag-grid-angular>
 </div>

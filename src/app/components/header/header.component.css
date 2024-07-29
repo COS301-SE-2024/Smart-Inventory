@@ -1,10 +1,11 @@
 mat-toolbar {
     display: flex;
     align-items: center;
-    background-color: #f2f2f2;
+    background-color: var(--header-bg-color);
     font-weight: 450;
     font-size: 35px;
 }
+
 .flex-spacer {
     flex: 1 1 auto;
 }
@@ -25,15 +26,27 @@ mat-toolbar {
 .profile-box {
     display: flex;
     align-items: center;
-    border-left: 1px solid grey;
+    border-left: 1px solid var(--header-bg-color);
     padding: 11px;
     height: 50px;
-    /* border-radius: 5px;
-    /* Optional: if you prefer rounded corners */
+}
+
+.theme-svg circle,
+.theme-svg path {
+    stroke: var(--svg-stroke-color); /* Default stroke for light mode */
+}
+
+.dark-mode .theme-svg circle,
+.dark-mode .theme-svg path {
+    stroke: var(--svg-stroke-color); /* Lighter stroke for dark mode */
+}
+
+svg.theme-svg {
+    margin-right: 15px;
 }
 
 .profile-pic {
-    color: black;
+    color: var(--header-profile-text);
     /* Icon color */
     font-size: 48px;
     /* Icon size, adjust as needed */
@@ -43,7 +56,7 @@ mat-toolbar {
     /* Match height to font-size or as needed */
     border-radius: 50%;
     /* Circular mask, if desired */
-    background-color: #eee;
+    /* background-color: #eee; */
     /* Background color, if needed */
 }
 
@@ -52,12 +65,17 @@ mat-toolbar {
     flex-direction: column;
 }
 
+.pageTitle{
+    color: var(--header-profile-text);
+}
+
 .username {
     font-weight: bold;
     font-size: 16px;
+    color: var(--header-profile-text);
 }
 
 .role {
     font-size: 14px;
-    color: gray;
+    color: var(--header-profile-text);
 }

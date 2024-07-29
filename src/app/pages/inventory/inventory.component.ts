@@ -14,6 +14,10 @@ import { LoadingSpinnerComponent } from '../../components/loader/loading-spinner
 import { MatDialog } from '@angular/material/dialog';
 import { InventoryDeleteConfirmationDialogComponent } from './inventory-delete-confirmation-dialogue.component';
 import { MatDialogModule } from '@angular/material/dialog';
+import { AddInventoryModalComponent } from './add-inventory-modal/add-inventory-modal.component';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { RequestStockModalComponent } from './request-stock-modal/request-stock-modal.component';
+import { MatNativeDateModule } from '@angular/material/core';
 
 @Component({
     selector: 'app-inventory',
@@ -26,6 +30,10 @@ import { MatDialogModule } from '@angular/material/dialog';
         LoadingSpinnerComponent,
         MatDialogModule,
         InventoryDeleteConfirmationDialogComponent,
+        AddInventoryModalComponent,
+        RequestStockModalComponent,
+        MatNativeDateModule,
+        MatDatepickerModule,
     ],
     templateUrl: './inventory.component.html',
     styleUrls: ['./inventory.component.css'],
@@ -34,26 +42,20 @@ export class InventoryComponent implements OnInit {
     @ViewChild('gridComponent') gridComponent!: GridComponent;
 
     rowData: any[] = [];
-    showAddPopup = false;
-    showRequestStockPopup = false;
     isLoading = true;
-    item = {
-        productId: '',
-        description: '',
-        quantity: 0,
-        sku: '',
-        supplier: '',
-    };
-    selectedItem: any = null;
-    requestQuantity: number | null = null;
+    suppliers: any[] = [];
 
     colDefs: ColDef[] = [
         { field: 'inventoryID', headerName: 'Inventory ID', hide: true },
         { field: 'sku', headerName: 'SKU' },
         { field: 'productId', headerName: 'Product ID' },
         { field: 'description', headerName: 'Description' },
+        { field: 'category', headerName: 'Category' },
         { field: 'quantity', headerName: 'Quantity' },
         { field: 'supplier', headerName: 'Supplier' },
+        { field: 'expirationDate', headerName: 'Expiration Date' },
+        { field: 'lowStockThreshold', headerName: 'Low Stock Threshold' },
+        { field: 'reorderFreq', headerName: 'Reorder Frequency' },
     ];
 
     addButton = { text: 'Add New Item' };
@@ -65,6 +67,7 @@ export class InventoryComponent implements OnInit {
     async ngOnInit(): Promise<void> {
         this.titleService.updateTitle('Inventory');
         await this.loadInventoryData();
+        await this.loadSuppliers();
     }
 
     async loadInventoryData() {
@@ -108,10 +111,14 @@ export class InventoryComponent implements OnInit {
                 this.rowData = inventoryItems.map((item: any) => ({
                     inventoryID: item.inventoryID,
                     sku: item.SKU,
+                    category: item.category,
                     productId: item.productID,
                     description: item.description,
                     quantity: item.quantity,
                     supplier: item.supplier,
+                    expirationDate: item.expirationDate,
+                    lowStockThreshold: item.lowStockThreshold,
+                    reorderFreq : item.reorderFreq
                 }));
                 console.log('Processed inventory items:', this.rowData);
             } else {
@@ -126,27 +133,67 @@ export class InventoryComponent implements OnInit {
         }
     }
 
-    openAddItemPopup() {
-        this.showAddPopup = true;
+    async loadSuppliers() {
+        try {
+            const session = await fetchAuthSession();
+
+            const cognitoClient = new CognitoIdentityProviderClient({
+                region: outputs.auth.aws_region,
+                credentials: session.credentials,
+            });
+
+            const getUserCommand = new GetUserCommand({
+                AccessToken: session.tokens?.accessToken.toString(),
+            });
+            const getUserResponse = await cognitoClient.send(getUserCommand);
+
+            const tenantId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
+
+            if (!tenantId) {
+                console.error('TenantId not found in user attributes');
+                this.suppliers = [];
+                return;
+            }
+
+            const lambdaClient = new LambdaClient({
+                region: outputs.auth.aws_region,
+                credentials: session.credentials,
+            });
+
+            const invokeCommand = new InvokeCommand({
+                FunctionName: 'getSuppliers',
+                Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: tenantId } })),
+            });
+
+            const lambdaResponse = await lambdaClient.send(invokeCommand);
+            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+
+            if (responseBody.statusCode === 200) {
+                this.suppliers = JSON.parse(responseBody.body);
+            } else {
+                console.error('Error fetching suppliers data:', responseBody.body);
+                this.suppliers = [];
+            }
+        } catch (error) {
+            console.error('Error in loadSuppliers:', error);
+            this.suppliers = [];
+        }
     }
 
-    closeAddPopup() {
-        this.showAddPopup = false;
-        this.item = {
-            productId: '',
-            description: '',
-            quantity: 0,
-            sku: '',
-            supplier: '',
-        };
+    openAddItemPopup() {
+        const dialogRef = this.dialog.open(AddInventoryModalComponent, {
+            width: '600px',
+            data: { suppliers: this.suppliers }
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                this.onSubmit(result);
+            }
+        });
     }
 
     async onSubmit(formData: any) {
-        if (isNaN(formData.quantity)) {
-            alert('Please enter a valid quantity');
-            return;
-        }
-
         try {
             const session = await fetchAuthSession();
 
@@ -174,10 +221,14 @@ export class InventoryComponent implements OnInit {
             const payload = JSON.stringify({
                 productID: formData.productId,
                 description: formData.description,
+                category: formData.category,
                 quantity: formData.quantity,
                 sku: formData.sku,
                 supplier: formData.supplier,
                 tenentId: tenantId,
+                expirationDate: formData.expirationDate,
+                lowStockThreshold: formData.lowStockThreshold,
+                reorderFreq: formData.reorderFreq,
             });
 
             console.log('Payload:', payload);
@@ -193,7 +244,6 @@ export class InventoryComponent implements OnInit {
             if (responseBody.statusCode === 201) {
                 console.log('Inventory item added successfully');
                 await this.loadInventoryData();
-                this.closeAddPopup();
             } else {
                 throw new Error(responseBody.body);
             }
@@ -328,23 +378,19 @@ export class InventoryComponent implements OnInit {
     }
 
     openRequestStockPopup(item: any) {
-        this.selectedItem = item;
-        this.showRequestStockPopup = true;
-        this.requestQuantity = null;
+        const dialogRef = this.dialog.open(RequestStockModalComponent, {
+            width: '400px',
+            data: { sku: item.sku, supplier: item.supplier }
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                this.requestStock(item, result);
+            }
+        });
     }
 
-    closeRequestStockPopup() {
-        this.showRequestStockPopup = false;
-        this.selectedItem = null;
-        this.requestQuantity = null;
-    }
-
-    async requestStock() {
-        if (this.requestQuantity === null || isNaN(this.requestQuantity)) {
-            alert('Please enter a valid quantity');
-            return;
-        }
-
+    async requestStock(item: any, quantity: number) {
         try {
             const session = await fetchAuthSession();
 
@@ -370,9 +416,9 @@ export class InventoryComponent implements OnInit {
             });
 
             // First, update the inventory
-            const updatedQuantity = this.selectedItem.quantity - this.requestQuantity;
+            const updatedQuantity = item.quantity - quantity;
             const updateEvent = {
-                data: this.selectedItem,
+                data: item,
                 field: 'quantity',
                 newValue: updatedQuantity,
             };
@@ -381,12 +427,12 @@ export class InventoryComponent implements OnInit {
             // Then, create the stock request report
             const reportPayload = {
                 tenentId: tenentId,
-                sku: this.selectedItem.sku,
-                supplier: this.selectedItem.supplier,
-                quantityRequested: this.requestQuantity.toString(), // Ensure this is a string
+                sku: item.sku,
+                supplier: item.supplier,
+                quantityRequested: quantity.toString(),
             };
 
-            console.log('Report Payload:', reportPayload); // Add this for debugging
+            console.log('Report Payload:', reportPayload);
 
             const createReportCommand = new InvokeCommand({
                 FunctionName: 'Report-createItem',
@@ -396,12 +442,11 @@ export class InventoryComponent implements OnInit {
             const lambdaResponse = await lambdaClient.send(createReportCommand);
             const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
 
-            console.log('Lambda Response:', responseBody); // Add this for debugging
+            console.log('Lambda Response:', responseBody);
 
             if (responseBody.statusCode === 201) {
                 console.log('Stock request report created successfully');
                 await this.loadInventoryData();
-                this.closeRequestStockPopup();
             } else {
                 throw new Error(JSON.stringify(responseBody.body));
             }

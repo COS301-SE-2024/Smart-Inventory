@@ -48,6 +48,10 @@ mat-select {
     width: 100px;
 }
 
+mat-select{
+    color: var(--text-color);
+}
+
 span.mat-mdc-select-min-line {
     font-size: 19px;
     font-weight: 400;

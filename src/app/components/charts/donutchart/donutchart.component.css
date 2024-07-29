@@ -9,6 +9,10 @@
     padding: 15px;
 }
 
+.ag-chart-wrapper.ag-charts-theme-default {
+    height: 70% !important;
+}
+
 .donut-chart {
     display: flex;
     flex-direction: column;
@@ -31,11 +35,12 @@
 .chart-container {
     /* height: 80px; */
     z-index: 1;
-    /* background-color: #e6e6e6; */
+    background-color: var(--dash-cards-bg-color);
 }
 
 mat-select {
     border: 1px solid grey;
+    color: var(--text-color);
     border-radius: 5px;
     margin-left: 10px;
     align-content: center;

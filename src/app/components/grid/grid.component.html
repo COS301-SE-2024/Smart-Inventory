@@ -35,6 +35,12 @@
             <button mat-menu-item *ngIf="getCurrentRoute('orders')" color="primary">
                 Mark Order As Received
             </button>
+            <button mat-menu-item *ngIf="getCurrentRoute('orders')" color="primary" (click)="onViewEmailTemplate()">
+                View Email Template
+              </button>
+            <button mat-menu-item *ngIf="getCurrentRoute('orders')" color="primary" (click)="onViewDeliveryInfo()">
+            View Delivery Info
+            </button>
             <button mat-menu-item *ngIf="getCurrentRoute('inventory')" color="primary" (click)="deleteRow()">
                 - Remove Item
             </button>

@@ -14,6 +14,8 @@ import { LoadingSpinnerComponent } from '../../components/loader/loading-spinner
 import { MatDialog } from '@angular/material/dialog';
 import { InventoryDeleteConfirmationDialogComponent } from './inventory-delete-confirmation-dialogue.component';
 import { MatDialogModule } from '@angular/material/dialog';
+import { AddInventoryModalComponent } from './add-inventory-modal/add-inventory-modal.component';
+import { RequestStockModalComponent } from './request-stock-modal/request-stock-modal.component';
 
 @Component({
     selector: 'app-inventory',
@@ -26,6 +28,8 @@ import { MatDialogModule } from '@angular/material/dialog';
         LoadingSpinnerComponent,
         MatDialogModule,
         InventoryDeleteConfirmationDialogComponent,
+        AddInventoryModalComponent,
+        RequestStockModalComponent,
     ],
     templateUrl: './inventory.component.html',
     styleUrls: ['./inventory.component.css'],
@@ -34,22 +38,7 @@ export class InventoryComponent implements OnInit {
     @ViewChild('gridComponent') gridComponent!: GridComponent;
 
     rowData: any[] = [];
-    showAddPopup = false;
-    showRequestStockPopup = false;
     isLoading = true;
-    item = {
-        productId: '',
-        description: '',
-        category: '',
-        quantity: 0,
-        sku: '',
-        supplier: '',
-        expirationDate: '',
-        lowStockThreshold: 0,
-        reorderFreq: 0,
-    };
-    selectedItem: any = null;
-    requestQuantity: number | null = null;
     suppliers: any[] = [];
 
     colDefs: ColDef[] = [
@@ -188,31 +177,19 @@ export class InventoryComponent implements OnInit {
     }
 
     openAddItemPopup() {
-        this.showAddPopup = true;
+        const dialogRef = this.dialog.open(AddInventoryModalComponent, {
+            width: '600px',
+            data: { suppliers: this.suppliers }
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                this.onSubmit(result);
+            }
+        });
     }
 
-    closeAddPopup() {
-        this.showAddPopup = false;
-        this.item = {
-            productId: '',
-            description: '',
-            quantity: 0,
-            sku: '',
-            supplier: '',
-            category: '',
-            lowStockThreshold: 0,
-            reorderFreq: 0,
-            expirationDate: '',
-        };
-    }
-
-    
     async onSubmit(formData: any) {
-        if (isNaN(formData.quantity) || isNaN(formData.lowStockThreshold) || isNaN(formData.reorderFreq)) {
-            alert('Please enter valid numeric values for Quantity, Low Stock Threshold, and Reorder Frequency');
-            return;
-        }
-
         try {
             const session = await fetchAuthSession();
 
@@ -263,7 +240,6 @@ export class InventoryComponent implements OnInit {
             if (responseBody.statusCode === 201) {
                 console.log('Inventory item added successfully');
                 await this.loadInventoryData();
-                this.closeAddPopup();
             } else {
                 throw new Error(responseBody.body);
             }
@@ -398,23 +374,19 @@ export class InventoryComponent implements OnInit {
     }
 
     openRequestStockPopup(item: any) {
-        this.selectedItem = item;
-        this.showRequestStockPopup = true;
-        this.requestQuantity = null;
+        const dialogRef = this.dialog.open(RequestStockModalComponent, {
+            width: '400px',
+            data: { sku: item.sku, supplier: item.supplier }
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                this.requestStock(item, result);
+            }
+        });
     }
 
-    closeRequestStockPopup() {
-        this.showRequestStockPopup = false;
-        this.selectedItem = null;
-        this.requestQuantity = null;
-    }
-
-    async requestStock() {
-        if (this.requestQuantity === null || isNaN(this.requestQuantity)) {
-            alert('Please enter a valid quantity');
-            return;
-        }
-
+    async requestStock(item: any, quantity: number) {
         try {
             const session = await fetchAuthSession();
 
@@ -440,44 +412,43 @@ export class InventoryComponent implements OnInit {
             });
 
             // First, update the inventory
-            const updatedQuantity = this.selectedItem.quantity - this.requestQuantity;
+            const updatedQuantity = item.quantity - quantity;
             const updateEvent = {
-                data: this.selectedItem,
+                data: item,
                 field: 'quantity',
                 newValue: updatedQuantity,
             };
             await this.handleCellValueChanged(updateEvent);
 
-// Then, create the stock request report
-const reportPayload = {
-    tenentId: tenentId,
-    sku: this.selectedItem.sku,
-    supplier: this.selectedItem.supplier,
-    quantityRequested: this.requestQuantity.toString(), // Ensure this is a string
-};
+            // Then, create the stock request report
+            const reportPayload = {
+                tenentId: tenentId,
+                sku: item.sku,
+                supplier: item.supplier,
+                quantityRequested: quantity.toString(),
+            };
 
-console.log('Report Payload:', reportPayload); // Add this for debugging
+            console.log('Report Payload:', reportPayload);
 
-const createReportCommand = new InvokeCommand({
-    FunctionName: 'Report-createItem',
-    Payload: new TextEncoder().encode(JSON.stringify({ body: JSON.stringify(reportPayload) })),
-});
+            const createReportCommand = new InvokeCommand({
+                FunctionName: 'Report-createItem',
+                Payload: new TextEncoder().encode(JSON.stringify({ body: JSON.stringify(reportPayload) })),
+            });
 
-const lambdaResponse = await lambdaClient.send(createReportCommand);
-const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+            const lambdaResponse = await lambdaClient.send(createReportCommand);
+            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
 
-console.log('Lambda Response:', responseBody); // Add this for debugging
+            console.log('Lambda Response:', responseBody);
 
-if (responseBody.statusCode === 201) {
-    console.log('Stock request report created successfully');
-    await this.loadInventoryData();
-    this.closeRequestStockPopup();
-} else {
-    throw new Error(JSON.stringify(responseBody.body));
-}
-} catch (error) {
-console.error('Error requesting stock:', error);
-alert(`Error requesting stock: ${(error as Error).message}`);
-}
-}
+            if (responseBody.statusCode === 201) {
+                console.log('Stock request report created successfully');
+                await this.loadInventoryData();
+            } else {
+                throw new Error(JSON.stringify(responseBody.body));
+            }
+        } catch (error) {
+            console.error('Error requesting stock:', error);
+            alert(`Error requesting stock: ${(error as Error).message}`);
+        }
+    }
 }

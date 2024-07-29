@@ -98,6 +98,9 @@
 .grid-container {
     margin: 15px;
     width: 100%;
+    height: 100%;
+    display: block;
+    overflow: scroll;
 }
 
 .error-message {
@@ -117,4 +120,4 @@
     justify-content: center;
     align-items: center;
     z-index: 9999;
-  }
+}

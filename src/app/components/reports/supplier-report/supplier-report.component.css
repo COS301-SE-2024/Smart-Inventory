@@ -133,3 +133,7 @@ mat-grid-tile {
     font-size: 16px;
     color: #777;
 }
+
+mat-card.mat-mdc-card.mdc-card {
+    background-color: white;
+}

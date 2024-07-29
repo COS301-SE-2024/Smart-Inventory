@@ -11,7 +11,7 @@
     </div> -->
     <!-- <mat-grid-list cols="3" rowHeight="210px"> -->
 
-        <!-- <mat-grid-tile *ngFor="let tile of tiles.slice(currentIndex, currentIndex + 3)" class="tile" gutterSize="15px">
+    <!-- <mat-grid-tile *ngFor="let tile of tiles.slice(currentIndex, currentIndex + 3)" class="tile" gutterSize="15px">
             <div class="icon-container">
                 <mat-icon [attr.aria-label]="tile.iconLabel" class="metric-icon">{{ tile.icon }}</mat-icon>
             </div>
@@ -30,10 +30,11 @@
     </div>
     <!-- </div> -->
     <mat-grid-list cols="8" rowHeight="29vh" gutterSize="20px">
-        
+
         <div class="carousel-wrapper">
             <div #carousel class="tile-wrapper">
-                <mat-grid-tile *ngFor="let tile of visibleTiles" class="tile" gutterSize="10px" [colspan]="1" [rowspan]="1">
+                <mat-grid-tile *ngFor="let tile of visibleTiles" class="tile" gutterSize="10px" [colspan]="1"
+                    [rowspan]="1">
                     <div class="icon-container">
                         <mat-icon [attr.aria-label]="tile.iconLabel" class="metric-icon">{{ tile.icon }}</mat-icon>
                     </div>
@@ -54,16 +55,16 @@
                 </div>
             </div>
         </mat-grid-tile>
-        <mat-grid-tile [colspan]="2" [rowspan]="4">
+        <mat-grid-tile [colspan]="2" [rowspan]="2">
             <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
                 <mat-card style="height: 100%; width: 100%">
                     <mat-card-title style="margin-left: 15px; margin-top: 15px; font-size: 25px;"> {{
                         SupplierReport.title }} </mat-card-title>
                     <mat-card-content style="align-items: center">
                         <ul style="list-style: none; padding: 0; margin: 0">
-                            <li *ngFor="let metric of SupplierReport.metrics | keyvalue"
+                            <li *ngFor="let metric of SupplierReport.metrics"
                                 style="font-size: 15px; padding: 8px 0; border-bottom: 1px solid lightgrey">
-                                {{ metric.value }}
+                                {{ metric.name }}: {{ metric.value }}
                             </li>
                         </ul>
                     </mat-card-content>
@@ -78,7 +79,17 @@
             </div>
         </mat-grid-tile>
 
-        <mat-grid-tile [colspan]="3" [rowspan]="2">
+        <mat-grid-tile [colspan]="4" [rowspan]="2">
+            <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
+                <mat-card style="height: 100%; width: 100vh">
+                    <app-line *ngFor="let metricData of chartData.seriesData"
+                        [title]="metricData.metric + ' Comparison'" [xAxisData]="chartData.xAxisData"
+                        [yAxisName]="metricData.metric" [seriesData]="metricData.data"></app-line>
+                </mat-card>
+            </div>
+        </mat-grid-tile>
+
+        <mat-grid-tile [colspan]="4" [rowspan]="2">
             <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
                 <mat-card style="height: 100%; width: 100%">
                     <app-saleschart></app-saleschart>
@@ -86,22 +97,14 @@
             </div>
         </mat-grid-tile>
 
-        <mat-grid-tile [colspan]="3" [rowspan]="2">
-            <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
-                <mat-card style="height: 100%; width: 100%">
-                    <app-saleschart></app-saleschart>
-                </mat-card>
-            </div>
-        </mat-grid-tile>
-        
         <!-- <mat-grid-tile [colspan]="3" [rowspan]="2"> -->
         <!-- <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%"> -->
         <!-- <app-dynamic-graph></app-dynamic-graph> -->
         <!-- </div> -->
         <!-- </mat-grid-tile> -->
-    <!-- </mat-grid-list> -->
- <!-- </div>  -->
+        <!-- </mat-grid-list> -->
+        <!-- </div>  -->
 
-<div *ngIf="isLoading" class="loading-overlay">
-    <app-loading-spinner></app-loading-spinner>
-</div>
+        <div *ngIf="isLoading" class="loading-overlay">
+            <app-loading-spinner></app-loading-spinner>
+        </div>

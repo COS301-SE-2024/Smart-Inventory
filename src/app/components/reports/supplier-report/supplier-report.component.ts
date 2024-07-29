@@ -18,8 +18,12 @@ import { LoadingSpinnerComponent } from '../../loader/loading-spinner.component'
 import { DateSelectCellEditorComponent } from './date-select-cell-editor.component';
 import { RoleSelectCellEditorComponent } from '../../../pages/team/role-select-cell-editor.component';
 import { LineBarComponent } from '../../charts/line-bar/line-bar.component';
+import { LineComponent } from '../../charts/line/line.component';
 import { RowNode } from 'ag-grid-community';
 import { AgGridAngular } from 'ag-grid-angular';
+
+
+type ChartMetric = 'On Time Delivery Rate' | 'Order Accuracy Rate' | 'Out Standing Payments' | 'TotalSpent';
 
 @Component({
     selector: 'app-supplier-report',
@@ -35,7 +39,8 @@ import { AgGridAngular } from 'ag-grid-angular';
         LoadingSpinnerComponent,
         LineBarComponent,
         DateSelectCellEditorComponent,
-        RoleSelectCellEditorComponent
+        RoleSelectCellEditorComponent,
+        LineComponent
     ],
     templateUrl: './supplier-report.component.html',
     styleUrl: './supplier-report.component.css',
@@ -52,6 +57,7 @@ export class SupplierReportComponent implements OnInit {
 
     visibleTiles: any[] = []; // Holds the tiles currently being displayed
     currentIndex = 0;
+    chartData: any;
 
     updateVisibleTiles() {
         this.visibleTiles = this.tiles.slice(this.currentIndex, this.currentIndex + 4);
@@ -77,21 +83,21 @@ export class SupplierReportComponent implements OnInit {
 
     SupplierReport = {
         title: 'Order Report',
-        subtitle:
-            'Have an overall view of your inventory, relevant metrics to assist you in automation and ordering and provide analytics associated with it.',
-        metrics: {
-            metric_1: 'Average supplier performance: ',
-            metric_2: 'Overall product defect rate: ',
-            metric_3: 'Worst performer: ',
-            metric_4: 'Average delivery rate: ',
-            metric_5: 'Fill Rate: ',
-            metric_6: 'Total inventory turnover: ',
-            metric_7: 'Critical/Major/Minor Defect Rate:',
-            metric_8: '“Right First Time” Rate:',
-            metric_9: 'On-time Order Completion Rate:',
-        },
-        graphs: [],
+        subtitle: 'Have an overall view of your inventory, relevant metrics to assist you in automation and ordering and provide analytics associated with it.',
+        metrics: [
+            { name: 'Average supplier performance', value: null },  // Replace '90%' with the actual value
+            { name: 'Overall product defect rate', value: '0%' },    // Replace '2%' with the actual value
+            { name: 'Worst performer', value: null },        // Replace 'Supplier X' with the actual value
+            { name: 'Average delivery rate', value: null },         // Replace '95%' with the actual value
+            { name: 'Fill Rate', value: '0%' },                     // Replace '97%' with the actual value
+            { name: 'Total inventory turnover', value: 'null' },  // Replace '5 times' with the actual value
+            { name: 'Critical/Major/Minor Defect Rate', value: '0%' }, // Replace '4%' with the actual value
+            { name: '“Right First Time” Rate', value: '0%' },       // Replace '92%' with the actual value
+            { name: 'On-time Order Completion Rate', value: 0 }  // Replace '99%' with the actual value
+        ],
+        graphs: []
     };
+
 
     tiles: any[] = [];
 
@@ -112,10 +118,17 @@ export class SupplierReportComponent implements OnInit {
         await this.fetchMetrics(this.rowData);
         console.log(this.getMostAverageSupplier()['Supplier ID']);
         console.log(this.getWorstPerformingSupplier()['Supplier ID'])
-        console.log(this.calculateAverageDeliveryRate(this.originalData))
-        console.log(this.calculateOnTimeOrderCompletionRate(this.originalData))
+        console.log(this.calculateAverageDeliveryRate())
+        console.log(this.calculateOnTimeOrderCompletionRate())
         this.updateVisibleTiles();
+        this.SupplierReport.metrics[0].value = this.getMostAverageSupplier()['Supplier ID'];
+        this.SupplierReport.metrics[2].value = this.getWorstPerformingSupplier()['Supplier ID'];
+        this.SupplierReport.metrics[3].value = this.calculateAverageDeliveryRate();
+        this.SupplierReport.metrics[8].value = this.calculateOnTimeOrderCompletionRate();
+        // console.log(this.getChartData());
         // console.log(this.visibleTiles);
+        this.chartData = this.getChartData();
+        // console.log()
     }
 
     colDefs!: ColDef[];
@@ -192,7 +205,51 @@ export class SupplierReportComponent implements OnInit {
     //         .filter(row => row['Supplier ID'] === supplierId)
     //         .map(row => row.Date);
     // }
+    getChartData(): {
+        xAxisData: string[];
+        seriesData: {
+            metric: ChartMetric;
+            data: {
+                name: string;
+                data: number[];
+            }[];
+        }[];
+    } {
+        console.log('Original Data:', this.originalData);
 
+        // Extract years dynamically from the data and sort them
+        const years = [...new Set(this.originalData.map(item => item['Date'].slice(0, 4)))].sort();
+        const supplierIds = [...new Set(this.originalData.map(item => item['Supplier ID']))];
+        const metrics: ChartMetric[] = ['On Time Delivery Rate', 'Order Accuracy Rate', 'Out Standing Payments', 'TotalSpent'];
+
+        console.log('Years:', years);
+        console.log('Supplier IDs:', supplierIds);
+
+        const seriesData = metrics.map(metric => {
+            const data = supplierIds.map(supplierId => {
+                console.log(`Processing Supplier ID: ${supplierId} for metric: ${metric}`);
+                const yearData = years.map(year => {
+                    const item = this.originalData.find(d => d['Supplier ID'] === supplierId && d['Date'].startsWith(year));
+                    console.log(`Year ${year}, Item found:`, item);
+                    if (item) {
+                        console.log(`Metric value for ${year}:`, item[metric]);
+                    }
+                    return item && item[metric] != null ? Number(item[metric]) : 0;
+                });
+                console.log(`Data for ${supplierId}:`, yearData);
+                return { name: supplierId, data: yearData };
+            });
+
+            return { metric, data };
+        });
+
+        console.log('Series Data:', seriesData);
+
+        return {
+            xAxisData: years,
+            seriesData
+        };
+    }
 
     async fetchMetrics(data: any[]) {
         try {
@@ -370,11 +427,11 @@ export class SupplierReportComponent implements OnInit {
         return worstSupplier;
     }
 
-    calculateAverageDeliveryRate(suppliers: any[]): number {
+    calculateAverageDeliveryRate(): number {
         // Initialize the sum and count variables
         let totalDeliveryRate = 0;
         let count = 0;
-
+        const suppliers = this.originalData;
         // Iterate over each supplier entry
         suppliers.forEach(supplier => {
             // Check if the "On Time Delivery Rate" is present and is a number
@@ -390,7 +447,8 @@ export class SupplierReportComponent implements OnInit {
         return averageDeliveryRate;
     }
 
-    calculateOnTimeOrderCompletionRate(suppliers: any[]): number {
+    calculateOnTimeOrderCompletionRate(): number {
+        const suppliers = this.originalData;
         const totalRate = suppliers.reduce((sum, supplier) => sum + supplier['On Time Delivery Rate'], 0);
         return totalRate / suppliers.length;
     }

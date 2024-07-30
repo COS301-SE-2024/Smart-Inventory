@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnChanges, SimpleChanges, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, Input, OnInit, OnChanges, SimpleChanges, AfterViewInit, ViewChild, ElementRef, HostListener } from '@angular/core';
 import { EChartsOption } from 'echarts';
 import * as echarts from 'echarts';
 
@@ -16,6 +16,14 @@ export class LineComponent implements OnInit, OnChanges, AfterViewInit {
   @Input() seriesData: { name: string; data: number[] }[] = [];
 
   @ViewChild('chartContainer') chartContainer!: ElementRef;
+
+  @HostListener('window:resize')
+  onWindowResize() {
+    if (this.chart) {
+      this.chart.resize();
+    }
+  }
+
 
   private chart: echarts.ECharts | null = null;
 

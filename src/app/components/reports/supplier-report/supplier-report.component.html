@@ -49,7 +49,7 @@
             </div>
         </div>
         <mat-grid-tile [colspan]="8" [rowspan]="3">
-            <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
+            <div style="padding: 10px 10px 10px 10px; width: 100%">
                 <div class="inventoryHolder">
                     <app-grid [rowData]="rowData" [columnDefs]="colDefs" #gridComponent></app-grid>
                 </div>
@@ -80,14 +80,17 @@
         </mat-grid-tile>
 
         <mat-grid-tile [colspan]="4" [rowspan]="2">
-            <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
-                <mat-card style="height: 100%; width: 100vh">
-                    <app-line *ngFor="let metricData of chartData.seriesData"
-                        [title]="metricData.metric + ' Comparison'" [xAxisData]="chartData.xAxisData"
-                        [yAxisName]="metricData.metric" [seriesData]="metricData.data"></app-line>
+            <div style="padding: 10px; height: 100%; width: 100%;">
+                <mat-card style="height: 100%; width: 100%;">
+                    <div *ngIf="chartData?.seriesData">
+                        <app-line *ngFor="let metricData of chartData.seriesData"
+                            [title]="metricData.metric + ' Comparison'" [xAxisData]="chartData.xAxisData"
+                            [yAxisName]="metricData.metric" [seriesData]="metricData.data"></app-line>
+                    </div>
                 </mat-card>
             </div>
         </mat-grid-tile>
+
 
         <mat-grid-tile [colspan]="4" [rowspan]="2">
             <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">

@@ -128,6 +128,7 @@ export class SupplierReportComponent implements OnInit {
         // console.log(this.getChartData());
         // console.log(this.visibleTiles);
         this.chartData = this.getChartData();
+        console.log('chartdata:', this.chartData)
         // console.log()
     }
 
@@ -215,35 +216,35 @@ export class SupplierReportComponent implements OnInit {
             }[];
         }[];
     } {
-        console.log('Original Data:', this.originalData);
+        // console.log('Original Data:', this.originalData);
 
         // Extract years dynamically from the data and sort them
         const years = [...new Set(this.originalData.map(item => item['Date'].slice(0, 4)))].sort();
         const supplierIds = [...new Set(this.originalData.map(item => item['Supplier ID']))];
         const metrics: ChartMetric[] = ['On Time Delivery Rate', 'Order Accuracy Rate', 'Out Standing Payments', 'TotalSpent'];
 
-        console.log('Years:', years);
-        console.log('Supplier IDs:', supplierIds);
+        // console.log('Years:', years);
+        // console.log('Supplier IDs:', supplierIds);
 
         const seriesData = metrics.map(metric => {
             const data = supplierIds.map(supplierId => {
-                console.log(`Processing Supplier ID: ${supplierId} for metric: ${metric}`);
+                // console.log(`Processing Supplier ID: ${supplierId} for metric: ${metric}`);
                 const yearData = years.map(year => {
                     const item = this.originalData.find(d => d['Supplier ID'] === supplierId && d['Date'].startsWith(year));
-                    console.log(`Year ${year}, Item found:`, item);
-                    if (item) {
-                        console.log(`Metric value for ${year}:`, item[metric]);
-                    }
+                    // console.log(`Year ${year}, Item found:`, item);
+                    // if (item) {
+                    //     console.log(`Metric value for ${year}:`, item[metric]);
+                    // }
                     return item && item[metric] != null ? Number(item[metric]) : 0;
                 });
-                console.log(`Data for ${supplierId}:`, yearData);
+                // console.log(`Data for ${supplierId}:`, yearData);
                 return { name: supplierId, data: yearData };
             });
 
             return { metric, data };
         });
 
-        console.log('Series Data:', seriesData);
+        // console.log('Series Data:', seriesData);
 
         return {
             xAxisData: years,

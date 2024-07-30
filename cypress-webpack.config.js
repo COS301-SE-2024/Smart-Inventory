@@ -1,13 +1,8 @@
-export const module = {
+module: {
     rules: [
         {
-            test: /\.css$/i,
+            test: /\.css$/,
             use: ['style-loader', 'css-loader'],
         },
-    ],
-};
-export const externals = [
-    {
-        './inventory.component.css': 'null',
-    },
-];
+    ];
+}

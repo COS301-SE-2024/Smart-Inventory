@@ -14,6 +14,21 @@ import { CustomQuoteModalComponent } from '../../components/quote/custom-quote-m
 import { CommonModule } from '@angular/common';
 import { LoadingSpinnerComponent } from '../../components/loader/loading-spinner.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { EmailTemplateModalComponent } from '../../components/email-template-modal/email-template-modal.component';
+import { DeliveryInformationModalComponent } from '../../components/delivery-information-modal/delivery-information-modal.component';
+
+interface DeliveryAddress {
+  company: string;
+  street: string;
+  city: string;
+  state: string;
+  postalCode: string;
+  country: string;
+  instructions: string;
+  contactName: string;
+  email: string;
+  phone: string;
+}
 
 @Component({
   selector: 'app-orders',
@@ -58,6 +73,19 @@ export class OrdersComponent implements OnInit {
     { field: 'Actual_Delivery_Date', filter: 'agDateColumnFilter' },
 
   ];
+
+  deliveryAddress: DeliveryAddress = {
+    company: '',
+    street: '',
+    city: '',
+    state: '',
+    postalCode: '',
+    country: '',
+    instructions: '',
+    contactName: '',
+    email: '',
+    phone: ''
+  };
 
   defaultColDef: ColDef = {
     flex: 1,
@@ -498,5 +526,56 @@ export class OrdersComponent implements OnInit {
     }
   }
 
+  viewEmailTemplate() {
+    const dialogRef = this.dialog.open(EmailTemplateModalComponent, {
+      width: '600px',
+      data: { emailTemplate: this.getEmailTemplate() }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.saveEmailTemplate(result);
+      }
+    });
+  }
+
+  getEmailTemplate() {
+    // Implement logic to get the current email template
+    // This could be from a service or local storage
+    return {
+      greeting: 'Dear Supplier,',
+      explanation: 'We are requesting a quote for the following items:',
+      items: '',
+      requirements: 'Please provide your best price and delivery time for these items.',
+      instructions: 'Submit your quote through our web form at [Your Web Form URL]',
+      contactInfo: 'If you have any questions, please contact us at [Your Contact Information]'
+    };
+  }
+
+  saveEmailTemplate(template: any) {
+    // Implement logic to save the email template
+    // This could be to a service or local storage
+    console.log('Saving email template:', template);
+  }
+
+  viewDeliveryInfo() {
+    const dialogRef = this.dialog.open(DeliveryInformationModalComponent, {
+      width: '600px',
+      data: { deliveryAddress: this.deliveryAddress }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.deliveryAddress = result;
+        this.saveDeliveryInfo(result);
+      }
+    });
+  }
+
+  saveDeliveryInfo(deliveryInfo: DeliveryAddress) {
+    // Implement logic to save the delivery information
+    // This could be to a service or API
+    console.log('Saving delivery information:', deliveryInfo);
+  }
 
 }

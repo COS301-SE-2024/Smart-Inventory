@@ -1,6 +1,9 @@
 .supplierHolder {
     margin: 15px;
     width: 100%;
+    height: 100%;
+    display: block;
+    overflow: scroll;
 }
 
 .popup-overlay {
@@ -81,11 +84,11 @@
     background-color: #333333;
 }
 
-.button-group button[type="submit"] {
+.button-group button[type='submit'] {
     background-color: #888888;
 }
 
-.button-group button[type="submit"]:hover {
+.button-group button[type='submit']:hover {
     background-color: #666666;
 }
 
@@ -106,4 +109,4 @@
     justify-content: center;
     align-items: center;
     z-index: 9999;
-  }
+}

@@ -42,7 +42,7 @@ export class AppComponent implements OnInit {
         this.logAuthSession();
         this.router.events.subscribe((event) => {
             if (event instanceof NavigationEnd) {
-                this.isSupplierForm = event.url === '/supplier-form';
+                this.isSupplierForm = event.urlAfterRedirects.startsWith('/supplier-form');
             }
         });
     }

@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Component, Renderer2, ElementRef, AfterViewInit } from '@angular/core';
 import { AgChartsAngular } from 'ag-charts-angular';
-import { AgChartOptions } from 'ag-charts-community';
+import { AgChartOptions, AgChartTheme } from 'ag-charts-community';
 import { MaterialModule } from '../../material/material.module';
 
 type DataYearly = {
@@ -20,11 +20,37 @@ export class BarchartComponent implements AfterViewInit {
     public selectedYear: string = new Date().getFullYear().toString(); // Default to current year
 
     public chartOptions: AgChartOptions;
+    private themeObserver!: MutationObserver;
+
+    private lightTheme: AgChartTheme = {
+        palette: {
+            fills: ['#5C2983', '#0076C5', '#21B372'],
+            strokes: ['#333333'],
+        },
+        baseTheme: 'ag-default',
+    };
+    
+    private darkTheme: AgChartTheme = {
+        palette: {
+            fills: ['#8860D0', '#4098D7', '#56CF87'],
+            strokes: ['#aaaaaa'],
+        },
+        baseTheme: 'ag-material-dark',
+        overrides: {
+            common: {
+                background: {
+                    fill: '#1E1E1E'
+                }
+            }
+        }
+    };
+    
 
     updateChartData(year: string) {
         const seriesData = this.getDataByYear(year);
 
         this.chartOptions = {
+            ...this.chartOptions,
             data: seriesData.flatMap((series) => series),
             title: {
                 text: 'Sales vs. Sales Target Comparison',
@@ -109,6 +135,8 @@ export class BarchartComponent implements AfterViewInit {
 
     constructor(private renderer: Renderer2, private el: ElementRef) {
         this.chartOptions = {};
+        // this.initializeChart();
+        this.setupThemeObserver();
     }
 
     ngOnInit() {
@@ -116,9 +144,32 @@ export class BarchartComponent implements AfterViewInit {
     }
 
     ngAfterViewInit() {
+        this.applyCurrentTheme();
         // const chartWrapper = this.el.nativeElement.querySelector('.ag-chart-wrapper');
         // if (chartWrapper) {
         //   this.renderer.setStyle(chartWrapper, 'position', 'absolute');
         // }
+    }
+
+    private setupThemeObserver() {
+        this.themeObserver = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.attributeName === 'data-theme') {
+                    this.applyCurrentTheme();
+                }
+            });
+        });
+        this.themeObserver.observe(document.body, {
+            attributes: true // Listen to attribute changes only.
+        });
+    }
+
+    private applyCurrentTheme() {
+        const theme = document.body.getAttribute('data-theme') === 'dark' ? this.darkTheme : this.lightTheme;
+        this.chartOptions = {
+            ...this.chartOptions, // Spread existing chart options to preserve other configurations
+            theme: theme
+        };
+        this.updateChartData(this.selectedYear); // Re-render the chart with the new theme
     }
 }

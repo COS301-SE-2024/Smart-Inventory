@@ -2,13 +2,15 @@ import { TitleService } from '../../header/title.service';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MaterialModule } from '../../material/material.module';
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatCardModule } from '@angular/material/card';
 import { GridComponent } from '../../grid/grid.component';
 import { ColDef } from 'ag-grid-community';
-import { SaleschartComponent } from '../../charts/saleschart/saleschart.component';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ChartDataService } from '../../../services/chart-data.service';
+import { AgChartsAngular } from 'ag-charts-angular';
+import { AgChartOptions } from 'ag-charts-community';
 
 @Component({
     selector: 'app-activity-report',
@@ -20,7 +22,7 @@ import { ActivatedRoute, Router } from '@angular/router';
         MaterialModule,
         CommonModule,
         MatProgressSpinnerModule,
-        SaleschartComponent,
+        AgChartsAngular,
     ],
     templateUrl: './activity-report.component.html',
     styleUrl: './activity-report.component.css',
@@ -30,10 +32,12 @@ export class ActivityReportComponent implements OnInit {
         private titleService: TitleService,
         private router: Router,
         private route: ActivatedRoute,
+        private service: ChartDataService,
     ) {}
 
     rowData: any[] = [];
-
+    options1!: AgChartOptions;
+    options2!: AgChartOptions;
     selectedItem: any = null;
     requestQuantity: number | null = null;
 
@@ -50,18 +54,31 @@ export class ActivityReportComponent implements OnInit {
     };
     ngOnInit() {
         this.titleService.updateTitle(this.getCurrentRoute());
+        this.options1 = this.service.setPieData(this.calculateCategoryTotalQuantities(), 'Time Spent per Member');
+        this.options2 = this.service.setPieData(this.calculateCategoryTotalQuantities(), 'Idle Time per Member');
     }
 
     colDefs!: ColDef[];
 
+    calculateCategoryTotalQuantities(): Map<string, number> {
+        const categoryTotals = new Map<string, number>();
+
+        this.rowData.forEach((element) => {
+            const category = element.category;
+            const currentTotal = categoryTotals.get(category) || 0;
+            categoryTotals.set(category, currentTotal + element.timeSpent);
+        });
+        return categoryTotals;
+    }
+
     getCurrentRoute() {
         this.colDefs = [
-            { field: 'Member ID', headerName: 'Member ID' },
-            { field: 'Order Date', headerName: 'Order Date' },
-            { field: 'description', headerName: 'Description' },
-            { field: 'Address', headerName: 'Address' },
-            { field: 'supplier', headerName: 'Supplier' },
-            { field: 'automated', headerName: 'Automated' },
+            { field: 'memberID', headerName: 'Member ID' },
+            { field: 'name', headerName: 'Name' },
+            { field: 'role', headerName: 'Role' },
+            { field: 'task', headerName: 'Task' },
+            { field: 'timeSpent', headerName: 'Time Spent' },
+            { field: 'idleTime', headerName: 'Idle Time' },
         ];
         return 'Activity Report';
     }

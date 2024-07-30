@@ -23,6 +23,7 @@ input {
     width: 350px;
     padding: 5px;
 }
+
 mat-select {
     border: 1px solid grey;
     border-radius: 5px;
@@ -34,8 +35,21 @@ mat-select {
     font-size: 15px;
 }
 
+mat-select {
+    color: var(--text-color);
+}
+
+/* For global styles.css */
+.mat-form-field-type-mat-select .mat-form-field-label {
+    color: var(--text-color) !important;
+}
+
 ::ng-deep .mat-mdc-select-value {
     width: 100px;
+}
+
+:host ::ng-deep .mat-form-field-type-mat-select .mat-form-field-label {
+    color: var(--text-color) !important;
 }
 
 .filter {

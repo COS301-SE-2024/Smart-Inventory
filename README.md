@@ -408,7 +408,7 @@ That's it! You should now have the Angular app with AWS Amplify integration runn
         </b>
         <br>
         <p>
-          Passionate about data-driven decision-making, I am dedicated to transitioning into the role of a data scientist. I thrive in collaborative environments and am committed to continuous learning to stay at the forefront of emerging trends in data science.
+          I am a BSc Information Knowledge Systems student majoring in Computer Science and Genetics. My interests lie in the field of Bioinformatics and Computational Biology, where I seek to leverage my knowledge in both computer science and genetics to explore biological complexities through data analysis, algorithm development, and modeling. I am curious about how advancements in computer science can better our understanding of genetics, leading to innovative solutions in healthcare.
         </p>
         <a href="https://github.com/TristanU21442615">
           <img src="/media/githubPic.png" width="24" height="24"/>

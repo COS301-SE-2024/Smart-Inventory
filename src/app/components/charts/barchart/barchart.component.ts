@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Component, Renderer2, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, Renderer2, ElementRef, AfterViewInit, Input, SimpleChanges } from '@angular/core';
 import { AgChartsAngular } from 'ag-charts-angular';
 import { AgChartOptions, AgChartTheme } from 'ag-charts-community';
 import { MaterialModule } from '../../material/material.module';
@@ -18,9 +18,16 @@ type DataYearly = {
 })
 export class BarchartComponent implements AfterViewInit {
     public selectedYear: string = new Date().getFullYear().toString(); // Default to current year
-
+    @Input() chartTitle?: string;
     public chartOptions: AgChartOptions;
     private themeObserver!: MutationObserver;
+
+    ngOnChanges(changes: SimpleChanges) {
+        if (changes['chartTitle']) {
+            // Code to update the chart's title, perhaps by redrawing the chart
+        }
+    }
+
 
     private lightTheme: AgChartTheme = {
         palette: {
@@ -29,7 +36,7 @@ export class BarchartComponent implements AfterViewInit {
         },
         baseTheme: 'ag-default',
     };
-    
+
     private darkTheme: AgChartTheme = {
         palette: {
             fills: ['#8860D0', '#4098D7', '#56CF87'],
@@ -44,7 +51,7 @@ export class BarchartComponent implements AfterViewInit {
             }
         }
     };
-    
+
 
     updateChartData(year: string) {
         const seriesData = this.getDataByYear(year);

@@ -16,6 +16,7 @@ import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatSelectModule } from '@angular/material/select';
 import { RoleSelectCellEditorComponent } from '../../pages/team/role-select-cell-editor.component';
+import { DateSelectCellEditorComponent } from '../reports/supplier-report/date-select-cell-editor.component';
 import { CustomQuoteModalComponent } from '../quote/custom-quote-modal/custom-quote-modal.component';
 @Component({
     selector: 'app-grid',
@@ -32,6 +33,7 @@ import { CustomQuoteModalComponent } from '../quote/custom-quote-modal/custom-qu
         MatSelectModule,
         MatIcon,
         RoleSelectCellEditorComponent,
+        DateSelectCellEditorComponent,
     ],
     templateUrl: './grid.component.html',
     styleUrl: './grid.component.css',

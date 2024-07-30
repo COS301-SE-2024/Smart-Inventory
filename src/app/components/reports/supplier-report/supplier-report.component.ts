@@ -22,7 +22,6 @@ import { LineComponent } from '../../charts/line/line.component';
 import { RowNode } from 'ag-grid-community';
 import { AgGridAngular } from 'ag-grid-angular';
 
-
 type ChartMetric = 'On Time Delivery Rate' | 'Order Accuracy Rate' | 'Out Standing Payments' | 'TotalSpent';
 
 @Component({
@@ -40,7 +39,7 @@ type ChartMetric = 'On Time Delivery Rate' | 'Order Accuracy Rate' | 'Out Standi
         LineBarComponent,
         DateSelectCellEditorComponent,
         RoleSelectCellEditorComponent,
-        LineComponent
+        LineComponent,
     ],
     templateUrl: './supplier-report.component.html',
     styleUrl: './supplier-report.component.css',
@@ -52,7 +51,6 @@ export class SupplierReportComponent implements OnInit {
         private route: ActivatedRoute,
     ) {
         Amplify.configure(outputs);
-
     }
 
     visibleTiles: any[] = []; // Holds the tiles currently being displayed
@@ -83,21 +81,21 @@ export class SupplierReportComponent implements OnInit {
 
     SupplierReport = {
         title: 'Order Report',
-        subtitle: 'Have an overall view of your inventory, relevant metrics to assist you in automation and ordering and provide analytics associated with it.',
+        subtitle:
+            'Have an overall view of your inventory, relevant metrics to assist you in automation and ordering and provide analytics associated with it.',
         metrics: [
-            { name: 'Average supplier performance', value: null },  // Replace '90%' with the actual value
-            { name: 'Overall product defect rate', value: '0%' },    // Replace '2%' with the actual value
-            { name: 'Worst performer', value: null },        // Replace 'Supplier X' with the actual value
-            { name: 'Average delivery rate', value: null },         // Replace '95%' with the actual value
-            { name: 'Fill Rate', value: '0%' },                     // Replace '97%' with the actual value
-            { name: 'Total inventory turnover', value: 'null' },  // Replace '5 times' with the actual value
+            { name: 'Average supplier performance', value: null }, // Replace '90%' with the actual value
+            { name: 'Overall product defect rate', value: '0%' }, // Replace '2%' with the actual value
+            { name: 'Worst performer', value: null }, // Replace 'Supplier X' with the actual value
+            { name: 'Average delivery rate', value: null }, // Replace '95%' with the actual value
+            { name: 'Fill Rate', value: '0%' }, // Replace '97%' with the actual value
+            { name: 'Total inventory turnover', value: 'null' }, // Replace '5 times' with the actual value
             { name: 'Critical/Major/Minor Defect Rate', value: '0%' }, // Replace '4%' with the actual value
-            { name: '“Right First Time” Rate', value: '0%' },       // Replace '92%' with the actual value
-            { name: 'On-time Order Completion Rate', value: 0 }  // Replace '99%' with the actual value
+            { name: '“Right First Time” Rate', value: '0%' }, // Replace '92%' with the actual value
+            { name: 'On-time Order Completion Rate', value: 0 }, // Replace '99%' with the actual value
         ],
-        graphs: []
+        graphs: [],
     };
-
 
     tiles: any[] = [];
 
@@ -106,7 +104,7 @@ export class SupplierReportComponent implements OnInit {
     showNextTiles() {
         this.currentIndex += 3;
         if (this.currentIndex >= this.tiles.length) {
-            this.currentIndex = 0;  // Wrap around to the start
+            this.currentIndex = 0; // Wrap around to the start
         }
     }
 
@@ -117,9 +115,9 @@ export class SupplierReportComponent implements OnInit {
         this.loadSupplierMetrics();
         await this.fetchMetrics(this.rowData);
         console.log(this.getMostAverageSupplier()['Supplier ID']);
-        console.log(this.getWorstPerformingSupplier()['Supplier ID'])
-        console.log(this.calculateAverageDeliveryRate())
-        console.log(this.calculateOnTimeOrderCompletionRate())
+        console.log(this.getWorstPerformingSupplier()['Supplier ID']);
+        console.log(this.calculateAverageDeliveryRate());
+        console.log(this.calculateOnTimeOrderCompletionRate());
         this.updateVisibleTiles();
         this.SupplierReport.metrics[0].value = this.getMostAverageSupplier()['Supplier ID'];
         this.SupplierReport.metrics[2].value = this.getWorstPerformingSupplier()['Supplier ID'];
@@ -140,8 +138,8 @@ export class SupplierReportComponent implements OnInit {
             {
                 field: 'Date',
                 headerName: 'Role',
-                cellEditor: DateSelectCellEditorComponent,  // Make sure this is set if it should be editable
-                cellRenderer: DateSelectCellEditorComponent
+                cellEditor: DateSelectCellEditorComponent, // Make sure this is set if it should be editable
+                cellRenderer: DateSelectCellEditorComponent,
             },
             { field: 'On Time Delivery Rate', headerName: 'On Time Delivery Rate' },
             { field: 'Order Accuracy Rate', headerName: 'Order Accuracy Rate' },
@@ -155,7 +153,7 @@ export class SupplierReportComponent implements OnInit {
 
     getUniqueSuppliers(data: any[]): any[] {
         const uniqueSuppliers: any[] = [];
-        data.forEach(item => {
+        data.forEach((item) => {
             if (!uniqueSuppliers[item['Supplier ID']]) {
                 uniqueSuppliers[item['Supplier ID']] = item;
             }
@@ -164,21 +162,17 @@ export class SupplierReportComponent implements OnInit {
     }
 
     getAvailableDates(supplierId: string): string[] {
-        return this.originalData
-            .filter(item => item['Supplier ID'] === supplierId)
-            .map(item => item['Date']);
+        return this.originalData.filter((item) => item['Supplier ID'] === supplierId).map((item) => item['Date']);
     }
 
     onDateChange(supplierId: string, newDate: string): void {
         // const updatedData = this.originalData.find(item =>
         //     item['Supplier ID'] === supplierId && item['Date'] === newDate
         // );
-
         // if (updatedData) {
         //     const rowIndex = this.rowData.findIndex(row => row['Supplier ID'] === supplierId);
         //     if (rowIndex !== -1) {
         //         this.rowData[rowIndex] = { ...updatedData };
-
         //         const rowNode = this.gridComponent.api.getRowNode(rowIndex.toString());
         //         if (rowNode) {
         //             this.gridComponent.api.refreshCells({
@@ -197,7 +191,7 @@ export class SupplierReportComponent implements OnInit {
     // Function to fetch data based on date and supplier ID
     fetchDataForDate(supplierId: string, date: string): any {
         // Mock function to simulate fetching data for a specific date
-        return this.rowData.find(row => row['Supplier ID'] === supplierId && row.Date === date);
+        return this.rowData.find((row) => row['Supplier ID'] === supplierId && row.Date === date);
     }
 
     // getAvailableDates(supplierId: string): string[] {
@@ -218,18 +212,25 @@ export class SupplierReportComponent implements OnInit {
         console.log('Original Data:', this.originalData);
 
         // Extract years dynamically from the data and sort them
-        const years = [...new Set(this.originalData.map(item => item['Date'].slice(0, 4)))].sort();
-        const supplierIds = [...new Set(this.originalData.map(item => item['Supplier ID']))];
-        const metrics: ChartMetric[] = ['On Time Delivery Rate', 'Order Accuracy Rate', 'Out Standing Payments', 'TotalSpent'];
+        const years = [...new Set(this.originalData.map((item) => item['Date'].slice(0, 4)))].sort();
+        const supplierIds = [...new Set(this.originalData.map((item) => item['Supplier ID']))];
+        const metrics: ChartMetric[] = [
+            'On Time Delivery Rate',
+            'Order Accuracy Rate',
+            'Out Standing Payments',
+            'TotalSpent',
+        ];
 
         console.log('Years:', years);
         console.log('Supplier IDs:', supplierIds);
 
-        const seriesData = metrics.map(metric => {
-            const data = supplierIds.map(supplierId => {
+        const seriesData = metrics.map((metric) => {
+            const data = supplierIds.map((supplierId) => {
                 console.log(`Processing Supplier ID: ${supplierId} for metric: ${metric}`);
-                const yearData = years.map(year => {
-                    const item = this.originalData.find(d => d['Supplier ID'] === supplierId && d['Date'].startsWith(year));
+                const yearData = years.map((year) => {
+                    const item = this.originalData.find(
+                        (d) => d['Supplier ID'] === supplierId && d['Date'].startsWith(year),
+                    );
                     console.log(`Year ${year}, Item found:`, item);
                     if (item) {
                         console.log(`Metric value for ${year}:`, item[metric]);
@@ -247,7 +248,7 @@ export class SupplierReportComponent implements OnInit {
 
         return {
             xAxisData: years,
-            seriesData
+            seriesData,
         };
     }
 
@@ -256,12 +257,27 @@ export class SupplierReportComponent implements OnInit {
             console.log(data);
             data.forEach((supplier) => {
                 this.tiles.push(
-                    this.createTile('schedule', 'On-Time Delivery', 'On Time Delivery Rate', supplier['On Time Delivery Rate'].toString()),
-                    this.createTile('check_circle', 'Order Accuracy', 'Order Accuracy Rate', supplier['Order Accuracy Rate'].toString()),
+                    this.createTile(
+                        'schedule',
+                        'On-Time Delivery',
+                        'On Time Delivery Rate',
+                        supplier['On Time Delivery Rate'].toString(),
+                    ),
+                    this.createTile(
+                        'check_circle',
+                        'Order Accuracy',
+                        'Order Accuracy Rate',
+                        supplier['Order Accuracy Rate'].toString(),
+                    ),
                     this.createTile('repeat', 'Reorder Level', 'Reorder Level', supplier['Reorder Level']),
                     this.createTile('attach_money', 'Total Spend', 'Total Spent', supplier['TotalSpent'].toString()),
-                    this.createTile('money_off', 'Outstanding Payments', 'Outstanding Payments', supplier['Out Standing Payments'].toString()),
-                    this.createTile('warning', 'Risk Score', 'Risk Score', supplier['RiskScore'])
+                    this.createTile(
+                        'money_off',
+                        'Outstanding Payments',
+                        'Outstanding Payments',
+                        supplier['Out Standing Payments'].toString(),
+                    ),
+                    this.createTile('warning', 'Risk Score', 'Risk Score', supplier['RiskScore']),
                 );
             });
         } catch (error) {
@@ -269,7 +285,6 @@ export class SupplierReportComponent implements OnInit {
         } finally {
             this.isLoading = false;
         }
-
     }
 
     private createTile(icon: string, iconLabel: string, metricName: string, value: string): any {
@@ -278,7 +293,7 @@ export class SupplierReportComponent implements OnInit {
             iconLabel: iconLabel,
             metricName: metricName,
             value: value,
-            additionalInfo: this.determineAdditionalInfo(metricName, value)
+            additionalInfo: this.determineAdditionalInfo(metricName, value),
         };
     }
 
@@ -319,25 +334,29 @@ export class SupplierReportComponent implements OnInit {
     calculateAverages(suppliers: any[]): any {
         // console.log("Received suppliers:", suppliers);
 
-        const total = suppliers.reduce((acc, curr) => {
-            // console.log("Current item:", curr); // Check what each supplier item looks like
+        const total = suppliers.reduce(
+            (acc, curr) => {
+                // console.log("Current item:", curr); // Check what each supplier item looks like
 
-            // Access properties correctly using bracket notation if they include spaces
-            const onTimeRate = typeof curr['On Time Delivery Rate'] === 'number' ? curr['On Time Delivery Rate'] : 0;
-            const accuracyRate = typeof curr['Order Accuracy Rate'] === 'number' ? curr['Order Accuracy Rate'] : 0;
+                // Access properties correctly using bracket notation if they include spaces
+                const onTimeRate =
+                    typeof curr['On Time Delivery Rate'] === 'number' ? curr['On Time Delivery Rate'] : 0;
+                const accuracyRate = typeof curr['Order Accuracy Rate'] === 'number' ? curr['Order Accuracy Rate'] : 0;
 
-            if (onTimeRate === 0 || accuracyRate === 0) {
-                console.error("Invalid data for supplier:", curr);
-            }
+                if (onTimeRate === 0 || accuracyRate === 0) {
+                    console.error('Invalid data for supplier:', curr);
+                }
 
-            return {
-                onTimeDeliveryRate: acc.onTimeDeliveryRate + onTimeRate,
-                orderAccuracyRate: acc.orderAccuracyRate + accuracyRate,
-            };
-        }, { onTimeDeliveryRate: 0, orderAccuracyRate: 0 });
+                return {
+                    onTimeDeliveryRate: acc.onTimeDeliveryRate + onTimeRate,
+                    orderAccuracyRate: acc.orderAccuracyRate + accuracyRate,
+                };
+            },
+            { onTimeDeliveryRate: 0, orderAccuracyRate: 0 },
+        );
 
         if (suppliers.length === 0) {
-            console.error("No suppliers provided to calculate averages.");
+            console.error('No suppliers provided to calculate averages.');
             return { onTimeDeliveryRate: 0, orderAccuracyRate: 0 }; // Return zero or handle appropriately
         }
 
@@ -361,19 +380,25 @@ export class SupplierReportComponent implements OnInit {
         let mostAverageSupplier = null;
         let smallestDifference = Infinity; // Start with a large number that any real difference will be smaller than
 
-        suppliers.forEach(supplier => {
+        suppliers.forEach((supplier) => {
             // Safely access properties
-            const onTimeRate = typeof supplier['On Time Delivery Rate'] === 'number' ? supplier['On Time Delivery Rate'] : null;
-            const accuracyRate = typeof supplier['Order Accuracy Rate'] === 'number' ? supplier['Order Accuracy Rate'] : null;
+            const onTimeRate =
+                typeof supplier['On Time Delivery Rate'] === 'number' ? supplier['On Time Delivery Rate'] : null;
+            const accuracyRate =
+                typeof supplier['Order Accuracy Rate'] === 'number' ? supplier['Order Accuracy Rate'] : null;
 
             if (onTimeRate === null || accuracyRate === null) {
-                console.error("Invalid data encountered, skipping supplier:", supplier);
+                console.error('Invalid data encountered, skipping supplier:', supplier);
                 return; // Continue to the next supplier in the forEach loop
             }
 
             // Calculate the absolute percentage differences
-            const onTimeDiff = Math.abs((onTimeRate - averages.onTimeDeliveryRate) / averages.onTimeDeliveryRate * 100);
-            const accuracyDiff = Math.abs((accuracyRate - averages.orderAccuracyRate) / averages.orderAccuracyRate * 100);
+            const onTimeDiff = Math.abs(
+                ((onTimeRate - averages.onTimeDeliveryRate) / averages.onTimeDeliveryRate) * 100,
+            );
+            const accuracyDiff = Math.abs(
+                ((accuracyRate - averages.orderAccuracyRate) / averages.orderAccuracyRate) * 100,
+            );
             const totalDifference = onTimeDiff + accuracyDiff; // Simple sum of differences
 
             // Check if this supplier has the smallest difference so far
@@ -394,12 +419,14 @@ export class SupplierReportComponent implements OnInit {
         let worstSupplier = null;
         let highestScore = -Infinity; // Start with a very low score that any real score will be higher than
 
-        suppliers.forEach(supplier => {
+        suppliers.forEach((supplier) => {
             // Calculating performance score
             // We could also include risk assessment based on 'RiskScore' and 'Out Standing Payments'
-            let performanceScore = (100 - supplier['On Time Delivery Rate']) +
+            let performanceScore =
+                100 -
+                supplier['On Time Delivery Rate'] +
                 (100 - supplier['Order Accuracy Rate']) +
-                (supplier['Out Standing Payments'] / 1000); // Example of scaling outstanding payments
+                supplier['Out Standing Payments'] / 1000; // Example of scaling outstanding payments
 
             // Consider RiskScore effect
             let riskFactor = 0;
@@ -433,7 +460,7 @@ export class SupplierReportComponent implements OnInit {
         let count = 0;
         const suppliers = this.originalData;
         // Iterate over each supplier entry
-        suppliers.forEach(supplier => {
+        suppliers.forEach((supplier) => {
             // Check if the "On Time Delivery Rate" is present and is a number
             if (supplier && typeof supplier['On Time Delivery Rate'] === 'number') {
                 totalDeliveryRate += supplier['On Time Delivery Rate'];
@@ -496,96 +523,96 @@ export class SupplierReportComponent implements OnInit {
                 // }));
                 this.originalData = [
                     {
-                        "Supplier ID": "S001",
-                        "Date": "2021-07-23",
-                        "On Time Delivery Rate": 92.0,
-                        "Order Accuracy Rate": 97.5,
-                        "Out Standing Payments": 3000,
-                        "Reorder Level": "Medium",
-                        "RiskScore": "Low",
-                        "TotalSpent": 120000
+                        'Supplier ID': 'S001',
+                        Date: '2021-07-23',
+                        'On Time Delivery Rate': 92.0,
+                        'Order Accuracy Rate': 97.5,
+                        'Out Standing Payments': 3000,
+                        'Reorder Level': 'Medium',
+                        RiskScore: 'Low',
+                        TotalSpent: 120000,
                     },
                     {
-                        "Supplier ID": "S001",
-                        "Date": "2022-07-23",
-                        "On Time Delivery Rate": 93.0,
-                        "Order Accuracy Rate": 98.0,
-                        "Out Standing Payments": 2000,
-                        "Reorder Level": "Medium",
-                        "RiskScore": "Low",
-                        "TotalSpent": 130000
+                        'Supplier ID': 'S001',
+                        Date: '2022-07-23',
+                        'On Time Delivery Rate': 93.0,
+                        'Order Accuracy Rate': 98.0,
+                        'Out Standing Payments': 2000,
+                        'Reorder Level': 'Medium',
+                        RiskScore: 'Low',
+                        TotalSpent: 130000,
                     },
                     {
-                        "Supplier ID": "S001",
-                        "Date": "2023-07-23",
-                        "On Time Delivery Rate": 94.0,
-                        "Order Accuracy Rate": 99.0,
-                        "Out Standing Payments": 1500,
-                        "Reorder Level": "Medium",
-                        "RiskScore": "Low",
-                        "TotalSpent": 140000
+                        'Supplier ID': 'S001',
+                        Date: '2023-07-23',
+                        'On Time Delivery Rate': 94.0,
+                        'Order Accuracy Rate': 99.0,
+                        'Out Standing Payments': 1500,
+                        'Reorder Level': 'Medium',
+                        RiskScore: 'Low',
+                        TotalSpent: 140000,
                     },
                     {
-                        "Supplier ID": "S002",
-                        "Date": "2021-07-23",
-                        "On Time Delivery Rate": 88.0,
-                        "Order Accuracy Rate": 95.0,
-                        "Out Standing Payments": 4500,
-                        "Reorder Level": "High",
-                        "RiskScore": "Moderate",
-                        "TotalSpent": 110000
+                        'Supplier ID': 'S002',
+                        Date: '2021-07-23',
+                        'On Time Delivery Rate': 88.0,
+                        'Order Accuracy Rate': 95.0,
+                        'Out Standing Payments': 4500,
+                        'Reorder Level': 'High',
+                        RiskScore: 'Moderate',
+                        TotalSpent: 110000,
                     },
                     {
-                        "Supplier ID": "S002",
-                        "Date": "2022-07-23",
-                        "On Time Delivery Rate": 89.0,
-                        "Order Accuracy Rate": 96.0,
-                        "Out Standing Payments": 4200,
-                        "Reorder Level": "High",
-                        "RiskScore": "Moderate",
-                        "TotalSpent": 115000
+                        'Supplier ID': 'S002',
+                        Date: '2022-07-23',
+                        'On Time Delivery Rate': 89.0,
+                        'Order Accuracy Rate': 96.0,
+                        'Out Standing Payments': 4200,
+                        'Reorder Level': 'High',
+                        RiskScore: 'Moderate',
+                        TotalSpent: 115000,
                     },
                     {
-                        "Supplier ID": "S002",
-                        "Date": "2023-07-23",
-                        "On Time Delivery Rate": 90.0,
-                        "Order Accuracy Rate": 97.0,
-                        "Out Standing Payments": 4000,
-                        "Reorder Level": "High",
-                        "RiskScore": "Moderate",
-                        "TotalSpent": 120000
+                        'Supplier ID': 'S002',
+                        Date: '2023-07-23',
+                        'On Time Delivery Rate': 90.0,
+                        'Order Accuracy Rate': 97.0,
+                        'Out Standing Payments': 4000,
+                        'Reorder Level': 'High',
+                        RiskScore: 'Moderate',
+                        TotalSpent: 120000,
                     },
                     {
-                        "Supplier ID": "S003",
-                        "Date": "2021-07-23",
-                        "On Time Delivery Rate": 85.0,
-                        "Order Accuracy Rate": 90.0,
-                        "Out Standing Payments": 5000,
-                        "Reorder Level": "Low",
-                        "RiskScore": "High",
-                        "TotalSpent": 95000
+                        'Supplier ID': 'S003',
+                        Date: '2021-07-23',
+                        'On Time Delivery Rate': 85.0,
+                        'Order Accuracy Rate': 90.0,
+                        'Out Standing Payments': 5000,
+                        'Reorder Level': 'Low',
+                        RiskScore: 'High',
+                        TotalSpent: 95000,
                     },
                     {
-                        "Supplier ID": "S003",
-                        "Date": "2022-07-23",
-                        "On Time Delivery Rate": 87.0,
-                        "Order Accuracy Rate": 92.0,
-                        "Out Standing Payments": 4800,
-                        "Reorder Level": "Low",
-                        "RiskScore": "High",
-                        "TotalSpent": 100000
+                        'Supplier ID': 'S003',
+                        Date: '2022-07-23',
+                        'On Time Delivery Rate': 87.0,
+                        'Order Accuracy Rate': 92.0,
+                        'Out Standing Payments': 4800,
+                        'Reorder Level': 'Low',
+                        RiskScore: 'High',
+                        TotalSpent: 100000,
                     },
                     {
-                        "Supplier ID": "S003",
-                        "Date": "2023-07-23",
-                        "On Time Delivery Rate": 89.0,
-                        "Order Accuracy Rate": 94.0,
-                        "Out Standing Payments": 4600,
-                        "Reorder Level": "Low",
-                        "RiskScore": "High",
-                        "TotalSpent": 105000
-                    }
-                ]
+                        'Supplier ID': 'S003',
+                        Date: '2023-07-23',
+                        'On Time Delivery Rate': 89.0,
+                        'Order Accuracy Rate': 94.0,
+                        'Out Standing Payments': 4600,
+                        'Reorder Level': 'Low',
+                        RiskScore: 'High',
+                        TotalSpent: 105000,
+                    },
+                ];
 
                 this.rowData = this.processRowData(this.originalData);
 
@@ -612,7 +639,7 @@ export class SupplierReportComponent implements OnInit {
     private groupDataBySupplier(rawData: any[]): Map<string, any[]> {
         const grouped = new Map<string, any[]>();
 
-        rawData.forEach(item => {
+        rawData.forEach((item) => {
             const group = grouped.get(item['Supplier ID']) || [];
             group.push(item);
             grouped.set(item['Supplier ID'], group);
@@ -631,7 +658,7 @@ export class SupplierReportComponent implements OnInit {
 
         // Prepare data to include only the most recent record initially with all available dates
         groupedData.forEach((value, key) => {
-            let dates = value.map(item => item.Date);
+            let dates = value.map((item) => item.Date);
             let mostRecentRecord = { ...value[0], Dates: dates }; // Clone the most recent record and add all dates
             preparedData.push(mostRecentRecord);
         });

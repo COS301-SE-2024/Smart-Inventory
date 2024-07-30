@@ -52,9 +52,15 @@
                                     "maximumError": "11MB"
                                 },
                                 {
-                                    "type": "anyComponentStyle",
-                                    "maximumWarning": "300kB",
-                                    "maximumError": "10MB"
+                                  "type": "anyComponentStyle",
+                                  "maximumWarning": "300kB",
+                                  "maximumError": "500kB"
+                                },
+                                {
+                                  "type": "anyComponentStyle",
+                                  "name": "ag-grid",
+                                  "maximumWarning": "500kB",
+                                  "maximumError": "1MB"
                                 }
                             ],
                             "outputHashing": "all"

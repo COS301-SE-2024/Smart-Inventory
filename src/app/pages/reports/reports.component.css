@@ -1,0 +1,9 @@
+.item-card-container {
+    display: flex;
+    flex-direction: column;
+    margin: 20px;
+}
+
+mat-card-actions {
+    margin-top: auto;
+}

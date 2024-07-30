@@ -1,0 +1,88 @@
+<ng-container *ngIf="isNewQuote">
+  <h2 mat-dialog-title>Create Custom Quote</h2>
+</ng-container>
+<ng-container *ngIf="!isNewQuote">
+  <div class="quote-header">
+    <div>Order ID: {{orderId}}</div>
+    <div>Quote ID: {{quoteId}}</div>
+  </div>
+</ng-container>
+<mat-dialog-content class="quote-content">
+  <div *ngIf="isLoading" class="loading-overlay">
+    <app-loading-spinner></app-loading-spinner>
+  </div>
+  <ng-container *ngIf="!isLoading">
+    <div class="items-section">
+      <h3>Quote Items</h3>
+      <mat-form-field appearance="outline" class="full-width search-field">
+        <mat-label>Search Quote Items</mat-label>
+        <input matInput type="text" [(ngModel)]="quoteItemSearchTerm" (input)="filterQuoteItems()">
+        <button *ngIf="quoteItemSearchTerm" matSuffix mat-icon-button aria-label="Clear"
+          (click)="quoteItemSearchTerm=''; filterQuoteItems()" class="clear-button">
+          <mat-icon>close</mat-icon>
+        </button>
+        <mat-icon matSuffix class="search-icon">search</mat-icon>
+      </mat-form-field>
+      <div class="item-list">
+        <div *ngFor="let item of filteredQuoteItems; let i = index" class="item-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Item</mat-label>
+            <mat-select [(ngModel)]="item.item" [compareWith]="compareItems" (ngModelChange)="onQuoteChanged()">
+              <mat-option>
+                <ngx-mat-select-search [formControl]="item.searchControl" placeholderLabel="Search items..."
+                  noEntriesFoundLabel="No matching items found" (input)="filterItems($any($event).target.value, i)">
+                </ngx-mat-select-search>
+              </mat-option>
+              <mat-option *ngFor="let invItem of item.filteredItems | async" [value]="invItem">
+                <div class="item-option">
+                  <div class="item-sku">{{invItem.sku}}</div>
+                  <div class="item-description">{{invItem.description}}</div>
+                </div>
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Quantity</mat-label>
+            <input matInput type="number" [(ngModel)]="item.quantity" min="1" (ngModelChange)="onQuoteChanged()">
+          </mat-form-field>
+          <button mat-icon-button (click)="removeItem(i)" aria-label="Remove item" class="remove-item-button">
+            <mat-icon>remove_circle</mat-icon>
+          </button>
+        </div>
+      </div>
+      <button mat-raised-button (click)="addItem()" class="add-item-button">
+        <mat-icon>add</mat-icon> Add Item
+      </button>
+    </div>
+
+    <div class="suppliers-section">
+      <h3>Suppliers</h3>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Select Suppliers</mat-label>
+        <mat-select [(ngModel)]="selectedSuppliers" multiple (ngModelChange)="onQuoteChanged()" data-cy="supplierSelect">
+          <mat-option>
+            <ngx-mat-select-search [formControl]="supplierControl" placeholderLabel="Search suppliers..."
+              noEntriesFoundLabel="No matching suppliers found"></ngx-mat-select-search>
+          </mat-option>
+          <mat-option *ngFor="let supplier of filteredSuppliers | async" [value]="supplier">{{supplier}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <div class="selected-suppliers">
+        <mat-chip-listbox>
+          <mat-chip *ngFor="let supplier of selectedSuppliers" (removed)="removeSupplier(supplier)">
+            {{supplier}}
+            <button matChipRemove>
+              <mat-icon>cancel</mat-icon>
+            </button>
+          </mat-chip>
+        </mat-chip-listbox>
+      </div>
+    </div>
+  </ng-container>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancel()">Cancel</button>
+  <button mat-raised-button color="primary" *ngIf="isNewQuote" (click)="createOrder()">Create Order</button>
+  <button mat-raised-button color="primary" *ngIf="!isNewQuote" (click)="saveChanges()" [disabled]="!hasUnsavedChanges">Save Changes</button>
+  <button mat-raised-button color="primary" *ngIf="!isNewQuote" (click)="sendQuote()" [disabled]="hasUnsavedChanges">Send Quote</button>
+</mat-dialog-actions>

@@ -45,3 +45,6 @@ Thumbs.db
 .amplify
 amplify_outputs*
 amplifyconfiguration*
+
+# Script output
+component_contents.txt

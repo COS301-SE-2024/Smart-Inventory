@@ -1,0 +1,48 @@
+name: Lint Codebase
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+permissions:
+  contents: read
+
+jobs:
+  start:
+    name: Initial Setup
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Starting Job
+        run: |
+          echo "Beginning to lint ${{ github.repository }}"
+
+  lint_frontend:
+    name: Lint Frontend
+    runs-on: ubuntu-latest
+    needs: start
+    steps:
+      - name: Checkout "${{ github.repository }}"
+        uses: actions/checkout@v4
+      - name: Set up Node v18.19.0
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18.19.0'
+
+      - name: Install dependencies
+        run:  |
+          npm ci
+
+      - name: Lint Codebase
+        run:  |
+          npm run lint --prefix src/app
+  end:
+    name: The end
+    runs-on: ubuntu-latest
+    needs: [lint_frontend]
+    steps:
+      - name: Ending
+        id: init
+        run: |
+          echo "${{ github.repository }} has been successfully linted"

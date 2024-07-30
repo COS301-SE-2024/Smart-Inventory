@@ -75,14 +75,14 @@ describe('SidebarComponent', () => {
     it('settings should be visible', () => {
         cy.get('.mat-toolbar').click();
         cy.get(
-            ':nth-child(7) > .mat-mdc-list-item > .mdc-list-item__content > .mat-mdc-list-item-unscoped-content',
+            ':nth-child(8) > .mat-mdc-list-item > .mdc-list-item__content > .mat-mdc-list-item-unscoped-content',
         ).should('contain', 'Settings');
     });
 
     it('logout should be visible', () => {
         cy.get('.mat-toolbar').click();
         cy.get(
-            ':nth-child(8) > .mat-mdc-list-item > .mdc-list-item__content > .mat-mdc-list-item-unscoped-content',
+            ':nth-child(9) > .mat-mdc-list-item > .mdc-list-item__content > .mat-mdc-list-item-unscoped-content',
         ).should('contain', 'Log Out');
     });
 
@@ -128,17 +128,24 @@ describe('SidebarComponent', () => {
         ).should('contain', 'assignment');
     });
 
-    it('settings icon should be visible', () => {
+    it('help icon should be visible', () => {
         cy.get('.mat-toolbar').click();
         cy.get(
             ':nth-child(7) > .mat-mdc-list-item > .mdc-list-item__content > .mat-mdc-list-item-unscoped-content > .mat-icon',
+        ).should('contain', 'help');
+    });
+
+    it('settings icon should be visible', () => {
+        cy.get('.mat-toolbar').click();
+        cy.get(
+            ':nth-child(8) > .mat-mdc-list-item > .mdc-list-item__content > .mat-mdc-list-item-unscoped-content > .mat-icon',
         ).should('contain', 'settings');
     });
 
     it('logout icon should be visible', () => {
         cy.get('.mat-toolbar').click();
         cy.get(
-            ':nth-child(8) > .mat-mdc-list-item > .mdc-list-item__content > .mat-mdc-list-item-unscoped-content > .mat-icon',
+            ':nth-child(9) > .mat-mdc-list-item > .mdc-list-item__content > .mat-mdc-list-item-unscoped-content > .mat-icon',
         ).should('contain', 'exit_to_app');
     });
 });

@@ -1,15 +1,7 @@
 import { defineConfig } from 'cypress';
 
 export default defineConfig({
-    viewportWidth: 1280,
-    viewportHeight: 720,
-    setupNodeEvents(on, config) {},
-    experimentalModifyObstructiveThirdPartyCode: true,
-    chromeWebSecurity: false,
     component: {
-        env: {
-            commandDelay: 1
-        },
         devServer: {
             framework: 'angular',
             bundler: 'webpack',
@@ -18,19 +10,15 @@ export default defineConfig({
                     root: '',
                     sourceRoot: 'src',
                     buildOptions: {
-                        outputPath: 'dist/smart-inventory',
+                        outputPath: 'dist',
                         index: 'src/index.html',
-                        browser: 'src/main.ts',
+                        main: 'src/main.ts',
                         polyfills: ['zone.js'],
                         tsConfig: 'tsconfig.app.json',
-                        assets: [
-                            {
-                                glob: '**/*',
-                                input: 'public',
-                            },
-                        ],
+                        assets: ['src/assets'],
                         styles: [
-                            '@angular/material/prebuilt-themes/azure-blue.css',
+                            'node_modules/ag-grid-community/styles/ag-grid.css',
+                            'node_modules/ag-grid-community/styles/ag-theme-alpine.css',
                             'node_modules/@aws-amplify/ui-angular/theme.css',
                             'src/styles.css',
                         ],

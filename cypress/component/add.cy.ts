@@ -1,4 +1,3 @@
-import { AddComponent } from '../../src/app/components/grid/add/add.component';
 import { MaterialModule } from '../../src/app/components/material/material.module';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';

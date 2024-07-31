@@ -1,0 +1,46 @@
+/* styles.css or your global stylesheet */
+.custom-modal .mat-form-field {
+    width: 100%;
+    /* Ensures form fields use the full width of the dialog */
+}
+
+.custom-modal mat-dialog-container {
+    padding: 24px;
+    /* Adds padding inside the dialog for better spacing */
+}
+
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f5f5f5;
+    border-bottom: 1px solid #e0e0e0;
+    padding: 10px 20px;
+}
+
+
+.full-width-input {
+    width: 100%;
+    margin-top: 20px;
+}
+
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+    padding: 10px 0;
+}
+
+button {
+    margin-left: 8px;
+}
+
+form.modal-form.ng-pristine.ng-valid {
+    padding: 20px;
+}
+
+h2 {
+    padding-top: 20px;
+}

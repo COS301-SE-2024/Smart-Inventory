@@ -1,0 +1,139 @@
+.ag-body-vertical-scroll-container {
+    width: 100%;
+    display: none !important;
+}
+
+
+.carousel-wrapper {
+    overflow-x: hidden;
+    display: flex;
+    scroll-behavior: smooth;
+}
+
+.carousel-navigation {
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+    width: 100%;
+    top: 22%;
+    z-index: 10;
+    transform: translateY(-50%);
+}
+
+.carousel-wrapper mat-grid-list {
+    flex: 0 0 auto;
+}
+
+.tile-wrapper{
+    position: absolute;
+    width: 195%;
+    left: 1%;
+}
+
+.tile {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    /* background: #fff; */
+    transition: box-shadow 0.3s;
+    /* Smooth transition for hover effects, optional */
+}
+
+.down-arrow {
+    font-size: 48px;
+    /* Larger icon size */
+    color: #666;
+    /* Adjust color as necessary */
+}
+
+mat-grid-tile {
+    margin: 10px;
+}
+
+.tile:hover {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    /* Optional: Enhanced shadow on hover */
+}
+
+.icon-container {
+    flex-shrink: 0;
+    width: 140px;
+    height: 120px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.metric-icon {
+    font-size: 60px;
+    /* color: rgb(255, 0, 0); */
+    border-radius: 50%;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* justify-content: right; */
+    height: 100%;
+    width: 100%;
+}
+
+.arrow-container {
+    width: 70px;
+    height: 70px;
+    position: relative;
+    left: 50%;
+    background: #e6e4e4;
+    border-radius: 50px;
+    right: 50%;
+    top: 1%;
+    cursor: pointer;
+    z-index: 3;
+}
+
+.arrow-icon {
+    font-size: 60px;
+    /* color: rgb(255, 0, 0); */
+    border-radius: 50%;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* justify-content: right; */
+    height: 100%;
+    width: 100%;
+}
+
+.content {
+    flex-grow: 1;
+    padding-left: 20px;
+}
+
+.metric-title {
+    margin-bottom: 10px;
+    color: #333;
+    display: flex;
+    justify-content: center;
+}
+
+.details {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-around;
+}
+
+.metric-value {
+    font-size: 24px;
+    color: #555;
+    margin-right: 20px;
+}
+
+.metric-info {
+    font-size: 16px;
+    color: #777;
+}
+
+mat-card.mat-mdc-card.mdc-card {
+    background-color: white;
+}

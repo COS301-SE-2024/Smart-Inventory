@@ -4,6 +4,8 @@
     [columnDefs]="colDefs"
     (newCustomQuote)="handleNewCustomQuote($event)"
     (viewGeneratedQuoteClicked)="viewGeneratedQuote()"
+    (viewEmailTemplateClicked)="viewEmailTemplate()"
+    (viewDeliveryInfoClicked)="viewDeliveryInfo()"
     (rowSelected)="onRowSelected($event)"
     (deleteOrderClicked)="deleteOrderRow()"
     #gridComponent

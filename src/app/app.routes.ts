@@ -21,5 +21,5 @@ export const routes: Routes = [
     { path: 'help', component: HelpComponent },
     { path: 'settings', component: SettingsComponent },
     { path: 'grid', component: GridComponent },
-    { path: 'supplier-form/:supplierID/:orderID', component: SupplierFormComponent },
+    { path: 'supplier-form/:supplierID/:orderID/:deliveryID', component: SupplierFormComponent },
 ];

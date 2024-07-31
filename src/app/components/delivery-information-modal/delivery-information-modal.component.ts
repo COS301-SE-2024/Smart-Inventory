@@ -6,6 +6,12 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 
+import { v4 as uuidv4 } from 'uuid';
+import { fetchAuthSession } from 'aws-amplify/auth';
+import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
+import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
+import outputs from '../../../../amplify_outputs.json';
+
 interface DeliveryAddress {
   company: string;
   street: string;
@@ -55,9 +61,56 @@ export class DeliveryInformationModalComponent {
     });
   }
 
-  onSave() {
+  async onSave() {
     if (this.deliveryForm.valid) {
-      this.dialogRef.close(this.deliveryForm.value);
+      try {
+        const session = await fetchAuthSession();
+
+        const cognitoClient = new CognitoIdentityProviderClient({
+          region: outputs.auth.aws_region,
+          credentials: session.credentials,
+        });
+
+        const getUserCommand = new GetUserCommand({
+          AccessToken: session.tokens?.accessToken.toString(),
+        });
+        const getUserResponse = await cognitoClient.send(getUserCommand);
+
+        const tenentId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
+
+        if (!tenentId) {
+          throw new Error('TenantId not found in user attributes');
+        }
+
+        const lambdaClient = new LambdaClient({
+          region: outputs.auth.aws_region,
+          credentials: session.credentials,
+        });
+
+        const deliveryInfo = {
+          ...this.deliveryForm.value,
+          deliveryInfoID: uuidv4(),
+          tenentId: tenentId,
+        };
+
+        const invokeCommand = new InvokeCommand({
+          FunctionName: 'addDeliveryInfo',
+          Payload: new TextEncoder().encode(JSON.stringify(deliveryInfo)),
+        });
+
+        const lambdaResponse = await lambdaClient.send(invokeCommand);
+        const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+
+        if (responseBody.statusCode === 201) {
+          console.log('Delivery information added successfully');
+          this.dialogRef.close(deliveryInfo);
+        } else {
+          throw new Error(responseBody.body);
+        }
+      } catch (error) {
+        console.error('Error adding delivery information:', error);
+        // Handle the error (e.g., show an error message to the user)
+      }
     }
   }
 

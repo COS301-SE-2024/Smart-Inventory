@@ -45,11 +45,11 @@ process_file() {
     for dir in "${directories[@]}"; do
         local component_path=$(find . -type d -path "*/$dir/$input" -print -quit)
         if [ -n "$component_path" ]; then
-            local file_pattern="*.component.ts|*.component.html|*.page.ts|*.page.html|*.page.scss"
-            if [ "$exclude_css" = false ]; then
-                file_pattern="$file_pattern|*.component.css"
+            if [ "$exclude_css" = true ]; then
+                local files=$(find "$component_path" -maxdepth 1 -type f \( -name "*.component.ts" -o -name "*.component.html" -o -name "*.page.ts" -o -name "*.page.html" -o -name "*.page.scss" \))
+            else
+                local files=$(find "$component_path" -maxdepth 1 -type f \( -name "*.component.ts" -o -name "*.component.html" -o -name "*.component.css" -o -name "*.page.ts" -o -name "*.page.html" -o -name "*.page.scss" \))
             fi
-            local files=$(find "$component_path" -maxdepth 1 -type f -regextype posix-extended -regex ".*($file_pattern)")
             
             for file in $files; do
                 local filename=$(basename "$file")

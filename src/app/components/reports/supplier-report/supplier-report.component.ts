@@ -128,7 +128,7 @@ export class SupplierReportComponent implements OnInit {
         // console.log(this.getChartData());
         // console.log(this.visibleTiles);
         this.chartData = this.getChartData();
-        console.log('chartdata:', this.chartData)
+        console.log('chartdata:', this.chartData.seriesData)
         // console.log()
     }
 
@@ -208,50 +208,39 @@ export class SupplierReportComponent implements OnInit {
     // }
     getChartData(): {
         xAxisData: string[];
+        title: string;
+        yAxisName: string; // Ensure you have a yAxisName to pass along
         seriesData: {
-            metric: ChartMetric;
-            data: {
-                name: string;
-                data: number[];
-            }[];
+            name: string;
+            data: number[];
         }[];
     } {
-        // console.log('Original Data:', this.originalData);
+        const title = 'On Time Delivery Rate';
+        const yAxisName = title; // Assuming you use the title as the yAxisName, adjust if necessary
 
         // Extract years dynamically from the data and sort them
         const years = [...new Set(this.originalData.map(item => item['Date'].slice(0, 4)))].sort();
         const supplierIds = [...new Set(this.originalData.map(item => item['Supplier ID']))];
-        const metrics: ChartMetric[] = ['On Time Delivery Rate', 'Order Accuracy Rate', 'Out Standing Payments', 'TotalSpent'];
 
-        // console.log('Years:', years);
-        // console.log('Supplier IDs:', supplierIds);
-
-        const seriesData = metrics.map(metric => {
-            const data = supplierIds.map(supplierId => {
-                // console.log(`Processing Supplier ID: ${supplierId} for metric: ${metric}`);
-                const yearData = years.map(year => {
-                    const item = this.originalData.find(d => d['Supplier ID'] === supplierId && d['Date'].startsWith(year));
-                    // console.log(`Year ${year}, Item found:`, item);
-                    // if (item) {
-                    //     console.log(`Metric value for ${year}:`, item[metric]);
-                    // }
-                    return item && item[metric] != null ? Number(item[metric]) : 0;
-                });
-                // console.log(`Data for ${supplierId}:`, yearData);
-                return { name: supplierId, data: yearData };
+        // Aggregate data for all metrics into one series per supplier
+        const seriesData = supplierIds.map(supplierId => {
+            const data = years.map(year => {
+                const yearData = this.originalData.filter(d => d['Supplier ID'] === supplierId && d['Date'].startsWith(year));
+                // Sum or average data based on metric, here we assume it's sum
+                return yearData.reduce((acc, item) => acc + Number(item[title] || 0), 0);
             });
-
-            return { metric, data };
+            return { name: supplierId, data };
         });
 
-        // console.log('Series Data:', seriesData);
+        console.log('Series Data:', seriesData);
 
         return {
             xAxisData: years,
-            seriesData
+            seriesData,
+            title,
+            yAxisName
         };
     }
-
     async fetchMetrics(data: any[]) {
         try {
             console.log(data);

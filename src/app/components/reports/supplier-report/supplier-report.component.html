@@ -82,14 +82,13 @@
         <mat-grid-tile [colspan]="4" [rowspan]="2">
             <div style="padding: 10px; height: 100%; width: 100%;">
                 <mat-card style="height: 100%; width: 100%;">
-                    <div *ngIf="chartData?.seriesData">
-                        <app-line *ngFor="let metricData of chartData.seriesData"
-                            [title]="metricData.metric + ' Comparison'" [xAxisData]="chartData.xAxisData"
-                            [yAxisName]="metricData.metric" [seriesData]="metricData.data"></app-line>
-                    </div>
+                    <app-line *ngIf="chartData" [title]="chartData.title + ' Comparison'"
+                        [xAxisData]="chartData.xAxisData" 
+                        [seriesData]="chartData.seriesData"></app-line>
                 </mat-card>
             </div>
         </mat-grid-tile>
+
 
 
         <mat-grid-tile [colspan]="4" [rowspan]="2">

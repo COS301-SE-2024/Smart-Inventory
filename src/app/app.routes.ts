@@ -9,12 +9,13 @@ import { SettingsComponent } from './pages/settings/settings.component';
 import { HelpComponent } from './pages/help/help.component';
 import { GridComponent } from './components/grid/grid.component';
 import { SupplierFormComponent } from './components/supplier-form/supplier-form.component';
-
+import { SupplierReportComponent } from './components/reports/supplier-report/supplier-report.component';
 export const routes: Routes = [
     { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
     { path: 'dashboard', component: DashboardComponent },
     { path: 'inventory', component: InventoryComponent },
     { path: 'reports', component: ReportsComponent },
+    { path: 'supplierReport', component: SupplierReportComponent },
     { path: 'team', component: TeamComponent },
     { path: 'suppliers', component: SuppliersComponent },
     { path: 'orders', component: OrdersComponent },

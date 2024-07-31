@@ -427,10 +427,10 @@ export class InventoryComponent implements OnInit {
 // Then, create the stock request report
 const reportPayload = {
     tenentId: tenentId,
-    sku: this.selectedItem.sku,
-    category: this.selectedItem.category,
-    supplier: this.selectedItem.supplier,
-    quantityRequested: this.requestQuantity.toString(), // Ensure this is a string
+    sku: item.sku,
+    category: item.category,
+    supplier: item.supplier,
+    quantityRequested: item.requestQuantity.toString(), // Ensure this is a string
 };
 
             console.log('Report Payload:', reportPayload);

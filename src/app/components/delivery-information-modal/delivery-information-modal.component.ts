@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
@@ -39,8 +39,10 @@ interface DeliveryAddress {
   templateUrl: './delivery-information-modal.component.html',
   styleUrl: './delivery-information-modal.component.css'
 })
-export class DeliveryInformationModalComponent {
+export class DeliveryInformationModalComponent implements OnInit {
   deliveryForm: FormGroup;
+  isLoading = true;
+  existingDeliveryInfoID: string | null = null;
 
   constructor(
     public dialogRef: MatDialogRef<DeliveryInformationModalComponent>,
@@ -59,6 +61,71 @@ export class DeliveryInformationModalComponent {
       email: [data.deliveryAddress.email, [Validators.required, Validators.email]],
       phone: [data.deliveryAddress.phone, Validators.required]
     });
+  }
+
+  async ngOnInit() {
+    await this.loadDeliveryInfo();
+  }
+
+  async loadDeliveryInfo() {
+    try {
+      const session = await fetchAuthSession();
+
+      const cognitoClient = new CognitoIdentityProviderClient({
+        region: outputs.auth.aws_region,
+        credentials: session.credentials,
+      });
+
+      const getUserCommand = new GetUserCommand({
+        AccessToken: session.tokens?.accessToken.toString(),
+      });
+      const getUserResponse = await cognitoClient.send(getUserCommand);
+
+      const tenentId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
+
+      if (!tenentId) {
+        throw new Error('TenantId not found in user attributes');
+      }
+
+      const lambdaClient = new LambdaClient({
+        region: outputs.auth.aws_region,
+        credentials: session.credentials,
+      });
+
+      const invokeCommand = new InvokeCommand({
+        FunctionName: 'getDeliveryInfo',
+        Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: tenentId } })),
+      });
+
+      const lambdaResponse = await lambdaClient.send(invokeCommand);
+      const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+
+      if (responseBody.statusCode === 200) {
+        const deliveryInfo = JSON.parse(responseBody.body)[0]; // Assuming we're using the first entry
+        if (deliveryInfo) {
+          this.existingDeliveryInfoID = deliveryInfo.deliveryInfoID;
+          this.deliveryForm.patchValue({
+            company: deliveryInfo.companyName,
+            street: deliveryInfo.street,
+            city: deliveryInfo.city,
+            state: deliveryInfo.state,
+            postalCode: deliveryInfo.postalCode,
+            country: deliveryInfo.country,
+            instructions: deliveryInfo.deliveryInstructions,
+            contactName: deliveryInfo.contactName,
+            email: deliveryInfo.email,
+            phone: deliveryInfo.phone
+          });
+        }
+      } else if (responseBody.statusCode !== 404) {
+        throw new Error(responseBody.body);
+      }
+    } catch (error) {
+      console.error('Error loading delivery information:', error);
+      // Handle the error (e.g., show an error message to the user)
+    } finally {
+      this.isLoading = false;
+    }
   }
 
   async onSave() {
@@ -89,30 +156,32 @@ export class DeliveryInformationModalComponent {
 
         const deliveryInfo = {
           ...this.deliveryForm.value,
-          deliveryInfoID: uuidv4(),
+          deliveryInfoID: this.existingDeliveryInfoID || uuidv4(),
           tenentId: tenentId,
         };
 
         const invokeCommand = new InvokeCommand({
-          FunctionName: 'addDeliveryInfo',
+          FunctionName: 'updateDeliveryInfo',
           Payload: new TextEncoder().encode(JSON.stringify(deliveryInfo)),
         });
 
         const lambdaResponse = await lambdaClient.send(invokeCommand);
         const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
 
-        if (responseBody.statusCode === 201) {
-          console.log('Delivery information added successfully');
+        if (responseBody.statusCode === 200) {
+          console.log('Delivery information updated successfully');
           this.dialogRef.close(deliveryInfo);
         } else {
           throw new Error(responseBody.body);
         }
       } catch (error) {
-        console.error('Error adding delivery information:', error);
+        console.error('Error updating delivery information:', error);
         // Handle the error (e.g., show an error message to the user)
       }
     }
   }
+
+
 
   onCancel() {
     this.dialogRef.close();

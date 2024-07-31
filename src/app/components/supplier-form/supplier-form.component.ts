@@ -48,6 +48,7 @@ export class SupplierFormComponent implements OnInit {
   supplierID: string = '';
   orderID: string = '';
   deliveryID: string = '';
+  tenentId: string = '';
 
 
   constructor(private dialog: MatDialog, private route: ActivatedRoute) {}
@@ -116,14 +117,16 @@ export class SupplierFormComponent implements OnInit {
       this.supplierID = params['supplierID'] || '';
       this.orderID = params['orderID'] || '';
       this.deliveryID = params['deliveryID'] || '';
+      this.tenentId = params['tenentId'] || '';
       console.log('Supplier ID:', this.supplierID);
       console.log('Order ID:', this.orderID);
       console.log('Delivery ID:', this.deliveryID);
+      console.log('Tenent ID:', this.tenentId);
       
       if (this.supplierID && this.orderID && this.deliveryID) {
-        // this.loadSupplierData(this.supplierID);
+        // this.loadSupplierData(this.supplierID, this.tenentId);
         // this.loadOrderData(this.orderID);
-        // this.loadOrderData(this.deliveryID);
+        // this.loadOrderData(this.deliveryID;
       }
     });
 

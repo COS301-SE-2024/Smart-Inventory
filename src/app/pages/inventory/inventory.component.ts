@@ -452,6 +452,7 @@ export class InventoryComponent implements OnInit {
 const reportPayload = {
     tenentId: tenentId,
     sku: this.selectedItem.sku,
+    category: this.selectedItem.category,
     supplier: this.selectedItem.supplier,
     quantityRequested: this.requestQuantity.toString(), // Ensure this is a string
 };

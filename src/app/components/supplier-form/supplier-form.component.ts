@@ -5,6 +5,7 @@ import { CustomCurrencyPipe } from './custom-currency.pipe';
 import { MatDialog } from '@angular/material/dialog';
 import { UpdateContactConfirmationComponent } from './update-contact-confirmation.component';
 import { ActivatedRoute } from '@angular/router';
+import { SupplierService } from '../../../../amplify/services/supplier.service';
 
 interface QuoteItem {
   description: string;
@@ -51,7 +52,7 @@ export class SupplierFormComponent implements OnInit {
   tenentId: string = '';
 
 
-  constructor(private dialog: MatDialog, private route: ActivatedRoute) {}
+  constructor(private dialog: MatDialog, private route: ActivatedRoute, private supplierService: SupplierService) {}
 
   openUpdateContactModal() {
     const dialogRef = this.dialog.open(UpdateContactConfirmationComponent, {
@@ -123,10 +124,8 @@ export class SupplierFormComponent implements OnInit {
       console.log('Delivery ID:', this.deliveryID);
       console.log('Tenent ID:', this.tenentId);
       
-      if (this.supplierID && this.orderID && this.deliveryID) {
-        // this.loadSupplierData(this.supplierID, this.tenentId);
-        // this.loadOrderData(this.orderID);
-        // this.loadOrderData(this.deliveryID;
+      if (this.supplierID && this.tenentId) {
+        this.loadSupplierData();
       }
     });
 
@@ -212,6 +211,26 @@ export class SupplierFormComponent implements OnInit {
     ];
     this.updateAllTotals();
     this.setDefaultDeliveryDate();
+  }
+
+  loadSupplierData() {
+    this.supplierService.getSupplierInfo(this.tenentId, this.supplierID).subscribe(
+      (data) => {
+        console.log('Received supplier data:', data);
+        this.supplierInfo = {
+          companyName: data.company_name,
+          contactPerson: data.contact_name,
+          email: data.contact_email,
+          phone: data.phone_number,
+          address: `${data.address.street}, ${data.address.city}, ${data.address.state_province}, ${data.address.postal_code}, ${data.address.country}`
+        };
+        console.log('Updated supplierInfo:', this.supplierInfo);
+      },
+      (error) => {
+        console.error('Error fetching supplier data:', error);
+        // Handle error (e.g., show error message to user)
+      }
+    );
   }
 
   setDefaultDeliveryDate() {

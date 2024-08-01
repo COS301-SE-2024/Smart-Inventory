@@ -2,10 +2,13 @@
 <mat-toolbar>
     <span class="pageTitle">{{ pageTitle }}</span>
     <span class="flex-spacer"></span>
+    <!-- Notification bell -->
+    <button mat-icon-button (click)="toggleNotificationPanel()">
+        <mat-icon>notifications</mat-icon>
+    </button>
     <!-- User profile -->
     <div class="user-profile" [matMenuTriggerFor]="menu">
         <div class="profile-box">
-            <!-- <mat-icon class="profile-pic">account_circle</mat-icon> -->
             <svg
                 width="50"
                 height="50"
@@ -21,7 +24,6 @@
                     stroke-linecap="round"
                 />
             </svg>
-
             <div class="user-info">
                 <span class="username">{{ userName }}</span>
                 <span class="role">{{ userEmail }}</span>
@@ -33,3 +35,72 @@
         <button mat-menu-item (click)="logout()">Logout</button>
     </mat-menu>
 </mat-toolbar>
+
+<!-- Notification panel -->
+<div class="notification-panel" [class.open]="isNotificationPanelOpen">
+    <div class="notification-header">
+        <h3>Notifications</h3>
+        <div>
+            <button mat-icon-button routerLink="/settings" matTooltip="Go to Settings">
+                <mat-icon>settings</mat-icon>
+            </button>
+            <button mat-icon-button (click)="closeNotificationPanel()" matTooltip="Close">
+                <mat-icon>close</mat-icon>
+            </button>
+        </div>
+    </div>
+
+    <div class="notification-tabs">
+        <mat-tab-group mat-align-tabs="start" (selectedIndexChange)="onTabChange($event)">
+            <mat-tab>
+                <!-- <div class="tab-scroll-hint" matTooltip="Scroll for more filters">
+                </div> -->
+                <ng-template mat-tab-label>All</ng-template>
+            </mat-tab>
+            <mat-tab>
+                <ng-template mat-tab-label>Inventory</ng-template>
+            </mat-tab>
+            <mat-tab>
+                <ng-template mat-tab-label>Reports</ng-template>
+            </mat-tab>
+            <mat-tab>
+                <ng-template mat-tab-label>Settings</ng-template>
+            </mat-tab>
+            <mat-tab>
+                <ng-template mat-tab-label>Orders</ng-template>
+            </mat-tab>
+            <mat-tab>
+                <ng-template mat-tab-label>Suppliers</ng-template>
+            </mat-tab>
+            <mat-tab>
+                <ng-template mat-tab-label>Teams</ng-template>
+            </mat-tab>
+        </mat-tab-group>
+    </div>
+
+    
+
+    <div class="notification-content">
+        <mat-list>
+            <ng-container *ngFor="let notification of filteredNotifications">
+                <mat-list-item>
+                    <mat-icon matListIcon>{{ getNotificationIcon(notification.type) }}</mat-icon>
+                    <span matListItemTitle>{{ notification.title }}</span>
+                    <span matListItemLine>{{ notification.date | date:'short' }}</span>
+                    <span matListItemLine>{{ notification.info }}</span>
+                </mat-list-item>
+            </ng-container>
+        </mat-list>
+    </div>
+    
+</div>
+
+<!-- Main content container -->
+<div class="main-content" [class.with-notification-panel]="isNotificationPanelOpen">
+    <ng-content></ng-content>
+</div>
+
+<!-- Main content container
+<div class="main-content" [class.with-notification-panel]="isNotificationPanelOpen">
+    <ng-content></ng-content>
+</div> -->

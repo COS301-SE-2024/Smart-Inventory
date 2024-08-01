@@ -79,3 +79,105 @@ svg.theme-svg {
     font-size: 14px;
     color: var(--header-profile-text);
 }
+
+/* NOTIFICATIONS */
+
+.notification-panel {
+    position: fixed;
+    top: 64px; /* Adjust based on your toolbar height */
+    right: -25%;
+    width: 25%;
+    height: calc(100% - 64px);
+    background-color: white;
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+    transition: right 0.3s ease-in-out, width 0.3s ease-in-out;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+}
+
+@media (max-width: 800px) and (max-height: 857px) {
+    .notification-panel {
+        right: -35%;
+        width: 35%;
+    }
+}
+
+.notification-panel.open {
+    right: 0;
+}
+
+.notification-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.notification-tabs {
+    overflow-x: auto;
+}
+
+/* Ensure tab labels are visible */
+.mat-tab-label {
+    min-width: 100px !important;
+    padding: 0 24px !important;
+    color: rgba(0, 0, 0, 0.87) !important;
+    opacity: 1 !important;
+}
+
+/* Style for active tab */
+.mat-tab-label-active {
+    color: #3f51b5 !important;
+    opacity: 1 !important;
+}
+
+/* Adjust tab header styling */
+.mat-tab-header {
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.tab-scroll-hint {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 8px;
+    color: #757575;
+    cursor: help;
+}
+
+.notification-content {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 16px;
+}
+
+.main-content {
+    transition: width 0.3s ease-in-out;
+    width: 100%;
+}
+
+.main-content.with-notification-panel {
+    width: 75%;
+}
+
+@media (max-width: 800) and (max-height: 857px) {
+    .main-content.with-notification-panel {
+        width: 65%;
+    }
+}
+
+.mat-list-item {
+    margin-bottom: 16px;
+}
+
+mat-list-item {
+    margin-bottom: 8px;
+    background-color: #f5f5f5;
+    border-radius: 4px;
+}
+
+mat-icon {
+    margin-right: 16px;
+}

@@ -84,16 +84,34 @@ svg.theme-svg {
 
 .notification-panel {
     position: fixed;
-    top: 64px; /* Adjust based on your toolbar height */
-    right: -25%;
-    width: 25%;
+    top: 64px;
+    right: 0;
     height: calc(100% - 64px);
     background-color: white;
     box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
-    transition: right 0.3s ease-in-out, width 0.3s ease-in-out;
+    transition: transform 0.3s ease-in-out;
     z-index: 1000;
     display: flex;
     flex-direction: column;
+    transform: translateX(100%);
+}
+
+.notification-panel.open {
+    transform: translateX(0);
+}
+
+.resize-handle {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 5px;
+    cursor: ew-resize;
+    background-color: #e0e0e0;
+}
+
+.resize-handle:hover {
+    background-color: #bdbdbd;
 }
 
 @media (max-width: 800px) and (max-height: 857px) {
@@ -116,10 +134,10 @@ svg.theme-svg {
 }
 
 .notification-tabs {
-    overflow-x: auto;
+    /* overflow-x: auto; */
 }
 
-/* Ensure tab labels are visible */
+
 .mat-tab-label {
     min-width: 100px !important;
     padding: 0 24px !important;
@@ -127,13 +145,12 @@ svg.theme-svg {
     opacity: 1 !important;
 }
 
-/* Style for active tab */
 .mat-tab-label-active {
     color: #3f51b5 !important;
     opacity: 1 !important;
 }
 
-/* Adjust tab header styling */
+
 .mat-tab-header {
     border-bottom: 1px solid #e0e0e0;
 }

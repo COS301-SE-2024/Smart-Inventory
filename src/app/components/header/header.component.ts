@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, HostListener } from '@angular/core';
 import { MaterialModule } from '../material/material.module';
 import { signOut, fetchUserAttributes } from 'aws-amplify/auth';
 import { Router } from '@angular/router';
@@ -34,6 +34,10 @@ interface Notification {
 })
 export class HeaderComponent implements OnInit {
     // @ViewChild('tabGroup') tabGroup!: MatTabGroup;
+
+    // resizing notification panel
+    panelWidth: number = 400; 
+    isResizing: boolean = false;
 
     pageTitle: string = '';
     userName: string = '';
@@ -130,5 +134,26 @@ export class HeaderComponent implements OnInit {
             case 'Teams': return 'group';
             default: return 'notifications';
         }
+    }
+
+    startResize(event: MouseEvent) {
+        this.isResizing = true;
+        event.preventDefault();
+    }
+
+    @HostListener('window:mousemove', ['$event'])
+    onMouseMove(event: MouseEvent) {
+        if (!this.isResizing) return;
+        
+        const screenWidth = window.innerWidth;
+        const newWidth = screenWidth - event.clientX;
+        
+        // Set minimum and maximum widths
+        this.panelWidth = Math.max(300, Math.min(newWidth, screenWidth * 0.8));
+    }
+
+    @HostListener('window:mouseup')
+    onMouseUp() {
+        this.isResizing = false;
     }
 }

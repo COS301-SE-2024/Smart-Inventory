@@ -10,12 +10,15 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { FormsModule } from '@angular/forms';
 
 interface Notification {
     type: string;
     title: string;
     date: Date;
     info: string;
+    read: boolean;
 }
 
 @Component({
@@ -27,7 +30,9 @@ interface Notification {
         DatePipe,
         MatTabsModule,
         MatListModule,
-        MatIconModule
+        MatIconModule, 
+        MatCheckbox,
+        FormsModule
     ],
     templateUrl: './header.component.html',
     styleUrl: './header.component.css',
@@ -42,18 +47,25 @@ export class HeaderComponent implements OnInit {
     pageTitle: string = '';
     userName: string = '';
     userEmail: string = '';
-    isNotificationPanelOpen: boolean = false;
-    filters: string[] = ['All', 'Inventory', 'Reports', 'Settings', 'Orders', 'Suppliers', 'Teams'];
+
     notifications: Notification[] = [
-        { type: 'Inventory', title: 'Low stock alert', date: new Date(), info: 'Item A is running low' },
-        { type: 'Reports', title: 'Monthly report ready', date: new Date(), info: 'Your monthly report is available' },
-        { type: 'Settings', title: 'New feature available', date: new Date(), info: 'Check out our new dashboard feature' },
-        { type: 'Orders', title: 'New order received', date: new Date(), info: 'Order #1234 needs processing' },
-        { type: 'Suppliers', title: 'Supplier update', date: new Date(), info: 'Supplier X has new contact information' },
-        { type: 'Teams', title: 'New team member', date: new Date(), info: 'Welcome John Doe to the team' },
+        { type: 'Inventory', title: 'Low stock alert', date: new Date(), info: 'Item A is running low', read: false },
+        { type: 'Reports', title: 'Monthly report ready', date: new Date(), info: 'Your monthly report is available', read: true },
+        { type: 'Settings', title: 'New feature available', date: new Date(), info: 'Check out our new dashboard feature', read: false },
+        { type: 'Orders', title: 'New order received', date: new Date(), info: 'Order #1234 needs processing', read: true },
+        { type: 'Suppliers', title: 'Supplier update', date: new Date(), info: 'Supplier X has new contact information', read: false },
+        { type: 'Teams', title: 'New team member', date: new Date(), info: 'Welcome John Doe to the team', read: true },
     ];
+    
     filteredNotifications: Notification[] = [];
     activeFilter: string = 'All';
+
+    isNotificationPanelOpen: boolean = false;
+    filters: string[] = ['All', 'Inventory', 'Reports', 'Settings', 'Orders', 'Suppliers', 'Teams'];
+    
+    showRead: boolean = true;
+    showUnread: boolean = true;
+    unreadCount: number = 0;
     
     constructor(
         private titleService: TitleService,
@@ -66,6 +78,7 @@ export class HeaderComponent implements OnInit {
         this.titleService.currentTitle.subscribe((title) => (this.pageTitle = title));
         this.loadUserInfo();
         this.filteredNotifications = this.notifications;
+        this.updateFilteredNotifications();
     }
 
     // ngAfterViewInit() {
@@ -116,12 +129,17 @@ export class HeaderComponent implements OnInit {
         this.filterNotifications(filter);
     }
 
+    // filterNotifications(filter: string) {
+    //     if (filter === 'All') {
+    //         this.filteredNotifications = this.notifications;
+    //     } else {
+    //         this.filteredNotifications = this.notifications.filter(n => n.type === filter);
+    //     }
+    // }
+
     filterNotifications(filter: string) {
-        if (filter === 'All') {
-            this.filteredNotifications = this.notifications;
-        } else {
-            this.filteredNotifications = this.notifications.filter(n => n.type === filter);
-        }
+        this.activeFilter = filter;
+        this.updateFilteredNotifications();
     }
 
     getNotificationIcon(type: string): string {
@@ -156,4 +174,26 @@ export class HeaderComponent implements OnInit {
     onMouseUp() {
         this.isResizing = false;
     }
+
+    // update filtered notifications
+    updateFilteredNotifications() {
+        this.filteredNotifications = this.notifications.filter(n => 
+            (this.showRead && n.read) || (this.showUnread && !n.read)
+        );
+        if (this.activeFilter !== 'All') {
+            this.filteredNotifications = this.filteredNotifications.filter(n => n.type === this.activeFilter);
+        }
+        this.unreadCount = this.notifications.filter(n => !n.read).length;
+    }
+
+    // Add this method to toggle read/unread filters
+    toggleFilter(type: 'read' | 'unread') {
+        if (type === 'read') {
+            this.showRead = !this.showRead;
+        } else {
+            this.showUnread = !this.showUnread;
+        }
+        this.updateFilteredNotifications();
+    }
+    
 }

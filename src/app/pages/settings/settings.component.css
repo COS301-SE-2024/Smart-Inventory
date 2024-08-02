@@ -111,7 +111,7 @@
 }
 mat-list {
     flex-grow: 1;
-    border: 3px solid blue;
+    /* border: 3px solid blue; */
     overflow: scroll;
 }
 /* LEFT PANE */
@@ -615,6 +615,7 @@ mat-label {
 .form-row.form-row-password {
     width: 100%;
     margin-right: 30px;
+    margin-top: 15px;
 }
 
 .form-field {
@@ -636,13 +637,15 @@ button.change-password-button {
     color: #000000 !important;
     margin-top: 10px !important;
     font-size: 15px !important;
+    margin-right: 50px;
 }
 
 button.cancel-password-button {
     background-color: transparent;
     color: red !important;
     margin-top: 10px !important;
-    font-size: 20px !important;
+    font-size: 15px !important;
+    margin-left: 50px;
 }
 
 button.delete-button {

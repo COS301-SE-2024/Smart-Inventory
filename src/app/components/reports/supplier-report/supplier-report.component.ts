@@ -19,6 +19,7 @@ import { DateSelectCellEditorComponent } from './date-select-cell-editor.compone
 import { RoleSelectCellEditorComponent } from '../../../pages/team/role-select-cell-editor.component';
 import { LineBarComponent } from '../../charts/line-bar/line-bar.component';
 import { LineComponent } from '../../charts/line/line.component';
+import { RadarComponent } from '../../charts/radar/radar.component';
 import { RowNode } from 'ag-grid-community';
 import { AgGridAngular } from 'ag-grid-angular';
 
@@ -40,7 +41,8 @@ type ChartMetric = 'On Time Delivery Rate' | 'Order Accuracy Rate' | 'Out Standi
         LineBarComponent,
         DateSelectCellEditorComponent,
         RoleSelectCellEditorComponent,
-        LineComponent
+        LineComponent,
+        RadarComponent
     ],
     templateUrl: './supplier-report.component.html',
     styleUrl: './supplier-report.component.css',
@@ -487,95 +489,196 @@ export class SupplierReportComponent implements OnInit {
                 this.originalData = [
                     {
                         "Supplier ID": "S001",
-                        "Date": "2021-07-23",
-                        "On Time Delivery Rate": 92.0,
-                        "Order Accuracy Rate": 97.5,
-                        "Out Standing Payments": 3000,
+                        "Date": "2024-07-23",
+                        "On Time Delivery Rate": 95.0,
+                        "Order Accuracy Rate": 99.5,
+                        "Out Standing Payments": 1000,
                         "Reorder Level": "Medium",
                         "RiskScore": "Low",
-                        "TotalSpent": 120000
-                    },
-                    {
-                        "Supplier ID": "S001",
-                        "Date": "2022-07-23",
-                        "On Time Delivery Rate": 93.0,
-                        "Order Accuracy Rate": 98.0,
-                        "Out Standing Payments": 2000,
-                        "Reorder Level": "Medium",
-                        "RiskScore": "Low",
-                        "TotalSpent": 130000
-                    },
-                    {
-                        "Supplier ID": "S001",
-                        "Date": "2023-07-23",
-                        "On Time Delivery Rate": 94.0,
-                        "Order Accuracy Rate": 99.0,
-                        "Out Standing Payments": 1500,
-                        "Reorder Level": "Medium",
-                        "RiskScore": "Low",
-                        "TotalSpent": 140000
+                        "TotalSpent": 150000
                     },
                     {
                         "Supplier ID": "S002",
-                        "Date": "2021-07-23",
-                        "On Time Delivery Rate": 88.0,
-                        "Order Accuracy Rate": 95.0,
-                        "Out Standing Payments": 4500,
+                        "Date": "2024-07-23",
+                        "On Time Delivery Rate": 91.0,
+                        "Order Accuracy Rate": 97.5,
+                        "Out Standing Payments": 3800,
                         "Reorder Level": "High",
                         "RiskScore": "Moderate",
+                        "TotalSpent": 125000
+                    },
+                    {
+                        "Supplier ID": "S003",
+                        "Date": "2024-07-23",
+                        "On Time Delivery Rate": 90.5,
+                        "Order Accuracy Rate": 95.0,
+                        "Out Standing Payments": 4500,
+                        "Reorder Level": "Low",
+                        "RiskScore": "High",
                         "TotalSpent": 110000
                     },
                     {
-                        "Supplier ID": "S002",
-                        "Date": "2022-07-23",
-                        "On Time Delivery Rate": 89.0,
-                        "Order Accuracy Rate": 96.0,
-                        "Out Standing Payments": 4200,
-                        "Reorder Level": "High",
-                        "RiskScore": "Moderate",
-                        "TotalSpent": 115000
-                    },
-                    {
-                        "Supplier ID": "S002",
-                        "Date": "2023-07-23",
-                        "On Time Delivery Rate": 90.0,
-                        "Order Accuracy Rate": 97.0,
-                        "Out Standing Payments": 4000,
-                        "Reorder Level": "High",
-                        "RiskScore": "Moderate",
-                        "TotalSpent": 120000
-                    },
-                    {
-                        "Supplier ID": "S003",
+                        "Supplier ID": "S004",
                         "Date": "2021-07-23",
-                        "On Time Delivery Rate": 85.0,
-                        "Order Accuracy Rate": 90.0,
-                        "Out Standing Payments": 5000,
-                        "Reorder Level": "Low",
-                        "RiskScore": "High",
+                        "On Time Delivery Rate": 87.0,
+                        "Order Accuracy Rate": 93.0,
+                        "Out Standing Payments": 3500,
+                        "Reorder Level": "Medium",
+                        "RiskScore": "Moderate",
+                        "TotalSpent": 90000
+                    },
+                    {
+                        "Supplier ID": "S004",
+                        "Date": "2022-07-23",
+                        "On Time Delivery Rate": 88.5,
+                        "Order Accuracy Rate": 94.5,
+                        "Out Standing Payments": 3000,
+                        "Reorder Level": "Medium",
+                        "RiskScore": "Moderate",
                         "TotalSpent": 95000
                     },
                     {
-                        "Supplier ID": "S003",
-                        "Date": "2022-07-23",
-                        "On Time Delivery Rate": 87.0,
-                        "Order Accuracy Rate": 92.0,
-                        "Out Standing Payments": 4800,
-                        "Reorder Level": "Low",
-                        "RiskScore": "High",
+                        "Supplier ID": "S004",
+                        "Date": "2023-07-23",
+                        "On Time Delivery Rate": 90.0,
+                        "Order Accuracy Rate": 96.0,
+                        "Out Standing Payments": 2500,
+                        "Reorder Level": "Medium",
+                        "RiskScore": "Moderate",
                         "TotalSpent": 100000
                     },
                     {
-                        "Supplier ID": "S003",
+                        "Supplier ID": "S005",
+                        "Date": "2021-07-23",
+                        "On Time Delivery Rate": 84.0,
+                        "Order Accuracy Rate": 89.0,
+                        "Out Standing Payments": 5500,
+                        "Reorder Level": "High",
+                        "RiskScore": "High",
+                        "TotalSpent": 80000
+                    },
+                    {
+                        "Supplier ID": "S005",
+                        "Date": "2022-07-23",
+                        "On Time Delivery Rate": 85.5,
+                        "Order Accuracy Rate": 91.0,
+                        "Out Standing Payments": 5200,
+                        "Reorder Level": "High",
+                        "RiskScore": "High",
+                        "TotalSpent": 85000
+                    },
+                    {
+                        "Supplier ID": "S005",
                         "Date": "2023-07-23",
-                        "On Time Delivery Rate": 89.0,
-                        "Order Accuracy Rate": 94.0,
-                        "Out Standing Payments": 4600,
+                        "On Time Delivery Rate": 87.0,
+                        "Order Accuracy Rate": 93.5,
+                        "Out Standing Payments": 4900,
+                        "Reorder Level": "High",
+                        "RiskScore": "High",
+                        "TotalSpent": 90000
+                    },
+                    {
+                        "Supplier ID": "S001",
+                        "Date": "2024-07-23",
+                        "On Time Delivery Rate": 95.0,
+                        "Order Accuracy Rate": 99.5,
+                        "Out Standing Payments": 1000,
+                        "Reorder Level": "Medium",
+                        "RiskScore": "Low",
+                        "TotalSpent": 150000
+                    },
+                    {
+                        "Supplier ID": "S001",
+                        "Date": "2024-07-23",
+                        "On Time Delivery Rate": 95.0,
+                        "Order Accuracy Rate": 99.5,
+                        "Out Standing Payments": 1000,
+                        "Reorder Level": "Medium",
+                        "RiskScore": "Low",
+                        "TotalSpent": 150000
+                    },
+                    {
+                        "Supplier ID": "S001",
+                        "Date": "2024-07-23",
+                        "On Time Delivery Rate": 94.5,
+                        "Order Accuracy Rate": 99.0,
+                        "Out Standing Payments": 1100,
+                        "Reorder Level": "Medium",
+                        "RiskScore": "Low",
+                        "TotalSpent": 150500
+                    },
+                    {
+                        "Supplier ID": "S001",
+                        "Date": "2024-07-23",
+                        "On Time Delivery Rate": 95.0,
+                        "Order Accuracy Rate": 99.0,
+                        "Out Standing Payments": 1050,
+                        "Reorder Level": "Medium",
+                        "RiskScore": "Low",
+                        "TotalSpent": 150250
+                    },
+                    {
+                        "Supplier ID": "S002",
+                        "Date": "2024-07-23",
+                        "On Time Delivery Rate": 91.0,
+                        "Order Accuracy Rate": 97.5,
+                        "Out Standing Payments": 3800,
+                        "Reorder Level": "High",
+                        "RiskScore": "Moderate",
+                        "TotalSpent": 125000
+                    },
+                    {
+                        "Supplier ID": "S002",
+                        "Date": "2024-07-23",
+                        "On Time Delivery Rate": 91.0,
+                        "Order Accuracy Rate": 97.5,
+                        "Out Standing Payments": 3800,
+                        "Reorder Level": "High",
+                        "RiskScore": "Moderate",
+                        "TotalSpent": 125000
+                    },
+                    {
+                        "Supplier ID": "S002",
+                        "Date": "2024-07-23",
+                        "On Time Delivery Rate": 90.5,
+                        "Order Accuracy Rate": 97.0,
+                        "Out Standing Payments": 3850,
+                        "Reorder Level": "High",
+                        "RiskScore": "Moderate",
+                        "TotalSpent": 124500
+                    },
+                    {
+                        "Supplier ID": "S002",
+                        "Date": "2024-07-23",
+                        "On Time Delivery Rate": 91.5,
+                        "Order Accuracy Rate": 98.0,
+                        "Out Standing Payments": 3750,
+                        "Reorder Level": "High",
+                        "RiskScore": "Moderate",
+                        "TotalSpent": 125500
+                    },
+                    {
+                        "Supplier ID": "S003",
+                        "Date": "2024-07-23",
+                        "On Time Delivery Rate": 90.5,
+                        "Order Accuracy Rate": 95.0,
+                        "Out Standing Payments": 4500,
                         "Reorder Level": "Low",
                         "RiskScore": "High",
-                        "TotalSpent": 105000
+                        "TotalSpent": 110000
+                    },
+                    {
+                        "Supplier ID": "S003",
+                        "Date": "2024-07-23",
+                        "On Time Delivery Rate": 90.5,
+                        "Order Accuracy Rate": 95.0,
+                        "Out Standing Payments": 4500,
+                        "Reorder Level": "Low",
+                        "RiskScore": "High",
+                        "TotalSpent": 110000
                     }
                 ]
+                
 
                 this.rowData = this.processRowData(this.originalData);
 

@@ -67,6 +67,7 @@
     [rowData]="rowData"
     [class]="themeClass"
     class="ag-theme-quartz aggrid" 
-    (gridReady)="onGridReady($event)" style="height: 83vh;">
+    [ngStyle]="gridStyle"
+    (gridReady)="onGridReady($event)">
     </ag-grid-angular>
 </div>

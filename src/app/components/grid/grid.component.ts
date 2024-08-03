@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, OnDestroy, Output, EventEmitter, output } from '@angular/core';
-import { Renderer2, ElementRef, AfterViewInit, ViewEncapsulation  } from '@angular/core';
+import { Renderer2, ElementRef, AfterViewInit, ViewEncapsulation } from '@angular/core';
 import { AgGridAngular } from 'ag-grid-angular';
 import { ColDef, GridReadyEvent, CellValueChangedEvent, RowValueChangedEvent, GridApi } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
@@ -39,7 +39,7 @@ import { CustomQuoteModalComponent } from '../quote/custom-quote-modal/custom-qu
     styleUrl: './grid.component.css',
     encapsulation: ViewEncapsulation.Emulated
 })
-export class GridComponent implements OnInit, OnDestroy, AfterViewInit   {
+export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
     @Input() rowData: any[] = [];
     @Input() columnDefs: ColDef[] = [];
     @Input() addButton: { text: string } = { text: 'Add' };
@@ -56,6 +56,7 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit   {
     @Output() viewEmailTemplateClicked = new EventEmitter<void>();
     @Output() viewDeliveryInfoClicked = new EventEmitter<void>();
     private themeObserver!: MutationObserver;
+    gridStyle: any;
 
     public themeClass: string = 'ag-theme-material'; // Default to light theme
 
@@ -80,6 +81,7 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit   {
 
     constructor(public dialog: MatDialog, private route: ActivatedRoute, private renderer: Renderer2, private el: ElementRef) {
         this.setupThemeObserver();
+        this.setGridHeight();
     }
 
     private setupThemeObserver() {
@@ -99,6 +101,21 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit   {
         if (this.gridApi) {
             this.gridApi.redrawRows(); // Redraw rows to apply the new CSS class for the theme change
         }
+    }
+
+    setGridHeight(): void {
+        const baseHeight = 33; // Base height in vh for up to 10 rows
+        if (this.rowData.length > 10) {
+            const extraRows = this.rowData.length - 10;
+            this.gridStyle = { height: `${baseHeight + extraRows * 3}vh` }; // Adjust 3vh per extra row or as needed
+        } else {
+            this.gridStyle = { height: `${baseHeight}vh` };
+        }
+    }
+
+    // Example to re-calculate height when data changes
+    onRowDataChanged(): void {
+        this.setGridHeight();
     }
 
     ngOnInit(): void {
@@ -173,24 +190,24 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit   {
 
     onRowSelected(event: any) {
         if (event && event.node && event.node.isSelected()) {
-          this.selectedRow = event.data;
-          this.rowSelected.emit(this.selectedRow);
+            this.selectedRow = event.data;
+            this.rowSelected.emit(this.selectedRow);
         } else {
-          this.selectedRow = null;
-          this.rowSelected.emit(null);
+            this.selectedRow = null;
+            this.rowSelected.emit(null);
         }
-      }
+    }
 
-      onSelectionChanged(event: any) {
+    onSelectionChanged(event: any) {
         const selectedRows = this.gridApi.getSelectedRows();
         if (selectedRows.length > 0) {
-          this.selectedRow = selectedRows[0];
-          this.rowSelected.emit(this.selectedRow);
+            this.selectedRow = selectedRows[0];
+            this.rowSelected.emit(this.selectedRow);
         } else {
-          this.selectedRow = null;
-          this.rowSelected.emit(null);
+            this.selectedRow = null;
+            this.rowSelected.emit(null);
         }
-      }
+    }
 
     importExcel() {
         alert('Import Not completed');
@@ -244,7 +261,7 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit   {
             width: '500px',
             data: { isNewQuote: true }
         });
-    
+
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
                 if (result.action === 'createOrder') {

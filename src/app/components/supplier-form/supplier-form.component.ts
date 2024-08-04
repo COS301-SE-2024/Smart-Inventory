@@ -6,6 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { UpdateContactConfirmationComponent } from './update-contact-confirmation.component';
 import { ActivatedRoute } from '@angular/router';
 import { SupplierService } from '../../../../amplify/services/supplier.service';
+import { DeliveryService } from '../../../../amplify/services/delivery.service';
 
 interface QuoteItem {
   description: string;
@@ -52,7 +53,7 @@ export class SupplierFormComponent implements OnInit {
   tenentId: string = '';
 
 
-  constructor(private dialog: MatDialog, private route: ActivatedRoute, private supplierService: SupplierService) {}
+  constructor(private dialog: MatDialog, private route: ActivatedRoute, private supplierService: SupplierService, private deliveryService: DeliveryService) {}
 
   openUpdateContactModal() {
     const dialogRef = this.dialog.open(UpdateContactConfirmationComponent, {
@@ -88,24 +89,24 @@ export class SupplierFormComponent implements OnInit {
   submissionDeadline: string = '2024-08-15T17:00:00'; 
 
   deliveryAddress: DeliveryAddress = {
-    company: 'Checkers',
-    street: '123 Main St',
-    city: 'Exampleville',
-    state: 'State',
-    postalCode: '12345',
-    country: 'Country',
-    instructions: 'Please deliver to the loading dock between 9 AM and 5 PM.',
-    contactName: 'Jane Smith',
-    email: 'jane.smith@checkers.com',
-    phone: '+1 234 567 8901'
+    company: '',
+    street: '',
+    city: '',
+    state: '',
+    postalCode: '',
+    country: '',
+    instructions: '',
+    contactName: '',
+    email: '',
+    phone: ''
   };
 
   supplierInfo = {
-    companyName: 'Douglasdale',
-    contactPerson: 'John Doe',
-    email: 'john.doe@suppliercompany.com',
-    phone: '+1 234 567 8900',
-    address: '456 Supplier St, Supplier City, SC 12345, Country'
+    companyName: '',
+    contactPerson: '',
+    email: '',
+    phone: '',
+    address: ''
   };
 
   vatPercentage: number = 15; // Default VAT percentage
@@ -127,6 +128,10 @@ export class SupplierFormComponent implements OnInit {
       if (this.supplierID && this.tenentId) {
         this.loadSupplierData();
       }
+      if (this.deliveryID && this.tenentId) {
+        this.loadDeliveryInfo();
+      }
+
     });
 
     // Initialize with mock data (same as before)
@@ -331,6 +336,33 @@ export class SupplierFormComponent implements OnInit {
     const maxSize = 10 * 1024 * 1024; // 10MB
   
     return validTypes.includes(file.type) && file.size <= maxSize;
+  }
+
+  loadDeliveryInfo() {
+    if (this.tenentId && this.deliveryID) {
+      this.deliveryService.getDeliveryInfo(this.tenentId, this.deliveryID).subscribe(
+        (data) => {
+          console.log('Received delivery data:', data);
+          this.deliveryAddress = {
+            company: data.companyName,
+            street: data.street,
+            city: data.city,
+            state: data.state,
+            postalCode: data.postalCode,
+            country: data.country,
+            instructions: data.deliveryInstructions,
+            contactName: data.contactName,
+            email: data.email,
+            phone: data.phone
+          };
+          console.log('Updated deliveryAddress:', this.deliveryAddress);
+        },
+        (error) => {
+          console.error('Error fetching delivery data:', error);
+          // Handle error (e.g., show error message to user)
+        }
+      );
+    }
   }
 
   

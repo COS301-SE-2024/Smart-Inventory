@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, HostListener } from '@angular/core';
+import { Component, OnInit, ViewChild, HostListener, Inject } from '@angular/core';
 import { MaterialModule } from '../material/material.module';
 import { signOut, fetchUserAttributes } from 'aws-amplify/auth';
 import { Router } from '@angular/router';
@@ -12,13 +12,43 @@ import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { FormsModule } from '@angular/forms';
+import { MatDialog, MatDialogModule, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 interface Notification {
+    id: number;
     type: string;
     title: string;
     date: Date;
     info: string;
     read: boolean;
+}
+
+// Pop Up Notification
+@Component({
+    selector: 'app-notification-dialog',
+    standalone: true,
+    imports: [
+        CommonModule,
+        MatDialogModule,
+        MatButtonModule,
+        DatePipe,
+    ],
+    template: `
+        <h2 mat-dialog-title>{{ data.title }}</h2>
+        <mat-dialog-content>
+            <p>{{ data.info }}</p>
+            <p>Date: {{ data.date | date:'short' }}</p>
+            <p>Type: {{ data.type }}</p>
+        </mat-dialog-content>
+        <mat-dialog-actions>
+            <button mat-button [mat-dialog-close]="true">Close</button>
+        </mat-dialog-actions>
+    `,
+})
+export class NotificationDialogComponent {
+    constructor(@Inject(MAT_DIALOG_DATA) public data: Notification) {}
 }
 
 @Component({
@@ -32,13 +62,16 @@ interface Notification {
         MatListModule,
         MatIconModule, 
         MatCheckbox,
-        FormsModule
+        FormsModule,
+        MatDialogModule,
+        MatButtonModule,
+        NotificationDialogComponent,
+        MatTooltipModule
     ],
     templateUrl: './header.component.html',
     styleUrl: './header.component.css',
 })
 export class HeaderComponent implements OnInit {
-    // @ViewChild('tabGroup') tabGroup!: MatTabGroup;
 
     // resizing notification panel
     panelWidth: number = 400; 
@@ -49,12 +82,12 @@ export class HeaderComponent implements OnInit {
     userEmail: string = '';
 
     notifications: Notification[] = [
-        { type: 'Inventory', title: 'Low stock alert', date: new Date(), info: 'Item A is running low', read: false },
-        { type: 'Reports', title: 'Monthly report ready', date: new Date(), info: 'Your monthly report is available', read: true },
-        { type: 'Settings', title: 'New feature available', date: new Date(), info: 'Check out our new dashboard feature', read: false },
-        { type: 'Orders', title: 'New order received', date: new Date(), info: 'Order #1234 needs processing', read: true },
-        { type: 'Suppliers', title: 'Supplier update', date: new Date(), info: 'Supplier X has new contact information', read: false },
-        { type: 'Teams', title: 'New team member', date: new Date(), info: 'Welcome John Doe to the team', read: true },
+        { id: 1, type: 'Inventory', title: 'Low stock alert', date: new Date(), info: 'Item A is running low', read: false },
+        { id: 2, type: 'Reports', title: 'Monthly report ready', date: new Date(), info: 'Your monthly report is available', read: true },
+        { id: 3, type: 'Settings', title: 'New feature available', date: new Date(), info: 'Check out our new dashboard feature', read: false },
+        { id: 4, type: 'Orders', title: 'New order received', date: new Date(), info: 'Order #1234 needs processing', read: true },
+        { id: 5, type: 'Suppliers', title: 'Supplier update', date: new Date(), info: 'Supplier X has new contact information', read: false },
+        { id: 6, type: 'Teams', title: 'New team member', date: new Date(), info: 'Welcome John Doe to the team', read: true },
     ];
     
     filteredNotifications: Notification[] = [];
@@ -71,7 +104,8 @@ export class HeaderComponent implements OnInit {
         private titleService: TitleService,
         private cognitoService: CognitoService,
         private auth: AuthenticatorService,
-        private router: Router
+        private router: Router,
+        private dialog: MatDialog
     ) {}
 
     ngOnInit() {
@@ -80,12 +114,6 @@ export class HeaderComponent implements OnInit {
         this.filteredNotifications = this.notifications;
         this.updateFilteredNotifications();
     }
-
-    // ngAfterViewInit() {
-    //     this.tabGroup.selectedIndexChange.subscribe((index) => {
-    //         this.filterNotifications(this.filters[index]);
-    //     });
-    // }
 
     // LOADER
     loadUserInfo() {
@@ -111,6 +139,14 @@ export class HeaderComponent implements OnInit {
     }
 
     // NOTIFICATIONS FUNCTIONS
+
+    markAllAsRead() {
+        this.notifications.forEach(notification => {
+            notification.read = true;
+        });
+        this.updateFilteredNotifications();
+    }
+
     toggleNotificationPanel() {
         this.isNotificationPanelOpen = !this.isNotificationPanelOpen;
     }
@@ -128,14 +164,6 @@ export class HeaderComponent implements OnInit {
         this.activeFilter = filter;
         this.filterNotifications(filter);
     }
-
-    // filterNotifications(filter: string) {
-    //     if (filter === 'All') {
-    //         this.filteredNotifications = this.notifications;
-    //     } else {
-    //         this.filteredNotifications = this.notifications.filter(n => n.type === filter);
-    //     }
-    // }
 
     filterNotifications(filter: string) {
         this.activeFilter = filter;
@@ -177,16 +205,50 @@ export class HeaderComponent implements OnInit {
 
     // update filtered notifications
     updateFilteredNotifications() {
-        this.filteredNotifications = this.notifications.filter(n => 
-            (this.showRead && n.read) || (this.showUnread && !n.read)
-        );
+        this.filteredNotifications = this.notifications.filter(n => {
+            if (this.showRead && this.showUnread) {
+                return true;
+            } else if (this.showRead) {
+                return n.read;
+            } else if (this.showUnread) {
+                return !n.read;
+            }
+            return false;
+        });
+
         if (this.activeFilter !== 'All') {
             this.filteredNotifications = this.filteredNotifications.filter(n => n.type === this.activeFilter);
         }
+
+        this.filteredNotifications.sort((a, b) => {
+            if (a.read === b.read) return 0;
+            return a.read ? 1 : -1;
+        });
+
         this.unreadCount = this.notifications.filter(n => !n.read).length;
     }
 
-    // Add this method to toggle read/unread filters
+    toggleReadStatus(event: Event, notification: Notification) {
+        event.stopPropagation(); // Prevent the notification dialog from opening
+        notification.read = !notification.read;
+        this.updateFilteredNotifications();
+    }
+
+    openNotification(notification: Notification) {
+        const dialogRef = this.dialog.open(NotificationDialogComponent, {
+            width: '400px',
+            data: notification
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                notification.read = true;
+                this.updateFilteredNotifications();
+            }
+        });
+    }
+
+    // toggle read/unread filters
     toggleFilter(type: 'read' | 'unread') {
         if (type === 'read') {
             this.showRead = !this.showRead;
@@ -195,5 +257,6 @@ export class HeaderComponent implements OnInit {
         }
         this.updateFilteredNotifications();
     }
-    
 }
+
+

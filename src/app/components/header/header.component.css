@@ -191,8 +191,11 @@ svg.theme-svg {
 
 mat-list-item {
     margin-bottom: 8px;
-    background-color: #f5f5f5;
     border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    display: flex;
+    align-items: center;
 }
 
 mat-icon {
@@ -205,6 +208,12 @@ mat-icon {
     align-items: center;
     padding: 8px 16px;
     border-bottom: 1px solid #e0e0e0;
+}
+
+.filter-controls {
+    display: flex;
+    align-items: center;
+    gap: 16px; /* This adds space between the checkboxes and the button */
 }
 
 .unread-count {
@@ -220,3 +229,26 @@ mat-icon {
 .unread mat-list-item {
     background-color: #e3f2fd;
 }
+
+.unread {
+    font-weight: bold;
+    background-color: #e3f2fd;
+}
+
+mat-list-item:hover {
+    /* background-color: #f0f0f0; */
+    cursor: pointer;
+}
+
+.unread mat-list-item:hover {
+    background-color: #9bd1f8;
+}
+
+mat-icon[matListIcon] {
+    margin-right: 16px;
+}
+
+mat-icon:last-child {
+    margin-left: auto;
+}
+

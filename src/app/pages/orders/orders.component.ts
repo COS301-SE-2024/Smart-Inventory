@@ -194,7 +194,10 @@ export class OrdersComponent implements OnInit {
             ItemSKU: item.ItemSKU,
             Quantity: item.Quantity
           })),
-          suppliers: updatedQuote.suppliers
+          suppliers: updatedQuote.suppliers.map((supplier: any) => ({
+            supplier: supplier.company_name,
+            supplierID: supplier.supplierID
+          }))
         })
       };
   
@@ -261,9 +264,13 @@ export class OrdersComponent implements OnInit {
           Quantity: item.Quantity,
           inventoryID: item.inventoryID
         })),
-        suppliers: quoteData.suppliers
+        suppliers: quoteData.suppliers.map((supplier: any) => ({
+          supplier: supplier.supplier,
+          supplierID: supplier.supplierID
+        }))
       };
   
+      console.log('New Quote Data:', quoteData);
       console.log('New Order Data:', newOrder);
   
       const invokeCommand = new InvokeCommand({

@@ -59,12 +59,12 @@ export class CustomQuoteModalComponent implements OnInit {
   quoteItems: QuoteItem[] = [];
   filteredQuoteItems: QuoteItem[] = [];
   quoteItemSearchTerm: string = '';
-  selectedSuppliers: string[] = [];
-  suppliers: string[] = [];
+  selectedSuppliers: { company_name: string; supplierID: string }[] = [];
+  suppliers: { company_name: string; supplierID: string }[] = [];
   inventoryItems: { sku: string; description: string }[] = [];
 
   supplierControl = new FormControl();
-  filteredSuppliers: ReplaySubject<string[]> = new ReplaySubject<string[]>(1);
+  filteredSuppliers: ReplaySubject<{ company_name: string; supplierID: string }[]> = new ReplaySubject<{ company_name: string; supplierID: string }[]>(1);
 
   isEditing: boolean = false;
   isNewQuote: boolean = false;
@@ -160,7 +160,7 @@ export class CustomQuoteModalComponent implements OnInit {
       search = search.toLowerCase();
     }
     this.filteredSuppliers.next(
-      this.suppliers.filter(supplier => supplier.toLowerCase().indexOf(search) > -1)
+      this.suppliers.filter(supplier => supplier.company_name.toLowerCase().indexOf(search) > -1)
     );
   }
 
@@ -204,8 +204,8 @@ export class CustomQuoteModalComponent implements OnInit {
     }
   }
 
-  removeSupplier(supplier: string) {
-    this.selectedSuppliers = this.selectedSuppliers.filter(s => s !== supplier);
+  removeSupplier(supplierToRemove: { company_name: string; supplierID: string }) {
+    this.selectedSuppliers = this.selectedSuppliers.filter(s => s.supplierID !== supplierToRemove.supplierID);
     this.onQuoteChanged();
   }
 
@@ -213,23 +213,27 @@ export class CustomQuoteModalComponent implements OnInit {
     try {
       const session = await fetchAuthSession();
       const tenentId = await this.getTenentId(session);
-
+  
       const lambdaClient = new LambdaClient({
         region: outputs.auth.aws_region,
         credentials: session.credentials,
       });
-
+  
       const invokeCommand = new InvokeCommand({
         FunctionName: 'getSuppliers',
         Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: tenentId } })),
       });
-
+  
       const lambdaResponse = await lambdaClient.send(invokeCommand);
       const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
+  
       if (responseBody.statusCode === 200) {
         const suppliers = JSON.parse(responseBody.body);
-        this.suppliers = suppliers.map((supplier: any) => supplier.company_name);
+        this.suppliers = suppliers.map((supplier: any) => ({
+          company_name: supplier.company_name,
+          supplierID: supplier.supplierID
+        }));
+        console.log('Suppliers:', this.suppliers);
       } else {
         console.error('Error fetching suppliers data:', responseBody.body);
         this.suppliers = [];
@@ -310,9 +314,9 @@ export class CustomQuoteModalComponent implements OnInit {
       items: this.quoteItems.map(({ item, quantity }) => ({
         ItemSKU: item.sku,
         Quantity: quantity,
-        inventoryID: item.inventoryID // Add this line
+        inventoryID: item.inventoryID
       })),
-      suppliers: this.selectedSuppliers
+      suppliers: this.selectedSuppliers.map(supplier => supplier.supplierID)
     };
   
     try {
@@ -353,9 +357,12 @@ export class CustomQuoteModalComponent implements OnInit {
           items: updatedQuote.items.map((item: any) => ({
             ItemSKU: item.ItemSKU,
             Quantity: item.Quantity,
-            inventoryID: item.inventoryID // Add this line
+            inventoryID: item.inventoryID
           })),
-          suppliers: updatedQuote.suppliers
+          suppliers: updatedQuote.suppliers.map((supplier: any) => ({
+            supplier: supplier.company_name,
+            supplierID: supplier.supplierID
+          }))
         })
       };
   
@@ -391,11 +398,15 @@ export class CustomQuoteModalComponent implements OnInit {
       items: this.quoteItems.map(({ item, quantity }) => ({
         ItemSKU: item.sku,
         Quantity: quantity,
-        inventoryID: item.inventoryID // Add this line
+        inventoryID: item.inventoryID
       })),
-      suppliers: this.selectedSuppliers,
+      suppliers: this.selectedSuppliers.map(supplier => ({
+        supplier: supplier.company_name,
+        supplierID: supplier.supplierID
+      })),
       Quote_Status: 'Draft'
     };
+    console.log(order);
     this.dialogRef.close({ action: 'createOrder', data: order });
   }
 
@@ -414,11 +425,10 @@ export class CustomQuoteModalComponent implements OnInit {
     }
     if (!this.isNewQuote) {
       console.log('Sending quote...');
-      // Implement the logic to send the quote
       this.dialogRef.close({ action: 'sendQuote', data: {
         quoteId: this.quoteId,
         items: this.quoteItems,
-        suppliers: this.selectedSuppliers
+        suppliers: this.selectedSuppliers.map(supplier => supplier.company_name)
       }});
     }
   }

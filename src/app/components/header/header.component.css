@@ -196,6 +196,13 @@ mat-list-item {
     transition: background-color 0.3s ease;
     display: flex;
     align-items: center;
+    
+}
+
+mat-list-item h3[matListItemTitle] {
+    font-size: 20px; 
+    font-weight: 500; 
+    margin-bottom: 4px; 
 }
 
 mat-icon {

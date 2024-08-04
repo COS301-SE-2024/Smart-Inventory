@@ -48,7 +48,7 @@ interface DeliveryAddress {
 export class SupplierFormComponent implements OnInit {
 
   supplierID: string = '';
-  orderID: string = '';
+  quoteID: string = '';
   deliveryID: string = '';
   tenentId: string = '';
 
@@ -117,11 +117,11 @@ export class SupplierFormComponent implements OnInit {
 
     this.route.params.subscribe(params => {
       this.supplierID = params['supplierID'] || '';
-      this.orderID = params['orderID'] || '';
+      this.quoteID = params['quoteID'] || '';
       this.deliveryID = params['deliveryID'] || '';
       this.tenentId = params['tenentId'] || '';
       console.log('Supplier ID:', this.supplierID);
-      console.log('Order ID:', this.orderID);
+      console.log('Quote ID:', this.quoteID);
       console.log('Delivery ID:', this.deliveryID);
       console.log('Tenent ID:', this.tenentId);
       

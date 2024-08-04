@@ -501,10 +501,10 @@ mat-label {
 
 /* Checkbox Styles */
 
-.mdc-checkbox__native-control:enabled:checked ~ .mdc-checkbox__background {
+/* .mdc-checkbox__native-control:enabled:checked ~ .mdc-checkbox__background {
     background-color: #03ad00 !important;
     border: #03ad00;
-}
+} */
 .mat-grid-tile-content {
     top: 0;
     left: 0;

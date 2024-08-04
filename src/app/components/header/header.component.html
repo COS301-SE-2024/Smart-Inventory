@@ -60,6 +60,7 @@
         <div class="filter-controls">
             <mat-checkbox [(ngModel)]="showRead" (change)="updateFilteredNotifications()">Read</mat-checkbox>
             <mat-checkbox [(ngModel)]="showUnread" (change)="updateFilteredNotifications()">Unread</mat-checkbox>
+            <mat-checkbox [(ngModel)]="showArchived" (change)="updateFilteredNotifications()">Show Archived</mat-checkbox>
             <button mat-button color="primary" (click)="markAllAsRead()" [disabled]="unreadCount === 0">
                 Mark All as Read
             </button>
@@ -100,7 +101,7 @@
     <div class="notification-content">
         <mat-list>
             <mat-list-item *ngFor="let notification of filteredNotifications" 
-                           [ngClass]="{'unread': !notification.read}"
+                           [ngClass]="{'unread': !notification.read, 'archived': notification.archived}"
                            (click)="openNotification(notification)">
                 <mat-icon matListIcon>{{ getNotificationIcon(notification.type) }}</mat-icon>
                 <h3 matListItemTitle>{{ notification.title }}</h3>
@@ -110,6 +111,11 @@
                         (click)="toggleReadStatus($event, notification)" 
                         [matTooltip]="notification.read ? 'Mark as unread' : 'Mark as read'">
                     <mat-icon>{{ notification.read ? 'markunread' : 'done' }}</mat-icon>
+                </button>
+                <button mat-icon-button 
+                        (click)="toggleArchive($event, notification)" 
+                        [matTooltip]="notification.archived ? 'Unarchive' : 'Archive'">
+                    <mat-icon>{{ notification.archived ? 'unarchive' : 'archive' }}</mat-icon>
                 </button>
             </mat-list-item>
         </mat-list>

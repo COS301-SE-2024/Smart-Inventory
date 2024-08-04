@@ -23,6 +23,7 @@ interface Notification {
     date: Date;
     info: string;
     read: boolean;
+    archived: boolean;
 }
 
 // Pop Up Notification
@@ -82,13 +83,16 @@ export class HeaderComponent implements OnInit {
     userEmail: string = '';
 
     notifications: Notification[] = [
-        { id: 1, type: 'Inventory', title: 'Low stock alert', date: new Date(), info: 'Item A is running low', read: false },
-        { id: 2, type: 'Reports', title: 'Monthly report ready', date: new Date(), info: 'Your monthly report is available', read: true },
-        { id: 3, type: 'Settings', title: 'New feature available', date: new Date(), info: 'Check out our new dashboard feature', read: false },
-        { id: 4, type: 'Orders', title: 'New order received', date: new Date(), info: 'Order #1234 needs processing', read: true },
-        { id: 5, type: 'Suppliers', title: 'Supplier update', date: new Date(), info: 'Supplier X has new contact information', read: false },
-        { id: 6, type: 'Teams', title: 'New team member', date: new Date(), info: 'Welcome John Doe to the team', read: true },
+        { id: 1, type: 'Inventory', title: 'Low stock alert', date: new Date(), info: 'Item A is running low', read: false, archived: false },
+        { id: 2, type: 'Reports', title: 'Monthly report ready', date: new Date(), info: 'Your monthly report is available', read: true, archived: false },
+        { id: 3, type: 'Settings', title: 'New feature available', date: new Date(), info: 'Check out our new dashboard feature', read: false, archived: false },
+        { id: 4, type: 'Orders', title: 'New order received', date: new Date(), info: 'Order #1234 needs processing', read: true, archived: false },
+        { id: 5, type: 'Suppliers', title: 'Supplier update', date: new Date(), info: 'Supplier X has new contact information', read: false, archived: false },
+        { id: 6, type: 'Teams', title: 'New team member', date: new Date(), info: 'Welcome John Doe to the team', read: true, archived: false },
     ];
+    
+    // archived notifications
+    showArchived: boolean = false;
     
     filteredNotifications: Notification[] = [];
     activeFilter: string = 'All';
@@ -203,9 +207,18 @@ export class HeaderComponent implements OnInit {
         this.isResizing = false;
     }
 
+    toggleArchive(event: Event, notification: Notification) {
+        event.stopPropagation();
+        notification.archived = !notification.archived;
+        this.updateFilteredNotifications();
+    }
+
     // update filtered notifications
     updateFilteredNotifications() {
         this.filteredNotifications = this.notifications.filter(n => {
+            if (!this.showArchived && n.archived) {
+                return false;
+            }
             if (this.showRead && this.showUnread) {
                 return true;
             } else if (this.showRead) {
@@ -221,11 +234,19 @@ export class HeaderComponent implements OnInit {
         }
 
         this.filteredNotifications.sort((a, b) => {
-            if (a.read === b.read) return 0;
-            return a.read ? 1 : -1;
+            if (a.archived === b.archived) {
+                if (a.read === b.read) return 0;
+                return a.read ? 1 : -1;
+            }
+            return a.archived ? 1 : -1;
         });
 
-        this.unreadCount = this.notifications.filter(n => !n.read).length;
+        this.unreadCount = this.notifications.filter(n => !n.read && !n.archived).length;
+    }
+
+    toggleShowArchived() {
+        this.showArchived = !this.showArchived;
+        this.updateFilteredNotifications();
     }
 
     toggleReadStatus(event: Event, notification: Notification) {

@@ -259,3 +259,14 @@ mat-icon:last-child {
     margin-left: auto;
 }
 
+.archived {
+    opacity: 0.5;
+}
+
+.archived:hover {
+    opacity: 0.8;
+}
+
+.mat-mdc-button .mat-mdc-button-touch-target{
+    background-color: none;
+}

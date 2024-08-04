@@ -21,10 +21,16 @@ import outputs from '../../../../../amplify_outputs.json';
 import { LoadingSpinnerComponent } from '../../loader/loading-spinner.component';
 
 interface QuoteItem {
-  item: { sku: string; description: string };
+  item: { sku: string; description: string; inventoryID: string };
   quantity: number;
   filteredItems: ReplaySubject<{ sku: string; description: string }[]>;
   searchControl: FormControl;
+}
+
+interface InventoryItem {
+  sku: string;
+  description: string;
+  inventoryID: string;
 }
 
 @Component({
@@ -172,7 +178,7 @@ export class CustomQuoteModalComponent implements OnInit {
     const newFilteredItems = new ReplaySubject<{ sku: string; description: string }[]>(1);
     newFilteredItems.next(this.inventoryItems.slice());
     const newItem: QuoteItem = {
-      item: { sku: '', description: '' },
+      item: { sku: '', description: '', inventoryID: '' },
       quantity: 1,
       filteredItems: newFilteredItems,
       searchControl: new FormControl()
@@ -256,7 +262,8 @@ export class CustomQuoteModalComponent implements OnInit {
         const inventoryItems = JSON.parse(responseBody.body);
         this.inventoryItems = inventoryItems.map((item: any) => ({
           sku: item.SKU,
-          description: item.description
+          description: item.description,
+          inventoryID: item.inventoryID // Add this line
         }));
         // Initialize filtered items for each quote item
         this.quoteItems.forEach(quoteItem => {
@@ -302,7 +309,8 @@ export class CustomQuoteModalComponent implements OnInit {
       quoteId: this.quoteId,
       items: this.quoteItems.map(({ item, quantity }) => ({
         ItemSKU: item.sku,
-        Quantity: quantity
+        Quantity: quantity,
+        inventoryID: item.inventoryID // Add this line
       })),
       suppliers: this.selectedSuppliers
     };
@@ -344,7 +352,8 @@ export class CustomQuoteModalComponent implements OnInit {
         body: JSON.stringify({
           items: updatedQuote.items.map((item: any) => ({
             ItemSKU: item.ItemSKU,
-            Quantity: item.Quantity
+            Quantity: item.Quantity,
+            inventoryID: item.inventoryID // Add this line
           })),
           suppliers: updatedQuote.suppliers
         })
@@ -379,15 +388,16 @@ export class CustomQuoteModalComponent implements OnInit {
 
   createOrder() {
     const order = {
-        items: this.quoteItems.map(({ item, quantity }) => ({
-            ItemSKU: item.sku,
-            Quantity: quantity
-        })),
-        suppliers: this.selectedSuppliers,
-        Quote_Status: 'Draft'
+      items: this.quoteItems.map(({ item, quantity }) => ({
+        ItemSKU: item.sku,
+        Quantity: quantity,
+        inventoryID: item.inventoryID // Add this line
+      })),
+      suppliers: this.selectedSuppliers,
+      Quote_Status: 'Draft'
     };
     this.dialogRef.close({ action: 'createOrder', data: order });
-}
+  }
 
   cancel() {
     this.dialogRef.close({ action: 'cancel' });

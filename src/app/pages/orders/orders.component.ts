@@ -258,7 +258,8 @@ export class OrdersComponent implements OnInit {
         Creation_Time: new Date().toISOString(),
         quoteItems: quoteData.items.map((item: any) => ({
           ItemSKU: item.ItemSKU,
-          Quantity: item.Quantity
+          Quantity: item.Quantity,
+          inventoryID: item.inventoryID
         })),
         suppliers: quoteData.suppliers
       };

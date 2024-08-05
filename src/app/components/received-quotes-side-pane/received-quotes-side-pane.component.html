@@ -1,14 +1,48 @@
 <div class="side-pane" [class.open]="isOpen">
-  <button mat-icon-button class="close-button" (click)="close()">
-    <mat-icon>close</mat-icon>
-  </button>
-  <h2>Received Quotes</h2>
-  <div *ngIf="selectedOrder">
-    <p>Order ID: {{ selectedOrder.Order_ID }}</p>
-    <p>Quote ID: {{ selectedOrder.Quote_ID }}</p>
-    <!-- Add more details as needed -->
+    <div class="side-pane-header">
+      <button mat-icon-button class="close-button" (click)="close()">
+        <mat-icon>close</mat-icon>
+      </button>
+      <h2>Received Quotes</h2>
+    </div>
+    <div class="side-pane-content">
+      <div *ngIf="selectedOrder">
+        <p>Order ID: {{ selectedOrder.Order_ID }}</p>
+        <p>Quote ID: {{ selectedOrder.Quote_ID }}</p>
+        <p>Order ID: {{ selectedOrder.Order_ID }}</p>
+        <p>Quote ID: {{ selectedOrder.Quote_ID }}</p>
+        <p>Order ID: {{ selectedOrder.Order_ID }}</p>
+        <p>Quote ID: {{ selectedOrder.Quote_ID }}</p>
+        <p>Order ID: {{ selectedOrder.Order_ID }}</p>
+        <p>Quote ID: {{ selectedOrder.Quote_ID }}</p>
+        <p>Order ID: {{ selectedOrder.Order_ID }}</p>
+        <p>Quote ID: {{ selectedOrder.Quote_ID }}</p>
+        <p>Order ID: {{ selectedOrder.Order_ID }}</p>
+        <p>Quote ID: {{ selectedOrder.Quote_ID }}</p>
+        <p>Order ID: {{ selectedOrder.Order_ID }}</p>
+        <p>Quote ID: {{ selectedOrder.Quote_ID }}</p>
+        <p>Order ID: {{ selectedOrder.Order_ID }}</p>
+        <p>Quote ID: {{ selectedOrder.Quote_ID }}</p>
+        <p>Order ID: {{ selectedOrder.Order_ID }}</p>
+        <p>Quote ID: {{ selectedOrder.Quote_ID }}</p>
+        <p>Order ID: {{ selectedOrder.Order_ID }}</p>
+        <p>Quote ID: {{ selectedOrder.Quote_ID }}</p>
+        <p>Order ID: {{ selectedOrder.Order_ID }}</p>
+        <p>Quote ID: {{ selectedOrder.Quote_ID }}</p>
+        <p>Order ID: {{ selectedOrder.Order_ID }}</p>
+        <p>Quote ID: {{ selectedOrder.Quote_ID }}</p>
+        <p>Order ID: {{ selectedOrder.Order_ID }}</p>
+        <p>Quote ID: {{ selectedOrder.Quote_ID }}</p>
+        <p>Order ID: {{ selectedOrder.Order_ID }}</p>
+        <p>Quote ID: {{ selectedOrder.Quote_ID }}</p>
+        <p>Order ID: {{ selectedOrder.Order_ID }}</p>
+        <p>Quote ID: {{ selectedOrder.Quote_ID }}</p>
+        
+        <!-- Add more details as needed -->
+      </div>
+      <div *ngIf="!selectedOrder">
+        <p>No order selected</p>
+      </div>
+      <!-- You can add more content here, it will scroll if it overflows -->
+    </div>
   </div>
-  <div *ngIf="!selectedOrder">
-    <p>No order selected</p>
-  </div>
-</div>

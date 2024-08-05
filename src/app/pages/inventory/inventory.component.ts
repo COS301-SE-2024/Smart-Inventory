@@ -54,7 +54,17 @@ export class InventoryComponent implements OnInit {
         { field: 'category', headerName: 'Category' },
         { field: 'quantity', headerName: 'Quantity' },
         { field: 'supplier', headerName: 'Supplier' },
-        { field: 'expirationDate', headerName: 'Expiration Date' },
+        { 
+            field: 'expirationDate', 
+            headerName: 'Expiration Date',
+            valueFormatter: (params) => {
+                if (params.value) {
+                    const date = new Date(params.value);
+                    return date.toISOString().split('T')[0]; // Format: YYYY-MM-DD
+                }
+                return '';
+            }
+        },
         { field: 'lowStockThreshold', headerName: 'Low Stock Threshold' },
         { field: 'reorderFreq', headerName: 'Reorder Frequency' },
     ];

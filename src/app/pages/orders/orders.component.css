@@ -6,11 +6,6 @@
     overflow: scroll;
 }
 
-.orderHolder {
-    margin: 15px;
-    width: 100%;
-}
-
 .loading-overlay {
     position: fixed;
     top: 0;

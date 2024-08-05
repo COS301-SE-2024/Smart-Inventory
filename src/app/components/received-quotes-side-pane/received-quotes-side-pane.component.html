@@ -1,0 +1,14 @@
+<div class="side-pane" [class.open]="isOpen">
+  <button mat-icon-button class="close-button" (click)="close()">
+    <mat-icon>close</mat-icon>
+  </button>
+  <h2>Received Quotes</h2>
+  <div *ngIf="selectedOrder">
+    <p>Order ID: {{ selectedOrder.Order_ID }}</p>
+    <p>Quote ID: {{ selectedOrder.Quote_ID }}</p>
+    <!-- Add more details as needed -->
+  </div>
+  <div *ngIf="!selectedOrder">
+    <p>No order selected</p>
+  </div>
+</div>

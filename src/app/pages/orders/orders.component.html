@@ -8,10 +8,17 @@
     (viewDeliveryInfoClicked)="viewDeliveryInfo()"
     (rowSelected)="onRowSelected($event)"
     (deleteOrderClicked)="deleteOrderRow()"
+    (viewReceivedQuotesClicked)="viewReceivedQuotes()"
     #gridComponent
     >
     </app-grid>
 </div>
+    <app-received-quotes-side-pane 
+    [isOpen]="isSidePaneOpen"
+    [selectedOrder]="selectedOrder"
+    (closed)="isSidePaneOpen = false"
+    ></app-received-quotes-side-pane>
 <div *ngIf="isLoading" class="loading-overlay">
     <app-loading-spinner></app-loading-spinner>
 </div>
+

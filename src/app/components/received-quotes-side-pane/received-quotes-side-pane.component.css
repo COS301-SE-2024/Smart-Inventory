@@ -1,0 +1,22 @@
+.side-pane {
+  position: fixed;
+  top: 0;
+  right: -400px;
+  width: 400px;
+  height: 100%;
+  background-color: white;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+  transition: right 0.3s ease-out;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.side-pane.open {
+  right: 0;
+}
+
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}

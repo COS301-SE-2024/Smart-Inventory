@@ -16,6 +16,7 @@ import { LoadingSpinnerComponent } from '../../components/loader/loading-spinner
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { EmailTemplateModalComponent } from '../../components/email-template-modal/email-template-modal.component';
 import { DeliveryInformationModalComponent } from '../../components/delivery-information-modal/delivery-information-modal.component';
+import { ReceivedQuotesSidePaneComponent } from 'app/components/received-quotes-side-pane/received-quotes-side-pane.component';
 
 interface DeliveryAddress {
   company: string;
@@ -33,7 +34,7 @@ interface DeliveryAddress {
 @Component({
   selector: 'app-orders',
   standalone: true,
-  imports: [GridComponent, MatButtonModule, MatDialogModule, CommonModule, LoadingSpinnerComponent],
+  imports: [GridComponent, MatButtonModule, MatDialogModule, CommonModule, LoadingSpinnerComponent, ReceivedQuotesSidePaneComponent],
   templateUrl: './orders.component.html',
   styleUrl: './orders.component.css',
 })
@@ -41,6 +42,7 @@ export class OrdersComponent implements OnInit {
   @ViewChild(GridComponent) gridComponent!: GridComponent;
 
   isLoading = true;
+  isSidePaneOpen: boolean = false;
 
   constructor(private titleService: TitleService, private dialog: MatDialog, private snackBar: MatSnackBar ) {
     Amplify.configure(outputs);
@@ -584,6 +586,10 @@ export class OrdersComponent implements OnInit {
     // Implement logic to save the delivery information
     // This could be to a service or API
     console.log('Saving delivery information:', deliveryInfo);
+  }
+
+  viewReceivedQuotes() {
+    this.isSidePaneOpen = true;
   }
 
 }

@@ -9,6 +9,7 @@ import { SupplierService } from '../../../../amplify/services/supplier.service';
 import { DeliveryService } from '../../../../amplify/services/delivery.service';
 
 interface QuoteItem {
+  upc: string;
   description: string;
   sku: string;
   requestedQuantity: number;
@@ -137,6 +138,7 @@ export class SupplierFormComponent implements OnInit {
     // Initialize with mock data (same as before)
     this.quoteItems = [
       {
+        upc: '123456789012',
         description: 'High-Performance Laptop',
         sku: 'TECH001',
         requestedQuantity: 10,
@@ -148,6 +150,7 @@ export class SupplierFormComponent implements OnInit {
         totalPrice: 142500
       },
       {
+        upc: '234567890123',
         description: 'Ergonomic Office Chair',
         sku: 'FURN002',
         requestedQuantity: 20,
@@ -159,6 +162,7 @@ export class SupplierFormComponent implements OnInit {
         totalPrice: 32400
       },
       {
+        upc: '345678901234',
         description: 'Wireless Mouse',
         sku: 'ACC003',
         requestedQuantity: 50,
@@ -170,6 +174,7 @@ export class SupplierFormComponent implements OnInit {
         totalPrice: 14700
       },
       {
+        upc: '456789012345',
         description: '4K Monitor',
         sku: 'DISP004',
         requestedQuantity: 15,
@@ -181,6 +186,7 @@ export class SupplierFormComponent implements OnInit {
         totalPrice: 55800
       },
       {
+        upc: '567890123456',
         description: 'Wireless Keyboard',
         sku: 'ACC005',
         requestedQuantity: 30,
@@ -192,6 +198,7 @@ export class SupplierFormComponent implements OnInit {
         totalPrice: 14550
       },
       {
+        upc: '678901234567',
         description: 'Desk Lamp',
         sku: 'LIGHT006',
         requestedQuantity: 25,
@@ -203,6 +210,7 @@ export class SupplierFormComponent implements OnInit {
         totalPrice: 5000
       },
       {
+        upc: '789012345678',
         description: 'Whiteboard',
         sku: 'OFF007',
         requestedQuantity: 5,

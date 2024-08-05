@@ -42,7 +42,9 @@
     <table class="quote-table">
       <thead>
         <tr>
+
           <th>Description</th>
+          <th>UPC</th>
           <th>SKU</th>
           <th>Requested Quantity</th>
           <th>Availability</th>
@@ -55,7 +57,9 @@
       </thead>
       <tbody>
         <tr *ngFor="let item of quoteItems; let i = index">
+
           <td>{{item.description}}</td>
+          <td>{{item.upc}}</td>
           <td>{{item.sku}}</td>
           <td>{{item.requestedQuantity}}</td>
           <td class="availability-checkbox">

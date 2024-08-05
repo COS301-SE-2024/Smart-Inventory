@@ -7,7 +7,7 @@ import { UpdateContactConfirmationComponent } from './update-contact-confirmatio
 import { ActivatedRoute } from '@angular/router';
 import { SupplierService } from '../../../../amplify/services/supplier.service';
 import { DeliveryService } from '../../../../amplify/services/delivery.service';
-import { QuoteService } from '../../../../amplify/services/quote.service';
+import { QuoteService } from '../../../../amplify/services/quote-items.service';
 import { QuoteSubmissionService } from '../../../../amplify/services/quote-submission.service';
 
 interface QuoteItem {

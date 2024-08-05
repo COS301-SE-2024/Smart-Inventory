@@ -221,11 +221,57 @@ mat-icon {
     display: flex;
     align-items: center;
     gap: 16px; /* This adds space between the checkboxes and the button */
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    /* scrollbar-color: #888 #f1f1f1; */
+    padding-bottom: 8px; /* Add some padding to show scrollbar */
+    max-width: calc(100% - 100px); /* Adjust based on your unread count width */
+    transition: transform 0.3s ease;
+}
+
+.chevron-left, .chevron-right {
+    color: #3f51b5;
+}
+
+.filter-controls::-webkit-scrollbar {
+    height: 6px;
+}
+
+.filter-controls::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.filter-controls::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 3px;
+}
+
+.filter-controls::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Ensure checkboxes don't shrink */
+.filter-controls mat-checkbox {
+    flex-shrink: 0;
+}
+
+/* Ensure the mark all as read button doesn't shrink */
+.filter-controls .mark-all-read {
+    flex-shrink: 0;
 }
 
 .unread-count {
     font-weight: bold;
     color: #3f51b5;
+    white-space: nowrap;
+    margin-left: 16px;
+    flex-shrink: 0;
+}
+
+/* Ensure checkboxes and mark-all-read button don't shrink */
+.filter-controls mat-checkbox,
+.filter-controls .mark-all-read {
+    flex-shrink: 0;
 }
 
 .unread {

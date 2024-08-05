@@ -57,14 +57,25 @@
     </div>
 
     <div class="notification-filters">
-        <div class="filter-controls">
+        <button mat-icon-button class="chevron-left" (click)="scrollFilters('left')" [disabled]="isScrolledToStart">
+            <mat-icon>chevron_left</mat-icon>
+        </button>
+        <div class="filter-controls" #filterControls>
             <mat-checkbox [(ngModel)]="showRead" (change)="updateFilteredNotifications()">Read</mat-checkbox>
             <mat-checkbox [(ngModel)]="showUnread" (change)="updateFilteredNotifications()">Unread</mat-checkbox>
             <mat-checkbox [(ngModel)]="showArchived" (change)="updateFilteredNotifications()">Show Archived</mat-checkbox>
-            <button mat-button color="primary" (click)="markAllAsRead()" [disabled]="unreadCount === 0">
-                Mark All as Read
+            <button mat-icon-button 
+                    class="mark-all-read"
+                    color="primary" 
+                    (click)="markAllAsRead()" 
+                    [disabled]="unreadCount === 0"
+                    matTooltip="Mark all as read">
+                <mat-icon>done_all</mat-icon>
             </button>
         </div>
+        <button mat-icon-button class="chevron-right" (click)="scrollFilters('right')" [disabled]="isScrolledToEnd">
+            <mat-icon>chevron_right</mat-icon>
+        </button>
         <div class="unread-count">
             {{ unreadCount }} unread
         </div>

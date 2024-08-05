@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, HostListener, Inject } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, HostListener, Inject } from '@angular/core';
 import { MaterialModule } from '../material/material.module';
 import { signOut, fetchUserAttributes } from 'aws-amplify/auth';
 import { Router } from '@angular/router';
@@ -73,6 +73,9 @@ export class NotificationDialogComponent {
     styleUrl: './header.component.css',
 })
 export class HeaderComponent implements OnInit {
+    @ViewChild('filterControls') filterControls!: ElementRef;
+    isScrolledToStart: boolean = true;
+    isScrolledToEnd: boolean = false;
 
     // resizing notification panel
     panelWidth: number = 400; 
@@ -110,7 +113,47 @@ export class HeaderComponent implements OnInit {
         private auth: AuthenticatorService,
         private router: Router,
         private dialog: MatDialog
-    ) {}
+    ) { }
+
+    ngAfterViewInit() {
+        this.checkScrollPosition();
+    }
+    
+    checkScrollPosition() {
+        const element = this.filterControls.nativeElement;
+        this.isScrolledToStart = element.scrollLeft <= 0;
+        this.isScrolledToEnd = element.scrollLeft + element.clientWidth >= element.scrollWidth;
+    }
+
+    scrollFilters(direction: 'left' | 'right') {
+        const element = this.filterControls.nativeElement;
+        const scrollAmount = element.clientWidth / 2;
+        if (direction === 'left') {
+            element.scrollLeft -= scrollAmount;
+        } else {
+            element.scrollLeft += scrollAmount;
+        }
+        setTimeout(() => this.checkScrollPosition(), 100);
+    }
+
+    
+    @HostListener('window:resize', ['$event']) onResize(event: Event) {
+        this.updateFilterSize();
+    }
+
+    updateFilterSize() {
+        const panelWidth = this.panelWidth;
+        const minWidth = 400; // Minimum panel width
+        const maxWidth = 600; // Maximum panel width for scaling
+
+        // Calculate scale factor (0 to 1)
+        const scale = Math.min(Math.max((panelWidth - minWidth) / (maxWidth - minWidth), 0), 1);
+
+        // Update CSS variables
+        document.documentElement.style.setProperty('--filter-font-size', `${12 + scale * 4}px`);
+        document.documentElement.style.setProperty('--filter-icon-size', `${16 + scale * 8}px`);
+        document.documentElement.style.setProperty('--filter-padding', `${4 + scale * 4}px ${8 + scale * 8}px`);
+    }
 
     ngOnInit() {
         this.titleService.currentTitle.subscribe((title) => (this.pageTitle = title));

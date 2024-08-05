@@ -1,3 +1,13 @@
+/* PLACEHOLDER */
+::placeholder {
+    text-align: left;
+  }
+
+  /* Ensure input text is left-aligned */
+input.mat-input-element {
+  text-align: left;
+}
+
 /* SCROLL BAR */
 .mat-mdc-tab-group,
 .mat-mdc-tab-nav-bar {
@@ -530,6 +540,8 @@ mat-label {
     flex-direction: column;
     padding: 16px;
     background-color: none;
+    align-items: center;
+    width: 100%;
     border-radius: 8px;
 }
 
@@ -560,6 +572,8 @@ mat-label {
 .accounts-row-two {
     overflow-y: scroll;
     max-height: 80vh;
+    width: 75%;
+    overflow-y: auto;
 }
 .mat-mdc-button .mat-mdc-button-touch-target {
     position: absolute;
@@ -591,15 +605,28 @@ mat-label {
     align-content: center;
     flex-wrap: wrap;
     text-align: center;
-    overflow-y: scroll;
+    /* overflow-y: scroll; */
+    width: 100%;
+}
+
+.name-surname-row {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
 }
 
 .form-container h3 {
     font-size: 40px;
 }
 
+.form-container hr {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
 .form-container h4 {
     font-size: 30px;
+    align-self: flex-start;
 }
 
 .form-row {
@@ -618,8 +645,17 @@ mat-label {
     margin-top: 15px;
 }
 
+.current-password {
+    width: 70%;
+  }
+
 .form-field {
     flex: 1;
+    width: 48%;
+}
+
+.email-field {
+    width: 100%;
 }
 
 button mat-button {
@@ -638,6 +674,7 @@ button.change-password-button {
     margin-top: 10px !important;
     font-size: 15px !important;
     margin-right: 50px;
+    width: 28%;
 }
 
 button.cancel-password-button {
@@ -648,6 +685,19 @@ button.cancel-password-button {
     margin-left: 50px;
 }
 
+.delete-confirmation-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 20px;
+  }
+
+  .delete-confirmation-row .form-field {
+    width: 48%;
+    margin-bottom: 10px;
+  }
+
 button.delete-button {
     /* background-color: #8f8f8f; */
     width: 200px;
@@ -656,6 +706,7 @@ button.delete-button {
     font-size: 20px;
     font-weight: 400;
     margin-bottom: 20px;
+    margin-right: 10px;
 }
 
 /* CONFIRM DELETE ACCOUNT PASSWORD */
@@ -664,7 +715,24 @@ button.delete-button {
     color: black !important;
     font-size: 20px !important;
     font-weight: 500 !important;
+    width: 100%;
+    margin-top: 10px;
 }
+
+.delete-account-row {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+    margin-top: 20px;
+  }
+
+.password-action-buttons {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 10px;
+  }
 
 /* Custom Form Field Styling */
 .form-row mat-form-field {
@@ -701,3 +769,11 @@ mat-form-field .mdc-line-ripple {
 .mat-form-field-outline-gap {
     border-radius: 15px !important;
 }
+
+.password-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+  

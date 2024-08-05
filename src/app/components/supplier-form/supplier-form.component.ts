@@ -7,6 +7,7 @@ import { UpdateContactConfirmationComponent } from './update-contact-confirmatio
 import { ActivatedRoute } from '@angular/router';
 import { SupplierService } from '../../../../amplify/services/supplier.service';
 import { DeliveryService } from '../../../../amplify/services/delivery.service';
+import { QuoteService } from '../../../../amplify/services/quote.service';
 
 interface QuoteItem {
   upc: string;
@@ -54,7 +55,7 @@ export class SupplierFormComponent implements OnInit {
   tenentId: string = '';
 
 
-  constructor(private dialog: MatDialog, private route: ActivatedRoute, private supplierService: SupplierService, private deliveryService: DeliveryService) {}
+  constructor(private dialog: MatDialog, private route: ActivatedRoute, private supplierService: SupplierService, private deliveryService: DeliveryService, private quoteService: QuoteService) {}
 
   openUpdateContactModal() {
     const dialogRef = this.dialog.open(UpdateContactConfirmationComponent, {
@@ -132,96 +133,14 @@ export class SupplierFormComponent implements OnInit {
       if (this.deliveryID && this.tenentId) {
         this.loadDeliveryInfo();
       }
+      if (this.quoteID && this.tenentId) {
+        this.loadQuoteItems();
+      }
+
 
     });
 
-    // Initialize with mock data (same as before)
-    this.quoteItems = [
-      {
-        upc: '123456789012',
-        description: 'High-Performance Laptop',
-        sku: 'TECH001',
-        requestedQuantity: 10,
-        isAvailable: true,
-        availableQuantity: 10,
-        unitCost: 150,
-        totalCost: 150000,
-        discount: 5,
-        totalPrice: 142500
-      },
-      {
-        upc: '234567890123',
-        description: 'Ergonomic Office Chair',
-        sku: 'FURN002',
-        requestedQuantity: 20,
-        isAvailable: true,
-        availableQuantity: 18,
-        unitCost: 200,
-        totalCost: 36000,
-        discount: 10,
-        totalPrice: 32400
-      },
-      {
-        upc: '345678901234',
-        description: 'Wireless Mouse',
-        sku: 'ACC003',
-        requestedQuantity: 50,
-        isAvailable: true,
-        availableQuantity: 50,
-        unitCost: 300,
-        totalCost: 15000,
-        discount: 2,
-        totalPrice: 14700
-      },
-      {
-        upc: '456789012345',
-        description: '4K Monitor',
-        sku: 'DISP004',
-        requestedQuantity: 15,
-        isAvailable: true,
-        availableQuantity: 12,
-        unitCost: 500,
-        totalCost: 60000,
-        discount: 7,
-        totalPrice: 55800
-      },
-      {
-        upc: '567890123456',
-        description: 'Wireless Keyboard',
-        sku: 'ACC005',
-        requestedQuantity: 30,
-        isAvailable: true,
-        availableQuantity: 30,
-        unitCost: 500,
-        totalCost: 15000,
-        discount: 3,
-        totalPrice: 14550
-      },
-      {
-        upc: '678901234567',
-        description: 'Desk Lamp',
-        sku: 'LIGHT006',
-        requestedQuantity: 25,
-        isAvailable: true,
-        availableQuantity: 20,
-        unitCost: 250,
-        totalCost: 5000,
-        discount: 0,
-        totalPrice: 5000
-      },
-      {
-        upc: '789012345678',
-        description: 'Whiteboard',
-        sku: 'OFF007',
-        requestedQuantity: 5,
-        isAvailable: true,
-        availableQuantity: 5,
-        unitCost: 100,
-        totalCost: 5000,
-        discount: 5,
-        totalPrice: 4750
-      }
-    ];
+    this.quoteItems = [];
     this.updateAllTotals();
     this.setDefaultDeliveryDate();
   }
@@ -371,6 +290,19 @@ export class SupplierFormComponent implements OnInit {
         }
       );
     }
+  }
+
+  loadQuoteItems() {
+    this.quoteService.getQuoteItems(this.quoteID, this.tenentId).subscribe(
+      (items) => {
+        this.quoteItems = items;
+        this.updateAllTotals();
+      },
+      (error) => {
+        console.error('Error fetching quote items:', error);
+        // Handle error (e.g., show error message to user)
+      }
+    );
   }
 
   

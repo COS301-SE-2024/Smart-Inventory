@@ -27,7 +27,7 @@ export const routes: Routes = [
     { path: 'inventoryReport', component: InventoryReportComponent },
     { path: 'orderReport', component: OrderReportComponent },
     { path: 'grid', component: GridComponent },
-    { path: 'supplier-form/:supplierID/:orderID/:deliveryID/:tenentId', component: SupplierFormComponent },
+    { path: 'supplier-form/:supplierID/:quoteID/:deliveryID/:tenentId', component: SupplierFormComponent },
     { path: 'supplierReport/:supplierID/:orderID', component: SupplierReportComponent },
     { path: 'activityReport', component: ActivityReportComponent },
 ];

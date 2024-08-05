@@ -18,6 +18,7 @@ import { AddInventoryModalComponent } from './add-inventory-modal/add-inventory-
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { RequestStockModalComponent } from './request-stock-modal/request-stock-modal.component';
 import { MatNativeDateModule } from '@angular/material/core';
+import { ActivityLoggingService } from '../../services/activity-logging.service';
 
 @Component({
     selector: 'app-inventory',
@@ -48,19 +49,29 @@ export class InventoryComponent implements OnInit {
     colDefs: ColDef[] = [
         { field: 'inventoryID', headerName: 'Inventory ID', hide: true },
         { field: 'sku', headerName: 'SKU' },
-        { field: 'productId', headerName: 'Product ID' },
+        { field: 'upc', headerName: 'Universal Product Code' },
         { field: 'description', headerName: 'Description' },
         { field: 'category', headerName: 'Category' },
         { field: 'quantity', headerName: 'Quantity' },
         { field: 'supplier', headerName: 'Supplier' },
-        { field: 'expirationDate', headerName: 'Expiration Date' },
+        { 
+            field: 'expirationDate', 
+            headerName: 'Expiration Date',
+            valueFormatter: (params) => {
+                if (params.value) {
+                    const date = new Date(params.value);
+                    return date.toISOString().split('T')[0]; // Format: YYYY-MM-DD
+                }
+                return '';
+            }
+        },
         { field: 'lowStockThreshold', headerName: 'Low Stock Threshold' },
         { field: 'reorderFreq', headerName: 'Reorder Frequency' },
     ];
 
     addButton = { text: 'Add New Item' };
 
-    constructor(private titleService: TitleService, private dialog: MatDialog) {
+    constructor(private titleService: TitleService, private dialog: MatDialog, private activityLoggingService: ActivityLoggingService) {
         Amplify.configure(outputs);
     }
 
@@ -112,7 +123,7 @@ export class InventoryComponent implements OnInit {
                     inventoryID: item.inventoryID,
                     sku: item.SKU,
                     category: item.category,
-                    productId: item.productID,
+                    upc: item.upc,
                     description: item.description,
                     quantity: item.quantity,
                     supplier: item.supplier,
@@ -219,7 +230,7 @@ export class InventoryComponent implements OnInit {
             });
 
             const payload = JSON.stringify({
-                productID: formData.productId,
+                upc: formData.upc,
                 description: formData.description,
                 category: formData.category,
                 quantity: formData.quantity,
@@ -243,6 +254,13 @@ export class InventoryComponent implements OnInit {
 
             if (responseBody.statusCode === 201) {
                 console.log('Inventory item added successfully');
+                this.activityLoggingService.addActivityLog({
+                    memberID: tenantId, // You might want to use a more specific user ID if available
+                    name: 'User', // Replace with actual user name if available
+                    role: 'Inventory Manager', // Replace with actual user role if available
+                    action: 'Added new inventory item',
+                    details: { sku: formData.sku, description: formData.description }
+                });
                 await this.loadInventoryData();
             } else {
                 throw new Error(responseBody.body);
@@ -310,6 +328,13 @@ export class InventoryComponent implements OnInit {
 
             if (responseBody.statusCode === 200) {
                 console.log('Inventory item deleted successfully');
+                this.activityLoggingService.addActivityLog({
+                    memberID: tenantId,
+                    name: 'User',
+                    role: 'Inventory Manager',
+                    action: 'Deleted inventory item',
+                    details: { inventoryID: inventoryID }
+                });
             } else {
                 throw new Error(responseBody.body);
             }
@@ -360,6 +385,13 @@ export class InventoryComponent implements OnInit {
 
             if (responseBody.statusCode === 200) {
                 console.log('Inventory item updated successfully');
+                this.activityLoggingService.addActivityLog({
+                    memberID: tenentId,
+                    name: 'User',
+                    role: 'Inventory Manager',
+                    action: 'Updated inventory item',
+                    details: { sku: event.data.sku, field: event.field, newValue: event.newValue }
+                });
                 // Update the local data to reflect the change
                 const updatedItem = JSON.parse(responseBody.body);
                 const index = this.rowData.findIndex((item) => item.inventoryID === updatedItem.inventoryID);
@@ -424,13 +456,14 @@ export class InventoryComponent implements OnInit {
             };
             await this.handleCellValueChanged(updateEvent);
 
-            // Then, create the stock request report
-            const reportPayload = {
-                tenentId: tenentId,
-                sku: item.sku,
-                supplier: item.supplier,
-                quantityRequested: quantity.toString(),
-            };
+// Then, create the stock request report
+const reportPayload = {
+    tenentId: tenentId,
+    sku: item.sku,
+    category: item.category,
+    supplier: item.supplier,
+    quantityRequested: item.requestQuantity.toString(), // Ensure this is a string
+};
 
             console.log('Report Payload:', reportPayload);
 
@@ -446,6 +479,13 @@ export class InventoryComponent implements OnInit {
 
             if (responseBody.statusCode === 201) {
                 console.log('Stock request report created successfully');
+                this.activityLoggingService.addActivityLog({
+                    memberID: tenentId,
+                    name: 'User',
+                    role: 'Inventory Manager',
+                    action: 'Requested stock',
+                    details: { sku: item.sku, quantity: quantity }
+                });
                 await this.loadInventoryData();
             } else {
                 throw new Error(JSON.stringify(responseBody.body));

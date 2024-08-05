@@ -8,6 +8,7 @@ import { ActivatedRoute } from '@angular/router';
 import { SupplierService } from '../../../../amplify/services/supplier.service';
 import { DeliveryService } from '../../../../amplify/services/delivery.service';
 import { QuoteService } from '../../../../amplify/services/quote.service';
+import { QuoteSubmissionService } from '../../../../amplify/services/quote-submission.service';
 
 interface QuoteItem {
   upc: string;
@@ -55,7 +56,7 @@ export class SupplierFormComponent implements OnInit {
   tenentId: string = '';
 
 
-  constructor(private dialog: MatDialog, private route: ActivatedRoute, private supplierService: SupplierService, private deliveryService: DeliveryService, private quoteService: QuoteService) {}
+  constructor(private dialog: MatDialog, private route: ActivatedRoute, private supplierService: SupplierService, private deliveryService: DeliveryService, private quoteService: QuoteService, private quoteSubmissionService: QuoteSubmissionService ) {}
 
   openUpdateContactModal() {
     const dialogRef = this.dialog.open(UpdateContactConfirmationComponent, {
@@ -218,17 +219,41 @@ export class SupplierFormComponent implements OnInit {
   }
 
   submitQuote() {
-    console.log('Quote submitted:', {
-      items: this.quoteItems,
-      currency: this.selectedCurrency,
-      vatPercentage: this.vatPercentage,
-      deliveryDate: this.deliveryDate,
-      deliveryCost: this.deliveryCost,
-      totalValue: this.getTotalQuoteValue(),
-      additionalComments: this.additionalComments,
-      attachments: this.selectedFiles.map(file => file.name)
-    });
-    // Here you would typically send the data to a server
+    const quoteData = {
+      quoteItems: this.quoteItems.map(item => ({
+        upc: item.upc,
+        sku: item.sku,
+        unitCost: item.unitCost,
+        availableQuantity: item.availableQuantity,
+        totalPrice: item.totalPrice,
+        discount: item.discount,
+        isAvailable: item.isAvailable
+      })),
+      quoteDetails: {
+        QuoteID: this.quoteID,
+        SupplierID: this.supplierID,
+        vatPercentage: this.vatPercentage,
+        vatAmount: this.getVatAmount(),
+        deliveryDate: this.deliveryDate,
+        deliveryCost: this.deliveryCost,
+        subtotal: this.getSubtotal(),
+        totalQuoteValue: this.getTotalQuoteValue(),
+        currency: this.selectedCurrency,
+        additionalComments: this.additionalComments,
+        tenentId: this.tenentId
+      }
+    };
+
+    this.quoteSubmissionService.submitQuote(quoteData).subscribe(
+      (response) => {
+        console.log('Quote submitted successfully:', response);
+        // Handle successful submission (e.g., show success message, navigate to a different page)
+      },
+      (error) => {
+        console.error('Error submitting quote:', error);
+        // Handle error (e.g., show error message to user)
+      }
+    );
   }
 
   updateCurrency() {

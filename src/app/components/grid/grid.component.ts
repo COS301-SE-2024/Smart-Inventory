@@ -96,6 +96,13 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
         this.themeObserver.observe(document.body, { attributes: true });
     }
 
+    refreshGrid(newData: any[]) {
+        this.rowData = newData;
+        if (this.gridApi) {
+          this.gridApi.setRowData(this.rowData);
+        }
+      }
+
     private applyCurrentTheme() {
         const theme =
             document.body.getAttribute('data-theme') === 'dark' ? 'ag-theme-material-dark' : 'ag-theme-quartz';

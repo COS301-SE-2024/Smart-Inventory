@@ -1,4 +1,8 @@
-<div style="height: 100%; display: block; overflow: scroll">
+<div *ngIf="isLoading" class="loading-spinner">
+    <mat-spinner></mat-spinner>
+</div>
+
+<div *ngIf="!isLoading" style="height: 100%; display: block; overflow: scroll">
     <mat-toolbar style="width: 100%">
         <button mat-button style="width: 100%; background-color: #f1f1f1; color: black" (click)="back()">
             Back to reports
@@ -15,8 +19,8 @@
         <mat-grid-tile [colspan]="3" [rowspan]="2">
             <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
                 <mat-card style="height: 100%; width: 100%">
-                    <ag-charts-angular [options]="options2" style="height: 100%"></ag-charts-angular
-                ></mat-card>
+                    <ag-charts-angular [options]="options2" style="height: 100%"></ag-charts-angular>
+                </mat-card>
             </div>
         </mat-grid-tile>
         <mat-grid-tile [colspan]="3" [rowspan]="2">
@@ -29,7 +33,7 @@
         <mat-grid-tile [colspan]="9" [rowspan]="4">
             <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
                 <div class="inventoryHolder">
-                    <app-grid [rowData]="rowData" [columnDefs]="colDefs" #gridComponent> </app-grid>
+                    <app-grid [rowData]="rowData" [columnDefs]="colDefs" #gridComponent></app-grid>
                 </div>
             </div>
         </mat-grid-tile>
@@ -45,7 +49,7 @@
         <mat-grid-tile [colspan]="3" [rowspan]="5">
             <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
                 <mat-card style="height: 100%; width: 100%">
-                    <mat-card-title style="text-align: center"> Basic Metrics </mat-card-title>
+                    <mat-card-title style="text-align: center">Basic Metrics</mat-card-title>
                     <mat-card-content style="align-items: center">
                         <ul style="list-style: none; padding: 0; margin: 0">
                             <li

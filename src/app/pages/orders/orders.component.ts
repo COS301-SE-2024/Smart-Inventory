@@ -195,7 +195,7 @@ export class OrdersComponent implements OnInit {
             Quantity: item.Quantity
           })),
           suppliers: updatedQuote.suppliers.map((supplier: any) => ({
-            supplier: supplier.company_name,
+            company_name: supplier.company_name,
             supplierID: supplier.supplierID
           }))
         })
@@ -265,7 +265,7 @@ export class OrdersComponent implements OnInit {
           inventoryID: item.inventoryID
         })),
         suppliers: quoteData.suppliers.map((supplier: any) => ({
-          supplier: supplier.supplier,
+          company_name: supplier.company_name,
           supplierID: supplier.supplierID
         }))
       };

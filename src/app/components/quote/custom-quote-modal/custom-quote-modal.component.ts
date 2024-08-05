@@ -134,7 +134,7 @@ export class CustomQuoteModalComponent implements OnInit {
   
     this.selectedSuppliers = quoteDetails.suppliers && Array.isArray(quoteDetails.suppliers)
     ? quoteDetails.suppliers.map((supplier: any) => ({
-        company_name: supplier.supplier,
+        company_name: supplier.company_name,
         supplierID: supplier.supplierID
       }))
     : [];
@@ -322,10 +322,12 @@ export class CustomQuoteModalComponent implements OnInit {
         inventoryID: item.inventoryID
       })),
       suppliers: this.selectedSuppliers.map(supplier => ({
-        supplier: supplier.company_name,
+        company_name: supplier.company_name,
         supplierID: supplier.supplierID
       }))
     };
+
+    console.log('Saving changes with data:', JSON.stringify(updatedQuote, null, 2));
   
     try {
       await this.updateQuote(updatedQuote);
@@ -368,7 +370,7 @@ export class CustomQuoteModalComponent implements OnInit {
             inventoryID: item.inventoryID
           })),
           suppliers: updatedQuote.suppliers.map((supplier: any) => ({
-            supplier: supplier.supplier,
+            company_name: supplier.company_name,
             supplierID: supplier.supplierID
           }))
         })
@@ -409,7 +411,7 @@ export class CustomQuoteModalComponent implements OnInit {
         inventoryID: item.inventoryID
       })),
       suppliers: this.selectedSuppliers.map(supplier => ({
-        supplier: supplier.company_name,
+        company_name: supplier.company_name,
         supplierID: supplier.supplierID
       })),
       Quote_Status: 'Draft'
@@ -437,7 +439,7 @@ export class CustomQuoteModalComponent implements OnInit {
         quoteId: this.quoteId,
         items: this.quoteItems,
         suppliers: this.selectedSuppliers.map(supplier => ({
-          supplier: supplier.company_name,
+          company_name: supplier.company_name,
           supplierID: supplier.supplierID
         }))
       }});

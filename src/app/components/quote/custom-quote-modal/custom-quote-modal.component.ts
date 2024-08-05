@@ -132,7 +132,12 @@ export class CustomQuoteModalComponent implements OnInit {
       this.quoteItems = [];
     }
   
-    this.selectedSuppliers = quoteDetails.suppliers || [];
+    this.selectedSuppliers = quoteDetails.suppliers && Array.isArray(quoteDetails.suppliers)
+    ? quoteDetails.suppliers.map((supplier: any) => ({
+        company_name: supplier.supplier,
+        supplierID: supplier.supplierID
+      }))
+    : [];
   
     // Initialize filtered items for each quote item
     this.quoteItems.forEach(quoteItem => {
@@ -316,7 +321,10 @@ export class CustomQuoteModalComponent implements OnInit {
         Quantity: quantity,
         inventoryID: item.inventoryID
       })),
-      suppliers: this.selectedSuppliers.map(supplier => supplier.supplierID)
+      suppliers: this.selectedSuppliers.map(supplier => ({
+        supplier: supplier.company_name,
+        supplierID: supplier.supplierID
+      }))
     };
   
     try {
@@ -360,7 +368,7 @@ export class CustomQuoteModalComponent implements OnInit {
             inventoryID: item.inventoryID
           })),
           suppliers: updatedQuote.suppliers.map((supplier: any) => ({
-            supplier: supplier.company_name,
+            supplier: supplier.supplier,
             supplierID: supplier.supplierID
           }))
         })
@@ -428,7 +436,10 @@ export class CustomQuoteModalComponent implements OnInit {
       this.dialogRef.close({ action: 'sendQuote', data: {
         quoteId: this.quoteId,
         items: this.quoteItems,
-        suppliers: this.selectedSuppliers.map(supplier => supplier.company_name)
+        suppliers: this.selectedSuppliers.map(supplier => ({
+          supplier: supplier.company_name,
+          supplierID: supplier.supplierID
+        }))
       }});
     }
   }

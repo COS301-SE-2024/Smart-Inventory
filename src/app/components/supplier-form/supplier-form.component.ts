@@ -247,8 +247,6 @@ export class SupplierFormComponent implements OnInit {
       }
     };
 
-    console.log('Quote data being sent to backend:', JSON.stringify(quoteData, null, 2));
-
     this.quoteSubmissionService.submitQuote(quoteData).subscribe(
       (response) => {
         console.log('Quote submitted successfully:', response);

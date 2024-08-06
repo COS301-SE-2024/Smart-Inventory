@@ -28,7 +28,6 @@ export class QuoteService {
       requestedQuantity: item.Quantity,
       isAvailable: true,
       availableQuantity: item.Quantity,
-      inventoryID: item.inventoryID,
       unitCost: 0,
       totalCost: 0,
       discount: 0,

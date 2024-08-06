@@ -7,8 +7,8 @@ import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
 import { fetchAuthSession } from 'aws-amplify/auth';
 import outputs from '../../../../amplify_outputs.json';
 import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
-
-
+import { MatDialog } from '@angular/material/dialog';
+import { SupplierQuoteDetailsComponent } from '../supplier-quote-details/supplier-quote-details.component';
 
 interface SupplierQuote {
   SupplierID: string;
@@ -33,7 +33,7 @@ export class ReceivedQuotesSidePaneComponent implements OnChanges {
 
   supplierQuotes: SupplierQuote[] = [];
 
-  constructor() {}
+  constructor(private dialog: MatDialog) {}
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['selectedOrder'] && this.selectedOrder) {
@@ -102,6 +102,11 @@ export class ReceivedQuotesSidePaneComponent implements OnChanges {
   }
 
   viewQuoteDetails(quote: SupplierQuote) {
-    console.log('View details for:', quote);
+    this.dialog.open(SupplierQuoteDetailsComponent, {
+      width: '90%',
+      maxWidth: '1200px',
+      data: { quote: quote }
+    });
   }
+
 }

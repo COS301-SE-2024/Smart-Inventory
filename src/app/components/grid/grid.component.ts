@@ -124,6 +124,7 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
 
         // Make all columns editable
         this.columnDefs = this.columnDefs.map((col) => ({ ...col, editable: true }));
+        
     }
 
     ngAfterViewInit() {
@@ -143,6 +144,7 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
         this.gridApi = params.api;
         this.gridApi.sizeColumnsToFit();
         this.applyCurrentTheme();
+        console.log('in grid component', this.rowData)
     }
 
     ngOnDestroy(): void {

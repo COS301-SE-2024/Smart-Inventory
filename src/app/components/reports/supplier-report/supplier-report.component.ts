@@ -138,7 +138,7 @@ export class SupplierReportComponent implements OnInit {
         this.inventory = await this.loadInventoryData();
         console.log('inventory ', this.inventory)
 
-        console.log('my rowData', this.rowData)
+        // console.log('my rowData', this.rowData)
     }
 
     colDefs!: ColDef[];
@@ -157,8 +157,8 @@ export class SupplierReportComponent implements OnInit {
             { field: 'Order Accuracy Rate', headerName: 'Order Accuracy Rate' },
             { field: 'Out Standing Payments', headerName: 'Out Standing Payments' },
             { field: 'Reorder Level', headerName: 'Reorder Level' },
-            { field: 'Risk Score', headerName: 'RiskScore' },
-            { field: 'Total Spent', headerName: 'TotalSpent' },
+            { field: 'RiskScore', headerName: 'Risk Score' },
+            { field: 'TotalSpent', headerName: 'Total Spent' },
         ];
         return 'Supplier Report';
     }
@@ -771,13 +771,113 @@ export class SupplierReportComponent implements OnInit {
                         "Reorder Level": "Low",
                         "RiskScore": "High",
                         "TotalSpent": 110000
+                    },
+                    {
+                        "Supplier ID": "S006",
+                        "Date": "2024-07-23",
+                        "On Time Delivery Rate": 93.0,
+                        "Order Accuracy Rate": 98.0,
+                        "Out Standing Payments": 1200,
+                        "Reorder Level": "Medium",
+                        "RiskScore": "Low",
+                        "TotalSpent": 130000
+                    },
+                    {
+                        "Supplier ID": "S007",
+                        "Date": "2024-07-23",
+                        "On Time Delivery Rate": 88.0,
+                        "Order Accuracy Rate": 94.5,
+                        "Out Standing Payments": 3100,
+                        "Reorder Level": "High",
+                        "RiskScore": "Moderate",
+                        "TotalSpent": 115000
+                    },
+                    {
+                        "Supplier ID": "S008",
+                        "Date": "2024-07-23",
+                        "On Time Delivery Rate": 85.5,
+                        "Order Accuracy Rate": 92.0,
+                        "Out Standing Payments": 4000,
+                        "Reorder Level": "Low",
+                        "RiskScore": "High",
+                        "TotalSpent": 105000
+                    },
+                    {
+                        "Supplier ID": "S009",
+                        "Date": "2024-07-23",
+                        "On Time Delivery Rate": 91.0,
+                        "Order Accuracy Rate": 97.0,
+                        "Out Standing Payments": 500,
+                        "Reorder Level": "Medium",
+                        "RiskScore": "Low",
+                        "TotalSpent": 140000
+                    },
+                    {
+                        "Supplier ID": "S010",
+                        "Date": "2024-07-23",
+                        "On Time Delivery Rate": 86.0,
+                        "Order Accuracy Rate": 90.5,
+                        "Out Standing Payments": 6000,
+                        "Reorder Level": "High",
+                        "RiskScore": "High",
+                        "TotalSpent": 95000
+                    },
+                    {
+                        "Supplier ID": "S006",
+                        "Date": "2024-07-24",
+                        "On Time Delivery Rate": 93.5,
+                        "Order Accuracy Rate": 98.5,
+                        "Out Standing Payments": 1150,
+                        "Reorder Level": "Medium",
+                        "RiskScore": "Low",
+                        "TotalSpent": 130500
+                    },
+                    {
+                        "Supplier ID": "S007",
+                        "Date": "2024-07-24",
+                        "On Time Delivery Rate": 89.0,
+                        "Order Accuracy Rate": 95.0,
+                        "Out Standing Payments": 3200,
+                        "Reorder Level": "High",
+                        "RiskScore": "Moderate",
+                        "TotalSpent": 116000
+                    },
+                    {
+                        "Supplier ID": "S008",
+                        "Date": "2024-07-24",
+                        "On Time Delivery Rate": 86.0,
+                        "Order Accuracy Rate": 93.0,
+                        "Out Standing Payments": 3900,
+                        "Reorder Level": "Low",
+                        "RiskScore": "High",
+                        "TotalSpent": 106000
+                    },
+                    {
+                        "Supplier ID": "S009",
+                        "Date": "2024-07-24",
+                        "On Time Delivery Rate": 92.0,
+                        "Order Accuracy Rate": 97.5,
+                        "Out Standing Payments": 550,
+                        "Reorder Level": "Medium",
+                        "RiskScore": "Low",
+                        "TotalSpent": 141000
+                    },
+                    {
+                        "Supplier ID": "S010",
+                        "Date": "2024-07-24",
+                        "On Time Delivery Rate": 87.0,
+                        "Order Accuracy Rate": 91.0,
+                        "Out Standing Payments": 5800,
+                        "Reorder Level": "High",
+                        "RiskScore": "High",
+                        "TotalSpent": 96000
                     }
                 ]
 
 
                 this.rowData = this.processRowData(this.originalData);
 
-                console.log('Processed suppliers:', this.supplierIds);
+                console.log('Processed suppliers:', this.rowData);
             } else {
                 console.error('Error fetching suppliers data:', responseBody.body);
                 this.rowData = [];
@@ -846,6 +946,7 @@ export class SupplierReportComponent implements OnInit {
 
     processRowData(rawData: any[]): any[] {
         const groupedData = this.groupDataBySupplier(rawData);
+        console.log('groupedData', groupedData)
         return this.prepareRowData(groupedData);
     }
 

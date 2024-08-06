@@ -21,6 +21,7 @@ interface QuoteItem {
   totalCost: number;
   discount: number;
   totalPrice: number;
+  inventoryID: string;
 }
 
 interface Currency {
@@ -227,7 +228,9 @@ export class SupplierFormComponent implements OnInit {
         availableQuantity: item.availableQuantity,
         totalPrice: item.totalPrice,
         discount: item.discount,
-        isAvailable: item.isAvailable
+        inventoryID: item.inventoryID,
+        isAvailable: item.isAvailable,
+
       })),
       quoteDetails: {
         QuoteID: this.quoteID,
@@ -243,6 +246,8 @@ export class SupplierFormComponent implements OnInit {
         tenentId: this.tenentId
       }
     };
+
+    console.log('Quote data being sent to backend:', JSON.stringify(quoteData, null, 2));
 
     this.quoteSubmissionService.submitQuote(quoteData).subscribe(
       (response) => {

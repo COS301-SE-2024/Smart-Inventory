@@ -104,7 +104,7 @@ export class ReceivedQuotesSidePaneComponent implements OnChanges {
   viewQuoteDetails(quote: SupplierQuote) {
     this.dialog.open(SupplierQuoteDetailsComponent, {
       width: '90%',
-      maxWidth: '1200px',
+      maxWidth: '1350px',
       data: { quote: quote }
     });
   }

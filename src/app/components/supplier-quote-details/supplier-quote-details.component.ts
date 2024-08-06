@@ -1,6 +1,8 @@
 import { Component, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 
 interface QuoteItem {
   description: string;
@@ -29,7 +31,7 @@ interface QuoteSummary {
 @Component({
   selector: 'app-supplier-quote-details',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, MatDialogModule, MatIconModule, MatButtonModule],
   templateUrl: './supplier-quote-details.component.html',
   styleUrl: './supplier-quote-details.component.css'
 })

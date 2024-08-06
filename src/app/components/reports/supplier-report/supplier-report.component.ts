@@ -25,7 +25,9 @@ import { AgGridAngular } from 'ag-grid-angular';
 
 
 type ChartMetric = 'On Time Delivery Rate' | 'Order Accuracy Rate' | 'Out Standing Payments' | 'TotalSpent';
-
+type ChartData = {
+    source: any[];
+};
 @Component({
     selector: 'app-supplier-report',
     standalone: true,
@@ -82,6 +84,7 @@ export class SupplierReportComponent implements OnInit {
 
     selectedItem: any = null;
     requestQuantity: number | null = null;
+    inventory: any[] = [];
 
     SupplierReport = {
         title: 'Order Report',
@@ -131,7 +134,11 @@ export class SupplierReportComponent implements OnInit {
         // console.log(this.visibleTiles);
         this.chartData = this.getChartData();
         console.log('chartdata:', this.chartData.seriesData)
-        // console.log()
+        this.processData();
+        this.inventory = await this.loadInventoryData();
+        console.log('inventory ', this.inventory)
+
+        console.log('my rowData', this.rowData)
     }
 
     colDefs!: ColDef[];
@@ -142,7 +149,7 @@ export class SupplierReportComponent implements OnInit {
             { field: 'Supplier ID', headerName: 'Supplier ID' },
             {
                 field: 'Date',
-                headerName: 'Role',
+                headerName: 'Date',
                 cellEditor: DateSelectCellEditorComponent,  // Make sure this is set if it should be editable
                 cellRenderer: DateSelectCellEditorComponent
             },
@@ -150,8 +157,8 @@ export class SupplierReportComponent implements OnInit {
             { field: 'Order Accuracy Rate', headerName: 'Order Accuracy Rate' },
             { field: 'Out Standing Payments', headerName: 'Out Standing Payments' },
             { field: 'Reorder Level', headerName: 'Reorder Level' },
-            { field: 'RiskScore', headerName: 'RiskScore' },
-            { field: 'TotalSpent', headerName: 'TotalSpent' },
+            { field: 'Risk Score', headerName: 'RiskScore' },
+            { field: 'Total Spent', headerName: 'TotalSpent' },
         ];
         return 'Supplier Report';
     }
@@ -445,6 +452,94 @@ export class SupplierReportComponent implements OnInit {
         return totalRate / suppliers.length;
     }
 
+    async loadInventoryData() {
+        const inventoryData = [
+            {
+                inventoryID: "bc9040cb-3834-4391-9ab7-153968c1d13a",
+                tenentId: "1717667019559-j85syk",
+                category: "Food: Perishable",
+                createdAt: "2024-08-05T13:14:26.211Z",
+                description: "Maize Meal - Super Fine, 5kg",
+                expirationDate: "2024-09-24T22:00:00.000Z",
+                lowStockThreshold: 20,
+                quantity: 72,
+                reorderFreq: 30,
+                SKU: "MS-301",
+                supplier: "Foodcorp",
+                upc: "6001070000000",
+                updatedAt: "2024-08-05T13:14:26.211Z",
+                condition: "good"
+            },
+            {
+                inventoryID: "7860ac1c-9b39-4c9b-bf2f-1efbb87cbdf3",
+                tenentId: "1717667019559-j85syk",
+                category: "Beverages: Non-Alcoholic",
+                createdAt: "2024-08-05T13:17:16.112Z",
+                description: "Amarula Cream Liqueur, 750ml",
+                expirationDate: "2024-08-07T22:00:00.000Z",
+                lowStockThreshold: 15,
+                quantity: 48,
+                reorderFreq: 15,
+                SKU: "AM-405",
+                supplier: "Eskort",
+                upc: "6009880000000",
+                updatedAt: "2024-08-05T13:17:16.112Z",
+                condition: "moderate"
+            },
+            {
+                inventoryID: "1525c187-b594-4992-96a7-6acd0e1c1901",
+                tenentId: "1717667019559-j85syk",
+                category: "Food: Perishable",
+                createdAt: "2024-08-05T13:11:38.253Z",
+                description: "Rooibos Tea - Organic, 40 Bags",
+                expirationDate: "2024-08-30T22:00:00.000Z",
+                lowStockThreshold: 10,
+                quantity: 52,
+                reorderFreq: 7,
+                SKU: "RO-102",
+                supplier: "BOS Brands",
+                upc: "6009180000000",
+                updatedAt: "2024-08-05T13:11:38.253Z",
+                condition: "good"
+            },
+            {
+                inventoryID: "97053b80-40f0-416e-8844-5a65bce1c577",
+                tenentId: "1",
+                category: "Sample Category",
+                createdAt: "2024-08-05T11:50:03.967Z",
+                description: "Sample Product",
+                expirationDate: "2024-07-02T00:00:00.000Z",
+                lowStockThreshold: 10,
+                quantity: 100,
+                reorderFreq: 30,
+                SKU: "SAMPLE_SKU",
+                supplier: "Sample Supplier",
+                upc: "6a9c12a1-22fc-4f6d-92ad-bc1c86c3466f",
+                updatedAt: "2024-08-05T11:50:03.967Z",
+                condition: "bad"
+            },
+            {
+                inventoryID: "6b51adf0-0716-467d-b566-84db02c9e7f4",
+                tenentId: "1717667019559-j85syk",
+                category: "Food: Perishable",
+                createdAt: "2024-08-05T13:05:53.445Z",
+                description: "Biltong Snapstix - Original Beef",
+                expirationDate: "2024-08-30T22:00:00.000Z",
+                lowStockThreshold: 10,
+                quantity: 54,
+                reorderFreq: 7,
+                SKU: "BF-001",
+                supplier: "Fredy Hirsch Brands",
+                upc: "6001010000000",
+                updatedAt: "2024-08-05T13:05:53.445Z",
+                condition: "moderate"
+            }
+        ];
+
+        return inventoryData;
+
+    }
+
     async loadSuppliersData() {
         try {
             const session = await fetchAuthSession();
@@ -678,7 +773,7 @@ export class SupplierReportComponent implements OnInit {
                         "TotalSpent": 110000
                     }
                 ]
-                
+
 
                 this.rowData = this.processRowData(this.originalData);
 
@@ -696,6 +791,58 @@ export class SupplierReportComponent implements OnInit {
     }
 
     rowData: any[] = [];
+    lineBarData!: ChartData;
+
+    processData(): void {
+        const groupedData = this.groupDataByTopSupplier();
+        const formattedData = this.formatDataForChart(groupedData);
+        this.lineBarData = { source: formattedData.source };
+        // Now pass formattedData to LineBarComponent via its @Input() property
+    }
+
+    groupDataByTopSupplier(): any {
+        const grouped = this.originalData.reduce((acc, data) => {
+            const id = data['Supplier ID'];
+            if (!acc[id]) {
+                acc[id] = { ...data, count: 1 }; // Initial creation of the group
+            } else {
+                acc[id].TotalSpent += data.TotalSpent; // Summing up TotalSpent
+                acc[id].count += 1; // Counting occurrences
+            }
+            return acc;
+        }, {});
+
+        return Object.values(grouped).sort((a: any, b: any) => b.TotalSpent - a.TotalSpent).slice(0, 5);
+    }
+
+    formatDataForChart(data: any[]): any {
+        // Prepare header row with years dynamically extracted from the dataset
+        const years = [...new Set(this.originalData.map(item => item.Date.slice(0, 4)))].sort();
+        const header = ["Supplier ID", ...years];
+
+        // Prepare data rows for each supplier
+        const chartData = data.map(supplier => {
+            // Initialize row with supplier ID and zeros for each year
+            const row = [supplier['Supplier ID'], ...Array(years.length).fill(0)];
+
+            // Fill in the total spent for each year found in the original data for this supplier
+            this.originalData.filter(item => item['Supplier ID'] === supplier['Supplier ID'])
+                .forEach(item => {
+                    const yearIndex = years.indexOf(item.Date.slice(0, 4)) + 1; // +1 because first element is supplier ID
+                    row[yearIndex] += item.TotalSpent; // Accumulate total spent
+                });
+
+            return row;
+        });
+
+        // Combine the header with the rows to form the complete dataset for the chart
+        const formattedData = {
+            source: [header, ...chartData]
+        };
+
+        return formattedData;
+    }
+
 
     processRowData(rawData: any[]): any[] {
         const groupedData = this.groupDataBySupplier(rawData);

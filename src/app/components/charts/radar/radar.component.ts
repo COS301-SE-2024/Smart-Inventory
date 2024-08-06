@@ -74,7 +74,6 @@ export class RadarComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       ]
     };
-
     this.chartInstance?.setOption(option);
   }
 
@@ -84,4 +83,5 @@ export class RadarComponent implements OnInit, AfterViewInit, OnDestroy {
       this.chartInstance.resize();
     }
   }
+
 }

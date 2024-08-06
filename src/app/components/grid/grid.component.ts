@@ -130,7 +130,9 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
         this.applyCurrentTheme();
 
         const selectPlaceholder = this.el.nativeElement.querySelector('.mat-select-placeholder');
-        this.renderer.setStyle(selectPlaceholder, 'color', 'var(--text-color)');
+        if (selectPlaceholder) {
+            this.renderer.setStyle(selectPlaceholder, 'color', 'var(--text-color)');
+        }
     }
 
     getCurrentRoute(v: string) {

@@ -17,6 +17,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { EmailTemplateModalComponent } from '../../components/email-template-modal/email-template-modal.component';
 import { DeliveryInformationModalComponent } from '../../components/delivery-information-modal/delivery-information-modal.component';
 import { ReceivedQuotesSidePaneComponent } from 'app/components/received-quotes-side-pane/received-quotes-side-pane.component';
+import { MatCardModule } from '@angular/material/card';
 
 interface DeliveryAddress {
   company: string;
@@ -34,7 +35,7 @@ interface DeliveryAddress {
 @Component({
   selector: 'app-orders',
   standalone: true,
-  imports: [GridComponent, MatButtonModule, MatDialogModule, CommonModule, LoadingSpinnerComponent, ReceivedQuotesSidePaneComponent],
+  imports: [GridComponent, MatButtonModule, MatDialogModule, CommonModule, LoadingSpinnerComponent, ReceivedQuotesSidePaneComponent, MatCardModule],
   templateUrl: './orders.component.html',
   styleUrl: './orders.component.css',
 })

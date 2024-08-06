@@ -1,48 +1,30 @@
 <div class="side-pane" [class.open]="isOpen">
-    <div class="side-pane-header">
-      <button mat-icon-button class="close-button" (click)="close()">
-        <mat-icon>close</mat-icon>
-      </button>
-      <h2>Received Quotes</h2>
+  <div class="side-pane-header">
+    <button mat-icon-button class="close-button" (click)="close()">
+      <mat-icon>close</mat-icon>
+    </button>
+    <h3>Received Quotes</h3>
+  </div>
+  <div class="side-pane-content">
+    <div *ngIf="selectedOrder">
+      <h4>Order ID: {{ selectedOrder.Order_ID }}</h4>
+      <h5>Quote ID: {{ selectedOrder.Quote_ID }}</h5>
+      <div class="supplier-quotes">
+        <mat-card *ngFor="let quote of supplierQuotes" class="supplier-quote-card" (click)="viewQuoteDetails(quote)">
+          <mat-card-header>
+            <mat-card-title>{{ quote.supplierName }}</mat-card-title>
+            <mat-card-subtitle>Quote Value: {{ quote.totalQuoteValue | currency:'USD':'symbol':'1.2-2' }}</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <p><strong>Delivery Date:</strong> {{ quote.deliveryDate | date:'mediumDate' }}</p>
+            <p><strong>Delivery Cost:</strong> {{ quote.deliveryCost | currency:'USD':'symbol':'1.2-2' }}</p>
+          </mat-card-content>
+        </mat-card>
+      </div>
     </div>
-    <div class="side-pane-content">
-      <div *ngIf="selectedOrder">
-        <p>Order ID: {{ selectedOrder.Order_ID }}</p>
-        <p>Quote ID: {{ selectedOrder.Quote_ID }}</p>
-        <p>Order ID: {{ selectedOrder.Order_ID }}</p>
-        <p>Quote ID: {{ selectedOrder.Quote_ID }}</p>
-        <p>Order ID: {{ selectedOrder.Order_ID }}</p>
-        <p>Quote ID: {{ selectedOrder.Quote_ID }}</p>
-        <p>Order ID: {{ selectedOrder.Order_ID }}</p>
-        <p>Quote ID: {{ selectedOrder.Quote_ID }}</p>
-        <p>Order ID: {{ selectedOrder.Order_ID }}</p>
-        <p>Quote ID: {{ selectedOrder.Quote_ID }}</p>
-        <p>Order ID: {{ selectedOrder.Order_ID }}</p>
-        <p>Quote ID: {{ selectedOrder.Quote_ID }}</p>
-        <p>Order ID: {{ selectedOrder.Order_ID }}</p>
-        <p>Quote ID: {{ selectedOrder.Quote_ID }}</p>
-        <p>Order ID: {{ selectedOrder.Order_ID }}</p>
-        <p>Quote ID: {{ selectedOrder.Quote_ID }}</p>
-        <p>Order ID: {{ selectedOrder.Order_ID }}</p>
-        <p>Quote ID: {{ selectedOrder.Quote_ID }}</p>
-        <p>Order ID: {{ selectedOrder.Order_ID }}</p>
-        <p>Quote ID: {{ selectedOrder.Quote_ID }}</p>
-        <p>Order ID: {{ selectedOrder.Order_ID }}</p>
-        <p>Quote ID: {{ selectedOrder.Quote_ID }}</p>
-        <p>Order ID: {{ selectedOrder.Order_ID }}</p>
-        <p>Quote ID: {{ selectedOrder.Quote_ID }}</p>
-        <p>Order ID: {{ selectedOrder.Order_ID }}</p>
-        <p>Quote ID: {{ selectedOrder.Quote_ID }}</p>
-        <p>Order ID: {{ selectedOrder.Order_ID }}</p>
-        <p>Quote ID: {{ selectedOrder.Quote_ID }}</p>
-        <p>Order ID: {{ selectedOrder.Order_ID }}</p>
-        <p>Quote ID: {{ selectedOrder.Quote_ID }}</p>
-        
-        <!-- Add more details as needed -->
-      </div>
-      <div *ngIf="!selectedOrder">
-        <p>No order selected</p>
-      </div>
-      <!-- You can add more content here, it will scroll if it overflows -->
+    <div *ngIf="!selectedOrder" class="no-order-selected">
+      <mat-icon>info</mat-icon>
+      <p>No order selected</p>
     </div>
   </div>
+</div>

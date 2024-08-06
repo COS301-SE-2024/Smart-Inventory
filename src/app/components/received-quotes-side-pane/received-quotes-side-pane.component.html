@@ -12,12 +12,12 @@
       <div class="supplier-quotes">
         <mat-card *ngFor="let quote of supplierQuotes" class="supplier-quote-card" (click)="viewQuoteDetails(quote)">
           <mat-card-header>
-            <mat-card-title>{{ quote.supplierName }}</mat-card-title>
-            <mat-card-subtitle>Quote Value: {{ quote.totalQuoteValue | currency:'USD':'symbol':'1.2-2' }}</mat-card-subtitle>
+            <mat-card-title>Supplier ID: {{ quote.supplier_name }}</mat-card-title>
+            <mat-card-subtitle>Quote Value: {{ quote.Total_Quote_Value | currency:quote.Currency:'symbol':'1.2-2' }}</mat-card-subtitle>
           </mat-card-header>
           <mat-card-content>
-            <p><strong>Delivery Date:</strong> {{ quote.deliveryDate | date:'mediumDate' }}</p>
-            <p><strong>Delivery Cost:</strong> {{ quote.deliveryCost | currency:'USD':'symbol':'1.2-2' }}</p>
+            <p><strong>Delivery Date:</strong> {{ quote.Delivery_Date | date:'mediumDate' }}</p>
+            <p><strong>Delivery Cost:</strong> {{ quote.Delivery_Cost | currency:quote.Currency:'symbol':'1.2-2' }}</p>
           </mat-card-content>
         </mat-card>
       </div>

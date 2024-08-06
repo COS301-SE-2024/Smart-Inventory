@@ -1,14 +1,22 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
+import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
+import { fetchAuthSession } from 'aws-amplify/auth';
+import outputs from '../../../../amplify_outputs.json';
+import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
+
+
 
 interface SupplierQuote {
-  supplierName: string;
-  totalQuoteValue: number;
-  deliveryDate: Date;
-  deliveryCost: number;
+  SupplierID: string;
+  supplier_name: string;
+  Total_Quote_Value: number;
+  Delivery_Date: string;
+  Delivery_Cost: number;
+  Currency: string;
 }
 
 @Component({
@@ -18,38 +26,82 @@ interface SupplierQuote {
   templateUrl: './received-quotes-side-pane.component.html',
   styleUrls: ['./received-quotes-side-pane.component.css']
 })
-export class ReceivedQuotesSidePaneComponent {
+export class ReceivedQuotesSidePaneComponent implements OnChanges {
   @Input() isOpen: boolean = false;
   @Input() selectedOrder: any;
   @Output() closed = new EventEmitter<void>();
 
-  supplierQuotes: SupplierQuote[] = [
-    {
-      supplierName: 'Supplier A',
-      totalQuoteValue: 1500.50,
-      deliveryDate: new Date('2024-08-15'),
-      deliveryCost: 50.00,
-    },
-    {
-      supplierName: 'Supplier B',
-      totalQuoteValue: 1450.75,
-      deliveryDate: new Date('2024-08-20'),
-      deliveryCost: 45.00,
-    },
-    {
-      supplierName: 'Supplier C',
-      totalQuoteValue: 1525.00,
-      deliveryDate: new Date('2024-08-18'),
-      deliveryCost: 55.00,
+  supplierQuotes: SupplierQuote[] = [];
+
+  constructor() {}
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['selectedOrder'] && this.selectedOrder) {
+      this.fetchSupplierQuotes();
     }
-  ];
+  }
 
   close() {
     this.closed.emit();
   }
 
+  async fetchSupplierQuotes() {
+    try {
+      const session = await fetchAuthSession();
+      const tenentId = await this.getTenentId(session);
+
+      const lambdaClient = new LambdaClient({
+        region: outputs.auth.aws_region,
+        credentials: session.credentials,
+      });
+
+      const invokeCommand = new InvokeCommand({
+        FunctionName: 'getSupplierQuoteSummaries',
+        Payload: new TextEncoder().encode(JSON.stringify({
+          pathParameters: {
+            quoteId: this.selectedOrder.Quote_ID,
+            tenentId: tenentId
+          }
+        })),
+      });
+
+      const lambdaResponse = await lambdaClient.send(invokeCommand);
+      const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+
+      if (responseBody.statusCode === 200) {
+        this.supplierQuotes = JSON.parse(responseBody.body);
+        console.log('Supplier quotes:', this.supplierQuotes);
+      } else {
+        console.error('Error fetching supplier quotes:', responseBody.body);
+      }
+    } catch (error) {
+      console.error('Error in fetchSupplierQuotes:', error);
+    }
+  }
+
+  async getTenentId(session: any): Promise<string> {
+    const cognitoClient = new CognitoIdentityProviderClient({
+      region: outputs.auth.aws_region,
+      credentials: session.credentials,
+    });
+
+    const getUserCommand = new GetUserCommand({
+      AccessToken: session.tokens?.accessToken.toString(),
+    });
+    const getUserResponse = await cognitoClient.send(getUserCommand);
+
+    const tenentId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
+
+    if (!tenentId) {
+      throw new Error('TenentId not found in user attributes');
+    }
+
+    console.log(tenentId);
+
+    return tenentId;
+  }
+
   viewQuoteDetails(quote: SupplierQuote) {
-    // Implement this method to show the modal with detailed quote information
     console.log('View details for:', quote);
   }
 }

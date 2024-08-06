@@ -1,31 +1,33 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { fetchAuthSession } from 'aws-amplify/auth';
+import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
+import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
+import outputs from '../../../../amplify_outputs.json';
 
 interface QuoteItem {
   description: string;
   upc: string;
-  sku: string;
-  requestedQuantity: number;
-  isAvailable: boolean;
-  availableQuantity: number;
-  unitCost: number;
-  totalCost: number;
-  discount: number;
-  totalPrice: number;
+  ItemSKU: string;
+  AvailableQuantity: number;
+  UnitPrice: number;
+  TotalPrice: number;
+  Discount: number;
+  IsAvailable: boolean;
 }
 
 interface QuoteSummary {
-  vatPercentage: number;
-  deliveryDate: string;
-  deliveryCost: number;
-  subtotal: number;
-  vatAmount: number;
-  totalQuoteValue: number;
-  currency: string;
-  additionalComments?: string;
+  VAT_Percentage: number;
+  Delivery_Date: string;
+  Delivery_Cost: number;
+  Subtotal: number;
+  VAT_Amount: number;
+  Total_Quote_Value: number;
+  Currency: string;
+  Additional_Comments?: string;
 }
 
 @Component({
@@ -35,50 +37,80 @@ interface QuoteSummary {
   templateUrl: './supplier-quote-details.component.html',
   styleUrl: './supplier-quote-details.component.css'
 })
-export class SupplierQuoteDetailsComponent {
+export class SupplierQuoteDetailsComponent implements OnInit {
   supplierInfo: any;
-  quoteItems: QuoteItem[];
-  quoteSummary: QuoteSummary;
+  quoteItems: QuoteItem[] = [];
+  quoteSummary: QuoteSummary | null = null;
+  isLoading = true;
+  error: string | null = null;
 
   constructor(
     public dialogRef: MatDialogRef<SupplierQuoteDetailsComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any
-  ) {
-    // Mock data for demonstration
-    this.supplierInfo = {
-      companyName: 'ABC Suppliers Ltd.',
-      contactPerson: 'John Doe',
-      email: 'john.doe@abcsuppliers.com',
-      phone: '+1 234 567 8900',
-      address: '123 Supplier Street, Supplier City, SC 12345, Country'
-    };
+    @Inject(MAT_DIALOG_DATA) public data: { quoteID: string; supplierID: string; }
+  ) {}
 
-    this.quoteItems = [
-      {
-        description: 'Item 1',
-        upc: '123456789012',
-        sku: 'SKU001',
-        requestedQuantity: 100,
-        isAvailable: true,
-        availableQuantity: 90,
-        unitCost: 10,
-        totalCost: 900,
-        discount: 5,
-        totalPrice: 855
-      },
-      // Add more mock items as needed
-    ];
+  ngOnInit() {
+    this.loadQuoteDetails();
+  }
 
-    this.quoteSummary = {
-      vatPercentage: 15,
-      deliveryDate: '2024-08-15',
-      deliveryCost: 50,
-      subtotal: 855,
-      vatAmount: 128.25,
-      totalQuoteValue: 1033.25,
-      currency: 'USD',
-      additionalComments: 'This is a sample additional comment for the quote.'
-    };
+  async loadQuoteDetails() {
+    try {
+      const session = await fetchAuthSession();
+      const tenentId = await this.getTenentId(session);
+
+      const lambdaClient = new LambdaClient({
+        region: outputs.auth.aws_region,
+        credentials: session.credentials,
+      });
+
+      const invokeCommand = new InvokeCommand({
+        FunctionName: 'getSupplierQuoteDetails',
+        Payload: new TextEncoder().encode(JSON.stringify({
+          pathParameters: {
+            quoteID: this.data.quoteID,
+            supplierID: this.data.supplierID,
+            tenentId: tenentId
+          }
+        })),
+      });
+
+      const lambdaResponse = await lambdaClient.send(invokeCommand);
+      const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+
+      if (responseBody.statusCode === 200) {
+        const quoteDetails = JSON.parse(responseBody.body);
+        this.supplierInfo = quoteDetails.supplierInfo;
+        this.quoteItems = quoteDetails.quoteItems;
+        this.quoteSummary = quoteDetails.quoteSummary;
+        this.isLoading = false;
+      } else {
+        throw new Error(responseBody.body || 'Failed to fetch quote details');
+      }
+    } catch (error) {
+      console.error('Error fetching quote details:', error);
+      this.error = 'Failed to load quote details. Please try again.';
+      this.isLoading = false;
+    }
+  }
+
+  async getTenentId(session: any): Promise<string> {
+    const cognitoClient = new CognitoIdentityProviderClient({
+      region: outputs.auth.aws_region,
+      credentials: session.credentials,
+    });
+
+    const getUserCommand = new GetUserCommand({
+      AccessToken: session.tokens?.accessToken.toString(),
+    });
+    const getUserResponse = await cognitoClient.send(getUserCommand);
+
+    const tenentId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
+
+    if (!tenentId) {
+      throw new Error('TenentId not found in user attributes');
+    }
+
+    return tenentId;
   }
 
   close(): void {

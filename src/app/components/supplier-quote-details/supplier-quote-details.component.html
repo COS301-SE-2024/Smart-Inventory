@@ -1,95 +1,97 @@
 <div class="supplier-quote-container">
-    <div class="side-pane-header">
-      <h2>Supplier Quote Details</h2>
-      <button mat-icon-button class="close-button" (click)="close()">
-        <mat-icon>close</mat-icon>
-      </button>
+  <div class="side-pane-header">
+    <h2>Supplier Quote Details</h2>
+    <button mat-icon-button class="close-button" (click)="close()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <div *ngIf="isLoading" class="loading">
+    Loading quote details...
+  </div>
+
+  <div *ngIf="error" class="error">
+    {{ error }}
+  </div>
+
+  <div *ngIf="!isLoading && !error" class="scrollable-content">
+    <div class="supplier-info">
+      <div class="supplier-details">
+        <h3>{{supplierInfo.company_name}}</h3>
+        <p><strong>Contact:</strong> {{supplierInfo.contact_name}}</p>
+        <p><strong>Email:</strong> {{supplierInfo.contact_email}}</p>
+        <p><strong>Phone:</strong> {{supplierInfo.phone_number}}</p>
+        <p><strong>Address:</strong> {{supplierInfo.address.street}}, {{supplierInfo.address.city}}, {{supplierInfo.address.state_province}}, {{supplierInfo.address.postal_code}}, {{supplierInfo.address.country}}</p>
+      </div>
+    </div>
+
+    <h2>QUOTATION</h2>
+
+    <div class="currency-display">
+      <strong>Currency:</strong> {{quoteSummary?.Currency}}
+    </div>
+
+    <div class="table-container">
+      <table class="quote-table">
+        <thead>
+          <tr>
+            <th>Description</th>
+            <th>UPC</th>
+            <th>SKU</th>
+            <th>Availability</th>
+            <th>Available Quantity</th>
+            <th>Unit Cost</th>
+            <th>Total Cost</th>
+            <th>Discount (%)</th>
+            <th>Total Price</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of quoteItems">
+            <td>{{item.description}}</td>
+            <td>{{item.upc}}</td>
+            <td>{{item.ItemSKU}}</td>
+            <td>{{item.IsAvailable ? 'Yes' : 'No'}}</td>
+            <td>{{item.AvailableQuantity}}</td>
+            <td>{{item.UnitPrice | currency:quoteSummary?.Currency:'symbol':'1.2-2'}}</td>
+            <td class="total-cost">{{item.UnitPrice * item.AvailableQuantity | currency:quoteSummary?.Currency:'symbol':'1.2-2'}}</td>
+            <td>{{item.Discount}}%</td>
+            <td class="total-price">{{item.TotalPrice | currency:quoteSummary?.Currency:'symbol':'1.2-2'}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="quote-summary" *ngIf="quoteSummary">
+      <div class="summary-row">
+        <strong>VAT (%):</strong>
+        <span>{{quoteSummary.VAT_Percentage}}%</span>
+      </div>
+      <div class="summary-row">
+        <strong>Delivery Date:</strong>
+        <span>{{quoteSummary.Delivery_Date | date:'mediumDate'}}</span>
+      </div>
+      <div class="summary-row">
+        <strong>Delivery Cost:</strong>
+        <span>{{quoteSummary.Delivery_Cost | currency:quoteSummary.Currency:'symbol':'1.2-2'}}</span>
+      </div>
+      <div class="summary-row">
+        <strong>Subtotal:</strong>
+        <span>{{quoteSummary.Subtotal | currency:quoteSummary.Currency:'symbol':'1.2-2'}}</span>
+      </div>
+      <div class="summary-row">
+        <strong>VAT Amount:</strong>
+        <span>{{quoteSummary.VAT_Amount | currency:quoteSummary.Currency:'symbol':'1.2-2'}}</span>
+      </div>
+      <div class="summary-row total">
+        <strong>Total Quote Value:</strong>
+        <span>{{quoteSummary.Total_Quote_Value | currency:quoteSummary.Currency:'symbol':'1.2-2'}}</span>
+      </div>
     </div>
   
-    <div class="scrollable-content">
-      <div class="supplier-info">
-        <div class="supplier-details">
-          <h3>{{supplierInfo.companyName}}</h3>
-          <p><strong>Contact:</strong> {{supplierInfo.contactPerson}}</p>
-          <p><strong>Email:</strong> {{supplierInfo.email}}</p>
-          <p><strong>Phone:</strong> {{supplierInfo.phone}}</p>
-          <p><strong>Address:</strong> {{supplierInfo.address}}</p>
-        </div>
-      </div>
-  
-      <h2>QUOTATION</h2>
-  
-      <div class="currency-display">
-        <strong>Currency:</strong> {{quoteSummary.currency}}
-      </div>
-  
-      <div class="table-container">
-        <table class="quote-table">
-          <thead>
-            <tr>
-              <th>Description</th>
-              <th>UPC</th>
-              <th>SKU</th>
-              <th>Requested Quantity</th>
-              <th>Availability</th>
-              <th>Available Quantity</th>
-              <th>Unit Cost</th>
-              <th>Total Cost</th>
-              <th>Discount (%)</th>
-              <th>Total Price</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let item of quoteItems">
-              <td>{{item.description}}</td>
-              <td>{{item.upc}}</td>
-              <td>{{item.sku}}</td>
-              <td>{{item.requestedQuantity}}</td>
-              <td>{{item.isAvailable ? 'Yes' : 'No'}}</td>
-              <td>{{item.availableQuantity}}</td>
-              <td>{{item.unitCost | currency:quoteSummary.currency:'symbol':'1.2-2'}}</td>
-              <td class="total-cost">{{item.totalCost | currency:quoteSummary.currency:'symbol':'1.2-2'}}</td>
-              <td>{{item.discount}}</td>
-              <td class="total-price">{{item.totalPrice | currency:quoteSummary.currency:'symbol':'1.2-2'}}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-  
-      <div class="quote-summary">
-        <div class="summary-row">
-          <strong>VAT (%):</strong>
-          <span>{{quoteSummary.vatPercentage}}%</span>
-        </div>
-        <div class="summary-row">
-          <strong>Delivery Date:</strong>
-          <span>{{quoteSummary.deliveryDate | date:'mediumDate'}}</span>
-        </div>
-        <div class="summary-row">
-          <strong>Delivery Cost:</strong>
-          <span>{{quoteSummary.deliveryCost | currency:quoteSummary.currency:'symbol':'1.2-2'}}</span>
-        </div>
-        <div class="summary-row">
-          <strong>Subtotal:</strong>
-          <span>{{quoteSummary.subtotal | currency:quoteSummary.currency:'symbol':'1.2-2'}}</span>
-        </div>
-        <div class="summary-row">
-          <strong>VAT Amount:</strong>
-          <span>{{quoteSummary.vatAmount | currency:quoteSummary.currency:'symbol':'1.2-2'}}</span>
-        </div>
-        <div class="summary-row">
-          <strong>Delivery Cost:</strong>
-          <span>{{quoteSummary.deliveryCost | currency:quoteSummary.currency:'symbol':'1.2-2'}}</span>
-        </div>
-        <div class="summary-row total">
-          <strong>Total Quote Value:</strong>
-          <span>{{quoteSummary.totalQuoteValue | currency:quoteSummary.currency:'symbol':'1.2-2'}}</span>
-        </div>
-      </div>
-    
-      <div class="additional-info" *ngIf="quoteSummary.additionalComments">
-        <h3>Additional Comments</h3>
-        <p>{{quoteSummary.additionalComments}}</p>
-      </div>
+    <div class="additional-info" *ngIf="quoteSummary?.Additional_Comments">
+      <h3>Additional Comments</h3>
+      <p>{{quoteSummary?.Additional_Comments}}</p>
     </div>
   </div>
+</div>

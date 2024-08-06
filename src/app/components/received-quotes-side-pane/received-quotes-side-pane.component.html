@@ -7,8 +7,8 @@
   </div>
   <div class="side-pane-content">
     <div *ngIf="selectedOrder">
-      <h4>Order ID: {{ selectedOrder.Order_ID }}</h4>
-      <h5>Quote ID: {{ selectedOrder.Quote_ID }}</h5>
+      <!-- <h4>Order ID: {{ selectedOrder.Order_ID }}</h4>
+      <h5>Quote ID: {{ selectedOrder.Quote_ID }}</h5> -->
       <div class="supplier-quotes">
         <mat-card *ngFor="let quote of supplierQuotes" class="supplier-quote-card" (click)="viewQuoteDetails(quote)">
           <mat-card-header>

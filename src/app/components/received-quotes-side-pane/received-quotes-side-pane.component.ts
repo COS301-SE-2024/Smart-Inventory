@@ -101,11 +101,14 @@ export class ReceivedQuotesSidePaneComponent implements OnChanges {
     return tenentId;
   }
 
-  viewQuoteDetails(quote: SupplierQuote) {
+  viewQuoteDetails(quote: any) {
     this.dialog.open(SupplierQuoteDetailsComponent, {
       width: '90%',
       maxWidth: '1350px',
-      data: { quote: quote }
+      data: {
+        quoteID: quote.QuoteID,
+        supplierID: quote.SupplierID
+      }
     });
   }
 

@@ -21,7 +21,6 @@ interface QuoteItem {
   totalCost: number;
   discount: number;
   totalPrice: number;
-  inventoryID: string;
 }
 
 interface Currency {
@@ -228,7 +227,6 @@ export class SupplierFormComponent implements OnInit {
         availableQuantity: item.availableQuantity,
         totalPrice: item.totalPrice,
         discount: item.discount,
-        inventoryID: item.inventoryID,
         isAvailable: item.isAvailable,
 
       })),

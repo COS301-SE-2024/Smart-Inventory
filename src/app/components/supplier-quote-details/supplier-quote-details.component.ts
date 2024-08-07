@@ -1,12 +1,13 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { fetchAuthSession } from 'aws-amplify/auth';
 import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
 import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
 import outputs from '../../../../amplify_outputs.json';
+import { QuoteAcceptConfirmationDialogComponent } from './quote-accept-confirmation-dialog.component';
 
 interface QuoteItem {
   description: string;
@@ -33,7 +34,7 @@ interface QuoteSummary {
 @Component({
   selector: 'app-supplier-quote-details',
   standalone: true,
-  imports: [CommonModule, MatDialogModule, MatIconModule, MatButtonModule],
+  imports: [CommonModule, MatDialogModule, MatIconModule, MatButtonModule, QuoteAcceptConfirmationDialogComponent],
   templateUrl: './supplier-quote-details.component.html',
   styleUrl: './supplier-quote-details.component.css'
 })
@@ -46,7 +47,8 @@ export class SupplierQuoteDetailsComponent implements OnInit {
 
   constructor(
     public dialogRef: MatDialogRef<SupplierQuoteDetailsComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { quoteID: string; supplierID: string; }
+    @Inject(MAT_DIALOG_DATA) public data: { quoteID: string; supplierID: string; },
+    private dialog: MatDialog
   ) {}
 
   ngOnInit() {
@@ -115,5 +117,26 @@ export class SupplierQuoteDetailsComponent implements OnInit {
 
   close(): void {
     this.dialogRef.close();
+  }
+
+  openAcceptQuoteDialog(): void {
+    const dialogRef = this.dialog.open(QuoteAcceptConfirmationDialogComponent, {
+      width: '350px',
+      data: { supplierName: this.supplierInfo.company_name }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        // User confirmed, proceed with quote acceptance
+        this.acceptQuote();
+      }
+    });
+  }
+
+  acceptQuote(): void {
+    // Implement the logic to accept the quote
+    console.log('Quote accepted');
+    // You might want to call a service method here to update the backend
+    // After successful acceptance, you may want to close the dialog or update the UI
   }
 }

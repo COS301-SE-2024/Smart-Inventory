@@ -1,9 +1,14 @@
 <div class="supplier-quote-container">
   <div class="side-pane-header">
     <h2>Supplier Quote Details</h2>
-    <button mat-icon-button class="close-button" (click)="close()">
-      <mat-icon>close</mat-icon>
-    </button>
+    <div class="header-buttons">
+      <button mat-raised-button color="primary" class="accept-quote-button">
+        Accept Quote
+      </button>
+      <button mat-icon-button class="close-button" (click)="close()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
   </div>
 
   <div *ngIf="isLoading" class="loading">

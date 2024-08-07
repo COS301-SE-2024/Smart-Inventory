@@ -33,6 +33,15 @@ h3 {
   margin-bottom: 20px;
 }
 
+.header-buttons {
+  display: flex;
+  align-items: center;
+}
+
+.accept-quote-button {
+  margin-right: 10px;
+}
+
 .side-pane-header h2 {
   margin: 0;
   font-size: 24px;

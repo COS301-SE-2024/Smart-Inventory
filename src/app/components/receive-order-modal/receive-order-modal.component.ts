@@ -2,8 +2,6 @@ import { Component, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
-import { OrderReceivedConfirmationDialogComponent } from './OrderReceivedConfirmationDialogComponent';
-
 
 @Component({
   selector: 'app-receive-order-modal',
@@ -20,15 +18,6 @@ export class ReceiveOrderModalComponent {
   ) {}
 
   markAsReceived() {
-    const confirmDialog = this.dialog.open(OrderReceivedConfirmationDialogComponent, {
-      width: '350px',
-      data: { Order_ID: this.data.Order_ID }
-    });
-
-    confirmDialog.afterClosed().subscribe(result => {
-      if (result) {
-        this.dialogRef.close({ action: 'received', data: this.data });
-      }
-    });
+    this.dialogRef.close({ action: 'received', data: this.data });
   }
 }

@@ -610,34 +610,81 @@ export class OrdersComponent implements OnInit {
     this.isSidePaneOpen = true;
   }
   
-  openReceiveOrderModal(orderData: any) {
+  async openReceiveOrderModal(orderData: any) {
     const dialogRef = this.dialog.open(ReceiveOrderModalComponent, {
       width: '500px',
       data: orderData
     });
-  
-    dialogRef.afterClosed().subscribe(result => {
+
+    dialogRef.afterClosed().subscribe(async result => {
       if (result && result.action === 'received') {
-        this.markOrderAsReceived(result.data);
+        const confirmDialog = this.dialog.open(OrderReceivedConfirmationDialogComponent, {
+          width: '350px',
+          data: { Order_ID: result.data.Order_ID }
+        });
+
+        confirmDialog.afterClosed().subscribe(async confirmed => {
+          if (confirmed) {
+            await this.markOrderAsReceived(result.data);
+          }
+        });
       }
     });
   }
-  
-  markOrderAsReceived(orderData: any) {
-    // Implement the logic to mark the order as received
-    console.log('Marking order as received:', orderData);
-    // Update the order status in your data source
-    // For example:
-    // this.updateOrderStatus(orderData.Order_ID, 'Received');
-    // Refresh the grid data
-    this.loadOrdersData();
-  
-    // Show a success message
-    this.snackBar.open('Order marked as received successfully', 'Close', {
-      duration: 3000,
-      horizontalPosition: 'center',
-      verticalPosition: 'top',
-    });
+
+  async markOrderAsReceived(orderData: any) {
+    try {
+      const session = await fetchAuthSession();
+      const lambdaClient = new LambdaClient({
+        region: outputs.auth.aws_region,
+        credentials: session.credentials,
+      });
+
+      const payload = {
+        body: JSON.stringify({
+          orderID: orderData.Order_ID,
+          orderDate: orderData.Order_Date
+        })
+      };
+
+      const invokeCommand = new InvokeCommand({
+        FunctionName: 'receiveOrder', // Replace with your actual Lambda function name
+        Payload: new TextEncoder().encode(JSON.stringify(payload)),
+      });
+
+      const lambdaResponse = await lambdaClient.send(invokeCommand);
+      const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+
+      if (responseBody.statusCode === 200) {
+        const result = JSON.parse(responseBody.body);
+        console.log('Order marked as received:', result);
+        
+        // Update local data
+        const index = this.rowData.findIndex(order => order.Order_ID === orderData.Order_ID);
+        if (index !== -1) {
+          this.rowData[index] = result.updatedOrder;
+        }
+
+        // Refresh the grid
+        this.gridComponent.refreshGrid(this.rowData);
+
+        // Show success message
+        this.snackBar.open('Order marked as received successfully', 'Close', {
+          duration: 3000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+        });
+      } else {
+        throw new Error(responseBody.body || 'Unknown error occurred');
+      }
+    } catch (error) {
+      console.error('Error marking order as received:', error);
+      this.snackBar.open(`Error marking order as received: ${(error as Error).message}`, 'Close', {
+        duration: 5000,
+        horizontalPosition: 'center',
+        verticalPosition: 'top',
+      });
+    }
   }
 
 }

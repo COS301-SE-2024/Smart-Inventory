@@ -21,7 +21,7 @@ export class StackedbarchartComponent implements OnChanges, AfterViewInit {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['data'] && this.chart) {
+    if (changes['data']) {
       console.log('New data received:', this.data);
       this.updateChartOptions();
     }
@@ -38,7 +38,6 @@ export class StackedbarchartComponent implements OnChanges, AfterViewInit {
     if (!this.chart) return;
 
     const option: echarts.EChartsOption = {
-      title: { text: 'Overall status progression' },
       tooltip: {
         trigger: 'axis',
         axisPointer: {
@@ -55,11 +54,11 @@ export class StackedbarchartComponent implements OnChanges, AfterViewInit {
         containLabel: true
       },
       xAxis: {
-        type: 'value'
+        type: 'category',  // Changed from 'value' to 'category'
+        data: this.data.map(item => item.supplier)  // Now on the x-axis
       },
       yAxis: {
-        type: 'category',
-        data: this.data.map(item => item.supplier)
+        type: 'value'  // Changed from 'category' to 'value'
       },
       series: [
         {

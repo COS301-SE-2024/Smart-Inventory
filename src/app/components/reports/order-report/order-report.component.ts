@@ -66,6 +66,7 @@ export class OrderReportComponent implements OnInit {
         this.calculateMetrics();
         this.supplierQuote = await this.supplierQuotePrices();
         this.updateOrderStatuses(this.rowData, this.supplierQuote);
+        this.prepareChartData();
     }
 
     calculateMetrics() {
@@ -137,17 +138,18 @@ export class OrderReportComponent implements OnInit {
 
     async fetchOrders() {
         const orders = [
-            { orderID: 1, orderIssuedDate: '2023-01-01', expectedOrderDate: '2023-01-05', supplier: '20f7ce39-aa7f-438f-8948-c412791deba5', orderCost: 1000, orderReceivedDate: '2023-01-04', status: 'Completed', quoteStatus: 'Approved', address: '123 Elm St, Springfield' },
-            { orderID: 2, orderIssuedDate: '2023-01-02', expectedOrderDate: '2023-01-06', supplier: '3126556f-a27b-448f-979f-035e8646442c', orderCost: 1500, orderReceivedDate: '2023-01-05', status: 'In Progress', quoteStatus: 'Pending', address: '456 Oak St, Riverdale' },
-            { orderID: 3, orderIssuedDate: '2023-01-03', expectedOrderDate: '2023-01-07', supplier: '20f7ce39-aa7f-438f-8948-c412791deba5', orderCost: 1200, orderReceivedDate: '2023-01-08', status: 'Delayed', quoteStatus: 'Approved', address: '789 Pine St, Shelbyville' },
-            { orderID: 4, orderIssuedDate: '2023-01-04', expectedOrderDate: '2023-01-08', supplier: 'unknown_supplier_id', orderCost: 1100, orderReceivedDate: '2023-01-07', status: 'Completed', quoteStatus: 'Rejected', address: '101 Maple Ave, Springfield' },
-            { orderID: 5, orderIssuedDate: '2023-01-05', expectedOrderDate: '2023-01-09', supplier: '3126556f-a27b-448f-979f-035e8646442c', orderCost: 1600, orderReceivedDate: '2023-01-09', status: 'In Progress', quoteStatus: 'Approved', address: '202 Birch Rd, Riverdale' },
-            { orderID: 6, orderIssuedDate: '2023-01-06', expectedOrderDate: '2023-01-10', supplier: '20f7ce39-aa7f-438f-8948-c412791deba5', orderCost: 1300, orderReceivedDate: '2023-01-11', status: 'Completed', quoteStatus: 'Approved', address: '303 Cedar St, Shelbyville' },
-            // Additional orders
-            { orderID: 7, orderIssuedDate: '2023-01-07', expectedOrderDate: '2023-01-11', supplier: '20f7ce39-aa7f-438f-8948-c412791deba5', orderCost: 1400, orderReceivedDate: '2023-01-10', status: 'No Status', quoteStatus: 'No Status', address: '404 Birch Rd, Riverdale' },
-            { orderID: 8, orderIssuedDate: '2023-01-08', expectedOrderDate: '2023-01-12', supplier: '3126556f-a27b-448f-979f-035e8646442c', orderCost: 950, orderReceivedDate: '2023-01-11', status: 'No Status', quoteStatus: 'No Status', address: '505 Pine St, Shelbyville' },
-            { orderID: 9, orderIssuedDate: '2023-01-09', expectedOrderDate: '2023-01-13', supplier: '20f7ce39-aa7f-438f-8948-c412791deba5', orderCost: 1150, orderReceivedDate: '2023-01-12', status: 'No Status', quoteStatus: 'No Status', address: '606 Oak St, Riverdale' },
-            { orderID: 10, orderIssuedDate: '2023-01-10', expectedOrderDate: '2023-01-14', supplier: 'unknown_supplier_id_2', orderCost: 500, orderReceivedDate: '2023-01-13', status: 'No Status', quoteStatus: 'No Status', address: '707 Elm St, Springfield' }
+            { orderID: 1, orderIssuedDate: '2021-01-01', expectedOrderDate: '2021-01-05', supplier: '20f7ce39-aa7f-438f-8948-c412791deba5', orderCost: 1000, orderReceivedDate: '2021-01-04', status: 'Completed', quoteStatus: 'Approved', address: '123 Elm St, Springfield' },
+            { orderID: 2, orderIssuedDate: '2022-02-15', expectedOrderDate: '2022-02-20', supplier: '3126556f-a27b-448f-979f-035e8646442c', orderCost: 1500, orderReceivedDate: '2022-02-19', status: 'In Progress', quoteStatus: 'Approved', address: '456 Oak St, Riverdale' },
+            { orderID: 3, orderIssuedDate: '2021-03-10', expectedOrderDate: '2021-03-15', supplier: '20f7ce39-aa7f-438f-8948-c412791deba5', orderCost: 1200, orderReceivedDate: '2021-03-14', status: 'No Status', quoteStatus: 'No Status', address: '789 Pine St, Shelbyville' },
+            { orderID: 4, orderIssuedDate: '2022-04-22', expectedOrderDate: '2022-04-25', supplier: 'unknown_supplier_id', orderCost: 1100, orderReceivedDate: '2022-04-24', status: 'Completed', quoteStatus: 'Approved', address: '101 Maple Ave, Springfield' },
+            { orderID: 5, orderIssuedDate: '2023-05-05', expectedOrderDate: '2023-05-10', supplier: '3126556f-a27b-448f-979f-035e8646442c', orderCost: 1600, orderReceivedDate: '2023-05-09', status: 'In Progress', quoteStatus: 'Approved', address: '202 Birch Rd, Riverdale' },
+            { orderID: 6, orderIssuedDate: '2023-06-01', expectedOrderDate: '2023-06-05', supplier: '20f7ce39-aa7f-438f-8948-c412791deba5', orderCost: 1300, orderReceivedDate: '2023-06-04', status: 'No Status', quoteStatus: 'No Status', address: '303 Cedar St, Shelbyville' },
+            { orderID: 7, orderIssuedDate: '2021-07-07', expectedOrderDate: '2021-07-12', supplier: 'unknown_supplier_id_2', orderCost: 1400, orderReceivedDate: '2021-07-11', status: 'No Status', quoteStatus: 'No Status', address: '404 Birch Rd, Riverdale' },
+            { orderID: 8, orderIssuedDate: '2022-08-15', expectedOrderDate: '2022-08-20', supplier: '20f7ce39-aa7f-438f-8948-c412791deba5', orderCost: 950, orderReceivedDate: '2022-08-19', status: 'No Status', quoteStatus: 'No Status', address: '505 Pine St, Shelbyville' },
+            { orderID: 9, orderIssuedDate: '2023-09-10', expectedOrderDate: '2023-09-15', supplier: '3126556f-a27b-448f-979f-035e8646442c', orderCost: 1150, orderReceivedDate: '2023-09-14', status: 'Completed', quoteStatus: 'Approved', address: '606 Oak St, Riverdale' },
+            { orderID: 10, orderIssuedDate: '2021-10-20', expectedOrderDate: '2021-10-25', supplier: 'unknown_supplier_id', orderCost: 500, orderReceivedDate: '2021-10-24', status: 'No Status', quoteStatus: 'No Status', address: '707 Elm St, Springfield' },
+            { orderID: 11, orderIssuedDate: '2022-11-11', expectedOrderDate: '2022-11-15', supplier: 'unknown_supplier_id_2', orderCost: 1250, orderReceivedDate: '2022-11-14', status: 'Completed', quoteStatus: 'Approved', address: '808 Cedar St, Shelbyville' },
+            { orderID: 12, orderIssuedDate: '2023-12-05', expectedOrderDate: '2023-12-10', supplier: '20f7ce39-aa7f-438f-8948-c412791deba5', orderCost: 1800, orderReceivedDate: '2023-12-09', status: 'Delayed', quoteStatus: 'Approved', address: '909 Birch Rd, Riverdale' }
         ];
 
 

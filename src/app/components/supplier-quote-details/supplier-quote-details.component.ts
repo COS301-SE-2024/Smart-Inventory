@@ -48,7 +48,11 @@ export class SupplierQuoteDetailsComponent implements OnInit {
 
   constructor(
     public dialogRef: MatDialogRef<SupplierQuoteDetailsComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { quoteID: string; supplierID: string; },
+    @Inject(MAT_DIALOG_DATA) public data: { 
+    quoteID: string; 
+    supplierID: string; 
+    orderID: string; 
+    orderDate: string;},
     private dialog: MatDialog,
     private snackBar: MatSnackBar
   ) {}
@@ -134,16 +138,53 @@ export class SupplierQuoteDetailsComponent implements OnInit {
     });
   }
 
-  acceptQuote(): void {
-    // Implement the logic to accept the quote
-    console.log('Quote accepted');
-    // You might want to call a service method here to update the backend
-    
-    // After successful acceptance, show a snackbar and close the dialog
-    this.snackBar.open('Quote accepted successfully', 'Close', {
-      duration: 6000,
-      verticalPosition: 'top'
-    });
-    this.dialogRef.close(true);
+  async acceptQuote(): Promise<void> {
+    try {
+      const session = await fetchAuthSession();
+      const tenentId = await this.getTenentId(session);
+  
+      const lambdaClient = new LambdaClient({
+        region: outputs.auth.aws_region,
+        credentials: session.credentials,
+      });
+  
+      const payloadBody = {
+        orderID: this.data.orderID,
+        orderDate: this.data.orderDate,
+        selectedSupplier: this.supplierInfo.company_name,
+        supplierID: this.data.supplierID,
+        expectedDeliveryDate: this.quoteSummary?.Delivery_Date
+      };
+  
+      // Console log the payload
+      console.log('Payload being sent to acceptQuote Lambda:', payloadBody);
+  
+      const invokeCommand = new InvokeCommand({
+        FunctionName: 'acceptQuote',
+        Payload: new TextEncoder().encode(JSON.stringify({ body: payloadBody })),
+      });
+  
+      const lambdaResponse = await lambdaClient.send(invokeCommand);
+      const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+  
+      // Console log the Lambda response
+      console.log('Response from acceptQuote Lambda:', responseBody);
+  
+      if (responseBody.statusCode === 200) {
+        this.snackBar.open('Quote accepted successfully', 'Close', {
+          duration: 6000,
+          verticalPosition: 'top'
+        });
+        this.dialogRef.close(true); // Close the dialog and indicate success
+      } else {
+        throw new Error(responseBody.body || 'Failed to accept quote');
+      }
+    } catch (error) {
+      console.error('Error accepting quote:', error);
+      this.snackBar.open(`Error accepting quote: ${(error as Error).message}`, 'Close', {
+        duration: 6000,
+        verticalPosition: 'top'
+      });
+    }
   }
 }

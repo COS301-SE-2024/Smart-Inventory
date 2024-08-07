@@ -101,13 +101,23 @@ export class ReceivedQuotesSidePaneComponent implements OnChanges {
     return tenentId;
   }
 
+
   viewQuoteDetails(quote: any) {
-    this.dialog.open(SupplierQuoteDetailsComponent, {
+    const dialogRef = this.dialog.open(SupplierQuoteDetailsComponent, {
       width: '90%',
       maxWidth: '1350px',
       data: {
         quoteID: quote.QuoteID,
-        supplierID: quote.SupplierID
+        supplierID: quote.SupplierID,
+        orderID: this.selectedOrder.Order_ID,
+        orderDate: this.selectedOrder.Order_Date
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        // Quote was accepted, refresh the data
+        this.fetchSupplierQuotes();
       }
     });
   }

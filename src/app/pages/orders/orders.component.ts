@@ -31,6 +31,8 @@ interface DeliveryAddress {
   email: string;
   phone: string;
 }
+const defaultColor = '#FFF0DB'; // Orange/yellow color
+const completedColor = '#E8F5E9'; // Green color
 
 @Component({
   selector: 'app-orders',
@@ -54,8 +56,8 @@ export class OrdersComponent implements OnInit {
 
   // Column Definitions: Defines & controls grid columns.
   colDefs: ColDef[] = [
-    { field: 'Order_ID', filter: 'agSetColumnFilter' },
-    { field: 'Order_Date', filter: 'agDateColumnFilter' },
+    { field: 'Order_ID', headerName: 'Order ID' },
+    { field: 'Order_Date', headerName: 'Order Date', filter: 'agDateColumnFilter' },
     { 
       field: 'Creation_Time', 
       headerName: 'Creation Time',
@@ -68,13 +70,26 @@ export class OrdersComponent implements OnInit {
         return '';
       }
     },
-    { field: 'Order_Status', filter: 'agSetColumnFilter' },
-    { field: 'Quote_ID', filter: 'agSetColumnFilter' },
-    { field: 'Quote_Status', filter: 'agSetColumnFilter' },
-    { field: 'Selected_Supplier', filter: 'agSetColumnFilter' },
-    { field: 'Expected_Delivery_Date', filter: 'agDateColumnFilter' },
-    { field: 'Actual_Delivery_Date', filter: 'agDateColumnFilter' },
-
+    { 
+      field: 'Order_Status', 
+      headerName: 'Order Status', 
+      filter: 'agSetColumnFilter',
+      cellStyle: (params) => {
+        return { backgroundColor: params.value === 'Completed' ? completedColor : defaultColor };
+      }
+    },
+    { field: 'Quote_ID', headerName: 'Quote ID' },
+    { 
+      field: 'Quote_Status', 
+      headerName: 'Quote Status', 
+      filter: 'agSetColumnFilter',
+      cellStyle: (params) => {
+        return { backgroundColor: params.value === 'Accepted' ? completedColor : defaultColor };
+      }
+    },
+    { field: 'Selected_Supplier', headerName: 'Selected Supplier', filter: 'agSetColumnFilter' },
+    { field: 'Expected_Delivery_Date', headerName: 'Expected Delivery Date', filter: 'agDateColumnFilter' },
+    { field: 'Actual_Delivery_Date', headerName: 'Actual Delivery Date', filter: 'agDateColumnFilter' },
   ];
 
   deliveryAddress: DeliveryAddress = {

@@ -41,10 +41,10 @@ export class RadarComponent implements OnInit, AfterViewInit {
     if (!this.chart) return;
     console.log('radar data recieved:', this.data)
     const indicators = [
-      { name: 'On Time Delivery', max: 1000 },
-      { name: 'Order Accuracy', max: 100 },
+      { name: 'On Time Delivery(%)', max: 100 },
+      { name: 'Order Accuracy(%)', max: 100 },
       { name: 'Outstanding Payments', max: 10000 },
-      { name: 'Total Spent', max: 500000 }
+      { name: 'Total Spent', max: 1000000 }
     ];
 
     const seriesData = this.data.map(supplier => ({

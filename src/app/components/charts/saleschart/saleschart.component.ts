@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, AfterViewInit, SimpleChanges, Input, OnChanges } from '@angular/core';
 import { AgChartsAngular } from 'ag-charts-angular';
 import { AgChartOptions, AgCharts, AgChartTheme } from 'ag-charts-community';
 import { FilterService } from '../../../services/filter.service';
@@ -22,11 +22,19 @@ interface YearlyData {
     templateUrl: './saleschart.component.html',
     styleUrl: './saleschart.component.css',
 })
-export class SaleschartComponent implements OnInit, OnDestroy, AfterViewInit {
+export class SaleschartComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges {
     public chartOptions: AgChartOptions;
     private chart: any;
     private filterSubscription!: Subscription;
     private themeObserver!: MutationObserver;
+
+    @Input() chartTitle?: string;
+
+    ngOnChanges(changes: SimpleChanges) {
+        if (changes['chartTitle']) {
+            // Code to update the chart's title, perhaps by redrawing the chart
+        }
+    }
 
     private lightTheme: AgChartTheme = {
         palette: {

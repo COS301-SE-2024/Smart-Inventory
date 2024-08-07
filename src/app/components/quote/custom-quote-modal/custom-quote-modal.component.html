@@ -59,7 +59,7 @@
       <h3>Suppliers</h3>
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>Select Suppliers</mat-label>
-        <mat-select [(ngModel)]="selectedSuppliers" multiple (ngModelChange)="onQuoteChanged()">
+        <mat-select [(ngModel)]="selectedSuppliers" multiple (ngModelChange)="onQuoteChanged()" data-cy="supplierSelect">
           <mat-option>
             <ngx-mat-select-search [formControl]="supplierControl" placeholderLabel="Search suppliers..."
               noEntriesFoundLabel="No matching suppliers found"></ngx-mat-select-search>

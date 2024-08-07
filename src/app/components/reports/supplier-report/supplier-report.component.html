@@ -1,4 +1,4 @@
-<div style="height: 100%; display: block; overflow: scroll; overflow-x: hidden;">
+<div style="height: 100%; display: block; overflow: scroll; overflow-x: hidden">
     <mat-toolbar style="width: 100%">
         <button mat-button style="width: 100%; background-color: #f1f1f1; color: black" (click)="back()">
             Back to reports
@@ -30,11 +30,15 @@
     </div>
     <!-- </div> -->
     <mat-grid-list cols="8" rowHeight="29vh" gutterSize="20px">
-
         <div class="carousel-wrapper">
             <div #carousel class="tile-wrapper">
-                <mat-grid-tile *ngFor="let tile of visibleTiles" class="tile" gutterSize="10px" [colspan]="1"
-                    [rowspan]="1">
+                <mat-grid-tile
+                    *ngFor="let tile of visibleTiles"
+                    class="tile"
+                    gutterSize="10px"
+                    [colspan]="1"
+                    [rowspan]="1"
+                >
                     <div class="icon-container">
                         <mat-icon [attr.aria-label]="tile.iconLabel" class="metric-icon">{{ tile.icon }}</mat-icon>
                     </div>
@@ -58,12 +62,15 @@
         <mat-grid-tile [colspan]="2" [rowspan]="2">
             <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
                 <mat-card style="height: 100%; width: 100%">
-                    <mat-card-title style="margin-left: 15px; margin-top: 15px; font-size: 25px;"> {{
-                        SupplierReport.title }} </mat-card-title>
+                    <mat-card-title style="margin-left: 15px; margin-top: 15px; font-size: 25px">
+                        {{ SupplierReport.title }}
+                    </mat-card-title>
                     <mat-card-content style="align-items: center">
                         <ul style="list-style: none; padding: 0; margin: 0">
-                            <li *ngFor="let metric of SupplierReport.metrics"
-                                style="font-size: 15px; padding: 8px 0; border-bottom: 1px solid lightgrey">
+                            <li
+                                *ngFor="let metric of SupplierReport.metrics"
+                                style="font-size: 15px; padding: 8px 0; border-bottom: 1px solid lightgrey"
+                            >
                                 {{ metric.name }}: {{ metric.value }}
                             </li>
                         </ul>
@@ -106,5 +113,6 @@
         <!-- </div>  -->
 
         <div *ngIf="isLoading" class="loading-overlay">
-            <app-loading-spinner></app-loading-spinner>
-        </div>
+            <app-loading-spinner></app-loading-spinner></div
+    ></mat-grid-list>
+</div>

@@ -1,0 +1,12 @@
+<mat-drawer-container class="example-container" autosize>
+    <mat-drawer #drawer mode="side" opened="false">
+        <!-- side-panel.component.html -->
+        <div *ngFor="let chart of charts">
+            <button mat-button (click)="openChart(chart)">{{ chart.name }}</button>
+        </div>
+
+    </mat-drawer>
+    <div class="example-sidenav-content">
+        <button mat-raised-button (click)="drawer.toggle()">Add a Widget</button>
+    </div>
+</mat-drawer-container>

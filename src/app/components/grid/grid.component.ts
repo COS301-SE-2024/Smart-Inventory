@@ -1,12 +1,10 @@
 import { Component, Input, OnInit, OnDestroy, Output, EventEmitter, output } from '@angular/core';
 import { Renderer2, ElementRef, AfterViewInit, ViewEncapsulation } from '@angular/core';
 import { AgGridAngular } from 'ag-grid-angular';
+import { AgGridModule } from 'ag-grid-angular';
 import { ColDef, GridReadyEvent, CellValueChangedEvent, RowValueChangedEvent, GridApi } from 'ag-grid-community';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-quartz.css';
-import 'ag-grid-community/styles/ag-theme-material.css';
 import { MatButtonModule } from '@angular/material/button';
-import { MatIcon } from '@angular/material/icon';
+import { MatIconModule } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -15,6 +13,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatSelectModule } from '@angular/material/select';
+import { MatDialogModule } from '@angular/material/dialog';
 import { RoleSelectCellEditorComponent } from '../../pages/team/role-select-cell-editor.component';
 import { DateSelectCellEditorComponent } from '../reports/supplier-report/date-select-cell-editor.component';
 import { CustomQuoteModalComponent } from '../quote/custom-quote-modal/custom-quote-modal.component';
@@ -22,8 +21,7 @@ import { CustomQuoteModalComponent } from '../quote/custom-quote-modal/custom-qu
     selector: 'app-grid',
     standalone: true,
     imports: [
-        AgGridAngular,
-        MatButtonModule,
+        AgGridModule,
         MatFormFieldModule,
         MatInputModule,
         FormsModule,
@@ -31,13 +29,14 @@ import { CustomQuoteModalComponent } from '../quote/custom-quote-modal/custom-qu
         MatMenuModule,
         CommonModule,
         MatSelectModule,
-        MatIcon,
+        MatIconModule,
+        MatDialogModule,
         RoleSelectCellEditorComponent,
         DateSelectCellEditorComponent,
     ],
     templateUrl: './grid.component.html',
     styleUrl: './grid.component.css',
-    encapsulation: ViewEncapsulation.Emulated
+    encapsulation: ViewEncapsulation.Emulated,
 })
 export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
     @Input() rowData: any[] = [];
@@ -79,7 +78,12 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
     public rowSelection: 'single' | 'multiple' = 'multiple';
     public editType: 'fullRow' = 'fullRow';
 
-    constructor(public dialog: MatDialog, private route: ActivatedRoute, private renderer: Renderer2, private el: ElementRef) {
+    constructor(
+        public dialog: MatDialog,
+        private route: ActivatedRoute,
+        private renderer: Renderer2,
+        private el: ElementRef,
+    ) {
         this.setupThemeObserver();
         this.setGridHeight();
     }
@@ -95,8 +99,16 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
         this.themeObserver.observe(document.body, { attributes: true });
     }
 
+    refreshGrid(newData: any[]) {
+        this.rowData = newData;
+        if (this.gridApi) {
+          this.gridApi.setRowData(this.rowData);
+        }
+      }
+
     private applyCurrentTheme() {
-        const theme = document.body.getAttribute('data-theme') === 'dark' ? 'ag-theme-material-dark' : 'ag-theme-quartz';
+        const theme =
+            document.body.getAttribute('data-theme') === 'dark' ? 'ag-theme-material-dark' : 'ag-theme-quartz';
         this.themeClass = theme;
         if (this.gridApi) {
             this.gridApi.redrawRows(); // Redraw rows to apply the new CSS class for the theme change
@@ -263,11 +275,11 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
     openCustomQuoteModal() {
         const dialogRef = this.dialog.open(CustomQuoteModalComponent, {
             width: '500px',
-            data: { isNewQuote: true }
+            data: { isNewQuote: true },
         });
 
-        dialogRef.afterClosed().subscribe(result => {
-            if (result) {
+        dialogRef.afterClosed().subscribe((result) => {
+           if (result) {
                 if (result.action === 'createOrder') {
                     console.log('Creating order:', result.data);
                     this.newCustomQuote.emit({ type: 'order', data: result.data });

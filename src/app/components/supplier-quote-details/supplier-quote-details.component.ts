@@ -8,6 +8,7 @@ import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
 import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
 import outputs from '../../../../amplify_outputs.json';
 import { QuoteAcceptConfirmationDialogComponent } from './quote-accept-confirmation-dialog.component';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 interface QuoteItem {
   description: string;
@@ -34,7 +35,7 @@ interface QuoteSummary {
 @Component({
   selector: 'app-supplier-quote-details',
   standalone: true,
-  imports: [CommonModule, MatDialogModule, MatIconModule, MatButtonModule, QuoteAcceptConfirmationDialogComponent],
+  imports: [CommonModule, MatDialogModule, MatIconModule, MatButtonModule, QuoteAcceptConfirmationDialogComponent, MatSnackBarModule],
   templateUrl: './supplier-quote-details.component.html',
   styleUrl: './supplier-quote-details.component.css'
 })
@@ -48,7 +49,8 @@ export class SupplierQuoteDetailsComponent implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<SupplierQuoteDetailsComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { quoteID: string; supplierID: string; },
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit() {
@@ -127,7 +129,6 @@ export class SupplierQuoteDetailsComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        // User confirmed, proceed with quote acceptance
         this.acceptQuote();
       }
     });
@@ -137,6 +138,12 @@ export class SupplierQuoteDetailsComponent implements OnInit {
     // Implement the logic to accept the quote
     console.log('Quote accepted');
     // You might want to call a service method here to update the backend
-    // After successful acceptance, you may want to close the dialog or update the UI
+    
+    // After successful acceptance, show a snackbar and close the dialog
+    this.snackBar.open('Quote accepted successfully', 'Close', {
+      duration: 6000,
+      verticalPosition: 'top'
+    });
+    this.dialogRef.close(true);
   }
 }

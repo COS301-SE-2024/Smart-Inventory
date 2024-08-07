@@ -32,8 +32,8 @@
             <button mat-menu-item *ngIf="getCurrentRoute('orders')" color="primary" (click)="onViewReceivedQuotes()">
                 View Received Quotes
               </button>
-            <button mat-menu-item *ngIf="getCurrentRoute('orders')" color="primary">
-                Mark Order As Received
+            <button mat-menu-item *ngIf="getCurrentRoute('orders')" color="primary" (click)="onMarkOrderAsReceived()">
+            Mark Order As Received
             </button>
             <button mat-menu-item *ngIf="getCurrentRoute('orders')" color="primary" (click)="onViewEmailTemplate()">
                 View Email Template

@@ -18,6 +18,8 @@ import { EmailTemplateModalComponent } from '../../components/email-template-mod
 import { DeliveryInformationModalComponent } from '../../components/delivery-information-modal/delivery-information-modal.component';
 import { ReceivedQuotesSidePaneComponent } from 'app/components/received-quotes-side-pane/received-quotes-side-pane.component';
 import { MatCardModule } from '@angular/material/card';
+import { ReceiveOrderModalComponent } from 'app/components/receive-order-modal/receive-order-modal.component';
+import { OrderReceivedConfirmationDialogComponent } from 'app/components/receive-order-modal/OrderReceivedConfirmationDialogComponent';
 
 interface DeliveryAddress {
   company: string;
@@ -606,6 +608,36 @@ export class OrdersComponent implements OnInit {
 
   viewReceivedQuotes() {
     this.isSidePaneOpen = true;
+  }
+  
+  openReceiveOrderModal(orderData: any) {
+    const dialogRef = this.dialog.open(ReceiveOrderModalComponent, {
+      width: '500px',
+      data: orderData
+    });
+  
+    dialogRef.afterClosed().subscribe(result => {
+      if (result && result.action === 'received') {
+        this.markOrderAsReceived(result.data);
+      }
+    });
+  }
+  
+  markOrderAsReceived(orderData: any) {
+    // Implement the logic to mark the order as received
+    console.log('Marking order as received:', orderData);
+    // Update the order status in your data source
+    // For example:
+    // this.updateOrderStatus(orderData.Order_ID, 'Received');
+    // Refresh the grid data
+    this.loadOrdersData();
+  
+    // Show a success message
+    this.snackBar.open('Order marked as received successfully', 'Close', {
+      duration: 3000,
+      horizontalPosition: 'center',
+      verticalPosition: 'top',
+    });
   }
 
 }

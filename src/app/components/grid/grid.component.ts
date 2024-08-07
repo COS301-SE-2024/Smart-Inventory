@@ -57,6 +57,7 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
     @Output() viewEmailTemplateClicked = new EventEmitter<void>();
     @Output() viewDeliveryInfoClicked = new EventEmitter<void>();
     @Output() viewReceivedQuotesClicked = new EventEmitter<void>();
+    @Output() markOrderAsReceivedClicked = new EventEmitter<any>();
     private themeObserver!: MutationObserver;
 
     public themeClass: string = 'ag-theme-material'; // Default to light theme
@@ -280,5 +281,14 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
 
     onViewReceivedQuotes() {
         this.viewReceivedQuotesClicked.emit();
-      }
+    }
+
+    onMarkOrderAsReceived() {
+    const selectedRows = this.gridApi.getSelectedRows();
+    if (selectedRows && selectedRows.length > 0) {
+        this.markOrderAsReceivedClicked.emit(selectedRows[0]);
+    } else {
+        console.log('No row selected for marking as received');
+    }
+    }  
 }

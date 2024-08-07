@@ -96,7 +96,7 @@ export class DeliveryInformationModalComponent implements OnInit {
       });
 
       const invokeCommand = new InvokeCommand({
-        FunctionName: 'getDeliveryInfo',
+        FunctionName: 'getDeliveryDetails',
         Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: tenentId } })),
       });
 

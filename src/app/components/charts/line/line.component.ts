@@ -47,7 +47,10 @@ export class LineComponent implements OnInit, OnChanges, AfterViewInit {
     const options: EChartsOption = {
       title: { text: this.title },
       tooltip: { trigger: 'axis' },
-      legend: { data: this.seriesData.map(series => series.name) },
+      legend: {
+        data: this.seriesData.map(series => series.name),
+        bottom: 0 // Set the legend at the bottom of the chart
+      },
       xAxis: {
         type: 'category',
         data: this.xAxisData
@@ -58,8 +61,9 @@ export class LineComponent implements OnInit, OnChanges, AfterViewInit {
       },
       series: this.seriesData.map(series => ({
         name: series.name,
-        type: 'line',
-        data: series.data
+        type: 'bar',
+        data: series.data,
+        smooth: true
       }))
     };
 

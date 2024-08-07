@@ -52,6 +52,7 @@ export class LineBarComponent implements OnInit, OnDestroy, AfterViewInit, OnCha
       const dataSource = this.data.source;
 
       const option: EChartsOption = {
+        title: { text: 'Total amount spent over periods' },
         tooltip: {
           trigger: 'axis',
           showContent: false

@@ -10,6 +10,7 @@ import { ColDef } from 'ag-grid-community';
 import { SaleschartComponent } from '../../charts/saleschart/saleschart.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { StackedbarchartComponent } from '../../charts/stackedbarchart/stackedbarchart.component';
+import { ScatterplotComponent } from '../../charts/scatterplot/scatterplot.component';
 @Component({
     selector: 'app-order-report',
     standalone: true,
@@ -20,7 +21,7 @@ import { StackedbarchartComponent } from '../../charts/stackedbarchart/stackedba
         MaterialModule,
         CommonModule,
         MatProgressSpinnerModule,
-        // SaleschartComponent,
+        ScatterplotComponent,
         StackedbarchartComponent
     ],
     templateUrl: './order-report.component.html',
@@ -28,6 +29,7 @@ import { StackedbarchartComponent } from '../../charts/stackedbarchart/stackedba
 })
 export class OrderReportComponent implements OnInit {
     stackedBarChartData: any[] = [];
+    scatterPlotChartData: any[] = [];
     constructor(
         private titleService: TitleService,
         private router: Router,
@@ -67,6 +69,8 @@ export class OrderReportComponent implements OnInit {
         this.supplierQuote = await this.supplierQuotePrices();
         this.updateOrderStatuses(this.rowData, this.supplierQuote);
         this.prepareChartData();
+        this.scatterPlotChartData = this.prepareScatterPlotData();
+        console.log('scatter plot in parent', this.scatterPlotChartData)
     }
 
     calculateMetrics() {
@@ -192,6 +196,17 @@ export class OrderReportComponent implements OnInit {
         }));
 
         console.log('Prepared Chart Data:', this.stackedBarChartData);
+    }
+
+    prepareScatterPlotData() {
+        const supplierQuoteData = this.supplierQuote.map(item => ({
+            unitPrice: item.UnitPrice,
+            discount: item.Discount,
+            availableQuantity: item.AvailableQuantity,
+            itemSKU: item.ItemSKU
+        }));
+
+        return supplierQuoteData;
     }
 
     back() {

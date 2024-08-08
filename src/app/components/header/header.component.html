@@ -44,6 +44,7 @@
 
 <div class="notification-panel" [class.open]="isNotificationPanelOpen" [style.width.px]="panelWidth">
     <div class="resize-handle" (mousedown)="startResize($event)"></div>
+    
     <div class="notification-header">
         <h3>Notifications</h3>
         <div>
@@ -56,7 +57,7 @@
         </div>
     </div>
 
-    <div class="notification-filters">
+    <!-- <div class="notification-filters">
         <button mat-icon-button class="chevron-left" (click)="scrollFilters('left')" [disabled]="isScrolledToStart">
             <mat-icon>chevron_left</mat-icon>
         </button>
@@ -79,13 +80,11 @@
         <div class="unread-count">
             {{ unreadCount }} unread
         </div>
-    </div>
+    </div> -->
 
     <div class="notification-tabs">
         <mat-tab-group mat-align-tabs="start" (selectedIndexChange)="onTabChange($event)">
             <mat-tab>
-                <!-- <div class="tab-scroll-hint" matTooltip="Scroll for more filters">
-                </div> -->
                 <ng-template mat-tab-label>All</ng-template>
             </mat-tab>
             <mat-tab>
@@ -109,7 +108,7 @@
         </mat-tab-group>
     </div>
 
-    <div class="notification-content">
+    <!-- <div class="notification-content">
         <mat-list>
             <mat-list-item *ngFor="let notification of filteredNotifications" 
                            [ngClass]="{'unread': !notification.read, 'archived': notification.archived}"
@@ -118,6 +117,92 @@
                 <h3 matListItemTitle>{{ notification.title }}</h3>
                 <p matListItemLine>{{ notification.date | date:'short' }}</p>
                 <p matListItemLine>{{ notification.info }}</p>
+                <button mat-icon-button 
+                        (click)="toggleReadStatus($event, notification)" 
+                        [matTooltip]="notification.read ? 'Mark as unread' : 'Mark as read'">
+                    <mat-icon>{{ notification.read ? 'markunread' : 'done' }}</mat-icon>
+                </button>
+                <button mat-icon-button 
+                        (click)="toggleArchive($event, notification)" 
+                        [matTooltip]="notification.archived ? 'Unarchive' : 'Archive'">
+                    <mat-icon>{{ notification.archived ? 'unarchive' : 'archive' }}</mat-icon>
+                </button>
+            </mat-list-item>
+        </mat-list>
+    </div> -->
+
+    <!-- <mat-tab-group (selectedTabChange)="onTabChange($event)">
+        <mat-tab *ngFor="let filter of filters" [label]="filter"></mat-tab>
+    </mat-tab-group> -->
+    
+    <!-- <div class="notification-actions">
+        <button mat-button [matMenuTriggerFor]="filterMenu">
+            <mat-icon>tune</mat-icon>
+            Filters
+        </button>
+        <mat-menu #filterMenu="matMenu">
+            <mat-checkbox [(ngModel)]="showRead" (change)="updateFilteredNotifications()">Read</mat-checkbox>
+            <mat-checkbox [(ngModel)]="showUnread" (change)="updateFilteredNotifications()">Unread</mat-checkbox>
+            <mat-checkbox [(ngModel)]="showArchived" (change)="updateFilteredNotifications()">Show Archived</mat-checkbox>
+        </mat-menu>
+        
+        <button mat-icon-button
+                class="mark-all-read"
+                color="primary" 
+                (click)="markAllAsRead()" 
+                [disabled]="unreadCount === 0"
+                matTooltip="Mark all as read">
+            <mat-icon>done_all</mat-icon>
+        </button>
+        
+        <span class="unread-count">{{ unreadCount }} unread</span>
+    </div> -->
+
+    <div class="notification-actions">
+        <button mat-button [matMenuTriggerFor]="filterMenu" #filterMenuTrigger="matMenuTrigger">
+            <mat-icon>tune</mat-icon>
+            Filters
+        </button>
+        <mat-menu #filterMenu="matMenu" [hasBackdrop]="false" class="filter-menu">
+            <ng-template matMenuContent>
+                <div (click)="$event.stopPropagation()">
+                    <div class="filter-menu-header">
+                        <span>Filters</span>
+                        <button mat-icon-button (click)="closeFilterMenu()">
+                            <mat-icon>close</mat-icon>
+                        </button>
+                    </div>
+                    <mat-checkbox [(ngModel)]="showRead" (change)="updateFilteredNotifications()">Read</mat-checkbox>
+                    <mat-checkbox [(ngModel)]="showUnread" (change)="updateFilteredNotifications()">Unread</mat-checkbox>
+                    <mat-checkbox [(ngModel)]="showArchived" (change)="updateFilteredNotifications()">Show Archived</mat-checkbox>
+                </div>
+            </ng-template>
+        </mat-menu>
+        
+        <button mat-icon-button
+                class="mark-all-read"
+                color="primary" 
+                (click)="markAllAsRead()" 
+                [disabled]="unreadCount === 0"
+                matTooltip="Mark all as read">
+            <mat-icon>done_all</mat-icon>
+        </button>
+        
+        <span class="unread-count">{{ unreadCount }} unread</span>
+    </div>
+    
+    <div class="notification-content">
+        <mat-list>
+            <mat-list-item *ngFor="let notification of filteredNotifications" 
+                           [ngClass]="{'unread': !notification.read, 'archived': notification.archived}"
+                           (click)="openNotification(notification)">
+                <!-- <mat-icon matListIcon>{{ getNotificationIcon(notification.type) }}</mat-icon> -->
+                <div matListItemTitle>
+                    <mat-icon>{{ getNotificationIcon(notification.type) }}</mat-icon>
+                    {{ notification.title }}
+                </div>
+                <div matListItemLine>{{ notification.date | date:'short' }}</div>
+                <div matListItemLine>{{ notification.info }}</div>
                 <button mat-icon-button 
                         (click)="toggleReadStatus($event, notification)" 
                         [matTooltip]="notification.read ? 'Mark as unread' : 'Mark as read'">

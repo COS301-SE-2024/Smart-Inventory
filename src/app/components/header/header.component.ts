@@ -15,6 +15,10 @@ import { FormsModule } from '@angular/forms';
 import { MatDialog, MatDialogModule, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatTabChangeEvent } from '@angular/material/tabs';
+import { MatMenuTrigger } from '@angular/material/menu';
+// import { MatMenuTrigger } from '@angular/material/menu';
+import { MatMenuModule } from '@angular/material/menu';
 
 interface Notification {
     id: number;
@@ -58,27 +62,33 @@ export class NotificationDialogComponent {
     imports: [
         CommonModule,
         MaterialModule,
+        FormsModule,
         DatePipe,
         MatTabsModule,
         MatListModule,
-        MatIconModule, 
+        MatIconModule,
         MatCheckbox,
         FormsModule,
         MatDialogModule,
         MatButtonModule,
         NotificationDialogComponent,
-        MatTooltipModule
+        MatTooltipModule,
+        MatMenuModule,
+        MatMenuTrigger
     ],
     templateUrl: './header.component.html',
     styleUrl: './header.component.css',
 })
 export class HeaderComponent implements OnInit {
-    @ViewChild('filterControls') filterControls!: ElementRef;
+
+    @ViewChild('MatMenuTrigger') trigger!: MatMenuTrigger;
+    @ViewChild('filterMenuTrigger') filterMenuTrigger!: MatMenuTrigger;
+
     isScrolledToStart: boolean = true;
     isScrolledToEnd: boolean = false;
 
     // resizing notification panel
-    panelWidth: number = 400; 
+    panelWidth: number = 400;
     isResizing: boolean = false;
 
     pageTitle: string = '';
@@ -94,18 +104,19 @@ export class HeaderComponent implements OnInit {
         { id: 6, type: 'Teams', title: 'New team member', date: new Date(), info: 'Welcome John Doe to the team', read: true, archived: false },
     ];
     
-    // archived notifications
-    showArchived: boolean = false;
+    
     
     filteredNotifications: Notification[] = [];
     activeFilter: string = 'All';
 
+    // filter notifications
     isNotificationPanelOpen: boolean = false;
     filters: string[] = ['All', 'Inventory', 'Reports', 'Settings', 'Orders', 'Suppliers', 'Teams'];
-    
     showRead: boolean = true;
     showUnread: boolean = true;
     unreadCount: number = 0;
+    // archived notifications
+    showArchived: boolean = false;
     
     constructor(
         private titleService: TitleService,
@@ -115,26 +126,26 @@ export class HeaderComponent implements OnInit {
         private dialog: MatDialog
     ) { }
 
-    ngAfterViewInit() {
-        this.checkScrollPosition();
-    }
+    // ngAfterViewInit() {
+    //     this.checkScrollPosition();
+    // }
     
-    checkScrollPosition() {
-        const element = this.filterControls.nativeElement;
-        this.isScrolledToStart = element.scrollLeft <= 0;
-        this.isScrolledToEnd = element.scrollLeft + element.clientWidth >= element.scrollWidth;
-    }
+    // checkScrollPosition() {
+    //     const element = this.filterControls.nativeElement;
+    //     this.isScrolledToStart = element.scrollLeft <= 0;
+    //     this.isScrolledToEnd = element.scrollLeft + element.clientWidth >= element.scrollWidth;
+    // }
 
-    scrollFilters(direction: 'left' | 'right') {
-        const element = this.filterControls.nativeElement;
-        const scrollAmount = element.clientWidth / 2;
-        if (direction === 'left') {
-            element.scrollLeft -= scrollAmount;
-        } else {
-            element.scrollLeft += scrollAmount;
-        }
-        setTimeout(() => this.checkScrollPosition(), 100);
-    }
+    // scrollFilters(direction: 'left' | 'right') {
+    //     const element = this.filterControls.nativeElement;
+    //     const scrollAmount = element.clientWidth / 2;
+    //     if (direction === 'left') {
+    //         element.scrollLeft -= scrollAmount;
+    //     } else {
+    //         element.scrollLeft += scrollAmount;
+    //     }
+    //     setTimeout(() => this.checkScrollPosition(), 100);
+    // }
 
     
     @HostListener('window:resize', ['$event']) onResize(event: Event) {
@@ -202,9 +213,21 @@ export class HeaderComponent implements OnInit {
         this.isNotificationPanelOpen = false;
     }
 
+    closeFilterMenu() {
+        this.filterMenuTrigger.closeMenu();
+    }
+
+    // onTabChange(index: number) {
+    //     const filters = ['All', 'Inventory', 'Reports', 'Settings', 'Orders', 'Suppliers', 'Teams'];
+    //     this.filterNotifications(filters[index]);
+    // }
+
+    // onTabChange(event: MatTabChangeEvent) {
+    //     this.filterNotifications(this.filters[event.index]);
+    // }
+
     onTabChange(index: number) {
-        const filters = ['All', 'Inventory', 'Reports', 'Settings', 'Orders', 'Suppliers', 'Teams'];
-        this.filterNotifications(filters[index]);
+        this.filterNotifications(this.filters[index]);
     }
 
     selectFilter(filter: string) {
@@ -259,23 +282,31 @@ export class HeaderComponent implements OnInit {
     // update filtered notifications
     updateFilteredNotifications() {
         this.filteredNotifications = this.notifications.filter(n => {
-            if (!this.showArchived && n.archived) {
+            // Always show archived notifications if showArchived is true
+            if (this.showArchived && n.archived) {
+                return true;
+            }
+            
+            // For non-archived notifications, apply read/unread filters
+            if (!n.archived) {
+                if (this.showRead && this.showUnread) {
+                    return true;
+                } else if (this.showRead) {
+                    return n.read;
+                } else if (this.showUnread) {
+                    return !n.read;
+                }
                 return false;
             }
-            if (this.showRead && this.showUnread) {
-                return true;
-            } else if (this.showRead) {
-                return n.read;
-            } else if (this.showUnread) {
-                return !n.read;
-            }
+            
+            // If showArchived is false, don't show archived notifications
             return false;
         });
-
+    
         if (this.activeFilter !== 'All') {
             this.filteredNotifications = this.filteredNotifications.filter(n => n.type === this.activeFilter);
         }
-
+    
         this.filteredNotifications.sort((a, b) => {
             if (a.archived === b.archived) {
                 if (a.read === b.read) return 0;
@@ -283,7 +314,7 @@ export class HeaderComponent implements OnInit {
             }
             return a.archived ? 1 : -1;
         });
-
+    
         this.unreadCount = this.notifications.filter(n => !n.read && !n.archived).length;
     }
 
@@ -321,6 +352,5 @@ export class HeaderComponent implements OnInit {
         }
         this.updateFilteredNotifications();
     }
+
 }
-
-

@@ -64,13 +64,15 @@
             <ngx-mat-select-search [formControl]="supplierControl" placeholderLabel="Search suppliers..."
               noEntriesFoundLabel="No matching suppliers found"></ngx-mat-select-search>
           </mat-option>
-          <mat-option *ngFor="let supplier of filteredSuppliers | async" [value]="supplier">{{supplier}}</mat-option>
+          <mat-option *ngFor="let supplier of filteredSuppliers | async" [value]="supplier">
+            {{supplier.company_name}}
+          </mat-option>
         </mat-select>
       </mat-form-field>
       <div class="selected-suppliers">
         <mat-chip-listbox>
           <mat-chip *ngFor="let supplier of selectedSuppliers" (removed)="removeSupplier(supplier)">
-            {{supplier}}
+            {{supplier.company_name}}
             <button matChipRemove>
               <mat-icon>cancel</mat-icon>
             </button>

@@ -16,6 +16,10 @@ import { LoadingSpinnerComponent } from '../../components/loader/loading-spinner
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { EmailTemplateModalComponent } from '../../components/email-template-modal/email-template-modal.component';
 import { DeliveryInformationModalComponent } from '../../components/delivery-information-modal/delivery-information-modal.component';
+import { ReceivedQuotesSidePaneComponent } from 'app/components/received-quotes-side-pane/received-quotes-side-pane.component';
+import { MatCardModule } from '@angular/material/card';
+import { ReceiveOrderModalComponent } from 'app/components/receive-order-modal/receive-order-modal.component';
+import { OrderReceivedConfirmationDialogComponent } from 'app/components/receive-order-modal/OrderReceivedConfirmationDialogComponent';
 
 interface DeliveryAddress {
   company: string;
@@ -29,11 +33,13 @@ interface DeliveryAddress {
   email: string;
   phone: string;
 }
+const defaultColor = '#FFF0DB'; // Orange/yellow color
+const completedColor = '#E8F5E9'; // Green color
 
 @Component({
   selector: 'app-orders',
   standalone: true,
-  imports: [GridComponent, MatButtonModule, MatDialogModule, CommonModule, LoadingSpinnerComponent],
+  imports: [GridComponent, MatButtonModule, MatDialogModule, CommonModule, LoadingSpinnerComponent, ReceivedQuotesSidePaneComponent, MatCardModule],
   templateUrl: './orders.component.html',
   styleUrl: './orders.component.css',
 })
@@ -41,6 +47,7 @@ export class OrdersComponent implements OnInit {
   @ViewChild(GridComponent) gridComponent!: GridComponent;
 
   isLoading = true;
+  isSidePaneOpen: boolean = false;
 
   constructor(private titleService: TitleService, private dialog: MatDialog, private snackBar: MatSnackBar ) {
     Amplify.configure(outputs);
@@ -51,8 +58,8 @@ export class OrdersComponent implements OnInit {
 
   // Column Definitions: Defines & controls grid columns.
   colDefs: ColDef[] = [
-    { field: 'Order_ID', filter: 'agSetColumnFilter' },
-    { field: 'Order_Date', filter: 'agDateColumnFilter' },
+    { field: 'Order_ID', headerName: 'Order ID' },
+    { field: 'Order_Date', headerName: 'Order Date', filter: 'agDateColumnFilter' },
     { 
       field: 'Creation_Time', 
       headerName: 'Creation Time',
@@ -65,13 +72,26 @@ export class OrdersComponent implements OnInit {
         return '';
       }
     },
-    { field: 'Order_Status', filter: 'agSetColumnFilter' },
-    { field: 'Quote_ID', filter: 'agSetColumnFilter' },
-    { field: 'Quote_Status', filter: 'agSetColumnFilter' },
-    { field: 'Selected_Supplier', filter: 'agSetColumnFilter' },
-    { field: 'Expected_Delivery_Date', filter: 'agDateColumnFilter' },
-    { field: 'Actual_Delivery_Date', filter: 'agDateColumnFilter' },
-
+    { 
+      field: 'Order_Status', 
+      headerName: 'Order Status', 
+      filter: 'agSetColumnFilter',
+      cellStyle: (params) => {
+        return { backgroundColor: params.value === 'Completed' ? completedColor : defaultColor };
+      }
+    },
+    { field: 'Quote_ID', headerName: 'Quote ID' },
+    { 
+      field: 'Quote_Status', 
+      headerName: 'Quote Status', 
+      filter: 'agSetColumnFilter',
+      cellStyle: (params) => {
+        return { backgroundColor: params.value === 'Accepted' ? completedColor : defaultColor };
+      }
+    },
+    { field: 'Selected_Supplier', headerName: 'Selected Supplier', filter: 'agSetColumnFilter' },
+    { field: 'Expected_Delivery_Date', headerName: 'Expected Delivery Date', filter: 'agDateColumnFilter' },
+    { field: 'Actual_Delivery_Date', headerName: 'Actual Delivery Date', filter: 'agDateColumnFilter' },
   ];
 
   deliveryAddress: DeliveryAddress = {
@@ -194,7 +214,10 @@ export class OrdersComponent implements OnInit {
             ItemSKU: item.ItemSKU,
             Quantity: item.Quantity
           })),
-          suppliers: updatedQuote.suppliers
+          suppliers: updatedQuote.suppliers.map((supplier: any) => ({
+            company_name: supplier.company_name,
+            supplierID: supplier.supplierID
+          }))
         })
       };
   
@@ -258,11 +281,16 @@ export class OrdersComponent implements OnInit {
         Creation_Time: new Date().toISOString(),
         quoteItems: quoteData.items.map((item: any) => ({
           ItemSKU: item.ItemSKU,
-          Quantity: item.Quantity
+          Quantity: item.Quantity,
+          inventoryID: item.inventoryID
         })),
-        suppliers: quoteData.suppliers
+        suppliers: quoteData.suppliers.map((supplier: any) => ({
+          company_name: supplier.company_name,
+          supplierID: supplier.supplierID
+        }))
       };
   
+      console.log('New Quote Data:', quoteData);
       console.log('New Order Data:', newOrder);
   
       const invokeCommand = new InvokeCommand({
@@ -576,6 +604,87 @@ export class OrdersComponent implements OnInit {
     // Implement logic to save the delivery information
     // This could be to a service or API
     console.log('Saving delivery information:', deliveryInfo);
+  }
+
+  viewReceivedQuotes() {
+    this.isSidePaneOpen = true;
+  }
+  
+  async openReceiveOrderModal(orderData: any) {
+    const dialogRef = this.dialog.open(ReceiveOrderModalComponent, {
+      width: '500px',
+      data: orderData
+    });
+
+    dialogRef.afterClosed().subscribe(async result => {
+      if (result && result.action === 'received') {
+        const confirmDialog = this.dialog.open(OrderReceivedConfirmationDialogComponent, {
+          width: '350px',
+          data: { Order_ID: result.data.Order_ID }
+        });
+
+        confirmDialog.afterClosed().subscribe(async confirmed => {
+          if (confirmed) {
+            await this.markOrderAsReceived(result.data);
+          }
+        });
+      }
+    });
+  }
+
+  async markOrderAsReceived(orderData: any) {
+    try {
+      const session = await fetchAuthSession();
+      const lambdaClient = new LambdaClient({
+        region: outputs.auth.aws_region,
+        credentials: session.credentials,
+      });
+
+      const payload = {
+        body: JSON.stringify({
+          orderID: orderData.Order_ID,
+          orderDate: orderData.Order_Date
+        })
+      };
+
+      const invokeCommand = new InvokeCommand({
+        FunctionName: 'receiveOrder', // Replace with your actual Lambda function name
+        Payload: new TextEncoder().encode(JSON.stringify(payload)),
+      });
+
+      const lambdaResponse = await lambdaClient.send(invokeCommand);
+      const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+
+      if (responseBody.statusCode === 200) {
+        const result = JSON.parse(responseBody.body);
+        console.log('Order marked as received:', result);
+        
+        // Update local data
+        const index = this.rowData.findIndex(order => order.Order_ID === orderData.Order_ID);
+        if (index !== -1) {
+          this.rowData[index] = result.updatedOrder;
+        }
+
+        // Refresh the grid
+        this.gridComponent.refreshGrid(this.rowData);
+
+        // Show success message
+        this.snackBar.open('Order marked as received successfully', 'Close', {
+          duration: 3000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+        });
+      } else {
+        throw new Error(responseBody.body || 'Unknown error occurred');
+      }
+    } catch (error) {
+      console.error('Error marking order as received:', error);
+      this.snackBar.open(`Error marking order as received: ${(error as Error).message}`, 'Close', {
+        duration: 5000,
+        horizontalPosition: 'center',
+        verticalPosition: 'top',
+      });
+    }
   }
 
 }

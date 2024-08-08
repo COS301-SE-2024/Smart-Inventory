@@ -17,6 +17,8 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { RoleSelectCellEditorComponent } from '../../pages/team/role-select-cell-editor.component';
 import { DateSelectCellEditorComponent } from '../reports/supplier-report/date-select-cell-editor.component';
 import { CustomQuoteModalComponent } from '../quote/custom-quote-modal/custom-quote-modal.component';
+import { ReceivedQuotesSidePaneComponent } from '../received-quotes-side-pane/received-quotes-side-pane.component';
+
 @Component({
     selector: 'app-grid',
     standalone: true,
@@ -33,6 +35,7 @@ import { CustomQuoteModalComponent } from '../quote/custom-quote-modal/custom-qu
         MatDialogModule,
         RoleSelectCellEditorComponent,
         DateSelectCellEditorComponent,
+        ReceivedQuotesSidePaneComponent,
     ],
     templateUrl: './grid.component.html',
     styleUrl: './grid.component.css',
@@ -54,6 +57,8 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
     @Output() deleteOrderClicked = new EventEmitter<any>();
     @Output() viewEmailTemplateClicked = new EventEmitter<void>();
     @Output() viewDeliveryInfoClicked = new EventEmitter<void>();
+    @Output() viewReceivedQuotesClicked = new EventEmitter<void>();
+    @Output() markOrderAsReceivedClicked = new EventEmitter<any>();
     private themeObserver!: MutationObserver;
     gridStyle: any;
 
@@ -295,4 +300,17 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
     onViewDeliveryInfo() {
         this.viewDeliveryInfoClicked.emit();
     }
+
+    onViewReceivedQuotes() {
+        this.viewReceivedQuotesClicked.emit();
+    }
+
+    onMarkOrderAsReceived() {
+    const selectedRows = this.gridApi.getSelectedRows();
+    if (selectedRows && selectedRows.length > 0) {
+        this.markOrderAsReceivedClicked.emit(selectedRows[0]);
+    } else {
+        console.log('No row selected for marking as received');
+    }
+    }  
 }

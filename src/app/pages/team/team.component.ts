@@ -229,7 +229,7 @@ export class TeamComponent implements OnInit {
             });
 
             const invokeCommand = new InvokeCommand({
-                FunctionName: 'getUsers',
+                FunctionName: 'getUsersV2',
                 Payload: new TextEncoder().encode(payload),
             });
 

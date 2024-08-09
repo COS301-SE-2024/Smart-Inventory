@@ -255,7 +255,7 @@ export class SaleschartComponent implements OnInit, OnDestroy, AfterViewInit, On
         // });
 
         await this.loadOrdersData();
-        console.log('sales chart rowData', this.rowData)
+        // console.log('sales chart rowData', this.rowData)
         this.updateChartData();
 
         

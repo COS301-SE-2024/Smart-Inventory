@@ -305,56 +305,56 @@ export class DashboardComponent implements OnInit {
     }
 
 
-    async loadInventoryData() {
-        try {
-            const session = await fetchAuthSession();
+    // async loadInventoryData() {
+    //     try {
+    //         const session = await fetchAuthSession();
 
-            const cognitoClient = new CognitoIdentityProviderClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
+    //         const cognitoClient = new CognitoIdentityProviderClient({
+    //             region: outputs.auth.aws_region,
+    //             credentials: session.credentials,
+    //         });
 
-            const getUserCommand = new GetUserCommand({
-                AccessToken: session.tokens?.accessToken.toString(),
-            });
+    //         const getUserCommand = new GetUserCommand({
+    //             AccessToken: session.tokens?.accessToken.toString(),
+    //         });
 
-            const getUserResponse = await cognitoClient.send(getUserCommand);
+    //         const getUserResponse = await cognitoClient.send(getUserCommand);
 
-            const tenantId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
+    //         const tenantId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
 
-            if (!tenantId) {
-                console.error('TenantId not found in user attributes');
-                this.inventoryCount = 0; // Updated to manage count
-                return;
-            }
+    //         if (!tenantId) {
+    //             console.error('TenantId not found in user attributes');
+    //             this.inventoryCount = 0; // Updated to manage count
+    //             return;
+    //         }
 
-            const lambdaClient = new LambdaClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
+    //         const lambdaClient = new LambdaClient({
+    //             region: outputs.auth.aws_region,
+    //             credentials: session.credentials,
+    //         });
 
-            const invokeCommand = new InvokeCommand({
-                FunctionName: 'Inventory-getItems',
-                Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: tenantId } })),
-            });
+    //         const invokeCommand = new InvokeCommand({
+    //             FunctionName: 'Inventory-getItems',
+    //             Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: tenantId } })),
+    //         });
 
-            const lambdaResponse = await lambdaClient.send(invokeCommand);
-            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-            // console.log('Response from Lambda:', responseBody);
+    //         const lambdaResponse = await lambdaClient.send(invokeCommand);
+    //         const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+    //         // console.log('Response from Lambda:', responseBody);
 
-            if (responseBody.statusCode === 200) {
-                const inventoryItems = JSON.parse(responseBody.body);
-                this.inventoryCount = inventoryItems.length; // Setting the count of inventory items
-                console.log('Inventory items count:', this.inventoryCount);
-            } else {
-                console.error('Error fetching inventory data:', responseBody.body);
-                this.inventoryCount = 0; // Updated to manage count
-            }
-        } catch (error) {
-            console.error('Error in loadInventoryData:', error);
-            this.inventoryCount = 0; // Updated to manage count
-        }
-    }
+    //         if (responseBody.statusCode === 200) {
+    //             const inventoryItems = JSON.parse(responseBody.body);
+    //             this.inventoryCount = inventoryItems.length; // Setting the count of inventory items
+    //             console.log('Inventory items count:', this.inventoryCount);
+    //         } else {
+    //             console.error('Error fetching inventory data:', responseBody.body);
+    //             this.inventoryCount = 0; // Updated to manage count
+    //         }
+    //     } catch (error) {
+    //         console.error('Error in loadInventoryData:', error);
+    //         this.inventoryCount = 0; // Updated to manage count
+    //     }
+    // }
 
 
     async fetchUsers() {
@@ -633,7 +633,7 @@ export class DashboardComponent implements OnInit {
         this.loadState(); // Load the state on initialization
         this.titleService.updateTitle('Dashboard');
 
-        await this.loadInventoryData();
+        // await this.loadInventoryData();
         await this.fetchUsers();
         await this.dashboardData();
     }

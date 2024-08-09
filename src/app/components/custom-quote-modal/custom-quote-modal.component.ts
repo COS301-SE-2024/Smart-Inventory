@@ -423,8 +423,8 @@ export class CustomQuoteModalComponent implements OnInit {
   cancel() {
     this.dialogRef.close({ action: 'cancel' });
   }
-
-  sendQuote() {
+  
+  async sendQuote() {
     if (this.hasUnsavedChanges) {
       this.snackBar.open('Please save changes before sending the quote.', 'Close', {
         duration: 5000,
@@ -435,14 +435,103 @@ export class CustomQuoteModalComponent implements OnInit {
     }
     if (!this.isNewQuote) {
       console.log('Sending quote...');
+      const emailData = await this.prepareEmailData();
+      
+      // Send emails
+      await this.sendEmails(emailData);
+
       this.dialogRef.close({ action: 'sendQuote', data: {
         quoteId: this.quoteId,
         items: this.quoteItems,
-        suppliers: this.selectedSuppliers.map(supplier => ({
-          company_name: supplier.company_name,
-          supplierID: supplier.supplierID
-        }))
+        suppliers: this.selectedSuppliers,
+        emailData: emailData
       }});
+    }
+  }
+
+  async sendEmails(emailData: any[]) {
+    const lambdaClient = new LambdaClient({
+      region: outputs.auth.aws_region,
+      credentials: (await fetchAuthSession()).credentials,
+    });
+
+    const invokeCommand = new InvokeCommand({
+      FunctionName: 'sendSupplierEmails',
+      Payload: new TextEncoder().encode(JSON.stringify({ emailData: emailData })),
+    });
+
+    const lambdaResponse = await lambdaClient.send(invokeCommand);
+    const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+
+    if (responseBody.statusCode === 200) {
+      console.log('Emails sent successfully:', responseBody.body);
+    } else {
+      throw new Error(`Failed to send emails: ${responseBody.body}`);
+    }
+  }
+
+  async prepareEmailData() {
+    const session = await fetchAuthSession();
+    const tenentId = await this.getTenentId(session);
+    const deliveryInfoID = await this.getDeliveryInfoID(tenentId);
+
+    const emailDataPromises = this.selectedSuppliers.map(async (supplier) => {
+      const supplierDetails = await this.getSupplierDetails(tenentId, supplier.supplierID);
+      const uniqueLink = `localhost:4200/supplier-form/${supplier.supplierID}/${this.quoteId}/${deliveryInfoID}/${tenentId}`;
+      return {
+        supplierEmail: supplierDetails.contact_email,
+        supplierName: supplier.company_name,
+        uniqueLink: uniqueLink
+      };
+    });
+
+    const emailData = await Promise.all(emailDataPromises);
+    console.log('Email data:', emailData);
+    return emailData;
+  }
+
+  async getSupplierDetails(tenentId: string, supplierID: string): Promise<any> {
+    const lambdaClient = new LambdaClient({
+      region: outputs.auth.aws_region,
+      credentials: (await fetchAuthSession()).credentials,
+    });
+
+    const invokeCommand = new InvokeCommand({
+      FunctionName: 'getSupplier',
+      Payload: new TextEncoder().encode(JSON.stringify({ 
+        pathParameters: { tenentId: tenentId, supplierID: supplierID } 
+      })),
+    });
+
+    const lambdaResponse = await lambdaClient.send(invokeCommand);
+    const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+
+    if (responseBody.statusCode === 200) {
+      return JSON.parse(responseBody.body);
+    } else {
+      throw new Error(`Failed to get supplier details: ${responseBody.body}`);
+    }
+  }
+
+  async getDeliveryInfoID(tenentId: string): Promise<string> {
+    const lambdaClient = new LambdaClient({
+      region: outputs.auth.aws_region,
+      credentials: (await fetchAuthSession()).credentials,
+    });
+
+    const invokeCommand = new InvokeCommand({
+      FunctionName: 'getDeliveryID',
+      Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: tenentId } })),
+    });
+
+    const lambdaResponse = await lambdaClient.send(invokeCommand);
+    const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+
+    if (responseBody.statusCode === 200) {
+      const { deliveryInfoID } = JSON.parse(responseBody.body);
+      return deliveryInfoID;
+    } else {
+      throw new Error('Failed to get deliveryInfoID');
     }
   }
 

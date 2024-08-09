@@ -530,6 +530,9 @@ export class OrdersComponent implements OnInit {
 
   async sendQuote(quoteData: any) {
     try {
+      // Log the email data
+      console.log('Email data for sending quote:', quoteData.emailData);
+      
       // Implement the logic to send the quote
       console.log('Sending quote:', quoteData);
       
@@ -553,6 +556,7 @@ export class OrdersComponent implements OnInit {
       });
     }
   }
+
 
   viewEmailTemplate() {
     const dialogRef = this.dialog.open(EmailTemplateModalComponent, {

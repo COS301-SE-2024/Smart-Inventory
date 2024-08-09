@@ -9,6 +9,24 @@ type DataYearly = {
     [year: string]: { name: string; data: number[] }[];
 };
 
+interface InventoryItem {
+    category: string;
+    quantity: number; // Current stock in inventory
+}
+
+interface StockRequest {
+    category: string;
+    quantityRequested: number;
+}
+
+type InventoryData = {
+    [category: string]: {
+        currentStock: number;
+        requestedStock: number;
+    };
+};
+
+
 @Component({
     selector: 'app-barchart',
     standalone: true,
@@ -18,9 +36,11 @@ type DataYearly = {
 })
 export class BarchartComponent implements AfterViewInit {
     public selectedYear: string = new Date().getFullYear().toString(); // Default to current year
-    @Input() chartTitle?: string;
+    @Input() chartTitle: string = "Inventory vs. Stock Requests Comparison";
     public chartOptions: AgChartOptions;
     private themeObserver!: MutationObserver;
+
+    private inventoryData: InventoryData = {};
 
     ngOnChanges(changes: SimpleChanges) {
         if (changes['chartTitle']) {
@@ -53,48 +73,55 @@ export class BarchartComponent implements AfterViewInit {
     };
 
 
-    updateChartData(year: string) {
-        const seriesData = this.getDataByYear(year);
+    updateChartData() {
+        // const seriesData = this.getDataByYear(year);
 
+        const data = Object.keys(this.inventoryData).map(category => ({
+            category,
+            CurrentStock: this.inventoryData[category].currentStock,
+            RequestedStock: this.inventoryData[category].requestedStock
+        }));
+    
         this.chartOptions = {
             ...this.chartOptions,
-            data: seriesData.flatMap((series) => series),
+            autoSize: true,
+            data,
             title: {
-                text: 'Sales vs. Sales Target Comparison',
+                text: this.chartTitle,
             },
             series: [
                 {
                     type: 'bar',
-                    xKey: 'month',
-                    yKey: 'Direct',
-                    yName: 'Actual Sales',
+                    xKey: 'category',
+                    yKey: 'CurrentStock',
+                    yName: 'Current Stock',
                 },
                 {
                     type: 'bar',
-                    xKey: 'month',
-                    yKey: 'Target',
-                    yName: 'Sales Target',
-                },
+                    xKey: 'category',
+                    yKey: 'RequestedStock',
+                    yName: 'Stock Requests',
+                }
             ],
             axes: [
                 {
                     type: 'category',
                     position: 'bottom',
                     title: {
-                        text: 'Month',
-                    },
+                        text: 'Category',
+                    }
                 },
                 {
                     type: 'number',
                     position: 'left',
                     title: {
-                        text: 'Sales Values',
+                        text: 'Quantity',
                     },
                     label: {
                         formatter: ({ value }) => this.formatNumber(value),
-                    },
-                },
-            ],
+                    }
+                }
+            ]
         };
     }
 
@@ -142,12 +169,38 @@ export class BarchartComponent implements AfterViewInit {
 
     constructor(private renderer: Renderer2, private el: ElementRef) {
         this.chartOptions = {};
-        // this.initializeChart();
+        this.initializeData();
         this.setupThemeObserver();
     }
 
+    private initializeData() {
+        // Sample data initialization, replace this with actual data fetching logic
+        const inventories: InventoryItem[] = [
+            { category: 'Electronics', quantity: 120 },
+            { category: 'Food: Perishable', quantity: 80 },
+            { category: 'Beverages: Non-Alcoholic', quantity: 200 }
+        ];
+        const stockRequests: StockRequest[] = [
+            { category: 'Electronics', quantityRequested: 90 },
+            { category: 'Food: Perishable', quantityRequested: 100 },
+            { category: 'Beverages: Non-Alcoholic', quantityRequested: 150 }
+        ];
+
+        // Aggregating data for chart
+        inventories.forEach(item => {
+            this.inventoryData[item.category] = { currentStock: item.quantity, requestedStock: 0 };
+        });
+
+        stockRequests.forEach(request => {
+            if (this.inventoryData[request.category]) {
+                this.inventoryData[request.category].requestedStock += request.quantityRequested;
+            }
+        });
+    }
+
     ngOnInit() {
-        this.updateChartData(this.selectedYear);
+        // this.updateChartData(this.selectedYear);
+        this.updateChartData();
     }
 
     ngAfterViewInit() {
@@ -177,6 +230,6 @@ export class BarchartComponent implements AfterViewInit {
             ...this.chartOptions, // Spread existing chart options to preserve other configurations
             theme: theme
         };
-        this.updateChartData(this.selectedYear); // Re-render the chart with the new theme
+        this.updateChartData(); // Re-render the chart with the new theme
     }
 }

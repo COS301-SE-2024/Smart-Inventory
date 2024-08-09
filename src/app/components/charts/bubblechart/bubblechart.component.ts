@@ -11,9 +11,9 @@ import { AgChartOptions, AgChartTheme } from 'ag-charts-community';
 })
 
 export class BubblechartComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges  {
-    public chartOptions: AgChartOptions;
+    public chartOptions!: AgChartOptions;
     private themeObserver!: MutationObserver;
-    @Input() chartTitle?: string;
+    @Input() chartTitle: string = "Supplier Price and Availability Comparison";
 
     ngOnChanges(changes: SimpleChanges) {
         if (changes['chartTitle']) {
@@ -45,54 +45,98 @@ export class BubblechartComponent implements OnInit, OnDestroy, AfterViewInit, O
     };
 
     constructor() {
+
+        this.initializeChart();
         
+        // this.chartOptions = {
+        //     data: [
+        //         { category: 'Electronics', sales: 20000, target: 25000 },
+        //         { category: 'Clothing', sales: 18000, target: 22000 },
+        //         { category: 'Furniture', sales: 15000, target: 18000 },
+        //         { category: 'Home Appliances', sales: 12000, target: 16000 },
+        //         { category: 'Toys & Games', sales: 10000, target: 12000 },
+        //     ],
+        //     title: {
+        //         text: 'Sales VS Target by Category',
+        //     },
+            // series: [
+            //     {
+            //         type: 'bar',
+            //         xKey: 'category',
+            //         yKey: 'sales',
+            //         yName: 'Actual Sales',
+            //         direction: 'horizontal',
+            //         cornerRadius: 10,
+            //         stacked: true,
+            //         label: { enabled: true, formatter: (params) => `${params.value}` },
+            //     },
+            //     {
+            //         type: 'bar',
+            //         xKey: 'category',
+            //         yKey: 'target',
+            //         yName: 'Sales Target',
+            //         direction: 'horizontal',
+            //         cornerRadius: 10,
+            //         stacked: true,
+            //         label: { enabled: true, formatter: (params) => `${params.value}` },
+            //     },
+            // ],
+            // axes: [
+            //     {
+            //         type: 'category',
+            //         position: 'left',
+            //         title: {
+            //             text: 'Product Category',
+            //         },
+            //     },
+            //     {
+            //         type: 'number',
+            //         position: 'bottom',
+            //         title: {
+            //             text: 'USD',
+            //         },
+            //     },
+            // ],
+        // };
+    }
+
+    private initializeChart() {
         this.chartOptions = {
-            data: [
-                { category: 'Electronics', sales: 20000, target: 25000 },
-                { category: 'Clothing', sales: 18000, target: 22000 },
-                { category: 'Furniture', sales: 15000, target: 18000 },
-                { category: 'Home Appliances', sales: 12000, target: 16000 },
-                { category: 'Toys & Games', sales: 10000, target: 12000 },
-            ],
-            title: {
-                text: 'Sales VS Target by Category',
-            },
+            autoSize: true,
+            data: this.generateChartData(),
+            title: { text: this.chartTitle },
             series: [
                 {
                     type: 'bar',
-                    xKey: 'category',
-                    yKey: 'sales',
-                    yName: 'Actual Sales',
+                    xKey: 'ItemSKU',
+                    yKey: 'AvailableQuantity',
+                    yName: 'Available Quantity',
                     direction: 'horizontal',
                     cornerRadius: 10,
                     stacked: true,
-                    label: { enabled: true, formatter: (params) => `${params.value}` },
+                    label: { enabled: true, formatter: (params) => `${params.value} units` },
                 },
                 {
                     type: 'bar',
-                    xKey: 'category',
-                    yKey: 'target',
-                    yName: 'Sales Target',
+                    xKey: 'ItemSKU',
+                    yKey: 'TotalPrice',
+                    yName: 'Total Price',
                     direction: 'horizontal',
                     cornerRadius: 10,
                     stacked: true,
-                    label: { enabled: true, formatter: (params) => `${params.value}` },
+                    label: { enabled: true, formatter: (params) => `$${params.value.toFixed(2)}` },
                 },
             ],
             axes: [
                 {
                     type: 'category',
                     position: 'left',
-                    title: {
-                        text: 'Product Category',
-                    },
+                    title: { text: 'Item SKU' },
                 },
                 {
                     type: 'number',
                     position: 'bottom',
-                    title: {
-                        text: 'USD',
-                    },
+                    title: { text: 'Quantity and Price' },
                 },
             ],
         };
@@ -132,14 +176,14 @@ export class BubblechartComponent implements OnInit, OnDestroy, AfterViewInit, O
         };
     }
 
-    generateBubbleData(baseval: number, range: number, count: number, yrange: number, zrange: number) {
-        const data = [];
-        for (let i = 0; i < count; i++) {
-            const x = Math.floor(Math.random() * range) + baseval + (i * range) / count; // Spread out inventory levels more
-            const y = Math.floor(Math.random() * yrange) + 10 + (i * yrange) / count; // Spread out sales volume more
-            const z = Math.floor(Math.random() * zrange) + 5; // Consistent bubble size distribution
-            data.push({ x, y, z });
-        }
-        return data;
+    private generateChartData() {
+        // Sample Data Processing, replace this with actual data fetching and processing logic
+        return [
+            { ItemSKU: 'MS-301', AvailableQuantity: 500, TotalPrice: 285 },
+            { ItemSKU: 'AM-405', AvailableQuantity: 600, TotalPrice: 360 },
+            { ItemSKU: 'BF-001', AvailableQuantity: 300, TotalPrice: 334.08 },
+            { ItemSKU: 'CH-205', AvailableQuantity: 200, TotalPrice: 109.98 },
+            { ItemSKU: 'RO-102', AvailableQuantity: 400, TotalPrice: 391.5 },
+        ];
     }
 }

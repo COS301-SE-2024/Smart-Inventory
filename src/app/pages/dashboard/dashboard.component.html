@@ -91,26 +91,40 @@
             </button>
             <div class="full-width-card">
                 <div class="statistics" style="width: 50%; padding: 20px">
-                    <div class="sales">
+                    <div class="earnings">
                         <h3 style="color: var(----dash-bg-color); margin-bottom: 10px">Requests</h3>
                         <ul style="list-style: none; padding: 0; margin: 0">
-                            <li style="padding: 8px 0; border-bottom: 1px solid #eee">Total Requests: 320</li>
                             <li style="padding: 8px 0; border-bottom: 1px solid #eee">
-                                Fulfilled Requests: 280 (87.5%)
+                                Total Requests: {{ RequestOrders.requests.totalRequests }}
                             </li>
-                            <li style="padding: 8px 0">Pending Requests: 40</li>
+                            <li style="padding: 8px 0; border-bottom: 1px solid #eee">
+                                Most Requested Category: {{ RequestOrders.requests.fulfilledRequests.count }}
+                                ({{ RequestOrders.requests.fulfilledRequests.percentage }}%)
+                            </li>
+                            <li style="padding: 8px 0">
+                                Pending Requests: {{ RequestOrders.requests.pendingRequests }}
+                            </li>
                         </ul>
                     </div>
                     <hr />
                     <div class="earnings">
                         <h3 style="color: var(----dash-bg-color); margin-bottom: 10px">Backorders</h3>
                         <ul style="list-style: none; padding: 0; margin: 0">
-                            <li style="padding: 8px 0; border-bottom: 1px solid #eee">Current Backorders: 75</li>
-                            <li style="padding: 8px 0; border-bottom: 1px solid #eee">Average Delay: 8 days</li>
-                            <li style="padding: 8px 0">Longest Backorder Item: Product X - 15 days</li>
+                            <li style="padding: 8px 0; border-bottom: 1px solid #eee">
+                                Current Backorders: {{ RequestOrders.backorders.currentBackorders }}
+                            </li>
+                            <li style="padding: 8px 0; border-bottom: 1px solid #eee">
+                                Average Delay: {{ RequestOrders.backorders.averageDelay }} days
+                            </li>
+                            <li style="padding: 8px 0">
+                                Longest Backorder Item: {{ RequestOrders.backorders.longestBackorderItem.productName }}
+                                -
+                                {{ RequestOrders.backorders.longestBackorderItem.delay }} days
+                            </li>
                         </ul>
                     </div>
                 </div>
+
                 <app-saleschart class="chart"></app-saleschart>
             </div>
         </gridster-item>
@@ -144,7 +158,7 @@
         </gridster-item>
     </gridster>
     <div *ngFor="let config of newCharts">
-        <app-templatechart [chartType]="config.chartType" [chartData]="config.data"
-            [chartTitle]="config.title" style="width: 400px; height: 400px;"></app-templatechart>
+        <app-templatechart [chartType]="config.chartType" [chartData]="config.data" [chartTitle]="config.title"
+            style="width: 400px; height: 400px;"></app-templatechart>
     </div>
 </div>

@@ -94,6 +94,29 @@ export class SaleschartComponent implements OnInit, OnDestroy, AfterViewInit, On
         };
     }
 
+    private ordersData: any[] = [
+        { orderDate: '8/7/2024', orderStatus: 'Completed', deliveryDate: '8/7/2024' },
+        { orderDate: '8/7/2024', orderStatus: 'Pending Approval', deliveryDate: null },
+        { orderDate: '8/5/2024', orderStatus: 'Completed', deliveryDate: '8/7/2024' },
+        { orderDate: '8/3/2024', orderStatus: 'Completed', deliveryDate: '8/4/2024' },
+        { orderDate: '8/1/2024', orderStatus: 'Cancelled', deliveryDate: null },
+        { orderDate: '7/30/2024', orderStatus: 'Completed', deliveryDate: '8/1/2024' },
+        { orderDate: '7/28/2024', orderStatus: 'Pending Approval', deliveryDate: null },
+        { orderDate: '7/25/2024', orderStatus: 'Completed', deliveryDate: '7/27/2024' },
+        { orderDate: '7/23/2024', orderStatus: 'Completed', deliveryDate: '7/25/2024' },
+        { orderDate: '7/21/2024', orderStatus: 'Cancelled', deliveryDate: null },
+        { orderDate: '6/15/2024', orderStatus: 'Completed', deliveryDate: '6/17/2024' },
+        { orderDate: '6/12/2024', orderStatus: 'Pending Approval', deliveryDate: null },
+        { orderDate: '6/10/2024', orderStatus: 'Completed', deliveryDate: '6/11/2024' },
+        { orderDate: '5/29/2024', orderStatus: 'Completed', deliveryDate: '5/30/2024' },
+        { orderDate: '5/20/2024', orderStatus: 'Cancelled', deliveryDate: null },
+        { orderDate: '5/15/2024', orderStatus: 'Completed', deliveryDate: '5/17/2024' },
+        { orderDate: '5/10/2024', orderStatus: 'Pending Approval', deliveryDate: null },
+        { orderDate: '4/25/2024', orderStatus: 'Completed', deliveryDate: '4/27/2024' },
+        { orderDate: '4/20/2024', orderStatus: 'Completed', deliveryDate: '4/21/2024' },
+        { orderDate: '4/15/2024', orderStatus: 'Cancelled', deliveryDate: null },
+    ];
+
     private yearlyData: YearlyData = {
         year: {
             categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
@@ -128,28 +151,28 @@ export class SaleschartComponent implements OnInit, OnDestroy, AfterViewInit, On
             title: {
                 text: 'Sales and Shipment Duration',
             },
-            data: this.getData(),
+            data: this.formatChartData(),
             series: [
                 {
                     type: 'area',
                     xKey: 'month',
-                    yKey: 'sales',
-                    yName: 'Sales',
+                    yKey: 'completedCount',
+                    yName: 'Completed Orders',
                     stacked: true,
                 },
                 {
                     type: 'area',
                     xKey: 'month',
-                    yKey: 'earnings',
-                    yName: 'Earnings',
+                    yKey: 'pendingCount',
+                    yName: 'Pending Orders',
                     stacked: true,
                 },
                 {
                     type: 'area',
                     xKey: 'month',
-                    yKey: 'shipmentDuration',
-                    yName: 'Shipment Duration (days)',
-                    marker: { enabled: true },
+                    yKey: 'cancelledCount',
+                    yName: 'Cancelled Orders',
+                    stacked: true,
                 },
             ],
             axes: [
@@ -160,6 +183,10 @@ export class SaleschartComponent implements OnInit, OnDestroy, AfterViewInit, On
                 {
                     type: 'number',
                     position: 'left',
+                    title: {
+                        text: 'Number of Orders',
+                    },
+                    max: 10,
                 },
             ],
             // background: {
@@ -167,7 +194,25 @@ export class SaleschartComponent implements OnInit, OnDestroy, AfterViewInit, On
             // },
         };
         // this.chart = AgCharts.create(this.chartOptions);
-        this.updateChartData('year');
+        // this.updateChartData('year');
+    }
+
+    private formatChartData() {
+        // Group data by month and aggregate counts by order status
+        const groupedData = this.ordersData.reduce((acc, cur) => {
+            const [month, day, year] = cur.orderDate.split('/');
+            const monthYear = `${year}-${month.padStart(2, '0')}`; // Format as YYYY-MM
+
+            acc[monthYear] = acc[monthYear] || { month: monthYear, completedCount: 0, pendingCount: 0, cancelledCount: 0 };
+
+            if (cur.orderStatus === 'Completed') acc[monthYear].completedCount++;
+            if (cur.orderStatus === 'Pending Approval') acc[monthYear].pendingCount++;
+            if (cur.orderStatus === 'Cancelled') acc[monthYear].cancelledCount++;
+
+            return acc;
+        }, {});
+
+        return Object.values(groupedData);
     }
 
     getData() {

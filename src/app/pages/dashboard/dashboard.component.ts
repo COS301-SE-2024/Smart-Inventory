@@ -95,6 +95,25 @@ export class DashboardComponent implements OnInit {
     pendingDeletions: DashboardItem[] = [];
     standaloneDeletions: DashboardItem[] = [];
 
+    RequestOrders = {
+        requests: {
+            totalRequests: 320,
+            fulfilledRequests: {
+                count: 280,
+                percentage: 87.5
+            },
+            pendingRequests: 40,
+        },
+        backorders: {
+            currentBackorders: 75,
+            averageDelay: 8, // in days
+            longestBackorderItem: {
+                productName: 'Product X',
+                delay: 15 // in days
+            }
+        }
+    };
+
     dashboard: DashboardItem[];
     largeItem: DashboardItem = {
         cols: 4,

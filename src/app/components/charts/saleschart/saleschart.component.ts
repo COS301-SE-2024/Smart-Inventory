@@ -3,7 +3,12 @@ import { AgChartsAngular } from 'ag-charts-angular';
 import { AgChartOptions, AgCharts, AgChartTheme } from 'ag-charts-community';
 import { FilterService } from '../../../services/filter.service';
 import { Subscription } from 'rxjs';
+import { Amplify } from 'aws-amplify';
+import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
+import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
+import { fetchAuthSession } from 'aws-amplify/auth';
 
+import outputs from '../../../../../amplify_outputs.json';
 interface DataSet {
     categories: string[];
     salesData: number[];
@@ -23,11 +28,11 @@ interface YearlyData {
     styleUrl: './saleschart.component.css',
 })
 export class SaleschartComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges {
-    public chartOptions: AgChartOptions;
+    public chartOptions!: AgChartOptions;
     private chart: any;
     private filterSubscription!: Subscription;
     private themeObserver!: MutationObserver;
-
+    private rowData: any[] = [];
     @Input() chartTitle?: string;
 
     ngOnChanges(changes: SimpleChanges) {
@@ -71,7 +76,7 @@ export class SaleschartComponent implements OnInit, OnDestroy, AfterViewInit, On
             attributes: true
         });
     }
-    
+
 
     private applyCurrentTheme() {
         // Retrieve the theme setting directly from the body attribute
@@ -83,8 +88,8 @@ export class SaleschartComponent implements OnInit, OnDestroy, AfterViewInit, On
             this.chart = AgCharts.create(this.chartOptions);
         }
     }
-    
-    
+
+
     private getChartOptions(theme: string): AgChartOptions {
         // Determine the theme settings based on the passed theme string
         const themeSettings = theme === 'dark' ? this.darkTheme : this.lightTheme;
@@ -145,13 +150,143 @@ export class SaleschartComponent implements OnInit, OnDestroy, AfterViewInit, On
     };
 
     constructor(private filterService: FilterService) {
+        Amplify.configure(outputs);
         this.setupThemeObserver();
+        // this.chart = AgCharts.create(this.chartOptions);
+        // this.updateChartData('year');
+    }
+
+    private isLoading = false;
+
+    async loadOrdersData() {
+        this.isLoading = true;
+        try {
+            const session = await fetchAuthSession();
+
+            const cognitoClient = new CognitoIdentityProviderClient({
+                region: outputs.auth.aws_region,
+                credentials: session.credentials,
+            });
+
+            const getUserCommand = new GetUserCommand({
+                AccessToken: session.tokens?.accessToken.toString(),
+            });
+            const getUserResponse = await cognitoClient.send(getUserCommand);
+
+            const tenentId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
+
+            if (!tenentId) {
+                console.error('TenentId not found in user attributes');
+                this.rowData = [];
+                return;
+            }
+
+            const lambdaClient = new LambdaClient({
+                region: outputs.auth.aws_region,
+                credentials: session.credentials,
+            });
+
+            const invokeCommand = new InvokeCommand({
+                FunctionName: 'getOrders',
+                Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: tenentId } })),
+            });
+
+            const lambdaResponse = await lambdaClient.send(invokeCommand);
+            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+            console.log('Response from Lambda:', responseBody);
+
+            if (responseBody.statusCode === 200) {
+                const orders = JSON.parse(responseBody.body);
+                this.rowData = orders.map((order: any) => ({
+                    Order_ID: order.Order_ID,
+                    Order_Date: order.Order_Date,
+                    Order_Status: order.Order_Status,
+                    Quote_ID: order.Quote_ID,
+                    Quote_Status: order.Quote_Status,
+                    Selected_Supplier: order.Selected_Supplier,
+                    Expected_Delivery_Date: order.Expected_Delivery_Date,
+                    Actual_Delivery_Date: order.Actual_Delivery_Date,
+                    Creation_Time: order.Creation_Time // Add this line
+                }));
+                console.log('Processed orders:', this.rowData);
+            } else {
+                console.error('Error fetching orders data:', responseBody.body);
+                this.rowData = [];
+            }
+        } catch (error) {
+            console.error('Error in loadOrdersData:', error);
+            this.rowData = [];
+        } finally {
+            this.isLoading = false;
+        }
+    }
+
+    private aggregateDataForChart(data: any[]): any[] {
+        // Sample aggregation logic, should be tailored to specific needs
+        return data.reduce((acc, order) => {
+            const month = new Date(order.Order_Date).getMonth();
+            if (!acc[month]) {
+                acc[month] = { month: month, completedCount: 0, pendingCount: 0, cancelledCount: 0 };
+            }
+            if (order.Order_Status === 'Completed') {
+                acc[month].completedCount++;
+            } else if (order.Order_Status === 'Pending Approval') {
+                acc[month].pendingCount++;
+            } else if (order.Order_Status === 'Cancelled') {
+                acc[month].cancelledCount++;
+            }
+            return acc;
+        }, {});
+    }
+
+    getData() {
+        return this.yearlyData['year'].categories.map((category, index) => ({
+            month: category,
+            sales: this.yearlyData['year'].salesData[index],
+            earnings: this.yearlyData['year'].earningsData[index],
+            shipmentDuration: this.yearlyData['year'].shipmentDuration[index],
+        }));
+    }
+
+    async ngOnInit() {
+        this.applyCurrentTheme(); // Set the theme when the component loads
+        // this.filterSubscription = this.filterService.currentFilter.subscribe((filter) => {
+        //     this.updateChartData();
+        // });
+
+        await this.loadOrdersData();
+        console.log('sales chart rowData', this.rowData)
+        this.updateChartData();
+
+        
+    }
+
+    ngAfterViewInit() {
+        // Ensure the theme is applied after the view initializes, catching any late DOM updates
+        this.applyCurrentTheme();
+    }
+
+    ngOnDestroy() {
+        if (this.filterSubscription) {
+            this.filterSubscription.unsubscribe();
+        }
+        if (this.chart) {
+            this.chart = null; // Proper cleanup
+        }
+        if (this.themeObserver) {
+            this.themeObserver.disconnect();
+        }
+    }
+
+    private updateChartData() {
+        const aggregatedData = this.aggregateDataForChart(this.rowData);
+
         this.chartOptions = {
             theme: this.darkTheme,
             title: {
                 text: 'Sales and Shipment Duration',
             },
-            data: this.formatChartData(),
+            data: aggregatedData,
             series: [
                 {
                     type: 'area',
@@ -175,109 +310,11 @@ export class SaleschartComponent implements OnInit, OnDestroy, AfterViewInit, On
                     stacked: true,
                 },
             ],
-            axes: [
-                {
-                    type: 'category',
-                    position: 'bottom',
-                },
-                {
-                    type: 'number',
-                    position: 'left',
-                    title: {
-                        text: 'Number of Orders',
-                    },
-                    max: 10,
-                },
-            ],
-            // background: {
-            //     fill: '#1E1E1E',
-            // },
-        };
-        // this.chart = AgCharts.create(this.chartOptions);
-        // this.updateChartData('year');
-    }
-
-    private formatChartData() {
-        // Group data by month and aggregate counts by order status
-        const groupedData = this.ordersData.reduce((acc, cur) => {
-            const [month, day, year] = cur.orderDate.split('/');
-            const monthYear = `${year}-${month.padStart(2, '0')}`; // Format as YYYY-MM
-
-            acc[monthYear] = acc[monthYear] || { month: monthYear, completedCount: 0, pendingCount: 0, cancelledCount: 0 };
-
-            if (cur.orderStatus === 'Completed') acc[monthYear].completedCount++;
-            if (cur.orderStatus === 'Pending Approval') acc[monthYear].pendingCount++;
-            if (cur.orderStatus === 'Cancelled') acc[monthYear].cancelledCount++;
-
-            return acc;
-        }, {});
-
-        return Object.values(groupedData);
-    }
-
-    getData() {
-        return this.yearlyData['year'].categories.map((category, index) => ({
-            month: category,
-            sales: this.yearlyData['year'].salesData[index],
-            earnings: this.yearlyData['year'].earningsData[index],
-            shipmentDuration: this.yearlyData['year'].shipmentDuration[index],
-        }));
-    }
-
-    ngOnInit() {
-        this.applyCurrentTheme(); // Set the theme when the component loads
-        this.filterSubscription = this.filterService.currentFilter.subscribe((filter) => {
-            this.updateChartData(filter);
-        });
-
-        this.updateChartData('year');
-    }
-
-    ngAfterViewInit() {
-        // Ensure the theme is applied after the view initializes, catching any late DOM updates
-        this.applyCurrentTheme();
-    }
-
-    ngOnDestroy() {
-        if (this.filterSubscription) {
-            this.filterSubscription.unsubscribe();
-        }
-        if (this.chart) {
-            this.chart = null; // Proper cleanup
-        }
-        if (this.themeObserver) {
-            this.themeObserver.disconnect();
-        }
-    }
-
-    private updateChartData(filter: string) {
-        const data = this.yearlyData[filter];
-        if (!data) return;
-
-        const newOptions = {
-            data: data.categories.map((category, index) => ({
-                category: category,
-                sales: data.salesData[index],
-                earnings: data.earningsData[index],
-            })),
-            axes: [
-                {
-                    type: 'category',
-                    position: 'bottom',
-                    label: { rotation: 0 },
-                    categories: data.categories,
-                },
-                {
-                    type: 'number',
-                    position: 'left',
-                },
-            ],
         };
 
         if (this.chart) {
-            AgCharts.update(this.chart, newOptions);
+            AgCharts.update(this.chart, this.chartOptions);
         } else {
-            // this.chartOptions = {...this.chartOptions, ...newOptions};
             this.chart = AgCharts.create(this.chartOptions);
         }
     }

@@ -477,7 +477,7 @@ export class CustomQuoteModalComponent implements OnInit {
 
     const emailDataPromises = this.selectedSuppliers.map(async (supplier) => {
       const supplierDetails = await this.getSupplierDetails(tenentId, supplier.supplierID);
-      const uniqueLink = `localhost:4200/supplier-form/${supplier.supplierID}/${this.quoteId}/${deliveryInfoID}/${tenentId}`;
+      const uniqueLink = `http://localhost:4200/supplier-form/${supplier.supplierID}/${this.quoteId}/${deliveryInfoID}/${tenentId}`;
       return {
         supplierEmail: supplierDetails.contact_email,
         supplierName: supplier.company_name,

@@ -137,3 +137,22 @@ mat-grid-tile {
 mat-card.mat-mdc-card.mdc-card {
     background-color: white;
 }
+
+.ag-chart-wrapper {
+    position: fixed !important;
+    /* Overrides the position style */
+    top: 50%;
+    /* Center the chart vertically */
+    left: 50%;
+    /* Center the chart horizontally */
+    transform: translate(-50%, -50%);
+    /* Adjusts the positioning to truly center it */
+    z-index: 1000;
+    /* Ensures it's above other content */
+    margin: 10px;
+    /* Adjust as needed */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    /* Optional: Adds shadow for better depth */
+    overflow: hidden;
+    /* Ensures no content spills out */
+}

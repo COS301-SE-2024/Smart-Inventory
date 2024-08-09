@@ -89,6 +89,15 @@ export class CustomQuoteModalComponent implements OnInit {
     console.log('orderId:', this.orderId, 'quoteId:', this.quoteId); // Add this log
   }
 
+  private defaultEmailBody = `Dear {{SUPPLIER_NAME}},
+
+  We are requesting a quote for our order. Please use the following unique link to submit your quote:
+  {{WEB_FORM_URL}}
+  
+  Thank you for your prompt attention to this matter.
+  
+  Best regards`;
+
   async ngOnInit() {
     this.isLoading = true;
     try {
@@ -424,6 +433,7 @@ export class CustomQuoteModalComponent implements OnInit {
     this.dialogRef.close({ action: 'cancel' });
   }
   
+
   async sendQuote() {
     if (this.hasUnsavedChanges) {
       this.snackBar.open('Please save changes before sending the quote.', 'Close', {
@@ -449,6 +459,61 @@ export class CustomQuoteModalComponent implements OnInit {
     }
   }
 
+  async prepareEmailData() {
+    const session = await fetchAuthSession();
+    const tenentId = await this.getTenentId(session);
+    const deliveryInfoID = await this.getDeliveryInfoID(tenentId);
+    const emailTemplate = await this.getEmailTemplate(tenentId);
+
+    const emailDataPromises = this.selectedSuppliers.map(async (supplier) => {
+      const supplierDetails = await this.getSupplierDetails(tenentId, supplier.supplierID);
+      const uniqueLink = `http://localhost:4200/supplier-form/${supplier.supplierID}/${this.quoteId}/${deliveryInfoID}/${tenentId}`;
+      
+      let emailBody = emailTemplate || this.defaultEmailBody;
+      emailBody = emailBody.replace('{{SUPPLIER_NAME}}', supplier.company_name)
+                           .replace('{{WEB_FORM_URL}}', uniqueLink);
+
+      return {
+        supplierEmail: supplierDetails.contact_email,
+        supplierName: supplier.company_name,
+        emailBody: emailBody
+      };
+    });
+
+    const emailData = await Promise.all(emailDataPromises);
+    console.log('Email data:', emailData);
+    return emailData;
+  }
+
+  async getEmailTemplate(tenentId: string): Promise<string | null> {
+    const lambdaClient = new LambdaClient({
+      region: outputs.auth.aws_region,
+      credentials: (await fetchAuthSession()).credentials,
+    });
+
+    const invokeCommand = new InvokeCommand({
+      FunctionName: 'getEmailTemplate',
+      Payload: new TextEncoder().encode(JSON.stringify({ 
+        pathParameters: { tenentId: tenentId } 
+      })),
+    });
+
+    const lambdaResponse = await lambdaClient.send(invokeCommand);
+    const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+
+    if (responseBody.statusCode === 200) {
+      const { emailBody } = JSON.parse(responseBody.body);
+      return emailBody;
+    } else if (responseBody.statusCode === 404) {
+      console.log('No custom email template found for this tenant. Using default template.');
+      return null;
+    } else {
+      console.error('Error fetching email template:', responseBody.body);
+      return null;
+    }
+  }
+
+
   async sendEmails(emailData: any[]) {
     const lambdaClient = new LambdaClient({
       region: outputs.auth.aws_region,
@@ -470,25 +535,7 @@ export class CustomQuoteModalComponent implements OnInit {
     }
   }
 
-  async prepareEmailData() {
-    const session = await fetchAuthSession();
-    const tenentId = await this.getTenentId(session);
-    const deliveryInfoID = await this.getDeliveryInfoID(tenentId);
 
-    const emailDataPromises = this.selectedSuppliers.map(async (supplier) => {
-      const supplierDetails = await this.getSupplierDetails(tenentId, supplier.supplierID);
-      const uniqueLink = `http://localhost:4200/supplier-form/${supplier.supplierID}/${this.quoteId}/${deliveryInfoID}/${tenentId}`;
-      return {
-        supplierEmail: supplierDetails.contact_email,
-        supplierName: supplier.company_name,
-        uniqueLink: uniqueLink
-      };
-    });
-
-    const emailData = await Promise.all(emailDataPromises);
-    console.log('Email data:', emailData);
-    return emailData;
-  }
 
   async getSupplierDetails(tenentId: string, supplierID: string): Promise<any> {
     const lambdaClient = new LambdaClient({

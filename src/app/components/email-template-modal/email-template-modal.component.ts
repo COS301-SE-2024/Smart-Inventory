@@ -31,7 +31,7 @@ import outputs from '../../../../amplify_outputs.json';
 export class EmailTemplateModalComponent implements OnInit {
   emailForm: FormGroup;
   WEB_FORM_URL = '{{WEB_FORM_URL}}';
-  defaultEmailBody = `Dear Supplier,
+  defaultEmailBody = `Dear {{SUPPLIER_NAME}},
 
 We are requesting a quote for our order. Please use the following unique link to submit your quote:
 ${this.WEB_FORM_URL}

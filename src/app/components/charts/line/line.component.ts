@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnChanges, SimpleChanges, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, Input, OnInit, OnChanges, SimpleChanges, AfterViewInit, ViewChild, ElementRef, HostListener } from '@angular/core';
 import { EChartsOption } from 'echarts';
 import * as echarts from 'echarts';
 
@@ -7,51 +7,49 @@ import * as echarts from 'echarts';
   standalone: true,
   imports: [],
   templateUrl: './line.component.html',
-  styleUrl: './line.component.css'
+  styleUrls: ['./line.component.css']  // Corrected property name from 'styleUrl' to 'styleUrls'
 })
 export class LineComponent implements OnInit, OnChanges, AfterViewInit {
   @Input() title: string = '';
   @Input() xAxisData: string[] = [];
   @Input() yAxisName: string = '';
-  @Input() seriesData: { name: string; data: number[] }[] = [];
+  @Input() seriesData: { name: string; data: number[] }[] = []; // Adjusted for correct input
 
-  @ViewChild('chartContainer') chartContainer!: ElementRef;
+  @ViewChild('chartContainer', { static: true }) chartContainer!: ElementRef<HTMLDivElement>;
 
   private chart: echarts.ECharts | null = null;
+
+  @HostListener('window:resize')
+  onWindowResize(): void {
+    this.chart?.resize();
+  }
 
   ngOnInit() {
     // Chart initialization moved to ngAfterViewInit
   }
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     this.initChart();
   }
 
-  ngOnChanges(changes: SimpleChanges) {
-    if (this.chart) {
-      if (changes['title'] || changes['xAxisData'] || changes['yAxisName'] || changes['seriesData']) {
-        this.updateChartOptions();
-      }
-    }
-  }
-
-  private initChart() {
-    if (this.chartContainer && this.chartContainer.nativeElement) {
-      this.chart = echarts.init(this.chartContainer.nativeElement);
+  ngOnChanges(changes: SimpleChanges): void {
+    if (this.chart && (changes['title'] || changes['xAxisData'] || changes['yAxisName'] || changes['seriesData'])) {
       this.updateChartOptions();
     }
   }
 
-  private updateChartOptions() {
+  private initChart(): void {
+    this.chart = echarts.init(this.chartContainer.nativeElement);
+    this.updateChartOptions();
+  }
+
+  private updateChartOptions(): void {
     const options: EChartsOption = {
-      title: {
-        text: this.title
-      },
-      tooltip: {
-        trigger: 'axis'
-      },
+      title: { text: this.title },
+      tooltip: { trigger: 'axis' },
       legend: {
-        data: this.seriesData.map(series => series.name)
+        data: this.seriesData.map(series => series.name),
+        bottom: 0 // Set the legend at the bottom of the chart
       },
       xAxis: {
         type: 'category',
@@ -63,13 +61,12 @@ export class LineComponent implements OnInit, OnChanges, AfterViewInit {
       },
       series: this.seriesData.map(series => ({
         name: series.name,
-        type: 'line',
-        data: series.data
+        type: 'bar',
+        data: series.data,
+        smooth: true
       }))
     };
 
-    if (this.chart) {
-      this.chart.setOption(options);
-    }
+    this.chart?.setOption(options);
   }
 }

@@ -4,13 +4,22 @@
 # chmod +x component_extractor.sh 
 
 # Run command with arguments of which folders to use
-#./component_extractor.sh email-template-modal app.component.html app.routes.ts
+# ./component_extractor.sh [-n] email-template-modal app.component.html app.routes.ts
 
+# Initialize variable for excluding CSS
+exclude_css=false
 
 # Check if at least one argument is provided
 if [ $# -eq 0 ]; then
-    echo "Usage: $0 <component1> <component2> ... [filename.extension]"
+    echo "Usage: $0 [-n] <component1> <component2> ... [filename.extension]"
+    echo "  -n: Exclude CSS files from output"
     exit 1
+fi
+
+# Check for -n flag
+if [ "$1" == "-n" ]; then
+    exclude_css=true
+    shift
 fi
 
 # Output file
@@ -36,7 +45,11 @@ process_file() {
     for dir in "${directories[@]}"; do
         local component_path=$(find . -type d -path "*/$dir/$input" -print -quit)
         if [ -n "$component_path" ]; then
-            local files=$(find "$component_path" -maxdepth 1 -type f \( -name "*.component.ts" -o -name "*.component.html" -o -name "*.component.css" -o -name "*.page.ts" -o -name "*.page.html" -o -name "*.page.scss" \))
+            if [ "$exclude_css" = true ]; then
+                local files=$(find "$component_path" -maxdepth 1 -type f \( -name "*.component.ts" -o -name "*.component.html" -o -name "*.page.ts" -o -name "*.page.html" -o -name "*.page.scss" \))
+            else
+                local files=$(find "$component_path" -maxdepth 1 -type f \( -name "*.component.ts" -o -name "*.component.html" -o -name "*.component.css" -o -name "*.page.ts" -o -name "*.page.html" -o -name "*.page.scss" \))
+            fi
             
             for file in $files; do
                 local filename=$(basename "$file")

@@ -1,0 +1,10 @@
+<h2 mat-dialog-title>Receive Order</h2>
+<mat-dialog-content>
+  <div *ngFor="let key of data | keyvalue">
+    <strong>{{key.key}}:</strong> {{key.value}}
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancel</button>
+  <button mat-raised-button color="primary" (click)="markAsReceived()">Mark Order As Received</button>
+</mat-dialog-actions>

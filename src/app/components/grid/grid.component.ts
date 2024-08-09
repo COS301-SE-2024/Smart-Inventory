@@ -1,5 +1,6 @@
 import { Component, Input, OnInit, OnDestroy, Output, EventEmitter, output } from '@angular/core';
 import { Renderer2, ElementRef, AfterViewInit, ViewEncapsulation } from '@angular/core';
+import { AgGridAngular } from 'ag-grid-angular';
 import { AgGridModule } from 'ag-grid-angular';
 import { ColDef, GridReadyEvent, CellValueChangedEvent, RowValueChangedEvent, GridApi } from 'ag-grid-community';
 import { MatButtonModule } from '@angular/material/button';
@@ -16,6 +17,8 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { RoleSelectCellEditorComponent } from '../../pages/team/role-select-cell-editor.component';
 import { DateSelectCellEditorComponent } from '../reports/supplier-report/date-select-cell-editor.component';
 import { CustomQuoteModalComponent } from '../quote/custom-quote-modal/custom-quote-modal.component';
+import { ReceivedQuotesSidePaneComponent } from '../received-quotes-side-pane/received-quotes-side-pane.component';
+
 @Component({
     selector: 'app-grid',
     standalone: true,
@@ -32,6 +35,7 @@ import { CustomQuoteModalComponent } from '../quote/custom-quote-modal/custom-qu
         MatDialogModule,
         RoleSelectCellEditorComponent,
         DateSelectCellEditorComponent,
+        ReceivedQuotesSidePaneComponent,
     ],
     templateUrl: './grid.component.html',
     styleUrl: './grid.component.css',
@@ -53,7 +57,10 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
     @Output() deleteOrderClicked = new EventEmitter<any>();
     @Output() viewEmailTemplateClicked = new EventEmitter<void>();
     @Output() viewDeliveryInfoClicked = new EventEmitter<void>();
+    @Output() viewReceivedQuotesClicked = new EventEmitter<void>();
+    @Output() markOrderAsReceivedClicked = new EventEmitter<any>();
     private themeObserver!: MutationObserver;
+    gridStyle: any;
 
     public themeClass: string = 'ag-theme-material'; // Default to light theme
 
@@ -83,6 +90,7 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
         private el: ElementRef,
     ) {
         this.setupThemeObserver();
+        this.setGridHeight();
     }
 
     private setupThemeObserver() {
@@ -96,6 +104,13 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
         this.themeObserver.observe(document.body, { attributes: true });
     }
 
+    refreshGrid(newData: any[]) {
+        this.rowData = newData;
+        if (this.gridApi) {
+          this.gridApi.setRowData(this.rowData);
+        }
+      }
+
     private applyCurrentTheme() {
         const theme =
             document.body.getAttribute('data-theme') === 'dark' ? 'ag-theme-material-dark' : 'ag-theme-quartz';
@@ -105,19 +120,37 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
         }
     }
 
+    setGridHeight(): void {
+        const baseHeight = 33; // Base height in vh for up to 10 rows
+        if (this.rowData.length > 10) {
+            const extraRows = this.rowData.length - 10;
+            this.gridStyle = { height: `${baseHeight + extraRows * 3}vh` }; // Adjust 3vh per extra row or as needed
+        } else {
+            this.gridStyle = { height: `${baseHeight}vh` };
+        }
+    }
+
+    // Example to re-calculate height when data changes
+    onRowDataChanged(): void {
+        this.setGridHeight();
+    }
+
     ngOnInit(): void {
         this.filteredRowData = [...this.rowData];
         this.selectOptions = this.columnDefs.map((f: any) => f.field);
 
         // Make all columns editable
         this.columnDefs = this.columnDefs.map((col) => ({ ...col, editable: true }));
+        
     }
 
     ngAfterViewInit() {
         this.applyCurrentTheme();
 
         const selectPlaceholder = this.el.nativeElement.querySelector('.mat-select-placeholder');
-        this.renderer.setStyle(selectPlaceholder, 'color', 'var(--text-color)');
+        if (selectPlaceholder) {
+            this.renderer.setStyle(selectPlaceholder, 'color', 'var(--text-color)');
+        }
     }
 
     getCurrentRoute(v: string) {
@@ -128,6 +161,7 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
         this.gridApi = params.api;
         this.gridApi.sizeColumnsToFit();
         this.applyCurrentTheme();
+        console.log('in grid component', this.rowData)
     }
 
     ngOnDestroy(): void {
@@ -250,7 +284,7 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
         });
 
         dialogRef.afterClosed().subscribe((result) => {
-            if (result) {
+           if (result) {
                 if (result.action === 'createOrder') {
                     console.log('Creating order:', result.data);
                     this.newCustomQuote.emit({ type: 'order', data: result.data });
@@ -266,4 +300,17 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
     onViewDeliveryInfo() {
         this.viewDeliveryInfoClicked.emit();
     }
+
+    onViewReceivedQuotes() {
+        this.viewReceivedQuotesClicked.emit();
+    }
+
+    onMarkOrderAsReceived() {
+    const selectedRows = this.gridApi.getSelectedRows();
+    if (selectedRows && selectedRows.length > 0) {
+        this.markOrderAsReceivedClicked.emit(selectedRows[0]);
+    } else {
+        console.log('No row selected for marking as received');
+    }
+    }  
 }

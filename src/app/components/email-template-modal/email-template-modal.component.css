@@ -54,3 +54,13 @@ button {
   font-size: 14px;
   line-height: 1.5;
 }
+
+.placeholder-buttons {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 30px;
+}
+
+.placeholder-buttons button {
+  margin-right: 10px;
+}

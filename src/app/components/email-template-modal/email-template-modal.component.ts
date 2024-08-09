@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl } from '@angular/forms';
@@ -31,7 +31,8 @@ import outputs from '../../../../amplify_outputs.json';
 export class EmailTemplateModalComponent implements OnInit {
   emailForm: FormGroup;
   WEB_FORM_URL = '{{WEB_FORM_URL}}';
-  defaultEmailBody = `Dear {{SUPPLIER_NAME}},
+  SUPPLIER_NAME = '{{SUPPLIER_NAME}}';
+  defaultEmailBody = `Dear ${this.SUPPLIER_NAME},
 
 We are requesting a quote for our order. Please use the following unique link to submit your quote:
 ${this.WEB_FORM_URL}
@@ -39,6 +40,8 @@ ${this.WEB_FORM_URL}
 Thank you for your prompt attention to this matter.
 
 Best regards`;
+
+  @ViewChild('emailBodyTextarea') emailBodyTextarea?: ElementRef;
 
   constructor(
     public dialogRef: MatDialogRef<EmailTemplateModalComponent>,
@@ -185,5 +188,28 @@ Best regards`;
       verticalPosition: 'top',
       panelClass: ['error-snackbar']
     });
+  }
+
+  insertPlaceholder(placeholder: string) {
+    if (this.emailBodyTextarea) {
+      const textarea: HTMLTextAreaElement = this.emailBodyTextarea.nativeElement;
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      const text = textarea.value;
+      const before = text.substring(0, start);
+      const after = text.substring(end, text.length);
+      textarea.value = `${before}${placeholder}${after}`;
+      textarea.selectionStart = textarea.selectionEnd = start + placeholder.length;
+      textarea.focus();
+      this.emailForm.patchValue({ emailBody: textarea.value });
+    }
+  }
+
+  insertSupplierName() {
+    this.insertPlaceholder(this.SUPPLIER_NAME);
+  }
+
+  insertWebFormUrl() {
+    this.insertPlaceholder(this.WEB_FORM_URL);
   }
 }

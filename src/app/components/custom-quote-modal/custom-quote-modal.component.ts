@@ -17,8 +17,8 @@ import { Amplify } from 'aws-amplify';
 import { fetchAuthSession } from 'aws-amplify/auth';
 import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
 import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
-import outputs from '../../../../../amplify_outputs.json';
-import { LoadingSpinnerComponent } from '../../loader/loading-spinner.component';
+import outputs from '../../../../amplify_outputs.json';
+import { LoadingSpinnerComponent } from '../loader/loading-spinner.component';
 
 interface QuoteItem {
   item: { sku: string; description: string; inventoryID: string };

@@ -10,7 +10,7 @@ import outputs from '../../../../amplify_outputs.json';
 
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { Amplify } from 'aws-amplify';
-import { CustomQuoteModalComponent } from '../../components/quote/custom-quote-modal/custom-quote-modal.component';
+import { CustomQuoteModalComponent } from '../../components/custom-quote-modal/custom-quote-modal.component';
 import { CommonModule } from '@angular/common';
 import { LoadingSpinnerComponent } from '../../components/loader/loading-spinner.component';
 import { MatSnackBar } from '@angular/material/snack-bar';

@@ -14,6 +14,7 @@ import { OrderReportComponent } from './components/reports/order-report/order-re
 import { SupplierReportComponent } from './components/reports/supplier-report/supplier-report.component';
 import { ActivityReportComponent } from './components/reports/activity-report/activity-report.component';
 
+
 export const routes: Routes = [
     { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
     { path: 'dashboard', component: DashboardComponent },

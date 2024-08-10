@@ -280,9 +280,16 @@ export class DashboardComponent implements OnInit {
     }
 
     // Integration
+    inventoryLevel: number = 20;
 
     async dashboardData() {
         try {
+            // Mocked baseline values (should be dynamically fetched or defined)
+            const baselineValues = {
+                inventoryLevels: 10, // Baseline inventory levels
+                backorders: 5,      // Baseline backorders
+                fulfillmentDays: 390 // Baseline average fulfillment days (for comparison)
+            };
             const session = await fetchAuthSession();
             this.loader.setLoading(false);
 
@@ -326,7 +333,8 @@ export class DashboardComponent implements OnInit {
 
             if (responseBody.statusCode === 200) {
                 const dashboardData = JSON.parse(responseBody.body);
-                console.log('Dashboard Data:', dashboardData);
+                // console.log('Dashboard Data:', dashboardData);
+                console.log('I am a metric', parseFloat((((dashboardData.inventoryLevels - baselineValues.inventoryLevels) / baselineValues.inventoryLevels) * 100).toFixed(2)));
 
                 // Update the dashboardInfo with new data from the Lambda function
                 this.dashboard = [
@@ -338,7 +346,7 @@ export class DashboardComponent implements OnInit {
                         name: 'Inventory Levels',
                         icon: 'storage',
                         analytic: dashboardData.inventoryLevels.toString(),
-                        percentage: 0.04, // Update this if needed from dashboardData
+                        percentage: parseFloat((((dashboardData.inventoryLevels - baselineValues.inventoryLevels) / baselineValues.inventoryLevels) * 100).toFixed(2)), // Update this if needed from dashboardData
                         type: 'card',
                         isActive: true,
                         tooltip: 'Current inventory stock count.',
@@ -351,7 +359,7 @@ export class DashboardComponent implements OnInit {
                         name: 'Backorders',
                         icon: 'assignment_return',
                         analytic: dashboardData.backorders.toString(),
-                        percentage: -0.01, // Update this if needed from dashboardData
+                        percentage: parseFloat((((dashboardData.backorders - baselineValues.backorders) / baselineValues.backorders) * 100).toFixed(2)), // Update this if needed from dashboardData
                         type: 'card',
                         isActive: true,
                         tooltip: 'Orders pending due to lack of stock.',
@@ -364,7 +372,7 @@ export class DashboardComponent implements OnInit {
                         name: 'Avg Fulfillment Time',
                         icon: 'hourglass_full',
                         analytic: dashboardData.avgFulfillmentTime,
-                        percentage: -0.05, // Update this if needed from dashboardData
+                        percentage: parseFloat((((parseFloat(dashboardData.avgFulfillmentTime.split(" days")[0]) - baselineValues.fulfillmentDays) / baselineValues.fulfillmentDays) * 100).toFixed(2)), // Update this if needed from dashboardData
                         type: 'card',
                         isActive: true,
                         tooltip: 'Average time taken from order placement to shipment.',
@@ -377,7 +385,7 @@ export class DashboardComponent implements OnInit {
                         name: 'Top Seller',
                         icon: 'star_rate',
                         analytic: dashboardData.topSeller,
-                        percentage: 0.12, // Update this if needed from dashboardData
+                        percentage: parseFloat("0.12"), // Update this if needed from dashboardData
                         type: 'card',
                         isActive: true,
                         tooltip: 'The product with the highest requests.',

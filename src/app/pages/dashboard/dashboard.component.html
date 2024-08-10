@@ -72,7 +72,7 @@
                     </div>
                     <div class="percentage"
                         [ngClass]="{ increase: (item.percentage ?? 0) > 0, decrease: (item.percentage ?? 0) < 0 }">
-                        {{ item.percentage | percent : '1.1-2' }}
+                        {{ item.percentage }}<span>%</span>
                     </div>
                 </div>
             </div>

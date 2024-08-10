@@ -195,8 +195,8 @@ export class BarchartComponent implements AfterViewInit {
             });
             const getUserResponse = await cognitoClient.send(getUserCommand);
 
-            // const tenentId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
-            const tenentId = '1718890159961-q85m9';
+            const tenentId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
+            // const tenentId = '1718890159961-q85m9';
 
             if (!tenentId) {
                 console.error('TenentId not found in user attributes');

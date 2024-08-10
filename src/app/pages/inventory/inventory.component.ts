@@ -18,7 +18,6 @@ import { AddInventoryModalComponent } from './add-inventory-modal/add-inventory-
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { RequestStockModalComponent } from './request-stock-modal/request-stock-modal.component';
 import { MatNativeDateModule } from '@angular/material/core';
-import { ActivityLoggingService } from '../../services/activity-logging.service';
 
 @Component({
     selector: 'app-inventory',
@@ -45,6 +44,9 @@ export class InventoryComponent implements OnInit {
     rowData: any[] = [];
     isLoading = true;
     suppliers: any[] = [];
+    userName: string = '';
+    userRole: string = '';
+    tenantId: string = '';
 
     colDefs: ColDef[] = [
         { field: 'inventoryID', headerName: 'Inventory ID', hide: true },
@@ -66,22 +68,26 @@ export class InventoryComponent implements OnInit {
             }
         },
         { field: 'lowStockThreshold', headerName: 'Low Stock Threshold' },
-        { field: 'reorderFreq', headerName: 'Reorder Frequency' },
+        { field: 'reorderAmount', headerName: 'Reorder Amount' },
     ];
 
     addButton = { text: 'Add New Item' };
 
-    constructor(private titleService: TitleService, private dialog: MatDialog, private activityLoggingService: ActivityLoggingService) {
+    constructor(
+        private titleService: TitleService,
+        private dialog: MatDialog
+    ) {
         Amplify.configure(outputs);
     }
 
     async ngOnInit(): Promise<void> {
         this.titleService.updateTitle('Inventory');
+        await this.getUserInfo();
         await this.loadInventoryData();
         await this.loadSuppliers();
     }
 
-    async loadInventoryData() {
+    async getUserInfo() {
         try {
             const session = await fetchAuthSession();
 
@@ -95,13 +101,59 @@ export class InventoryComponent implements OnInit {
             });
             const getUserResponse = await cognitoClient.send(getUserCommand);
 
-            const tenantId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
+            const givenName = getUserResponse.UserAttributes?.find(attr => attr.Name === 'given_name')?.Value || '';
+            const familyName = getUserResponse.UserAttributes?.find(attr => attr.Name === 'family_name')?.Value || '';
+            this.userName = `${givenName} ${familyName}`.trim();
 
-            if (!tenantId) {
-                console.error('TenantId not found in user attributes');
-                this.rowData = [];
-                return;
+            this.tenantId = getUserResponse.UserAttributes?.find(attr => attr.Name === 'custom:tenentId')?.Value || '';
+
+            const lambdaClient = new LambdaClient({
+                region: outputs.auth.aws_region,
+                credentials: session.credentials,
+            });
+
+            const payload = JSON.stringify({
+                userPoolId: outputs.auth.user_pool_id,
+                username: session.tokens?.accessToken.payload['username'],
+            });
+
+            const invokeCommand = new InvokeCommand({
+                FunctionName: 'getUsers',
+                Payload: new TextEncoder().encode(payload),
+            });
+
+            const lambdaResponse = await lambdaClient.send(invokeCommand);
+            const users = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+
+            const currentUser = users.find((user: any) => 
+                user.Attributes.find((attr: any) => attr.Name === 'email')?.Value === session.tokens?.accessToken.payload['username']
+            );
+
+            if (currentUser && currentUser.Groups.length > 0) {
+                this.userRole = this.getRoleDisplayName(currentUser.Groups[0].GroupName);
             }
+
+        } catch (error) {
+            console.error('Error fetching user info:', error);
+        }
+    }
+
+    private getRoleDisplayName(roleName: string): string {
+        switch (roleName) {
+            case 'admin':
+                return 'Admin';
+            case 'enduser':
+                return 'End User';
+            case 'inventorycontroller':
+                return 'Inventory Controller';
+            default:
+                return '';
+        }
+    }
+
+    async loadInventoryData() {
+        try {
+            const session = await fetchAuthSession();
 
             const lambdaClient = new LambdaClient({
                 region: outputs.auth.aws_region,
@@ -110,7 +162,7 @@ export class InventoryComponent implements OnInit {
 
             const invokeCommand = new InvokeCommand({
                 FunctionName: 'Inventory-getItems',
-                Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: tenantId } })),
+                Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: this.tenantId } })),
             });
 
             const lambdaResponse = await lambdaClient.send(invokeCommand);
@@ -129,9 +181,11 @@ export class InventoryComponent implements OnInit {
                     supplier: item.supplier,
                     expirationDate: item.expirationDate,
                     lowStockThreshold: item.lowStockThreshold,
-                    reorderFreq : item.reorderFreq
+                    reorderAmount : item.reorderAmount
                 }));
                 console.log('Processed inventory items:', this.rowData);
+
+                await this.logActivity('Viewed inventory', { itemCount: this.rowData.length });
             } else {
                 console.error('Error fetching inventory data:', responseBody.body);
                 this.rowData = [];
@@ -148,24 +202,6 @@ export class InventoryComponent implements OnInit {
         try {
             const session = await fetchAuthSession();
 
-            const cognitoClient = new CognitoIdentityProviderClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
-
-            const getUserCommand = new GetUserCommand({
-                AccessToken: session.tokens?.accessToken.toString(),
-            });
-            const getUserResponse = await cognitoClient.send(getUserCommand);
-
-            const tenantId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
-
-            if (!tenantId) {
-                console.error('TenantId not found in user attributes');
-                this.suppliers = [];
-                return;
-            }
-
             const lambdaClient = new LambdaClient({
                 region: outputs.auth.aws_region,
                 credentials: session.credentials,
@@ -173,7 +209,7 @@ export class InventoryComponent implements OnInit {
 
             const invokeCommand = new InvokeCommand({
                 FunctionName: 'getSuppliers',
-                Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: tenantId } })),
+                Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: this.tenantId } })),
             });
 
             const lambdaResponse = await lambdaClient.send(invokeCommand);
@@ -208,22 +244,6 @@ export class InventoryComponent implements OnInit {
         try {
             const session = await fetchAuthSession();
 
-            const cognitoClient = new CognitoIdentityProviderClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
-
-            const getUserCommand = new GetUserCommand({
-                AccessToken: session.tokens?.accessToken.toString(),
-            });
-            const getUserResponse = await cognitoClient.send(getUserCommand);
-
-            const tenantId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
-
-            if (!tenantId) {
-                throw new Error('TenantId not found in user attributes');
-            }
-
             const lambdaClient = new LambdaClient({
                 region: outputs.auth.aws_region,
                 credentials: session.credentials,
@@ -236,10 +256,10 @@ export class InventoryComponent implements OnInit {
                 quantity: formData.quantity,
                 sku: formData.sku,
                 supplier: formData.supplier,
-                tenentId: tenantId,
+                tenentId: this.tenantId,
                 expirationDate: formData.expirationDate,
                 lowStockThreshold: formData.lowStockThreshold,
-                reorderFreq: formData.reorderFreq,
+                reorderAmount: formData.reorderAmount,
             });
 
             console.log('Payload:', payload);
@@ -254,13 +274,7 @@ export class InventoryComponent implements OnInit {
 
             if (responseBody.statusCode === 201) {
                 console.log('Inventory item added successfully');
-                this.activityLoggingService.addActivityLog({
-                    memberID: tenantId, // You might want to use a more specific user ID if available
-                    name: 'User', // Replace with actual user name if available
-                    role: 'Inventory Manager', // Replace with actual user role if available
-                    action: 'Added new inventory item',
-                    details: { sku: formData.sku, description: formData.description }
-                });
+                await this.logActivity('Added new inventory item', { sku: formData.sku, description: formData.description });
                 await this.loadInventoryData();
             } else {
                 throw new Error(responseBody.body);
@@ -283,7 +297,7 @@ export class InventoryComponent implements OnInit {
                     await this.deleteInventoryItem(row.inventoryID);
                 }
                 this.gridComponent.removeConfirmedRows(rows);
-                await this.loadInventoryData(); // Refresh the data after deletion
+                await this.loadInventoryData();
             });
         }
     }
@@ -292,22 +306,6 @@ export class InventoryComponent implements OnInit {
         try {
             const session = await fetchAuthSession();
 
-            const cognitoClient = new CognitoIdentityProviderClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
-
-            const getUserCommand = new GetUserCommand({
-                AccessToken: session.tokens?.accessToken.toString(),
-            });
-            const getUserResponse = await cognitoClient.send(getUserCommand);
-
-            const tenantId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
-
-            if (!tenantId) {
-                throw new Error('TenantId not found in user attributes');
-            }
-
             const lambdaClient = new LambdaClient({
                 region: outputs.auth.aws_region,
                 credentials: session.credentials,
@@ -315,7 +313,7 @@ export class InventoryComponent implements OnInit {
 
             const payload = JSON.stringify({
                 inventoryID: inventoryID,
-                tenentId: tenantId,
+                tenentId: this.tenantId,
             });
 
             const invokeCommand = new InvokeCommand({
@@ -328,13 +326,7 @@ export class InventoryComponent implements OnInit {
 
             if (responseBody.statusCode === 200) {
                 console.log('Inventory item deleted successfully');
-                this.activityLoggingService.addActivityLog({
-                    memberID: tenantId,
-                    name: 'User',
-                    role: 'Inventory Manager',
-                    action: 'Deleted inventory item',
-                    details: { inventoryID: inventoryID }
-                });
+                await this.logActivity('Deleted inventory item', { inventoryID: inventoryID });
             } else {
                 throw new Error(responseBody.body);
             }
@@ -348,22 +340,6 @@ export class InventoryComponent implements OnInit {
         try {
             const session = await fetchAuthSession();
 
-            const cognitoClient = new CognitoIdentityProviderClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
-
-            const getUserCommand = new GetUserCommand({
-                AccessToken: session.tokens?.accessToken.toString(),
-            });
-            const getUserResponse = await cognitoClient.send(getUserCommand);
-
-            const tenentId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
-
-            if (!tenentId) {
-                throw new Error('TenentId not found in user attributes');
-            }
-
             const lambdaClient = new LambdaClient({
                 region: outputs.auth.aws_region,
                 credentials: session.credentials,
@@ -371,7 +347,7 @@ export class InventoryComponent implements OnInit {
 
             const updatedData = {
                 inventoryID: event.data.inventoryID,
-                tenentId: tenentId,
+                tenentId: this.tenantId,
                 [event.field]: event.newValue,
             };
 
@@ -385,13 +361,7 @@ export class InventoryComponent implements OnInit {
 
             if (responseBody.statusCode === 200) {
                 console.log('Inventory item updated successfully');
-                this.activityLoggingService.addActivityLog({
-                    memberID: tenentId,
-                    name: 'User',
-                    role: 'Inventory Manager',
-                    action: 'Updated inventory item',
-                    details: { sku: event.data.sku, field: event.field, newValue: event.newValue }
-                });
+                await this.logActivity('Updated inventory item', { sku: event.data.sku, field: event.field, newValue: event.newValue });
                 // Update the local data to reflect the change
                 const updatedItem = JSON.parse(responseBody.body);
                 const index = this.rowData.findIndex((item) => item.inventoryID === updatedItem.inventoryID);
@@ -426,22 +396,6 @@ export class InventoryComponent implements OnInit {
         try {
             const session = await fetchAuthSession();
 
-            const cognitoClient = new CognitoIdentityProviderClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
-
-            const getUserCommand = new GetUserCommand({
-                AccessToken: session.tokens?.accessToken.toString(),
-            });
-            const getUserResponse = await cognitoClient.send(getUserCommand);
-
-            const tenentId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
-
-            if (!tenentId) {
-                throw new Error('TenentId not found in user attributes');
-            }
-
             const lambdaClient = new LambdaClient({
                 region: outputs.auth.aws_region,
                 credentials: session.credentials,
@@ -456,14 +410,14 @@ export class InventoryComponent implements OnInit {
             };
             await this.handleCellValueChanged(updateEvent);
 
-// Then, create the stock request report
-const reportPayload = {
-    tenentId: tenentId,
-    sku: item.sku,
-    category: item.category,
-    supplier: item.supplier,
-    quantityRequested: item.requestQuantity.toString(), // Ensure this is a string
-};
+            // Then, create the stock request report
+            const reportPayload = {
+                tenentId: this.tenantId,
+                sku: item.sku,
+                category: item.category,
+                supplier: item.supplier,
+                quantityRequested: quantity.toString(),
+            };
 
             console.log('Report Payload:', reportPayload);
 
@@ -479,13 +433,7 @@ const reportPayload = {
 
             if (responseBody.statusCode === 201) {
                 console.log('Stock request report created successfully');
-                this.activityLoggingService.addActivityLog({
-                    memberID: tenentId,
-                    name: 'User',
-                    role: 'Inventory Manager',
-                    action: 'Requested stock',
-                    details: { sku: item.sku, quantity: quantity }
-                });
+                await this.logActivity('Requested stock', { sku: item.sku, quantity: quantity });
                 await this.loadInventoryData();
             } else {
                 throw new Error(JSON.stringify(responseBody.body));
@@ -493,6 +441,44 @@ const reportPayload = {
         } catch (error) {
             console.error('Error requesting stock:', error);
             alert(`Error requesting stock: ${(error as Error).message}`);
+        }
+    }
+
+    async logActivity(task: string, details: any) {
+        try {
+            const session = await fetchAuthSession();
+    
+            const lambdaClient = new LambdaClient({
+                region: outputs.auth.aws_region,
+                credentials: session.credentials,
+            });
+    
+            const payload = JSON.stringify({
+                tenentId: this.tenantId,
+                memberId: this.tenantId, // Assuming memberId is the same as tenantId
+                name: this.userName,
+                role: this.userRole,
+                task: task,
+                timeSpent: 0, // You might want to calculate this
+                idleTime: 0, // You might want to calculate this
+                details: details // This will not be stored in DynamoDB as per the Lambda function
+            });
+    
+            const invokeCommand = new InvokeCommand({
+                FunctionName: 'userActivity-createItem',
+                Payload: new TextEncoder().encode(JSON.stringify({ body: payload })),
+            });
+    
+            const lambdaResponse = await lambdaClient.send(invokeCommand);
+            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+    
+            if (responseBody.statusCode === 201) {
+                console.log('Activity logged successfully');
+            } else {
+                throw new Error(responseBody.body);
+            }
+        } catch (error) {
+            console.error('Error logging activity:', error);
         }
     }
 }

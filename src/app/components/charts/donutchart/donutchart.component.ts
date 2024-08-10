@@ -30,7 +30,7 @@ export class DonutchartComponent implements AfterViewInit, OnInit{
     public chartOptions!: AgChartOptions;
     private themeObserver!: MutationObserver;
     private data: any[] = [];
-
+    private chart: any;
     private lightTheme: AgChartTheme = {
         palette: {
             fills: ['#5C2983', '#0076C5', '#21B372'],  // Example fill colors for light theme

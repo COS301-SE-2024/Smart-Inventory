@@ -28,7 +28,7 @@ export class SaleschartComponent implements OnInit, OnDestroy, AfterViewInit, On
     private chart: any;
     private filterSubscription!: Subscription;
     private themeObserver!: MutationObserver;
-    private rowData: any[] = [];
+    private ordersData: any[] = [];
     @Input() chartTitle?: string;
 
     ngOnChanges(changes: SimpleChanges) {
@@ -75,9 +75,14 @@ export class SaleschartComponent implements OnInit, OnDestroy, AfterViewInit, On
 
 
     private applyCurrentTheme() {
-        // Retrieve the theme setting directly from the body attribute
-        const currentTheme = document.body.getAttribute('data-theme') || 'light'; // Default to 'light' if undefined
-        this.chartOptions = this.getChartOptions(currentTheme);
+        const currentTheme = document.body.getAttribute('data-theme') || 'light';
+        const themeSettings = currentTheme === 'dark' ? this.darkTheme : this.lightTheme;
+        
+        this.chartOptions = {
+            ...this.chartOptions,
+            theme: themeSettings
+        };
+
         if (this.chart) {
             AgCharts.update(this.chart, this.chartOptions);
         } else {
@@ -94,29 +99,6 @@ export class SaleschartComponent implements OnInit, OnDestroy, AfterViewInit, On
             theme: themeSettings  // Apply the determined theme settings
         };
     }
-
-    private ordersData: any[] = [
-        // { orderDate: '8/7/2024', orderStatus: 'Completed', deliveryDate: '8/7/2024' },
-        // { orderDate: '8/7/2024', orderStatus: 'Pending Approval', deliveryDate: null },
-        // { orderDate: '8/5/2024', orderStatus: 'Completed', deliveryDate: '8/7/2024' },
-        // { orderDate: '8/3/2024', orderStatus: 'Completed', deliveryDate: '8/4/2024' },
-        // { orderDate: '8/1/2024', orderStatus: 'Cancelled', deliveryDate: null },
-        // { orderDate: '7/30/2024', orderStatus: 'Completed', deliveryDate: '8/1/2024' },
-        // { orderDate: '7/28/2024', orderStatus: 'Pending Approval', deliveryDate: null },
-        // { orderDate: '7/25/2024', orderStatus: 'Completed', deliveryDate: '7/27/2024' },
-        // { orderDate: '7/23/2024', orderStatus: 'Completed', deliveryDate: '7/25/2024' },
-        // { orderDate: '7/21/2024', orderStatus: 'Cancelled', deliveryDate: null },
-        // { orderDate: '6/15/2024', orderStatus: 'Completed', deliveryDate: '6/17/2024' },
-        // { orderDate: '6/12/2024', orderStatus: 'Pending Approval', deliveryDate: null },
-        // { orderDate: '6/10/2024', orderStatus: 'Completed', deliveryDate: '6/11/2024' },
-        // { orderDate: '5/29/2024', orderStatus: 'Completed', deliveryDate: '5/30/2024' },
-        // { orderDate: '5/20/2024', orderStatus: 'Cancelled', deliveryDate: null },
-        // { orderDate: '5/15/2024', orderStatus: 'Completed', deliveryDate: '5/17/2024' },
-        // { orderDate: '5/10/2024', orderStatus: 'Pending Approval', deliveryDate: null },
-        // { orderDate: '4/25/2024', orderStatus: 'Completed', deliveryDate: '4/27/2024' },
-        // { orderDate: '4/20/2024', orderStatus: 'Completed', deliveryDate: '4/21/2024' },
-        // { orderDate: '4/15/2024', orderStatus: 'Cancelled', deliveryDate: null },
-    ];
 
     constructor(private filterService: FilterService) {
         Amplify.configure(outputs);
@@ -193,7 +175,7 @@ export class SaleschartComponent implements OnInit, OnDestroy, AfterViewInit, On
 
             if (!tenentId) {
                 console.error('TenentId not found in user attributes');
-                this.rowData = [];
+                // this.rowData = [];
                 return;
             }
 
@@ -249,21 +231,20 @@ export class SaleschartComponent implements OnInit, OnDestroy, AfterViewInit, On
                 );
             } else {
                 console.error('Error fetching orders data:', responseBody.body);
-                this.rowData = [];
+                // this.rowData = [];
             }
         } catch (error) {
             console.error('Error in loadOrdersData:', error);
-            this.rowData = [];
+            // this.rowData = [];
         } finally {
             this.isLoading = false;
         }
     }
 
     private formatChartData() {
-        // Group data by month and aggregate counts by order status
         const groupedData = this.ordersData.reduce((acc, cur) => {
             const [month, day, year] = cur.orderDate.split('-');
-            const monthYear = `${year}-${month.padStart(2, '0')}`; // Format as YYYY-MM
+            const monthYear = `${year}-${month.padStart(2, '0')}`;
 
             acc[monthYear] = acc[monthYear] || { month: monthYear, completedCount: 0, pendingCount: 0, cancelledCount: 0 };
 
@@ -274,12 +255,9 @@ export class SaleschartComponent implements OnInit, OnDestroy, AfterViewInit, On
             return acc;
         }, {});
 
-        console.log('my object groupedData',  Object.values(groupedData))
-
         this.chartOptions = {
-            // theme: this.darkTheme,
             title: {
-                text: 'Sales and Shipment Duration',
+                text: this.chartTitle || 'Sales and Shipment Duration',
             },
             data: Object.values(groupedData),
             series: [
@@ -319,11 +297,9 @@ export class SaleschartComponent implements OnInit, OnDestroy, AfterViewInit, On
                     max: 10,
                 },
             ],
-            // background: {
-            //     fill: '#1E1E1E',
-            // },
         };
-        
+
+        this.applyCurrentTheme();
     }
 
 

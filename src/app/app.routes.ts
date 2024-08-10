@@ -13,7 +13,7 @@ import { InventoryReportComponent } from './components/reports/inventory-report/
 import { OrderReportComponent } from './components/reports/order-report/order-report.component';
 import { SupplierReportComponent } from './components/reports/supplier-report/supplier-report.component';
 import { ActivityReportComponent } from './components/reports/activity-report/activity-report.component';
-import { SupplierFormComponent } from './components/supplier-form/supplier-form.component';
+
 
 export const routes: Routes = [
     { path: '', redirectTo: '/dashboard', pathMatch: 'full' },

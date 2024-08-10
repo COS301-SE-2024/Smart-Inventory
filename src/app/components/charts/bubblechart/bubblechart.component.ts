@@ -186,8 +186,8 @@ export class BubblechartComponent implements OnInit, OnDestroy, AfterViewInit, O
             });
             const getUserResponse = await cognitoClient.send(getUserCommand);
 
-            // const tenantId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
-            const tenantId = "1717667019559-j85syk";
+            const tenantId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
+            // const tenantId = "1717667019559-j85syk";
 
             if (!tenantId) {
                 console.error('TenantId not found in user attributes');

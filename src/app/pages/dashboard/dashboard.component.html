@@ -94,15 +94,15 @@
                     <div class="earnings">
                         <h3 style="color: var(----dash-bg-color); margin-bottom: 10px">Requests</h3>
                         <ul style="list-style: none; padding: 0; margin: 0">
-                            <li style="padding: 8px 0; border-bottom: 1px solid #eee">
+                            <li *ngIf="RequestOrders" style="padding: 8px 0; border-bottom: 1px solid #eee">
                                 Total Requests: {{ RequestOrders.requests.totalRequests }}
                             </li>
-                            <li style="padding: 8px 0; border-bottom: 1px solid #eee">
-                                Most Requested Category: {{ RequestOrders.requests.fulfilledRequests.count }}
-                                ({{ RequestOrders.requests.fulfilledRequests.percentage }}%)
+                            <li *ngIf="RequestOrders" style="padding: 8px 0; border-bottom: 1px solid #eee">
+                                Most Requested Category: {{ RequestOrders.requests.mostRequested.name }}
+                                ({{ RequestOrders.requests.mostRequested.percentage }}%)
                             </li>
-                            <li style="padding: 8px 0">
-                                Pending Requests: {{ RequestOrders.requests.pendingRequests }}
+                            <li *ngIf="RequestOrders" style="padding: 8px 0">
+                                Highest Requests: {{ RequestOrders.requests.highestRequest }}
                             </li>
                         </ul>
                     </div>
@@ -110,13 +110,13 @@
                     <div class="earnings">
                         <h3 style="color: var(----dash-bg-color); margin-bottom: 10px">Backorders</h3>
                         <ul style="list-style: none; padding: 0; margin: 0">
-                            <li style="padding: 8px 0; border-bottom: 1px solid #eee">
+                            <li *ngIf="RequestOrders" style="padding: 8px 0; border-bottom: 1px solid #eee">
                                 Current Backorders: {{ RequestOrders.backorders.currentBackorders }}
                             </li>
-                            <li style="padding: 8px 0; border-bottom: 1px solid #eee">
+                            <li *ngIf="RequestOrders" style="padding: 8px 0; border-bottom: 1px solid #eee">
                                 Average Delay: {{ RequestOrders.backorders.averageDelay }} days
                             </li>
-                            <li style="padding: 8px 0">
+                            <li *ngIf="RequestOrders" style="padding: 8px 0">
                                 Longest Backorder Item: {{ RequestOrders.backorders.longestBackorderItem.productName }}
                                 -
                                 {{ RequestOrders.backorders.longestBackorderItem.delay }} days

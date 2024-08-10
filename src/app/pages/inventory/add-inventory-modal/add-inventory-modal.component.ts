@@ -56,7 +56,7 @@ export class AddInventoryModalComponent {
       category: ['', Validators.required],
       quantity: [0, [Validators.required, Validators.min(0)]],
       lowStockThreshold: [0, [Validators.required, Validators.min(0)]],
-      reorderFreq: [0, [Validators.required, Validators.min(0)]],
+      reorderAmount: [0, [Validators.required, Validators.min(0)]],
       supplier: ['', Validators.required],
       expirationDate: ['', Validators.required]
     });

@@ -476,7 +476,9 @@ export class CustomQuoteModalComponent implements OnInit {
       return {
         supplierEmail: supplierDetails.contact_email,
         supplierName: supplier.company_name,
-        emailBody: emailBody
+        emailBody: emailBody,
+        orderId: this.orderId, // Include the order ID in the email data
+        quoteId: this.quoteId // Include the quote ID as well for completeness
       };
     });
 

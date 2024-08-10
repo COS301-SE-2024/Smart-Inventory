@@ -10,7 +10,7 @@ import outputs from '../../../../amplify_outputs.json';
 
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { Amplify } from 'aws-amplify';
-import { CustomQuoteModalComponent } from '../../components/quote/custom-quote-modal/custom-quote-modal.component';
+import { CustomQuoteModalComponent } from '../../components/custom-quote-modal/custom-quote-modal.component';
 import { CommonModule } from '@angular/common';
 import { LoadingSpinnerComponent } from '../../components/loader/loading-spinner.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -35,6 +35,8 @@ interface DeliveryAddress {
 }
 const defaultColor = '#FFF0DB'; // Orange/yellow color
 const completedColor = '#E8F5E9'; // Green color
+const sentToSuppliersColor = '#E3F2FD'; // Light blue color
+const pendingApprovalColor = '#FFCDD2'; // Light red color for Pending Approval
 
 @Component({
   selector: 'app-orders',
@@ -77,7 +79,13 @@ export class OrdersComponent implements OnInit {
       headerName: 'Order Status', 
       filter: 'agSetColumnFilter',
       cellStyle: (params) => {
-        return { backgroundColor: params.value === 'Completed' ? completedColor : defaultColor };
+        if (params.value === 'Pending Approval') {
+          return { backgroundColor: pendingApprovalColor };
+        } else if (params.value === 'Completed') {
+          return { backgroundColor: completedColor };
+        } else {
+          return { backgroundColor: defaultColor };
+        }
       }
     },
     { field: 'Quote_ID', headerName: 'Quote ID' },
@@ -86,7 +94,13 @@ export class OrdersComponent implements OnInit {
       headerName: 'Quote Status', 
       filter: 'agSetColumnFilter',
       cellStyle: (params) => {
-        return { backgroundColor: params.value === 'Accepted' ? completedColor : defaultColor };
+        if (params.value === 'Sent to Suppliers') {
+          return { backgroundColor: sentToSuppliersColor };
+        } else if (params.value === 'Accepted') {
+          return { backgroundColor: completedColor };
+        } else {
+          return { backgroundColor: pendingApprovalColor };
+        }
       }
     },
     { field: 'Selected_Supplier', headerName: 'Selected Supplier', filter: 'agSetColumnFilter' },
@@ -530,6 +544,9 @@ export class OrdersComponent implements OnInit {
 
   async sendQuote(quoteData: any) {
     try {
+      // Log the email data
+      console.log('Email data for sending quote:', quoteData.emailData);
+      
       // Implement the logic to send the quote
       console.log('Sending quote:', quoteData);
       
@@ -553,6 +570,7 @@ export class OrdersComponent implements OnInit {
       });
     }
   }
+
 
   viewEmailTemplate() {
     const dialogRef = this.dialog.open(EmailTemplateModalComponent, {

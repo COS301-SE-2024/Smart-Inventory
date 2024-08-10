@@ -17,8 +17,8 @@ import { Amplify } from 'aws-amplify';
 import { fetchAuthSession } from 'aws-amplify/auth';
 import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
 import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
-import outputs from '../../../../../amplify_outputs.json';
-import { LoadingSpinnerComponent } from '../../loader/loading-spinner.component';
+import outputs from '../../../../amplify_outputs.json';
+import { LoadingSpinnerComponent } from '../loader/loading-spinner.component';
 
 interface QuoteItem {
   item: { sku: string; description: string; inventoryID: string };
@@ -88,6 +88,15 @@ export class CustomQuoteModalComponent implements OnInit {
     console.log('Received data in modal:', data); // Add this log
     console.log('orderId:', this.orderId, 'quoteId:', this.quoteId); // Add this log
   }
+
+  private defaultEmailBody = `Dear {{SUPPLIER_NAME}},
+
+  We are requesting a quote for our order. Please use the following unique link to submit your quote:
+  {{WEB_FORM_URL}}
+  
+  Thank you for your prompt attention to this matter.
+  
+  Best regards`;
 
   async ngOnInit() {
     this.isLoading = true;
@@ -423,8 +432,9 @@ export class CustomQuoteModalComponent implements OnInit {
   cancel() {
     this.dialogRef.close({ action: 'cancel' });
   }
+  
 
-  sendQuote() {
+  async sendQuote() {
     if (this.hasUnsavedChanges) {
       this.snackBar.open('Please save changes before sending the quote.', 'Close', {
         duration: 5000,
@@ -435,14 +445,142 @@ export class CustomQuoteModalComponent implements OnInit {
     }
     if (!this.isNewQuote) {
       console.log('Sending quote...');
+      const emailData = await this.prepareEmailData();
+      
+      // Send emails
+      await this.sendEmails(emailData);
+
       this.dialogRef.close({ action: 'sendQuote', data: {
         quoteId: this.quoteId,
         items: this.quoteItems,
-        suppliers: this.selectedSuppliers.map(supplier => ({
-          company_name: supplier.company_name,
-          supplierID: supplier.supplierID
-        }))
+        suppliers: this.selectedSuppliers,
+        emailData: emailData
       }});
+    }
+  }
+
+  async prepareEmailData() {
+    const session = await fetchAuthSession();
+    const tenentId = await this.getTenentId(session);
+    const deliveryInfoID = await this.getDeliveryInfoID(tenentId);
+    const emailTemplate = await this.getEmailTemplate(tenentId);
+
+    const emailDataPromises = this.selectedSuppliers.map(async (supplier) => {
+      const supplierDetails = await this.getSupplierDetails(tenentId, supplier.supplierID);
+      const uniqueLink = `http://localhost:4200/supplier-form/${supplier.supplierID}/${this.quoteId}/${deliveryInfoID}/${tenentId}`;
+      
+      let emailBody = emailTemplate || this.defaultEmailBody;
+      emailBody = emailBody.replace('{{SUPPLIER_NAME}}', supplier.company_name)
+                           .replace('{{WEB_FORM_URL}}', uniqueLink);
+
+      return {
+        supplierEmail: supplierDetails.contact_email,
+        supplierName: supplier.company_name,
+        emailBody: emailBody,
+        orderId: this.orderId, // Include the order ID in the email data
+        quoteId: this.quoteId // Include the quote ID as well for completeness
+      };
+    });
+
+    const emailData = await Promise.all(emailDataPromises);
+    console.log('Email data:', emailData);
+    return emailData;
+  }
+
+  async getEmailTemplate(tenentId: string): Promise<string | null> {
+    const lambdaClient = new LambdaClient({
+      region: outputs.auth.aws_region,
+      credentials: (await fetchAuthSession()).credentials,
+    });
+
+    const invokeCommand = new InvokeCommand({
+      FunctionName: 'getEmailTemplate',
+      Payload: new TextEncoder().encode(JSON.stringify({ 
+        pathParameters: { tenentId: tenentId } 
+      })),
+    });
+
+    const lambdaResponse = await lambdaClient.send(invokeCommand);
+    const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+
+    if (responseBody.statusCode === 200) {
+      const { emailBody } = JSON.parse(responseBody.body);
+      return emailBody;
+    } else if (responseBody.statusCode === 404) {
+      console.log('No custom email template found for this tenant. Using default template.');
+      return null;
+    } else {
+      console.error('Error fetching email template:', responseBody.body);
+      return null;
+    }
+  }
+
+
+  async sendEmails(emailData: any[]) {
+    const lambdaClient = new LambdaClient({
+      region: outputs.auth.aws_region,
+      credentials: (await fetchAuthSession()).credentials,
+    });
+
+    const invokeCommand = new InvokeCommand({
+      FunctionName: 'sendSupplierEmails',
+      Payload: new TextEncoder().encode(JSON.stringify({ emailData: emailData })),
+    });
+
+    const lambdaResponse = await lambdaClient.send(invokeCommand);
+    const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+
+    if (responseBody.statusCode === 200) {
+      console.log('Emails sent successfully:', responseBody.body);
+    } else {
+      throw new Error(`Failed to send emails: ${responseBody.body}`);
+    }
+  }
+
+
+
+  async getSupplierDetails(tenentId: string, supplierID: string): Promise<any> {
+    const lambdaClient = new LambdaClient({
+      region: outputs.auth.aws_region,
+      credentials: (await fetchAuthSession()).credentials,
+    });
+
+    const invokeCommand = new InvokeCommand({
+      FunctionName: 'getSupplier',
+      Payload: new TextEncoder().encode(JSON.stringify({ 
+        pathParameters: { tenentId: tenentId, supplierID: supplierID } 
+      })),
+    });
+
+    const lambdaResponse = await lambdaClient.send(invokeCommand);
+    const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+
+    if (responseBody.statusCode === 200) {
+      return JSON.parse(responseBody.body);
+    } else {
+      throw new Error(`Failed to get supplier details: ${responseBody.body}`);
+    }
+  }
+
+  async getDeliveryInfoID(tenentId: string): Promise<string> {
+    const lambdaClient = new LambdaClient({
+      region: outputs.auth.aws_region,
+      credentials: (await fetchAuthSession()).credentials,
+    });
+
+    const invokeCommand = new InvokeCommand({
+      FunctionName: 'getDeliveryID',
+      Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: tenentId } })),
+    });
+
+    const lambdaResponse = await lambdaClient.send(invokeCommand);
+    const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+
+    if (responseBody.statusCode === 200) {
+      const { deliveryInfoID } = JSON.parse(responseBody.body);
+      return deliveryInfoID;
+    } else {
+      throw new Error('Failed to get deliveryInfoID');
     }
   }
 

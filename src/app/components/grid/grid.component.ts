@@ -16,7 +16,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatDialogModule } from '@angular/material/dialog';
 import { RoleSelectCellEditorComponent } from '../../pages/team/role-select-cell-editor.component';
 import { DateSelectCellEditorComponent } from '../reports/supplier-report/date-select-cell-editor.component';
-import { CustomQuoteModalComponent } from '../quote/custom-quote-modal/custom-quote-modal.component';
+import { CustomQuoteModalComponent } from '../custom-quote-modal/custom-quote-modal.component';
 import { ReceivedQuotesSidePaneComponent } from '../received-quotes-side-pane/received-quotes-side-pane.component';
 
 @Component({

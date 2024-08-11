@@ -161,7 +161,7 @@ export class OrdersComponent implements OnInit {
   
   openCustomQuoteModal(quoteDetails: any, orderId: string, quoteId: string) {
     const dialogRef = this.dialog.open(CustomQuoteModalComponent, {
-      width: '500px',
+      width: '800px',
       data: {
         quoteDetails: {
           ...quoteDetails,

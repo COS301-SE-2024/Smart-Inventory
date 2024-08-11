@@ -30,6 +30,7 @@ export class ReceivedQuotesSidePaneComponent implements OnChanges {
   @Input() isOpen: boolean = false;
   @Input() selectedOrder: any;
   @Output() closed = new EventEmitter<void>();
+  @Output() quoteAccepted = new EventEmitter<void>();
 
   supplierQuotes: SupplierQuote[] = [];
 
@@ -115,9 +116,10 @@ export class ReceivedQuotesSidePaneComponent implements OnChanges {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        // Quote was accepted, refresh the data
+      if (result && result.action === 'quoteAccepted') {
+        // Quote was accepted, refresh the data and notify the parent component
         this.fetchSupplierQuotes();
+        this.quoteAccepted.emit();
       }
     });
   }

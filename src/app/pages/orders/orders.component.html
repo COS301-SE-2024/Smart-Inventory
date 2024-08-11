@@ -19,6 +19,7 @@
     [isOpen]="isSidePaneOpen"
     [selectedOrder]="selectedOrder"
     (closed)="isSidePaneOpen = false"
+    (quoteAccepted)="onQuoteAccepted()"
     ></app-received-quotes-side-pane>
 <div *ngIf="isLoading" class="loading-overlay">
     <app-loading-spinner></app-loading-spinner>

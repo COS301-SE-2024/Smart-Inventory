@@ -728,4 +728,10 @@ export class OrdersComponent implements OnInit {
     });
   }
 
+  async onQuoteAccepted() {
+    await this.loadOrdersData();
+    this.gridComponent.refreshGrid(this.rowData);
+    this.isSidePaneOpen = false; // Optionally close the side pane
+  }
+
 }

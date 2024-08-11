@@ -49,23 +49,9 @@ mat-dialog-actions {
   border-top: 1px solid #e0e0e0;
 }
 
-::ng-deep .mat-tab-body-content {
-  padding: 20px 10px;
-}
-
-/* Add space between tabs and content */
-::ng-deep .mat-tab-body-wrapper {
-  margin-top: 20px;
-}
-
 /* Reduce space between day inputs in weekly tab */
 .weekly-schedule mat-form-field {
   margin-bottom: 5px;
-}
-
-/* Add space above the daily scan time input */
-::ng-deep .mat-tab-body-content mat-form-field:first-child {
-  margin-top: 20px;
 }
 
 /* Style for the daily scan time container */

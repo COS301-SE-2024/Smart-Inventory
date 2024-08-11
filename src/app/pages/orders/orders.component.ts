@@ -20,6 +20,7 @@ import { ReceivedQuotesSidePaneComponent } from 'app/components/received-quotes-
 import { MatCardModule } from '@angular/material/card';
 import { ReceiveOrderModalComponent } from 'app/components/receive-order-modal/receive-order-modal.component';
 import { OrderReceivedConfirmationDialogComponent } from 'app/components/receive-order-modal/OrderReceivedConfirmationDialogComponent';
+import { AutomationSettingsModalComponent } from 'app/components/automation-settings-modal/automation-settings-modal.component';
 
 interface DeliveryAddress {
   company: string;
@@ -703,6 +704,19 @@ export class OrdersComponent implements OnInit {
         verticalPosition: 'top',
       });
     }
+  }
+
+  openAutomationSettingsModal() {
+    const dialogRef = this.dialog.open(AutomationSettingsModalComponent, {
+      width: '400px'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        console.log('New scan interval set:', result.scheduledScanInterval);
+        // You can update your component or service with the new interval here
+      }
+    });
   }
 
 }

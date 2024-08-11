@@ -59,6 +59,8 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
     @Output() viewDeliveryInfoClicked = new EventEmitter<void>();
     @Output() viewReceivedQuotesClicked = new EventEmitter<void>();
     @Output() markOrderAsReceivedClicked = new EventEmitter<any>();
+    @Output() viewAutomationSettingsClicked = new EventEmitter<void>();
+
     private themeObserver!: MutationObserver;
     gridStyle: any;
 
@@ -312,5 +314,9 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
     } else {
         console.log('No row selected for marking as received');
     }
-    }  
+    }
+    
+    openAutomationSettings() {
+        this.viewAutomationSettingsClicked.emit();
+    }
 }

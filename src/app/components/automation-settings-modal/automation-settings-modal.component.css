@@ -1,1 +1,64 @@
-/*empty*/
+/* automation-settings-modal.component.css */
+
+:host {
+  display: block;
+  font-family: Arial, sans-serif;
+  color: #333;
+}
+
+h2 {
+  color: #2c3e50;
+}
+
+mat-dialog-content {
+  margin-bottom: 20px;
+}
+
+mat-radio-group {
+  display: flex;
+  justify-content: space-between;
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+mat-radio-button {
+  margin-right: 10px;
+}
+
+mat-form-field {
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.interval-inputs {
+  display: flex;
+  gap: 15px;
+}
+
+.interval-inputs mat-form-field {
+  flex: 1;
+}
+
+.weekly-schedule {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+}
+
+.next-scan-info {
+  background-color: #e8f4fd;
+  border-left: 4px solid #3498db;
+  padding: 10px;
+  border-radius: 4px;
+}
+
+.next-scan-info p {
+  margin: 5px 0;
+}
+
+mat-dialog-actions {
+  justify-content: flex-end;
+  padding-top: 20px;
+  border-top: 1px solid #e0e0e0;
+}

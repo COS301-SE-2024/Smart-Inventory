@@ -298,7 +298,7 @@ a#help-button {
 
 .help-button-container {
     position: sticky;
-    top: 95%;
+    top: 94%;
     /* Adjust based on desired visibility */
     /* right: 20px; */
     /* Keeps it visible at the top-right */

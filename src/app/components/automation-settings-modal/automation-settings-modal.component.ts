@@ -1,6 +1,6 @@
 // automation-settings-modal.component.ts
 import { Component, OnInit } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -13,7 +13,8 @@ import { fetchAuthSession } from 'aws-amplify/auth';
 import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
 import outputs from '../../../../amplify_outputs.json';
 import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
-
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { ScanConfirmationDialogComponent } from './scan-confirmation-dialog.component';
 
 @Component({
   selector: 'app-automation-settings-modal',
@@ -28,7 +29,8 @@ import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-c
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
-    MatRadioModule
+    MatRadioModule,
+    ScanConfirmationDialogComponent
   ]
 })
 export class AutomationSettingsModalComponent implements OnInit {
@@ -42,7 +44,11 @@ export class AutomationSettingsModalComponent implements OnInit {
   nextScheduledScan: Date = new Date();
   countdownTime: string = '';
 
-  constructor(public dialogRef: MatDialogRef<AutomationSettingsModalComponent>) {}
+  constructor(
+    public dialogRef: MatDialogRef<AutomationSettingsModalComponent>,
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog
+  ) {}
 
   async ngOnInit() {
     await this.fetchCurrentSettings();
@@ -116,9 +122,32 @@ export class AutomationSettingsModalComponent implements OnInit {
   }
 
   scanNow() {
-    console.log('Scanning inventory now...');
-    this.updateNextScheduledScan();
+    // Close the current dialog
+    this.dialogRef.close('opening_scan_confirmation');
+
+    // Open the confirmation dialog
+    const confirmDialogRef = this.dialog.open(ScanConfirmationDialogComponent, {
+      width: '300px'
+    });
+
+    confirmDialogRef.afterClosed().subscribe(result => {
+      if (result === true) {
+        console.log('Scanning inventory now...');
+        this.snackBar.open('Inventory scan initiated', 'Close', {
+          duration: 3000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+        });
+        // Here you would typically call a service to initiate the actual scan
+      } else {
+        // If cancelled, reopen the Automation Settings modal
+        this.dialog.open(AutomationSettingsModalComponent, {
+          width: '400px' // Use the same width as when originally opened
+        });
+      }
+    });
   }
+
 
   cancel() {
     this.dialogRef.close();
@@ -210,13 +239,22 @@ export class AutomationSettingsModalComponent implements OnInit {
 
       if (responseBody.statusCode === 200) {
         console.log('Automation settings updated successfully');
+        this.snackBar.open('Automation settings updated successfully', 'Close', {
+          duration: 3000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+        });
         this.dialogRef.close(scheduleConfig);
       } else {
         throw new Error(responseBody.body || 'Failed to update automation settings');
       }
     } catch (error) {
       console.error('Error saving automation settings:', error);
-      // Handle error (show message to user, etc.)
+      this.snackBar.open(`Error saving settings: ${(error as Error).message}`, 'Close', {
+        duration: 5000,
+        horizontalPosition: 'center',
+        verticalPosition: 'top',
+      });
     }
   }
 

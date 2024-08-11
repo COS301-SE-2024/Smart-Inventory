@@ -710,11 +710,13 @@ export class OrdersComponent implements OnInit {
     const dialogRef = this.dialog.open(AutomationSettingsModalComponent, {
       width: '400px'
     });
-
+  
     dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        console.log('New scan interval set:', result.scheduledScanInterval);
-        // You can update your component or service with the new interval here
+      if (result === 'opening_scan_confirmation') {
+        // Do nothing, as the scan confirmation dialog will handle reopening if needed
+      } else if (result) {
+        console.log('New automation settings:', result);
+        // Handle the new settings
       }
     });
   }

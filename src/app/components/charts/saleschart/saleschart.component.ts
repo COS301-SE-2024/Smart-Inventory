@@ -3,16 +3,17 @@ import { AgChartsAngular } from 'ag-charts-angular';
 import { AgChartOptions, AgCharts, AgChartTheme } from 'ag-charts-community';
 import { FilterService } from '../../../services/filter.service';
 import { Subscription } from 'rxjs';
+import { Amplify } from 'aws-amplify';
+import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
+import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
+import { fetchAuthSession } from 'aws-amplify/auth';
 
+import outputs from '../../../../../amplify_outputs.json';
 interface DataSet {
     categories: string[];
     salesData: number[];
     earningsData: number[];
     shipmentDuration: number[];
-}
-
-interface YearlyData {
-    [key: string]: DataSet;
 }
 
 @Component({
@@ -23,11 +24,11 @@ interface YearlyData {
     styleUrl: './saleschart.component.css',
 })
 export class SaleschartComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges {
-    public chartOptions: AgChartOptions;
+    public chartOptions!: AgChartOptions;
     private chart: any;
     private filterSubscription!: Subscription;
     private themeObserver!: MutationObserver;
-
+    private ordersData: any[] = [];
     @Input() chartTitle?: string;
 
     ngOnChanges(changes: SimpleChanges) {
@@ -71,20 +72,25 @@ export class SaleschartComponent implements OnInit, OnDestroy, AfterViewInit, On
             attributes: true
         });
     }
-    
+
 
     private applyCurrentTheme() {
-        // Retrieve the theme setting directly from the body attribute
-        const currentTheme = document.body.getAttribute('data-theme') || 'light'; // Default to 'light' if undefined
-        this.chartOptions = this.getChartOptions(currentTheme);
+        const currentTheme = document.body.getAttribute('data-theme') || 'light';
+        const themeSettings = currentTheme === 'dark' ? this.darkTheme : this.lightTheme;
+        
+        this.chartOptions = {
+            ...this.chartOptions,
+            theme: themeSettings
+        };
+
         if (this.chart) {
             AgCharts.update(this.chart, this.chartOptions);
         } else {
             this.chart = AgCharts.create(this.chartOptions);
         }
     }
-    
-    
+
+
     private getChartOptions(theme: string): AgChartOptions {
         // Determine the theme settings based on the passed theme string
         const themeSettings = theme === 'dark' ? this.darkTheme : this.lightTheme;
@@ -94,62 +100,187 @@ export class SaleschartComponent implements OnInit, OnDestroy, AfterViewInit, On
         };
     }
 
-    private yearlyData: YearlyData = {
-        year: {
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-            salesData: [23000, 25000, 22000, 27000, 24000, 26000, 25000, 23000, 21000, 22000, 24000, 25000],
-            earningsData: [15000, 12000, 14000, 13000, 16000, 13000, 14000, 15000, 12000, 14000, 16000, 13000],
-            shipmentDuration: [2, 3, 2.5, 3.2, 2.8, 2.1, 3.5, 3, 2.9, 3.1, 2.7, 3.6],
-        },
-        month: {
-            categories: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
-            salesData: [12000, 18000, 16000, 13000],
-            earningsData: [8000, 12000, 10000, 7000],
-            shipmentDuration: [2.5, 2, 3, 3.2],
-        },
-        week: {
-            categories: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-            salesData: [3000, 3500, 4000, 4500, 3000, 2000, 2500],
-            earningsData: [2000, 2500, 3000, 3500, 2000, 1500, 1750],
-            shipmentDuration: [2, 2.1, 1.8, 1.9, 2.2, 2.5, 2.4],
-        },
-        day: {
-            categories: ['00:00-04:00', '04:00-08:00', '08:00-12:00', '12:00-16:00', '16:00-20:00', '20:00-24:00'],
-            salesData: [1500, 2000, 2500, 3000, 3500, 3000],
-            earningsData: [1000, 1500, 2000, 2500, 3000, 2500],
-            shipmentDuration: [1.5, 1.6, 1.4, 1.3, 1.5, 1.6],
-        },
-    };
-
     constructor(private filterService: FilterService) {
+        Amplify.configure(outputs);
         this.setupThemeObserver();
+        // this.chartOptions = {
+        //     theme: this.darkTheme,
+        //     title: {
+        //         text: 'Sales and Shipment Duration',
+        //     },
+        //     data: this.formatChartData(),
+        //     series: [
+        //         {
+        //             type: 'area',
+        //             xKey: 'month',
+        //             yKey: 'completedCount',
+        //             yName: 'Completed Orders',
+        //             stacked: true,
+        //         },
+        //         {
+        //             type: 'area',
+        //             xKey: 'month',
+        //             yKey: 'pendingCount',
+        //             yName: 'Pending Orders',
+        //             stacked: true,
+        //         },
+        //         {
+        //             type: 'area',
+        //             xKey: 'month',
+        //             yKey: 'cancelledCount',
+        //             yName: 'Cancelled Orders',
+        //             stacked: true,
+        //         },
+        //     ],
+        //     axes: [
+        //         {
+        //             type: 'category',
+        //             position: 'bottom',
+        //         },
+        //         {
+        //             type: 'number',
+        //             position: 'left',
+        //             title: {
+        //                 text: 'Number of Orders',
+        //             },
+        //             max: 10,
+        //         },
+        //     ],
+        //     // background: {
+        //     //     fill: '#1E1E1E',
+        //     // },
+        // };
+        // this.chart = AgCharts.create(this.chartOptions);
+        // this.updateChartData('year');
+    }
+
+    private isLoading = false;
+
+    async loadOrdersData() {
+        this.isLoading = true;
+        try {
+            const session = await fetchAuthSession();
+
+            const cognitoClient = new CognitoIdentityProviderClient({
+                region: outputs.auth.aws_region,
+                credentials: session.credentials,
+            });
+
+            const getUserCommand = new GetUserCommand({
+                AccessToken: session.tokens?.accessToken.toString(),
+            });
+            const getUserResponse = await cognitoClient.send(getUserCommand);
+
+            const tenentId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
+
+            if (!tenentId) {
+                console.error('TenentId not found in user attributes');
+                // this.rowData = [];
+                return;
+            }
+
+            const lambdaClient = new LambdaClient({
+                region: outputs.auth.aws_region,
+                credentials: session.credentials,
+            });
+
+            const invokeCommand = new InvokeCommand({
+                FunctionName: 'getOrders',
+                Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: tenentId } })),
+            });
+
+            const lambdaResponse = await lambdaClient.send(invokeCommand);
+            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+            console.log('Response from Lambda:', responseBody);
+
+            if (responseBody.statusCode === 200) {
+                const orders = JSON.parse(responseBody.body);
+                this.ordersData = orders.map((order: any) => ({
+                    // Order_ID: order.Order_ID,
+                    orderDate: order.Order_Date,
+                    orderStatus: order.Order_Status,
+                    // Quote_ID: order.Quote_ID,
+                    // Quote_Status: order.Quote_Status,
+                    // Selected_Supplier: order.Selected_Supplier,
+                    deliveryDate: order.Expected_Delivery_Date,
+                    // Actual_Delivery_Date: order.Actual_Delivery_Date,
+                    // Creation_Time: order.Creation_Time // Add this line
+                }));
+                console.log('Processed orders:', this.ordersData);
+                this.ordersData.push(
+                    { orderDate: '8-7-2024', orderStatus: 'Completed', deliveryDate: '8/7/2024' },
+                    { orderDate: '8-7-2024', orderStatus: 'Pending Approval', deliveryDate: null },
+                    { orderDate: '8-5-2024', orderStatus: 'Completed', deliveryDate: '8/7/2024' },
+                    { orderDate: '8-3-2024', orderStatus: 'Completed', deliveryDate: '8/4/2024' },
+                    { orderDate: '8-1-2024', orderStatus: 'Cancelled', deliveryDate: null },
+                    { orderDate: '7-30-2024', orderStatus: 'Completed', deliveryDate: '8/1/2024' },
+                    { orderDate: '7-28-2024', orderStatus: 'Pending Approval', deliveryDate: null },
+                    { orderDate: '7-25-2024', orderStatus: 'Completed', deliveryDate: '7/27/2024' },
+                    { orderDate: '7-23-2024', orderStatus: 'Completed', deliveryDate: '7/25/2024' },
+                    { orderDate: '7-21-2024', orderStatus: 'Cancelled', deliveryDate: null },
+                    { orderDate: '6-15-2024', orderStatus: 'Completed', deliveryDate: '6/17/2024' },
+                    { orderDate: '6-12-2024', orderStatus: 'Pending Approval', deliveryDate: null },
+                    { orderDate: '6-10-2024', orderStatus: 'Completed', deliveryDate: '6/11/2024' },
+                    { orderDate: '5-29-2024', orderStatus: 'Completed', deliveryDate: '5/30/2024' },
+                    { orderDate: '5-20-2024', orderStatus: 'Cancelled', deliveryDate: null },
+                    { orderDate: '5-15-2024', orderStatus: 'Completed', deliveryDate: '5/17/2024' },
+                    { orderDate: '5-10-2024', orderStatus: 'Pending Approval', deliveryDate: null },
+                    { orderDate: '4-25-2024', orderStatus: 'Completed', deliveryDate: '4/27/2024' },
+                    { orderDate: '4-20-2024', orderStatus: 'Completed', deliveryDate: '4/21/2024' },
+                    { orderDate: '4-15-2024', orderStatus: 'Cancelled', deliveryDate: null },
+                );
+            } else {
+                console.error('Error fetching orders data:', responseBody.body);
+                // this.rowData = [];
+            }
+        } catch (error) {
+            console.error('Error in loadOrdersData:', error);
+            // this.rowData = [];
+        } finally {
+            this.isLoading = false;
+        }
+    }
+
+    private formatChartData() {
+        const groupedData = this.ordersData.reduce((acc, cur) => {
+            const [month, day, year] = cur.orderDate.split('-');
+            const monthYear = `${year}-${month.padStart(2, '0')}`;
+
+            acc[monthYear] = acc[monthYear] || { month: monthYear, completedCount: 0, pendingCount: 0, cancelledCount: 0 };
+
+            if (cur.orderStatus === 'Completed') acc[monthYear].completedCount++;
+            if (cur.orderStatus === 'Pending Approval') acc[monthYear].pendingCount++;
+            if (cur.orderStatus === 'Cancelled') acc[monthYear].cancelledCount++;
+
+            return acc;
+        }, {});
+
         this.chartOptions = {
-            theme: this.darkTheme,
             title: {
-                text: 'Sales and Shipment Duration',
+                text: this.chartTitle || 'Sales and Shipment Duration',
             },
-            data: this.getData(),
+            data: Object.values(groupedData),
             series: [
                 {
                     type: 'area',
                     xKey: 'month',
-                    yKey: 'sales',
-                    yName: 'Sales',
+                    yKey: 'completedCount',
+                    yName: 'Completed Orders',
                     stacked: true,
                 },
                 {
                     type: 'area',
                     xKey: 'month',
-                    yKey: 'earnings',
-                    yName: 'Earnings',
+                    yKey: 'pendingCount',
+                    yName: 'Pending Orders',
                     stacked: true,
                 },
                 {
                     type: 'area',
                     xKey: 'month',
-                    yKey: 'shipmentDuration',
-                    yName: 'Shipment Duration (days)',
-                    marker: { enabled: true },
+                    yKey: 'cancelledCount',
+                    yName: 'Cancelled Orders',
+                    stacked: true,
                 },
             ],
             axes: [
@@ -160,32 +291,27 @@ export class SaleschartComponent implements OnInit, OnDestroy, AfterViewInit, On
                 {
                     type: 'number',
                     position: 'left',
+                    title: {
+                        text: 'Number of Orders',
+                    },
+                    max: 10,
                 },
             ],
-            // background: {
-            //     fill: '#1E1E1E',
-            // },
         };
-        // this.chart = AgCharts.create(this.chartOptions);
-        this.updateChartData('year');
+
+        this.applyCurrentTheme();
     }
 
-    getData() {
-        return this.yearlyData['year'].categories.map((category, index) => ({
-            month: category,
-            sales: this.yearlyData['year'].salesData[index],
-            earnings: this.yearlyData['year'].earningsData[index],
-            shipmentDuration: this.yearlyData['year'].shipmentDuration[index],
-        }));
-    }
 
-    ngOnInit() {
+    async ngOnInit() {
         this.applyCurrentTheme(); // Set the theme when the component loads
         this.filterSubscription = this.filterService.currentFilter.subscribe((filter) => {
-            this.updateChartData(filter);
+            // this.updateChartData(filter);
         });
 
-        this.updateChartData('year');
+        // this.updateChartData('year');
+        await this.loadOrdersData();
+        this.formatChartData();
     }
 
     ngAfterViewInit() {
@@ -205,35 +331,4 @@ export class SaleschartComponent implements OnInit, OnDestroy, AfterViewInit, On
         }
     }
 
-    private updateChartData(filter: string) {
-        const data = this.yearlyData[filter];
-        if (!data) return;
-
-        const newOptions = {
-            data: data.categories.map((category, index) => ({
-                category: category,
-                sales: data.salesData[index],
-                earnings: data.earningsData[index],
-            })),
-            axes: [
-                {
-                    type: 'category',
-                    position: 'bottom',
-                    label: { rotation: 0 },
-                    categories: data.categories,
-                },
-                {
-                    type: 'number',
-                    position: 'left',
-                },
-            ],
-        };
-
-        if (this.chart) {
-            AgCharts.update(this.chart, newOptions);
-        } else {
-            // this.chartOptions = {...this.chartOptions, ...newOptions};
-            this.chart = AgCharts.create(this.chartOptions);
-        }
-    }
 }

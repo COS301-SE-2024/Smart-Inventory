@@ -54,16 +54,13 @@ const pendingApprovalColor = '#FFCDD2'; // Light red color for Pending Approval
     styleUrl: './orders.component.css',
 })
 export class OrdersComponent implements OnInit {
+
     @ViewChild(GridComponent) gridComponent!: GridComponent;
 
-    isLoading = true;
+    isLoading = false;
     isSidePaneOpen: boolean = false;
 
-    constructor(
-        private titleService: TitleService,
-        private dialog: MatDialog,
-        private snackBar: MatSnackBar,
-    ) {
+    constructor(private titleService: TitleService, private dialog: MatDialog, private snackBar: MatSnackBar) {
         Amplify.configure(outputs);
     }
 
@@ -72,7 +69,7 @@ export class OrdersComponent implements OnInit {
 
     // Column Definitions: Defines & controls grid columns.
     colDefs: ColDef[] = [
-        { field: 'Order_ID', headerName: 'Order ID', filter: 'agTextColumnFilter' },
+        { field: 'Order_ID', headerName: 'Order ID' },
         { field: 'Order_Date', headerName: 'Order Date', filter: 'agDateColumnFilter' },
         {
             field: 'Creation_Time',
@@ -84,7 +81,7 @@ export class OrdersComponent implements OnInit {
                     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
                 }
                 return '';
-            },
+            }
         },
         {
             field: 'Order_Status',
@@ -98,9 +95,9 @@ export class OrdersComponent implements OnInit {
                 } else {
                     return { backgroundColor: defaultColor };
                 }
-            },
+            }
         },
-        { field: 'Quote_ID', headerName: 'Quote ID', filter: 'agTextColumnFilter' },
+        { field: 'Quote_ID', headerName: 'Quote ID' },
         {
             field: 'Quote_Status',
             headerName: 'Quote Status',
@@ -113,7 +110,7 @@ export class OrdersComponent implements OnInit {
                 } else {
                     return { backgroundColor: pendingApprovalColor };
                 }
-            },
+            }
         },
         { field: 'Selected_Supplier', headerName: 'Selected Supplier', filter: 'agSetColumnFilter' },
         { field: 'Expected_Delivery_Date', headerName: 'Expected Delivery Date', filter: 'agDateColumnFilter' },
@@ -130,7 +127,7 @@ export class OrdersComponent implements OnInit {
         instructions: '',
         contactName: '',
         email: '',
-        phone: '',
+        phone: ''
     };
 
     defaultColDef: ColDef = {
@@ -138,7 +135,7 @@ export class OrdersComponent implements OnInit {
         editable: true,
     };
 
-    openAddDialog() {}
+    openAddDialog() { }
 
     async ngOnInit() {
         this.titleService.updateTitle('Orders');
@@ -158,7 +155,12 @@ export class OrdersComponent implements OnInit {
     async viewGeneratedQuote() {
         console.log('Current selected order:', this.selectedOrder);
         if (!this.selectedOrder) {
-            alert('Please select an order first');
+            this.snackBar.open('Please select an order first', 'Close', {
+                duration: 5000,
+                horizontalPosition: 'center',
+                verticalPosition: 'top',
+            });
+            // alert('Please select an order first');
             return;
         }
         try {
@@ -166,7 +168,12 @@ export class OrdersComponent implements OnInit {
             this.openCustomQuoteModal(quoteDetails, this.selectedOrder.Order_ID, this.selectedOrder.Quote_ID);
         } catch (error) {
             console.error('Error fetching quote details:', error);
-            alert('Error fetching quote details');
+            this.snackBar.open('Error fetching quote details', '', {
+                duration: 5000,
+                horizontalPosition: 'center',
+                verticalPosition: 'top',
+            });
+            // alert('Error fetching quote details');
         }
     }
 
@@ -177,15 +184,15 @@ export class OrdersComponent implements OnInit {
                 quoteDetails: {
                     ...quoteDetails,
                     orderId: orderId,
-                    quoteId: quoteId,
+                    quoteId: quoteId
                 },
                 isEditing: false,
-                isNewQuote: !orderId,
+                isNewQuote: !orderId
             },
-            disableClose: true, // Prevent closing on backdrop click or ESC key
+            disableClose: true // Prevent closing on backdrop click or ESC key
         });
 
-        dialogRef.afterClosed().subscribe((result) => {
+        dialogRef.afterClosed().subscribe(result => {
             if (result && result.action === 'saveChanges') {
                 this.updateQuote(result.data);
             } else if (result && result.action === 'sendQuote') {
@@ -205,11 +212,9 @@ export class OrdersComponent implements OnInit {
 
         const invokeCommand = new InvokeCommand({
             FunctionName: 'getQuoteDetails',
-            Payload: new TextEncoder().encode(
-                JSON.stringify({
-                    pathParameters: { tenentId: tenentId, quoteId: quoteId },
-                }),
-            ),
+            Payload: new TextEncoder().encode(JSON.stringify({
+                pathParameters: { tenentId: tenentId, quoteId: quoteId }
+            })),
         });
 
         const lambdaResponse = await lambdaClient.send(invokeCommand);
@@ -235,18 +240,18 @@ export class OrdersComponent implements OnInit {
             const payload = {
                 pathParameters: {
                     tenentId: tenentId,
-                    quoteId: updatedQuote.quoteId,
+                    quoteId: updatedQuote.quoteId
                 },
                 body: JSON.stringify({
                     items: updatedQuote.items.map((item: any) => ({
                         ItemSKU: item.ItemSKU,
-                        Quantity: item.Quantity,
+                        Quantity: item.Quantity
                     })),
                     suppliers: updatedQuote.suppliers.map((supplier: any) => ({
                         company_name: supplier.company_name,
-                        supplierID: supplier.supplierID,
-                    })),
-                }),
+                        supplierID: supplier.supplierID
+                    }))
+                })
             };
 
             console.log('Updating quote with payload:', JSON.stringify(payload, null, 2));
@@ -310,12 +315,12 @@ export class OrdersComponent implements OnInit {
                 quoteItems: quoteData.items.map((item: any) => ({
                     ItemSKU: item.ItemSKU,
                     Quantity: item.Quantity,
-                    inventoryID: item.inventoryID,
+                    inventoryID: item.inventoryID
                 })),
                 suppliers: quoteData.suppliers.map((supplier: any) => ({
                     company_name: supplier.company_name,
-                    supplierID: supplier.supplierID,
-                })),
+                    supplierID: supplier.supplierID
+                }))
             };
 
             console.log('New Quote Data:', quoteData);
@@ -355,7 +360,7 @@ export class OrdersComponent implements OnInit {
                     orderId: orderId,
                     quoteId: quoteId,
                     items: quoteData.items,
-                    suppliers: quoteData.suppliers,
+                    suppliers: quoteData.suppliers
                 };
 
                 // Open the generated quote modal after a delay
@@ -494,12 +499,20 @@ export class OrdersComponent implements OnInit {
 
     async deleteOrderRow() {
         if (!this.selectedOrder) {
-            alert('Please select an order to delete');
+            this.snackBar.open(`Please select an order to delete`, 'Close', {
+                duration: 5000,
+                horizontalPosition: 'center',
+                verticalPosition: 'top',
+            });
             return;
         }
 
         if (this.selectedOrder.Quote_Status !== 'Draft') {
-            alert('Only orders with Draft quote status can be deleted');
+            this.snackBar.open('Only orders with Draft quote status can be deleted', 'Close', {
+                duration: 5000,
+                horizontalPosition: 'center',
+                verticalPosition: 'top',
+            });
             return;
         }
 

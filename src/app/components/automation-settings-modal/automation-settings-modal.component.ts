@@ -15,6 +15,7 @@ import outputs from '../../../../amplify_outputs.json';
 import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ScanConfirmationDialogComponent } from './scan-confirmation-dialog.component';
+import { MatTabsModule } from '@angular/material/tabs';
 
 @Component({
   selector: 'app-automation-settings-modal',
@@ -30,7 +31,8 @@ import { ScanConfirmationDialogComponent } from './scan-confirmation-dialog.comp
     MatInputModule,
     MatSelectModule,
     MatRadioModule,
-    ScanConfirmationDialogComponent
+    ScanConfirmationDialogComponent,
+    MatTabsModule
   ]
 })
 export class AutomationSettingsModalComponent implements OnInit {
@@ -41,6 +43,7 @@ export class AutomationSettingsModalComponent implements OnInit {
   };
   nextScheduledScan: Date = new Date();
   countdownTime: string = '';
+  selectedTabIndex: number = 0;
 
   constructor(
     public dialogRef: MatDialogRef<AutomationSettingsModalComponent>,
@@ -50,8 +53,15 @@ export class AutomationSettingsModalComponent implements OnInit {
 
   async ngOnInit() {
     await this.fetchCurrentSettings();
+    this.selectedTabIndex = this.scheduleType === 'daily' ? 0 : 1;
     this.updateNextScheduledScan();
     this.startCountdown();
+  }
+
+  onTabChange(index: number) {
+    this.selectedTabIndex = index;
+    this.scheduleType = index === 0 ? 'daily' : 'weekly';
+    this.updateNextScheduledScan();
   }
 
   updateNextScheduledScan() {
@@ -185,13 +195,10 @@ export class AutomationSettingsModalComponent implements OnInit {
   async saveSettings() {
     this.updateNextScheduledScan();
     let scheduleConfig;
-    switch(this.scheduleType) {
-      case 'daily':
-        scheduleConfig = { scheduleType: 'daily', dailyTime: this.dailyTime };
-        break;
-      case 'weekly':
-        scheduleConfig = { scheduleType: 'weekly', weeklySchedule: this.weeklySchedule };
-        break;
+    if (this.selectedTabIndex === 0) {
+      scheduleConfig = { scheduleType: 'daily', dailyTime: this.dailyTime };
+    } else {
+      scheduleConfig = { scheduleType: 'weekly', weeklySchedule: this.weeklySchedule };
     }
 
     try {

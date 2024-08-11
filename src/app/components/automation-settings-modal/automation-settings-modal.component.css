@@ -8,22 +8,15 @@
 
 h2 {
   color: #2c3e50;
+  margin-bottom: 20px;
 }
 
 mat-dialog-content {
   margin-bottom: 20px;
 }
 
-mat-radio-group {
-  display: flex;
-  justify-content: space-between;
-  border-radius: 5px;
-  padding: 10px;
-  margin-bottom: 10px;
-}
-
-mat-radio-button {
-  margin-right: 10px;
+mat-tab-group {
+  margin-bottom: 20px;
 }
 
 mat-form-field {
@@ -31,26 +24,19 @@ mat-form-field {
   margin-bottom: 15px;
 }
 
-.interval-inputs {
-  display: flex;
-  gap: 15px;
-}
-
-.interval-inputs mat-form-field {
-  flex: 1;
-}
-
 .weekly-schedule {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 15px;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+  margin-top: 20px;
 }
 
 .next-scan-info {
   background-color: #e8f4fd;
   border-left: 4px solid #3498db;
-  padding: 10px;
+  padding: 15px;
   border-radius: 4px;
+  margin-bottom: 20px;
 }
 
 .next-scan-info p {
@@ -61,4 +47,28 @@ mat-dialog-actions {
   justify-content: flex-end;
   padding-top: 20px;
   border-top: 1px solid #e0e0e0;
+}
+
+::ng-deep .mat-tab-body-content {
+  padding: 20px 10px;
+}
+
+/* Add space between tabs and content */
+::ng-deep .mat-tab-body-wrapper {
+  margin-top: 20px;
+}
+
+/* Reduce space between day inputs in weekly tab */
+.weekly-schedule mat-form-field {
+  margin-bottom: 5px;
+}
+
+/* Add space above the daily scan time input */
+::ng-deep .mat-tab-body-content mat-form-field:first-child {
+  margin-top: 20px;
+}
+
+/* Style for the daily scan time container */
+.daily-scan-time {
+  padding-top: 20px;
 }

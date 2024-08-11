@@ -10,7 +10,7 @@
     </div>
     <div>
         <button class="btnAdd" mat-raised-button matTooltip="Quickly access and manage tasks related to current page." [matMenuTriggerFor]="menu">Quick Actions</button>
-        <mat-menu #menu="matMenu">
+        <mat-menu #menu="matMenu" class="menu">
             <button mat-menu-item color="primary" (click)="downloadCSV()">Export Excel</button>
             <button mat-menu-item color="primary" (click)="importExcel()">Import Excel</button>
             <button mat-menu-item color="primary" (click)="addRow()" *ngIf="getCurrentRoute('inventory')">

@@ -1,57 +1,56 @@
 <div class="grid-container">
-    <app-grid
-        [rowData]="rowData"
-        [columnDefs]="colDefs"
-        [addButton]="addButton"
-        (addNewClicked)="openAddMemberPopup()"
-        (nameCellValueChanged)="onNameCellValueChanged($event)"
-        #gridComponent
-    >
+    <app-grid [rowData]="rowData" [columnDefs]="colDefs" [addButton]="addButton" (addNewClicked)="openAddMemberPopup()"
+        (nameCellValueChanged)="onNameCellValueChanged($event)" #gridComponent>
     </app-grid>
 </div>
 
 <div *ngIf="showPopup" class="popup-overlay">
-    <div class="popup-content">
-        <h2>Add Member</h2>
-        <form (ngSubmit)="onSubmit(userForm.value)" #userForm="ngForm">
-            <div class="form-group">
-                <label for="name">Name</label>
-                <input type="text" id="name" name="name" [(ngModel)]="user.name" required />
-            </div>
-            <div class="form-group">
-                <label for="surname">Surname</label>
-                <input type="text" id="surname" name="surname" [(ngModel)]="user.surname" required />
-            </div>
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    [(ngModel)]="user.email"
-                    required
-                    email
-                    #userEmail="ngModel"
-                />
-                <div *ngIf="userEmail.invalid && (userEmail.dirty || userEmail.touched)" class="error-message">
-                    <div *ngIf="userEmail.errors?.['required']">Email is required.</div>
-                    <div *ngIf="userEmail.errors?.['email']">Please enter a valid email address.</div>
+    <div class="custom-dialog">
+        <div class="popup-content">
+            <h2>Add Member</h2>
+            <form (ngSubmit)="onSubmit(userForm.value)" #userForm="ngForm">
+
+                <!-- Name Input -->
+                <mat-form-field appearance="outline">
+                    <mat-label>Name</mat-label>
+                    <input matInput type="text" id="name" name="name" [(ngModel)]="user.name" required />
+                </mat-form-field>
+
+                <!-- Surname Input -->
+                <mat-form-field appearance="outline">
+                    <mat-label>Surname</mat-label>
+                    <input matInput type="text" id="surname" name="surname" [(ngModel)]="user.surname" required />
+                </mat-form-field>
+
+                <!-- Email Input -->
+                <mat-form-field appearance="outline">
+                    <mat-label>Email</mat-label>
+                    <input matInput type="email" id="email" name="email" [(ngModel)]="user.email" required
+                        #userEmail="ngModel" />
+                    <mat-error *ngIf="userEmail.invalid && (userEmail.dirty || userEmail.touched)">
+                        <span *ngIf="userEmail.errors?.['required']">Email is required.</span>
+                        <span *ngIf="userEmail.errors?.['email']">Please enter a valid email address.</span>
+                    </mat-error>
+                </mat-form-field>
+
+                <!-- Role Selection -->
+                <mat-form-field appearance="outline">
+                    <mat-label>Role</mat-label>
+                    <mat-select id="role" name="role" [(ngModel)]="user.role" required>
+                        <mat-option value="">Select a role</mat-option>
+                        <mat-option value="admin">Admin</mat-option>
+                        <mat-option value="enduser">End User</mat-option>
+                        <mat-option value="inventorycontroller">Inventory Controller</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <!-- Buttons -->
+                <div class="button-group">
+                    <button mat-button (click)="closePopup()">Cancel</button>
+                    <button mat-raised-button color="primary" type="submit"
+                        [disabled]="!userForm.form.valid">Submit</button>
                 </div>
-            </div>
-            <div class="form-group">
-                <label for="role">Role</label>
-                <select id="role" name="role" [(ngModel)]="user.role" required>
-                    <option value="">Select a role</option>
-                    <option value="admin">Admin</option>
-                    <option value="enduser">End User</option>
-                    <option value="inventorycontroller">Inventory Controller</option>
-                </select>
-            </div>
-            <div class="button-group">
-                <button type="submit" [disabled]="!userForm.form.valid">Submit</button>
-                <button type="button" (click)="closePopup()">Cancel</button>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
 </div>
 

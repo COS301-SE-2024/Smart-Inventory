@@ -18,7 +18,13 @@ import { AddInventoryModalComponent } from './add-inventory-modal/add-inventory-
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { RequestStockModalComponent } from './request-stock-modal/request-stock-modal.component';
 import { MatNativeDateModule } from '@angular/material/core';
-
+import {
+    MatSnackBar,
+    MatSnackBarAction,
+    MatSnackBarActions,
+    MatSnackBarLabel,
+    MatSnackBarRef,
+} from '@angular/material/snack-bar';
 @Component({
     selector: 'app-inventory',
     standalone: true,
@@ -77,9 +83,19 @@ export class InventoryComponent implements OnInit {
     constructor(
         private titleService: TitleService,
         private dialog: MatDialog,
+        private _snackBar: MatSnackBar
     ) {
         Amplify.configure(outputs);
     }
+
+    oopenSnackBar(message: string) {
+        this._snackBar.open(message, 'Close', {
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+          duration: 5 * 100
+        });
+      }
+
 
     async ngOnInit(): Promise<void> {
         this.titleService.updateTitle('Inventory');

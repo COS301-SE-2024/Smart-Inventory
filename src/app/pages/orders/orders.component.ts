@@ -48,7 +48,7 @@ const pendingApprovalColor = '#FFCDD2'; // Light red color for Pending Approval
 export class OrdersComponent implements OnInit {
   @ViewChild(GridComponent) gridComponent!: GridComponent;
 
-  isLoading = true;
+  isLoading = false;
   isSidePaneOpen: boolean = false;
 
   constructor(private titleService: TitleService, private dialog: MatDialog, private snackBar: MatSnackBar ) {

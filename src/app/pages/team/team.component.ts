@@ -22,7 +22,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { RoleChangeConfirmationDialogComponent } from './role-change-confirmation-dialog.component';
 import { RoleSelectCellEditorComponent } from './role-select-cell-editor.component';
 import { LoadingSpinnerComponent } from '../../components/loader/loading-spinner.component';
-
+import { MaterialModule } from 'app/components/material/material.module';
 @Component({
     selector: 'app-team',
     standalone: true,
@@ -36,6 +36,7 @@ import { LoadingSpinnerComponent } from '../../components/loader/loading-spinner
         RoleChangeConfirmationDialogComponent,
         RoleSelectCellEditorComponent,
         LoadingSpinnerComponent,
+        MaterialModule,
     ],
     templateUrl: './team.component.html',
     styleUrls: ['./team.component.css'],

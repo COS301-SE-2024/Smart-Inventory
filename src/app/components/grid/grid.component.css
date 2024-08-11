@@ -78,3 +78,7 @@ mat-select {
     display: flex;
     align-items: center;
 }
+
+#mat-menu-panel-1{
+    width: 135px;
+}

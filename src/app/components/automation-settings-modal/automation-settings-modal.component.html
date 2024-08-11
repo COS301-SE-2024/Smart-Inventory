@@ -2,28 +2,11 @@
 <h2 mat-dialog-title>Automation Settings</h2>
 <mat-dialog-content>
   <mat-radio-group [(ngModel)]="scheduleType">
-    <mat-radio-button value="interval">Interval</mat-radio-button>
     <mat-radio-button value="daily">Daily</mat-radio-button>
     <mat-radio-button value="weekly">Weekly</mat-radio-button>
   </mat-radio-group>
 
   <ng-container [ngSwitch]="scheduleType">
-    <ng-container *ngSwitchCase="'interval'">
-      <div class="interval-inputs">
-        <mat-form-field>
-          <mat-label>Interval Value</mat-label>
-          <input matInput type="number" [(ngModel)]="intervalValue" min="1">
-        </mat-form-field>
-        <mat-form-field>
-          <mat-label>Interval Unit</mat-label>
-          <mat-select [(ngModel)]="intervalUnit">
-            <mat-option value="minutes">Minutes</mat-option>
-            <mat-option value="hours">Hours</mat-option>
-            <mat-option value="days">Days</mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div>
-    </ng-container>
 
     <ng-container *ngSwitchCase="'daily'">
       <mat-form-field>

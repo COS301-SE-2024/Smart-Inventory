@@ -34,9 +34,7 @@ import { ScanConfirmationDialogComponent } from './scan-confirmation-dialog.comp
   ]
 })
 export class AutomationSettingsModalComponent implements OnInit {
-  scheduleType: 'interval' | 'daily' | 'weekly' = 'interval';
-  intervalValue: number = 24;
-  intervalUnit: 'minutes' | 'hours' | 'days' = 'hours';
+  scheduleType: 'daily' | 'weekly' = 'daily';
   dailyTime: string = '00:00';
   weeklySchedule: { [key: string]: string } = {
     monday: '', tuesday: '', wednesday: '', thursday: '', friday: '', saturday: '', sunday: ''
@@ -59,10 +57,6 @@ export class AutomationSettingsModalComponent implements OnInit {
   updateNextScheduledScan() {
     const now = new Date();
     switch (this.scheduleType) {
-      case 'interval':
-        const intervalInMs = this.intervalValue * this.getIntervalMultiplier();
-        this.nextScheduledScan = new Date(now.getTime() + intervalInMs);
-        break;
       case 'daily':
         const [hours, minutes] = this.dailyTime.split(':').map(Number);
         this.nextScheduledScan = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes);
@@ -96,14 +90,6 @@ export class AutomationSettingsModalComponent implements OnInit {
         }
         this.nextScheduledScan = nextScan;
         break;
-    }
-  }
-
-  getIntervalMultiplier(): number {
-    switch (this.intervalUnit) {
-      case 'minutes': return 60 * 1000;
-      case 'hours': return 60 * 60 * 1000;
-      case 'days': return 24 * 60 * 60 * 1000;
     }
   }
 
@@ -187,10 +173,6 @@ export class AutomationSettingsModalComponent implements OnInit {
   applySettings(settings: any) {
     this.scheduleType = settings.scheduleType;
     switch (this.scheduleType) {
-      case 'interval':
-        this.intervalValue = settings.intervalValue;
-        this.intervalUnit = settings.intervalUnit;
-        break;
       case 'daily':
         this.dailyTime = settings.dailyTime;
         break;
@@ -204,9 +186,6 @@ export class AutomationSettingsModalComponent implements OnInit {
     this.updateNextScheduledScan();
     let scheduleConfig;
     switch(this.scheduleType) {
-      case 'interval':
-        scheduleConfig = { scheduleType: 'interval', intervalValue: this.intervalValue, intervalUnit: this.intervalUnit };
-        break;
       case 'daily':
         scheduleConfig = { scheduleType: 'daily', dailyTime: this.dailyTime };
         break;

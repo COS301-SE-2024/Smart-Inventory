@@ -61,7 +61,6 @@ export class AutomationSettingsModalComponent implements OnInit {
   onTabChange(index: number) {
     this.selectedTabIndex = index;
     this.scheduleType = index === 0 ? 'daily' : 'weekly';
-    this.updateNextScheduledScan();
   }
 
   updateNextScheduledScan() {

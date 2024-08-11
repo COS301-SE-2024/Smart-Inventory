@@ -17,14 +17,20 @@ import { Amplify } from 'aws-amplify';
 import { fetchAuthSession } from 'aws-amplify/auth';
 import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
 import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
-import outputs from '../../../../../amplify_outputs.json';
-import { LoadingSpinnerComponent } from '../../loader/loading-spinner.component';
+import outputs from '../../../../amplify_outputs.json';
+import { LoadingSpinnerComponent } from '../loader/loading-spinner.component';
 
 interface QuoteItem {
-  item: { sku: string; description: string };
+  item: { sku: string; description: string; inventoryID: string };
   quantity: number;
   filteredItems: ReplaySubject<{ sku: string; description: string }[]>;
   searchControl: FormControl;
+}
+
+interface InventoryItem {
+  sku: string;
+  description: string;
+  inventoryID: string;
 }
 
 @Component({
@@ -53,12 +59,12 @@ export class CustomQuoteModalComponent implements OnInit {
   quoteItems: QuoteItem[] = [];
   filteredQuoteItems: QuoteItem[] = [];
   quoteItemSearchTerm: string = '';
-  selectedSuppliers: string[] = [];
-  suppliers: string[] = [];
+  selectedSuppliers: { company_name: string; supplierID: string }[] = [];
+  suppliers: { company_name: string; supplierID: string }[] = [];
   inventoryItems: { sku: string; description: string }[] = [];
 
   supplierControl = new FormControl();
-  filteredSuppliers: ReplaySubject<string[]> = new ReplaySubject<string[]>(1);
+  filteredSuppliers: ReplaySubject<{ company_name: string; supplierID: string }[]> = new ReplaySubject<{ company_name: string; supplierID: string }[]>(1);
 
   isEditing: boolean = false;
   isNewQuote: boolean = false;
@@ -82,6 +88,15 @@ export class CustomQuoteModalComponent implements OnInit {
     console.log('Received data in modal:', data); // Add this log
     console.log('orderId:', this.orderId, 'quoteId:', this.quoteId); // Add this log
   }
+
+  private defaultEmailBody = `Dear {{SUPPLIER_NAME}},
+
+  We are requesting a quote for our order. Please use the following unique link to submit your quote:
+  {{WEB_FORM_URL}}
+  
+  Thank you for your prompt attention to this matter.
+  
+  Best regards`;
 
   async ngOnInit() {
     this.isLoading = true;
@@ -126,7 +141,12 @@ export class CustomQuoteModalComponent implements OnInit {
       this.quoteItems = [];
     }
   
-    this.selectedSuppliers = quoteDetails.suppliers || [];
+    this.selectedSuppliers = quoteDetails.suppliers && Array.isArray(quoteDetails.suppliers)
+    ? quoteDetails.suppliers.map((supplier: any) => ({
+        company_name: supplier.company_name,
+        supplierID: supplier.supplierID
+      }))
+    : [];
   
     // Initialize filtered items for each quote item
     this.quoteItems.forEach(quoteItem => {
@@ -154,7 +174,7 @@ export class CustomQuoteModalComponent implements OnInit {
       search = search.toLowerCase();
     }
     this.filteredSuppliers.next(
-      this.suppliers.filter(supplier => supplier.toLowerCase().indexOf(search) > -1)
+      this.suppliers.filter(supplier => supplier.company_name.toLowerCase().indexOf(search) > -1)
     );
   }
 
@@ -172,7 +192,7 @@ export class CustomQuoteModalComponent implements OnInit {
     const newFilteredItems = new ReplaySubject<{ sku: string; description: string }[]>(1);
     newFilteredItems.next(this.inventoryItems.slice());
     const newItem: QuoteItem = {
-      item: { sku: '', description: '' },
+      item: { sku: '', description: '', inventoryID: '' },
       quantity: 1,
       filteredItems: newFilteredItems,
       searchControl: new FormControl()
@@ -198,8 +218,8 @@ export class CustomQuoteModalComponent implements OnInit {
     }
   }
 
-  removeSupplier(supplier: string) {
-    this.selectedSuppliers = this.selectedSuppliers.filter(s => s !== supplier);
+  removeSupplier(supplierToRemove: { company_name: string; supplierID: string }) {
+    this.selectedSuppliers = this.selectedSuppliers.filter(s => s.supplierID !== supplierToRemove.supplierID);
     this.onQuoteChanged();
   }
 
@@ -207,23 +227,27 @@ export class CustomQuoteModalComponent implements OnInit {
     try {
       const session = await fetchAuthSession();
       const tenentId = await this.getTenentId(session);
-
+  
       const lambdaClient = new LambdaClient({
         region: outputs.auth.aws_region,
         credentials: session.credentials,
       });
-
+  
       const invokeCommand = new InvokeCommand({
         FunctionName: 'getSuppliers',
         Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: tenentId } })),
       });
-
+  
       const lambdaResponse = await lambdaClient.send(invokeCommand);
       const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
+  
       if (responseBody.statusCode === 200) {
         const suppliers = JSON.parse(responseBody.body);
-        this.suppliers = suppliers.map((supplier: any) => supplier.company_name);
+        this.suppliers = suppliers.map((supplier: any) => ({
+          company_name: supplier.company_name,
+          supplierID: supplier.supplierID
+        }));
+        console.log('Suppliers:', this.suppliers);
       } else {
         console.error('Error fetching suppliers data:', responseBody.body);
         this.suppliers = [];
@@ -256,7 +280,8 @@ export class CustomQuoteModalComponent implements OnInit {
         const inventoryItems = JSON.parse(responseBody.body);
         this.inventoryItems = inventoryItems.map((item: any) => ({
           sku: item.SKU,
-          description: item.description
+          description: item.description,
+          inventoryID: item.inventoryID // Add this line
         }));
         // Initialize filtered items for each quote item
         this.quoteItems.forEach(quoteItem => {
@@ -302,10 +327,16 @@ export class CustomQuoteModalComponent implements OnInit {
       quoteId: this.quoteId,
       items: this.quoteItems.map(({ item, quantity }) => ({
         ItemSKU: item.sku,
-        Quantity: quantity
+        Quantity: quantity,
+        inventoryID: item.inventoryID
       })),
-      suppliers: this.selectedSuppliers
+      suppliers: this.selectedSuppliers.map(supplier => ({
+        company_name: supplier.company_name,
+        supplierID: supplier.supplierID
+      }))
     };
+
+    console.log('Saving changes with data:', JSON.stringify(updatedQuote, null, 2));
   
     try {
       await this.updateQuote(updatedQuote);
@@ -344,9 +375,13 @@ export class CustomQuoteModalComponent implements OnInit {
         body: JSON.stringify({
           items: updatedQuote.items.map((item: any) => ({
             ItemSKU: item.ItemSKU,
-            Quantity: item.Quantity
+            Quantity: item.Quantity,
+            inventoryID: item.inventoryID
           })),
-          suppliers: updatedQuote.suppliers
+          suppliers: updatedQuote.suppliers.map((supplier: any) => ({
+            company_name: supplier.company_name,
+            supplierID: supplier.supplierID
+          }))
         })
       };
   
@@ -379,21 +414,27 @@ export class CustomQuoteModalComponent implements OnInit {
 
   createOrder() {
     const order = {
-        items: this.quoteItems.map(({ item, quantity }) => ({
-            ItemSKU: item.sku,
-            Quantity: quantity
-        })),
-        suppliers: this.selectedSuppliers,
-        Quote_Status: 'Draft'
+      items: this.quoteItems.map(({ item, quantity }) => ({
+        ItemSKU: item.sku,
+        Quantity: quantity,
+        inventoryID: item.inventoryID
+      })),
+      suppliers: this.selectedSuppliers.map(supplier => ({
+        company_name: supplier.company_name,
+        supplierID: supplier.supplierID
+      })),
+      Quote_Status: 'Draft'
     };
+    console.log(order);
     this.dialogRef.close({ action: 'createOrder', data: order });
-}
+  }
 
   cancel() {
     this.dialogRef.close({ action: 'cancel' });
   }
+  
 
-  sendQuote() {
+  async sendQuote() {
     if (this.hasUnsavedChanges) {
       this.snackBar.open('Please save changes before sending the quote.', 'Close', {
         duration: 5000,
@@ -404,12 +445,142 @@ export class CustomQuoteModalComponent implements OnInit {
     }
     if (!this.isNewQuote) {
       console.log('Sending quote...');
-      // Implement the logic to send the quote
+      const emailData = await this.prepareEmailData();
+      
+      // Send emails
+      await this.sendEmails(emailData);
+
       this.dialogRef.close({ action: 'sendQuote', data: {
         quoteId: this.quoteId,
         items: this.quoteItems,
-        suppliers: this.selectedSuppliers
+        suppliers: this.selectedSuppliers,
+        emailData: emailData
       }});
+    }
+  }
+
+  async prepareEmailData() {
+    const session = await fetchAuthSession();
+    const tenentId = await this.getTenentId(session);
+    const deliveryInfoID = await this.getDeliveryInfoID(tenentId);
+    const emailTemplate = await this.getEmailTemplate(tenentId);
+
+    const emailDataPromises = this.selectedSuppliers.map(async (supplier) => {
+      const supplierDetails = await this.getSupplierDetails(tenentId, supplier.supplierID);
+      const uniqueLink = `http://localhost:4200/supplier-form/${supplier.supplierID}/${this.quoteId}/${deliveryInfoID}/${tenentId}`;
+      
+      let emailBody = emailTemplate || this.defaultEmailBody;
+      emailBody = emailBody.replace('{{SUPPLIER_NAME}}', supplier.company_name)
+                           .replace('{{WEB_FORM_URL}}', uniqueLink);
+
+      return {
+        supplierEmail: supplierDetails.contact_email,
+        supplierName: supplier.company_name,
+        emailBody: emailBody,
+        orderId: this.orderId, // Include the order ID in the email data
+        quoteId: this.quoteId // Include the quote ID as well for completeness
+      };
+    });
+
+    const emailData = await Promise.all(emailDataPromises);
+    console.log('Email data:', emailData);
+    return emailData;
+  }
+
+  async getEmailTemplate(tenentId: string): Promise<string | null> {
+    const lambdaClient = new LambdaClient({
+      region: outputs.auth.aws_region,
+      credentials: (await fetchAuthSession()).credentials,
+    });
+
+    const invokeCommand = new InvokeCommand({
+      FunctionName: 'getEmailTemplate',
+      Payload: new TextEncoder().encode(JSON.stringify({ 
+        pathParameters: { tenentId: tenentId } 
+      })),
+    });
+
+    const lambdaResponse = await lambdaClient.send(invokeCommand);
+    const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+
+    if (responseBody.statusCode === 200) {
+      const { emailBody } = JSON.parse(responseBody.body);
+      return emailBody;
+    } else if (responseBody.statusCode === 404) {
+      console.log('No custom email template found for this tenant. Using default template.');
+      return null;
+    } else {
+      console.error('Error fetching email template:', responseBody.body);
+      return null;
+    }
+  }
+
+
+  async sendEmails(emailData: any[]) {
+    const lambdaClient = new LambdaClient({
+      region: outputs.auth.aws_region,
+      credentials: (await fetchAuthSession()).credentials,
+    });
+
+    const invokeCommand = new InvokeCommand({
+      FunctionName: 'sendSupplierEmails',
+      Payload: new TextEncoder().encode(JSON.stringify({ emailData: emailData })),
+    });
+
+    const lambdaResponse = await lambdaClient.send(invokeCommand);
+    const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+
+    if (responseBody.statusCode === 200) {
+      console.log('Emails sent successfully:', responseBody.body);
+    } else {
+      throw new Error(`Failed to send emails: ${responseBody.body}`);
+    }
+  }
+
+
+
+  async getSupplierDetails(tenentId: string, supplierID: string): Promise<any> {
+    const lambdaClient = new LambdaClient({
+      region: outputs.auth.aws_region,
+      credentials: (await fetchAuthSession()).credentials,
+    });
+
+    const invokeCommand = new InvokeCommand({
+      FunctionName: 'getSupplier',
+      Payload: new TextEncoder().encode(JSON.stringify({ 
+        pathParameters: { tenentId: tenentId, supplierID: supplierID } 
+      })),
+    });
+
+    const lambdaResponse = await lambdaClient.send(invokeCommand);
+    const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+
+    if (responseBody.statusCode === 200) {
+      return JSON.parse(responseBody.body);
+    } else {
+      throw new Error(`Failed to get supplier details: ${responseBody.body}`);
+    }
+  }
+
+  async getDeliveryInfoID(tenentId: string): Promise<string> {
+    const lambdaClient = new LambdaClient({
+      region: outputs.auth.aws_region,
+      credentials: (await fetchAuthSession()).credentials,
+    });
+
+    const invokeCommand = new InvokeCommand({
+      FunctionName: 'getDeliveryID',
+      Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: tenentId } })),
+    });
+
+    const lambdaResponse = await lambdaClient.send(invokeCommand);
+    const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+
+    if (responseBody.statusCode === 200) {
+      const { deliveryInfoID } = JSON.parse(responseBody.body);
+      return deliveryInfoID;
+    } else {
+      throw new Error('Failed to get deliveryInfoID');
     }
   }
 

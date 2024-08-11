@@ -8,6 +8,7 @@ import { OrdersComponent } from './pages/orders/orders.component';
 import { SettingsComponent } from './pages/settings/settings.component';
 import { HelpComponent } from './pages/help/help.component';
 import { GridComponent } from './components/grid/grid.component';
+import { SupplierFormComponent } from './components/supplier-form/supplier-form.component';
 import { InventoryReportComponent } from './components/reports/inventory-report/inventory-report.component';
 import { OrderReportComponent } from './components/reports/order-report/order-report.component';
 import { SupplierReportComponent } from './components/reports/supplier-report/supplier-report.component';
@@ -18,6 +19,8 @@ export const routes: Routes = [
     { path: 'dashboard', component: DashboardComponent },
     { path: 'inventory', component: InventoryComponent },
     { path: 'reports', component: ReportsComponent },
+    { path: 'supplierReport', component: SupplierReportComponent },
+    { path: 'orderReport', component: OrderReportComponent },
     { path: 'team', component: TeamComponent },
     { path: 'suppliers', component: SuppliersComponent },
     { path: 'orders', component: OrdersComponent },
@@ -26,6 +29,7 @@ export const routes: Routes = [
     { path: 'inventoryReport', component: InventoryReportComponent },
     { path: 'orderReport', component: OrderReportComponent },
     { path: 'grid', component: GridComponent },
+    { path: 'supplier-form/:supplierID/:quoteID/:deliveryID/:tenentId', component: SupplierFormComponent },
     { path: 'supplierReport/:supplierID/:orderID', component: SupplierReportComponent },
     { path: 'activityReport', component: ActivityReportComponent },
 ];

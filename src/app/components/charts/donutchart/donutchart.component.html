@@ -6,7 +6,7 @@
                 <!-- <h2>Most Popular Products</h2> -->
                 <!-- <mat-form-field appearance="fill" class="year-dropdown"> -->
                 <!-- <mat-label>Select Year</mat-label> -->
-                <mat-select [(ngModel)]="selectedYear" (selectionChange)="updateChartData(selectedYear)">
+                <mat-select [(ngModel)]="selectedYear" >
                     <mat-option value="2024">This year</mat-option>
                     <mat-option value="2023">2023</mat-option>
                     <mat-option value="2022">2022</mat-option>
@@ -18,5 +18,5 @@
     </div>
 </div>
 <div style="height: 80%;">
-    <ag-charts-angular [options]="chartOptions"></ag-charts-angular>
+    <ag-charts-angular [options]="chartOptions" (chartReady)="onChartReady($event)"></ag-charts-angular>
 </div>

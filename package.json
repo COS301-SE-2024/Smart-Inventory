@@ -27,7 +27,7 @@
         "ag-charts-angular": "^9.3.1",
         "ag-charts-community": "^9.3.1",
         "ag-grid-angular": "^32.0.0",
-        "ag-grid-community": "^32.0.0",
+        "ag-grid-community": "^32.0.2",
         "ag-grid-enterprise": "^32.0.0",
         "angular-gridster2": "^18.0.1",
         "audit": "^0.0.6",
@@ -42,6 +42,7 @@
         "rxjs": "~7.8.0",
         "tslib": "^2.3.0",
         "undici": "^6.19.4",
+        "webpack": "^5.93.0",
         "zone.js": "~0.14.3"
     },
     "devDependencies": {
@@ -63,7 +64,6 @@
         "@types/webpack": "^5.28.5",
         "@typescript-eslint/eslint-plugin": "^7.14.1",
         "@typescript-eslint/parser": "^7.14.1",
-        "ag-grid-community": "^32.0.2",
         "angular-eslint": "18.0.1",
         "aws-cdk": "^2.143.1",
         "aws-cdk-lib": "^2.143.1",
@@ -89,7 +89,6 @@
         "tsx": "^4.11.0",
         "typescript": "^5.4.5",
         "typescript-eslint": "8.0.0-alpha.20",
-        "webpack": "^5.93.0",
         "webpack-cli": "^5.1.4",
         "webpack-dev-server": "^5.0.4"
     }

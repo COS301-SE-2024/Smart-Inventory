@@ -18,6 +18,7 @@ import { AddInventoryModalComponent } from './add-inventory-modal/add-inventory-
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { RequestStockModalComponent } from './request-stock-modal/request-stock-modal.component';
 import { MatNativeDateModule } from '@angular/material/core';
+import { timestamp } from 'rxjs';
 
 @Component({
     selector: 'app-inventory',
@@ -120,7 +121,7 @@ export class InventoryComponent implements OnInit {
             });
 
             const invokeCommand = new InvokeCommand({
-                FunctionName: 'getUsers',
+                FunctionName: 'getUsersV2',
                 Payload: new TextEncoder().encode(payload),
             });
 
@@ -188,7 +189,7 @@ export class InventoryComponent implements OnInit {
                 }));
                 console.log('Processed inventory items:', this.rowData);
 
-                await this.logActivity('Viewed inventory', { itemCount: this.rowData.length });
+                await this.logActivity('Viewed inventory', 'Inventory navigated');
             } else {
                 console.error('Error fetching inventory data:', responseBody.body);
                 this.rowData = [];
@@ -277,10 +278,7 @@ export class InventoryComponent implements OnInit {
 
             if (responseBody.statusCode === 201) {
                 console.log('Inventory item added successfully');
-                await this.logActivity('Added new inventory item', {
-                    sku: formData.sku,
-                    description: formData.description,
-                });
+                await this.logActivity('Added new inventory item', formData.upc + ' was added.');
                 await this.loadInventoryData();
             } else {
                 throw new Error(responseBody.body);
@@ -332,7 +330,7 @@ export class InventoryComponent implements OnInit {
 
             if (responseBody.statusCode === 200) {
                 console.log('Inventory item deleted successfully');
-                await this.logActivity('Deleted inventory item', { inventoryID: inventoryID });
+                await this.logActivity('Deleted inventory item', inventoryID + ' was deleted.');
             } else {
                 throw new Error(responseBody.body);
             }
@@ -367,11 +365,7 @@ export class InventoryComponent implements OnInit {
 
             if (responseBody.statusCode === 200) {
                 console.log('Inventory item updated successfully');
-                await this.logActivity('Updated inventory item', {
-                    sku: event.data.sku,
-                    field: event.field,
-                    newValue: event.newValue,
-                });
+                await this.logActivity('Updated inventory item', event.data.upc + ' was updated.');
                 // Update the local data to reflect the change
                 const updatedItem = JSON.parse(responseBody.body);
                 const index = this.rowData.findIndex((item) => item.inventoryID === updatedItem.inventoryID);
@@ -443,7 +437,7 @@ export class InventoryComponent implements OnInit {
 
             if (responseBody.statusCode === 201) {
                 console.log('Stock request report created successfully');
-                await this.logActivity('Requested stock', { sku: item.sku, quantity: quantity });
+                await this.logActivity('Requested stock', quantity.toString() + 'of ' + item.sku);
                 await this.loadInventoryData();
             } else {
                 throw new Error(JSON.stringify(responseBody.body));
@@ -454,7 +448,7 @@ export class InventoryComponent implements OnInit {
         }
     }
 
-    async logActivity(task: string, details: any) {
+    async logActivity(task: string, details: string) {
         try {
             const session = await fetchAuthSession();
 
@@ -467,7 +461,7 @@ export class InventoryComponent implements OnInit {
                 tenentId: this.tenantId,
                 memberId: this.tenantId, // Assuming memberId is the same as tenantId
                 name: this.userName,
-                role: this.userRole,
+                role: this.userRole || 'Admin',
                 task: task,
                 timeSpent: 0, // You might want to calculate this
                 idleTime: 0, // You might want to calculate this

@@ -83,19 +83,9 @@ export class InventoryComponent implements OnInit {
     constructor(
         private titleService: TitleService,
         private dialog: MatDialog,
-        private _snackBar: MatSnackBar
     ) {
         Amplify.configure(outputs);
     }
-
-    oopenSnackBar(message: string) {
-        this._snackBar.open(message, 'Close', {
-          horizontalPosition: 'center',
-          verticalPosition: 'top',
-          duration: 5 * 100
-        });
-      }
-
 
     async ngOnInit(): Promise<void> {
         this.titleService.updateTitle('Inventory');

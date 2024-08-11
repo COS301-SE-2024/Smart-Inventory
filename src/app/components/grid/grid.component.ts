@@ -19,6 +19,7 @@ import { DateSelectCellEditorComponent } from '../reports/supplier-report/date-s
 import { CustomQuoteModalComponent } from '../custom-quote-modal/custom-quote-modal.component';
 import { ReceivedQuotesSidePaneComponent } from '../received-quotes-side-pane/received-quotes-side-pane.component';
 import { MatTooltip } from '@angular/material/tooltip';
+import { MatSnackBar } from '@angular/material/snack-bar';
 @Component({
     selector: 'app-grid',
     standalone: true,
@@ -99,10 +100,18 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
         private route: ActivatedRoute,
         private renderer: Renderer2,
         private el: ElementRef,
-        private cdr: ChangeDetectorRef
+        private cdr: ChangeDetectorRef,
+        private _snackBar: MatSnackBar
     ) {
         this.setupThemeObserver();
         // this.setGridHeight();
+    }
+
+    oopenSnackBar(message: string) {
+        this._snackBar.open(message, 'Close', {
+            horizontalPosition: 'center',
+            verticalPosition: 'top',
+        });
     }
 
     private setupThemeObserver() {
@@ -124,7 +133,7 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
                 const rowsToRemove = this.gridApi.getModel().getRow(allRows - 1)!.data;
                 this.gridApi.applyTransaction({ remove: [rowsToRemove] });
             }
-            
+
             // Add new rows
             this.gridApi.applyTransaction({ add: newData });
         }
@@ -147,14 +156,14 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
         let calculatedHeight = baseHeight + (this._rowData.length * rowHeight);
         let gridHeight = Math.min(calculatedHeight, maxHeight);
 
-        this.gridStyle = { 
+        this.gridStyle = {
             height: `${gridHeight}vh`,
             maxHeight: `${maxHeight}vh`
         };
-        
+
         // Force change detection
         this.cdr.detectChanges();
-        
+
         // Resize the grid if it's already initialized
         if (this.gridApi) {
             setTimeout(() => {
@@ -217,7 +226,8 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
     deleteRow() {
         var selectedRows = this.gridApi.getSelectedRows();
         if (!selectedRows || selectedRows.length === 0) {
-            console.log('No rows selected!');
+            // console.log();
+            this.oopenSnackBar('Please select a row to delete!');
             return;
         }
         this.rowsToDelete.emit(selectedRows);
@@ -308,7 +318,8 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
         if (selectedRows && selectedRows.length > 0) {
             this.requestStock.emit(selectedRows[0]);
         } else {
-            console.log('No row selected for requesting stock');
+            this.oopenSnackBar('Please select row for requesting stock');
+            // console.log('No row selected for requesting stock');
             // Optionally, you could show an alert or notification to the user
         }
     }
@@ -320,7 +331,7 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
         });
 
         dialogRef.afterClosed().subscribe((result) => {
-           if (result) {
+            if (result) {
                 if (result.action === 'createOrder') {
                     console.log('Creating order:', result.data);
                     this.newCustomQuote.emit({ type: 'order', data: result.data });
@@ -342,11 +353,12 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     onMarkOrderAsReceived() {
-    const selectedRows = this.gridApi.getSelectedRows();
-    if (selectedRows && selectedRows.length > 0) {
-        this.markOrderAsReceivedClicked.emit(selectedRows[0]);
-    } else {
-        console.log('No row selected for marking as received');
+        const selectedRows = this.gridApi.getSelectedRows();
+        if (selectedRows && selectedRows.length > 0) {
+            this.markOrderAsReceivedClicked.emit(selectedRows[0]);
+        } else {
+            this.oopenSnackBar('No row selected for marking as received');
+            // console.log('No row selected for marking as received');
+        }
     }
-    }  
 }

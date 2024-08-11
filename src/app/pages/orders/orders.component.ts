@@ -146,7 +146,12 @@ export class OrdersComponent implements OnInit {
   async viewGeneratedQuote() {
     console.log('Current selected order:', this.selectedOrder);
     if (!this.selectedOrder) {
-      alert('Please select an order first');
+      this.snackBar.open('Please select an order first', 'Close', {
+        duration: 5000,
+        horizontalPosition: 'center',
+        verticalPosition: 'top',
+      });
+      // alert('Please select an order first');
       return;
     }
     try {
@@ -154,7 +159,12 @@ export class OrdersComponent implements OnInit {
       this.openCustomQuoteModal(quoteDetails, this.selectedOrder.Order_ID, this.selectedOrder.Quote_ID);
     } catch (error) {
       console.error('Error fetching quote details:', error);
-      alert('Error fetching quote details');
+      this.snackBar.open('Error fetching quote details', '', {
+        duration: 5000,
+        horizontalPosition: 'center',
+        verticalPosition: 'top',
+      });
+      // alert('Error fetching quote details');
     }
   }
   
@@ -480,12 +490,23 @@ export class OrdersComponent implements OnInit {
 
   async deleteOrderRow() {
     if (!this.selectedOrder) {
-      alert('Please select an order to delete');
+      this.snackBar.open(`Please select an order to delete`, 'Close', {
+        duration: 5000,
+        horizontalPosition: 'center',
+        verticalPosition: 'top',
+      });
+
+      // alert('Please select an order to delete');
       return;
     }
 
     if (this.selectedOrder.Quote_Status !== 'Draft') {
-      alert('Only orders with Draft quote status can be deleted');
+      this.snackBar.open('Only orders with Draft quote status can be deleted', 'Close', {
+        duration: 5000,
+        horizontalPosition: 'center',
+        verticalPosition: 'top',
+      });
+      // alert('Only orders with Draft quote status can be deleted');
       return;
     }
 

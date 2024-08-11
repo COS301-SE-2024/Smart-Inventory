@@ -466,7 +466,6 @@ export class InventoryComponent implements OnInit {
                 timeSpent: 0, // You might want to calculate this
                 idleTime: 0, // You might want to calculate this
                 details: details, // This will not be stored in DynamoDB as per the Lambda function
-                details: details, // This will not be stored in DynamoDB as per the Lambda function
             });
 
             const invokeCommand = new InvokeCommand({

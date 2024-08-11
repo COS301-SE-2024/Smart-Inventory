@@ -50,32 +50,33 @@ export class InventoryComponent implements OnInit {
 
     colDefs: ColDef[] = [
         { field: 'inventoryID', headerName: 'Inventory ID', hide: true },
-        { field: 'sku', headerName: 'SKU' },
-        { field: 'upc', headerName: 'Universal Product Code' },
-        { field: 'description', headerName: 'Description' },
-        { field: 'category', headerName: 'Category' },
-        { field: 'quantity', headerName: 'Quantity' },
-        { field: 'supplier', headerName: 'Supplier' },
-        { 
-            field: 'expirationDate', 
+        { field: 'sku', headerName: 'SKU', filter: 'agSetColumnFilter' },
+        { field: 'upc', headerName: 'Universal Product Code', filter: 'agSetColumnFilter' },
+        { field: 'description', headerName: 'Description', filter: 'agSetColumnFilter' },
+        { field: 'category', headerName: 'Category', filter: 'agSetColumnFilter' },
+        { field: 'quantity', headerName: 'Quantity', filter: 'agSetColumnFilter' },
+        { field: 'supplier', headerName: 'Supplier', filter: 'agSetColumnFilter' },
+        {
+            field: 'expirationDate',
             headerName: 'Expiration Date',
+            filter: 'agSetColumnFilter',
             valueFormatter: (params) => {
                 if (params.value) {
                     const date = new Date(params.value);
                     return date.toISOString().split('T')[0]; // Format: YYYY-MM-DD
                 }
                 return '';
-            }
+            },
         },
-        { field: 'lowStockThreshold', headerName: 'Low Stock Threshold' },
-        { field: 'reorderAmount', headerName: 'Reorder Amount' },
+        { field: 'lowStockThreshold', headerName: 'Low Stock Threshold', filter: 'agSetColumnFilter' },
+        { field: 'reorderAmount', headerName: 'Reorder Amount', filter: 'agSetColumnFilter' },
     ];
 
     addButton = { text: 'Add New Item' };
 
     constructor(
         private titleService: TitleService,
-        private dialog: MatDialog
+        private dialog: MatDialog,
     ) {
         Amplify.configure(outputs);
     }
@@ -101,11 +102,12 @@ export class InventoryComponent implements OnInit {
             });
             const getUserResponse = await cognitoClient.send(getUserCommand);
 
-            const givenName = getUserResponse.UserAttributes?.find(attr => attr.Name === 'given_name')?.Value || '';
-            const familyName = getUserResponse.UserAttributes?.find(attr => attr.Name === 'family_name')?.Value || '';
+            const givenName = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'given_name')?.Value || '';
+            const familyName = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'family_name')?.Value || '';
             this.userName = `${givenName} ${familyName}`.trim();
 
-            this.tenantId = getUserResponse.UserAttributes?.find(attr => attr.Name === 'custom:tenentId')?.Value || '';
+            this.tenantId =
+                getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value || '';
 
             const lambdaClient = new LambdaClient({
                 region: outputs.auth.aws_region,
@@ -125,14 +127,15 @@ export class InventoryComponent implements OnInit {
             const lambdaResponse = await lambdaClient.send(invokeCommand);
             const users = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
 
-            const currentUser = users.find((user: any) => 
-                user.Attributes.find((attr: any) => attr.Name === 'email')?.Value === session.tokens?.accessToken.payload['username']
+            const currentUser = users.find(
+                (user: any) =>
+                    user.Attributes.find((attr: any) => attr.Name === 'email')?.Value ===
+                    session.tokens?.accessToken.payload['username'],
             );
 
             if (currentUser && currentUser.Groups.length > 0) {
                 this.userRole = this.getRoleDisplayName(currentUser.Groups[0].GroupName);
             }
-
         } catch (error) {
             console.error('Error fetching user info:', error);
         }
@@ -181,7 +184,7 @@ export class InventoryComponent implements OnInit {
                     supplier: item.supplier,
                     expirationDate: item.expirationDate,
                     lowStockThreshold: item.lowStockThreshold,
-                    reorderAmount : item.reorderAmount
+                    reorderAmount: item.reorderAmount,
                 }));
                 console.log('Processed inventory items:', this.rowData);
 
@@ -230,10 +233,10 @@ export class InventoryComponent implements OnInit {
     openAddItemPopup() {
         const dialogRef = this.dialog.open(AddInventoryModalComponent, {
             width: '600px',
-            data: { suppliers: this.suppliers }
+            data: { suppliers: this.suppliers },
         });
 
-        dialogRef.afterClosed().subscribe(result => {
+        dialogRef.afterClosed().subscribe((result) => {
             if (result) {
                 this.onSubmit(result);
             }
@@ -274,7 +277,10 @@ export class InventoryComponent implements OnInit {
 
             if (responseBody.statusCode === 201) {
                 console.log('Inventory item added successfully');
-                await this.logActivity('Added new inventory item', { sku: formData.sku, description: formData.description });
+                await this.logActivity('Added new inventory item', {
+                    sku: formData.sku,
+                    description: formData.description,
+                });
                 await this.loadInventoryData();
             } else {
                 throw new Error(responseBody.body);
@@ -361,7 +367,11 @@ export class InventoryComponent implements OnInit {
 
             if (responseBody.statusCode === 200) {
                 console.log('Inventory item updated successfully');
-                await this.logActivity('Updated inventory item', { sku: event.data.sku, field: event.field, newValue: event.newValue });
+                await this.logActivity('Updated inventory item', {
+                    sku: event.data.sku,
+                    field: event.field,
+                    newValue: event.newValue,
+                });
                 // Update the local data to reflect the change
                 const updatedItem = JSON.parse(responseBody.body);
                 const index = this.rowData.findIndex((item) => item.inventoryID === updatedItem.inventoryID);
@@ -382,10 +392,10 @@ export class InventoryComponent implements OnInit {
     openRequestStockPopup(item: any) {
         const dialogRef = this.dialog.open(RequestStockModalComponent, {
             width: '400px',
-            data: { sku: item.sku, supplier: item.supplier }
+            data: { sku: item.sku, supplier: item.supplier },
         });
 
-        dialogRef.afterClosed().subscribe(result => {
+        dialogRef.afterClosed().subscribe((result) => {
             if (result) {
                 this.requestStock(item, result);
             }
@@ -447,12 +457,12 @@ export class InventoryComponent implements OnInit {
     async logActivity(task: string, details: any) {
         try {
             const session = await fetchAuthSession();
-    
+
             const lambdaClient = new LambdaClient({
                 region: outputs.auth.aws_region,
                 credentials: session.credentials,
             });
-    
+
             const payload = JSON.stringify({
                 tenentId: this.tenantId,
                 memberId: this.tenantId, // Assuming memberId is the same as tenantId
@@ -461,17 +471,17 @@ export class InventoryComponent implements OnInit {
                 task: task,
                 timeSpent: 0, // You might want to calculate this
                 idleTime: 0, // You might want to calculate this
-                details: details // This will not be stored in DynamoDB as per the Lambda function
+                details: details, // This will not be stored in DynamoDB as per the Lambda function
             });
-    
+
             const invokeCommand = new InvokeCommand({
                 FunctionName: 'userActivity-createItem',
                 Payload: new TextEncoder().encode(JSON.stringify({ body: payload })),
             });
-    
+
             const lambdaResponse = await lambdaClient.send(invokeCommand);
             const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-    
+
             if (responseBody.statusCode === 201) {
                 console.log('Activity logged successfully');
             } else {

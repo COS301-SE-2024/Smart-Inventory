@@ -31,46 +31,22 @@ export class ReportsComponent implements OnInit {
         InventoryReport: {
             title: 'Inventory Report',
             subtitle:
-                'Have an overall view of your inventory, relevant metrics to assist you in automation and ordering and provide analytics associated with it.',
-            metric_1: 'Total Low Stock Items: ',
-            metric_2: 'Inventory Accuracy: ',
-            metric_3: 'Stock to Request Ratio: ',
-            metric_4: 'Total monthly requests: ',
-            metric_5: 'Fulfilled requests: ',
-            metric_6: 'Pending/Failed requests: ',
-            metric_7: 'Backorder to time ratio: ',
-            metric_8: 'Safety stock: ',
-            graphs: [],
+                'The Inventory Report provides a holistic view of your inventory status, movements, and forecasts. By leveraging advanced analytics and predictive modeling, this powerful tool offers actionable insights to optimize inventory levels, automate ordering processes, and enhance overall supply chain efficiency.',
         },
         ActivityReport: {
             title: 'Activity Report',
             subtitle:
-                'Have an overall view of the team, their performance, activities and analytics associated with it making team management easier.',
-            metric_1: 'Average completed activities: ',
-            metric_2: 'Idle users: ',
-            metric_3: 'Average time to complete a task: ',
-            graphs: [],
+                "The Team Activity Report provides a holistic view of your team's performance, activities, and associated analytics. This powerful tool streamlines team management by offering actionable insights through intuitive visualizations and detailed metrics.",
         },
         OrderReport: {
             title: 'Order Report',
             subtitle:
-                'Have an overall view of the orders, the quality, time it takes and analytics associated with it.',
-            metric_1: 'Total orders: ',
-            metric_2: 'Order placement frequency: ',
-            metric_3: 'Order picking accuracy: ',
-            metric_4: 'Total amount of automated orders: ',
-            metric_5: 'Average order trips reduced: ',
-            metric_6: 'Automated order frequency: ',
-            graphs: [],
+                'The Order Report provides a holistic view of your ordering system, encompassing both manual and automated orders. This powerful tool offers insights into order quality, processing times, and associated analytics, enabling data-driven decisions to optimize your order fulfillment process.',
         },
         SupplierReport: {
             title: 'Supplier Report',
             subtitle:
-                'Have an overall view of the suppliers, their activities, how well they performed and analytics associated with them.',
-            metric_1: 'Average supplier performance: ',
-            metric_2: 'Overall product defect rate: ',
-            metric_3: 'Worst performer: ',
-            graphs: [],
+                'The Supplier Report provides a holistic view of your supplier network, their activities, performance metrics, and associated analytics. This powerful tool offers insights into supplier reliability, quality, cost-effectiveness, and overall impact on your supply chain, enabling data-driven decisions to optimize supplier relationships and procurement strategies.',
         },
     };
 

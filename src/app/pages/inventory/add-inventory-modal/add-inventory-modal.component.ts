@@ -50,13 +50,13 @@ export class AddInventoryModalComponent {
     private fb: FormBuilder
   ) {
     this.inventoryForm = this.fb.group({
-      productId: ['', Validators.required],
+      upc: ['', Validators.required],
       sku: ['', Validators.required],
       description: ['', Validators.required],
       category: ['', Validators.required],
       quantity: [0, [Validators.required, Validators.min(0)]],
       lowStockThreshold: [0, [Validators.required, Validators.min(0)]],
-      reorderFreq: [0, [Validators.required, Validators.min(0)]],
+      reorderAmount: [0, [Validators.required, Validators.min(0)]],
       supplier: ['', Validators.required],
       expirationDate: ['', Validators.required]
     });

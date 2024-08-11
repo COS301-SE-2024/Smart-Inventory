@@ -1,9 +1,11 @@
-import { Component, OnInit, ChangeDetectorRef, Type } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, Type, ViewChild } from '@angular/core';
+import { MatSidenav } from '@angular/material/sidenav';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TitleService } from '../../components/header/title.service';
 import { MaterialModule } from '../../components/material/material.module';
 import { CommonModule } from '@angular/common';
-import { CompactType, GridsterItemComponent, GridsterModule } from 'angular-gridster2';
+import { SidepanelComponent } from '../../components/sidepanel/sidepanel.component';
+import { CompactType, GridsterModule } from 'angular-gridster2';
 import { GridType, DisplayGrid } from 'angular-gridster2';
 import { GridsterConfig, GridsterItem } from 'angular-gridster2';
 import { AgChartsAngular } from 'ag-charts-angular';
@@ -20,8 +22,13 @@ import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { RouterLink } from '@angular/router';
 import { Amplify } from 'aws-amplify';
+import { fetchAuthSession } from 'aws-amplify/auth';
+import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
+import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
 import outputs from '../../../../amplify_outputs.json';
-
+import { MatDialog } from '@angular/material/dialog';
+import { CustomizeComponent } from '../../components/modal/customize/customize.component';
+import { TemplatechartComponent } from '../../components/charts/templatechart/templatechart.component';
 interface DashboardItem extends GridsterItem {
     type: string;
     cols: number;
@@ -55,18 +62,59 @@ interface DashboardItem extends GridsterItem {
         SaleschartComponent,
         BubblechartComponent,
         MatProgressSpinnerModule,
+        TemplatechartComponent
     ],
 })
 export class DashboardComponent implements OnInit {
     isDeleteMode: boolean = false;
+    @ViewChild('sidenav') sidenav!: MatSidenav;
+
+    openSidePanel() {
+        this.sidenav.open();
+    }
+
+    closeSidePanel() {
+        this.sidenav.close();
+    }
+
     private saveTrigger = new Subject<void>();
 
-    data: any;
+    chartConfigs = [
+        { type: 'bar', data: { categories: ['Jan', 'Feb', 'Mar'], values: [5, 10, 15] }, title: 'Monthly Sales' },
+        { type: 'line', data: { categories: ['Jan', 'Feb', 'Mar'], values: [3, 6, 9] }, title: 'Quarterly Revenue' },
+        { type: 'pie', data: [{ name: 'Item A', value: 30 }, { name: 'Item B', value: 70 }], title: 'Market Share' },
+        { type: 'sunburst', data: [], title: 'Inventory Breakdown' } // Populate with appropriate data
+    ];
+    rowData: any[] = [];
+    dashboardInfo: any[] = [];
+    inventoryCount: number = 0;
+    userCount: number = 0;
 
     options: GridsterConfig;
     charts: Type<any>[] = [];
     pendingDeletions: DashboardItem[] = [];
     standaloneDeletions: DashboardItem[] = [];
+    stockRequest: any[] = [];
+    orders: any[] = [];
+
+    RequestOrders = {
+        requests: {
+            totalRequests: 0,
+            mostRequested: {
+                name: "None",
+                percentage: 0
+            },
+            highestRequest: 0,
+        },
+        backorders: {
+            currentBackorders: 0,
+            averageDelay: 0,
+            longestBackorderItem: {
+                productName: 'None',
+                delay: ''
+            }
+        }
+    };
 
     dashboard: DashboardItem[];
     largeItem: DashboardItem = {
@@ -109,7 +157,8 @@ export class DashboardComponent implements OnInit {
         private loader: LoadingService,
         private titleService: TitleService,
         private filterService: FilterService,
-        private cdr: ChangeDetectorRef
+        private cdr: ChangeDetectorRef,
+        private dialog: MatDialog
     ) {
         Amplify.configure(outputs);
         this.options = {
@@ -147,6 +196,379 @@ export class DashboardComponent implements OnInit {
                 this.performSaveState();
             });
     }
+
+    // Titles for each chart
+    chartTitles: { [key: string]: string } = {
+        salesChart: 'Initial Sales Chart Title',
+        barChart: 'Initial Bar Chart Title',
+        bubbleChart: 'Initial Bubble Chart Title'
+    };
+
+    openCustomizeModal(chartType: any) {
+        const dialogRef = this.dialog.open(CustomizeComponent, {
+            width: '400px',
+            data: {
+                chartType: chartType,
+            }
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                console.log('The dialog was closed', result);
+                this.updateChartConfigs(result);
+            }
+        });
+    }
+
+    enableDragging(item: GridsterItem) {
+        item.dragEnabled = true;
+    }
+
+    disableDragging(item: GridsterItem) {
+        item.dragEnabled = false;
+    }
+
+    populateRequestOrders(stockRequests: any[], orders: any[]) {
+        const requestSummary = new Map<string, number>();
+
+        // Aggregate stock requests
+        stockRequests.forEach(request => {
+            requestSummary.set(request.sku, (requestSummary.get(request.sku) || 0) + request.quantityRequested);
+        });
+
+        const totalRequests = Array.from(requestSummary.values()).reduce((a, b) => a + b, 0);
+        const highestRequest = Math.max(...requestSummary.values());
+        const mostRequestedSku = [...requestSummary.entries()].reduce((a, b) => a[1] > b[1] ? a : b)[0];
+        const mostRequestedPercentage = (requestSummary.get(mostRequestedSku)! / totalRequests) * 100;
+
+        // Process orders for backorder details
+        const backorders = orders.filter(order => order.Order_Status === "Pending Approval" && order.Expected_Delivery_Date);
+        const delays = backorders.map(order => this.calculateDelay(order.Order_Date, order.Expected_Delivery_Date!));
+        const totalDelay = delays.reduce((a, b) => a + b, 0);
+        const averageDelay = delays.length > 0 ? totalDelay / delays.length : 0;
+        const longestDelay = Math.max(...delays);
+        const longestBackorderItem = orders.find(order => this.calculateDelay(order.Order_Date, order.Expected_Delivery_Date!) === longestDelay);
+
+        return {
+            requests: {
+                totalRequests,
+                mostRequested: {
+                    name: mostRequestedSku,
+                    percentage: mostRequestedPercentage
+                },
+                highestRequest
+            },
+            backorders: {
+                currentBackorders: backorders.length,
+                averageDelay,
+                longestBackorderItem: {
+                    productName: longestBackorderItem && longestBackorderItem.Selected_Supplier ? longestBackorderItem.Selected_Supplier : "Up to date",
+                    delay: longestBackorderItem ? this.formatDelay(longestDelay) : ""
+                }
+            }
+        };
+    }
+
+    private calculateDelay(orderDate: string, expectedDate: string): number {
+        const order = new Date(orderDate);
+        const expected = new Date(expectedDate);
+        return (expected.getTime() - order.getTime()) / (1000 * 3600 * 24);
+    }
+
+    private formatDelay(delay: number): string {
+        return delay > 0 ? delay.toString() : "";  // Return an empty string if delay is zero or not calculable
+    }
+
+    // Integration
+    inventoryLevel: number = 20;
+
+    async dashboardData() {
+        try {
+            // Mocked baseline values (should be dynamically fetched or defined)
+            const baselineValues = {
+                inventoryLevels: 10, // Baseline inventory levels
+                backorders: 5,      // Baseline backorders
+                fulfillmentDays: 390 // Baseline average fulfillment days (for comparison)
+            };
+            const session = await fetchAuthSession();
+            this.loader.setLoading(false);
+
+            const cognitoClient = new CognitoIdentityProviderClient({
+                region: outputs.auth.aws_region,
+                credentials: session.credentials,
+            });
+
+            const getUserCommand = new GetUserCommand({
+                AccessToken: session.tokens?.accessToken.toString(),
+            });
+            const getUserResponse = await cognitoClient.send(getUserCommand);
+
+            const tenantId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
+
+            if (!tenantId) {
+                console.error('TenantId not found in user attributes');
+                this.rowData = [];
+                return;
+            }
+
+            const lambdaClient = new LambdaClient({
+                region: outputs.auth.aws_region,
+                credentials: session.credentials,
+            });
+
+
+            const invokeCommand = new InvokeCommand({
+                FunctionName: 'getDashboardData',
+                Payload: new TextEncoder().encode(JSON.stringify({
+                    pathParameters: {
+                        tenentId: tenantId, // Spelling as expected by the Lambda function
+                    }
+                })),
+            });
+
+            const lambdaResponse = await lambdaClient.send(invokeCommand);
+            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+            console.log('Response from Lambda:', responseBody);
+
+
+            if (responseBody.statusCode === 200) {
+                const dashboardData = JSON.parse(responseBody.body);
+                // console.log('Dashboard Data:', dashboardData);
+                console.log('I am a metric', parseFloat((((dashboardData.inventoryLevels - baselineValues.inventoryLevels) / baselineValues.inventoryLevels) * 100).toFixed(2)));
+
+                // Update the dashboardInfo with new data from the Lambda function
+                this.dashboard = [
+                    {
+                        cols: 1,
+                        rows: 1,
+                        y: 0,
+                        x: 4,
+                        name: 'Inventory Levels',
+                        icon: 'storage',
+                        analytic: dashboardData.inventoryLevels.toString(),
+                        percentage: parseFloat((((dashboardData.inventoryLevels - baselineValues.inventoryLevels) / baselineValues.inventoryLevels) * 100).toFixed(2)), // Update this if needed from dashboardData
+                        type: 'card',
+                        isActive: true,
+                        tooltip: 'Current inventory stock count.',
+                    },
+                    {
+                        cols: 1,
+                        rows: 1,
+                        y: 0,
+                        x: 5,
+                        name: 'Backorders',
+                        icon: 'assignment_return',
+                        analytic: dashboardData.backorders.toString(),
+                        percentage: parseFloat((((dashboardData.backorders - baselineValues.backorders) / baselineValues.backorders) * 100).toFixed(2)), // Update this if needed from dashboardData
+                        type: 'card',
+                        isActive: true,
+                        tooltip: 'Orders pending due to lack of stock.',
+                    },
+                    {
+                        cols: 1,
+                        rows: 1,
+                        y: 0,
+                        x: 6,
+                        name: 'Avg Fulfillment Time',
+                        icon: 'hourglass_full',
+                        analytic: dashboardData.avgFulfillmentTime,
+                        percentage: parseFloat((((parseFloat(dashboardData.avgFulfillmentTime.split(" days")[0]) - baselineValues.fulfillmentDays) / baselineValues.fulfillmentDays) * 100).toFixed(2)), // Update this if needed from dashboardData
+                        type: 'card',
+                        isActive: true,
+                        tooltip: 'Average time taken from order placement to shipment.',
+                    },
+                    {
+                        cols: 1,
+                        rows: 1,
+                        y: 0,
+                        x: 7,
+                        name: 'Top Seller',
+                        icon: 'star_rate',
+                        analytic: dashboardData.topSeller,
+                        percentage: parseFloat("0.12"), // Update this if needed from dashboardData
+                        type: 'card',
+                        isActive: true,
+                        tooltip: 'The product with the highest requests.',
+                    },
+                ];
+                console.log('Processed dashboard data:', this.dashboardInfo);
+            } else {
+                console.error('Error fetching dashboard data:', responseBody.body);
+                this.dashboardInfo = [];
+            }
+        } catch (error) {
+            console.error('Error in dashboardData:', error);
+            this.dashboardInfo = [];
+        }
+    }
+
+    isLoading: boolean = false;
+    async loadOrdersData() {
+        this.isLoading = true;
+        try {
+            const session = await fetchAuthSession();
+
+            const cognitoClient = new CognitoIdentityProviderClient({
+                region: outputs.auth.aws_region,
+                credentials: session.credentials,
+            });
+
+            const getUserCommand = new GetUserCommand({
+                AccessToken: session.tokens?.accessToken.toString(),
+            });
+            const getUserResponse = await cognitoClient.send(getUserCommand);
+
+            const tenentId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
+
+            if (!tenentId) {
+                console.error('TenentId not found in user attributes');
+                this.rowData = [];
+                return;
+            }
+
+            const lambdaClient = new LambdaClient({
+                region: outputs.auth.aws_region,
+                credentials: session.credentials,
+            });
+
+            const invokeCommand = new InvokeCommand({
+                FunctionName: 'getOrders',
+                Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: tenentId } })),
+            });
+
+            const lambdaResponse = await lambdaClient.send(invokeCommand);
+            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+            console.log('Response from Lambda:', responseBody);
+
+            if (responseBody.statusCode === 200) {
+                const orders = JSON.parse(responseBody.body);
+                this.orders = orders;
+                console.log('Processed orders:', orders);
+
+            } else {
+                console.error('Error fetching orders data:', responseBody.body);
+                this.rowData = [];
+            }
+        } catch (error) {
+            console.error('Error in loadOrdersData:', error);
+            this.rowData = [];
+        } finally {
+            this.isLoading = false;
+        }
+    }
+
+    async loadStockData() {
+        this.isLoading = true;
+        try {
+            const session = await fetchAuthSession();
+
+            const cognitoClient = new CognitoIdentityProviderClient({
+                region: outputs.auth.aws_region,
+                credentials: session.credentials,
+            });
+
+            const getUserCommand = new GetUserCommand({
+                AccessToken: session.tokens?.accessToken.toString(),
+            });
+            const getUserResponse = await cognitoClient.send(getUserCommand);
+
+            const tenentId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
+            // const tenentId = '1718890159961-q85m9';
+
+            if (!tenentId) {
+                console.error('TenentId not found in user attributes');
+                // this.rowData = [];
+                return;
+            }
+
+            const lambdaClient = new LambdaClient({
+                region: outputs.auth.aws_region,
+                credentials: session.credentials,
+            });
+
+            const invokeCommand = new InvokeCommand({
+                FunctionName: 'getStockRequests',
+                Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: tenentId } })),
+            });
+
+            const lambdaResponse = await lambdaClient.send(invokeCommand);
+            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+            console.log('Response from Lambda:', responseBody);
+
+            if (responseBody.statusCode === 200) {
+                const orders = JSON.parse(responseBody.body);
+                // orders.forEach((request: { category: string | number; quantityRequested: number; }) => {
+                //     if (this.inventoryData[request.category]) {
+                //         this.inventoryData[request.category].requestedStock = (this.inventoryData[request.category].requestedStock || 0) + request.quantityRequested;
+                //     } else {
+                //         this.inventoryData[request.category] = { currentStock: 0, requestedStock: request.quantityRequested };
+                //     }
+                // });
+                // this.updateChartData();
+                this.stockRequest = orders;
+                console.log('Processed orders:', orders);
+            } else {
+                console.error('Error fetching orders data:', responseBody.body);
+                // this.rowData = [];
+            }
+        } catch (error) {
+            console.error('Error in loadOrdersData:', error);
+            // this.rowData = [];
+        } finally {
+            this.isLoading = false;
+        }
+    }
+
+
+    async fetchUsers() {
+        try {
+            const session = await fetchAuthSession();
+
+            const lambdaClient = new LambdaClient({
+                region: outputs.auth.aws_region,
+                credentials: session.credentials,
+            });
+
+            // Retrieve the custom attribute using GetUserCommand
+            const client = new CognitoIdentityProviderClient({
+                region: outputs.auth.aws_region,
+                credentials: session.credentials,
+            });
+
+            const getUserCommand = new GetUserCommand({
+                AccessToken: session.tokens?.accessToken.toString(),
+            });
+            const getUserResponse = await client.send(getUserCommand);
+
+            const adminUniqueAttribute = getUserResponse.UserAttributes?.find(
+                (attr) => attr.Name === 'custom:tenentId'
+            )?.Value;
+
+            const payload = JSON.stringify({
+                userPoolId: outputs.auth.user_pool_id,
+                tenentId: adminUniqueAttribute,
+            });
+
+            const invokeCommand = new InvokeCommand({
+                FunctionName: 'getUsers',
+                Payload: new TextEncoder().encode(payload),
+            });
+
+            const lambdaResponse = await lambdaClient.send(invokeCommand);
+            const users = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+            // console.log('Users received from Lambda:', users);
+
+            this.userCount = Array.isArray(users) ? users.length : 0;
+            console.log('Number of users received:', this.userCount);
+        } catch (error) {
+            console.error('Error fetching users:', error);
+            this.userCount = 0; // Ensure user count is set to 0 in case of errors
+        }
+    }
+
+
+
+    //
 
     performSaveState() {
         console.log('Saving state:', this.dashboard); // Log to debug
@@ -337,27 +759,48 @@ export class DashboardComponent implements OnInit {
             console.error('Invalid chart type:', type);
         }
     }
+
+    newCharts: any[] = [];
+
+    updateChartConfigs(newConfig: any): void {
+        this.newCharts.push(newConfig);
+        this.dashboard.push(newConfig);
+        this.saveState();
+    }
+
+    addNewChartToDashboard(chartConfig: any) {
+        const newChartItem: DashboardItem = {
+            cols: 2,
+            rows: 2,
+            y: 0,
+            x: 0,
+            type: 'chart',
+            name: chartConfig.title,
+            chartType: chartConfig.chartType,
+            chartData: chartConfig.data,
+            // You might want to add more properties here
+        };
+
+        this.dashboard.push(newChartItem);
+        this.saveState();
+        this.sidenav.close(); // Close the side panel after adding the chart
+    }
+
     setFilter(filter: string): void {
         this.filterService.changeFilter(filter);
     }
 
-    fetchData() {
-        this.loader.setLoading(true);
-        this.http.get('https://api.example.com/data').subscribe({
-            next: (response) => {
-                this.data = response;
-                this.loader.setLoading(false);
-            },
-            error: (error) => {
-                console.error('Error fetching data:', error);
-                this.loader.setLoading(false);
-            },
-        });
-    }
 
-    ngOnInit() {
+
+    async ngOnInit() {
         this.loadState(); // Load the state on initialization
         this.titleService.updateTitle('Dashboard');
-        this.fetchData();
+
+        // await this.loadInventoryData();
+        await this.fetchUsers();
+        await this.dashboardData();
+        await this.loadOrdersData();
+        await this.loadStockData();
+        this.RequestOrders = this.populateRequestOrders(this.stockRequest, this.orders);
     }
 }

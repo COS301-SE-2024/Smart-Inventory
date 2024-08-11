@@ -41,7 +41,10 @@ import { LoadingSpinnerComponent } from '../../components/loader/loading-spinner
     styleUrls: ['./team.component.css'],
 })
 export class TeamComponent implements OnInit {
-    constructor(private titleService: TitleService, private dialog: MatDialog) {}
+    constructor(
+        private titleService: TitleService,
+        private dialog: MatDialog,
+    ) {}
     showPopup = false;
     user = {
         name: '',
@@ -56,12 +59,13 @@ export class TeamComponent implements OnInit {
     isLoading = true;
     rowData: any[] = [];
     colDefs: ColDef[] = [
-        { field: 'given_name', headerName: 'Name' },
-        { field: 'family_name', headerName: 'Surname' },
-        { field: 'email', headerName: 'Email' },
+        { field: 'given_name', headerName: 'Name', filter: 'agSetColumnFilter' },
+        { field: 'family_name', headerName: 'Surname', filter: 'agSetColumnFilter' },
+        { field: 'email', headerName: 'Email', filter: 'agSetColumnFilter' },
         {
             field: 'role',
             headerName: 'Role',
+            filter: 'agSetColumnFilter',
             cellRenderer: RoleSelectCellEditorComponent,
             width: 100,
         },
@@ -157,7 +161,7 @@ export class TeamComponent implements OnInit {
             const getUserResponse = await client.send(getUserCommand);
 
             const adminUniqueAttribute = getUserResponse.UserAttributes?.find(
-                (attr) => attr.Name === 'custom:tenentId'
+                (attr) => attr.Name === 'custom:tenentId',
             )?.Value;
 
             const createUserCommand = new AdminCreateUserCommand({
@@ -220,7 +224,7 @@ export class TeamComponent implements OnInit {
             const getUserResponse = await client.send(getUserCommand);
 
             const adminUniqueAttribute = getUserResponse.UserAttributes?.find(
-                (attr) => attr.Name === 'custom:tenentId'
+                (attr) => attr.Name === 'custom:tenentId',
             )?.Value;
 
             const payload = JSON.stringify({
@@ -229,7 +233,7 @@ export class TeamComponent implements OnInit {
             });
 
             const invokeCommand = new InvokeCommand({
-                FunctionName: 'getUsers',
+                FunctionName: 'getUsersV2',
                 Payload: new TextEncoder().encode(payload),
             });
 

@@ -1,7 +1,12 @@
-import { Component, OnDestroy, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, AfterViewInit, SimpleChanges, Input, OnChanges, ChangeDetectorRef } from '@angular/core';
 import { AgChartsAngular } from 'ag-charts-angular';
 import { AgChartOptions, AgChartTheme } from 'ag-charts-community';
+import { Amplify } from 'aws-amplify';
+import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
+import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
+import { fetchAuthSession } from 'aws-amplify/auth';
 
+import outputs from '../../../../../amplify_outputs.json';
 @Component({
     selector: 'app-bubblechart',
     standalone: true,
@@ -10,10 +15,19 @@ import { AgChartOptions, AgChartTheme } from 'ag-charts-community';
     styleUrl: './bubblechart.component.css',
 })
 
-export class BubblechartComponent implements OnInit, OnDestroy, AfterViewInit  {
-    public chartOptions: AgChartOptions;
+export class BubblechartComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges {
+    public chartOptions!: AgChartOptions;
     private themeObserver!: MutationObserver;
-    
+    private data: any[] = [];
+    @Input() chartTitle: string = "Supplier Price and Availability Comparison";
+
+    ngOnChanges(changes: SimpleChanges) {
+        if (changes['chartTitle'] && this.chartOptions.title) {
+            this.chartOptions.title.text = this.chartTitle;
+            this.cdr.detectChanges();
+        }
+    }
+
     private lightTheme: AgChartTheme = {
         palette: {
             fills: ['#5C2983', '#0076C5', '#21B372'],
@@ -21,7 +35,7 @@ export class BubblechartComponent implements OnInit, OnDestroy, AfterViewInit  {
         },
         baseTheme: 'ag-default',
     };
-    
+
     private darkTheme: AgChartTheme = {
         palette: {
             fills: ['#8860D0', '#4098D7', '#56CF87'],
@@ -37,63 +51,62 @@ export class BubblechartComponent implements OnInit, OnDestroy, AfterViewInit  {
         }
     };
 
-    constructor() {
-        
+    constructor(private cdr: ChangeDetectorRef) {
+
+        Amplify.configure(outputs);
+        this.initializeChartOptions();
+    }
+
+    private initializeChartOptions() {
         this.chartOptions = {
-            data: [
-                { category: 'Electronics', sales: 20000, target: 25000 },
-                { category: 'Clothing', sales: 18000, target: 22000 },
-                { category: 'Furniture', sales: 15000, target: 18000 },
-                { category: 'Home Appliances', sales: 12000, target: 16000 },
-                { category: 'Toys & Games', sales: 10000, target: 12000 },
-            ],
-            title: {
-                text: 'Sales VS Target by Category',
-            },
+            autoSize: true,
+            data: [],
+            title: { text: this.chartTitle },
             series: [
                 {
                     type: 'bar',
-                    xKey: 'category',
-                    yKey: 'sales',
-                    yName: 'Actual Sales',
+                    xKey: 'ItemSKU',
+                    yKey: 'AvailableQuantity',
+                    yName: 'Available Quantity',
                     direction: 'horizontal',
                     cornerRadius: 10,
                     stacked: true,
-                    label: { enabled: true, formatter: (params) => `${params.value}` },
+                    label: { enabled: true, formatter: (params) => `${params.value} units` },
                 },
                 {
                     type: 'bar',
-                    xKey: 'category',
-                    yKey: 'target',
-                    yName: 'Sales Target',
+                    xKey: 'ItemSKU',
+                    yKey: 'TotalPrice',
+                    yName: 'Total Price',
                     direction: 'horizontal',
                     cornerRadius: 10,
                     stacked: true,
-                    label: { enabled: true, formatter: (params) => `${params.value}` },
+                    label: { enabled: true, formatter: (params) => `$${params.value.toFixed(2)}` },
                 },
             ],
             axes: [
                 {
                     type: 'category',
                     position: 'left',
-                    title: {
-                        text: 'Product Category',
-                    },
+                    title: { text: 'Item SKU' },
                 },
                 {
                     type: 'number',
                     position: 'bottom',
-                    title: {
-                        text: 'USD',
-                    },
+                    title: { text: 'Quantity and Price' },
                 },
             ],
+            // legend: { position: 'bottom' },
+            // direction: 'horizontal'
         };
+
     }
 
-    ngOnInit() {}
+    async ngOnInit() {
+        await this.loadSupplierQuotes();
+    }
 
-    ngAfterViewInit(){
+    ngAfterViewInit() {
         this.setupThemeObserver();
         this.applyCurrentTheme();
     }
@@ -123,16 +136,106 @@ export class BubblechartComponent implements OnInit, OnDestroy, AfterViewInit  {
             ...this.chartOptions, // Reapply chart options with new theme
             theme: theme
         };
+        this.cdr.detectChanges(); // Ensure changes are detected
     }
 
-    generateBubbleData(baseval: number, range: number, count: number, yrange: number, zrange: number) {
-        const data = [];
-        for (let i = 0; i < count; i++) {
-            const x = Math.floor(Math.random() * range) + baseval + (i * range) / count; // Spread out inventory levels more
-            const y = Math.floor(Math.random() * yrange) + 10 + (i * yrange) / count; // Spread out sales volume more
-            const z = Math.floor(Math.random() * zrange) + 5; // Consistent bubble size distribution
-            data.push({ x, y, z });
+    private generateChartData(rawData: any[]): any[] {
+        const aggregatedData = rawData.reduce((acc, item) => {
+            const existingItem = acc.find((i: { ItemSKU: any; }) => i.ItemSKU === item.ItemSKU);
+            if (existingItem) {
+                existingItem.AvailableQuantity += Number(item.AvailableQuantity) || 0;
+                existingItem.TotalPrice += Number(item.TotalPrice) || 0;
+            } else {
+                acc.push({
+                    ItemSKU: item.ItemSKU,
+                    AvailableQuantity: Number(item.AvailableQuantity) || 0,
+                    TotalPrice: Number(item.TotalPrice) || 0
+                });
+            }
+            return acc;
+        }, []);
+
+        const processedData = aggregatedData.filter((item: { AvailableQuantity: number; TotalPrice: number; }) => item.AvailableQuantity > 0 && item.TotalPrice > 0);
+        
+        console.log('Processed data:', processedData);
+        return processedData;
+    }
+
+
+    // private generateChartData() {
+    //     // Sample Data Processing, replace this with actual data fetching and processing logic
+    //     const formattedData = this.data.map(item => ({
+    //         ItemSKU: item.ItemSKU,
+    //         AvailableQuantity: item.AvailableQuantity,
+    //         TotalPrice: item.TotalPrice
+    //     }));
+    //     return formattedData;
+    // }
+
+    async loadSupplierQuotes() {
+        try {
+            const session = await fetchAuthSession();
+
+            const cognitoClient = new CognitoIdentityProviderClient({
+                region: outputs.auth.aws_region,
+                credentials: session.credentials,
+            });
+
+            const getUserCommand = new GetUserCommand({
+                AccessToken: session.tokens?.accessToken.toString(),
+            });
+            const getUserResponse = await cognitoClient.send(getUserCommand);
+
+            const tenantId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
+            // const tenantId = "1717667019559-j85syk";
+
+            if (!tenantId) {
+                console.error('TenantId not found in user attributes');
+                // this.rowData = [];
+                return;
+            }
+
+            const lambdaClient = new LambdaClient({
+                region: outputs.auth.aws_region,
+                credentials: session.credentials,
+            });
+
+            const invokeCommand = new InvokeCommand({
+                FunctionName: 'getSupplierQuotePrices',
+                Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: tenantId } })),
+            });
+
+            const lambdaResponse = await lambdaClient.send(invokeCommand);
+            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+            console.log('Response from Lambda:', responseBody);
+
+            if (responseBody.statusCode === 200) {
+                const supplierData = JSON.parse(responseBody.body);
+                console.log('Raw supplier data:', supplierData);
+                this.data = this.generateChartData(supplierData);
+                this.updateChart();
+            } else {
+                console.error('Error fetching inventory data:', responseBody.body);
+                // this.rowData = [];
+            }
+        } catch (error) {
+            console.error('Error in loadInventoryData:', error);
+            // this.rowData = [];
+        } finally {
+            // this.isLoading = false;
         }
-        return data;
+    }
+
+    private updateChart() {
+        if (this.data.length > 0) {
+            console.log('Updating chart with data:', this.data);
+            this.chartOptions = {
+                ...this.chartOptions,
+                data: this.data
+            };
+            this.cdr.detectChanges();
+        } else {
+            console.warn('No data available to display in the chart.');
+        }
     }
 }

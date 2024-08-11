@@ -34,6 +34,7 @@
         "aws-amplify": "^6.3.4",
         "aws-sdk": "^2.1646.0",
         "cypress-ag-grid": "^3.3.1",
+        "echarts": "^5.5.1",
         "gridstack": "^10.2.0",
         "js-yaml": ">=3.13.1",
         "ngx-mat-select-search": "^7.0.6",

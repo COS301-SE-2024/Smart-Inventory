@@ -61,13 +61,14 @@ export class SuppliersComponent implements OnInit {
 
     colDefs: ColDef[] = [
         { field: 'supplierID', headerName: 'Supplier ID', hide: true },
-        { field: 'company_name', headerName: 'Company Name' },
-        { field: 'contact_name', headerName: 'Contact Name' },
-        { field: 'contact_email', headerName: 'Contact Email' },
-        { field: 'phone_number', headerName: 'Phone Number' },
+        { field: 'company_name', headerName: 'Company Name', filter: 'agSetColumnFilter' },
+        { field: 'contact_name', headerName: 'Contact Name', filter: 'agSetColumnFilter' },
+        { field: 'contact_email', headerName: 'Contact Email', filter: 'agSetColumnFilter' },
+        { field: 'phone_number', headerName: 'Phone Number', filter: 'agSetColumnFilter' },
         {
             field: 'address',
             headerName: 'Address',
+            filter: 'agSetColumnFilter',
             valueGetter: (params: any) => this.getAddressString(params.data.address),
             onCellClicked: (params: any) => this.onAddressCellClicked(params.data),
         },
@@ -75,7 +76,10 @@ export class SuppliersComponent implements OnInit {
 
     addButton = { text: 'Add New Supplier' };
 
-    constructor(private titleService: TitleService, private dialog: MatDialog) {
+    constructor(
+        private titleService: TitleService,
+        private dialog: MatDialog,
+    ) {
         Amplify.configure(outputs);
     }
 

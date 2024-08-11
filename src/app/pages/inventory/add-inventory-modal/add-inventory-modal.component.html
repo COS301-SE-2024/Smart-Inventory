@@ -2,8 +2,8 @@
 <mat-dialog-content>
   <form [formGroup]="inventoryForm">
     <mat-form-field appearance="fill">
-      <mat-label>Product ID</mat-label>
-      <input matInput formControlName="productId">
+      <mat-label>Universal Product Code</mat-label>
+      <input matInput formControlName="upc">
     </mat-form-field>
     <mat-form-field appearance="fill">
       <mat-label>SKU</mat-label>
@@ -30,8 +30,8 @@
       <input matInput type="number" formControlName="lowStockThreshold">
     </mat-form-field>
     <mat-form-field appearance="fill">
-      <mat-label>Reorder Frequency</mat-label>
-      <input matInput type="number" formControlName="reorderFreq">
+      <mat-label>Reorder Amount</mat-label>
+      <input matInput type="number" formControlName="reorderAmount">
     </mat-form-field>
     <mat-form-field appearance="fill">
       <mat-label>Supplier</mat-label>

@@ -1,9 +1,22 @@
 .item-card-container {
     display: flex;
     flex-direction: column;
-    margin: 20px;
+    background-color: #f1f1f1;
+    height: 100%;
+    width: 100%;
+    border-radius: 10px;
 }
 
 mat-card-actions {
     margin-top: auto;
+}
+.card-container {
+    height: 100%;
+    width: 80%;
+    padding: 10px;
+}
+
+.card-header {
+    text-align: center;
+    align-self: center;
 }

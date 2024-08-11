@@ -1,225 +1,391 @@
-import { TitleService } from '../../header/title.service';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MaterialModule } from '../../material/material.module';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatButtonModule } from '@angular/material/button';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatCardModule } from '@angular/material/card';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { AgChartsAngular } from 'ag-charts-angular';
+import { AgChartOptions, AgCartesianChartOptions } from 'ag-charts-community';
 import { GridComponent } from '../../grid/grid.component';
 import { ColDef } from 'ag-grid-community';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
+import { TitleService } from '../../header/title.service';
 import { ChartDataService } from '../../../services/chart-data.service';
-import { AgChartsAngular } from 'ag-charts-angular';
-import { AgChartOptions } from 'ag-charts-community';
+import { Amplify } from 'aws-amplify';
+import { fetchAuthSession } from 'aws-amplify/auth';
+import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
+import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
+import outputs from '../../../../../amplify_outputs.json';
 
 @Component({
-    selector: 'app-inventory-report',
-    standalone: true,
-    imports: [
-        GridComponent,
-        MatCardModule,
-        MatGridListModule,
-        MaterialModule,
-        CommonModule,
-        MatProgressSpinnerModule,
-        AgChartsAngular,
-    ],
-    templateUrl: './inventory-report.component.html',
-    styleUrl: './inventory-report.component.css',
+  selector: 'app-inventory-report',
+  templateUrl: './inventory-report.component.html',
+  styleUrls: ['./inventory-report.component.css'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    MatToolbarModule,
+    MatButtonModule,
+    MatGridListModule,
+    MatCardModule,
+    MatProgressSpinnerModule,
+    AgChartsAngular,
+    GridComponent
+  ]
 })
 export class InventoryReportComponent implements OnInit {
-    category: string[] = ['veg', 'meat', 'nuts'];
-    colDefs!: ColDef[];
-    rowData: any[] = [];
-    selectedItem: any = null;
-    requestQuantity: number | null = null;
-    sum: number = 0;
-    quantity: number = 0;
-    requests: number = 0;
-    count: number = 0;
-    InventoryReport: any;
-    options1!: AgChartOptions;
-    options2!: AgChartOptions;
-    options3!: AgChartOptions;
-    options4!: AgChartOptions;
-    options5!: AgChartOptions;
-    constructor(
-        private titleService: TitleService,
-        private router: Router,
-        private route: ActivatedRoute,
-        public service: ChartDataService,
-    ) {
-        this.titleService.updateTitle(this.getCurrentRoute());
-    }
+  @ViewChild('gridComponent') gridComponent!: GridComponent;
 
-    ngOnInit() {
-        this.options1 = this.service.setPieData(this.calculateCategoryTotalQuantities(), 'Quantity per Category');
-        this.options2 = this.service.setPieData(this.calculateCategoryTotalRequests(), 'Requests per Category');
-        this.options3 = this.service.setBarData(
-            this.calculateCategoryTotalQuantities(),
-            this.calculateCategoryTotalRequests(),
-            this.calculateCategoryTotalRequestsQuantity(),
-            'Requests Vs Quantity per Category',
-        );
-        this.options4 = this.service.setPieData(
-            this.calculateCategoryTotalRequests(),
-            'Requests Quantity per Category',
-        );
-        this.options5 = this.service.setAreaData(
-            'Yearly correlation between requests, quantity of requests and stock level',
-        );
-        this.InventoryReport = {
-            title: 'Inventory Report',
-            subtitle:
-                'Have an overall view of your inventory, relevant metrics to assist you in automation and ordering and provide analytics associated with it.',
-            metrics: {
-                metric_1: 'Total Stock Items: ' + this.calculateTotal('quantity'),
-                metric_2: 'Total Requests: ' + this.calculateTotal('requests'),
-                metric_3: 'Total Stock Quantity Requested: ' + this.calculateTotal('requestsQuantity'),
-                metric_4: 'Total Low Stock Items: ' + this.calculateTotalEmpty(),
-                metric_5: 'Inventory Accuracy: ' + this.calculateAccuracy() + '%',
-                metric_6: 'Stock to Request Ratio: ' + this.calculateRatio(),
-                metric_7: 'Fulfilled requests: ',
-                metric_8: 'Pending/Failed requests: ',
-                metric_9: 'Service Level: ',
-                metric_10: 'Accuracy of Forecast Demand: ',
-                metric_11: 'Inventory Shrinkage: ',
-                metric_12: 'Deadstock(due to expiration):',
-                metric_13: ' Lost Sales Ratio: ',
-            },
-            graphs: [],
-        };
-    }
+  rowData: any[] = [];
+  colDefs: ColDef[] = [];
+  options1!: AgChartOptions;
+  options2!: AgChartOptions;
+  options3!: AgChartOptions;
+  options4!: AgChartOptions;
+  options5: any;
+  InventoryReport: any;
+  isLoading = true;
 
-    getCurrentRoute() {
-        this.colDefs = [
-            { field: 'sku', headerName: 'SKU' },
-            { field: 'category', headerName: 'Category' },
-            { field: 'description', headerName: 'Description' },
-            { field: 'quantity', headerName: 'Quantity' },
-            { field: 'requests', headerName: 'Requests' },
-            { field: 'requestsQuantity', headerName: 'Requests Quantity' },
-            { field: 'expiration', headerName: 'Expiration' },
-            { field: 'inaccurateFix', headerName: 'Inaccuracy Quantity of Fix' },
-            { field: 'timeEmpty', headerName: 'Time Empty(days)' },
-        ];
-        for (let i = 1; i <= 100; i++) {
-            this.rowData.push({
-                sku: i,
-                category: this.category[i % 3],
-                description: 'dest',
-                quantity: Math.floor(Math.random() * 100), // Random quantity between 0 and 99
-                requests: Math.floor(Math.random() * 10), // Random requests between 0 and 9
-                requestsQuantity: Math.floor(Math.random() * 50),
-                expiration: this.getRandomExpirationDate(1),
-                inaccurateFix: Math.floor(Math.random() * 10),
-                timeEmpty: Math.floor(Math.random() * 4),
-            });
+  constructor(
+    private titleService: TitleService,
+    private router: Router,
+    public service: ChartDataService
+  ) {
+    Amplify.configure(outputs);
+  }
+
+  async ngOnInit() {
+    this.titleService.updateTitle('Inventory Report');
+    this.isLoading = true;
+    await this.loadInventoryData();
+    await this.updateInventoryWithRequests();
+    this.setupCharts();
+    this.setupMetrics();
+    this.isLoading = false;
+  }
+
+  async loadInventoryData() {
+    try {
+      const session = await fetchAuthSession();
+      const tenantId = await this.getTenantId(session);
+
+      const lambdaClient = new LambdaClient({
+        region: outputs.auth.aws_region,
+        credentials: session.credentials,
+      });
+
+      const invokeCommand = new InvokeCommand({
+        FunctionName: 'Inventory-getItems',
+        Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: tenantId } })),
+      });
+
+      const lambdaResponse = await lambdaClient.send(invokeCommand);
+      const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+
+      if (responseBody.statusCode === 200) {
+        const inventoryItems = JSON.parse(responseBody.body);
+        this.rowData = inventoryItems.map((item: any) => ({
+          inventoryID: item.inventoryID,
+          sku: item.SKU,
+          category: item.category,
+          productId: item.productID,
+          description: item.description,
+          quantity: item.quantity,
+          supplier: item.supplier,
+          expirationDate: item.expirationDate,
+          lowStockThreshold: item.lowStockThreshold,
+          reorderFreq: item.reorderFreq,
+          requests: 0,
+          requestsQuantity: 0
+        }));
+        this.setupColumnDefs();
+      } else {
+        console.error('Error fetching inventory data:', responseBody.body);
+        this.rowData = [];
+      }
+    } catch (error) {
+      console.error('Error in loadInventoryData:', error);
+      this.rowData = [];
+    }
+  }
+
+  setupColumnDefs() {
+    this.colDefs = [
+      { field: 'sku', headerName: 'SKU' },
+      { field: 'category', headerName: 'Category' },
+      { field: 'description', headerName: 'Description' },
+      { field: 'quantity', headerName: 'Quantity' },
+      { field: 'supplier', headerName: 'Supplier' },
+      { field: 'expirationDate', headerName: 'Expiration Date' },
+      { field: 'requests', headerName: 'Requests' },
+      { field: 'requestsQuantity', headerName: 'Requests Quantity'},
+    ];
+  }
+
+  async updateInventoryWithRequests() {
+    try {
+      const stockRequests = await this.fetchStockRequests();
+
+      const skuMap = new Map<string, { requests: number; quantity: number }>();
+
+      stockRequests.forEach((request: any) => {
+        const { sku, quantityRequested } = request;
+        if (!skuMap.has(sku)) {
+          skuMap.set(sku, { requests: 0, quantity: 0 });
         }
-        return 'Inventory Report';
-    }
+        const currentData = skuMap.get(sku)!;
+        currentData.requests += 1;
+        currentData.quantity += Number(quantityRequested);
+        skuMap.set(sku, currentData);
+      });
 
-    getRandomExpirationDate(minDays: number): Date {
-        const today = new Date();
-        const daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
-        const randomDay = Math.floor(Math.random() * (daysInMonth - minDays + 1)) + minDays;
-
-        // Set date to random day within the current month
-        return new Date(today.getFullYear(), today.getMonth(), randomDay);
-    }
-
-    calculateRatio() {
-        this.sum = 0;
-        this.count = 0;
-        this.rowData.forEach((element) => {
-            this.requests += element.requests;
-        });
-        this.rowData.forEach((element) => {
-            this.quantity += element.quantity;
-            this.count += 1;
-        });
-        return (this.requests / this.quantity).toFixed(3);
-    }
-
-    calculateTotal(column: String): number {
-        this.sum = 0;
-        switch (column) {
-            case 'requests':
-                this.rowData.forEach((element) => {
-                    this.sum += element.requests;
-                });
-                break;
-            case 'quantity':
-                this.rowData.forEach((element) => {
-                    this.sum += element.quantity;
-                });
-                break;
-            case 'requestsQuantity':
-                this.rowData.forEach((element) => {
-                    this.sum += element.requestsQuantity;
-                });
-                break;
-            case 'inaccurateFix':
-                this.rowData.forEach((element) => {
-                    this.sum += element.inaccurateFix;
-                });
-                break;
-            default:
-                break;
+      this.rowData = this.rowData.map(item => {
+        const requestData = skuMap.get(item.sku);
+        if (requestData) {
+          return {
+            ...item,
+            requests: requestData.requests,
+            requestsQuantity: requestData.quantity
+          };
         }
-        return this.sum;
+        return item;
+      });
+
+      if (this.gridComponent) {
+        this.gridComponent.refreshGrid(this.rowData);
+      }
+    } catch (error) {
+      console.error('Error updating inventory with requests:', error);
+    }
+  }
+
+  async fetchStockRequests() {
+    try {
+      const session = await fetchAuthSession();
+      const tenantId = await this.getTenantId(session);
+
+      const lambdaClient = new LambdaClient({
+        region: outputs.auth.aws_region,
+        credentials: session.credentials,
+      });
+
+      const invokeCommand = new InvokeCommand({
+        FunctionName: 'Report-getItems',
+        Payload: new TextEncoder().encode(JSON.stringify({ 
+          pathParameters: { tenentId: tenantId } 
+        })),
+      });
+
+      const lambdaResponse = await lambdaClient.send(invokeCommand);
+      const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+
+      if (responseBody.statusCode === 200) {
+        return JSON.parse(responseBody.body);
+      } else {
+        throw new Error(responseBody.body);
+      }
+    } catch (error) {
+      console.error('Error fetching stock requests:', error);
+      throw error;
+    }
+  }
+
+  async getTenantId(session: any) {
+    const cognitoClient = new CognitoIdentityProviderClient({
+      region: outputs.auth.aws_region,
+      credentials: session.credentials,
+    });
+
+    const getUserCommand = new GetUserCommand({
+      AccessToken: session.tokens?.accessToken.toString(),
+    });
+    const getUserResponse = await cognitoClient.send(getUserCommand);
+
+    const tenantId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
+
+    if (!tenantId) {
+      throw new Error('TenantId not found in user attributes');
     }
 
-    calculateTotalEmpty(): number {
-        this.count = 0;
-        this.rowData.forEach((element) => {
-            if (element.quantity == 0) {
-                this.count += 1;
-            }
-        });
-        return this.count;
-    }
+    return tenantId;
+  }
 
-    calculateCategoryTotalQuantities(): Map<string, number> {
-        const categoryTotals = new Map<string, number>();
+  setupCharts() {
+    this.options1 = this.service.setPieData(this.calculateCategoryTotalQuantities(), 'Quantity per Category');
+    this.options2 = this.service.setPieData(this.calculateCategoryTotalRequests(), 'Requests per Category');
+    this.options3 = this.service.setBarData(
+      this.calculateCategoryTotalQuantities(),
+      this.calculateCategoryTotalRequests(),
+      this.calculateCategoryTotalRequestsQuantity(),
+      'Requests Vs Quantity per Category'
+    );
+    this.options4 = this.service.setPieData(
+      this.calculateCategoryTotalRequestsQuantity(), // Changed from calculateCategoryTotalRequests
+      'Requests Quantity per Category'
+    );
+    this.options5 = this.setYearlyCorrelationData();
+  }
 
-        this.rowData.forEach((element) => {
-            const category = element.category;
-            const currentTotal = categoryTotals.get(category) || 0;
-            categoryTotals.set(category, currentTotal + element.quantity);
-        });
-        return categoryTotals;
-    }
+  setYearlyCorrelationData(): any {
+    const currentYear = new Date().getFullYear();
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    
+    const yearlyData = monthNames.map(month => ({
+      month,
+      stockLevel: 0,
+      requests: 0,
+      requestQuantity: 0
+    }));
 
-    calculateCategoryTotalRequests(): Map<string, number> {
-        const categoryTotals = new Map<string, number>();
+    this.rowData.forEach(item => {
+      const expirationDate = new Date(item.expirationDate);
+      if (expirationDate.getFullYear() === currentYear) {
+        const monthIndex = expirationDate.getMonth();
+        yearlyData[monthIndex].stockLevel += item.quantity;
+        yearlyData[monthIndex].requests += item.requests;
+        yearlyData[monthIndex].requestQuantity += item.requestsQuantity;
+      }
+    });
 
-        this.rowData.forEach((element) => {
-            const category = element.category;
-            const currentTotal = categoryTotals.get(category) || 0;
-            categoryTotals.set(category, currentTotal + element.requests);
-        });
-        return categoryTotals;
-    }
+    return {
+      title: {
+        text: 'Yearly correlation between requests, quantity of requests and stock level'
+      },
+      data: yearlyData,
+      series: [{
+        type: 'line',
+        xKey: 'month',
+        yKey: 'stockLevel',
+        yName: 'Stock Level'
+      }, {
+        type: 'line',
+        xKey: 'month',
+        yKey: 'requests',
+        yName: 'Requests'
+      }, {
+        type: 'line',
+        xKey: 'month',
+        yKey: 'requestQuantity',
+        yName: 'Request Quantity'
+      }],
+      legend: {
+        position: 'bottom'
+      },
+      axes: [{
+        type: 'category',
+        position: 'bottom'
+      }, {
+        type: 'number',
+        position: 'left'
+      }]
+    };
+  }
 
-    calculateCategoryTotalRequestsQuantity(): Map<string, number> {
-        const categoryTotals = new Map<string, number>();
+  setupMetrics() {
+    this.InventoryReport = {
+      title: 'Inventory Report',
+      subtitle: 'Overall view of inventory, metrics, and analytics.',
+      metrics: {
+        metric_1: `Total Stock Items: ${this.calculateTotal('quantity')}`,
+        metric_2: `Total Requests: ${this.calculateTotal('requests')}`,
+        metric_3: `Total Stock Quantity Requested: ${this.calculateTotal('requestsQuantity')}`,
+        metric_4: `Total Low Stock Items: ${this.calculateTotalLowStock()}`,
+        metric_5: `Inventory Accuracy: ${this.calculateAccuracy()}%`,
+        metric_6: `Stock to Request Ratio: ${this.calculateRatio()}`,
+       // metric_7: `Fulfilled requests: ${this.calculateFulfilledRequests()}`,
+       // metric_8: `Pending/Failed requests: ${this.calculatePendingFailedRequests()}`,
+        //metric_9: `Service Level: ${this.calculateServiceLevel()}%`,
+        //metric_10: `Accuracy of Forecast Demand: ${this.calculateForecastAccuracy()}%`,
+        metric_11: `Inventory Shrinkage: ${this.calculateInventoryShrinkage()}%`,
+        metric_12: `Deadstock (due to expiration): ${this.calculateDeadstock()}`,
+        metric_13: `Lost Sales Ratio: ${this.calculateLostSalesRatio()}%`,
+      },
+    };
+  }
 
-        this.rowData.forEach((element) => {
-            const category = element.category;
-            const currentTotal = categoryTotals.get(category) || 0;
-            categoryTotals.set(category, currentTotal + element.requestsQuantity);
-        });
-        return categoryTotals;
-    }
+  calculateTotal(column: string): number {
+    return this.rowData.reduce((sum, item) => sum + (item[column] || 0), 0);
+  }
 
-    calculateAccuracy() {
-        const inacc = this.calculateTotal('inaccurateFix');
-        const total = this.calculateTotal('quantity');
-        return ((1 - inacc / total) * 100).toFixed(2);
-    }
+  calculateTotalLowStock(): number {
+    return this.rowData.filter(item => item.quantity <= item.lowStockThreshold).length;
+  }
 
-    back() {
-        this.router.navigate(['/reports']);
-    }
+  calculateAccuracy(): string {
+    // Placeholder implementation
+    return '99.5';
+  }
+
+  calculateRatio(): string {
+    const requests = this.calculateTotal('requests');
+    const quantity = this.calculateTotal('quantity');
+    return (requests / quantity).toFixed(3);
+  }
+
+  calculateCategoryTotalQuantities(): Map<string, number> {
+    return this.calculateCategoryTotal('quantity');
+  }
+
+  calculateCategoryTotalRequests(): Map<string, number> {
+    return this.calculateCategoryTotal('requests');
+  }
+
+  calculateCategoryTotalRequestsQuantity(): Map<string, number> {
+    return this.calculateCategoryTotal('requestsQuantity');
+  }
+
+  calculateCategoryTotal(field: string): Map<string, number> {
+    const totals = new Map<string, number>();
+    this.rowData.forEach(item => {
+      const currentTotal = totals.get(item.category) || 0;
+      totals.set(item.category, currentTotal + (item[field] || 0));
+    });
+    return totals;
+  }
+
+  calculateFulfilledRequests(): number {
+    // Placeholder implementation
+    return 0;
+  }
+
+  calculatePendingFailedRequests(): number {
+    // Placeholder implementation
+    return 0;
+  }
+
+  calculateServiceLevel(): string {
+    // Placeholder implementation
+    return '95.0';
+  }
+
+  calculateForecastAccuracy(): string {
+    // Placeholder implementation
+    return '90.0';
+  }
+
+  calculateInventoryShrinkage(): string {
+    // Placeholder implementation
+    return '2.5';
+  }
+
+  calculateDeadstock(): number {
+      const currentDate = new Date();
+      return this.rowData.reduce((total, item) => {
+        const expirationDate = new Date(item.expirationDate);
+        if (expirationDate <= currentDate) {
+          return total + item.quantity;
+        }
+        return total;
+      }, 0);
+  }
+
+  calculateLostSalesRatio(): string {
+    // Placeholder implementation
+    return '1.5';
+  }
+
+  back() {
+    this.router.navigate(['/reports']);
+  }
 }

@@ -1,4 +1,4 @@
-import { CustomQuoteModalComponent } from '../../src/app/components/quote/custom-quote-modal/custom-quote-modal.component';
+import { CustomQuoteModalComponent } from '../../src/app/components/custom-quote-modal/custom-quote-modal.component';
 
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';

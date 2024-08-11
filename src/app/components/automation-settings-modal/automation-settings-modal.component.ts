@@ -51,7 +51,6 @@ export class AutomationSettingsModalComponent implements OnInit {
   }
 
   updateNextScheduledScan() {
-    // This is a simplified calculation and should be updated based on the selected schedule type
     const now = new Date();
     switch (this.scheduleType) {
       case 'interval':
@@ -66,15 +65,30 @@ export class AutomationSettingsModalComponent implements OnInit {
         }
         break;
       case 'weekly':
-        // This is a simplified weekly calculation and should be improved
         const daysOfWeek = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-        let daysToAdd = 0;
-        while (this.weeklySchedule[daysOfWeek[(now.getDay() + daysToAdd) % 7]] === '') {
-          daysToAdd++;
+        let nextScan = null;
+        for (let i = 0; i < 7; i++) {
+          const checkDay = daysOfWeek[(now.getDay() + i) % 7];
+          if (this.weeklySchedule[checkDay]) {
+            const [checkHours, checkMinutes] = this.weeklySchedule[checkDay].split(':').map(Number);
+            let checkDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() + i, checkHours, checkMinutes);
+            if (checkDate > now && (!nextScan || checkDate < nextScan)) {
+              nextScan = checkDate;
+            }
+          }
         }
-        const nextDay = daysOfWeek[(now.getDay() + daysToAdd) % 7];
-        const [nextHours, nextMinutes] = this.weeklySchedule[nextDay].split(':').map(Number);
-        this.nextScheduledScan = new Date(now.getFullYear(), now.getMonth(), now.getDate() + daysToAdd, nextHours, nextMinutes);
+        if (!nextScan) {
+          // If no valid time found, set to the first scheduled day next week
+          const firstScheduledDay = daysOfWeek.find(day => this.weeklySchedule[day]);
+          if (firstScheduledDay) {
+            const [firstHours, firstMinutes] = this.weeklySchedule[firstScheduledDay].split(':').map(Number);
+            nextScan = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 7 + daysOfWeek.indexOf(firstScheduledDay) - now.getDay(), firstHours, firstMinutes);
+          } else {
+            console.error('No weekly schedule set');
+            nextScan = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000); // Default to 1 week from now if no schedule
+          }
+        }
+        this.nextScheduledScan = nextScan;
         break;
     }
   }

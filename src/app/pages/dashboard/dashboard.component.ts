@@ -29,6 +29,7 @@ import outputs from '../../../../amplify_outputs.json';
 import { MatDialog } from '@angular/material/dialog';
 import { CustomizeComponent } from '../../components/modal/customize/customize.component';
 import { TemplatechartComponent } from '../../components/charts/templatechart/templatechart.component';
+import { LoadingSpinnerComponent } from 'app/components/loader/loading-spinner.component';
 interface DashboardItem extends GridsterItem {
     type: string;
     cols: number;
@@ -62,7 +63,8 @@ interface DashboardItem extends GridsterItem {
         SaleschartComponent,
         BubblechartComponent,
         MatProgressSpinnerModule,
-        TemplatechartComponent
+        TemplatechartComponent,
+        LoadingSpinnerComponent
     ],
 })
 export class DashboardComponent implements OnInit {
@@ -290,6 +292,7 @@ export class DashboardComponent implements OnInit {
                 backorders: 5,      // Baseline backorders
                 fulfillmentDays: 390 // Baseline average fulfillment days (for comparison)
             };
+
             const session = await fetchAuthSession();
             this.loader.setLoading(false);
 
@@ -400,11 +403,14 @@ export class DashboardComponent implements OnInit {
             console.error('Error in dashboardData:', error);
             this.dashboardInfo = [];
         }
+        finally{
+            // this..isLoading = false;
+        }
     }
 
-    isLoading: boolean = false;
+    isLoading: boolean = true;
     async loadOrdersData() {
-        this.isLoading = true;
+        // this.isLoading = true;
         try {
             const session = await fetchAuthSession();
 
@@ -453,12 +459,12 @@ export class DashboardComponent implements OnInit {
             console.error('Error in loadOrdersData:', error);
             this.rowData = [];
         } finally {
-            this.isLoading = false;
+            // this..isLoading = false;
         }
     }
 
     async loadStockData() {
-        this.isLoading = true;
+        // this.isLoading = true;
         try {
             const session = await fetchAuthSession();
 
@@ -515,7 +521,7 @@ export class DashboardComponent implements OnInit {
             console.error('Error in loadOrdersData:', error);
             // this.rowData = [];
         } finally {
-            this.isLoading = false;
+            // this..isLoading = false;
         }
     }
 
@@ -563,6 +569,8 @@ export class DashboardComponent implements OnInit {
         } catch (error) {
             console.error('Error fetching users:', error);
             this.userCount = 0; // Ensure user count is set to 0 in case of errors
+        }finally{
+            // this..isLoading = false;
         }
     }
 
@@ -802,5 +810,6 @@ export class DashboardComponent implements OnInit {
         await this.loadOrdersData();
         await this.loadStockData();
         this.RequestOrders = this.populateRequestOrders(this.stockRequest, this.orders);
+        this.isLoading = false;
     }
 }

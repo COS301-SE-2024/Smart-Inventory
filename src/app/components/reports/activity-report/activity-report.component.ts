@@ -26,7 +26,7 @@ import {
   import { AgChartOptions } from 'ag-charts-community';
   import { ChartDataService } from '../../../services/chart-data.service';
   import { Router } from '@angular/router';
-  
+//   import { LoadingSpinnerComponent } from '../../loader/loading-spinner.component';
   @Component({
       selector: 'app-activity-report',
       standalone: true,

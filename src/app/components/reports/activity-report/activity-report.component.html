@@ -49,3 +49,7 @@
         </mat-grid-tile>
     </mat-grid-list>
 </div>
+
+<div *ngIf="isLoading" class="loading-overlay">
+    <app-loading-spinner></app-loading-spinner>
+</div>

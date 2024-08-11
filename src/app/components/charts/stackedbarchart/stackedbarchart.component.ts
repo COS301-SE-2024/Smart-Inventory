@@ -38,6 +38,9 @@ export class StackedbarchartComponent implements OnChanges, AfterViewInit {
     if (!this.chart) return;
 
     const option: echarts.EChartsOption = {
+      title: {
+        text: 'Supplier Order Status Overview',
+      },
       tooltip: {
         trigger: 'axis',
         axisPointer: {
@@ -45,7 +48,8 @@ export class StackedbarchartComponent implements OnChanges, AfterViewInit {
         }
       },
       legend: {
-        data: ['Completed', 'In Progress', 'Delayed']
+        data: ['Completed', 'In Progress', 'Delayed'],
+        
       },
       grid: {
         left: '3%',

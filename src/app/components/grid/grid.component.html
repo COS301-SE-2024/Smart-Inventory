@@ -33,13 +33,16 @@
                 View Received Quotes
               </button>
             <button mat-menu-item *ngIf="getCurrentRoute('orders')" color="primary" (click)="onMarkOrderAsReceived()">
-            Mark Order As Received
+                Mark Order As Received
             </button>
             <button mat-menu-item *ngIf="getCurrentRoute('orders')" color="primary" (click)="onViewEmailTemplate()">
                 View Email Template
               </button>
             <button mat-menu-item *ngIf="getCurrentRoute('orders')" color="primary" (click)="onViewDeliveryInfo()">
-            View Delivery Info
+                View Delivery Info
+            </button>
+            <button mat-menu-item *ngIf="getCurrentRoute('orders')" color="primary">
+                View Automation Settings
             </button>
             <button mat-menu-item *ngIf="getCurrentRoute('inventory')" color="primary" (click)="deleteRow()">
                 - Remove Item

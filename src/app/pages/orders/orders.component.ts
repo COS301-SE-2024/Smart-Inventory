@@ -634,7 +634,8 @@ export class OrdersComponent implements OnInit {
   
   async openReceiveOrderModal(orderData: any) {
     const dialogRef = this.dialog.open(ReceiveOrderModalComponent, {
-      width: '500px',
+      width: '50vw',
+      maxWidth: '2700px',
       data: orderData
     });
 

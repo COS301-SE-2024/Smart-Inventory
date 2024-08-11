@@ -9,6 +9,11 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatRadioModule } from '@angular/material/radio';
 import { CommonModule } from '@angular/common';
+import { fetchAuthSession } from 'aws-amplify/auth';
+import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
+import outputs from '../../../../amplify_outputs.json';
+import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
+
 
 @Component({
   selector: 'app-automation-settings-modal',
@@ -39,7 +44,8 @@ export class AutomationSettingsModalComponent implements OnInit {
 
   constructor(public dialogRef: MatDialogRef<AutomationSettingsModalComponent>) {}
 
-  ngOnInit() {
+  async ngOnInit() {
+    await this.fetchCurrentSettings();
     this.updateNextScheduledScan();
     this.startCountdown();
   }
@@ -95,23 +101,6 @@ export class AutomationSettingsModalComponent implements OnInit {
     }, 1000);
   }
 
-  saveSettings() {
-    this.updateNextScheduledScan();
-    let scheduleConfig;
-    switch(this.scheduleType) {
-      case 'interval':
-        scheduleConfig = { type: 'interval', value: this.intervalValue, unit: this.intervalUnit };
-        break;
-      case 'daily':
-        scheduleConfig = { type: 'daily', time: this.dailyTime };
-        break;
-      case 'weekly':
-        scheduleConfig = { type: 'weekly', schedule: this.weeklySchedule };
-        break;
-    }
-    this.dialogRef.close(scheduleConfig);
-  }
-
   scanNow() {
     console.log('Scanning inventory now...');
     this.updateNextScheduledScan();
@@ -120,4 +109,124 @@ export class AutomationSettingsModalComponent implements OnInit {
   cancel() {
     this.dialogRef.close();
   }
+
+  async fetchCurrentSettings() {
+    try {
+      const session = await fetchAuthSession();
+      const tenentId = await this.getTenentId(session);
+
+      const lambdaClient = new LambdaClient({
+        region: outputs.auth.aws_region,
+        credentials: session.credentials,
+      });
+
+      const invokeCommand = new InvokeCommand({
+        FunctionName: 'getAutomationSettings',
+        Payload: new TextEncoder().encode(JSON.stringify({
+          pathParameters: { tenentId: tenentId }
+        })),
+      });
+
+      const lambdaResponse = await lambdaClient.send(invokeCommand);
+      const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+
+      if (responseBody.statusCode === 200) {
+        const settings = JSON.parse(responseBody.body);
+        this.applySettings(settings);
+      } else {
+        console.error('Error fetching automation settings:', responseBody.body);
+      }
+    } catch (error) {
+      console.error('Error fetching automation settings:', error);
+    }
+  }
+
+  applySettings(settings: any) {
+    this.scheduleType = settings.scheduleType;
+    switch (this.scheduleType) {
+      case 'interval':
+        this.intervalValue = settings.intervalValue;
+        this.intervalUnit = settings.intervalUnit;
+        break;
+      case 'daily':
+        this.dailyTime = settings.dailyTime;
+        break;
+      case 'weekly':
+        this.weeklySchedule = settings.weeklySchedule;
+        break;
+    }
+  }
+
+  async saveSettings() {
+    this.updateNextScheduledScan();
+    let scheduleConfig;
+    switch(this.scheduleType) {
+      case 'interval':
+        scheduleConfig = { scheduleType: 'interval', intervalValue: this.intervalValue, intervalUnit: this.intervalUnit };
+        break;
+      case 'daily':
+        scheduleConfig = { scheduleType: 'daily', dailyTime: this.dailyTime };
+        break;
+      case 'weekly':
+        scheduleConfig = { scheduleType: 'weekly', weeklySchedule: this.weeklySchedule };
+        break;
+    }
+
+    try {
+      const session = await fetchAuthSession();
+      const tenentId = await this.getTenentId(session);
+
+      const lambdaClient = new LambdaClient({
+        region: outputs.auth.aws_region,
+        credentials: session.credentials,
+      });
+
+      const invokeCommand = new InvokeCommand({
+        FunctionName: 'updateAutomationSettings',
+        Payload: new TextEncoder().encode(JSON.stringify({
+          body: JSON.stringify({
+            tenentId: tenentId,
+            settings: scheduleConfig
+          })
+        })),
+      });
+
+      const lambdaResponse = await lambdaClient.send(invokeCommand);
+      const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+
+      if (responseBody.statusCode === 200) {
+        console.log('Automation settings updated successfully');
+        this.dialogRef.close(scheduleConfig);
+      } else {
+        throw new Error(responseBody.body || 'Failed to update automation settings');
+      }
+    } catch (error) {
+      console.error('Error saving automation settings:', error);
+      // Handle error (show message to user, etc.)
+    }
+  }
+
+  async getTenentId(session: any): Promise<string> {
+    const cognitoClient = new CognitoIdentityProviderClient({
+      region: outputs.auth.aws_region,
+      credentials: session.credentials,
+    });
+
+    const getUserCommand = new GetUserCommand({
+      AccessToken: session.tokens?.accessToken.toString(),
+    });
+    const getUserResponse = await cognitoClient.send(getUserCommand);
+
+    const tenentId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
+
+    if (!tenentId) {
+      throw new Error('TenentId not found in user attributes');
+    }
+
+    console.log(tenentId);
+
+    return tenentId;
+  }
+
+
 }

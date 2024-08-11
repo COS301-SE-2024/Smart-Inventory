@@ -17,10 +17,8 @@
                 <mat-card style="height: 100%; width: 100%">
                     <mat-card-content style="align-items: center">
                         <ul style="list-style: none; padding: 0; margin: 0">
-                            <li
-                                *ngFor="let metric of OrderReport.metrics | keyvalue"
-                                style="font-size: 15px; padding: 8px 0; border-bottom: 1px solid lightgrey"
-                            >
+                            <li *ngFor="let metric of OrderReport.metrics | keyvalue"
+                                style="font-size: 15px; padding: 8px 0; border-bottom: 1px solid lightgrey">
                                 {{ metric.value }}
                             </li>
                         </ul>
@@ -28,16 +26,19 @@
                 </mat-card>
             </div>
         </mat-grid-tile>
-        <mat-grid-tile [colspan]="3" [rowspan]="2">
+        <mat-grid-tile [colspan]="4" [rowspan]="2">
             <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
-                <mat-card style="height: 100%; width: 100%"
-                    ><app-saleschart style="height: 100%"></app-saleschart
-                ></mat-card>
+                <mat-card style="height: 100%; width: 100%">
+                    <app-stackedbarchart [data]="stackedBarChartData"></app-stackedbarchart>
+                </mat-card>
             </div>
         </mat-grid-tile>
-        <mat-grid-tile [colspan]="3" [rowspan]="2">
-            <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
-                <!-- <app-dynamic-graph></app-dynamic-graph> -->
+
+        <mat-grid-tile [colspan]="4" [rowspan]="2">
+            <div style="padding: 10px; height: 100%; width: 100%;">
+                <mat-card style="height: 100%; width: 100%;">
+                    <app-scatterplot [data]="scatterPlotChartData"></app-scatterplot>
+                </mat-card>
             </div>
         </mat-grid-tile>
     </mat-grid-list>

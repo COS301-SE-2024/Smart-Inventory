@@ -1,6 +1,6 @@
 // automation-settings-modal.component.ts
-import { Component, OnInit } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { Component, OnInit, Inject } from '@angular/core';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -16,6 +16,8 @@ import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-c
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ScanConfirmationDialogComponent } from './scan-confirmation-dialog.component';
 import { MatTabsModule } from '@angular/material/tabs';
+import { OrdersComponent } from 'app/pages/orders/orders.component';
+
 
 @Component({
   selector: 'app-automation-settings-modal',
@@ -48,7 +50,8 @@ export class AutomationSettingsModalComponent implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<AutomationSettingsModalComponent>,
     private snackBar: MatSnackBar,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    @Inject(MAT_DIALOG_DATA) public data: { ordersComponent: any } // Change OrdersComponent to any to avoid circular dependency
   ) {}
 
   async ngOnInit() {
@@ -125,19 +128,51 @@ export class AutomationSettingsModalComponent implements OnInit {
       width: '300px'
     });
 
-    confirmDialogRef.afterClosed().subscribe(result => {
+    confirmDialogRef.afterClosed().subscribe(async (result) => { // Make this callback async
       if (result === true) {
-        console.log('Scanning inventory now...');
-        this.snackBar.open('Inventory scan initiated', 'Close', {
-          duration: 3000,
-          horizontalPosition: 'center',
-          verticalPosition: 'top',
-        });
-        // Here you would typically call a service to initiate the actual scan
+        try {
+          const session = await fetchAuthSession();
+          const tenentId = await this.getTenentId(session);
+
+          const lambdaClient = new LambdaClient({
+            region: outputs.auth.aws_region,
+            credentials: session.credentials,
+          });
+
+          const invokeCommand = new InvokeCommand({
+            FunctionName: 'orderAutomation',
+            Payload: new TextEncoder().encode(JSON.stringify({
+              tenentId: tenentId
+            })),
+          });
+
+          const lambdaResponse = await lambdaClient.send(invokeCommand);
+          const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+
+          if (responseBody.statusCode === 200) {
+            this.snackBar.open('Inventory scan completed successfully', 'Close', {
+              duration: 3000,
+              horizontalPosition: 'center',
+              verticalPosition: 'top',
+            });
+            // Refresh the orders page
+            await this.data.ordersComponent.loadOrdersData();
+          } else {
+            throw new Error(responseBody.body || 'Unknown error occurred');
+          }
+        } catch (error) {
+          console.error('Error during inventory scan:', error);
+          this.snackBar.open(`Error during inventory scan: ${(error as Error).message}`, 'Close', {
+            duration: 5000,
+            horizontalPosition: 'center',
+            verticalPosition: 'top',
+          });
+        }
       } else {
         // If cancelled, reopen the Automation Settings modal
         this.dialog.open(AutomationSettingsModalComponent, {
-          width: '400px' // Use the same width as when originally opened
+          width: '400px',
+          data: { ordersComponent: this.data.ordersComponent }
         });
       }
     });

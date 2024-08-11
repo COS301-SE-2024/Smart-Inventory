@@ -708,7 +708,8 @@ export class OrdersComponent implements OnInit {
 
   openAutomationSettingsModal() {
     const dialogRef = this.dialog.open(AutomationSettingsModalComponent, {
-      width: '400px'
+      width: '400px',
+      data: { ordersComponent: this }
     });
   
     dialogRef.afterClosed().subscribe(result => {

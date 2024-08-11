@@ -558,8 +558,11 @@ export class OrdersComponent implements OnInit {
         verticalPosition: 'top',
       });
   
-      // Refresh the orders data
-      await this.loadOrdersData();
+    // Reload the orders data
+    await this.loadOrdersData();
+    
+    // Refresh the grid
+    this.gridComponent.refreshGrid(this.rowData);
     } catch (error) {
       console.error('Error sending quote:', error);
       
@@ -684,6 +687,9 @@ export class OrdersComponent implements OnInit {
           this.rowData[index] = result.updatedOrder;
         }
 
+        // Reload the orders data
+        await this.loadOrdersData();
+        
         // Refresh the grid
         this.gridComponent.refreshGrid(this.rowData);
 

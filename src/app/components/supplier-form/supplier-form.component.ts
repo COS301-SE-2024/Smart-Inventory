@@ -260,7 +260,7 @@ export class SupplierFormComponent implements OnInit {
         this.snackBar.open('Quote submitted successfully!', 'Close', {
           duration: 3000, // Duration in milliseconds
           horizontalPosition: 'center',
-          verticalPosition: 'bottom',
+          verticalPosition: 'top',
         });
         // Handle any additional logic after successful submission
       },
@@ -269,7 +269,7 @@ export class SupplierFormComponent implements OnInit {
         this.snackBar.open('Error submitting quote. Please try again.', 'Close', {
           duration: 3000,
           horizontalPosition: 'center',
-          verticalPosition: 'bottom',
+          verticalPosition: 'top',
         });
         // Handle any additional error logic
       }

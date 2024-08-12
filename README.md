@@ -206,7 +206,7 @@ Reviews focus on checking that coding standards are being followed and that any 
   ##
 
   📄
-  <a href="documents/Demo 3/TechInstallt.pdf">
+  <a href="documents/Demo 3/TechInstall.pdf">
     Technical Installation Manual
   </a>
   <hr>

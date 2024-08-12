@@ -87,7 +87,7 @@ export class SupplierReportComponent implements OnInit {
     inventory: any[] = [];
 
     SupplierReport = {
-        title: 'Order Report',
+        title: 'Supplier Report',
         subtitle:
             'Have an overall view of your inventory, relevant metrics to assist you in automation and ordering and provide analytics associated with it.',
         metrics: [
@@ -116,6 +116,7 @@ export class SupplierReportComponent implements OnInit {
     }
 
     async ngOnInit() {
+        
         this.titleService.updateTitle(this.getCurrentRoute());
         await this.loadSuppliersData();
 
@@ -145,6 +146,7 @@ export class SupplierReportComponent implements OnInit {
         // console.log('inventory ', this.inventory)
         // console.log('my defect rate', this.calculateDefectRate(this.orderFulfillmentDetails));
         // console.log('my rowData', this.rowData)
+        this.isLoading = false;
     }
 
     colDefs!: ColDef[];
@@ -382,7 +384,7 @@ export class SupplierReportComponent implements OnInit {
         } catch (error) {
             console.log('Error fetching metrics');
         } finally {
-            this.isLoading = false;
+            // // this.isLoading = false;
         }
     }
 
@@ -1065,7 +1067,7 @@ export class SupplierReportComponent implements OnInit {
             console.error('Error in loadSuppliersData:', error);
             this.rowData = [];
         } finally {
-            this.isLoading = false;
+            // // this.isLoading = false;
         }
     }
 
@@ -1209,7 +1211,7 @@ export class SupplierReportComponent implements OnInit {
             console.error('Error in loadInventoryData:', error);
             this.rowData = [];
         } finally {
-            this.isLoading = false;
+            // this.isLoading = false;
         }
     }
 

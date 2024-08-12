@@ -14,3 +14,8 @@
     align-items: center;
     z-index: 9999;
 }
+
+mat-card.mat-mdc-card.mdc-card {
+    background-color: white;
+    box-shadow: 0 4px 8px rgb(0 0 0 / 30%);
+}

@@ -28,30 +28,31 @@
         <button mat-icon-button (click)="scrollTiles('left')"><mat-icon>chevron_left</mat-icon></button>
         <button mat-icon-button (click)="scrollTiles('right')"><mat-icon>chevron_right</mat-icon></button>
     </div>
+    <div class="carousel-wrapper">
+        <div class="card-wrapper">
+            <!-- Repeat this card structure for each tile -->
+            <div class="card" *ngFor="let tile of visibleTiles">
+                <!-- <div class="card-header"> -->
+                <div class="icon-container">
+                    <mat-icon [attr.aria-label]="tile.iconLabel" class="metric-icon">{{ tile.icon }}</mat-icon>
+                </div>
+
+                <!-- </div> -->
+
+                <div class="content">
+                    <h3 class="metric-title">{{ tile.metricName }}</h3>
+                    <div class="details">
+                        <p class="metric-value">{{ tile.value }}</p>
+                        <span class="metric-info">{{ tile.additionalInfo }}</span>
+                    </div>
+                    <!-- </div> -->
+                </div>
+            </div>
+            <!-- Add more cards here -->
+        </div>
+    </div>
     <!-- </div> -->
     <mat-grid-list cols="8" rowHeight="29vh" gutterSize="20px">
-        <div class="carousel-wrapper">
-            <div #carousel class="tile-wrapper">
-                <mat-grid-tile
-                    *ngFor="let tile of visibleTiles"
-                    class="tile"
-                    gutterSize="10px"
-                    [colspan]="1"
-                    [rowspan]="1"
-                >
-                    <div class="icon-container">
-                        <mat-icon [attr.aria-label]="tile.iconLabel" class="metric-icon">{{ tile.icon }}</mat-icon>
-                    </div>
-                    <div class="content">
-                        <h3 class="metric-title">{{ tile.metricName }}</h3>
-                        <div class="details">
-                            <p class="metric-value">{{ tile.value }}</p>
-                            <span class="metric-info">{{ tile.additionalInfo }}</span>
-                        </div>
-                    </div>
-                </mat-grid-tile>
-            </div>
-        </div>
         <mat-grid-tile [colspan]="8" [rowspan]="2">
             <div style="padding: 10px 10px 10px 10px; width: 100%">
                 <div class="inventoryHolder">
@@ -67,10 +68,8 @@
                     </mat-card-title>
                     <mat-card-content style="align-items: center">
                         <ul style="list-style: none; padding: 0; margin: 0">
-                            <li
-                                *ngFor="let metric of SupplierReport.metrics"
-                                style="font-size: 15px; padding: 8px 0; border-bottom: 1px solid lightgrey"
-                            >
+                            <li *ngFor="let metric of SupplierReport.metrics"
+                                style="font-size: 15px; padding: 8px 0; border-bottom: 1px solid lightgrey">
                                 {{ metric.name }}: {{ metric.value }}
                             </li>
                         </ul>
@@ -90,8 +89,7 @@
             <div style="padding: 10px; height: 100%; width: 100%;">
                 <mat-card style="height: 100%; width: 100%;">
                     <app-line *ngIf="chartData" [title]="chartData.title + ' Comparison'"
-                        [xAxisData]="chartData.xAxisData" 
-                        [seriesData]="chartData.seriesData"></app-line>
+                        [xAxisData]="chartData.xAxisData" [seriesData]="chartData.seriesData"></app-line>
                 </mat-card>
             </div>
         </mat-grid-tile>
@@ -113,6 +111,7 @@
         <!-- </div>  -->
 
         <div *ngIf="isLoading" class="loading-overlay">
-            <app-loading-spinner></app-loading-spinner></div
-    ></mat-grid-list>
+            <app-loading-spinner></app-loading-spinner>
+        </div>
+    </mat-grid-list>
 </div>

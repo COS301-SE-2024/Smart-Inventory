@@ -33,7 +33,7 @@
 }
 
 .btnAdd {
-    border-radius: 5px;
+    border-radius: 20px;
     margin-right: 10px;
     --mdc-protected-button-label-text-color: #000000;
     background-color: #f1f1f1;

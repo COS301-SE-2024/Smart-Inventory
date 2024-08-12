@@ -36,6 +36,9 @@ export class ScatterplotComponent implements OnChanges, AfterViewInit {
     if (!this.chart) return;
 
     const option: echarts.EChartsOption = {
+      title: {
+        text: 'Product Discount Versus Price Analysis',
+      },
       tooltip: {
         trigger: 'item',
         formatter: (params: any) => {

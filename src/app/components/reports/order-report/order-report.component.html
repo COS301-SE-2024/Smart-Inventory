@@ -4,7 +4,7 @@
             Back to reports
         </button>
     </mat-toolbar>
-    <mat-grid-list cols="8" rowHeight="25vh" gutterSize="20px">
+    <mat-grid-list cols="8" rowHeight="29vh" gutterSize="20px">
         <mat-grid-tile [colspan]="6" [rowspan]="2">
             <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
                 <div class="inventoryHolder">
@@ -15,6 +15,9 @@
         <mat-grid-tile [colspan]="2" [rowspan]="6">
             <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
                 <mat-card style="height: 100%; width: 100%">
+                    <mat-card-title style="margin-left: 15px; margin-top: 15px; font-size: 25px">
+                        {{ OrderReport.title }}
+                    </mat-card-title>
                     <mat-card-content style="align-items: center">
                         <ul style="list-style: none; padding: 0; margin: 0">
                             <li *ngFor="let metric of OrderReport.metrics | keyvalue"
@@ -26,7 +29,7 @@
                 </mat-card>
             </div>
         </mat-grid-tile>
-        <mat-grid-tile [colspan]="4" [rowspan]="2">
+        <mat-grid-tile [colspan]="5" [rowspan]="2">
             <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
                 <mat-card style="height: 100%; width: 100%">
                     <app-stackedbarchart [data]="stackedBarChartData"></app-stackedbarchart>
@@ -34,7 +37,7 @@
             </div>
         </mat-grid-tile>
 
-        <mat-grid-tile [colspan]="4" [rowspan]="2">
+        <mat-grid-tile [colspan]="5" [rowspan]="2">
             <div style="padding: 10px; height: 100%; width: 100%;">
                 <mat-card style="height: 100%; width: 100%;">
                     <app-scatterplot [data]="scatterPlotChartData"></app-scatterplot>

@@ -19,7 +19,6 @@ import { DeliveryInformationModalComponent } from '../../components/delivery-inf
 import { ReceivedQuotesSidePaneComponent } from 'app/components/received-quotes-side-pane/received-quotes-side-pane.component';
 import { MatCardModule } from '@angular/material/card';
 import { ReceiveOrderModalComponent } from 'app/components/receive-order-modal/receive-order-modal.component';
-import { OrderReceivedConfirmationDialogComponent } from 'app/components/receive-order-modal/OrderReceivedConfirmationDialogComponent';
 import { AutomationSettingsModalComponent } from 'app/components/automation-settings-modal/automation-settings-modal.component';
 
 interface DeliveryAddress {
@@ -641,16 +640,8 @@ export class OrdersComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(async result => {
       if (result && result.action === 'received') {
-        const confirmDialog = this.dialog.open(OrderReceivedConfirmationDialogComponent, {
-          width: '350px',
-          data: { Order_ID: result.data.Order_ID }
-        });
-
-        confirmDialog.afterClosed().subscribe(async confirmed => {
-          if (confirmed) {
-            await this.markOrderAsReceived(result.data);
-          }
-        });
+        await this.loadOrdersData();
+        this.gridComponent.refreshGrid(this.rowData);
       }
     });
   }
@@ -671,7 +662,7 @@ export class OrdersComponent implements OnInit {
       };
 
       const invokeCommand = new InvokeCommand({
-        FunctionName: 'receiveOrder', // Replace with your actual Lambda function name
+        FunctionName: 'receiveOrder', 
         Payload: new TextEncoder().encode(JSON.stringify(payload)),
       });
 

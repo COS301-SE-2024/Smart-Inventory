@@ -87,6 +87,7 @@ Reviews focus on checking that coding standards are being followed and that any 
 * Export Table
 * Search and sort table
 * Request Items
+* Wait for stock low event trigger
   
 ### 4. Supplier Management
 * Add Supplier
@@ -100,14 +101,57 @@ Reviews focus on checking that coding standards are being followed and that any 
 * Remove widget
 * Reposistion widget
 * Save state
+
+### 6. Reports
+* Activity Report
+  * Graph Generation
+  * Metric calculation
+  * Table compiler
+  * Export
+* Supplier Report
+  * Graph Generation
+  * Metric calculation
+  * Table compiler
+  * Export
+* Order Report
+  * Graph Generation
+  * Metric calculation
+  * Table compiler
+  * Export
+* Inventory Report
+  * Graph Generation
+  * Metric calculation
+  * Table compiler
+  * Export
   
-### 6. Help
+### 7. Order Mangement and placement
+* Create order
+* Cancel Order
+* View Qoute
+* View Template
+* Email Communication with suppliers
+* Web Portal
+* Mark as ordered
+* Autonomous ordering
+
+### 8. User management
+* Track Idle time
+* Track log in attempts
+* Track interactions
+
+### 9. Web Portal
+* Track supplier detail changes
+* Track quote changes
+* Track quote acceptance
+* Track expected delivary date choice
+  
+### 10. Help
 * FAQ
 * Troubleshooting
 * User Quides
 * Contact Us
 
-### 7. Settings
+### 11. Settings
 * Profile:
   * Change Password
   * Change details(name, surname, email)
@@ -177,19 +221,19 @@ Reviews focus on checking that coding standards are being followed and that any 
 ##
 
   <a href="https://drive.google.com/file/d/1GA5bhGj_Fdi55wLu19L-26e7DdXcXDOk/view?usp=drive_link">
-    Helix - Demo 2 App Recording
+    Helix - Demo 3 App Recording
   </a>
   
 ##
 
   <a href="https://drive.google.com/file/d/1iGT_RBSD6WArLD1bJzuDQxNmeEPE8L8b/view?usp=sharing">
-    Helix - Demo 2 Recording
+    Helix - Demo 3 Recording
   </a>
   
   ##
 
-  <a href="/documents/SmartInventory-Demo2.pdf">
-    Helix - Demo 2 Presentation Slides
+  <a href="/documents/Demo 3/SmartInventory-Demo3.pdf">
+    Helix - Demo 3 Presentation Slides
   </a>
 <hr>
 </br>
@@ -207,7 +251,9 @@ Reviews focus on checking that coding standards are being followed and that any 
 ### ⚙️ Backend:
 * AWS Lambda Functions
 * API Gateway
-* AWS Step Functions
+* AWS Event Bridge
+* AWS SES
+* AWS SNS
  
 ### ⚙️ Database:
 * AWS DynamoDB

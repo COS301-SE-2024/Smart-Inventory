@@ -11,12 +11,12 @@
 <div class="main-container gridster-container">
     <div class="help-button-container">
         <a id="help-button">
-            <button mat-raised-button [matMenuTriggerFor]="mainMenu">Help Options</button>
+            <button class="btnAdd" mat-raised-button [matMenuTriggerFor]="mainMenu">Quick Actions</button>
             <mat-menu #mainMenu="matMenu" yPosition="above">
                 <button mat-menu-item (click)="openSidePanel()">Add a Widget</button>
                 <button mat-menu-item (click)="toggleDeleteMode()">Delete a Widget</button>
-                <button mat-menu-item routerLink="/help">Help</button>
-                <button mat-menu-item routerLink="/settings">Settings</button>
+                <!-- <button mat-menu-item routerLink="/help">Help</button>
+                <button mat-menu-item routerLink="/settings">Settings</button> -->
             </mat-menu>
         </a>
     </div>
@@ -161,4 +161,8 @@
         <app-templatechart [chartType]="config.chartType" [chartData]="config.data" [chartTitle]="config.title"
             style="width: 400px; height: 400px;"></app-templatechart>
     </div>
+</div>
+
+<div *ngIf="isLoading" class="loading-overlay">
+    <app-loading-spinner></app-loading-spinner>
 </div>

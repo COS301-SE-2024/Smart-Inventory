@@ -175,7 +175,7 @@ export class SupplierQuoteDetailsComponent implements OnInit {
           duration: 6000,
           verticalPosition: 'top'
         });
-        this.dialogRef.close(true); // Close the dialog and indicate success
+        this.dialogRef.close({ action: 'quoteAccepted' }); // Close the dialog and indicate success
       } else {
         throw new Error(responseBody.body || 'Failed to accept quote');
       }

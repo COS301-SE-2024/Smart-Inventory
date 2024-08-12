@@ -13,10 +13,13 @@
         <mat-select [(ngModel)]="filterSelect" placeholder="Select Column">
             <mat-option *ngFor="let option of selectOptions" [value]="option">{{ option }}</mat-option>
         </mat-select>
+        <div class="icon-container">
+            <mat-icon class="icon" matTooltip="Select a column to search from, then enter your query in the search bar to filter the table." matTooltipPosition="right">info</mat-icon>
+        </div>
     </div>
     <div>
-        <button class="btnAdd" mat-raised-button [matMenuTriggerFor]="menu">Quick Actions</button>
-        <mat-menu #menu="matMenu">
+        <button class="btnAdd" mat-raised-button matTooltip="Quickly access and manage tasks related to current page." [matMenuTriggerFor]="menu">Quick Actions</button>
+        <mat-menu #menu="matMenu" class="menu">
             <button mat-menu-item color="primary" (click)="downloadCSV()">Export Excel</button>
             <button mat-menu-item color="primary" (click)="importExcel()">Import Excel</button>
             <button mat-menu-item color="primary" (click)="addRow()" *ngIf="getCurrentRoute('inventory')">
@@ -53,6 +56,9 @@
             </button>
             <button mat-menu-item *ngIf="getCurrentRoute('orders')" color="primary" (click)="onViewDeliveryInfo()">
                 View Delivery Info
+            </button>
+            <button mat-menu-item *ngIf="getCurrentRoute('orders')" color="primary" (click)="openAutomationSettings()">
+                View Automation Settings
             </button>
             <button mat-menu-item *ngIf="getCurrentRoute('inventory')" color="primary" (click)="deleteRow()">
                 - Remove Item

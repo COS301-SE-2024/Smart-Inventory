@@ -17,7 +17,7 @@ import { fetchAuthSession } from 'aws-amplify/auth';
 import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
 import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
 import outputs from '../../../../../amplify_outputs.json';
-
+import { LoadingSpinnerComponent } from 'app/components/loader/loading-spinner.component';
 @Component({
   selector: 'app-inventory-report',
   templateUrl: './inventory-report.component.html',
@@ -31,7 +31,8 @@ import outputs from '../../../../../amplify_outputs.json';
     MatCardModule,
     MatProgressSpinnerModule,
     AgChartsAngular,
-    GridComponent
+    GridComponent,
+    LoadingSpinnerComponent
   ]
 })
 export class InventoryReportComponent implements OnInit {

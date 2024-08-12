@@ -9,6 +9,7 @@ import { SupplierService } from '../../../../amplify/services/supplier.service';
 import { DeliveryService } from '../../../../amplify/services/delivery.service';
 import { QuoteService } from '../../../../amplify/services/quote-items.service';
 import { QuoteSubmissionService } from '../../../../amplify/services/quote-submission.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 interface QuoteItem {
   upc: string;
@@ -56,7 +57,15 @@ export class SupplierFormComponent implements OnInit {
   tenentId: string = '';
 
 
-  constructor(private dialog: MatDialog, private route: ActivatedRoute, private supplierService: SupplierService, private deliveryService: DeliveryService, private quoteService: QuoteService, private quoteSubmissionService: QuoteSubmissionService ) {}
+  constructor(
+    private dialog: MatDialog, 
+    private route: ActivatedRoute, 
+    private supplierService: SupplierService, 
+    private deliveryService: DeliveryService, 
+    private quoteService: QuoteService, 
+    private quoteSubmissionService: QuoteSubmissionService,
+    private snackBar: MatSnackBar
+  ) {}
 
   openUpdateContactModal() {
     const dialogRef = this.dialog.open(UpdateContactConfirmationComponent, {
@@ -248,11 +257,21 @@ export class SupplierFormComponent implements OnInit {
     this.quoteSubmissionService.submitQuote(quoteData).subscribe(
       (response) => {
         console.log('Quote submitted successfully:', response);
-        // Handle successful submission (e.g., show success message, navigate to a different page)
+        this.snackBar.open('Quote submitted successfully!', 'Close', {
+          duration: 3000, // Duration in milliseconds
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+        });
+        // Handle any additional logic after successful submission
       },
       (error) => {
         console.error('Error submitting quote:', error);
-        // Handle error (e.g., show error message to user)
+        this.snackBar.open('Error submitting quote. Please try again.', 'Close', {
+          duration: 3000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+        });
+        // Handle any additional error logic
       }
     );
   }

@@ -1,122 +1,0 @@
-       Helix
-
-Smart-Inventory
-Demo 1
-Links To Documentation
-
-                                                          ReadMe
-                                            Requirement Specification
-                                            Architectural Specification
-
-                                                 Design Specification
-                                                       User Manual
-
-                                                   Coding Standards
-                                                    Service Contract
-
-                                                      Testing Policy
-Agenda
-
-     0 Introduction
-     1 Documentation
-     2 Implementation Progress
-     3 Project Board
-     4 CI/CD
-                                       Our Team
-
-Tristan Sutherland      Bryce Sukhdeo  Hawa Ibrahim  Bouchaib Chraf  Thabang Kgaladi
-
-       Project Manager
-About Smart Inventory
-
-What is Smart Inventory?
-
-Smart Inventory is a user-friendly, web-based application that
-streamlines and automates core inventory processes.
-
-Who?
-
-Smart Inventory is designed to cater to the needs of various user
-roles within an organization:
-
-     Business Owners/Managers (Administrators):
-          Manage user access, configure system settings, and gain
-          comprehensive inventory insights.
-
-     Employees (Inventory Controllers/End-Users):
-          Focus on daily stock management tasks, including adding,
-          updating, and requesting stock.
-              Subsystems
-
-1. Authentication and Authorization Subsystem
-2. Team/User Management Subsystem
-3. Reporting Subsystem
-4. Inventory Management Subsystem
-5. Stock Request Subystem
-6. Supplier Management Subsystem
-7. Order Placement Subsystem
-Authorization/ Authentication Subsystem  Team/User Management Subsystem
-Reporting Subsystem  Inventory Management Subystem
-Stock Request Subsystem  Supplier Management
-                                 Subsystem
-Order Placement Subsystem
-Architectural Design
-
-Quality Requirements  Architectural Styles
-
-     Efficiency         Layered Architecture
-     Scalability        Service-Oriented
-     Security           Architecture (SOA)
-     Usability          Event-Driven Architecture
-     Maintainability    (EDA)
-                        Serverless Architecture
-                   Architectural Design
-
-Technology so far
-
-       Amplify
-       Cognito
-Lambda Functions
-    API Gateway
-       Sandbox
-       Cypress
-         Implementation Progress
-
-Front-End Progress  Back-End Progress
-
-Sign In             Secure Sign In and
-
-Create Account      Create Account
-Forget Password     Add member to a team
-
-Sidebar             List the team
-
-Settings Page       Add inventory
-
-Dashboard Page      Export graph as png,
-Inventory Page      svg, etc.
-Help Page           Light/Dark Mode
-Project Board
-CI/CD                                                     Linting
-
-                    Tests                  Set Trigger on merge into main
-                                           and develop.
-     Set Trigger on pushes to all          The automated linter ensures:
-     branches.
-     When the trigger event is                  No syntax errors.
-     triggered it will run unit tests and       No coding standards
-     e2e tests.                                 violations.
-                                                Styling is readable.
-
-             Building                                Deployment
-
-Set Trigger to build on push to            Set Trigger to deploy on push to
-main or develop branch.                    main.
-This helps ensure that no issues           Preview deployments through
-are around before the web app is           amplify sandbox to help enhance
-deployed.                                  API and web app testing, creation
-                                           and maintenance.
-THANK YOU!
-
-      QUESTIONS?
-

@@ -60,9 +60,12 @@ export class SettingsComponent implements OnInit {
         new: '',
         currentDelete: '',
     };
+    isChangingPassword = false;
+    hidePassword = true;
 
     currentTheme = 'light';
     isDeleteAccountVisible = false;
+    
 
     constructor(
         private snackBar: MatSnackBar,
@@ -71,7 +74,7 @@ export class SettingsComponent implements OnInit {
         private authenticator: AuthenticatorService,
         private router: Router,
         private themeService: ThemeService
-    ) {}
+    ) { }
 
     ngOnInit() {
         this.titleService.updateTitle('Settings');
@@ -181,5 +184,43 @@ export class SettingsComponent implements OnInit {
     selectTheme(theme: string): void {
         this.currentTheme = theme;
         this.themeService.setTheme(theme);
+    }
+
+    // password update
+    initiatePasswordChange() {
+        this.isChangingPassword = true;
+        this.password.current = ''; // Clear the current password field
+        this.password.new = ''; // Clear the new password field
+    }
+
+    cancelPasswordChange() {
+        this.isChangingPassword = false;
+        this.password.current = '';
+        this.password.new = '';
+        this.snackBar.open('Password change cancelled', 'Close', { duration: 3000 });
+    }
+
+    updatePassword() {
+        if (!this.password.current || !this.password.new) {
+            this.snackBar.open('Please fill in both current and new password fields', 'Close', { duration: 3000 });
+            return;
+        }
+
+        this.cognitoService.changePassword(this.password.current, this.password.new).subscribe(
+            () => {
+                this.snackBar.open('Password changed successfully', 'Close', { duration: 3000 });
+                this.password.current = '';
+                this.password.new = '';
+                this.isChangingPassword = false;
+            },
+            (error) => {
+                console.error('Error changing password:', error);
+                this.snackBar.open('Error changing password. Please try again.', 'Close', { duration: 3000 });
+            }
+        );
+    }
+
+    togglePasswordVisibility() {
+        this.hidePassword = !this.hidePassword;
     }
 }

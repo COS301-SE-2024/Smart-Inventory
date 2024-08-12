@@ -37,6 +37,9 @@ export class SuppliersComponent implements OnInit {
     isLoading = true;
     rowsToDelete: any[] = [];
     showEditAddressPopup = false;
+    tenantId: string = '';
+    userName: string = '';
+    userRole: string = '';
     editAddress = {
         street: '',
         city: '',
@@ -61,13 +64,14 @@ export class SuppliersComponent implements OnInit {
 
     colDefs: ColDef[] = [
         { field: 'supplierID', headerName: 'Supplier ID', hide: true },
-        { field: 'company_name', headerName: 'Company Name' },
-        { field: 'contact_name', headerName: 'Contact Name' },
-        { field: 'contact_email', headerName: 'Contact Email' },
-        { field: 'phone_number', headerName: 'Phone Number' },
+        { field: 'company_name', headerName: 'Company Name', filter: 'agSetColumnFilter' },
+        { field: 'contact_name', headerName: 'Contact Name', filter: 'agSetColumnFilter' },
+        { field: 'contact_email', headerName: 'Contact Email', filter: 'agSetColumnFilter' },
+        { field: 'phone_number', headerName: 'Phone Number', filter: 'agSetColumnFilter' },
         {
             field: 'address',
             headerName: 'Address',
+            filter: 'agSetColumnFilter',
             valueGetter: (params: any) => this.getAddressString(params.data.address),
             onCellClicked: (params: any) => this.onAddressCellClicked(params.data),
         },
@@ -75,14 +79,123 @@ export class SuppliersComponent implements OnInit {
 
     addButton = { text: 'Add New Supplier' };
 
-    constructor(private titleService: TitleService, private dialog: MatDialog) {
+    constructor(
+        private titleService: TitleService,
+        private dialog: MatDialog,
+    ) {
         Amplify.configure(outputs);
     }
 
     async ngOnInit(): Promise<void> {
         this.titleService.updateTitle('Suppliers');
+        await this.getUserInfo();
         await this.loadSuppliersData();
+        await this.logActivity('Viewed suppliers', 'Suppliers page navigated');
     }
+
+
+    async logActivity(task: string, details: string) {
+        try {
+            const session = await fetchAuthSession();
+    
+            const lambdaClient = new LambdaClient({
+                region: outputs.auth.aws_region,
+                credentials: session.credentials,
+            });
+    
+            const payload = JSON.stringify({
+                tenentId: this.tenantId,
+                memberId: this.tenantId,
+                name: this.userName,
+                role: this.userRole || 'Admin',
+                task: task,
+                timeSpent: 0,
+                idleTime: 0,
+                details: details,
+            });
+    
+            const invokeCommand = new InvokeCommand({
+                FunctionName: 'userActivity-createItem',
+                Payload: new TextEncoder().encode(JSON.stringify({ body: payload })),
+            });
+    
+            const lambdaResponse = await lambdaClient.send(invokeCommand);
+            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+    
+            if (responseBody.statusCode === 201) {
+                console.log('Activity logged successfully');
+            } else {
+                throw new Error(responseBody.body);
+            }
+        } catch (error) {
+            console.error('Error logging activity:', error);
+        }
+    }
+
+    private getRoleDisplayName(roleName: string): string {
+        switch (roleName) {
+            case 'admin':
+                return 'Admin';
+            case 'enduser':
+                return 'End User';
+            case 'inventorycontroller':
+                return 'Inventory Controller';
+            default:
+                return '';
+        }
+    }
+
+    async getUserInfo() {
+        try {
+            const session = await fetchAuthSession();
+
+            const cognitoClient = new CognitoIdentityProviderClient({
+                region: outputs.auth.aws_region,
+                credentials: session.credentials,
+            });
+
+            const getUserCommand = new GetUserCommand({
+                AccessToken: session.tokens?.accessToken.toString(),
+            });
+            const getUserResponse = await cognitoClient.send(getUserCommand);
+
+            const givenName = getUserResponse.UserAttributes?.find(attr => attr.Name === 'given_name')?.Value || '';
+            const familyName = getUserResponse.UserAttributes?.find(attr => attr.Name === 'family_name')?.Value || '';
+            this.userName = `${givenName} ${familyName}`.trim();
+
+            this.tenantId = getUserResponse.UserAttributes?.find(attr => attr.Name === 'custom:tenentId')?.Value || '';
+
+            const lambdaClient = new LambdaClient({
+                region: outputs.auth.aws_region,
+                credentials: session.credentials,
+            });
+
+            const payload = JSON.stringify({
+                userPoolId: outputs.auth.user_pool_id,
+                username: session.tokens?.accessToken.payload['username'],
+            });
+
+            const invokeCommand = new InvokeCommand({
+                FunctionName: 'getUsersV2',
+                Payload: new TextEncoder().encode(payload),
+            });
+
+            const lambdaResponse = await lambdaClient.send(invokeCommand);
+            const users = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+
+            const currentUser = users.find((user: any) => 
+                user.Attributes.find((attr: any) => attr.Name === 'email')?.Value === session.tokens?.accessToken.payload['username']
+            );
+
+            if (currentUser && currentUser.Groups.length > 0) {
+                this.userRole = this.getRoleDisplayName(currentUser.Groups[0].GroupName);
+            }
+
+        } catch (error) {
+            console.error('Error fetching user info:', error);
+        }
+    }
+
 
     async loadSuppliersData() {
         try {
@@ -147,12 +260,14 @@ export class SuppliersComponent implements OnInit {
         return `${address.street}, ${address.city}, ${address.country}, ${address.postal_code}`;
     }
 
-    openAddSupplierPopup() {
+    async openAddSupplierPopup() {
         this.showAddPopup = true;
+        await this.logActivity('Opened add supplier popup', 'Initiated adding a new supplier');
     }
 
-    onAddressCellClicked(supplier: any) {
+    async onAddressCellClicked(supplier: any) {
         this.openEditAddressPopup(supplier);
+        await this.logActivity('Opened edit address popup', `Editing address for supplier ${supplier.company_name}`);
     }
 
     closeAddPopup() {
@@ -248,6 +363,7 @@ export class SuppliersComponent implements OnInit {
                     this.gridComponent.rowData = [...this.rowData];
                 }
                 this.closeEditAddressPopup();
+                await this.logActivity('Updated supplier address', `Updated address for supplier ${this.selectedSupplier.company_name}`);
             } else {
                 throw new Error(responseBody.body);
             }
@@ -311,6 +427,7 @@ export class SuppliersComponent implements OnInit {
                 console.log('Supplier added successfully');
                 await this.loadSuppliersData();
                 this.closeAddPopup();
+                await this.logActivity('Added new supplier', `Added supplier ${formData.company_name}`);
             } else {
                 throw new Error(responseBody.body);
             }

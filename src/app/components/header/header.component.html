@@ -2,10 +2,17 @@
 <mat-toolbar>
     <span class="pageTitle">{{ pageTitle }}</span>
     <span class="flex-spacer"></span>
+    <!-- Notification bell -->
+    <!-- <button mat-icon-button (click)="toggleNotificationPanel()">
+        <mat-icon>notifications</mat-icon>
+    </button> -->
+    <!-- notification badge -->
+    <button mat-icon-button (click)="toggleNotificationPanel()" class="toolbar-icon">
+        <mat-icon [matBadge]="unreadCount" [matBadgeHidden]="unreadCount === 0" matBadgeColor="warn">notifications</mat-icon>
+    </button>    
     <!-- User profile -->
     <div class="user-profile" [matMenuTriggerFor]="menu">
         <div class="profile-box">
-            <!-- <mat-icon class="profile-pic">account_circle</mat-icon> -->
             <svg
                 width="50"
                 height="50"
@@ -21,7 +28,6 @@
                     stroke-linecap="round"
                 />
             </svg>
-
             <div class="user-info">
                 <span class="username">{{ userName }}</span>
                 <span class="role">{{ userEmail }}</span>
@@ -33,3 +39,188 @@
         <button mat-menu-item (click)="logout()">Logout</button>
     </mat-menu>
 </mat-toolbar>
+
+<!-- Notification panel -->
+
+<div class="notification-panel" [class.open]="isNotificationPanelOpen" [style.width.px]="panelWidth">
+    <div class="resize-handle" (mousedown)="startResize($event)"></div>
+    
+    <div class="notification-header">
+        <h3>Notifications</h3>
+        <div>
+            <button mat-icon-button routerLink="/settings" matTooltip="Go to Settings">
+                <mat-icon>settings</mat-icon>
+            </button>
+            <button mat-icon-button (click)="closeNotificationPanel()" matTooltip="Close">
+                <mat-icon>close</mat-icon>
+            </button>
+        </div>
+    </div>
+
+    <!-- <div class="notification-filters">
+        <button mat-icon-button class="chevron-left" (click)="scrollFilters('left')" [disabled]="isScrolledToStart">
+            <mat-icon>chevron_left</mat-icon>
+        </button>
+        <div class="filter-controls" #filterControls>
+            <mat-checkbox [(ngModel)]="showRead" (change)="updateFilteredNotifications()">Read</mat-checkbox>
+            <mat-checkbox [(ngModel)]="showUnread" (change)="updateFilteredNotifications()">Unread</mat-checkbox>
+            <mat-checkbox [(ngModel)]="showArchived" (change)="updateFilteredNotifications()">Show Archived</mat-checkbox>
+            <button mat-icon-button 
+                    class="mark-all-read"
+                    color="primary" 
+                    (click)="markAllAsRead()" 
+                    [disabled]="unreadCount === 0"
+                    matTooltip="Mark all as read">
+                <mat-icon>done_all</mat-icon>
+            </button>
+        </div>
+        <button mat-icon-button class="chevron-right" (click)="scrollFilters('right')" [disabled]="isScrolledToEnd">
+            <mat-icon>chevron_right</mat-icon>
+        </button>
+        <div class="unread-count">
+            {{ unreadCount }} unread
+        </div>
+    </div> -->
+
+    <div class="notification-tabs">
+        <mat-tab-group mat-align-tabs="start" (selectedIndexChange)="onTabChange($event)">
+            <mat-tab>
+                <ng-template mat-tab-label>All</ng-template>
+            </mat-tab>
+            <mat-tab>
+                <ng-template mat-tab-label>Inventory</ng-template>
+            </mat-tab>
+            <mat-tab>
+                <ng-template mat-tab-label>Reports</ng-template>
+            </mat-tab>
+            <mat-tab>
+                <ng-template mat-tab-label>Settings</ng-template>
+            </mat-tab>
+            <mat-tab>
+                <ng-template mat-tab-label>Orders</ng-template>
+            </mat-tab>
+            <mat-tab>
+                <ng-template mat-tab-label>Suppliers</ng-template>
+            </mat-tab>
+            <mat-tab>
+                <ng-template mat-tab-label>Teams</ng-template>
+            </mat-tab>
+        </mat-tab-group>
+    </div>
+
+    <!-- <div class="notification-content">
+        <mat-list>
+            <mat-list-item *ngFor="let notification of filteredNotifications" 
+                           [ngClass]="{'unread': !notification.read, 'archived': notification.archived}"
+                           (click)="openNotification(notification)">
+                <mat-icon matListIcon>{{ getNotificationIcon(notification.type) }}</mat-icon>
+                <h3 matListItemTitle>{{ notification.title }}</h3>
+                <p matListItemLine>{{ notification.date | date:'short' }}</p>
+                <p matListItemLine>{{ notification.info }}</p>
+                <button mat-icon-button 
+                        (click)="toggleReadStatus($event, notification)" 
+                        [matTooltip]="notification.read ? 'Mark as unread' : 'Mark as read'">
+                    <mat-icon>{{ notification.read ? 'markunread' : 'done' }}</mat-icon>
+                </button>
+                <button mat-icon-button 
+                        (click)="toggleArchive($event, notification)" 
+                        [matTooltip]="notification.archived ? 'Unarchive' : 'Archive'">
+                    <mat-icon>{{ notification.archived ? 'unarchive' : 'archive' }}</mat-icon>
+                </button>
+            </mat-list-item>
+        </mat-list>
+    </div> -->
+
+    <!-- <mat-tab-group (selectedTabChange)="onTabChange($event)">
+        <mat-tab *ngFor="let filter of filters" [label]="filter"></mat-tab>
+    </mat-tab-group> -->
+    
+    <!-- <div class="notification-actions">
+        <button mat-button [matMenuTriggerFor]="filterMenu">
+            <mat-icon>tune</mat-icon>
+            Filters
+        </button>
+        <mat-menu #filterMenu="matMenu">
+            <mat-checkbox [(ngModel)]="showRead" (change)="updateFilteredNotifications()">Read</mat-checkbox>
+            <mat-checkbox [(ngModel)]="showUnread" (change)="updateFilteredNotifications()">Unread</mat-checkbox>
+            <mat-checkbox [(ngModel)]="showArchived" (change)="updateFilteredNotifications()">Show Archived</mat-checkbox>
+        </mat-menu>
+        
+        <button mat-icon-button
+                class="mark-all-read"
+                color="primary" 
+                (click)="markAllAsRead()" 
+                [disabled]="unreadCount === 0"
+                matTooltip="Mark all as read">
+            <mat-icon>done_all</mat-icon>
+        </button>
+        
+        <span class="unread-count">{{ unreadCount }} unread</span>
+    </div> -->
+
+    <div class="notification-actions">
+        <button mat-button [matMenuTriggerFor]="filterMenu" #filterMenuTrigger="matMenuTrigger">
+            <mat-icon>tune</mat-icon>
+            Filters
+        </button>
+        <mat-menu #filterMenu="matMenu" [hasBackdrop]="false" class="filter-menu">
+            <ng-template matMenuContent>
+                <div (click)="$event.stopPropagation()">
+                    <div class="filter-menu-header">
+                        <span>Filters</span>
+                        <button mat-icon-button (click)="closeFilterMenu()">
+                            <mat-icon>close</mat-icon>
+                        </button>
+                    </div>
+                    <mat-checkbox [(ngModel)]="showRead" (change)="updateFilteredNotifications()">Read</mat-checkbox>
+                    <mat-checkbox [(ngModel)]="showUnread" (change)="updateFilteredNotifications()">Unread</mat-checkbox>
+                    <mat-checkbox [(ngModel)]="showArchived" (change)="updateFilteredNotifications()">Show Archived</mat-checkbox>
+                </div>
+            </ng-template>
+        </mat-menu>
+        
+        <button mat-icon-button
+                class="mark-all-read"
+                color="primary" 
+                (click)="markAllAsRead()" 
+                [disabled]="unreadCount === 0"
+                matTooltip="Mark all as read">
+            <mat-icon>done_all</mat-icon>
+        </button>
+        
+        <span class="unread-count">{{ unreadCount }} unread</span>
+    </div>
+    
+    <div class="notification-content">
+        <mat-list>
+            <mat-list-item *ngFor="let notification of filteredNotifications" 
+                           [ngClass]="{'unread': !notification.read, 'archived': notification.archived}"
+                           (click)="openNotification(notification)">
+                <!-- <mat-icon matListIcon>{{ getNotificationIcon(notification.type) }}</mat-icon> -->
+                <div matListItemTitle>
+                    <mat-icon>{{ getNotificationIcon(notification.type) }}</mat-icon>
+                    {{ notification.title }}
+                </div>
+                <div matListItemLine>{{ notification.date | date:'short' }}</div>
+                <div matListItemLine>{{ notification.info }}</div>
+                <button mat-icon-button 
+                        (click)="toggleReadStatus($event, notification)" 
+                        [matTooltip]="notification.read ? 'Mark as unread' : 'Mark as read'">
+                    <mat-icon>{{ notification.read ? 'markunread' : 'done' }}</mat-icon>
+                </button>
+                <button mat-icon-button 
+                        (click)="toggleArchive($event, notification)" 
+                        [matTooltip]="notification.archived ? 'Unarchive' : 'Archive'">
+                    <mat-icon>{{ notification.archived ? 'unarchive' : 'archive' }}</mat-icon>
+                </button>
+            </mat-list-item>
+        </mat-list>
+    </div>
+
+</div>
+
+
+<div class="main-content" [class.with-notification-panel]="isNotificationPanelOpen">
+    <ng-content></ng-content>
+</div>
+

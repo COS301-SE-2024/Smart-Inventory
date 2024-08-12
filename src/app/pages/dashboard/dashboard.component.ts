@@ -29,6 +29,7 @@ import outputs from '../../../../amplify_outputs.json';
 import { MatDialog } from '@angular/material/dialog';
 import { CustomizeComponent } from '../../components/modal/customize/customize.component';
 import { TemplatechartComponent } from '../../components/charts/templatechart/templatechart.component';
+import { LoadingSpinnerComponent } from 'app/components/loader/loading-spinner.component';
 interface DashboardItem extends GridsterItem {
     type: string;
     cols: number;
@@ -62,7 +63,8 @@ interface DashboardItem extends GridsterItem {
         SaleschartComponent,
         BubblechartComponent,
         MatProgressSpinnerModule,
-        TemplatechartComponent
+        TemplatechartComponent,
+        LoadingSpinnerComponent
     ],
 })
 export class DashboardComponent implements OnInit {
@@ -94,6 +96,27 @@ export class DashboardComponent implements OnInit {
     charts: Type<any>[] = [];
     pendingDeletions: DashboardItem[] = [];
     standaloneDeletions: DashboardItem[] = [];
+    stockRequest: any[] = [];
+    orders: any[] = [];
+
+    RequestOrders = {
+        requests: {
+            totalRequests: 0,
+            mostRequested: {
+                name: "None",
+                percentage: 0
+            },
+            highestRequest: 0,
+        },
+        backorders: {
+            currentBackorders: 0,
+            averageDelay: 0,
+            longestBackorderItem: {
+                productName: 'None',
+                delay: ''
+            }
+        }
+    };
 
     dashboard: DashboardItem[];
     largeItem: DashboardItem = {
@@ -207,10 +230,69 @@ export class DashboardComponent implements OnInit {
         item.dragEnabled = false;
     }
 
+    populateRequestOrders(stockRequests: any[], orders: any[]) {
+        const requestSummary = new Map<string, number>();
+
+        // Aggregate stock requests
+        stockRequests.forEach(request => {
+            requestSummary.set(request.sku, (requestSummary.get(request.sku) || 0) + request.quantityRequested);
+        });
+
+        const totalRequests = Array.from(requestSummary.values()).reduce((a, b) => a + b, 0);
+        const highestRequest = Math.max(...requestSummary.values());
+        const mostRequestedSku = [...requestSummary.entries()].reduce((a, b) => a[1] > b[1] ? a : b)[0];
+        const mostRequestedPercentage = (requestSummary.get(mostRequestedSku)! / totalRequests) * 100;
+
+        // Process orders for backorder details
+        const backorders = orders.filter(order => order.Order_Status === "Pending Approval" && order.Expected_Delivery_Date);
+        const delays = backorders.map(order => this.calculateDelay(order.Order_Date, order.Expected_Delivery_Date!));
+        const totalDelay = delays.reduce((a, b) => a + b, 0);
+        const averageDelay = delays.length > 0 ? totalDelay / delays.length : 0;
+        const longestDelay = Math.max(...delays);
+        const longestBackorderItem = orders.find(order => this.calculateDelay(order.Order_Date, order.Expected_Delivery_Date!) === longestDelay);
+
+        return {
+            requests: {
+                totalRequests,
+                mostRequested: {
+                    name: mostRequestedSku,
+                    percentage: mostRequestedPercentage
+                },
+                highestRequest
+            },
+            backorders: {
+                currentBackorders: backorders.length,
+                averageDelay,
+                longestBackorderItem: {
+                    productName: longestBackorderItem && longestBackorderItem.Selected_Supplier ? longestBackorderItem.Selected_Supplier : "Up to date",
+                    delay: longestBackorderItem ? this.formatDelay(longestDelay) : ""
+                }
+            }
+        };
+    }
+
+    private calculateDelay(orderDate: string, expectedDate: string): number {
+        const order = new Date(orderDate);
+        const expected = new Date(expectedDate);
+        return (expected.getTime() - order.getTime()) / (1000 * 3600 * 24);
+    }
+
+    private formatDelay(delay: number): string {
+        return delay > 0 ? delay.toString() : "";  // Return an empty string if delay is zero or not calculable
+    }
+
     // Integration
+    inventoryLevel: number = 20;
 
     async dashboardData() {
         try {
+            // Mocked baseline values (should be dynamically fetched or defined)
+            const baselineValues = {
+                inventoryLevels: 10, // Baseline inventory levels
+                backorders: 5,      // Baseline backorders
+                fulfillmentDays: 390 // Baseline average fulfillment days (for comparison)
+            };
+
             const session = await fetchAuthSession();
             this.loader.setLoading(false);
 
@@ -254,26 +336,64 @@ export class DashboardComponent implements OnInit {
 
             if (responseBody.statusCode === 200) {
                 const dashboardData = JSON.parse(responseBody.body);
-                console.log('Dashboard Data:', dashboardData); // Log to check the structure
+                // console.log('Dashboard Data:', dashboardData);
+                console.log('I am a metric', parseFloat((((dashboardData.inventoryLevels - baselineValues.inventoryLevels) / baselineValues.inventoryLevels) * 100).toFixed(2)));
 
-                // Directly use the object to set dashboardInfo
-                this.dashboardInfo = [{
-                    metric: 'Inventory Levels',
-                    value: dashboardData.inventoryLevels,
-                    timestamp: new Date().toISOString() // Assuming current time for demo purposes
-                }, {
-                    metric: 'Backorders',
-                    value: dashboardData.backorders,
-                    timestamp: new Date().toISOString() // Assuming current time for demo purposes
-                }, {
-                    metric: 'Average Fulfillment Time',
-                    value: dashboardData.avgFulfillmentTime,
-                    timestamp: new Date().toISOString() // Assuming current time for demo purposes
-                }, {
-                    metric: 'Top Seller',
-                    value: dashboardData.topSeller,
-                    timestamp: new Date().toISOString() // Assuming current time for demo purposes
-                }];
+                // Update the dashboardInfo with new data from the Lambda function
+                this.dashboard = [
+                    {
+                        cols: 1,
+                        rows: 1,
+                        y: 0,
+                        x: 4,
+                        name: 'Inventory Levels',
+                        icon: 'storage',
+                        analytic: dashboardData.inventoryLevels.toString(),
+                        percentage: parseFloat((((dashboardData.inventoryLevels - baselineValues.inventoryLevels) / baselineValues.inventoryLevels) * 100).toFixed(2)), // Update this if needed from dashboardData
+                        type: 'card',
+                        isActive: true,
+                        tooltip: 'Current inventory stock count.',
+                    },
+                    {
+                        cols: 1,
+                        rows: 1,
+                        y: 0,
+                        x: 5,
+                        name: 'Backorders',
+                        icon: 'assignment_return',
+                        analytic: dashboardData.backorders.toString(),
+                        percentage: parseFloat((((dashboardData.backorders - baselineValues.backorders) / baselineValues.backorders) * 100).toFixed(2)), // Update this if needed from dashboardData
+                        type: 'card',
+                        isActive: true,
+                        tooltip: 'Orders pending due to lack of stock.',
+                    },
+                    {
+                        cols: 1,
+                        rows: 1,
+                        y: 0,
+                        x: 6,
+                        name: 'Avg Fulfillment Time',
+                        icon: 'hourglass_full',
+                        analytic: dashboardData.avgFulfillmentTime,
+                        percentage: parseFloat((((parseFloat(dashboardData.avgFulfillmentTime.split(" days")[0]) - baselineValues.fulfillmentDays) / baselineValues.fulfillmentDays) * 100).toFixed(2)), // Update this if needed from dashboardData
+                        type: 'card',
+                        isActive: true,
+                        tooltip: 'Average time taken from order placement to shipment.',
+                    },
+                    {
+                        cols: 1,
+                        rows: 1,
+                        y: 0,
+                        x: 7,
+                        name: 'Top Seller',
+                        icon: 'star_rate',
+                        analytic: dashboardData.topSeller,
+                        percentage: parseFloat("0.12"), // Update this if needed from dashboardData
+                        type: 'card',
+                        isActive: true,
+                        tooltip: 'The product with the highest requests.',
+                    },
+                ];
                 console.log('Processed dashboard data:', this.dashboardInfo);
             } else {
                 console.error('Error fetching dashboard data:', responseBody.body);
@@ -283,10 +403,14 @@ export class DashboardComponent implements OnInit {
             console.error('Error in dashboardData:', error);
             this.dashboardInfo = [];
         }
+        finally{
+            // this..isLoading = false;
+        }
     }
 
-
-    async loadInventoryData() {
+    isLoading: boolean = true;
+    async loadOrdersData() {
+        // this.isLoading = true;
         try {
             const session = await fetchAuthSession();
 
@@ -298,14 +422,13 @@ export class DashboardComponent implements OnInit {
             const getUserCommand = new GetUserCommand({
                 AccessToken: session.tokens?.accessToken.toString(),
             });
-
             const getUserResponse = await cognitoClient.send(getUserCommand);
 
-            const tenantId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
+            const tenentId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
 
-            if (!tenantId) {
-                console.error('TenantId not found in user attributes');
-                this.inventoryCount = 0; // Updated to manage count
+            if (!tenentId) {
+                console.error('TenentId not found in user attributes');
+                this.rowData = [];
                 return;
             }
 
@@ -315,25 +438,90 @@ export class DashboardComponent implements OnInit {
             });
 
             const invokeCommand = new InvokeCommand({
-                FunctionName: 'Inventory-getItems',
-                Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: tenantId } })),
+                FunctionName: 'getOrders',
+                Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: tenentId } })),
             });
 
             const lambdaResponse = await lambdaClient.send(invokeCommand);
             const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-            // console.log('Response from Lambda:', responseBody);
+            console.log('Response from Lambda:', responseBody);
 
             if (responseBody.statusCode === 200) {
-                const inventoryItems = JSON.parse(responseBody.body);
-                this.inventoryCount = inventoryItems.length; // Setting the count of inventory items
-                console.log('Inventory items count:', this.inventoryCount);
+                const orders = JSON.parse(responseBody.body);
+                this.orders = orders;
+                console.log('Processed orders:', orders);
+
             } else {
-                console.error('Error fetching inventory data:', responseBody.body);
-                this.inventoryCount = 0; // Updated to manage count
+                console.error('Error fetching orders data:', responseBody.body);
+                this.rowData = [];
             }
         } catch (error) {
-            console.error('Error in loadInventoryData:', error);
-            this.inventoryCount = 0; // Updated to manage count
+            console.error('Error in loadOrdersData:', error);
+            this.rowData = [];
+        } finally {
+            // this..isLoading = false;
+        }
+    }
+
+    async loadStockData() {
+        // this.isLoading = true;
+        try {
+            const session = await fetchAuthSession();
+
+            const cognitoClient = new CognitoIdentityProviderClient({
+                region: outputs.auth.aws_region,
+                credentials: session.credentials,
+            });
+
+            const getUserCommand = new GetUserCommand({
+                AccessToken: session.tokens?.accessToken.toString(),
+            });
+            const getUserResponse = await cognitoClient.send(getUserCommand);
+
+            const tenentId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
+            // const tenentId = '1718890159961-q85m9';
+
+            if (!tenentId) {
+                console.error('TenentId not found in user attributes');
+                // this.rowData = [];
+                return;
+            }
+
+            const lambdaClient = new LambdaClient({
+                region: outputs.auth.aws_region,
+                credentials: session.credentials,
+            });
+
+            const invokeCommand = new InvokeCommand({
+                FunctionName: 'getStockRequests',
+                Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: tenentId } })),
+            });
+
+            const lambdaResponse = await lambdaClient.send(invokeCommand);
+            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+            console.log('Response from Lambda:', responseBody);
+
+            if (responseBody.statusCode === 200) {
+                const orders = JSON.parse(responseBody.body);
+                // orders.forEach((request: { category: string | number; quantityRequested: number; }) => {
+                //     if (this.inventoryData[request.category]) {
+                //         this.inventoryData[request.category].requestedStock = (this.inventoryData[request.category].requestedStock || 0) + request.quantityRequested;
+                //     } else {
+                //         this.inventoryData[request.category] = { currentStock: 0, requestedStock: request.quantityRequested };
+                //     }
+                // });
+                // this.updateChartData();
+                this.stockRequest = orders;
+                console.log('Processed orders:', orders);
+            } else {
+                console.error('Error fetching orders data:', responseBody.body);
+                // this.rowData = [];
+            }
+        } catch (error) {
+            console.error('Error in loadOrdersData:', error);
+            // this.rowData = [];
+        } finally {
+            // this..isLoading = false;
         }
     }
 
@@ -381,6 +569,8 @@ export class DashboardComponent implements OnInit {
         } catch (error) {
             console.error('Error fetching users:', error);
             this.userCount = 0; // Ensure user count is set to 0 in case of errors
+        }finally{
+            // this..isLoading = false;
         }
     }
 
@@ -614,8 +804,12 @@ export class DashboardComponent implements OnInit {
         this.loadState(); // Load the state on initialization
         this.titleService.updateTitle('Dashboard');
 
-        await this.loadInventoryData();
+        // await this.loadInventoryData();
         await this.fetchUsers();
         await this.dashboardData();
+        await this.loadOrdersData();
+        await this.loadStockData();
+        this.RequestOrders = this.populateRequestOrders(this.stockRequest, this.orders);
+        this.isLoading = false;
     }
 }

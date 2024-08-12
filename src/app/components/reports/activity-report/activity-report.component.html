@@ -7,21 +7,53 @@
     <mat-grid-list cols="9" rowHeight="20vh" gutterSize="15px">
         <mat-grid-tile [colspan]="3" [rowspan]="2">
             <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
-                <mat-card style="height: 100%; width: 100%"
-                    ><ag-charts-angular [options]="options1" style="height: 100%"></ag-charts-angular>
+                <mat-card style="height: 100%; width: 100%">
+                    <mat-card-content>
+                        <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%;">
+                            <div>
+                                <mat-icon>{{ ActivityReport.metrics[0].icon }}</mat-icon>
+                                <span>{{ ActivityReport.metrics[0].name }}</span>
+                            </div>
+                            <div>
+                                <h2>{{ ActivityReport.metrics[0].value }}</h2>
+                            </div>
+                        </div>
+                    </mat-card-content>
                 </mat-card>
             </div>
         </mat-grid-tile>
         <mat-grid-tile [colspan]="3" [rowspan]="2">
             <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
-                <mat-card style="height: 100%; width: 100%"
-                    ><ag-charts-angular [options]="options2" style="height: 100%"></ag-charts-angular>
+                <mat-card style="height: 100%; width: 100%">
+                    <mat-card-content>
+                        <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%;">
+                            <div>
+                                <mat-icon>{{ ActivityReport.metrics[1].icon }}</mat-icon>
+                                <span>{{ ActivityReport.metrics[1].name }}</span>
+                            </div>
+                            <div>
+                                <h2>{{ ActivityReport.metrics[1].value }}</h2>
+                            </div>
+                        </div>
+                    </mat-card-content>
                 </mat-card>
             </div>
         </mat-grid-tile>
         <mat-grid-tile [colspan]="3" [rowspan]="2">
             <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
-                <mat-card style="height: 100%; width: 100%"></mat-card>
+                <mat-card style="height: 100%; width: 100%">
+                    <mat-card-content>
+                        <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%;">
+                            <div>
+                                <mat-icon>{{ ActivityReport.metrics[2].icon }}</mat-icon>
+                                <span>{{ ActivityReport.metrics[2].name }}</span>
+                            </div>
+                            <div>
+                                <h2>{{ ActivityReport.metrics[2].value }}</h2>
+                            </div>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
             </div>
         </mat-grid-tile>
         <mat-grid-tile [colspan]="9" [rowspan]="4">
@@ -31,21 +63,9 @@
                 </div>
             </div>
         </mat-grid-tile>
-        <mat-grid-tile [colspan]="3" [rowspan]="5">
-            <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
-                <mat-card style="height: 100%; width: 100%">
-                    <mat-card-content style="align-items: center">
-                        <ul style="list-style: none; padding: 0; margin: 0">
-                            <li
-                                *ngFor="let metric of ActivityReport.metrics | keyvalue"
-                                style="font-size: 15px; padding: 8px 0; border-bottom: 1px solid lightgrey"
-                            >
-                                {{ metric.value }}
-                            </li>
-                        </ul>
-                    </mat-card-content>
-                </mat-card>
-            </div>
-        </mat-grid-tile>
     </mat-grid-list>
+</div>
+
+<div *ngIf="isLoading" class="loading-overlay">
+    <app-loading-spinner></app-loading-spinner>
 </div>

@@ -1,15 +1,14 @@
-/* SCROLL BAR */
-.mat-mdc-tab-group,
-.mat-mdc-tab-nav-bar {
-    --mat-tab-header-active-focus-label-text-color: #151414;
-    --mat-tab-header-active-label-text-color: #151414;
-    --mat-tab-header-inactive-label-text-color: rgb(0 0 0 / 60%);
-    --mat-tab-header-inactive-focus-label-text-color: black;
-    --mat-tab-header-inactive-hover-label-text-color: black;
-    --mdc-tab-indicator-active-indicator-color: #242022;
-    --mat-tab-header-active-hover-label-text-color: black;
-    --mat-tab-header-inactive-ripple-color: #232222;
+/* PLACEHOLDER */
+::placeholder {
+    text-align: left;
+  }
+
+  /* Ensure input text is left-aligned */
+input.mat-input-element {
+  text-align: left;
 }
+
+
 /* width */
 ::-webkit-scrollbar {
     margin-left: 5px;
@@ -34,17 +33,6 @@
     background: #555;
 }
 
-.mat-mdc-tab-group,
-.mat-mdc-tab-nav-bar {
-    --mat-tab-header-active-focus-label-text-color: var(--tab-active-color);
-    --mat-tab-header-active-label-text-color: var(--tab-active-color);
-    --mat-tab-header-inactive-label-text-color: var(--tab-inactive-color);
-    --mat-tab-header-inactive-focus-label-text-color: var(--tab-hover-color);
-    --mat-tab-header-inactive-hover-label-text-color: var(--tab-hover-color);
-    --mdc-tab-indicator-active-indicator-color: var(--tab-indicator-color);
-    --mat-tab-header-active-hover-label-text-color: var(--tab-hover-color);
-    --mat-tab-header-inactive-ripple-color: var(--tab-ripple-color);
-}
 
 .body {
     height: 100%;
@@ -111,7 +99,7 @@
 }
 mat-list {
     flex-grow: 1;
-    border: 3px solid blue;
+    /* border: 3px solid blue; */
     overflow: scroll;
 }
 /* LEFT PANE */
@@ -145,61 +133,6 @@ mat-list {
     margin-left: 10px;
 }
 
-/* RIGHT PANE */
-
-.content .second-row .right-pane {
-    width: 80%;
-    padding: 16px;
-}
-
-/* GENERAL SECTION */
-
-.content .second-row .right-pane .general-section {
-    display: flex;
-    flex-direction: column;
-    /* height: 100%;
-    margin: 20px;
-    align-content: center;
-    text-align: center; */
-}
-
-.content .second-row .right-pane .general-section .general-row {
-    width: 100%;
-}
-
-.content .second-row .right-pane .general-section .general-row.general-row-one {
-    height: 15vh;
-}
-
-.content .second-row .right-pane .general-section .general-row.general-row-one h2 {
-    margin: 0;
-    font-size: 60px;
-    margin-bottom: 10px;
-}
-
-.content .second-row .right-pane .general-section .general-row.general-row-one p {
-    margin-bottom: 20px;
-    font-weight: 500;
-    font-size: 20px;
-}
-
-.content .second-row .right-pane .general-section .general-row.general-row-one hr {
-    height: 4px;
-    box-shadow: none;
-    background-color: #000;
-    border: none;
-    border-radius: 15px;
-}
-
-.content .second-row .right-pane .general-section .general-row.general-row-two {
-    height: 50vh;
-    overflow-y: scroll;
-}
-
-.content .second-row .right-pane .general-section .general-row.general-row-two h3 {
-    font-size: 25px;
-    font-weight: 500;
-}
 
 /* LIGHT AND DARK MODE SELECTION */
 
@@ -226,250 +159,6 @@ mat-list {
 .theme-selection-grid .theme-option.selected-theme {
     outline: 7px solid #05ff00;
     border-radius: 15px;
-}
-
-/* LANGUAGE, TIME AND DATE SETTINGS */
-.settings-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    row-gap: 10px; /* Adjusted to create proper spacing between rows */
-    column-gap: 20px; /* Adjusted to create proper spacing between columns */
-    align-items: start;
-    margin-left: 5%;
-}
-
-.settings-field mat-form-field {
-    /* background-color: #fff; */
-    border-radius: 15px;
-    width: 80%;
-    background-color: none;
-}
-
-.settings-field mat-form-field mat-select mat-option {
-    padding: none;
-    margin: none;
-}
-
-.settings-row {
-    display: contents;
-}
-
-.settings-description {
-    text-align: left;
-    font-weight: 700;
-    font-size: 20px;
-}
-
-.settings-field {
-    text-align: left;
-}
-
-::ng-deep .mdc-line-ripple,
-::ng-deep .mdc-line-ripple.ng-tns-c1534922977-12,
-::ng-deep .mdc-line-ripple--deactivating,
-::ng-deep .mdc-line-ripple.ng-star-inserted {
-    display: none !important;
-}
-
-.settings-field mat-form-field ::ng-deep .mat-mdc-select-value {
-    width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    padding-top: 25px;
-}
-
-::ng-deep .mat-mdc-select-arrow svg {
-    margin-top: 15px;
-}
-
-/* Ensure the overlay panel has a high z-index */
-::ng-deep .cdk-overlay-container {
-    z-index: 1000;
-}
-
-/* PREFERENCES SECTION*/
-
-.content .second-row .right-pane .preferences-section {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-}
-
-.content .second-row .right-pane .preferences-section .preferences-row-one {
-    height: 15vh;
-}
-
-.content .second-row .right-pane .preferences-section .preferences-row-one h2 {
-    margin: 0;
-    font-size: 60px;
-    margin-bottom: 10px;
-}
-
-.content .second-row .right-pane .preferences-section .preferences-row.preferences-row-one p {
-    margin-bottom: 20px;
-    font-weight: 500;
-    font-size: 20px;
-}
-
-.content .second-row .right-pane .preferences-section .preferences-row.preferences-row-one hr {
-    height: 4px;
-    box-shadow: none;
-    background-color: #000;
-    border: none;
-    border-radius: 15px;
-}
-
-/* UNDER CONSTRUCTION */
-
-.content .second-row .right-pane .preferences-section .preferences-row-two {
-    height: 50vh;
-    /* overflow-y: auto; */
-    justify-content: center;
-}
-
-.content .second-row .right-pane .preferences-section .preferences-row-two img {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    width: 50%;
-}
-
-.content .second-row .right-pane .preferences-section .preferences-row-two h1 {
-    font-size: 70px;
-    /* display: block; */
-    text-align: center;
-    /* background-color: red; */
-}
-
-/* NOTIFICATIONS */
-
-/* Notifications Section */
-.notifications-section {
-    display: flex;
-    flex-direction: column; /* Ensures the sections are displayed in a column layout */
-    height: 100%;
-}
-.notifications-row-two {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    width: 100%;
-    overflow-y: auto;
-    margin-left: 30px;
-    padding-right: 30px;
-}
-.notifications-row-one {
-    height: 15vh;
-}
-
-.notifications-row-one h2 {
-    font-size: 60px;
-}
-
-.notifications-row-one p {
-    margin-bottom: 20px;
-    font-weight: 500;
-    font-size: 20px;
-}
-
-.notifications-row-one hr {
-    height: 4px;
-    background-color: #000;
-    border: none;
-    border-radius: 15px;
-}
-
-/* Section One */
-.notifications-section-one .notification-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 20px;
-}
-
-.notifications-section-one .notification-column {
-    flex: 1;
-}
-
-.notifications-section-one .notification-column h4 {
-    margin: 0;
-    font-size: 25px;
-    font-weight: 500;
-}
-
-/* Override Angular Material Styles for Toggle*/
-.mdc-switch__icons {
-    height: 100% !important;
-    position: relative !important;
-    width: 100% !important;
-    z-index: 1 !important;
-    background-color: black !important;
-    border-radius: 50% !important;
-}
-
-.mdc-switch:enabled .mdc-switch__track::after {
-    background: #544c4c !important;
-}
-
-.mdc-switch.mdc-switch--unselected:enabled .mdc-switch__icon {
-    display: none !important;
-}
-
-.mdc-switch.mdc-switch--selected:enabled .mdc-switch__icon {
-    fill: #000000 !important;
-}
-
-.mdc-switch:enabled .mdc-switch__track::before {
-    background: #fff !important;
-}
-
-.mdc-switch__track::before {
-    border-width: var(--mat-switch-track-outline-width) !important;
-    border-color: #ffffff !important;
-}
-.mdc-switch:enabled .mdc-switch__track::before {
-    background: #f1f1f1 !important;
-}
-
-.notifications-row-two div hr {
-    height: 4px;
-    background-color: #000;
-    border: none;
-    border-radius: 15px;
-    width: 98%;
-}
-
-/* Section Two */
-.notifications-section-two {
-    margin-top: 20px;
-}
-
-.notifications-section-two h3 {
-    font-weight: 500;
-}
-
-.notifications-section-two .trigger-row {
-    display: flex;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
-.notifications-section-two .trigger-checkbox-column {
-    width: 5%;
-}
-
-.notifications-section-two .trigger-text-column {
-    /* width: 95%; */
-}
-
-.notifications-section-two .trigger-text-column h4 {
-    margin: 0;
-    font-weight: 500;
-}
-
-.notifications-section-two .trigger-text-column p {
-    margin: 5px 0 0 0;
 }
 
 /* Mat-form-field Styles */
@@ -499,12 +188,6 @@ mat-label {
     background-color: white !important;
 }
 
-/* Checkbox Styles */
-
-.mdc-checkbox__native-control:enabled:checked ~ .mdc-checkbox__background {
-    background-color: #03ad00 !important;
-    border: #03ad00;
-}
 .mat-grid-tile-content {
     top: 0;
     left: 0;
@@ -530,6 +213,8 @@ mat-label {
     flex-direction: column;
     padding: 16px;
     background-color: none;
+    align-items: center;
+    width: 100%;
     border-radius: 8px;
 }
 
@@ -558,8 +243,10 @@ mat-label {
 }
 
 .accounts-row-two {
-    overflow-y: scroll;
-    max-height: 80vh;
+    /* overflow-y: scroll; */
+    min-height: 80vh;
+    width: 75%;
+    overflow-y: auto;
 }
 .mat-mdc-button .mat-mdc-button-touch-target {
     position: absolute;
@@ -591,15 +278,28 @@ mat-label {
     align-content: center;
     flex-wrap: wrap;
     text-align: center;
-    overflow-y: scroll;
+    /* overflow-y: scroll; */
+    width: 100%;
+}
+
+.name-surname-row {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
 }
 
 .form-container h3 {
     font-size: 40px;
 }
 
+.form-container hr {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
 .form-container h4 {
     font-size: 30px;
+    align-self: flex-start;
 }
 
 .form-row {
@@ -615,10 +315,20 @@ mat-label {
 .form-row.form-row-password {
     width: 100%;
     margin-right: 30px;
+    margin-top: 15px;
 }
+
+.current-password {
+    width: 70%;
+  }
 
 .form-field {
     flex: 1;
+    width: 48%;
+}
+
+.email-field {
+    width: 100%;
 }
 
 button mat-button {
@@ -636,14 +346,30 @@ button.change-password-button {
     color: #000000 !important;
     margin-top: 10px !important;
     font-size: 15px !important;
+    margin-right: 50px;
+    width: 28%;
 }
 
 button.cancel-password-button {
     background-color: transparent;
     color: red !important;
     margin-top: 10px !important;
-    font-size: 20px !important;
+    font-size: 15px !important;
+    margin-left: 50px;
 }
+
+.delete-confirmation-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 20px;
+  }
+
+  .delete-confirmation-row .form-field {
+    width: 48%;
+    margin-bottom: 10px;
+  }
 
 button.delete-button {
     /* background-color: #8f8f8f; */
@@ -653,6 +379,7 @@ button.delete-button {
     font-size: 20px;
     font-weight: 400;
     margin-bottom: 20px;
+    margin-right: 10px;
 }
 
 /* CONFIRM DELETE ACCOUNT PASSWORD */
@@ -661,7 +388,24 @@ button.delete-button {
     color: black !important;
     font-size: 20px !important;
     font-weight: 500 !important;
+    width: 100%;
+    margin-top: 10px;
 }
+
+.delete-account-row {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+    margin-top: 20px;
+  }
+
+.password-action-buttons {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 10px;
+  }
 
 /* Custom Form Field Styling */
 .form-row mat-form-field {
@@ -698,3 +442,11 @@ mat-form-field .mdc-line-ripple {
 .mat-form-field-outline-gap {
     border-radius: 15px !important;
 }
+
+.password-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+  

@@ -10,7 +10,13 @@
                                 mat-raised-button
                                 *ngFor="let filter of faqFilters"
                                 (click)="onFilterClick(filter)"
-                                style="border-radius: 5px; color: var(--button-text-color); background-color: var(--button-bg-color); box-shadow: var(--button-shadow); transition: all 0.3s ease;"
+                                style="
+                                    border-radius: 5px;
+                                    color: var(--button-text-color);
+                                    background-color: var(--button-bg-color);
+                                    box-shadow: var(--button-shadow);
+                                    transition: all 0.3s ease;
+                                "
                             >
                                 {{ filter }}
                             </button>
@@ -50,7 +56,7 @@
             </ng-container>
         </mat-tab>
         <mat-tab label="User Guides">
-            <ng-container>
+            <!-- <ng-container>
                 <div class="user-guides-section">
                     <div class="user-guides-row-two">
                         <div class="article-content">
@@ -580,7 +586,24 @@
                         </div>
                     </div>
                 </div>
-            </ng-container>
+            </ng-container> -->
+            <h5>View PDF Manual</h5>
+            <iframe
+                src="https://github.com/COS301-SE-2024/Smart-Inventory/tree/develop/documents/Demo%203/UserManual.pdf"
+                width="100%"
+                height="500px"
+            >
+                This browser does not support PDFs. Please download the PDF to view it:
+            </iframe>
+            <h5>Download PDF Manual</h5>
+            <p>
+                <a
+                    href="https://github.com/COS301-SE-2024/Smart-Inventory/tree/develop/documents/Demo%203/UserManual.pdf"
+                    download="UserManual.pdf"
+                >
+                    Click here to download the full Smart Inventory User Manual (PDF)
+                </a>
+            </p>
         </mat-tab>
         <mat-tab label="Contact Support">
             <ng-container>

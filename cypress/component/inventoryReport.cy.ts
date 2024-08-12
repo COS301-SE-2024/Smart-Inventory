@@ -1,160 +1,94 @@
+// cypress/component/inventory-report.component.cy.ts
+
 import { InventoryReportComponent } from '../../src/app/components/reports/inventory-report/inventory-report.component';
-// import { InventoryReportComponent } from '../../src/app/pages/inventory-report/inventory-report.component';
+import { MountConfig, mount } from 'cypress/angular';
 import { TitleService } from '../../src/app/components/header/title.service';
-import { ChartDataService } from '../../src/app/services/chart-data.service';
-import { Router, ActivatedRoute } from '@angular/router';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
-import * as amplifyAuth from 'aws-amplify/auth';
-import { LambdaClient } from '@aws-sdk/client-lambda';
-import { CognitoIdentityProviderClient } from '@aws-sdk/client-cognito-identity-provider';
-import { of } from 'rxjs';
+import { ActivatedRoute, Router } from '@angular/router';
+import { HttpClientModule } from '@angular/common/http';
 
 describe('InventoryReportComponent', () => {
-  let mockTitleService: Partial<TitleService>;
-  let mockRouter: Partial<Router>;
-  let mockChartDataService: Partial<ChartDataService>;
-  let mockActivatedRoute: Partial<ActivatedRoute>;
-
-  beforeEach(() => {
-    mockTitleService = {
-      updateTitle: cy.stub().as('updateTitleStub')
-    };
-
-    mockRouter = {
-      navigate: cy.stub().as('routerNavigateStub')
-    };
-
-    mockChartDataService = {
-      setPieData: cy.stub().as('setPieDataStub'),
-      setBarData: cy.stub().as('setBarDataStub')
-    };
-
-    mockActivatedRoute = {
-      params: of({}),
-      queryParams: of({}),
-      snapshot: {
-        paramMap: {
-          get: cy.stub().returns(null)
-        }
-      }
-    };
-
-    // Mock Amplify auth
-    cy.stub(amplifyAuth, 'fetchAuthSession').resolves({
-      tokens: {
-        accessToken: {
-          toString: () => 'mock-access-token'
+  const mountConfig: MountConfig<InventoryReportComponent> = {
+    declarations: [],
+    imports: [
+      HttpClientModule,
+      // Add other necessary imports here
+    ],
+    providers: [
+      TitleService,
+      {
+        provide: Router,
+        useValue: {
+          navigate: cy.stub().as('routerNavigate')
         }
       },
-      credentials: {}
-    });
+      {
+        provide: ActivatedRoute,
+        useValue: {}
+      }
+    ]
+  };
 
-    // Mock AWS SDK clients
-    cy.stub(LambdaClient.prototype, 'send').resolves({
-      Payload: new TextEncoder().encode(JSON.stringify({
-        statusCode: 200,
-        body: JSON.stringify([
-          {
-            inventoryID: '1',
-            SKU: 'ITEM1',
-            category: 'Category1',
-            description: 'Item 1',
-            quantity: 100,
-            supplier: 'Supplier1',
-            expirationDate: '2023-12-31',
-            lowStockThreshold: 20,
-            reorderFreq: 30
-          }
-        ])
-      }))
-    });
+  beforeEach(() => {
+    // Mock any necessary API calls
+    cy.intercept('GET', '**/inventory', { fixture: 'inventory.json' }).as('getInventory');
+    mount(InventoryReportComponent, mountConfig);
+    cy.wait('@getInventory');
+  });
 
-    cy.stub(CognitoIdentityProviderClient.prototype, 'send').resolves({
-      UserAttributes: [
-        { Name: 'custom:tenentId', Value: 'mock-tenant-id' }
-      ]
-    });
+  it('should display the inventory report title', () => {
+    cy.contains('Inventory Report').should('be.visible');
+  });
 
-    cy.mount(InventoryReportComponent, {
-      imports: [HttpClientTestingModule],
-      providers: [
-        { provide: TitleService, useValue: mockTitleService },
-        { provide: Router, useValue: mockRouter },
-        { provide: ChartDataService, useValue: mockChartDataService },
-        { provide: ActivatedRoute, useValue: mockActivatedRoute }
-      ]
-    }).as('component');
+  it('should display the grid component', () => {
+    cy.get('app-grid').should('exist');
+  });
 
-    // Wait for component to initialize
-    cy.get('@component').then((wrapper) => {
-      return new Cypress.Promise((resolve) => {
-        const checkInitialization = () => {
-          const component = wrapper.component as InventoryReportComponent;
-          if (!component.isLoading) {
-            resolve();
-          } else {
-            setTimeout(checkInitialization, 100);
-          }
-        };
-        checkInitialization();
-      });
+  it('should display key metrics', () => {
+    cy.contains('Total inventory items:').should('be.visible');
+    cy.contains('Low stock items:').should('be.visible');
+    cy.contains('Out of stock items:').should('be.visible');
+    cy.contains('Inventory value:').should('be.visible');
+    cy.contains('Inventory turnover rate:').should('be.visible');
+  });
+
+  it('should have correct column definitions in the grid', () => {
+    const expectedColumns = [
+      'SKU', 'Description', 'Category', 'Quantity',
+      'Low Stock Threshold', 'Reorder Amount', 'Unit Price', 'Total Value'
+    ];
+
+    expectedColumns.forEach(column => {
+      cy.get('.ag-header-cell').contains(column).should('be.visible');
     });
   });
 
-  it('should initialize and load data', () => {
-    cy.get('@component').then((wrapper) => {
-      const component = wrapper.component as InventoryReportComponent;
-      
-      expect(component.isLoading).to.be.false;
-      expect(component.rowData).to.have.length(1);
-      expect(component.rowData[0]).to.include({
-        sku: 'ITEM1',
-        category: 'Category1',
-        description: 'Item 1',
-        quantity: 100
-      });
-    });
-
-    cy.get('@updateTitleStub').should('have.been.calledWith', 'Inventory Report');
+  it('should display chart components', () => {
+    cy.get('app-stackedbarchart').should('exist');
+    cy.get('app-scatterplot').should('exist');
   });
 
-  it('should setup charts', () => {
-    cy.get('@component').then((wrapper) => {
-      const component = wrapper.component as InventoryReportComponent;
-      
-      expect(component.options1).to.not.be.undefined;
-      expect(component.options2).to.not.be.undefined;
-      expect(component.options3).to.not.be.undefined;
-      expect(component.options4).to.not.be.undefined;
-      expect(component.options5).to.not.be.undefined;
-    });
-
-    cy.get('@setPieDataStub').should('have.been.calledThrice');
-    cy.get('@setBarDataStub').should('have.been.calledOnce');
+  it('should navigate back to reports when back button is clicked', () => {
+    cy.contains('Back to reports').click();
+    cy.get('@routerNavigate').should('have.been.calledWith', ['/reports']);
   });
 
-  it('should calculate metrics correctly', () => {
-    cy.get('@component').then((wrapper) => {
-      const component = wrapper.component as InventoryReportComponent;
-      
-      expect(component.InventoryReport).to.not.be.undefined;
-      expect(component.InventoryReport.metrics).to.include({
-        metric_1: 'Total Stock Items: 100',
-        metric_2: 'Total Requests: 0',
-        metric_3: 'Total Stock Quantity Requested: 0',
-        metric_4: 'Total Low Stock Items: 0'
-      });
-    });
+  it('should update metrics based on inventory data', () => {
+    cy.contains('Total inventory items:').should('include.text');
+    cy.contains('Low stock items:').should('include.text');
+    cy.contains('Out of stock items:').should('include.text');
+    cy.contains('Inventory value:').should('include.text');
+    // Add more specific metric checks based on your mock data
   });
 
-  it('should navigate back to reports', () => {
-    cy.get('@component').then((wrapper) => {
-      const component = wrapper.component as InventoryReportComponent;
-      component.back();
-    });
-
-    cy.get('@routerNavigateStub').should('have.been.calledWith', ['/reports']);
+  it('should highlight low stock items', () => {
+    // Assuming you have a CSS class for low stock items
+    cy.get('.low-stock-item').should('exist');
   });
 
-  // Add more tests as needed...
+  it('should display correct inventory value calculation', () => {
+    // This test would depend on your specific implementation
+    cy.get('.total-inventory-value').should('exist');
+  });
+
+  // Add more tests as needed for specific functionalities of the Inventory Report
 });

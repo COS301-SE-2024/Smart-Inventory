@@ -162,3 +162,7 @@
             style="width: 400px; height: 400px;"></app-templatechart>
     </div>
 </div>
+
+<div *ngIf="isLoading" class="loading-overlay">
+    <app-loading-spinner></app-loading-spinner>
+</div>

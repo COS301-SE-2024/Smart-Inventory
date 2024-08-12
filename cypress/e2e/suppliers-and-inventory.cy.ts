@@ -1,28 +1,29 @@
-// cypress/e2e/inventory.cy.ts
+// cypress/e2e/suppliers-and-inventory.cy.ts
 
-const waitUntil = (predicate: () => boolean | Cypress.Chainable<boolean>, options: { timeout?: number; interval?: number } = {}) => {
+const waitUntil = (
+  predicate: () => boolean | Cypress.Chainable<boolean>,
+  options: { timeout?: number; interval?: number } = {}
+): Cypress.Chainable<boolean> => {
   const { timeout = 60000, interval = 1000 } = options;
   const startTime = Date.now();
 
-  const checkCondition = () => {
+  const checkCondition = (): Cypress.Chainable<boolean> => {
     if (Date.now() - startTime > timeout) {
       throw new Error('Timed out waiting for condition');
     }
 
     const result = predicate();
     if (Cypress.isCy(result)) {
-      return result.then((value) => {
+      return result.then((value: boolean) => {
         if (value) {
-          return value;
+          return cy.wrap(true);
         }
-        cy.wait(interval);
-        return checkCondition();
+        return cy.wait(interval).then(checkCondition);
       });
     } else if (result) {
-      return result;
+      return cy.wrap(true);
     } else {
-      cy.wait(interval);
-      return checkCondition();
+      return cy.wait(interval).then(checkCondition);
     }
   };
 
@@ -32,8 +33,8 @@ const waitUntil = (predicate: () => boolean | Cypress.Chainable<boolean>, option
 describe('Suppliers Page E2E Test', () => {
   beforeEach(() => {
     cy.visit('http://localhost:4200/login');
-    cy.get('input[name="username"]').type('u20418494@tuks.co.za');
-    cy.get('input[name="password"]').type('Hawa1234@');
+    cy.get('input[name="username"]').type('u21491578@tuks.co.za');
+    cy.get('input[name="password"]').type('Lovemore!7');
     cy.get('button[type="submit"]').contains('Sign in').click();
 
     // Wait for any redirects to complete
@@ -300,7 +301,6 @@ describe('Inventory Page E2E Test', () => {
         throw new Error('Failed to select supplier after multiple attempts');
       }
   
-      // cy.get('@supplierSelect').click({force: true});
       cy.get('@supplierSelect').click();
       cy.wait(1000); // Wait for dropdown to open
   

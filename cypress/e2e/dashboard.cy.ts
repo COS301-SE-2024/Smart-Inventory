@@ -1,5 +1,34 @@
 // cypress/e2e/smart-inventory.cy.ts
 
+const waitUntil = (predicate: () => boolean | Cypress.Chainable<boolean>, options: { timeout?: number; interval?: number } = {}) => {
+  const { timeout = 60000, interval = 1000 } = options;
+  const startTime = Date.now();
+
+  const checkCondition = () => {
+    if (Date.now() - startTime > timeout) {
+      throw new Error('Timed out waiting for condition');
+    }
+
+    const result = predicate();
+    if (Cypress.isCy(result)) {
+      return result.then((value) => {
+        if (value) {
+          return value;
+        }
+        cy.wait(interval);
+        return checkCondition();
+      });
+    } else if (result) {
+      return result;
+    } else {
+      cy.wait(interval);
+      return checkCondition();
+    }
+  };
+
+  return checkCondition();
+};
+
 describe('Dashboard and Navigation E2E Test', () => {
     beforeEach(() => {
       cy.visit('http://localhost:4200/login');

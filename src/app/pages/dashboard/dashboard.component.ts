@@ -230,7 +230,7 @@ export class DashboardComponent implements OnInit {
         item.dragEnabled = false;
     }
 
-    populateRequestOrders(stockRequests: any[], orders: any[]) {
+    async populateRequestOrders(stockRequests: any[], orders: any[]) {
         const requestSummary = new Map<string, number>();
 
         // Aggregate stock requests
@@ -809,7 +809,7 @@ export class DashboardComponent implements OnInit {
         await this.dashboardData();
         await this.loadOrdersData();
         await this.loadStockData();
-        this.RequestOrders = this.populateRequestOrders(this.stockRequest, this.orders);
+        this.RequestOrders = await this.populateRequestOrders(this.stockRequest, this.orders);
         this.isLoading = false;
     }
 }

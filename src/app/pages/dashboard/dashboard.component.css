@@ -5,9 +5,16 @@ gridster.scrollVertical::-webkit-scrollbar {
 
 /* Hide scrollbar for IE, Edge and Firefox */
 gridster.scrollVertical {
-    -ms-overflow-style: none;  
+    -ms-overflow-style: none;
     scrollbar-width: none;
     overflow-y: auto;
+}
+
+.btnAdd {
+    border-radius: 20px;
+    /* margin-right: 10px; */
+    --mdc-protected-button-label-text-color: #000000;
+    background-color: #f1f1f1;
 }
 
 gridster-item {
@@ -21,9 +28,9 @@ gridster-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: white;
+    background-color: var(--dash-cards-bg-color);
     /* default background for non-Orders */
-    color: black;
+    color: var(--dash-cards-text-color);
     border-radius: 8px;
     padding: 20px;
     z-index: 2;
@@ -98,12 +105,14 @@ h4 {
     display: flex;
     justify-content: space-between;
     height: 100%;
+    background-color: var(--dash-cards-bg-color);
 }
 
 .statistics {
     display: flex;
     flex-direction: column;
-    width: 50%;
+    width: 100%;
+    background-color: var(--dash-cards-bg-color);
 }
 
 .sales,
@@ -120,6 +129,7 @@ h4 {
     display: flex;
     justify-content: space-between;
     height: 100%;
+    background-color: var(--dash-cards-bg-color);
 }
 
 .chart-section {
@@ -159,7 +169,7 @@ h4 {
 }
 
 .report-btn {
-    background-color: blue;
+    background-color: var(--report-bg-color);
     color: white;
     padding: 10px 20px;
     border: none;
@@ -171,7 +181,7 @@ h4 {
 gridster {
     position: relative;
     box-sizing: border-box;
-    background: rgb(255, 255, 255) !important;
+    background: var(--dash-bg-color) !important;
     width: 100%;
     height: 100%;
     -webkit-user-select: none;
@@ -295,7 +305,7 @@ a#help-button {
 
 .help-button-container {
     position: sticky;
-    top: 95%;
+    top: 94%;
     /* Adjust based on desired visibility */
     /* right: 20px; */
     /* Keeps it visible at the top-right */
@@ -313,20 +323,15 @@ a#help-button {
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 104;  /* Overlay z-index */
-    pointer-events: none;  /* Allows clicks to pass through */
+    z-index: 104;
+    /* Overlay z-index */
+    pointer-events: none;
+    /* Allows clicks to pass through */
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-.modal {
-    background: white;
-    padding: 20px;
-    border-radius: 5px;
-    pointer-events: auto;  /* This enables interaction with the modal */
-    z-index: 101;  /* Ensures it is above the overlay */
-}
 
 .blur {
     /* filter: blur(1px); */
@@ -338,7 +343,86 @@ a#help-button {
     position: absolute;
     top: 10px;
     right: 10px;
-    z-index: 105;  /* Highest, so it's clickable */
-    pointer-events: auto;  /* Ensure they are clickable */
+    z-index: 105;
+    /* Highest, so it's clickable */
+    pointer-events: auto;
+    /* Ensure they are clickable */
     cursor: pointer;
+}
+
+.mat-drawer-container {
+    position: static !important;
+    z-index: 1;
+    color: var(--mat-sidenav-content-text-color);
+    background-color: var(--mat-sidenav-content-background-color);
+    box-sizing: border-box;
+    -webkit-overflow-scrolling: touch;
+    display: block;
+    overflow: hidden;
+}
+
+/* .sidenav-container {
+    width: 50%;
+    height: 50%;
+} */
+
+.sidenav-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    /* background-color: #f0f0f0;
+    border-bottom: 1px solid #e0e0e0; */
+}
+
+.charts-container {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+}
+
+.sidenav-chart {
+    width: 100%;
+    height: 345px;
+    margin-bottom: 114px; /* Space between charts */
+}
+
+.mat-drawer {
+    position: relative;
+    z-index: 4;
+    color: var(--mat-sidenav-container-text-color);
+    box-shadow: var(--mat-sidenav-container-elevation-shadow);
+    background-color: var(--card-bg-color) !important;
+    border-top-right-radius: var(--mat-sidenav-container-shape);
+    border-bottom-right-radius: var(--mat-sidenav-container-shape);
+    width: var(--mat-sidenav-container-width);
+    display: block;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    z-index: 3;
+    outline: 0;
+    box-sizing: border-box;
+    overflow-y: auto;
+    transform: translate3d(-100%, 0, 0);
+}
+
+/* Media queries to handle responsiveness */
+@media (max-width: 768px) {
+    .chart {
+        height: 150px; /* Adjust height as necessary for smaller devices */
+    }
+}
+
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
 }

@@ -1,6 +1,28 @@
+@import 'ag-grid-community/styles/ag-grid.css';
+@import 'ag-grid-community/styles/ag-theme-quartz.css';
+@import 'ag-grid-community/styles/ag-theme-material.css';
+@import 'ag-grid-community/styles/ag-theme-alpine.css';
+
 .aggrid {
     width: 100%;
-    height: 60vh;
+    /* height: 20vh; */
+}
+
+.tooltip {
+    max-width: 250px;
+    /* Adjust this value as needed */
+}
+
+
+.icon {
+    font-size: 20px;
+    border-radius: 50%;
+    padding-left: 15px;
+    display: flex;
+    align-items: inherit;
+    height: 100%;
+    width: 100%;
+    color: #3a3a3a54;
 }
 
 .btn-holder {
@@ -11,18 +33,30 @@
 }
 
 .btnAdd {
-    border-radius: 5px;
+    border-radius: 20px;
     margin-right: 10px;
     --mdc-protected-button-label-text-color: #000000;
+    background-color: #f1f1f1;
 }
 
-input {
+.input-container {
     border: 1px solid grey;
     border-radius: 5px;
     height: 40px;
     width: 350px;
-    padding: 5px;
 }
+
+.input-box {
+    height: 36px;
+    width: 323px;
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    border: none;
+    background-color: none;
+}
+
 mat-select {
     border: 1px solid grey;
     border-radius: 5px;
@@ -34,11 +68,28 @@ mat-select {
     font-size: 15px;
 }
 
+mat-select {
+    color: var(--text-color);
+}
+
+/* For global styles.css */
+.mat-form-field-type-mat-select .mat-form-field-label {
+    color: var(--text-color) !important;
+}
+
 ::ng-deep .mat-mdc-select-value {
     width: 100px;
+}
+
+:host ::ng-deep .mat-form-field-type-mat-select .mat-form-field-label {
+    color: var(--text-color) !important;
 }
 
 .filter {
     display: flex;
     align-items: center;
+}
+
+#mat-menu-panel-1{
+    width: 135px;
 }

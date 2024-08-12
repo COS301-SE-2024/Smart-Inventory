@@ -1,0 +1,132 @@
+<div class="supplier-quote-container">
+
+  <p class="submission-deadline">Submission Deadline: {{submissionDeadline | date:'EEEE, MMMM d, y, h:mm a'}}</p>
+
+  <div class="supplier-info">
+    <div class="supplier-details">
+      <h3>{{supplierInfo.companyName}}</h3>
+      <p><strong>Contact:</strong> {{supplierInfo.contactPerson}}</p>
+      <p><strong>Email:</strong> {{supplierInfo.email}}</p>
+      <p><strong>Phone:</strong> {{supplierInfo.phone}}</p>
+      <p><strong>Address:</strong> {{supplierInfo.address}}</p>
+      <button class="update-contact-btn" (click)="openUpdateContactModal()">Update Contact Information</button>
+    </div>
+  </div>
+
+  <h2>QUOTATION</h2>
+
+  <div class="delivery-address">
+    <h3>Delivery Address</h3>
+    <p><strong>Company:</strong> {{deliveryAddress.company}}</p>
+    <p><strong>Address:</strong> {{deliveryAddress.street}}, {{deliveryAddress.city}}, {{deliveryAddress.state}} {{deliveryAddress.postalCode}}, {{deliveryAddress.country}}</p>
+    <p><strong>Delivery Instructions:</strong> {{deliveryAddress.instructions}}</p>
+    
+    <div class="contact-information">
+      <h3>Contact Information</h3>
+      <p><strong>Contact Name:</strong> {{deliveryAddress.contactName}}</p>
+      <p><strong>Email:</strong> {{deliveryAddress.email}}</p>
+      <p><strong>Phone:</strong> {{deliveryAddress.phone}}</p>
+    </div>
+  </div>
+
+  <div class="currency-selector">
+    <label for="currency">Select Currency:</label>
+    <select id="currency" [(ngModel)]="selectedCurrency" (change)="updateCurrency()">
+      <option *ngFor="let currency of currencies" [value]="currency.code">
+        {{currency.code}} - {{currency.name}}
+      </option>
+    </select>
+  </div>
+
+  <div class="table-container">
+    <table class="quote-table">
+      <thead>
+        <tr>
+
+          <th>Description</th>
+          <th>UPC</th>
+          <th>SKU</th>
+          <th>Requested Quantity</th>
+          <th>Availability</th>
+          <th>Available Quantity</th>
+          <th>Unit Cost</th>
+          <th>Total Cost</th>
+          <th>Discount (%)</th>
+          <th>Total Price</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of quoteItems; let i = index">
+
+          <td>{{item.description}}</td>
+          <td>{{item.upc}}</td>
+          <td>{{item.sku}}</td>
+          <td>{{item.requestedQuantity}}</td>
+          <td class="availability-checkbox">
+            <input type="checkbox" [(ngModel)]="item.isAvailable" (change)="onAvailabilityChange(i)">
+          </td>
+          <td>
+            <input type="number" [(ngModel)]="item.availableQuantity" (ngModelChange)="updateTotals(i)" [disabled]="!item.isAvailable">
+          </td>
+          <td>
+            <input type="number" [(ngModel)]="item.unitCost" (ngModelChange)="updateTotals(i)" [disabled]="!item.isAvailable">
+          </td>
+          <td class="total-cost">{{item.totalCost | customCurrency:selectedCurrency}}</td>
+          <td>
+            <input type="number" [(ngModel)]="item.discount" (ngModelChange)="updateTotals(i)" [disabled]="!item.isAvailable">
+          </td>
+          <td class="total-price">{{item.totalPrice | customCurrency:selectedCurrency}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="quote-summary">
+    <div class="summary-row">
+      <label for="vatPercentage">VAT (%):</label>
+      <input type="number" id="vatPercentage" [(ngModel)]="vatPercentage" (ngModelChange)="updateTotalQuoteValue()" class="summary-input">
+    </div>
+    <div class="summary-row">
+      <label for="deliveryDate">Delivery Date:</label>
+      <input type="date" id="deliveryDate" [(ngModel)]="deliveryDate" class="summary-input">
+    </div>
+    <div class="summary-row">
+      <label for="deliveryCost">Delivery Cost:</label>
+      <input type="number" id="deliveryCost" [(ngModel)]="deliveryCost" (ngModelChange)="updateTotalQuoteValue()" class="summary-input">
+    </div>
+    <div class="summary-row">
+      <strong>Subtotal:</strong> 
+      <span class="summary-value">{{getSubtotal() | customCurrency:selectedCurrency}}</span>
+    </div>
+    <div class="summary-row">
+      <strong>VAT Amount:</strong> 
+      <span class="summary-value">{{getVatAmount() | customCurrency:selectedCurrency}}</span>
+    </div>
+    <div class="summary-row">
+      <strong>Delivery Cost:</strong> 
+      <span class="summary-value">{{deliveryCost | customCurrency:selectedCurrency}}</span>
+    </div>
+    <div class="summary-row total">
+      <strong>Total Quote Value:</strong> 
+      <span class="summary-value">{{getTotalQuoteValue() | customCurrency:selectedCurrency}}</span>
+    </div>
+  </div>
+  
+    <div class="additional-info">
+      <h3>Additional Comments</h3>
+      <textarea id="additionalComments" [(ngModel)]="additionalComments" rows="4" placeholder="Enter any additional information or notes here"></textarea>
+    </div>
+    <div class="attachments">
+      <h3>Attachments</h3>
+      <input type="file" id="attachments" (change)="onFileSelected($event)" multiple>
+      <p class="file-info">Accepted file types: PDF, DOC, DOCX, XLS, XLSX (Max size: 10MB per file)</p>
+      <ul class="file-list" *ngIf="selectedFiles.length > 0">
+        <li *ngFor="let file of selectedFiles">
+          {{ file.name }} ({{ (file.size / 1024 / 1024).toFixed(2) }} MB)
+          <button class="remove-file" (click)="removeFile(file)">Remove</button>
+        </li>
+      </ul>
+    </div>
+
+  <button class="submit-btn" (click)="submitQuote()">Submit Quote</button>
+</div>

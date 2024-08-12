@@ -1,0 +1,66 @@
+.metric-card {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 16px;
+    box-sizing: border-box;
+}
+
+.metric-header {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin-bottom: 8px;
+}
+
+.metric-name {
+    margin-left: 8px;
+    font-size: 20px;
+    font-weight: 500;
+}
+
+.metric-value {
+    text-align: center;
+}
+
+.metric-value h2 {
+    font-size: 36px;
+    margin: 16px 0;
+}
+
+.metric-trend {
+    text-align: center;
+}
+
+mat-icon {
+    font-size: 24px;
+    height: 80px;
+    width: 24px;
+}
+
+.text-success {
+    color: #4caf50;
+}
+
+.text-danger {
+    color: #f44336;
+}
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+mat-card.mat-mdc-card.mdc-card {
+    background-color: white;
+    box-shadow: 0 4px 8px rgb(0 0 0 / 30%);
+}

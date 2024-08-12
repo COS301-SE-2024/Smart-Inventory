@@ -1,0 +1,71 @@
+<div style="height: 100%; display: block; overflow: scroll">
+    <mat-toolbar style="width: 100%">
+        <button mat-button style="width: 100%; background-color: #f1f1f1; color: black" (click)="back()">
+            Back to reports
+        </button>
+    </mat-toolbar>
+    <mat-grid-list cols="9" rowHeight="20vh" gutterSize="15px">
+        <mat-grid-tile [colspan]="3" [rowspan]="2">
+            <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
+                <mat-card style="height: 100%; width: 100%">
+                    <mat-card-content>
+                        <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%;">
+                            <div>
+                                <mat-icon>{{ ActivityReport.metrics[0].icon }}</mat-icon>
+                                <span>{{ ActivityReport.metrics[0].name }}</span>
+                            </div>
+                            <div>
+                                <h2>{{ ActivityReport.metrics[0].value }}</h2>
+                            </div>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+            </div>
+        </mat-grid-tile>
+        <mat-grid-tile [colspan]="3" [rowspan]="2">
+            <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
+                <mat-card style="height: 100%; width: 100%">
+                    <mat-card-content>
+                        <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%;">
+                            <div>
+                                <mat-icon>{{ ActivityReport.metrics[1].icon }}</mat-icon>
+                                <span>{{ ActivityReport.metrics[1].name }}</span>
+                            </div>
+                            <div>
+                                <h2>{{ ActivityReport.metrics[1].value }}</h2>
+                            </div>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+            </div>
+        </mat-grid-tile>
+        <mat-grid-tile [colspan]="3" [rowspan]="2">
+            <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
+                <mat-card style="height: 100%; width: 100%">
+                    <mat-card-content>
+                        <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%;">
+                            <div>
+                                <mat-icon>{{ ActivityReport.metrics[2].icon }}</mat-icon>
+                                <span>{{ ActivityReport.metrics[2].name }}</span>
+                            </div>
+                            <div>
+                                <h2>{{ ActivityReport.metrics[2].value }}</h2>
+                            </div>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+            </div>
+        </mat-grid-tile>
+        <mat-grid-tile [colspan]="9" [rowspan]="4">
+            <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
+                <div class="inventoryHolder">
+                    <app-grid [rowData]="rowData" [columnDefs]="colDefs" #gridComponent> </app-grid>
+                </div>
+            </div>
+        </mat-grid-tile>
+    </mat-grid-list>
+</div>
+
+<div *ngIf="isLoading" class="loading-overlay">
+    <app-loading-spinner></app-loading-spinner>
+</div>

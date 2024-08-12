@@ -68,4 +68,71 @@ body, html {
   padding: 0; /* Reset default padding */
   /* overflow-y: scroll; */
 }
-  
+
+/* // styles.scss */
+.mat-form-field-type-mat-select .mat-form-field-label {
+    color: var(--text-color) !important;
+}
+
+
+/* Define the base colors */
+:root {
+  --background-color: #ffffff; /* Light mode background */
+  --text-color: #000000;       /* Light mode text */
+  --text-color-hover: rgb(27, 27, 215);
+  --sidebar-bg-color: #f2f2f2; /* Light mode sidebar background */
+  --sidebar-hover-bg-color: #d6d6d6;
+  --sidebar-text-color: #000000;
+  --card-bg-color: #ffffff;    /* Light mode card background */
+  --card-text-color: #000000;  /* Light mode card text color */
+  --header-bg-color: #EEEEEE;
+  --profile-pic: #ffff;
+  --header-profile-text: #000000;
+  --svg-stroke-color: #000000;
+  --dash-cards-text-color: #000000;
+  --dash-cards-bg-color: #FFFFFF;
+  --dash-bg-color: #FFFFFF;
+  --tab-active-color: #151414;
+  --tab-inactive-color: rgba(0, 0, 0, 0.6);
+  --tab-indicator-color: #242022;
+  --tab-hover-color: black;
+  --tab-ripple-color: #232222;
+  --button-bg-color: #f2f2f2;       /* Light mode background color for buttons */
+  --button-text-color: black;        /* Light mode text color for buttons */
+  --button-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Subtle shadow for light mode */
+  --help-accordion-bg-color: #fdfbff;
+  --help-accordion-text-color: black;
+  --user-guides-bg-color: white;
+  --report-bg-color: #0A93F6;
+}
+
+[data-theme='dark'] {
+  --background-color: #000000; /* Dark mode background */
+  --text-color: #ffffff;       /* Dark mode text */
+  --text-color-hover: rgb(74, 64, 186);
+  --header-bg-color: #1E1E1E;  /* Dark mode header background */
+  --sidebar-bg-color: #1E1E1E; /* Dark mode sidebar background */
+  --sidebar-text-color: #fff;
+  --sidebar-hover-bg-color: #ffffff1e;
+  --card-bg-color: #424242;    /* Dark mode card background */
+  --card-text-color: #ffffff;  /* Dark mode card text color */
+  --profile-pic: #0000;
+  --header-profile-text: #ffff;
+  --svg-stroke-color: #ffff;
+  --dash-cards-text-color: #ffffff;
+  --dash-cards-bg-color: #1E1E1E;
+  --dash-bg-color: #000000;
+  --tab-active-color: #ffffff;
+  --tab-inactive-color: rgba(255, 255, 255, 0.6);
+  --tab-indicator-color: #f0f0f0;
+  --tab-hover-color: #ffffff;
+  --tab-ripple-color: rgba(255, 255, 255, 0.1);
+  --button-bg-color: #333;           /* Dark mode background color for buttons */
+  --button-text-color: #fff;         /* Dark mode text color for buttons */
+  --button-shadow: -2px 2px 8px rgb(255 255 255 / 39%); /* White shadow for dark mode */
+  --help-accordion-bg-color: #232323;
+  --help-accordion-text-color: white;
+  --user-guides-bg-color: #232323;
+  --user-guides-sidebar-bg-color: #1E1E1E;
+  --report-bg-color: #131313;
+}

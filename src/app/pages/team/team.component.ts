@@ -14,7 +14,7 @@ import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
 import { GridComponent } from '../../components/grid/grid.component';
 import { ColDef } from 'ag-grid-community';
 import { TitleService } from '../../components/header/title.service';
-import { DeleteButtonRenderer } from './delete-button-renderer.component';
+import { DeleteButtonRendererComponent } from './delete-button-renderer.component';
 import { DeleteConfirmationDialogComponent } from './delete-confirmation-dialog.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
@@ -22,7 +22,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { RoleChangeConfirmationDialogComponent } from './role-change-confirmation-dialog.component';
 import { RoleSelectCellEditorComponent } from './role-select-cell-editor.component';
 import { LoadingSpinnerComponent } from '../../components/loader/loading-spinner.component';
-
+import { MaterialModule } from 'app/components/material/material.module';
 @Component({
     selector: 'app-team',
     standalone: true,
@@ -30,18 +30,22 @@ import { LoadingSpinnerComponent } from '../../components/loader/loading-spinner
         CommonModule,
         FormsModule,
         GridComponent,
-        DeleteButtonRenderer,
+        DeleteButtonRendererComponent,
         MatDialogModule,
         MatButtonModule,
         RoleChangeConfirmationDialogComponent,
         RoleSelectCellEditorComponent,
         LoadingSpinnerComponent,
+        MaterialModule,
     ],
     templateUrl: './team.component.html',
     styleUrls: ['./team.component.css'],
 })
 export class TeamComponent implements OnInit {
-    constructor(private titleService: TitleService, private dialog: MatDialog) {}
+    constructor(
+        private titleService: TitleService,
+        private dialog: MatDialog,
+    ) {}
     showPopup = false;
     user = {
         name: '',
@@ -56,21 +60,122 @@ export class TeamComponent implements OnInit {
     isLoading = true;
     rowData: any[] = [];
     colDefs: ColDef[] = [
-        { field: 'given_name', headerName: 'Name' },
-        { field: 'family_name', headerName: 'Surname' },
-        { field: 'email', headerName: 'Email' },
+        { field: 'given_name', headerName: 'Name', filter: 'agSetColumnFilter' },
+        { field: 'family_name', headerName: 'Surname', filter: 'agSetColumnFilter' },
+        { field: 'email', headerName: 'Email', filter: 'agSetColumnFilter' },
         {
             field: 'role',
             headerName: 'Role',
+            filter: 'agSetColumnFilter',
             cellRenderer: RoleSelectCellEditorComponent,
             width: 100,
         },
         {
             headerName: 'Remove Member',
-            cellRenderer: DeleteButtonRenderer,
+            cellRenderer: DeleteButtonRendererComponent,
             width: 100,
         },
     ];
+
+    tenantId: string = '';
+    userName: string = '';
+    userRole: string = '';
+
+    async ngOnInit() {
+        this.titleService.updateTitle('Team');
+        await this.getUserInfo();
+        await this.fetchUsers();
+        await this.logActivity('Viewed team', 'Team page navigated');
+    }
+
+    async getUserInfo() {
+        try {
+            const session = await fetchAuthSession();
+
+            const cognitoClient = new CognitoIdentityProviderClient({
+                region: outputs.auth.aws_region,
+                credentials: session.credentials,
+            });
+
+            const getUserCommand = new GetUserCommand({
+                AccessToken: session.tokens?.accessToken.toString(),
+            });
+            const getUserResponse = await cognitoClient.send(getUserCommand);
+
+            const givenName = getUserResponse.UserAttributes?.find(attr => attr.Name === 'given_name')?.Value || '';
+            const familyName = getUserResponse.UserAttributes?.find(attr => attr.Name === 'family_name')?.Value || '';
+            this.userName = `${givenName} ${familyName}`.trim();
+
+            this.tenantId = getUserResponse.UserAttributes?.find(attr => attr.Name === 'custom:tenentId')?.Value || '';
+
+            const lambdaClient = new LambdaClient({
+                region: outputs.auth.aws_region,
+                credentials: session.credentials,
+            });
+
+            const payload = JSON.stringify({
+                userPoolId: outputs.auth.user_pool_id,
+                username: session.tokens?.accessToken.payload['username'],
+            });
+
+            const invokeCommand = new InvokeCommand({
+                FunctionName: 'getUsersV2',
+                Payload: new TextEncoder().encode(payload),
+            });
+
+            const lambdaResponse = await lambdaClient.send(invokeCommand);
+            const users = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+
+            const currentUser = users.find((user: any) => 
+                user.Attributes.find((attr: any) => attr.Name === 'email')?.Value === session.tokens?.accessToken.payload['username']
+            );
+
+            if (currentUser && currentUser.Groups.length > 0) {
+                this.userRole = this.getRoleDisplayName(currentUser.Groups[0].GroupName);
+            }
+
+        } catch (error) {
+            console.error('Error fetching user info:', error);
+        }
+    }
+
+    async logActivity(task: string, details: string) {
+        try {
+            const session = await fetchAuthSession();
+    
+            const lambdaClient = new LambdaClient({
+                region: outputs.auth.aws_region,
+                credentials: session.credentials,
+            });
+    
+            const payload = JSON.stringify({
+                tenentId: this.tenantId,
+                memberId: this.tenantId,
+                name: this.userName,
+                role: this.userRole || 'Admin',
+                task: task,
+                timeSpent: 0,
+                idleTime: 0,
+                details: details,
+            });
+    
+            const invokeCommand = new InvokeCommand({
+                FunctionName: 'userActivity-createItem',
+                Payload: new TextEncoder().encode(JSON.stringify({ body: payload })),
+            });
+    
+            const lambdaResponse = await lambdaClient.send(invokeCommand);
+            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+    
+            if (responseBody.statusCode === 201) {
+                console.log('Activity logged successfully');
+            } else {
+                throw new Error(responseBody.body);
+            }
+        } catch (error) {
+            console.error('Error logging activity:', error);
+        }
+    }
 
     openAddMemberPopup() {
         this.showPopup = true;
@@ -80,7 +185,7 @@ export class TeamComponent implements OnInit {
         this.showPopup = false;
     }
 
-    onCellValueChanged(event: any) {
+    async onCellValueChanged(event: any) {
         if (event.column.colId === 'role') {
             const dialogRef = this.dialog.open(RoleChangeConfirmationDialogComponent, {
                 width: '350px',
@@ -92,13 +197,11 @@ export class TeamComponent implements OnInit {
                 },
             });
 
-            dialogRef.afterClosed().subscribe((result) => {
+            dialogRef.afterClosed().subscribe(async (result) => {
                 if (result) {
-                    // User confirmed, proceed with the change
                     console.log('Role change confirmed');
-                    // Here you would typically update the backend
+                    await this.logActivity('Changed user role', `Changed role for ${event.data.email} to ${event.newValue}`);
                 } else {
-                    // User cancelled, revert the change
                     event.node.setDataValue('role', event.oldValue);
                 }
             });
@@ -107,38 +210,33 @@ export class TeamComponent implements OnInit {
 
     async onNameCellValueChanged(event: any) {
         if (event.column.colId === 'given_name' || event.column.colId === 'family_name') {
-          try {
-            const session = await fetchAuthSession();
-      
-            const client = new CognitoIdentityProviderClient({
-              region: outputs.auth.aws_region,
-              credentials: session.credentials,
-            });
-      
-            const updateUserAttributesCommand = new AdminUpdateUserAttributesCommand({
-              UserPoolId: outputs.auth.user_pool_id,
-              Username: event.data.email,
-              UserAttributes: [
-                {
-                  Name: event.column.colId,
-                  Value: event.newValue,
-                },
-              ],
-            });
-      
-            await client.send(updateUserAttributesCommand);
-            console.log('User attribute updated successfully');
-          } catch (error) {
-            console.error('Error updating user attribute:', error);
-            // Revert the change in the grid
-            event.node.setDataValue(event.column.colId, event.oldValue);
-          }
-        }
-      }
+            try {
+                const session = await fetchAuthSession();
 
-    async ngOnInit() {
-        this.titleService.updateTitle('Team');
-        await this.fetchUsers();
+                const client = new CognitoIdentityProviderClient({
+                    region: outputs.auth.aws_region,
+                    credentials: session.credentials,
+                });
+
+                const updateUserAttributesCommand = new AdminUpdateUserAttributesCommand({
+                    UserPoolId: outputs.auth.user_pool_id,
+                    Username: event.data.email,
+                    UserAttributes: [
+                        {
+                            Name: event.column.colId,
+                            Value: event.newValue,
+                        },
+                    ],
+                });
+
+                await client.send(updateUserAttributesCommand);
+                console.log('User attribute updated successfully');
+                await this.logActivity('Updated user attribute', `Updated ${event.column.colId} for ${event.data.email}`);
+            } catch (error) {
+                console.error('Error updating user attribute:', error);
+                event.node.setDataValue(event.column.colId, event.oldValue);
+            }
+        }
     }
 
     async onSubmit(formData: any) {
@@ -150,14 +248,13 @@ export class TeamComponent implements OnInit {
                 credentials: session.credentials,
             });
 
-            // Retrieve the custom attribute using GetUserCommand
             const getUserCommand = new GetUserCommand({
                 AccessToken: session.tokens?.accessToken.toString(),
             });
             const getUserResponse = await client.send(getUserCommand);
 
             const adminUniqueAttribute = getUserResponse.UserAttributes?.find(
-                (attr) => attr.Name === 'custom:tenentId'
+                (attr) => attr.Name === 'custom:tenentId',
             )?.Value;
 
             const createUserCommand = new AdminCreateUserCommand({
@@ -190,8 +287,9 @@ export class TeamComponent implements OnInit {
             await client.send(addToGroupCommand);
 
             console.log('User created and added to the group successfully');
+            await this.logActivity('Added new team member', `Added ${formData.email} as ${formData.role}`);
 
-            this.fetchUsers(); // Refresh the user list after adding a new user
+            this.fetchUsers();
             this.closePopup();
         } catch (error) {
             console.error('Error creating user and adding to group:', error);
@@ -208,7 +306,6 @@ export class TeamComponent implements OnInit {
                 credentials: session.credentials,
             });
 
-            // Retrieve the custom attribute using GetUserCommand
             const client = new CognitoIdentityProviderClient({
                 region: outputs.auth.aws_region,
                 credentials: session.credentials,
@@ -220,7 +317,7 @@ export class TeamComponent implements OnInit {
             const getUserResponse = await client.send(getUserCommand);
 
             const adminUniqueAttribute = getUserResponse.UserAttributes?.find(
-                (attr) => attr.Name === 'custom:tenentId'
+                (attr) => attr.Name === 'custom:tenentId',
             )?.Value;
 
             const payload = JSON.stringify({
@@ -229,7 +326,7 @@ export class TeamComponent implements OnInit {
             });
 
             const invokeCommand = new InvokeCommand({
-                FunctionName: 'getUsers',
+                FunctionName: 'getUsersV2',
                 Payload: new TextEncoder().encode(payload),
             });
 

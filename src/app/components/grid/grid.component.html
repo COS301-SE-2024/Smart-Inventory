@@ -1,13 +1,25 @@
 <div class="btn-holder">
     <div class="filter">
-        <input [(ngModel)]="inputFilter" (input)="filterGrid()" placeholder="Search..." />
+        <div class="input-container">
+            <span matPrefix><mat-icon style="padding-top: 7px; padding-left: 2px">search</mat-icon></span>
+            <input
+                class="input-box"
+                matInput
+                [(ngModel)]="inputFilter"
+                (input)="filterGrid()"
+                placeholder="Search..."
+            />
+        </div>
         <mat-select [(ngModel)]="filterSelect" placeholder="Select Column">
             <mat-option *ngFor="let option of selectOptions" [value]="option">{{ option }}</mat-option>
         </mat-select>
+        <div class="icon-container">
+            <mat-icon class="icon" matTooltip="Select a column to search from, then enter your query in the search bar to filter the table." matTooltipPosition="right">info</mat-icon>
+        </div>
     </div>
     <div>
-        <button class="btnAdd" mat-raised-button [matMenuTriggerFor]="menu">Quick Actions</button>
-        <mat-menu #menu="matMenu">
+        <button class="btnAdd" mat-raised-button matTooltip="Quickly access and manage tasks related to current page." [matMenuTriggerFor]="menu">Quick Actions</button>
+        <mat-menu #menu="matMenu" class="menu">
             <button mat-menu-item color="primary" (click)="downloadCSV()">Export Excel</button>
             <button mat-menu-item color="primary" (click)="importExcel()">Import Excel</button>
             <button mat-menu-item color="primary" (click)="addRow()" *ngIf="getCurrentRoute('inventory')">
@@ -19,8 +31,34 @@
             <button mat-menu-item color="primary" (click)="addRow()" *ngIf="getCurrentRoute('suppliers')">
                 + Add Supplier
             </button>
-            <button mat-menu-item color="primary" (click)="addRow()" *ngIf="getCurrentRoute('orders')">
-                + Place Order
+            <button mat-menu-item *ngIf="getCurrentRoute('orders')" color="primary" (click)="openCustomQuoteModal()">
+                + Create Order
+            </button>
+            <button mat-menu-item *ngIf="getCurrentRoute('orders')" color="primary" (click)="deleteOrder()">
+                - Delete Order
+            </button>
+            <button
+                mat-menu-item
+                *ngIf="getCurrentRoute('orders')"
+                color="primary"
+                (click)="onViewGeneratedQuoteClick()"
+            >
+                View Generated Quote
+            </button>
+            <button mat-menu-item *ngIf="getCurrentRoute('orders')" color="primary" (click)="onViewReceivedQuotes()">
+                View Received Quotes
+            </button>
+            <button mat-menu-item *ngIf="getCurrentRoute('orders')" color="primary" (click)="onMarkOrderAsReceived()">
+                Mark Order As Received
+            </button>
+            <button mat-menu-item *ngIf="getCurrentRoute('orders')" color="primary" (click)="onViewEmailTemplate()">
+                View Email Template
+            </button>
+            <button mat-menu-item *ngIf="getCurrentRoute('orders')" color="primary" (click)="onViewDeliveryInfo()">
+                View Delivery Info
+            </button>
+            <button mat-menu-item *ngIf="getCurrentRoute('orders')" color="primary" (click)="openAutomationSettings()">
+                View Automation Settings
             </button>
             <button mat-menu-item *ngIf="getCurrentRoute('inventory')" color="primary" (click)="deleteRow()">
                 - Remove Item
@@ -28,10 +66,9 @@
             <button mat-menu-item *ngIf="getCurrentRoute('suppliers')" color="primary" (click)="deleteRow()">
                 - Remove Supplier
             </button>
-            <button mat-menu-item *ngIf="getCurrentRoute('orders')" color="primary" (click)="deleteRow()">
-                - Cancel Order
+            <button mat-menu-item *ngIf="getCurrentRoute('inventory')" color="primary" (click)="onRequestStock()">
+                Request Stock
             </button>
-            <button mat-menu-item *ngIf="getCurrentRoute('inventory')" color="primary" (click)="onRequestStock()">Request Stock</button>
         </mat-menu>
     </div>
 </div>
@@ -44,8 +81,12 @@
         [editType]="editType"
         (cellValueChanged)="onCellValueChanged($event)"
         (rowValueChanged)="onRowValueChanged($event)"
+        (rowSelected)="onRowSelected($event)"
+        (selectionChanged)="onSelectionChanged($event)"
         [rowData]="rowData"
+        [class]="themeClass"
         class="ag-theme-quartz aggrid"
+        [ngStyle]="gridStyle"
         (gridReady)="onGridReady($event)"
     >
     </ag-grid-angular>

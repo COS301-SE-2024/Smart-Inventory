@@ -1,0 +1,55 @@
+# Use the following command to run the script:
+# .\component_extractor.ps1 team grid inventory
+
+# You might need to adjust the powershell execution policy to run scripts. 
+# Run powershell as administrator and run the following command:
+# Set-ExecutionPolicy RemoteSigned
+
+# Check if at least one argument is provided
+if ($args.Count -eq 0) {
+    Write-Host "Usage: .\component_extractor.ps1 <component1> <component2> ... [filename.extension]"
+    exit 1
+}
+
+# Output file
+$output_file = "component_contents.txt"
+
+# Clear the output file if it exists
+if (Test-Path $output_file) {
+    Clear-Content $output_file
+}
+
+# Function to find and process files
+function Process-File($input) {
+    # Check if the input is a file in the current directory
+    if (Test-Path $input -PathType Leaf) {
+        Add-Content $output_file "$input:"
+        Get-Content $input | Add-Content $output_file
+        Add-Content $output_file "`n"
+        return
+    }
+    
+    # If not a file, treat it as a component
+    $directories = @("components", "pages")
+    foreach ($dir in $directories) {
+        $component_path = Get-ChildItem -Path . -Recurse -Directory | Where-Object { $_.FullName -like "*\$dir\$input" } | Select-Object -First 1 -ExpandProperty FullName
+        if ($component_path) {
+            $files = Get-ChildItem -Path $component_path -File | Where-Object { $_.Name -match "\.(component|page)\.(ts|html|css|scss)$" }
+            foreach ($file in $files) {
+                Add-Content $output_file "$($file.Name):"
+                Get-Content $file.FullName | Add-Content $output_file
+                Add-Content $output_file "`n"
+            }
+            return
+        }
+    }
+    
+    Write-Host "Warning: '$input' not found as a file or component. Skipping..."
+}
+
+# Process each argument provided
+foreach ($arg in $args) {
+    Process-File $arg
+}
+
+Write-Host "Contents have been written to $output_file"

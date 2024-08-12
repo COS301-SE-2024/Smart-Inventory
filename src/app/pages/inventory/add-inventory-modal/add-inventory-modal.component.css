@@ -1,0 +1,15 @@
+:host {
+    display: block;
+    width: 100%;
+    max-width: 600px;
+  }
+  
+  mat-form-field {
+    width: 100%;
+    margin-bottom: 15px;
+  }
+  
+  mat-dialog-content {
+    max-height: 70vh;
+    overflow-y: auto;
+  }

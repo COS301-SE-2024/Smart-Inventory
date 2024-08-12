@@ -80,7 +80,7 @@ body, html {
   --background-color: #ffffff; /* Light mode background */
   --text-color: #000000;       /* Light mode text */
   --text-color-hover: rgb(27, 27, 215);
-  --sidebar-bg-color: #f2f2f2; /* Light mode sidebar background */
+  --sidebar-bg-color: #f1f1f1; /* Light mode sidebar background */
   --sidebar-hover-bg-color: #d6d6d6;
   --sidebar-text-color: #000000;
   --card-bg-color: #ffffff;    /* Light mode card background */

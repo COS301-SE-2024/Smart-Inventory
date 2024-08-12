@@ -120,50 +120,50 @@ Reviews focus on checking that coding standards are being followed and that any 
 
 ## 📂Documents
   📄
-  <a href="documents/RequirementSpecification.md">
+  <a href="documents/Demo 3/SRS.pdf">
     Software Requirement Specification
   </a>
   
   ##
 
   📄
-  <a href="documents/ArchitecturalSpecification.md">
+  <a href="documents/Demo 3/ARS.pdf">
     Architectural Specification
   </a>
   
   ##
 
   📄
-  <a href="documents/DesignSpecification.md">
+  <a href="documents/Demo 3/DesignSpec.pdf">
     Design Specification
   </a>
   
   ##
 
   📄
-  <a href="documents/CodingStandards.md">
+  <a href="documents/Demo 3/CodingStandards.pdf">
     Coding Standards
   </a>
 
   ##
 
   📄
-  <a href="documents/UserManual.md">
+  <a href="documents/Demo 3/UserManual.pdf">
     User Manual
   </a>
 
   ##
 
   📄
-  <a href="documents/TestingPolicy.md">
-    Testing Policy
+  <a href="documents/Demo 3/TestingManual.pdf">
+    Testing Manual
   </a>
 
   ##
 
   📄
-  <a href="documents/ServicesContract.md">
-    Service Contract
+  <a href="documents/Demo 3/TechInstallt.pdf">
+    Technical Installation Manual
   </a>
   <hr>
 </br>

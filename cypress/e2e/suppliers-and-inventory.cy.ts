@@ -203,8 +203,8 @@ describe('Suppliers Page E2E Test', () => {
 describe('Inventory Page E2E Test', () => {
   beforeEach(() => {
     cy.visit('http://localhost:4200/login');
-    cy.get('input[name="username"]').type('u20418494@tuks.co.za');
-    cy.get('input[name="password"]').type('Hawa1234@');
+    cy.get('input[name="username"]').type('u21491578@tuks.co.za');
+    cy.get('input[name="password"]').type('Lovemore!7');
     cy.get('button[type="submit"]').contains('Sign in').click();
 
     // Wait for any redirects to complete

@@ -1,11 +1,11 @@
 /* PLACEHOLDER */
 ::placeholder {
     text-align: left;
-  }
+}
 
-  /* Ensure input text is left-aligned */
+/* Ensure input text is left-aligned */
 input.mat-input-element {
-  text-align: left;
+    text-align: left;
 }
 
 
@@ -97,11 +97,13 @@ input.mat-input-element {
     flex-direction: column;
     align-content: center;
 }
+
 mat-list {
     flex-grow: 1;
     /* border: 3px solid blue; */
     overflow: scroll;
 }
+
 /* LEFT PANE */
 
 .content .second-row .left-pane {
@@ -109,11 +111,16 @@ mat-list {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    justify-content: flex-start; /* Ensure buttons start at the top */
-    padding: 0; /* Ensure there's no padding affecting positioning */
-    margin: 0; /* Ensure there's no margin affecting positioning */
-    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+    justify-content: flex-start;
+    /* Ensure buttons start at the top */
+    padding: 0;
+    /* Ensure there's no padding affecting positioning */
+    margin: 0;
+    /* Ensure there's no margin affecting positioning */
+    box-sizing: border-box;
+    /* Include padding and border in the element's total width and height */
 }
+
 /* LIGHT AND DARK MODE TOGGLE */
 
 .mode-toggle span {
@@ -177,6 +184,13 @@ mat-label {
     color: #000 !important;
 }
 
+.btnAdd {
+    border-radius: 20px;
+    /* margin-right: 10px; */
+    --mdc-protected-button-label-text-color: #000000;
+    background-color: #f1f1f1;
+}
+
 /* Ensuring the dropdown looks as specified */
 .mat-select {
     background-color: white !important;
@@ -202,6 +216,7 @@ mat-label {
     width: 100%;
     justify-content: center;
 }
+
 .mdc-checkbox__checkmark {
     color: #000 !important;
 }
@@ -248,6 +263,7 @@ mat-label {
     width: 75%;
     overflow-y: auto;
 }
+
 .mat-mdc-button .mat-mdc-button-touch-target {
     position: absolute;
     top: 50%;
@@ -259,6 +275,7 @@ mat-label {
     background-color: #f1f1f1;
     border-radius: 5px;
 }
+
 .mat-mdc-form-field-infix {
     flex: auto;
     min-width: 0;
@@ -267,10 +284,12 @@ mat-label {
     box-sizing: border-box;
     background-color: #f1f1f1;
 }
+
 .mat-mdc-text-field-wrapper.mdc-text-field.mdc-text-field--filled {
     background-color: #f1f1f1;
     border-radius: 15px;
 }
+
 /* EDIT PERSONAL INFORMATION */
 .form-container {
     display: flex;
@@ -300,7 +319,103 @@ mat-label {
 .form-container h4 {
     font-size: 30px;
     align-self: flex-start;
+    padding-top: 15px;
+    margin: unset;
 }
+
+
+
+.delete-account-row {
+    margin-bottom: 30px;
+}
+
+.modal {
+    display: flex;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background-color: #ffffff;
+    padding: 25px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.modal-content2 {
+    background-color: #ffffff;
+    padding: 25px;
+    border-radius: 8px;
+    width: auto;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: 24px;
+    color: #333;
+}
+
+.close-button {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #666;
+    transition: color 0.3s ease;
+}
+
+.close-button:hover {
+    color: #333;
+}
+
+.modal-body {
+    margin-bottom: 30px;
+}
+
+.modal-body p {
+    margin-bottom: 20px;
+    font-size: 16px;
+    line-height: 1.5;
+    color: #555;
+}
+
+.form-field {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 20px;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+}
+
+
+
+
 
 .form-row {
     display: flex;
@@ -320,7 +435,7 @@ mat-label {
 
 .current-password {
     width: 70%;
-  }
+}
 
 .form-field {
     /* flex: 1; */
@@ -332,7 +447,7 @@ mat-label {
 }
 
 button mat-button {
-    
+
     justify-content: left;
     width: 200px;
     height: 60px;
@@ -341,11 +456,11 @@ button mat-button {
     font-weight: 400;
 }
 
-button{
+button {
     border-radius: 20px;
     /* margin-right: 10px; */
     --mdc-protected-button-label-text-color: #000000;
-    background-color: #f1f1f1;
+    background-color: #f1f1f1 !important;
 }
 
 /* .btnAdd {
@@ -355,14 +470,14 @@ button{
 button.change-password-button {
     color: black;
     color: #000000 !important;
-    margin-top: 10px !important;
+    /* margin-top: 10px !important; */
     font-size: 15px !important;
     margin-right: 50px;
     width: 28%;
 }
 
 button.cancel-password-button {
-    background-color: transparent;
+    /* background-color: transparent; */
     color: red !important;
     margin-top: 10px !important;
     font-size: 15px !important;
@@ -375,12 +490,12 @@ button.cancel-password-button {
     justify-content: space-between;
     width: 100%;
     margin-top: 20px;
-  }
+}
 
-  .delete-confirmation-row .form-field {
+.delete-confirmation-row .form-field {
     width: 48%;
     margin-bottom: 10px;
-  }
+}
 
 button.delete-button {
     /* background-color: #8f8f8f; */
@@ -409,14 +524,14 @@ button.delete-button {
     align-items: center;
     width: 100%;
     margin-top: 20px;
-  }
+}
 
 .password-action-buttons {
     display: flex;
     justify-content: space-between;
     width: 100%;
     margin-top: 10px;
-  }
+}
 
 /* Custom Form Field Styling */
 .form-row mat-form-field {
@@ -460,4 +575,3 @@ mat-form-field .mdc-line-ripple {
     align-items: center;
     width: 100%;
 }
-  

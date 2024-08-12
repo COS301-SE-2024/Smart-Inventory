@@ -1,69 +1,100 @@
 <mat-tab-group>
-    <mat-tab label="Profile">
-        <ng-container>
-            <div class="accounts-section">
-                <div class="accounts-row-two">
-                  <div class="form-container">
-                    <h4>Personal details</h4>
-                    <hr>
-                    
-                    <div class="name-surname-row">
-                      <mat-form-field class="form-field">
-                        <input matInput placeholder="Name" [(ngModel)]="profile.name">
-                      </mat-form-field>
-                      
-                      <mat-form-field class="form-field">
-                        <input matInput placeholder="Surname" [(ngModel)]="profile.surname">
-                      </mat-form-field>
-                    </div>
-                    
-                    <mat-form-field class="form-field email-field">
-                      <input matInput placeholder="Email" [formControl]="emailFormControl">
-                      <mat-error *ngIf="emailFormControl.hasError('email') && !emailFormControl.hasError('required')">
-                        Please enter a valid email address
-                      </mat-error>
-                      <mat-error *ngIf="emailFormControl.hasError('required')">
-                        Email is <strong>required</strong>
-                      </mat-error>
-                    </mat-form-field>
-                    
-                    <button mat-raised-button color="primary" (click)="saveProfileChanges()">Save Changes</button>
-              
-                    <h4>Password</h4>
-                    <hr>
-                    
-                    <div class="password-row">
-                      <mat-form-field class="form-field current-password">
-                        <input matInput [type]="hidePassword ? 'password' : 'text'" placeholder="Current Password" [(ngModel)]="password.current">
-                        <button mat-icon-button matSuffix (click)="togglePasswordVisibility()" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hidePassword">
-                          <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
-                        </button>
-                      </mat-form-field>
-                      
-                      <button mat-raised-button color="primary" class="change-password-button" (click)="initiatePasswordChange()">Change Password</button>
-                    </div>
-              
-                    <div *ngIf="isChangingPassword">
-                      <mat-form-field class="form-field">
-                        <input matInput [type]="hidePassword ? 'password' : 'text'" placeholder="New Password" [(ngModel)]="password.new">
-                      </mat-form-field>
-                      
-                      <div class="password-action-buttons">
-                        <button mat-raised-button color="primary" (click)="updatePassword()">Update</button>
-                        <button mat-button color="warn" (click)="cancelPasswordChange()">Cancel</button>
-                      </div>
-                    </div>
-              
-                    <h4>Delete Account</h4>
-                    <hr>
-                    
-                    <div class="delete-account-row">
-                      <button mat-raised-button color="warn" class="delete-button" (click)="toggleDeleteAccount()">Delete Account</button>
-                      <button mat-button *ngIf="isDeleteAccountVisible" (click)="toggleDeleteAccount()">Cancel</button>
-                    </div>
-              
-                    <div *ngIf="isDeleteAccountVisible" class="delete-confirmation-row">
-                      <mat-form-field class="form-field">
+  <mat-tab label="Profile">
+    <ng-container>
+      <div class="accounts-section">
+        <div class="accounts-row-two">
+          <div class="form-container">
+            <h4>Personal details</h4>
+            <hr>
+
+            <div class="name-surname-row">
+              <mat-form-field class="form-field">
+                <input matInput placeholder="Name" [(ngModel)]="profile.name">
+              </mat-form-field>
+
+              <mat-form-field class="form-field">
+                <input matInput placeholder="Surname" [(ngModel)]="profile.surname">
+              </mat-form-field>
+            </div>
+
+            <mat-form-field class="form-field email-field">
+              <input matInput placeholder="Email" [formControl]="emailFormControl">
+              <mat-error *ngIf="emailFormControl.hasError('email') && !emailFormControl.hasError('required')">
+                Please enter a valid email address
+              </mat-error>
+              <mat-error *ngIf="emailFormControl.hasError('required')">
+                Email is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+
+            <button mat-raised-button color="primary" (click)="saveProfileChanges()">Save Changes</button>
+
+            <h4>Password</h4>
+            <hr>
+
+            <div class="password-row">
+              <mat-form-field class="form-field current-password">
+                <input matInput [type]="hidePassword ? 'password' : 'text'" placeholder="Current Password"
+                  [(ngModel)]="password.current">
+                <button mat-icon-button matSuffix (click)="togglePasswordVisibility()"
+                  [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hidePassword">
+                  <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+                </button>
+              </mat-form-field>
+              <mat-form-field class="form-field">
+                <input matInput [type]="hidePassword ? 'password' : 'text'" placeholder="New Password"
+                  [(ngModel)]="password.new">
+                <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword"
+                  [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hidePassword">
+                  <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+                </button>
+              </mat-form-field>
+
+            </div>
+            <button mat-raised-button color="primary" class="change-password-button"
+              (click)="initiatePasswordChange()">Change Password</button>
+
+
+
+
+
+
+            <div *ngIf="isChangingPassword" class="modal">
+              <div class="modal-content2">
+                <div class="modal-header">
+                  <h2>Confirm password change</h2>
+                  <!-- <button class="close-button" (click)="toggleModal()">&times;</button> -->
+                </div>
+                <div class="modal-body">
+                  <p>Please confirm that you would like to change your password</p>
+                </div>
+                <div class="modal-footer">
+                  <button mat-raised-button (click)="cancelPasswordChange()">Cancel</button>
+                  <button mat-raised-button color="primary" (click)="updatePassword()">Update Password</button>
+                </div>
+              </div>
+              <!-- <mat-form-field class="form-field">
+                <input matInput [type]="hidePassword ? 'password' : 'text'" placeholder="New Password"
+                  [(ngModel)]="password.new">
+              </mat-form-field>
+
+              <div class="password-action-buttons">
+                <button mat-raised-button color="primary" (click)="updatePassword()">Update</button>
+                <button mat-button color="warn" (click)="cancelPasswordChange()">Cancel</button>
+              </div> -->
+            </div>
+
+            <h4>Delete Account</h4>
+            <hr>
+
+            <div class="delete-account-row">
+              <button mat-raised-button color="warn" class="delete-button" (click)="toggleDeleteAccount()">Delete
+                Account</button>
+              <!-- <button mat-button *ngIf="isDeleteAccountVisible" (click)="toggleDeleteAccount()">Cancel</button> -->
+            </div>
+
+
+            <!-- <mat-form-field class="form-field">
                         <input matInput type="password" placeholder="Current Password" [(ngModel)]="password.currentDelete">
                       </mat-form-field>
                       
@@ -71,29 +102,51 @@
                         <input matInput placeholder="Confirm Email" [(ngModel)]="profile.confirmEmailDelete">
                       </mat-form-field>
                       
-                      <button mat-raised-button color="warn" class="confirm-delete-button" (click)="handleDeleteAccount()">Confirm Delete</button>
-                    </div>
-                  </div>
+                      <button mat-raised-button color="warn" class="confirm-delete-button" (click)="handleDeleteAccount()">Confirm Delete</button> -->
+
+            <div *ngIf="isDeleteAccountVisible" class="modal">
+
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h2>Delete Confirmation</h2>
+                  <!-- <button class="close-button" (click)="toggleDeleteAccount()">&times;</button> -->
+                </div>
+                <div class="modal-body">
+                  <p>Are you sure you want to delete your account? This action cannot be undone.</p>
+                  <mat-form-field class="form-field" style="padding: 20px;">
+                    <input matInput type="password" placeholder="Current Password" [(ngModel)]="password.currentDelete">
+                  </mat-form-field>
+                  <mat-form-field class="form-field">
+                    <input matInput placeholder="Confirm Email" [(ngModel)]="profile.confirmEmailDelete">
+                  </mat-form-field>
+                </div>
+                <div class="modal-footer">
+                  <button mat-raised-button (click)="toggleDeleteAccount()">Cancel</button>
+                  <button mat-raised-button color="warn" (click)="handleDeleteAccount()">Delete Account</button>
                 </div>
               </div>
-        </ng-container>
-    </mat-tab>
-    <mat-tab label="Settings">
-        <ng-container>
-            <div class="second-row" style="text-align: center">
-                <h4>Theme</h4>
-                <hr />
-                <div class="theme-selection-grid">
-                    <div class="theme-option" [ngClass]="{ 'selected-theme': currentTheme === 'light' }"
-                        (click)="selectTheme('light')">
-                        <img src="assets/img/light-mode.png" alt="Light Mode" />
-                    </div>
-                    <div class="theme-option" [ngClass]="{ 'selected-theme': currentTheme === 'dark' }"
-                        (click)="selectTheme('dark')">
-                        <img src="assets/img/dark-mode.png" alt="Dark Mode" />
-                    </div>
-                </div>
             </div>
-        </ng-container>
-    </mat-tab>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </mat-tab>
+  <mat-tab label="Settings">
+    <ng-container>
+      <div class="second-row" style="text-align: center">
+        <h4>Theme</h4>
+        <hr />
+        <div class="theme-selection-grid">
+          <div class="theme-option" [ngClass]="{ 'selected-theme': currentTheme === 'light' }"
+            (click)="selectTheme('light')">
+            <img src="assets/img/light-mode.png" alt="Light Mode" />
+          </div>
+          <div class="theme-option" [ngClass]="{ 'selected-theme': currentTheme === 'dark' }"
+            (click)="selectTheme('dark')">
+            <img src="assets/img/dark-mode.png" alt="Dark Mode" />
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </mat-tab>
 </mat-tab-group>

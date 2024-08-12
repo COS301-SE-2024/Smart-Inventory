@@ -69,6 +69,8 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
     @Output() viewDeliveryInfoClicked = new EventEmitter<void>();
     @Output() viewReceivedQuotesClicked = new EventEmitter<void>();
     @Output() markOrderAsReceivedClicked = new EventEmitter<any>();
+    @Output() viewAutomationSettingsClicked = new EventEmitter<void>();
+
     @ViewChild(AgGridAngular) agGrid!: AgGridAngular;
     gridApi!: GridApi<any>;
     private themeObserver!: MutationObserver;
@@ -360,5 +362,9 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
             this.oopenSnackBar('No row selected for marking as received');
             // console.log('No row selected for marking as received');
         }
+    }
+    
+    openAutomationSettings() {
+        this.viewAutomationSettingsClicked.emit();
     }
 }

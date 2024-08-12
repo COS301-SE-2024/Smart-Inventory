@@ -57,6 +57,9 @@
             <button mat-menu-item *ngIf="getCurrentRoute('orders')" color="primary" (click)="onViewDeliveryInfo()">
                 View Delivery Info
             </button>
+            <button mat-menu-item *ngIf="getCurrentRoute('orders')" color="primary" (click)="openAutomationSettings()">
+                View Automation Settings
+            </button>
             <button mat-menu-item *ngIf="getCurrentRoute('inventory')" color="primary" (click)="deleteRow()">
                 - Remove Item
             </button>

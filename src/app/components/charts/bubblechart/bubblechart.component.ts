@@ -81,7 +81,7 @@ export class BubblechartComponent implements OnInit, OnDestroy, AfterViewInit, O
                     direction: 'horizontal',
                     cornerRadius: 10,
                     stacked: true,
-                    label: { enabled: true, formatter: (params) => `$${params.value.toFixed(2)}` },
+                    label: { enabled: true, formatter: (params) => `R${params.value.toFixed(2)}` },
                 },
             ],
             axes: [
@@ -188,6 +188,7 @@ export class BubblechartComponent implements OnInit, OnDestroy, AfterViewInit, O
 
             const tenantId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
             // const tenantId = "1717667019559-j85syk";
+            console.log('my id', tenantId);
 
             if (!tenantId) {
                 console.error('TenantId not found in user attributes');

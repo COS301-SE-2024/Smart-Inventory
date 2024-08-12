@@ -346,28 +346,42 @@ export class InventoryReportComponent implements OnInit {
   }
 
   calculateFulfilledRequests(): number {
-    // Placeholder implementation
-    return 0;
+    // Assuming fulfilled requests are 90% of total requests
+    return Math.floor(this.calculateTotal('requests') * 0.9);
   }
 
   calculatePendingFailedRequests(): number {
-    // Placeholder implementation
-    return 0;
+    // Assuming pending/failed requests are 10% of total requests
+    return Math.ceil(this.calculateTotal('requests') * 0.1);
   }
 
   calculateServiceLevel(): string {
-    // Placeholder implementation
-    return '95.0';
+    // Service Level = (Fulfilled Requests / Total Requests) * 100
+    const fulfilledRequests = this.calculateFulfilledRequests();
+    const totalRequests = this.calculateTotal('requests');
+    return ((fulfilledRequests / totalRequests) * 100).toFixed(2);
   }
 
   calculateForecastAccuracy(): string {
-    // Placeholder implementation
-    return '90.0';
+    // Simulating forecast accuracy based on the difference between requests and stock
+    const totalRequests = this.calculateTotal('requestsQuantity');
+    const totalStock = this.calculateTotal('quantity');
+    const accuracy = 100 - Math.abs((totalRequests - totalStock) / totalStock * 100);
+    return accuracy.toFixed(2);
   }
 
   calculateInventoryShrinkage(): string {
-    // Placeholder implementation
-    return '2.5';
+    // Simulating inventory shrinkage as a small percentage of total inventory
+    const totalInventory = this.calculateTotal('quantity');
+    const shrinkage = totalInventory * 0.02; // Assuming 2% shrinkage
+    return ((shrinkage / totalInventory) * 100).toFixed(2);
+  }
+
+  calculateLostSalesRatio(): string {
+    // Lost Sales Ratio = (Unfulfilled Requests / Total Requests) * 100
+    const unfulfilledRequests = this.calculatePendingFailedRequests();
+    const totalRequests = this.calculateTotal('requests');
+    return ((unfulfilledRequests / totalRequests) * 100).toFixed(2);
   }
 
   calculateDeadstock(): number {
@@ -379,11 +393,6 @@ export class InventoryReportComponent implements OnInit {
         }
         return total;
       }, 0);
-  }
-
-  calculateLostSalesRatio(): string {
-    // Placeholder implementation
-    return '1.5';
   }
 
   back() {

@@ -323,7 +323,7 @@ mat-label {
   }
 
 .form-field {
-    flex: 1;
+    /* flex: 1; */
     width: 48%;
 }
 
@@ -332,7 +332,7 @@ mat-label {
 }
 
 button mat-button {
-    background-color: #8f8f8f;
+    
     justify-content: left;
     width: 200px;
     height: 60px;
@@ -340,6 +340,17 @@ button mat-button {
     font-size: 20px;
     font-weight: 400;
 }
+
+button{
+    border-radius: 20px;
+    /* margin-right: 10px; */
+    --mdc-protected-button-label-text-color: #000000;
+    background-color: #f1f1f1;
+}
+
+/* .btnAdd {
+
+} */
 
 button.change-password-button {
     color: black;

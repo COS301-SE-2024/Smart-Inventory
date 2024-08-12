@@ -80,8 +80,8 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
 
     filteredRowData: any[] = [];
 
-    // gridApi: any;
-    // gridColumnApi: any;
+    //gridApi: any;
+    //gridColumnApi: any;
 
     filterSelect: string = '';
     inputFilter: string = '';
@@ -132,12 +132,12 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
             // Remove all existing rows
             const allRows = this.gridApi.getModel().getRowCount();
             if (allRows > 0) {
-                const rowsToRemove = this.gridApi.getModel().getRow(allRows - 1)!.data;
+                const rowsToRemove = this.gridApi.getModel().getRow(allRows)!.data;
                 this.gridApi.applyTransaction({ remove: [rowsToRemove] });
             }
 
             // Add new rows
-            this.gridApi.applyTransaction({ add: newData });
+        this.gridApi.applyTransaction({ add: newData });
         }
     }
 

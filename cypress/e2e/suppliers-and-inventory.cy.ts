@@ -30,6 +30,305 @@ const waitUntil = (
   return checkCondition();
 };
 
+describe('Notifications E2E Test', () => {
+  beforeEach(() => {
+    cy.visit('http://localhost:4200/login');
+
+    cy.get('input[name="username"]').type('u20418494@tuks.co.za');
+    cy.get('input[name="password"]').type('Hawa1234@');
+    cy.get('button[type="submit"]').contains('Sign in').click();
+
+    cy.wait(5000);
+
+    cy.url().then(url => {
+      cy.log(`Current URL after login: ${url}`);
+    });
+
+    cy.url().then(url => {
+      if (!url.includes('/dashboard')) {
+        cy.log('Not on dashboard, attempting to navigate...');
+        cy.visit('http://localhost:4200/dashboard');
+      }
+    });
+
+    waitUntil(() => {
+      return cy.document().then((doc) => {
+        const grid = doc.querySelector('app-grid');
+        const sidenav = doc.querySelector('.sidenav');
+        return Boolean(grid || sidenav);
+      });
+    }, { timeout: 60000 });
+  });
+
+  // Function to wait for the loading overlay to disappear
+  const waitForLoadingOverlay = () => {
+    return cy.get('body', { timeout: 30000 }).should(($body) => {
+      expect($body.find('.loading-overlay').length).to.equal(0);
+    });
+  };
+
+  // Function to click the notifications icon, handling potential overlay issues
+  const clickNotificationsIcon = () => {
+    waitForLoadingOverlay();
+    cy.get('button.toolbar-icon mat-icon', { timeout: 10000 }).contains('notifications').click({ force: true });
+  };
+
+  it('should open and close the notification panel', () => {
+    clickNotificationsIcon();
+    cy.get('.notification-panel', { timeout: 10000 }).should('be.visible');
+    cy.get('button[mattooltip="Close"]').click();
+    cy.get('.notification-panel').should('not.visible');
+  });
+
+  it('should display notifications', () => {
+    clickNotificationsIcon();
+    cy.get('.notification-content', { timeout: 10000 }).should('exist');
+  });
+
+  it('should filter notifications correctly', () => {
+    clickNotificationsIcon();
+
+    // Test filtering by notification type
+    const notificationTypes = ['All', 'Inventory', 'Reports', 'Settings', 'Orders', 'Suppliers', 'Teams'];
+    notificationTypes.forEach(type => {
+      cy.get('.notification-tabs').contains(type).click();
+      if (type === 'All') {
+        cy.get('.notification-content').should('exist');
+      } else {
+        cy.get('.notification-content').each(($el) => {
+          cy.wrap($el).find('[matlistitemtitle]').invoke('text').then((text) => {
+            if (text.includes(type)) {
+              cy.wrap($el).should('be.visible');
+            }
+            // else {
+              // cy.wrap($el).should('not.be.visible');
+            // }
+          });
+        });
+      }
+    });
+
+    // Test read/unread filters
+    cy.get('[data-cy="filter-menu-button"]').click();
+    cy.get('[data-cy="filter-menu-content"]').within(() => {
+      // Check initial state
+      cy.get('[data-cy="read-checkbox"]').should('have.class', 'mat-mdc-checkbox-checked');
+      cy.get('[data-cy="unread-checkbox"]').should('have.class', 'mat-mdc-checkbox-checked');
+
+      // Uncheck 'Read'
+      cy.get('[data-cy="read-checkbox"]').click();
+      cy.get('[data-cy="read-checkbox"]').should('not.have.class', 'mat-mdc-checkbox-checked');
+      cy.get('[data-cy="unread-checkbox"]').should('have.class', 'mat-mdc-checkbox-checked');
+    });
+
+    // Check that only unread notifications are visible
+    cy.get('.notification-content').each(($el) => {
+      cy.wrap($el).should('have.class', 'unread');
+    });
+
+    cy.get('[data-cy="filter-menu-button"]').click();
+    cy.get('[data-cy="filter-menu-content"]').within(() => {
+      // Check 'Read' and uncheck 'Unread'
+      cy.get('[data-cy="read-checkbox"]').click();
+      cy.get('[data-cy="unread-checkbox"]').click();
+      cy.get('[data-cy="read-checkbox"]').should('have.class', 'mat-mdc-checkbox-checked');
+      cy.get('[data-cy="unread-checkbox"]').should('not.have.class', 'mat-mdc-checkbox-checked');
+    });
+
+    // Check that only read notifications are visible
+    cy.get('.notification-content').each(($el) => {
+      cy.wrap($el).should('not.have.class', 'unread');
+    });
+
+    // Test show archived filter
+    cy.get('[data-cy="filter-menu-button"]').click();
+    cy.get('[data-cy="filter-menu-content"]').within(() => {
+      cy.get('[data-cy="archived-checkbox"]').click();
+      cy.get('[data-cy="archived-checkbox"]').should('have.class', 'mat-mdc-checkbox-checked');
+    });
+    cy.get('.notification-content').should('exist');
+    cy.get('.notification-content.archived').should('exist');
+
+    // Test marking as read/unread
+    cy.get('.notification-content').first().within(() => {
+      cy.get('button[ng-reflect-message="Mark as read"]').click();
+    });
+    cy.get('.notification-content').first().should('not.have.class', 'unread');
+
+    cy.get('.notification-content').first().within(() => {
+      cy.get('button[ng-reflect-message="Mark as unread"]').click();
+    });
+    cy.get('.notification-content').first().should('have.class', 'unread');
+
+    // Test archiving
+    cy.get('.notification-content').first().within(() => {
+      cy.get('button[ng-reflect-message="Archive"]').click();
+    });
+    cy.get('.notification-content').first().should('have.class', 'archived');
+
+    // Test unread count
+    cy.get('.unread-count').invoke('text').then((text) => {
+      const count = parseInt(text.match(/\d+/)[0]);
+      cy.get('.notification-content.unread').should('have.length', count);
+    });
+  });
+
+  // Helper function to get notification icon based on type
+  function getNotificationIcon(type: string): string {
+    switch (type) {
+      case 'Inventory': return 'inventory';
+      case 'Reports': return 'assessment';
+      case 'Settings': return 'settings';
+      case 'Orders': return 'shopping_cart';
+      case 'Suppliers': return 'business';
+      case 'Teams': return 'group';
+      default: return 'notifications';
+    }
+  }
+
+  it('should mark notification as read', () => {
+    clickNotificationsIcon();
+    cy.get('.notification-content').first().within(() => {
+      cy.get('button[ng-reflect-message="Mark as read"]').first().click();
+    });
+    cy.get('.notification-content').first().should('not.have.class', 'unread');
+  });
+
+  it('should archive a notification', () => {
+    clickNotificationsIcon();
+    cy.get('.notification-content').first().within(() => {
+      cy.get('button[ng-reflect-message="Archive"]').first().click();
+    });
+    cy.get('.notification-content').first().should('have.class', 'archived');
+  });
+
+  it('should update unread count', () => {
+    cy.get('button.toolbar-icon mat-icon').contains('notifications').find('.mat-badge-content').invoke('text').then((text) => {
+      const initialCount = parseInt(text);
+      clickNotificationsIcon();
+      cy.get('.notification-content').first().within(() => {
+        cy.get('button[ng-reflect-message="Mark as read"]').first().click();
+      });
+      cy.get('button.toolbar-icon mat-icon').contains('notifications').find('.mat-badge-content').should('contain', initialCount - 1);
+    });
+  });
+
+  it('should open notification details', () => {
+    clickNotificationsIcon();
+    cy.get('.notification-content').first().click();
+    cy.get('mat-dialog-container').should('be.visible');
+    cy.get('mat-dialog-container button').contains('Close').click();
+    cy.get('mat-dialog-container').should('not.exist');
+  });
+});
+
+describe('Dashboard and Navigation E2E Test', () => {
+  beforeEach(() => {
+    cy.visit('http://localhost:4200/login');
+
+    cy.get('input[name="username"]').type('u20418494@tuks.co.za');
+    cy.get('input[name="password"]').type('Hawa1234@');
+    cy.get('button[type="submit"]').contains('Sign in').click();
+
+    cy.wait(5000);
+
+    cy.url().then(url => {
+      cy.log(`URL after login: ${url}`);
+    });
+
+    cy.url().then(url => {
+      if (!url.includes('/dashboard')) {
+        cy.log('Not redirected to dashboard. Manually navigating...');
+        cy.visit('http://localhost:4200/dashboard');
+      }
+    });
+
+    cy.url().should('include', '/dashboard', { timeout: 20000 });
+
+    cy.url().then(url => {
+      if (!url.includes('/dashboard')) {
+        cy.log('Failed to reach dashboard. Current page content:');
+        cy.document().then((doc) => {
+          cy.log(doc.body.innerHTML);
+        });
+      }
+    });
+
+    cy.contains('Inventory Levels', { timeout: 20000 }).should('be.visible');
+  });
+
+  it('should display key dashboard elements', () => {
+    cy.get('.card', { timeout: 20000 }).should('have.length.at.least', 1);
+    cy.contains('.card', 'Inventory Levels').should('be.visible');
+    cy.contains('.card', 'Backorders').should('be.visible');
+    cy.contains('.card', 'Avg Fulfillment Time').should('be.visible');
+    cy.contains('.card', 'Top Seller').should('be.visible');
+    cy.get('ag-charts-angular', { timeout: 20000 }).should('exist');
+  });
+
+  const waitForLoadingOverlay = () => {
+    cy.get('.loading-overlay', { timeout: 13000 }).should('not.exist');
+  };
+
+  it('should display the sidebar', () => {
+    cy.get('.sidenav').should('be.visible');
+  });
+
+  const pages = [
+    { label: 'Dashboard', url: '/dashboard', content: 'Inventory Levels' },
+    { label: 'Inventory', url: '/inventory', content: 'Inventory' },
+    { label: 'Reports', url: '/reports', content: 'Reports' },
+    { label: 'Team', url: '/team', content: 'Team' },
+    { label: 'Suppliers', url: '/suppliers', content: 'Suppliers' },
+    { label: 'Orders', url: '/orders', content: 'Orders' },
+    { label: 'Help', url: '/help', content: 'Help' },
+    { label: 'Settings', url: '/settings', content: 'Settings' }
+  ];
+
+  pages.forEach(page => {
+    it(`should navigate to ${page.label} page`, () => {
+      // Wait for the loading overlay to disappear before interacting with the sidebar
+      waitForLoadingOverlay();
+
+      // Click on the sidebar item
+      cy.get('.sidenav').contains(page.label).click();
+
+      // Wait for the loading overlay to disappear after navigation
+      waitForLoadingOverlay();
+
+      // Check if the URL and content are correct
+      cy.url().should('include', page.url);
+      cy.contains(page.content, { timeout: 10000 }).should('be.visible');
+    });
+  });
+
+  it('should log out successfully', () => {
+    // Store the current URL before logging out
+    let currentUrl;
+    cy.url().then(url => {
+      currentUrl = url;
+    });
+
+    // Wait for the loading overlay to disappear
+    waitForLoadingOverlay();
+
+    // Try to click the Log Out button, with a fallback to force: true if needed
+    cy.get('.sidenav').contains('Log Out').click({ timeout: 10000 }).then(() => {}, (err) => {
+      if (err.message.includes('covered by another element')) {
+        cy.get('.sidenav').contains('Log Out').click({ force: true });
+      } else {
+        throw err;
+      }
+    });
+
+    // Wait for potential async operations
+    cy.wait(5000);
+    cy.get('.sidenav').should('not.exist');
+
+    
+  });
+});
+
 describe('Suppliers Page E2E Test', () => {
   beforeEach(() => {
     cy.visit('http://localhost:4200/login');
@@ -123,12 +422,6 @@ describe('Suppliers Page E2E Test', () => {
     cy.get('.popup-content', { timeout: 5000 }).should('not.exist');
     // cy.get('.popup-content').should('not.exist');
   
-    // Additional check to ensure the modal is fully closed
-    // cy.get('body').then($body => {
-    //   if ($body.find('.popup-content').length < 0) {
-    //     cy.get('.popup-content').should('not.be.visible');
-    //   }
-    // });
     
     // Verify the new supplier is in the grid
     cy.get('.ag-row').contains('Test Company').should('be.visible');

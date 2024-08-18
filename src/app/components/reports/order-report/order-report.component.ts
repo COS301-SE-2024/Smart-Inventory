@@ -7,8 +7,8 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import { MatCardModule } from '@angular/material/card';
 import { GridComponent } from '../../grid/grid.component';
 import { ColDef } from 'ag-grid-community';
-import { SaleschartComponent } from '../../charts/saleschart/saleschart.component';
 import { ActivatedRoute, Router } from '@angular/router';
+import { DonutTemplateComponent } from 'app/components/charts/donuttemplate/donuttemplate.component';
 import { StackedbarchartComponent } from '../../charts/stackedbarchart/stackedbarchart.component';
 import { ScatterplotComponent } from '../../charts/scatterplot/scatterplot.component';
 @Component({
@@ -22,7 +22,8 @@ import { ScatterplotComponent } from '../../charts/scatterplot/scatterplot.compo
         CommonModule,
         MatProgressSpinnerModule,
         ScatterplotComponent,
-        StackedbarchartComponent
+        StackedbarchartComponent,
+        DonutTemplateComponent
     ],
     templateUrl: './order-report.component.html',
     styleUrl: './order-report.component.css',

@@ -7,16 +7,9 @@
                         <div class="filter-buttons">
                             <button
                                 class="test"
-                                mat-raised-button
+                                mat-stroked-button
                                 *ngFor="let filter of faqFilters"
                                 (click)="onFilterClick(filter)"
-                                style="
-                                    border-radius: 5px;
-                                    color: var(--button-text-color);
-                                    background-color: var(--button-bg-color);
-                                    box-shadow: var(--button-shadow);
-                                    transition: all 0.3s ease;
-                                "
                             >
                                 {{ filter }}
                             </button>
@@ -623,7 +616,7 @@
                             <textarea matInput placeholder="Message" required style="height: 150px"></textarea>
                         </mat-form-field>
                         <div class="button-container">
-                            <button mat-button (click)="onSend()" class="send-button" style="border: auto">Send</button>
+                            <button class="test" mat-stroked-button (click)="onSend()">Send</button>
                         </div>
                     </form>
                     <!-- <div class="column-one" style="width: 100vh">

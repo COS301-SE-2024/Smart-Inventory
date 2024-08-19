@@ -2,14 +2,14 @@
     display: block;
     width: 100%;
     max-width: 600px;
-  }
-  
-  mat-form-field {
-    width: 100%;
-    margin-bottom: 15px;
-  }
-  
-  mat-dialog-content {
-    max-height: 70vh;
-    overflow-y: auto;
-  }
+}
+
+.btn {
+    border-radius: 20px;
+    margin-right: 10px;
+    --mdc-outlined-button-label-text-color: black;
+    --mdc-outlined-button-outline-color: #74777f;
+    border-radius: 5px;
+    width: 20px;
+    height: 40px;
+}

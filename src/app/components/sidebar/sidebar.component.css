@@ -1,8 +1,6 @@
 .sidenav-container {
     height: 100vh;
     width: 100%; /* Ensures the sidenav container takes full available space */
-    height: 100vh;
-    width: 100%; /* Ensures the sidenav container takes full available space */
 }
 
 .sidenav {
@@ -15,15 +13,12 @@
     height: 100vh;
     width: 50px; /* Standard width for sidenav */
     color: var(--sidebar-text-color); /* Changes default text/icon color to black for visibility */
-    transition: width 0.8s;
+    transition: width 0.8s ease;
     transition-delay: 0s;
+    overflow: hidden;
 }
 
 p {
-    width: 0px;
-    overflow: hidden;
-    transition: width 0.8s;
-    transition-delay: 0s;
     width: 0px;
     overflow: hidden;
     transition: width 0.8s;
@@ -33,13 +28,9 @@ p {
 .expanded {
     width: 100px;
     transition-delay: 0s;
-    width: 100px;
-    transition-delay: 0s;
 }
 
 .expanded p {
-    width: 100px;
-    transition-delay: 0s;
     width: 100px;
     transition-delay: 0s;
     color: var(--sidebar-text-color);
@@ -48,13 +39,9 @@ p {
 .sidenav:hover {
     width: 100px;
     transition-delay: 1s;
-    width: 100px;
-    transition-delay: 1s;
 }
 
 .sidenav:hover p {
-    width: 100px;
-    transition-delay: 1s;
     width: 100px;
     transition-delay: 1s;
     color: var(--sidebar-text-color);
@@ -66,16 +53,9 @@ mat-toolbar {
     justify-content: center;
     height: 64px; /* Standard toolbar height */
     background-color: var(--sidebar-bg-color); /* Slightly darker shade for the toolbar */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 64px; /* Standard toolbar height */
 }
 
 mat-icon {
-    display: block; /* Block display for icons */
-    margin: auto;
-    font-size: 24px; /* Standard Material icon size */
     display: block; /* Block display for icons */
     margin: auto;
     font-size: 24px; /* Standard Material icon size */
@@ -91,21 +71,14 @@ a {
     text-decoration: none;
     color: var(--sidebar-text-color); /* Ensures text is black */
     transition: background-color 0.3s; /* Smooth transition for hover effect */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 10px;
-    text-align: center;
-    text-decoration: none;
-    transition: background-color 0.3s; /* Smooth transition for hover effect */
 }
 
 a:hover {
+    height: 50px;
     background-color: var(--sidebar-hover-bg-color); /* Adds a hover effect  */
 }
 
 a div {
-    margin-top: 5px;
     margin-top: 5px;
 }
 

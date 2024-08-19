@@ -18,7 +18,9 @@ gridster.scrollVertical {
 }
 
 gridster-item {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.15);
+    box-shadow:
+        0 4px 8px rgba(0, 0, 0, 0.1),
+        0 6px 20px rgba(0, 0, 0, 0.15);
     margin-left: 2px;
     background: transparent !important;
     border-radius: 10px;
@@ -69,7 +71,6 @@ gridster-item {
     padding-left: 20px;
     /* space between icon and text */
 }
-
 
 h4 {
     font-size: 16px;
@@ -293,8 +294,6 @@ a#help-button {
     gap: 10px;
 }
 
-
-
 .main-container {
     /* position: relative; */
     height: 100vh;
@@ -331,7 +330,6 @@ a#help-button {
     justify-content: center;
     align-items: center;
 }
-
 
 .blur {
     /* filter: blur(1px); */

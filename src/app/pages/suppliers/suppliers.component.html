@@ -13,7 +13,7 @@
 
 <!-- Add Supplier Popup -->
 <div *ngIf="showAddPopup" class="popup-overlay">
-    <div class="popup-content">
+    <div class="custom-dialog">
         <h2>Add Supplier</h2>
         <form (ngSubmit)="onSubmit(supplierForm.value)" #supplierForm="ngForm">
             <div class="form-group">

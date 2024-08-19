@@ -15,8 +15,21 @@ import { CommonModule } from '@angular/common';
             <p>Are you sure you want to delete this user?</p>
         </div>
         <div mat-dialog-actions>
-            <button mat-button (click)="onNoClick()">No</button>
-            <button mat-button color="primary" (click)="onYesClick()">Yes</button>
+            <button
+                mat-stroked-button
+                (click)="onNoClick()"
+                style="border-radius: 20px;margin-right: 10px;--mdc-outlined-button-label-text-color: black;--mdc-outlined-button-outline-color: #74777f;border-radius: 5px; width: 20px;height: 40px;"
+            >
+                No
+            </button>
+            <button
+                mat-stroked-button
+                color="primary"
+                (click)="onYesClick()"
+                style="border-radius: 20px;margin-right: 10px;--mdc-outlined-button-label-text-color: black;--mdc-outlined-button-outline-color: #74777f;border-radius: 5px; width: 20px;height: 40px;"
+            >
+                Yes
+            </button>
         </div>
     `,
 })
@@ -25,7 +38,7 @@ export class DeleteConfirmationDialogComponent {
 
     constructor(
         public dialogRef: MatDialogRef<DeleteConfirmationDialogComponent>,
-        @Inject(MAT_DIALOG_DATA) public data: { given_name: string; family_name: string; email: string }
+        @Inject(MAT_DIALOG_DATA) public data: { given_name: string; family_name: string; email: string },
     ) {}
 
     onNoClick(): void {

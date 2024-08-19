@@ -20,8 +20,21 @@ import { CommonModule } from '@angular/common';
             </p>
         </div>
         <div mat-dialog-actions>
-            <button mat-button (click)="onNoClick()">Cancel</button>
-            <button mat-button color="primary" (click)="onYesClick()">Confirm</button>
+            <button
+                mat-stroked-button
+                (click)="onNoClick()"
+                style="border-radius: 20px;margin-right: 10px;--mdc-outlined-button-label-text-color: black;--mdc-outlined-button-outline-color: #74777f;border-radius: 5px; width: 20px;height: 40px;"
+            >
+                Cancel
+            </button>
+            <button
+                mat-stroked-button
+                color="primary"
+                (click)="onYesClick()"
+                style="border-radius: 20px;margin-right: 10px;--mdc-outlined-button-label-text-color: black;--mdc-outlined-button-outline-color: #74777f;border-radius: 5px; width: 20px;height: 40px;"
+            >
+                Confirm
+            </button>
         </div>
     `,
     styles: [
@@ -41,7 +54,7 @@ export class RoleChangeConfirmationDialogComponent {
     constructor(
         public dialogRef: MatDialogRef<RoleChangeConfirmationDialogComponent>,
         @Inject(MAT_DIALOG_DATA)
-        public data: { given_name: string; family_name: string; email: string; oldRole: string; newRole: string }
+        public data: { given_name: string; family_name: string; email: string; oldRole: string; newRole: string },
     ) {}
 
     onNoClick(): void {

@@ -69,18 +69,27 @@ export class StackedbarchartComponent implements OnChanges, AfterViewInit {
           name: 'Completed',
           type: 'bar',
           stack: 'total',
+          emphasis: {
+            focus: 'series'
+          },
           data: this.data.map(item => item.completed)
         },
         {
           name: 'In Progress',
           type: 'bar',
           stack: 'total',
+          emphasis: {
+            focus: 'series'
+          },
           data: this.data.map(item => item.inProgress)
         },
         {
           name: 'Delayed',
           type: 'bar',
           stack: 'total',
+          emphasis: {
+            focus: 'series'
+          },
           data: this.data.map(item => item.delayed)
         }
       ]

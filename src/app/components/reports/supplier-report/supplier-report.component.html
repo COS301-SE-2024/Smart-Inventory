@@ -4,26 +4,6 @@
             Back to reports
         </button>
     </mat-toolbar>
-
-    <!-- <div class="grid-container">
-    <div class="arrow-container"  (click)="showNextTiles()">
-        <mat-icon class="arrow-icon">keyboard_arrow_down</mat-icon>
-    </div> -->
-    <!-- <mat-grid-list cols="3" rowHeight="210px"> -->
-
-    <!-- <mat-grid-tile *ngFor="let tile of tiles.slice(currentIndex, currentIndex + 3)" class="tile" gutterSize="15px">
-            <div class="icon-container">
-                <mat-icon [attr.aria-label]="tile.iconLabel" class="metric-icon">{{ tile.icon }}</mat-icon>
-            </div>
-            <div class="content">
-                <h3 class="metric-title">{{ tile.metricName }}</h3>
-                <div class="details">
-                    <p class="metric-value">{{ tile.value }}</p>
-                    <span class="metric-info">{{ tile.additionalInfo }}</span>
-                </div>
-            </div>
-        </mat-grid-tile> -->
-    <!-- </mat-grid-list> -->
     <div class="carousel-navigation">
         <button mat-icon-button (click)="scrollTiles('left')"><mat-icon>chevron_left</mat-icon></button>
         <button mat-icon-button (click)="scrollTiles('right')"><mat-icon>chevron_right</mat-icon></button>

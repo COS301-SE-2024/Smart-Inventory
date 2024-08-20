@@ -159,22 +159,22 @@
     </div> -->
 
     <div class="notification-actions">
-        <button mat-button [matMenuTriggerFor]="filterMenu" #filterMenuTrigger="matMenuTrigger">
+        <button mat-button [matMenuTriggerFor]="filterMenu" #filterMenuTrigger="matMenuTrigger" data-cy="filter-menu-button">
             <mat-icon>tune</mat-icon>
             Filters
         </button>
         <mat-menu #filterMenu="matMenu" [hasBackdrop]="false" class="filter-menu">
             <ng-template matMenuContent>
-                <div (click)="$event.stopPropagation()">
+                <div (click)="$event.stopPropagation()" data-cy="filter-menu-content">
                     <div class="filter-menu-header">
                         <span>Filters</span>
-                        <button mat-icon-button (click)="closeFilterMenu()">
+                        <button mat-icon-button (click)="closeFilterMenu()" data-cy="close-filter-menu">
                             <mat-icon>close</mat-icon>
                         </button>
                     </div>
-                    <mat-checkbox [(ngModel)]="showRead" (change)="updateFilteredNotifications()">Read</mat-checkbox>
-                    <mat-checkbox [(ngModel)]="showUnread" (change)="updateFilteredNotifications()">Unread</mat-checkbox>
-                    <mat-checkbox [(ngModel)]="showArchived" (change)="updateFilteredNotifications()">Show Archived</mat-checkbox>
+                    <mat-checkbox [(ngModel)]="showRead" (change)="updateFilteredNotifications()" data-cy="read-checkbox">Read</mat-checkbox>
+                    <mat-checkbox [(ngModel)]="showUnread" (change)="updateFilteredNotifications()" data-cy="unread-checkbox">Unread</mat-checkbox>
+                    <mat-checkbox [(ngModel)]="showArchived" (change)="updateFilteredNotifications()" data-cy="archived-checkbox">Show Archived</mat-checkbox>
                 </div>
             </ng-template>
         </mat-menu>

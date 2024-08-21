@@ -129,7 +129,8 @@ svg.theme-svg {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 16px;
+    padding-left: 16px;
+    padding-right: 16px;
     border-bottom: 1px solid #e0e0e0;
 }
 
@@ -299,7 +300,7 @@ mat-icon {
 }
 
 .unread-count {
-    font-weight: bold;
+    /* font-weight: bold; */
     color: #3f51b5;
     white-space: nowrap;
     margin-left: 16px;
@@ -313,16 +314,16 @@ mat-icon {
 }
 
 .unread {
-    font-weight: bold;
+    /* font-weight: bold; */
 }
 
 .unread mat-list-item {
     background-color: #e3f2fd;
-    font-weight: bold;
+    /* font-weight: bold; */
 }
 
 .unread {
-    font-weight: bold;
+    /* font-weight: bold; */
     background-color: #e3f2fd;
 }
 

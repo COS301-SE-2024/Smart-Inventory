@@ -9,8 +9,9 @@
     --mdc-outlined-button-label-text-color: black;
     --mdc-outlined-button-outline-color: #74777f;
     border-radius: 5px;
-    width: 180px;
+    width: 160px;
     height: 40px;
+    padding: 5px;
 }
 
 /* width */

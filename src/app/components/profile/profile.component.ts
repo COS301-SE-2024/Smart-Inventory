@@ -18,10 +18,11 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import { CognitoService } from '../../_services/cognito.service';
 import { AuthenticatorService } from '@aws-amplify/ui-angular';
 import { Router } from '@angular/router';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { ThemeService } from '../../services/theme.service';
 
 @Component({
-    selector: 'app-settings',
+    selector: 'app-profile',
     standalone: true,
     imports: [
         CommonModule,
@@ -39,13 +40,13 @@ import { ThemeService } from '../../services/theme.service';
         MatTabsModule,
         MatCardModule,
         MatCheckboxModule,
+        MatToolbarModule,
         MatGridListModule,
     ],
-    templateUrl: './settings.component.html',
-    styleUrl: './settings.component.css',
-    encapsulation: ViewEncapsulation.None,
+    templateUrl: './profile.component.html',
+    styleUrl: './profile.component.css',
 })
-export class SettingsComponent implements OnInit {
+export class ProfileComponent implements OnInit {
     emailFormControl = new FormControl('', [Validators.required, Validators.email]);
 
     profile = {
@@ -223,11 +224,7 @@ export class SettingsComponent implements OnInit {
         this.hidePassword = !this.hidePassword;
     }
 
-    visitNotifications() {
-        this.router.navigate(['/notifications']);
-    }
-
-    visitProfile() {
-        this.router.navigate(['/profile']);
+    back() {
+        this.router.navigate(['/settings']);
     }
 }

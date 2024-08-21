@@ -1,14 +1,34 @@
 /* PLACEHOLDER */
 ::placeholder {
     text-align: left;
-  }
-
-  /* Ensure input text is left-aligned */
-input.mat-input-element {
-  text-align: left;
 }
 
+/* Ensure input text is left-aligned */
+input.mat-input-element {
+    text-align: left;
+}
 
+mat-form-field {
+    width: 100%;
+    margin-bottom: 15px;
+    --mdc-filled-text-field-label-text-color: #000000;
+    --mdc-filled-text-field-container-color: #f1f1f1;
+}
+
+mat-dialog-content {
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.btn {
+    border-radius: 20px;
+    margin-right: 10px;
+    --mdc-outlined-button-label-text-color: black;
+    --mdc-outlined-button-outline-color: #74777f;
+    border-radius: 5px;
+    width: 200px;
+    height: 40px;
+}
 /* width */
 ::-webkit-scrollbar {
     margin-left: 5px;
@@ -24,15 +44,14 @@ input.mat-input-element {
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-    background: #888;
+    background: none;
     border-radius: 50px;
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-    background: #555;
+    background: none;
 }
-
 
 .body {
     height: 100%;
@@ -132,7 +151,6 @@ mat-list {
     height: 95%;
     margin-left: 10px;
 }
-
 
 /* LIGHT AND DARK MODE SELECTION */
 
@@ -265,10 +283,10 @@ mat-label {
     width: 180px;
     position: relative;
     box-sizing: border-box;
-    background-color: #f1f1f1;
+    /*background-color: #f1f1f1;*/
 }
 .mat-mdc-text-field-wrapper.mdc-text-field.mdc-text-field--filled {
-    background-color: #f1f1f1;
+    /*background-color: #f1f1f1;*/
     border-radius: 15px;
 }
 /* EDIT PERSONAL INFORMATION */
@@ -279,9 +297,26 @@ mat-label {
     flex-wrap: wrap;
     text-align: center;
     /* overflow-y: scroll; */
-    width: 100%;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    background-color: #f1f1f1;
 }
 
+.mat-mdc-tab-body.mat-mdc-tab-body-active {
+    position: relative;
+    overflow-x: hidden;
+    display: flex;
+    z-index: 1;
+    flex-grow: 1;
+    align-content: center;
+    justify-content: center;
+    text-align: center;
+}
+.mat-mdc-tab-body {
+    overflow-y: scroll;
+    width: 100%;
+    height: 80vh;
+}
 .name-surname-row {
     display: flex;
     justify-content: space-between;
@@ -312,21 +347,6 @@ mat-label {
 
 /* EDIT PASSWORD */
 
-.form-row.form-row-password {
-    width: 100%;
-    margin-right: 30px;
-    margin-top: 15px;
-}
-
-.current-password {
-    width: 70%;
-  }
-
-.form-field {
-    flex: 1;
-    width: 48%;
-}
-
 .email-field {
     width: 100%;
 }
@@ -341,35 +361,18 @@ button mat-button {
     font-weight: 400;
 }
 
-button.change-password-button {
-    color: black;
-    color: #000000 !important;
-    margin-top: 10px !important;
-    font-size: 15px !important;
-    margin-right: 50px;
-    width: 28%;
-}
-
-button.cancel-password-button {
-    background-color: transparent;
-    color: red !important;
-    margin-top: 10px !important;
-    font-size: 15px !important;
-    margin-left: 50px;
-}
-
 .delete-confirmation-row {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
     width: 100%;
     margin-top: 20px;
-  }
+}
 
-  .delete-confirmation-row .form-field {
+.delete-confirmation-row .form-field {
     width: 48%;
     margin-bottom: 10px;
-  }
+}
 
 button.delete-button {
     /* background-color: #8f8f8f; */
@@ -398,14 +401,14 @@ button.delete-button {
     align-items: center;
     width: 100%;
     margin-top: 20px;
-  }
+}
 
 .password-action-buttons {
     display: flex;
     justify-content: space-between;
     width: 100%;
     margin-top: 10px;
-  }
+}
 
 /* Custom Form Field Styling */
 .form-row mat-form-field {
@@ -449,4 +452,3 @@ mat-form-field .mdc-line-ripple {
     align-items: center;
     width: 100%;
 }
-  

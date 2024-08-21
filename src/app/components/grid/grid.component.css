@@ -42,25 +42,26 @@
 }
 
 .input-container {
-    border: 2px solid #74777f;
+    border: 1px solid #74777f;
     border-radius: 5px;
     height: 40px;
     width: 350px;
 }
 
 .input-box {
-    height: 36px;
+    height: 35px;
     width: 322px;
     padding-left: 5px;
     padding-right: 5px;
     padding-top: 0px;
     padding-bottom: 0px;
     border: none;
-    background-color: none;
 }
-
+.cdk-text-field-autofill-monitored:not(:-webkit-autofill) {
+    outline: none;
+}
 mat-select {
-    border: 2px solid #74777f;
+    border: 1px solid #74777f;
     border-radius: 5px;
     margin-left: 10px;
     align-content: center;

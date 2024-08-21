@@ -1,0 +1,58 @@
+<ng-container>
+    <mat-toolbar style="width: 100%">
+        <button mat-button style="width: 100%; background-color: #f1f1f1; color: black" (click)="back()">
+            Back to Settings
+        </button>
+    </mat-toolbar>
+    <mat-grid-list cols="3" rowHeight="500px">
+        <mat-grid-tile></mat-grid-tile>
+        <mat-grid-tile>
+            <mat-card style="width: 95%; height: 95%">
+                <mat-card-title style="padding: 16px; text-align: center">Notifications</mat-card-title>
+                <mat-card-content style="padding: 10px">
+                    <mat-button-toggle-group>
+                        <mat-button-toggle value="on">ON</mat-button-toggle>
+                        <mat-button-toggle value="italic">OFF</mat-button-toggle>
+                    </mat-button-toggle-group>
+                    Allow Low Stock Notifications
+                </mat-card-content>
+                <mat-card-content style="padding: 10px">
+                    <mat-button-toggle-group>
+                        <mat-button-toggle value="on">ON</mat-button-toggle>
+                        <mat-button-toggle value="italic">OFF</mat-button-toggle>
+                    </mat-button-toggle-group>
+                    Supplier Updates
+                </mat-card-content>
+                <mat-card-content style="padding: 10px">
+                    <mat-button-toggle-group>
+                        <mat-button-toggle value="on">ON</mat-button-toggle>
+                        <mat-button-toggle value="italic">OFF</mat-button-toggle>
+                    </mat-button-toggle-group>
+                    Autonomous Orders
+                </mat-card-content>
+                <mat-card-content style="padding: 10px">
+                    <mat-button-toggle-group>
+                        <mat-button-toggle value="on">ON</mat-button-toggle>
+                        <mat-button-toggle value="italic">OFF</mat-button-toggle>
+                    </mat-button-toggle-group>
+                    Order Updates
+                </mat-card-content>
+                <mat-card-content style="padding: 10px">
+                    <mat-button-toggle-group>
+                        <mat-button-toggle value="on">ON</mat-button-toggle>
+                        <mat-button-toggle value="italic">OFF</mat-button-toggle>
+                    </mat-button-toggle-group>
+                    Team Updates
+                </mat-card-content>
+                <mat-card-content style="padding: 10px">
+                    <mat-button-toggle-group>
+                        <mat-button-toggle value="on">ON</mat-button-toggle>
+                        <mat-button-toggle value="italic">OFF</mat-button-toggle>
+                    </mat-button-toggle-group>
+                    Security Updates
+                </mat-card-content>
+            </mat-card>
+        </mat-grid-tile>
+        <mat-grid-tile> </mat-grid-tile>
+    </mat-grid-list>
+</ng-container>

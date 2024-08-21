@@ -34,11 +34,11 @@
     <div class="resize-handle" (mousedown)="startResize($event)"></div>
 
     <div class="notification-header">
-        <h3>Notifications</h3>
+        <h4 style="padding-top: 10px">Notifications</h4>
         <div>
-            <button mat-icon-button routerLink="/settings" matTooltip="Go to Settings">
+            <!-- <button mat-icon-button routerLink="/settings" matTooltip="Go to Settings">
                 <mat-icon>settings</mat-icon>
-            </button>
+            </button> -->
             <button mat-icon-button (click)="closeNotificationPanel()" matTooltip="Close">
                 <mat-icon>close</mat-icon>
             </button>
@@ -82,16 +82,7 @@
                 <ng-template mat-tab-label>Reports</ng-template>
             </mat-tab>
             <mat-tab>
-                <ng-template mat-tab-label>Settings</ng-template>
-            </mat-tab>
-            <mat-tab>
                 <ng-template mat-tab-label>Orders</ng-template>
-            </mat-tab>
-            <mat-tab>
-                <ng-template mat-tab-label>Suppliers</ng-template>
-            </mat-tab>
-            <mat-tab>
-                <ng-template mat-tab-label>Teams</ng-template>
             </mat-tab>
         </mat-tab-group>
     </div>

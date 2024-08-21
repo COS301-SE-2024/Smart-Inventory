@@ -4,6 +4,18 @@
     max-width: 600px;
 }
 
+mat-form-field {
+    width: 100%;
+    margin-bottom: 15px;
+    --mdc-filled-text-field-label-text-color: #000000;
+    --mdc-filled-text-field-container-color: #f1f1f1;
+}
+
+mat-dialog-content {
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
 .btn {
     border-radius: 20px;
     margin-right: 10px;

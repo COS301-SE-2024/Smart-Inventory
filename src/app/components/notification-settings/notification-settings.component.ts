@@ -1,11 +1,10 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatListModule } from '@angular/material/list';
 import { FormControl, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -20,7 +19,7 @@ import { AuthenticatorService } from '@aws-amplify/ui-angular';
 import { Router } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { ThemeService } from '../../services/theme.service';
-import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 @Component({
     selector: 'app-notification-settings',
@@ -43,7 +42,7 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
         MatCheckboxModule,
         MatToolbarModule,
         MatGridListModule,
-        MatButtonToggleModule,
+        MatSlideToggleModule,
     ],
     templateUrl: './notification-settings.component.html',
     styleUrl: './notification-settings.component.css',
@@ -57,6 +56,7 @@ export class NotificationSettingsComponent {
     ngOnInit() {
         this.titleService.updateTitle('Settings');
     }
+    checked!: boolean;
     back() {
         this.router.navigate(['/settings']);
     }

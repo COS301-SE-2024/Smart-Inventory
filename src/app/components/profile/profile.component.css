@@ -93,7 +93,6 @@ mat-label {
     border-radius: 5px;
 }
 .mat-mdc-form-field-infix {
-    flex: auto;
     min-width: 0;
     width: 180px;
     position: relative;
@@ -105,15 +104,23 @@ mat-label {
     border-radius: 15px;
 }
 /* EDIT PERSONAL INFORMATION */
-.form-container {
+
+.card {
     display: flex;
+    justify-content: center;
+    align-items: center;
     flex-direction: column;
-    align-content: center;
     flex-wrap: wrap;
     text-align: center;
     /* overflow-y: scroll; */
     margin-top: 10px;
     margin-bottom: 10px;
+    background-color: linear-gradient(white, #f1f1f1);
+    box-shadow:
+        0px 6px 6px -3px rgba(0, 0, 0, 0.2),
+        0px 10px 14px 1px rgba(0, 0, 0, 0.14),
+        0px 4px 18px 3px rgba(0, 0, 0, 0.12);
+    border-radius: 8px;
 }
 
 .mat-mdc-tab-body.mat-mdc-tab-body-active {

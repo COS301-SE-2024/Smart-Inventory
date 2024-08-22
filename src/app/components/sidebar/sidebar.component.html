@@ -10,7 +10,7 @@
         <mat-nav-list>
             <div *ngFor="let item of menuItems">
                 <a mat-list-item *ngIf="!item.click" [routerLink]="item.routerLink"
-                    ><mat-icon>{{ item.icon }}</mat-icon>
+                    ><mat-icon id="{{ item.icon }}">{{ item.icon }}</mat-icon>
                     <p>{{ item.label }}</p></a
                 >
                 <a mat-list-item *ngIf="item.click" (click)="signOut()"

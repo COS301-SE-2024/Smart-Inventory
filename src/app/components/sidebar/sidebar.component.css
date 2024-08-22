@@ -8,12 +8,12 @@
     width: 50px; /* Standard width for sidenav */
     /* background-color: var(--sidebar-bg-color); */ /* Light grey background */
     background-color: var(--sidebar-bg-color);
-    transition: width 0.8s;
+    transition: width 0.4s;
     transition-delay: 0s;
     height: 100vh;
     width: 50px; /* Standard width for sidenav */
     color: var(--sidebar-text-color); /* Changes default text/icon color to black for visibility */
-    transition: width 0.8s ease;
+    transition: width 0.4s ease;
     transition-delay: 0s;
     overflow: hidden;
 }
@@ -21,7 +21,7 @@
 p {
     width: 0px;
     overflow: hidden;
-    transition: width 0.8s;
+    transition: width 0.4s;
     transition-delay: 0s;
 }
 
@@ -38,12 +38,12 @@ p {
 
 .sidenav:hover {
     width: 100px;
-    transition-delay: 1s;
+    transition-delay: 0.4s;
 }
 
 .sidenav:hover p {
     width: 100px;
-    transition-delay: 1s;
+    transition-delay: 0.4s;
     color: var(--sidebar-text-color);
 }
 
@@ -74,7 +74,7 @@ a {
 }
 
 a:hover {
-    height: 50px;
+    height: 70px;
     background-color: var(--sidebar-hover-bg-color); /* Adds a hover effect  */
 }
 
@@ -84,4 +84,85 @@ a div {
 
 a.mat-mdc-list-item.mdc-list-item.mat-mdc-list-item-interactive.mat-mdc-list-item-single-line.mdc-list-item--with-one-line {
     height: 70px;
+}
+
+.sidenav:not(:hover):not(.expanded) #dashboard {
+    transition: 0.2s ease;
+    transform: translateY(13px); /* Move icon to center when not expanded */
+}
+
+.sidenav:not(:hover):not(.expanded) #inventory_2 {
+    transition: 0.2s ease;
+    transform: translateY(13px); /* Move icon to center when not expanded */
+}
+
+.sidenav:not(:hover):not(.expanded) #assessment {
+    transition: 0.2s ease;
+    transform: translateY(13px); /* Move icon to center when not expanded */
+}
+
+.sidenav:not(:hover):not(.expanded) #people {
+    transition: 0.2s ease;
+    transform: translateY(13px); /* Move icon to center when not expanded */
+}
+
+.sidenav:not(:hover):not(.expanded) #local_shipping {
+    transition: 0.2s ease;
+    transform: translateY(13px); /* Move icon to center when not expanded */
+}
+
+.sidenav:not(:hover):not(.expanded) #assignment {
+    transition: 0.2s ease;
+    transform: translateY(13px); /* Move icon to center when not expanded */
+}
+
+.sidenav:not(:hover):not(.expanded) #help {
+    transition: 0.2s ease;
+    transform: translateY(13px); /* Move icon to center when not expanded */
+}
+
+.sidenav:not(:hover):not(.expanded) #settings {
+    transition: 0.2s ease;
+    transform: translateY(13px); /* Move icon to center when not expanded */
+}
+
+.sidenav:not(:hover):not(.expanded) #exit_to_app {
+    transition: 0.2s ease;
+    transform: translateY(13px); /* Move icon to center when not expanded */
+}
+
+.sidenav:hover #dashboard {
+    transition: 0.2s ease;
+}
+
+.sidenav:hover #inventory_2 {
+    transition: 0.2s ease;
+}
+
+.sidenav:hover #assessment {
+    transition: 0.2s ease;
+}
+
+.sidenav:hover #people {
+    transition: 0.2s ease;
+}
+
+.sidenav:hover #local_shipping {
+    transition: 0.2s ease;
+}
+
+.sidenav:hover #assignment {
+    transition: 0.2s ease;
+}
+
+.sidenav:hover #help {
+    transition: 0.2s ease;
+}
+
+.sidenav:hover #settings {
+    transition: 0.2s ease;
+}
+
+.sidenav:hover #exit_to_app {
+    transition: 0.2s ease;
 }

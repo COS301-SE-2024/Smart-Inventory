@@ -19,6 +19,7 @@ import { CognitoService } from '../../_services/cognito.service';
 import { AuthenticatorService } from '@aws-amplify/ui-angular';
 import { Router } from '@angular/router';
 import { ThemeService } from '../../services/theme.service';
+import { ProfileComponent } from '../../components/profile/profile.component';
 
 @Component({
     selector: 'app-settings',
@@ -40,6 +41,7 @@ import { ThemeService } from '../../services/theme.service';
         MatCardModule,
         MatCheckboxModule,
         MatGridListModule,
+        ProfileComponent,
     ],
     templateUrl: './settings.component.html',
     styleUrl: './settings.component.css',

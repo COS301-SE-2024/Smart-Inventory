@@ -20,6 +20,12 @@ mat-dialog-content {
     overflow-y: auto;
 }
 
+.mat-mdc-card-header {
+    display: flex;
+    padding: 16px 16px 0;
+    width: 100%;
+}
+
 .btn {
     border-radius: 20px;
     margin-right: 10px;

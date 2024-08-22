@@ -1,136 +1,117 @@
 <ng-container>
-    <div style="width: 85%; padding-left: 12%; height: 95%; overflow-y: scroll">
-        <mat-toolbar style="width: 100%">
+    <mat-card class="card" style="width: 800px; margin-left: auto; margin-right: auto">
+        <mat-card-title style="padding: 16px">Personal details</mat-card-title>
+        <mat-card-content>
+            <mat-form-field appearance="outline">
+                <input matInput placeholder="Name" [(ngModel)]="profile.name" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <input matInput placeholder="Surname" [(ngModel)]="profile.surname" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <input matInput placeholder="Email" [formControl]="emailFormControl" />
+                <mat-error *ngIf="emailFormControl.hasError('email') && !emailFormControl.hasError('required')">
+                    Please enter a valid email address
+                </mat-error>
+                <mat-error *ngIf="emailFormControl.hasError('required')">
+                    Email is <strong>required</strong>
+                </mat-error>
+            </mat-form-field>
+
+            <button mat-stroked-button color="primary" (click)="saveProfileChanges()" class="btn">Save Changes</button>
+        </mat-card-content>
+        <hr style="margin-top: 16px; background-color: #f1f1f1" />
+        <mat-card-title style="padding: 16px">Password</mat-card-title>
+        <mat-card-content>
+            <mat-form-field appearance="outline">
+                <input
+                    matInput
+                    [type]="hidePassword ? 'password' : 'text'"
+                    placeholder="Current Password"
+                    [(ngModel)]="password.current"
+                />
+                <button
+                    mat-icon-button
+                    matSuffix
+                    (click)="togglePasswordVisibility()"
+                    [attr.aria-label]="'Hide password'"
+                    [attr.aria-pressed]="hidePassword"
+                >
+                    <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+                </button>
+            </mat-form-field>
+
             <button
-                mat-button
-                appearance="outline"
-                style="width: 100%; background-color: #f1f1f1; color: black"
-                (click)="back()"
+                mat-stroked-button
+                *ngIf="!isChangingPassword"
+                color="primary"
+                class="btn"
+                (click)="initiatePasswordChange()"
             >
-                Back to Settings
+                Change Password
             </button>
-        </mat-toolbar>
-        <mat-card class="card">
-            <mat-card-title style="padding: 16px">Personal details</mat-card-title>
-            <mat-card-content>
-                <mat-form-field appearance="outline">
-                    <input matInput placeholder="Name" [(ngModel)]="profile.name" />
-                </mat-form-field>
 
-                <mat-form-field appearance="outline">
-                    <input matInput placeholder="Surname" [(ngModel)]="profile.surname" />
-                </mat-form-field>
+            <mat-form-field *ngIf="isChangingPassword" appearance="outline">
+                <input
+                    matInput
+                    [type]="hidePassword ? 'password' : 'text'"
+                    placeholder="New Password"
+                    [(ngModel)]="password.new"
+                />
+            </mat-form-field>
+            <button
+                mat-stroked-button
+                *ngIf="isChangingPassword"
+                color="primary"
+                (click)="updatePassword()"
+                class="btn"
+            >
+                Update
+            </button>
+            <button
+                mat-stroked-button
+                *ngIf="isChangingPassword"
+                color="warn"
+                (click)="cancelPasswordChange()"
+                class="btn"
+            >
+                Cancel
+            </button>
+        </mat-card-content>
+        <hr style="margin-top: 16px; background-color: #f1f1f1" />
+        <mat-card-title style="padding: 16px">Delete Account</mat-card-title>
+        <mat-card-content>
+            <button
+                mat-stroked-button
+                *ngIf="!isDeleteAccountVisible"
+                color="warn"
+                class="btn"
+                (click)="toggleDeleteAccount()"
+            >
+                Delete Account
+            </button>
+            <mat-form-field appearance="outline" *ngIf="isDeleteAccountVisible">
+                <input matInput type="password" placeholder="Current Password" [(ngModel)]="password.currentDelete" />
+            </mat-form-field>
 
-                <mat-form-field appearance="outline">
-                    <input matInput placeholder="Email" [formControl]="emailFormControl" />
-                    <mat-error *ngIf="emailFormControl.hasError('email') && !emailFormControl.hasError('required')">
-                        Please enter a valid email address
-                    </mat-error>
-                    <mat-error *ngIf="emailFormControl.hasError('required')">
-                        Email is <strong>required</strong>
-                    </mat-error>
-                </mat-form-field>
+            <mat-form-field appearance="outline" *ngIf="isDeleteAccountVisible">
+                <input matInput placeholder="Confirm Email" [(ngModel)]="profile.confirmEmailDelete" />
+            </mat-form-field>
 
-                <button mat-stroked-button color="primary" (click)="saveProfileChanges()" class="btn">
-                    Save Changes
-                </button>
-            </mat-card-content>
-            <hr style="margin-top: 16px; background-color: #f1f1f1" />
-            <mat-card-title style="padding: 16px">Password</mat-card-title>
-            <mat-card-content>
-                <mat-form-field appearance="outline">
-                    <input
-                        matInput
-                        [type]="hidePassword ? 'password' : 'text'"
-                        placeholder="Current Password"
-                        [(ngModel)]="password.current"
-                    />
-                    <button
-                        mat-icon-button
-                        matSuffix
-                        (click)="togglePasswordVisibility()"
-                        [attr.aria-label]="'Hide password'"
-                        [attr.aria-pressed]="hidePassword"
-                    >
-                        <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
-                    </button>
-                </mat-form-field>
-
-                <button
-                    mat-stroked-button
-                    *ngIf="!isChangingPassword"
-                    color="primary"
-                    class="btn"
-                    (click)="initiatePasswordChange()"
-                >
-                    Change Password
-                </button>
-
-                <mat-form-field *ngIf="isChangingPassword" appearance="outline">
-                    <input
-                        matInput
-                        [type]="hidePassword ? 'password' : 'text'"
-                        placeholder="New Password"
-                        [(ngModel)]="password.new"
-                    />
-                </mat-form-field>
-                <button
-                    mat-stroked-button
-                    *ngIf="isChangingPassword"
-                    color="primary"
-                    (click)="updatePassword()"
-                    class="btn"
-                >
-                    Update
-                </button>
-                <button
-                    mat-stroked-button
-                    *ngIf="isChangingPassword"
-                    color="warn"
-                    (click)="cancelPasswordChange()"
-                    class="btn"
-                >
-                    Cancel
-                </button>
-            </mat-card-content>
-            <hr style="margin-top: 16px; background-color: #f1f1f1" />
-            <mat-card-title style="padding: 16px">Delete Account</mat-card-title>
-            <mat-card-content>
-                <button
-                    mat-stroked-button
-                    *ngIf="!isDeleteAccountVisible"
-                    color="warn"
-                    class="btn"
-                    (click)="toggleDeleteAccount()"
-                >
-                    Delete Account
-                </button>
-                <mat-form-field appearance="outline" *ngIf="isDeleteAccountVisible">
-                    <input
-                        matInput
-                        type="password"
-                        placeholder="Current Password"
-                        [(ngModel)]="password.currentDelete"
-                    />
-                </mat-form-field>
-
-                <mat-form-field appearance="outline" *ngIf="isDeleteAccountVisible">
-                    <input matInput placeholder="Confirm Email" [(ngModel)]="profile.confirmEmailDelete" />
-                </mat-form-field>
-
-                <button
-                    mat-stroked-button
-                    *ngIf="isDeleteAccountVisible"
-                    color="warn"
-                    class="btn"
-                    (click)="handleDeleteAccount()"
-                >
-                    Confirm Delete
-                </button>
-                <button mat-stroked-button *ngIf="isDeleteAccountVisible" (click)="toggleDeleteAccount()" class="btn">
-                    Cancel
-                </button>
-            </mat-card-content>
-        </mat-card>
-    </div>
+            <button
+                mat-stroked-button
+                *ngIf="isDeleteAccountVisible"
+                color="warn"
+                class="btn"
+                (click)="handleDeleteAccount()"
+            >
+                Confirm Delete
+            </button>
+            <button mat-stroked-button *ngIf="isDeleteAccountVisible" (click)="toggleDeleteAccount()" class="btn">
+                Cancel
+            </button>
+        </mat-card-content>
+    </mat-card>
 </ng-container>

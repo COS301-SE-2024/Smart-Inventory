@@ -88,47 +88,47 @@ a.mat-mdc-list-item.mdc-list-item.mat-mdc-list-item-interactive.mat-mdc-list-ite
 
 .sidenav:not(:hover):not(.expanded) #dashboard {
     transition: 0.2s ease;
-    transform: translateY(13px); /* Move icon to center when not expanded */
+    transform: translateY(12px); /* Move icon to center when not expanded */
 }
 
 .sidenav:not(:hover):not(.expanded) #inventory_2 {
     transition: 0.2s ease;
-    transform: translateY(13px); /* Move icon to center when not expanded */
+    transform: translateY(12px); /* Move icon to center when not expanded */
 }
 
 .sidenav:not(:hover):not(.expanded) #assessment {
     transition: 0.2s ease;
-    transform: translateY(13px); /* Move icon to center when not expanded */
+    transform: translateY(12px); /* Move icon to center when not expanded */
 }
 
 .sidenav:not(:hover):not(.expanded) #people {
     transition: 0.2s ease;
-    transform: translateY(13px); /* Move icon to center when not expanded */
+    transform: translateY(12px); /* Move icon to center when not expanded */
 }
 
 .sidenav:not(:hover):not(.expanded) #local_shipping {
     transition: 0.2s ease;
-    transform: translateY(13px); /* Move icon to center when not expanded */
+    transform: translateY(12px); /* Move icon to center when not expanded */
 }
 
 .sidenav:not(:hover):not(.expanded) #assignment {
     transition: 0.2s ease;
-    transform: translateY(13px); /* Move icon to center when not expanded */
+    transform: translateY(12px); /* Move icon to center when not expanded */
 }
 
 .sidenav:not(:hover):not(.expanded) #help {
     transition: 0.2s ease;
-    transform: translateY(13px); /* Move icon to center when not expanded */
+    transform: translateY(12px); /* Move icon to center when not expanded */
 }
 
 .sidenav:not(:hover):not(.expanded) #settings {
     transition: 0.2s ease;
-    transform: translateY(13px); /* Move icon to center when not expanded */
+    transform: translateY(12px); /* Move icon to center when not expanded */
 }
 
 .sidenav:not(:hover):not(.expanded) #exit_to_app {
     transition: 0.2s ease;
-    transform: translateY(13px); /* Move icon to center when not expanded */
+    transform: translateY(12px); /* Move icon to center when not expanded */
 }
 
 .sidenav:hover #dashboard {

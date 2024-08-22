@@ -4,6 +4,7 @@ mat-toolbar {
     background-color: var(--header-bg-color);
     font-weight: 450;
     font-size: 35px;
+    height: 60px;
 }
 
 .flex-spacer {

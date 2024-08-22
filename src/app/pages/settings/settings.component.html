@@ -1,6 +1,16 @@
 <ng-container>
-    <button (click)="visitProfile()">Profile</button>
-    <button (click)="visitNotifications()">Notification Settings</button>
+    <mat-tab-group>
+        <mat-tab label="Profile">
+            <div style="height: 85vh; width: 100%; overflow-y: scroll; align-content: center">
+                <app-profile></app-profile>
+            </div>
+        </mat-tab>
+        <mat-tab label="Automation">
+            <div style="height: 85vh; width: 100%; overflow-y: scroll; align-content: center">
+                <app-profile></app-profile>
+            </div>
+        </mat-tab>
+    </mat-tab-group>
 </ng-container>
 <!-- <ng-container>
             <div class="second-row" style="text-align: center">

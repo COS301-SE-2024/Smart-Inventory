@@ -89,25 +89,32 @@ export class OrderReportComponent implements OnInit {
 
     calculateOrderMetrics() {
         const orders = this.rowData;
-        const totalOrders = orders.length;
+        // Sort orders by date
+        orders.sort((a, b) => new Date(a.orderIssuedDate).getTime() - new Date(b.orderIssuedDate).getTime());
+
+        // Calculate days between orders
+        let totalDaysBetweenOrders = 0;
+        for (let i = 1; i < orders.length; i++) {
+            const daysBetween = (new Date(orders[i].orderIssuedDate).getTime() - new Date(orders[i - 1].orderIssuedDate).getTime()) / (1000 * 60 * 60 * 24);
+            totalDaysBetweenOrders += daysBetween;
+        }
+
+        // Calculate average days between orders
+        const averageDaysBetweenOrders = totalDaysBetweenOrders / (orders.length - 1);
+
+        // Perfect Order Rate calculation
         const validOrders = orders.filter(order => order.status === "Completed");
-        
-        // Order placement frequency
-        const uniqueDates = new Set(orders.map(order => order.orderIssuedDate));
-        const orderPlacementFrequency = totalOrders / uniqueDates.size;
-      
-        // Perfect Order Rate
-        const perfectOrders = validOrders.filter(order => 
-          order.expectedOrderDate && order.orderReceivedDate && 
-          new Date(order.orderReceivedDate) <= new Date(order.expectedOrderDate)
+        const perfectOrders = validOrders.filter(order =>
+            order.expectedOrderDate && order.orderReceivedDate &&
+            new Date(order.orderReceivedDate) <= new Date(order.expectedOrderDate)
         );
         const perfectOrderRate = (perfectOrders.length / validOrders.length) * 100;
-      
+
         return {
-          orderPlacementFrequency: orderPlacementFrequency.toFixed(2),
-          perfectOrderRate: perfectOrderRate.toFixed(2) + '%'
+            orderPlacementFrequency: averageDaysBetweenOrders.toFixed(1) + " days",
+            perfectOrderRate: perfectOrderRate.toFixed(2) + "%"
         };
-      }
+    }
 
     calculateAverageOrderTime(): number {
         const validOrders = this.rowData.filter(order =>

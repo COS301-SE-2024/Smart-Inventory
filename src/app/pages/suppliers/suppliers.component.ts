@@ -17,13 +17,13 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatDialogModule } from '@angular/material/dialog';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
-
+import { MaterialModule } from 'app/components/material/material.module';
 @Component({
     selector: 'app-suppliers',
     standalone: true,
     imports: [
         GridComponent,
-        MatButtonModule,
+        // MatButtonModule,
         CommonModule,
         FormsModule,
         DeleteConfirmationDialogComponent,
@@ -31,7 +31,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
         MatDialogModule,
         FormsModule,
         ReactiveFormsModule,
-        MatFormFieldModule,
+        // MatFormFieldModule,
+        MaterialModule
     ],
     templateUrl: './suppliers.component.html',
     styleUrl: './suppliers.component.css',

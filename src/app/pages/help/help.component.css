@@ -3,6 +3,30 @@
     width: 30vh;
 }
 
+.mat-mdc-card-header {
+    display: flex;
+    padding: 16px 16px 0;
+    width: 100%;
+}
+
+.card {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    flex-wrap: wrap;
+    text-align: center;
+    /* overflow-y: scroll; */
+    margin-top: 10px;
+    margin-bottom: 10px;
+    background-color: linear-gradient(white, #f1f1f1);
+    box-shadow:
+        0px 6px 6px -3px rgba(0, 0, 0, 0.2),
+        0px 10px 14px 1px rgba(0, 0, 0, 0.14),
+        0px 4px 18px 3px rgba(0, 0, 0, 0.12);
+    border-radius: 8px;
+}
+
 .test {
     border-radius: 20px;
     margin-right: 10px;
@@ -72,76 +96,6 @@
     display: flex;
     padding: 10px;
 }
-
-.content .first-row .buttons button {
-    width: 130px;
-    height: 60px;
-    border-radius: 15px;
-}
-
-.content .second-row {
-    height: 90%;
-    display: flex;
-    background-color: #d1d1d1;
-    overflow-y: auto;
-}
-
-/* LEFT PANE */
-
-.content .second-row .left-pane {
-    width: 20%;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: flex-start;
-    /* Ensure buttons start at the top */
-    padding: 0;
-    /* Ensure there's no padding affecting positioning */
-    margin: 0;
-    /* Ensure there's no margin affecting positioning */
-    box-sizing: border-box;
-    /* Include padding and border in the element's total width and height */
-}
-
-/* NAVIGATION MENU */
-
-.content .second-row .left-pane .menu-buttons {
-    width: 100%;
-    margin-top: 0;
-    padding: 0;
-    /* Ensure there's no padding affecting positioning */
-    box-sizing: border-box;
-    /* Include padding and border in the element's total width and height */
-    margin-bottom: 40vh;
-}
-
-.content .second-row .left-pane .menu-buttons button {
-    width: 100%;
-    text-align: left;
-    background-color: #d1d1d1;
-    color: black;
-    font-size: 23px;
-    margin-bottom: 8px;
-    justify-content: left;
-    padding-left: 30px;
-    border-radius: 10px;
-    font-weight: 500;
-    padding-top: 10px;
-    padding-bottom: 10px;
-    box-sizing: border-box;
-    /* Include padding and border in the element's total width and height */
-}
-
-/* .content[_ngcontent-ng-c2828906938][_ngcontent-ng-c2828906938]   .second-row[_ngcontent-ng-c2828906938][_ngcontent-ng-c2828906938]   .left-pane[_ngcontent-ng-c2828906938][_ngcontent-ng-c2828906938]   .menu-buttons[_ngcontent-ng-c2828906938][_ngcontent-ng-c2828906938]   button[_ngcontent-ng-c2828906938][_ngcontent-ng-c2828906938]{
-    justify-content: left;
-    padding-left: 25px;
-} */
-
-.content .second-row .left-pane .menu-buttons button.selected {
-    background-color: #05ff00;
-    color: black;
-}
-
 /* LIGHT AND DARK MODE TOGGLE */
 
 .mode-toggle span {
@@ -162,14 +116,6 @@
 }
 
 /* Override Angular Material Styles for Toggle*/
-.mdc-switch__icons {
-    height: 100% !important;
-    position: relative !important;
-    width: 100% !important;
-    z-index: 1 !important;
-    background-color: #05ff00 !important;
-    border-radius: 50% !important;
-}
 
 .mdc-switch:enabled .mdc-switch__track::after {
     background: #544c4c !important;
@@ -177,10 +123,6 @@
 
 .mdc-switch.mdc-switch--unselected:enabled .mdc-switch__icon {
     display: none !important;
-}
-
-.mdc-switch.mdc-switch--selected:enabled .mdc-switch__icon {
-    fill: #05ff00 !important;
 }
 
 .mdc-switch:enabled .mdc-switch__track::before {
@@ -192,166 +134,7 @@
     border-color: #ffffff !important;
 }
 
-/* RIGHT PANE */
-
-.content .second-row .right-pane {
-    width: 80%;
-    padding: 16px;
-}
-
-/* FAQs SECTION */
-
-.content .second-row .right-pane .faq-section {
-    display: flex;
-    padding-top: 10px;
-    flex-direction: column;
-    height: 100%;
-}
-
-.content .second-row .right-pane .faq-section .faq-row {
-    width: fit-content;
-}
-
-.content .second-row .right-pane .faq-section .faq-row.faq-row-one {
-    padding: auto;
-    height: 20vh;
-}
-
-.content .second-row .right-pane .faq-section .faq-row.faq-row-one h2 {
-    margin-bottom: 15px;
-    /* font-weight: 500; */
-    font-size: 60px;
-}
-
-.content .second-row .right-pane .faq-section .faq-row.faq-row-one .filter-buttons {
-    display: flex;
-    flex-wrap: wrap;
-    padding: 10px;
-}
-
-.content .second-row .right-pane .faq-section .faq-row.faq-row-one .filter-buttons .filter-button {
-    margin-right: 8px;
-    margin-bottom: 8px;
-    height: 60px;
-    background-color: #05ff00;
-    color: black;
-    border-radius: 15px;
-    font-size: 20px;
-    font-weight: 500;
-    padding: 10px;
-}
-
-.content .second-row .right-pane .faq-section .faq-row.faq-row-two {
-    height: 40vh;
-    overflow-y: auto;
-    padding: 10px;
-}
-
-.content .second-row .right-pane .faq-section .faq-row.faq-row-two mat-accordion {
-    width: 100%;
-}
-
-.content .second-row .right-pane .faq-section .faq-row.faq-row-two mat-expansion-panel-header {
-    height: 10vh;
-}
-
-.content .second-row .right-pane .faq-section .faq-row.faq-row-two mat-panel-title {
-    font-size: 25px;
-    font-weight: 500;
-}
-
-.content .second-row .right-pane .faq-section .faq-row.faq-row-two mat-expansion-panel p {
-    font-size: 20px;
-    font-weight: 400;
-}
-
-.content .second-row .right-pane .faq-section .faq-row.faq-row-three {
-    margin-top: 20px;
-    height: 10%;
-    display: flex;
-    align-items: top;
-}
-
-/* BANNER  */
-
-.content .second-row .right-pane .faq-section .faq-row.faq-row-three .faq-banner {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #05ff00;
-    padding: 16px;
-    width: 100%;
-    border-radius: 15px;
-}
-
-.content .second-row .right-pane .faq-section .faq-row.faq-row-three .faq-banner .banner-text h3 {
-    margin: 0;
-    margin-bottom: 5px;
-    font-size: 30px;
-}
-
-.content .second-row .right-pane .faq-section .faq-row.faq-row-three .faq-banner .banner-text p {
-    font-size: 20px;
-    margin: 0;
-    font-weight: 500;
-}
-
-.content .second-row .right-pane .faq-section .faq-row.faq-row-three .faq-banner .get-in-touch-button {
-    background-color: black;
-    color: white;
-    font-weight: 500;
-    font-size: 20px;
-    border-radius: 15px;
-    height: 70px;
-    width: 150px;
-    margin-left: auto;
-}
-
 /* TROUBLESHOOTING */
-
-.content .second-row .right-pane .troubleshooting-section {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-}
-
-.content .second-row .right-pane .troubleshooting-section .troubleshooting-row-one {
-    height: 10vh;
-}
-
-.content .second-row .right-pane .troubleshooting-section .troubleshooting-row-one h2 {
-    margin: 0;
-    font-size: 60px;
-}
-
-.content .second-row .right-pane .troubleshooting-section .troubleshooting-row-two {
-    height: 50vh;
-    overflow-y: auto;
-}
-
-.content .second-row .right-pane .troubleshooting-section .troubleshooting-row-two mat-accordion {
-    width: 100%;
-}
-
-.content .second-row .right-pane .troubleshooting-section .troubleshooting-row-two mat-expansion-panel-header {
-    height: 10vh;
-}
-
-.content .second-row .right-pane .troubleshooting-section .troubleshooting-row-two mat-expansion-panel p {
-    font-size: 20px;
-    font-weight: 400;
-}
-
-.content .second-row .right-pane .troubleshooting-section .troubleshooting-row-two mat-panel-title {
-    font-size: 25px;
-    font-weight: 500;
-}
-
-.content .second-row .right-pane .troubleshooting-section .troubleshooting-row-three {
-    /* height: 10%; */
-    display: flex;
-    align-items: center;
-}
 
 /* BANNER  */
 .mat-mdc-tab-group,
@@ -366,16 +149,6 @@
     --mat-tab-header-inactive-ripple-color: var(--tab-ripple-color);
     --mat-tab-header-active-focus-indicator-color: #000;
     --mdc-secondary-navigation-tab-container-height: 35px;
-}
-
-.content .second-row .right-pane .troubleshooting-section .troubleshooting-row-three .troubleshooting-banner {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #05ff00;
-    padding: 16px;
-    width: 100%;
-    border-radius: 15px;
 }
 
 .content
@@ -424,76 +197,6 @@
 
 /* CONTACT SUPPORT */
 
-/* .columnOne {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-}
-.columnTwo {
-    display: flex;
-    flex-direction: column;
-} */
-.content .second-row .right-pane .customer-support-section {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-}
-
-.content .second-row .right-pane .customer-support-section .customer-support-row-one {
-    height: 10vh;
-}
-
-.content .second-row .right-pane .customer-support-section .customer-support-row-one h2 {
-    margin: 0;
-    font-size: 60px;
-}
-
-.content .second-row .right-pane .customer-support-section .customer-support-row-two {
-    height: 50vh;
-    display: flex;
-}
-
-.content .second-row .right-pane .customer-support-section .customer-support-row-two .column-one {
-    width: 50%;
-}
-
-.content .second-row .right-pane .customer-support-section .customer-support-row-two .column-one img {
-    width: 100%;
-    height: 100%;
-}
-
-/* FORM SUBMISSION */
-
-.content .second-row .right-pane .customer-support-section .customer-support-row-two .column-two {
-    width: 50%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    /* Center the form in the column */
-    margin-left: 30px;
-}
-
-.content .second-row .right-pane .customer-support-section .customer-support-row-two .column-two form {
-    display: flex;
-    flex-direction: column;
-    width: 80%;
-    /* background-color: white;  */
-    /* padding: 20px; */
-    box-shadow: none;
-    border-radius: 10px;
-    /* Optional: Add border radius for better look */
-    max-width: fit-content;
-}
-
-.content .second-row .right-pane .customer-support-section .customer-support-row-two .column-two form mat-form-field {
-    margin-bottom: 15px;
-    background-color: none;
-    margin-top: 15px;
-    padding: none;
-    border-radius: 15px;
-}
-
 .content
     .second-row
     .right-pane
@@ -508,10 +211,11 @@
     max-width: fit-content;
 }
 
-.mat-mdc-text-field-wrapper.mdc-text-field.mdc-text-field--filled.mdc-text-field--no-label {
-    background-color: #f1f1f1;
+mat-form-field {
+    width: 100%;
+    background-color: none !important;
+    border-radius: 15px;
 }
-
 mat-form-field.mat-mdc-form-field.mat-mdc-form-field-type-mat-input.mat-form-field-appearance-fill.mat-primary.ng-star-inserted {
     --mat-mdc-form-field-floating-label-scale: 0.75;
     display: inline-flex;
@@ -583,42 +287,6 @@ mat-form-field.mat-mdc-form-field.mat-mdc-form-field-type-mat-input.mat-form-fie
     align-items: center;
 }
 
-.content .second-row .right-pane .customer-support-section .customer-support-row-three .customer-support-banner {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #05ff00;
-    padding: 16px;
-    width: 100%;
-    border-radius: 15px;
-}
-
-.content
-    .second-row
-    .right-pane
-    .customer-support-section
-    .customer-support-row-three
-    .customer-support-banner
-    .banner-text
-    h3 {
-    margin: 0;
-    margin-bottom: 5px;
-    font-size: 30px;
-}
-
-.content
-    .second-row
-    .right-pane
-    .customer-support-section
-    .customer-support-row-three
-    .customer-support-banner
-    .banner-text
-    p {
-    font-size: 20px;
-    margin: 0;
-    font-weight: 500;
-}
-
 .content
     .second-row
     .right-pane
@@ -637,64 +305,10 @@ mat-form-field.mat-mdc-form-field.mat-mdc-form-field-type-mat-input.mat-form-fie
     border: #000;
 }
 
-/* USER GUIDES SECTION */
-
-.user-guides-section {
-    height: 100%;
-    overflow: scroll;
-    display: flex;
-    flex-direction: column;
-}
-
-.user-guides-row-one {
-    height: 10%;
-    display: flex;
-    align-items: center;
-    padding: 16px;
-}
-
 .mat-mdc-tab-body-content.ng-trigger.ng-trigger-translateTab {
     height: 100vh;
     overflow: scroll;
     padding-right: 30px;
-}
-
-/* .user-guides-row-one h2 {
-    margin: 0;
-    font-size: 60px;
-} */
-
-.user-guides-row-two {
-    display: flex;
-    flex-direction: row;
-}
-
-.side-menu {
-    width: 20%;
-    position: relative;
-    /* top: 10%; */
-    background-color: var(--user-guides-sidebar-bg-color);
-    padding: 16px;
-    border-right: 1px solid #000000;
-}
-
-.side-menu nav ul {
-    list-style-type: none;
-    padding: 0;
-    color: #000;
-    padding-top: 10px;
-}
-
-.side-menu nav ul li {
-    margin-bottom: 8px;
-    font-size: 20px;
-    padding-bottom: 10px;
-    padding-top: 10px;
-    font-weight: 500;
-}
-
-a {
-    text-decoration: none;
 }
 
 .side-menu nav ul li a:link {
@@ -716,95 +330,6 @@ a {
     margin-left: 16px;
 }
 
-.article-content {
-    width: 80%;
-    padding: 16px;
-    background-color: var(--user-guides-bg-color);
-    overflow-y: scroll;
-}
-
-.article-content h2,
-h3,
-p {
-    margin-bottom: 10px;
-}
-
-.video-container {
-    display: flex;
-    justify-content: center;
-    /* Center horizontally */
-    align-items: center;
-    /* Center vertically */
-    height: 100%;
-    /* Full height of the parent container */
-}
-
-.video-frame {
-    position: relative;
-    width: 100%;
-    padding-top: 56.25%;
-    /* 16:9 Aspect Ratio */
-    overflow: hidden;
-}
-
-.responsive-video {
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    width: 100%;
-    height: 100%;
-    border: none;
-}
-
-/* .user-guides-row-three {
-    height: 10%;
-    display: flex;
-    align-items: center;
-    margin-top: 20px;
-}
-
-.user-guides-banner {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #05ff00;
-    padding: 16px;
-    width: 100%;
-    border-radius: 15px;
-} */
-.form-container {
-    display: flex;
-    flex-direction: column;
-    align-content: center;
-    flex-wrap: wrap;
-    text-align: center;
-    border: black;
-}
-
-/* .banner-text h3 {
-    margin: 0;
-    margin-bottom: 5px;
-    font-size: 30px;
-} */
-
-/* .banner-text p {
-    font-size: 20px;
-    margin: 0;
-    font-weight: 500;
-} */
-
-/* .get-in-touch-button {
-    background-color: black;
-    color: white;
-    font-size: 20px;
-    font-weight: 500;
-    border-radius: 15px;
-    height: 70px;
-    width: 150px;
-    margin-left: auto;
-} */
 .mat-mdc-button .mat-mdc-button-touch-target {
     position: absolute;
     top: 50%;
@@ -818,130 +343,8 @@ p {
     border: #000;
 }
 
-.mat-mdc-form-field-infix {
-    flex: auto;
-    min-width: 0;
-    width: 180px;
-    position: relative;
-    box-sizing: border-box;
-    background-color: #f1f1f1;
-}
-
-.mat-mdc-text-field-wrapper.mdc-text-field.mdc-text-field--filled {
-    background-color: #f1f1f1;
-    border-radius: 15px;
-}
-
 /* RELEASE NOTES SECTION */
 
-.content .second-row .right-pane .release-notes-section {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-}
-
-.content .second-row .right-pane .release-notes-section .release-notes-row {
-    width: 100%;
-}
-
-.content .second-row .right-pane .release-notes-section .release-notes-row.release-notes-row-one {
-    height: 10vh;
-}
-
-.content .second-row .right-pane .release-notes-section .release-notes-row.release-notes-row-one h2 {
-    margin-bottom: 15px;
-    /* font-weight: 500; */
-    font-size: 60px;
-}
-
-.content .second-row .right-pane .release-notes-section .release-notes-row.release-notes-row-two {
-    height: 50vh;
-    overflow-y: auto;
-}
-
-.content .second-row .right-pane .release-notes-section .release-notes-row.release-notes-row-three {
-    margin-top: 20px;
-    height: 10%;
-    display: flex;
-    align-items: center;
-}
-
-/* UNDER CONSTRUCTION */
-
-.content .second-row .right-pane .release-notes-section .release-notes-row.release-notes-row-two img {
-    margin-left: auto;
-    margin-right: auto;
-    /* width: 50%; */
-    width: auto;
-    height: 100%;
-}
-
-/* .content .second-row .right-pane .release-notes-section .release-notes-row.release-notes-row-two h1 {
-    font-size: 70px;
-     display: block; 
-    text-align: center;
-    background-color: red; 
-} */
-
-/* BANNER  */
-
-/* .content
-    .second-row
-    .right-pane
-    .release-notes-section
-    .release-notes-row.release-notes-row-three
-    .release-notes-banner {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #05ff00;
-    padding: 16px;
-    width: 100%;
-    border-radius: 15px;
-} */
-
-.content
-    .second-row
-    .right-pane
-    .release-notes-section
-    .release-notes-row.release-notes-row-three
-    .release-notes-banner
-    .banner-text
-    h3 {
-    margin: 0;
-    margin-bottom: 5px;
-    font-size: 30px;
-}
-
-.content
-    .second-row
-    .right-pane
-    .release-notes-section
-    .release-notes-row.release-notes-row-three
-    .release-notes-banner
-    .banner-text
-    p {
-    font-size: 20px;
-    margin: 0;
-    font-weight: 500;
-}
-
-/* .content
-    .second-row
-    .right-pane
-    .release-notes-section
-    .release-notes-row.release-notes-row-three
-    .release-notes-banner
-    .get-in-touch-button {
-    background-color: black;
-    color: white;
-    font-weight: 500;
-    font-size: 20px;
-    border-radius: 15px;
-    height: 70px;
-    width: 150px;
-    margin-left: auto;
-} */
 .form-row mat-form-field {
     background-color: none;
 }
@@ -991,42 +394,4 @@ mat-form-field .mdc-line-ripple {
 .form-field {
     padding: 10px;
     flex: 1;
-}
-
-button mat-button {
-    background-color: #f1f1f1;
-    justify-content: left;
-    width: 200px;
-    height: 60px;
-    color: #000;
-    font-size: 20px;
-    font-weight: 400;
-}
-
-.mat-expansion-panel {
-    box-sizing: content-box;
-    display: block;
-    margin: 0;
-    overflow: hidden;
-    transition:
-        margin 225ms cubic-bezier(0.4, 0, 0.2, 1),
-        box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    background: var(--help-accordion-bg-color) !important;
-    color: var(--help-accordion-text-color) !important;
-    border-radius: var(--mat-expansion-container-shape);
-}
-
-.mat-expansion-panel-header-title {
-    color: var(--help-accordion-text-color) !important;
-}
-
-.mat-expansion-indicator svg {
-    width: 24px;
-    height: 24px;
-    margin: 0 -8px;
-    vertical-align: middle;
-    fill: var(--help-accordion-text-color) !important;
-    display: none;
-    display: var(--mat-expansion-header-indicator-display, none);
 }

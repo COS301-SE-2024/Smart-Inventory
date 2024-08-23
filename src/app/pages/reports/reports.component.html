@@ -1,19 +1,24 @@
 <div style="height: 100%; display: block; overflow-y: scroll">
-    <mat-grid-list cols="1" rowHeight="190px" gutterSize="10px">
+    <mat-grid-list cols="2" rowHeight="440px" gutterSize="10px">
         <mat-grid-tile *ngFor="let report of reports | keyvalue">
             <div class="card-container">
-                <mat-card class="item-card-container">
+                <mat-card class="card">
                     <mat-card-header class="card-header">
-                        <mat-card-title>{{ report.value.title }}</mat-card-title>
-                        <mat-card-subtitle> {{ report.value.subtitle }}</mat-card-subtitle>
+                        <div mat-card-avatar class="header-image">
+                            <mat-icon style="font-size: 70px; width: 80px; height: 80px">{{
+                                report.value.icon
+                            }}</mat-icon>
+                        </div>
+                        <div class="header-content">
+                            <mat-card-title>{{ report.value.title }}</mat-card-title>
+                            <p class="subtitle">{{ report.value.subtitle }}</p>
+                            <!-- <mat-card-subtitle style="padding: 10px">{{ report.value.subtitle }}</mat-card-subtitle> -->
+                        </div>
                     </mat-card-header>
                     <mat-card-actions>
-                        <button
-                            mat-button
-                            style="width: 100%; background-color: white; color: black; border-radius: 10px"
-                            (click)="viewFullReport(report.key)"
-                        >
-                            View Full Report
+                        <button mat-button class="view-report-button" (click)="viewFullReport(report.key)">
+                            <span>View Full Report</span>
+                            <mat-icon iconPositionEnd>arrow_forward</mat-icon>
                         </button>
                     </mat-card-actions>
                 </mat-card>

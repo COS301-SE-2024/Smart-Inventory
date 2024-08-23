@@ -5,51 +5,53 @@
         </button>
     </mat-toolbar>
     <mat-grid-list cols="9" rowHeight="20vh" gutterSize="15px">
-        <mat-grid-tile [colspan]="3" [rowspan]="2">
+        <mat-grid-tile [colspan]="3" [rowspan]="1">
             <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
-                <mat-card style="height: 100%; width: 100%">
+                <mat-card>
                     <mat-card-content>
-                        <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%;">
-                            <div>
-                                <mat-icon>{{ ActivityReport.metrics[0].icon }}</mat-icon>
-                                <span>{{ ActivityReport.metrics[0].name }}</span>
+                        <mat-card-content>
+                            <div class="metric-container" style="padding: 0;">
+                                <div class="icon-container">
+                                    <mat-icon>{{ ActivityReport.metrics[0].icon }}</mat-icon>
+                                </div>
+                                <div class="text-container">
+                                    <span class="metric-name">{{ ActivityReport.metrics[0].name }}</span>
+                                    <h2 class="metric-value">{{ ActivityReport.metrics[0].value }}</h2>
+                                </div>
                             </div>
-                            <div>
-                                <h2>{{ ActivityReport.metrics[0].value }}</h2>
-                            </div>
-                        </div>
+                        </mat-card-content>
                     </mat-card-content>
                 </mat-card>
             </div>
         </mat-grid-tile>
-        <mat-grid-tile [colspan]="3" [rowspan]="2">
+        <mat-grid-tile [colspan]="3" [rowspan]="1">
             <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
-                <mat-card style="height: 100%; width: 100%">
+                <mat-card>
                     <mat-card-content>
-                        <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%;">
-                            <div>
+                        <div class="metric-container">
+                            <div class="icon-container">
                                 <mat-icon>{{ ActivityReport.metrics[1].icon }}</mat-icon>
-                                <span>{{ ActivityReport.metrics[1].name }}</span>
                             </div>
-                            <div>
-                                <h2>{{ ActivityReport.metrics[1].value }}</h2>
+                            <div class="text-container">
+                                <span class="metric-name">{{ ActivityReport.metrics[1].name }}</span>
+                                <h2 class="metric-value">{{ ActivityReport.metrics[1].value }}</h2>
                             </div>
                         </div>
                     </mat-card-content>
                 </mat-card>
             </div>
         </mat-grid-tile>
-        <mat-grid-tile [colspan]="3" [rowspan]="2">
+        <mat-grid-tile [colspan]="3" [rowspan]="1">
             <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
-                <mat-card style="height: 100%; width: 100%">
+                <mat-card>
                     <mat-card-content>
-                        <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%;">
-                            <div>
+                        <div class="metric-container">
+                            <div class="icon-container">
                                 <mat-icon>{{ ActivityReport.metrics[2].icon }}</mat-icon>
-                                <span>{{ ActivityReport.metrics[2].name }}</span>
                             </div>
-                            <div>
-                                <h2>{{ ActivityReport.metrics[2].value }}</h2>
+                            <div class="text-container">
+                                <span class="metric-name">{{ ActivityReport.metrics[2].name }}</span>
+                                <h2 class="metric-value">{{ ActivityReport.metrics[2].value }}</h2>
                             </div>
                         </div>
                     </mat-card-content>

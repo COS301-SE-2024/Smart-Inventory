@@ -1,4 +1,14 @@
-import { Component, Input, OnInit, OnDestroy, Output, EventEmitter, output, ChangeDetectorRef, ViewChild } from '@angular/core';
+import {
+    Component,
+    Input,
+    OnInit,
+    OnDestroy,
+    Output,
+    EventEmitter,
+    output,
+    ChangeDetectorRef,
+    ViewChild,
+} from '@angular/core';
 import { Renderer2, ElementRef, AfterViewInit, ViewEncapsulation } from '@angular/core';
 import { AgGridAngular } from 'ag-grid-angular';
 import { AgGridModule } from 'ag-grid-angular';
@@ -75,7 +85,11 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
     gridApi!: GridApi<any>;
     private themeObserver!: MutationObserver;
     gridStyle: any;
-
+    gridOptions = {
+        pagination: true,
+        paginationPageSize: 20, // Set the number of rows per page
+        // other grid options...
+    };
     public themeClass: string = 'ag-theme-material'; // Default to light theme
 
     filteredRowData: any[] = [];
@@ -103,9 +117,10 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
         private renderer: Renderer2,
         private el: ElementRef,
         private cdr: ChangeDetectorRef,
-        private _snackBar: MatSnackBar
+        private _snackBar: MatSnackBar,
     ) {
         this.setupThemeObserver();
+
         // this.setGridHeight();
     }
 
@@ -132,7 +147,7 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
             // Remove all existing rows
             const allRows = this.gridApi.getModel().getRowCount();
             if (allRows > 0) {
-                const rowsToRemove = this.gridApi.getModel().getRow(allRows - 1)!.data;
+                const rowsToRemove = this.gridApi.getModel().getRow(allRows)!.data;
                 this.gridApi.applyTransaction({ remove: [rowsToRemove] });
             }
 
@@ -151,16 +166,16 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     setGridHeight(): void {
-        const baseHeight = 33; // Base height in vh
+        const baseHeight = 35; // Base height in vh
         const rowHeight = 3; // Height per row in vh
-        const maxHeight = 52; // Maximum height in vh
+        const maxHeight = 75; // Maximum height in vh
 
-        let calculatedHeight = baseHeight + (this._rowData.length * rowHeight);
+        let calculatedHeight = baseHeight + this._rowData.length * rowHeight;
         let gridHeight = Math.min(calculatedHeight, maxHeight);
 
         this.gridStyle = {
             height: `${gridHeight}vh`,
-            maxHeight: `${maxHeight}vh`
+            maxHeight: `${maxHeight}vh`,
         };
 
         // Force change detection
@@ -172,6 +187,7 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
                 this.gridApi.sizeColumnsToFit();
                 this.gridApi.resetRowHeights();
             });
+            this.gridApi.updateGridOptions(this.gridOptions);
         }
     }
 
@@ -208,7 +224,7 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
         this.gridApi.sizeColumnsToFit();
         this.applyCurrentTheme();
         this.setGridHeight();
-        console.log('in grid component', this.rowData)
+        console.log('in grid component', this.rowData);
     }
 
     ngOnDestroy(): void {
@@ -363,7 +379,7 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
             // console.log('No row selected for marking as received');
         }
     }
-    
+
     openAutomationSettings() {
         this.viewAutomationSettingsClicked.emit();
     }

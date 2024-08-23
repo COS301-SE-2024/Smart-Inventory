@@ -13,17 +13,26 @@ import { FormsModule } from '@angular/forms';
 import { DeleteConfirmationDialogComponent } from './delete-confirmation-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { LoadingSpinnerComponent } from '../../components/loader/loading-spinner.component';
-
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatDialogModule } from '@angular/material/dialog';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MaterialModule } from 'app/components/material/material.module';
 @Component({
     selector: 'app-suppliers',
     standalone: true,
     imports: [
         GridComponent,
-        MatButtonModule,
+        // MatButtonModule,
         CommonModule,
         FormsModule,
         DeleteConfirmationDialogComponent,
         LoadingSpinnerComponent,
+        MatDialogModule,
+        FormsModule,
+        ReactiveFormsModule,
+        // MatFormFieldModule,
+        MaterialModule,
     ],
     templateUrl: './suppliers.component.html',
     styleUrl: './suppliers.component.css',
@@ -82,6 +91,7 @@ export class SuppliersComponent implements OnInit {
     constructor(
         private titleService: TitleService,
         private dialog: MatDialog,
+        private snackBar: MatSnackBar
     ) {
         Amplify.configure(outputs);
     }
@@ -93,16 +103,15 @@ export class SuppliersComponent implements OnInit {
         await this.logActivity('Viewed suppliers', 'Suppliers page navigated');
     }
 
-
     async logActivity(task: string, details: string) {
         try {
             const session = await fetchAuthSession();
-    
+
             const lambdaClient = new LambdaClient({
                 region: outputs.auth.aws_region,
                 credentials: session.credentials,
             });
-    
+
             const payload = JSON.stringify({
                 tenentId: this.tenantId,
                 memberId: this.tenantId,
@@ -113,15 +122,15 @@ export class SuppliersComponent implements OnInit {
                 idleTime: 0,
                 details: details,
             });
-    
+
             const invokeCommand = new InvokeCommand({
                 FunctionName: 'userActivity-createItem',
                 Payload: new TextEncoder().encode(JSON.stringify({ body: payload })),
             });
-    
+
             const lambdaResponse = await lambdaClient.send(invokeCommand);
             const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-    
+
             if (responseBody.statusCode === 201) {
                 console.log('Activity logged successfully');
             } else {
@@ -159,11 +168,12 @@ export class SuppliersComponent implements OnInit {
             });
             const getUserResponse = await cognitoClient.send(getUserCommand);
 
-            const givenName = getUserResponse.UserAttributes?.find(attr => attr.Name === 'given_name')?.Value || '';
-            const familyName = getUserResponse.UserAttributes?.find(attr => attr.Name === 'family_name')?.Value || '';
+            const givenName = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'given_name')?.Value || '';
+            const familyName = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'family_name')?.Value || '';
             this.userName = `${givenName} ${familyName}`.trim();
 
-            this.tenantId = getUserResponse.UserAttributes?.find(attr => attr.Name === 'custom:tenentId')?.Value || '';
+            this.tenantId =
+                getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value || '';
 
             const lambdaClient = new LambdaClient({
                 region: outputs.auth.aws_region,
@@ -183,19 +193,19 @@ export class SuppliersComponent implements OnInit {
             const lambdaResponse = await lambdaClient.send(invokeCommand);
             const users = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
 
-            const currentUser = users.find((user: any) => 
-                user.Attributes.find((attr: any) => attr.Name === 'email')?.Value === session.tokens?.accessToken.payload['username']
+            const currentUser = users.find(
+                (user: any) =>
+                    user.Attributes.find((attr: any) => attr.Name === 'email')?.Value ===
+                    session.tokens?.accessToken.payload['username'],
             );
 
             if (currentUser && currentUser.Groups.length > 0) {
                 this.userRole = this.getRoleDisplayName(currentUser.Groups[0].GroupName);
             }
-
         } catch (error) {
             console.error('Error fetching user info:', error);
         }
     }
-
 
     async loadSuppliersData() {
         try {
@@ -285,6 +295,11 @@ export class SuppliersComponent implements OnInit {
                 country: '',
             },
         };
+        this.snackBar.open('Saved successfully', 'Close', {
+            duration: 6000,
+            horizontalPosition: 'center',
+            verticalPosition: 'top',
+        });
     }
 
     openEditAddressPopup(supplier: any) {
@@ -303,6 +318,11 @@ export class SuppliersComponent implements OnInit {
             postal_code: '',
             country: '',
         };
+        this.snackBar.open('Changes saved successfully', 'Close', {
+            duration: 6000,
+            horizontalPosition: 'center',
+            verticalPosition: 'top',
+        });
     }
 
     async onEditAddressSubmit(formData: any) {
@@ -363,7 +383,10 @@ export class SuppliersComponent implements OnInit {
                     this.gridComponent.rowData = [...this.rowData];
                 }
                 this.closeEditAddressPopup();
-                await this.logActivity('Updated supplier address', `Updated address for supplier ${this.selectedSupplier.company_name}`);
+                await this.logActivity(
+                    'Updated supplier address',
+                    `Updated address for supplier ${this.selectedSupplier.company_name}`,
+                );
             } else {
                 throw new Error(responseBody.body);
             }
@@ -466,6 +489,11 @@ export class SuppliersComponent implements OnInit {
             this.gridComponent.removeConfirmedRows(this.rowsToDelete);
             this.rowsToDelete = [];
             await this.loadSuppliersData(); // Refresh the data after deletion
+            this.snackBar.open('Removed successfully', 'Close', {
+                duration: 6000,
+                horizontalPosition: 'center',
+                verticalPosition: 'top',
+              });
         }
     }
 

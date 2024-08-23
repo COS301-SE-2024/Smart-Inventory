@@ -10,7 +10,7 @@ import { fetchAuthSession } from 'aws-amplify/auth';
 @Component({
     selector: 'app-delete-button-renderer',
     standalone: true,
-    template: `<button class="delete-button" (click)="onDeleteButtonClick()">Delete</button>`,
+    template: `<button mat-stroked-button class="delete-button" (click)="onDeleteButtonClick()">Delete</button>`,
     styles: [
         `
             .delete-button {

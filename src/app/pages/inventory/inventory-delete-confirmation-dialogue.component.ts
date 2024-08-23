@@ -15,8 +15,32 @@ import { CommonModule } from '@angular/common';
             <p>Are you sure you want to delete this inventory item?</p>
         </div>
         <div mat-dialog-actions>
-            <button mat-button (click)="onNoClick()">No</button>
-            <button mat-button color="primary" (click)="onYesClick()">Yes</button>
+            <button
+                mat-stroked-button
+                (click)="onNoClick()"
+                style="border-radius: 20px;
+    margin-right: 10px;
+    --mdc-outlined-button-label-text-color: black;
+    --mdc-outlined-button-outline-color: #74777f;
+    border-radius: 5px;
+    width: 20px;
+    height: 40px;"
+            >
+                No
+            </button>
+            <button
+                mat-stroked-button
+                (click)="onYesClick()"
+                style="border-radius: 20px;
+    margin-right: 10px;
+    --mdc-outlined-button-label-text-color: black;
+    --mdc-outlined-button-outline-color: #74777f;
+    border-radius: 5px;
+    width: 20px;
+    height: 40px;"
+            >
+                Yes
+            </button>
         </div>
     `,
 })
@@ -25,7 +49,7 @@ export class InventoryDeleteConfirmationDialogComponent {
 
     constructor(
         public dialogRef: MatDialogRef<InventoryDeleteConfirmationDialogComponent>,
-        @Inject(MAT_DIALOG_DATA) public data: { sku: string }
+        @Inject(MAT_DIALOG_DATA) public data: { sku: string },
     ) {}
 
     onNoClick(): void {

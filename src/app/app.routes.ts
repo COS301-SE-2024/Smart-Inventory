@@ -13,6 +13,9 @@ import { InventoryReportComponent } from './components/reports/inventory-report/
 import { OrderReportComponent } from './components/reports/order-report/order-report.component';
 import { SupplierReportComponent } from './components/reports/supplier-report/supplier-report.component';
 import { ActivityReportComponent } from './components/reports/activity-report/activity-report.component';
+import { ProfileComponent } from './components/profile/profile.component';
+import { NotificationSettingsComponent } from './components/notification-settings/notification-settings.component';
+import { ContactSupportComponent } from './components/contact-support/contact-support.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
@@ -32,4 +35,7 @@ export const routes: Routes = [
     { path: 'supplier-form/:supplierID/:quoteID/:deliveryID/:tenentId', component: SupplierFormComponent },
     { path: 'supplierReport/:supplierID/:orderID', component: SupplierReportComponent },
     { path: 'activityReport', component: ActivityReportComponent },
+    { path: 'profile', component: ProfileComponent },
+    {path: 'contact-support', component: ContactSupportComponent},
+    { path: 'notifications', component: NotificationSettingsComponent },
 ];

@@ -1,84 +1,71 @@
 <div class="supplierHolder">
-    <app-grid
-        [rowData]="rowData"
-        [columnDefs]="colDefs"
-        [addButton]="addButton"
-        (addNewClicked)="openAddSupplierPopup()"
-        (itemToUpdate)="handleCellValueChanged($event)"
-        (rowsToDelete)="handleRowsToDelete($event)"
-        #gridComponent
-    >
+    <app-grid [rowData]="rowData" [columnDefs]="colDefs" [addButton]="addButton"
+        (addNewClicked)="openAddSupplierPopup()" (itemToUpdate)="handleCellValueChanged($event)"
+        (rowsToDelete)="handleRowsToDelete($event)" #gridComponent>
     </app-grid>
 </div>
 
 <!-- Add Supplier Popup -->
 <div *ngIf="showAddPopup" class="popup-overlay">
-    <div class="popup-content">
+    <div class="custom-dialog">
         <h2>Add Supplier</h2>
         <form (ngSubmit)="onSubmit(supplierForm.value)" #supplierForm="ngForm">
-            <div class="form-group">
-                <label for="company_name">Company Name</label>
-                <input type="text" id="company_name" name="company_name" [(ngModel)]="supplier.company_name" required />
-            </div>
-            <div class="form-group">
-                <label for="contact_name">Contact Name</label>
-                <input type="text" id="contact_name" name="contact_name" [(ngModel)]="supplier.contact_name" required />
-            </div>
-            <div class="form-group">
-                <label for="contact_email">Contact Email</label>
-                <input
-                    type="email"
-                    id="contact_email"
-                    name="contact_email"
-                    [(ngModel)]="supplier.contact_email"
-                    required
-                    email
-                    #contactEmail="ngModel"
-                />
-                <div *ngIf="contactEmail.invalid && (contactEmail.dirty || contactEmail.touched)" class="error-message">
-                    <div *ngIf="contactEmail.errors?.['required']">Contact email is required.</div>
-                    <div *ngIf="contactEmail.errors?.['email']">Please enter a valid email address.</div>
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="phone_number">Phone Number</label>
-                <input type="tel" id="phone_number" name="phone_number" [(ngModel)]="supplier.phone_number" required />
-            </div>
-            <div class="form-group">
-                <label for="street">Street</label>
-                <input type="text" id="street" name="street" [(ngModel)]="supplier.address.street" required />
-            </div>
-            <div class="form-group">
-                <label for="city">City</label>
-                <input type="text" id="city" name="city" [(ngModel)]="supplier.address.city" required />
-            </div>
-            <div class="form-group">
-                <label for="state_province">State/Province</label>
-                <input
-                    type="text"
-                    id="state_province"
-                    name="state_province"
-                    [(ngModel)]="supplier.address.state_province"
-                    required
-                />
-            </div>
-            <div class="form-group">
-                <label for="postal_code">Postal Code</label>
-                <input
-                    type="text"
-                    id="postal_code"
-                    name="postal_code"
-                    [(ngModel)]="supplier.address.postal_code"
-                    required
-                />
-            </div>
-            <div class="form-group">
-                <label for="country">Country</label>
-                <input type="text" id="country" name="country" [(ngModel)]="supplier.address.country" required />
-            </div>
+            <mat-form-field appearance="outline">
+                <mat-label>Company Name</mat-label>
+                <input matInput id="company_name" name="company_name" [(ngModel)]="supplier.company_name" required>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Contact Name</mat-label>
+                <input matInput id="contact_name" name="contact_name" [(ngModel)]="supplier.contact_name" required>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Contact Email</mat-label>
+                <input matInput type="email" id="contact_email" name="contact_email"
+                    [(ngModel)]="supplier.contact_email" required email #contactEmail="ngModel">
+                <mat-error *ngIf="contactEmail.invalid && (contactEmail.dirty || contactEmail.touched)">
+                    <span *ngIf="contactEmail.errors?.['required']">Contact email is required.</span>
+                    <span *ngIf="contactEmail.errors?.['email']">Please enter a valid email address.</span>
+                </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Phone Number</mat-label>
+                <input matInput type="tel" id="phone_number" name="phone_number" [(ngModel)]="supplier.phone_number"
+                    required>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Street</mat-label>
+                <input matInput id="street" name="street" [(ngModel)]="supplier.address.street" required>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>City</mat-label>
+                <input matInput id="city" name="city" [(ngModel)]="supplier.address.city" required>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>State/Province</mat-label>
+                <input matInput id="state_province" name="state_province" [(ngModel)]="supplier.address.state_province"
+                    required>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Postal Code</mat-label>
+                <input matInput id="postal_code" name="postal_code" [(ngModel)]="supplier.address.postal_code" required>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Country</mat-label>
+                <input matInput id="country" name="country" [(ngModel)]="supplier.address.country" required>
+            </mat-form-field>
+
             <div class="button-group">
-                <button type="submit" [disabled]="!supplierForm.form.valid">Submit</button>
-                <button type="button" (click)="closeAddPopup()">Cancel</button>
+                <button class="btnAdd" mat-raised-button color="primary" type="submit"
+                    [disabled]="!supplierForm.form.valid">Submit</button>
+                <button class="btnAdd" mat-button type="button" (click)="closeAddPopup()">Cancel</button>
             </div>
         </form>
     </div>
@@ -111,23 +98,13 @@
             </div>
             <div class="form-group">
                 <label for="edit_state_province">State/Province</label>
-                <input
-                    type="text"
-                    id="edit_state_province"
-                    name="state_province"
-                    [(ngModel)]="editAddress.state_province"
-                    required
-                />
+                <input type="text" id="edit_state_province" name="state_province"
+                    [(ngModel)]="editAddress.state_province" required />
             </div>
             <div class="form-group">
                 <label for="edit_postal_code">Postal Code</label>
-                <input
-                    type="text"
-                    id="edit_postal_code"
-                    name="postal_code"
-                    [(ngModel)]="editAddress.postal_code"
-                    required
-                />
+                <input type="text" id="edit_postal_code" name="postal_code" [(ngModel)]="editAddress.postal_code"
+                    required />
             </div>
             <div class="form-group">
                 <label for="edit_country">Country</label>

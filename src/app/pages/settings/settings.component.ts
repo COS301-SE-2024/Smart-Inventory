@@ -19,6 +19,8 @@ import { CognitoService } from '../../_services/cognito.service';
 import { AuthenticatorService } from '@aws-amplify/ui-angular';
 import { Router } from '@angular/router';
 import { ThemeService } from '../../services/theme.service';
+import { ProfileComponent } from '../../components/profile/profile.component';
+import { AutomationSettingsComponent } from '../../components/automation-settings/automation-settings.component';
 
 @Component({
     selector: 'app-settings',
@@ -40,6 +42,8 @@ import { ThemeService } from '../../services/theme.service';
         MatCardModule,
         MatCheckboxModule,
         MatGridListModule,
+        ProfileComponent,
+        AutomationSettingsComponent,
     ],
     templateUrl: './settings.component.html',
     styleUrl: './settings.component.css',
@@ -65,7 +69,6 @@ export class SettingsComponent implements OnInit {
 
     currentTheme = 'light';
     isDeleteAccountVisible = false;
-    
 
     constructor(
         private snackBar: MatSnackBar,
@@ -73,8 +76,8 @@ export class SettingsComponent implements OnInit {
         private cognitoService: CognitoService,
         private authenticator: AuthenticatorService,
         private router: Router,
-        private themeService: ThemeService
-    ) { }
+        private themeService: ThemeService,
+    ) {}
 
     ngOnInit() {
         this.titleService.updateTitle('Settings');
@@ -93,7 +96,7 @@ export class SettingsComponent implements OnInit {
             (error) => {
                 console.error('Error loading user profile:', error);
                 this.snackBar.open('Error loading user profile', 'Close', { duration: 3000 });
-            }
+            },
         );
     }
 
@@ -116,7 +119,7 @@ export class SettingsComponent implements OnInit {
             (error) => {
                 console.error('Error updating profile:', error);
                 this.snackBar.open('Error updating profile. Please try again.', 'Close', { duration: 3000 });
-            }
+            },
         );
     }
 
@@ -135,7 +138,7 @@ export class SettingsComponent implements OnInit {
             (error) => {
                 console.error('Error changing password:', error);
                 this.snackBar.open('Error changing password. Please try again.', 'Close', { duration: 3000 });
-            }
+            },
         );
     }
 
@@ -168,7 +171,7 @@ export class SettingsComponent implements OnInit {
                             this.snackBar.open('Error deleting account. Please try again.', 'Close', {
                                 duration: 3000,
                             });
-                        }
+                        },
                     );
                 } else {
                     this.snackBar.open('Invalid password', 'Close', { duration: 3000 });
@@ -177,7 +180,7 @@ export class SettingsComponent implements OnInit {
             (error) => {
                 console.error('Error verifying password:', error);
                 this.snackBar.open('Error verifying password. Please try again.', 'Close', { duration: 3000 });
-            }
+            },
         );
     }
 
@@ -216,11 +219,19 @@ export class SettingsComponent implements OnInit {
             (error) => {
                 console.error('Error changing password:', error);
                 this.snackBar.open('Error changing password. Please try again.', 'Close', { duration: 3000 });
-            }
+            },
         );
     }
 
     togglePasswordVisibility() {
         this.hidePassword = !this.hidePassword;
+    }
+
+    visitNotifications() {
+        this.router.navigate(['/notifications']);
+    }
+
+    visitProfile() {
+        this.router.navigate(['/profile']);
     }
 }

@@ -87,7 +87,7 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
     gridStyle: any;
     gridOptions = {
         pagination: true,
-        paginationPageSize: 25, // Set the number of rows per page
+        paginationPageSize: 20, // Set the number of rows per page
         // other grid options...
     };
     public themeClass: string = 'ag-theme-material'; // Default to light theme
@@ -147,7 +147,7 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
             // Remove all existing rows
             const allRows = this.gridApi.getModel().getRowCount();
             if (allRows > 0) {
-                const rowsToRemove = this.gridApi.getModel().getRow(allRows - 1)!.data;
+                const rowsToRemove = this.gridApi.getModel().getRow(allRows)!.data;
                 this.gridApi.applyTransaction({ remove: [rowsToRemove] });
             }
 

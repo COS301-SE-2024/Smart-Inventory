@@ -4,15 +4,39 @@
             Back to reports
         </button>
     </mat-toolbar>
+    <!-- order-report-metrics.component.html -->
+    <div class="metrics-container">
+        <button mat-icon-button (click)="scrollTiles('left')">
+            <mat-icon>chevron_left</mat-icon>
+        </button>
+
+        <div class="metrics-wrapper">
+            <mat-card *ngFor="let metric of visibleMetrics" class="metric-card">
+                <mat-card-header>
+                    <div mat-card-avatar class="metric-icon">
+                        <mat-icon class="icon" [attr.aria-label]="metric.iconLabel">{{ metric.icon }}</mat-icon>
+                    </div>
+                    <mat-card-title>{{ metric.metricName }}</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                    <p class="metric-value">{{ metric.value }}</p>
+                </mat-card-content>
+            </mat-card>
+        </div>
+
+        <button mat-icon-button (click)="scrollTiles('right')">
+            <mat-icon>chevron_right</mat-icon>
+        </button>
+    </div>
     <mat-grid-list cols="8" rowHeight="29vh" gutterSize="20px">
-        <mat-grid-tile [colspan]="6" [rowspan]="2">
+        <mat-grid-tile [colspan]="8" [rowspan]="2">
             <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
                 <div class="inventoryHolder">
                     <app-grid [rowData]="rowData" [columnDefs]="colDefs" #gridComponent> </app-grid>
                 </div>
             </div>
         </mat-grid-tile>
-        <mat-grid-tile [colspan]="2" [rowspan]="6">
+        <mat-grid-tile [colspan]="2" [rowspan]="2">
             <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
                 <mat-card style="height: 100%; width: 100%">
                     <mat-card-title style="margin-left: 15px; margin-top: 15px; font-size: 25px">
@@ -29,7 +53,7 @@
                 </mat-card>
             </div>
         </mat-grid-tile>
-        <mat-grid-tile [colspan]="5" [rowspan]="2">
+        <mat-grid-tile [colspan]="6" [rowspan]="2">
             <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
                 <mat-card style="height: 100%; width: 100%">
                     <app-stackedbarchart [data]="stackedBarChartData"></app-stackedbarchart>
@@ -41,6 +65,13 @@
             <div style="padding: 10px; height: 100%; width: 100%;">
                 <mat-card style="height: 100%; width: 100%;">
                     <app-scatterplot [data]="scatterPlotChartData"></app-scatterplot>
+                </mat-card>
+            </div>
+        </mat-grid-tile>
+        <mat-grid-tile [colspan]="3" [rowspan]="2">
+            <div style="padding: 10px; height: 100%; width: 100%;">
+                <mat-card style="height: 100%; width: 100%;">
+                    <app-donuttemplate [orderData]="rowData"></app-donuttemplate>
                 </mat-card>
             </div>
         </mat-grid-tile>

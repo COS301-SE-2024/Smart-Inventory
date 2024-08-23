@@ -80,38 +80,5 @@
                 Cancel
             </button>
         </mat-card-content>
-        <hr style="margin-top: 16px; background-color: #f1f1f1" />
-        <mat-card-title style="padding: 16px">Delete Account</mat-card-title>
-        <mat-card-content>
-            <button
-                mat-stroked-button
-                *ngIf="!isDeleteAccountVisible"
-                color="warn"
-                class="btn"
-                (click)="toggleDeleteAccount()"
-            >
-                Delete Account
-            </button>
-            <mat-form-field appearance="outline" *ngIf="isDeleteAccountVisible">
-                <input matInput type="password" placeholder="Current Password" [(ngModel)]="password.currentDelete" />
-            </mat-form-field>
-
-            <mat-form-field appearance="outline" *ngIf="isDeleteAccountVisible">
-                <input matInput placeholder="Confirm Email" [(ngModel)]="profile.confirmEmailDelete" />
-            </mat-form-field>
-
-            <button
-                mat-stroked-button
-                *ngIf="isDeleteAccountVisible"
-                color="warn"
-                class="btn"
-                (click)="handleDeleteAccount()"
-            >
-                Confirm Delete
-            </button>
-            <button mat-stroked-button *ngIf="isDeleteAccountVisible" (click)="toggleDeleteAccount()" class="btn">
-                Cancel
-            </button>
-        </mat-card-content>
     </mat-card>
 </ng-container>

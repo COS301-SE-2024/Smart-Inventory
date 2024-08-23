@@ -32,7 +32,7 @@ import { MaterialModule } from 'app/components/material/material.module';
         FormsModule,
         ReactiveFormsModule,
         // MatFormFieldModule,
-        MaterialModule
+        MaterialModule,
     ],
     templateUrl: './suppliers.component.html',
     styleUrl: './suppliers.component.css',

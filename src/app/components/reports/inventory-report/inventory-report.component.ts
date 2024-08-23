@@ -117,8 +117,8 @@ export class InventoryReportComponent implements OnInit {
       { field: 'category', headerName: 'Category' },
       { field: 'description', headerName: 'Description' },
       { field: 'quantity', headerName: 'Quantity' },
+      { field: 'lowStockThreshold', headerName: 'Low Stock Threshold'},
       { field: 'supplier', headerName: 'Supplier' },
-      { field: 'expirationDate', headerName: 'Expiration Date' },
       { field: 'requests', headerName: 'Requests' },
       { field: 'requestsQuantity', headerName: 'Requests Quantity'},
     ];

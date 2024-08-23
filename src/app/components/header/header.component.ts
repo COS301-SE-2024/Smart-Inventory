@@ -30,6 +30,12 @@ interface Notification {
     archived: boolean;
 }
 
+// HEY TRISTAN !!
+interface NotificationSetting {
+    name: string;
+    enabled: boolean;
+}
+
 // Pop Up Notification
 @Component({
     selector: 'app-notification-dialog',
@@ -95,13 +101,13 @@ export class HeaderComponent implements OnInit {
     userName: string = '';
     userEmail: string = '';
 
+    // HEY TRISTAN!!!
     notifications: Notification[] = [
         { id: 1, type: 'Inventory', title: 'Low stock alert', date: new Date(), info: 'Item A is running low', read: false, archived: false },
         { id: 2, type: 'Reports', title: 'Monthly report ready', date: new Date(), info: 'Your monthly report is available', read: true, archived: false },
-        { id: 3, type: 'Settings', title: 'New feature available', date: new Date(), info: 'Check out our new dashboard feature', read: false, archived: false },
-        { id: 4, type: 'Orders', title: 'New order received', date: new Date(), info: 'Order #1234 needs processing', read: true, archived: false },
-        { id: 5, type: 'Suppliers', title: 'Supplier update', date: new Date(), info: 'Supplier X has new contact information', read: false, archived: false },
-        { id: 6, type: 'Teams', title: 'New team member', date: new Date(), info: 'Welcome John Doe to the team', read: true, archived: false },
+        { id: 3, type: 'Orders', title: 'New order received', date: new Date(), info: 'Order #1234 needs processing', read: true, archived: false },
+        { id: 4, type: 'Suppliers', title: 'Supplier update', date: new Date(), info: 'Supplier X has new contact information', read: false, archived: false },
+        { id: 5, type: 'Teams', title: 'New team member', date: new Date(), info: 'Welcome John Doe to the team', read: true, archived: false },
     ];
     
     
@@ -109,14 +115,24 @@ export class HeaderComponent implements OnInit {
     filteredNotifications: Notification[] = [];
     activeFilter: string = 'All';
 
+    // HEY TRISTAN !!
     // filter notifications
     isNotificationPanelOpen: boolean = false;
-    filters: string[] = ['All', 'Inventory', 'Reports', 'Settings', 'Orders', 'Suppliers', 'Teams'];
+    filters: string[] = ['All', 'Inventory', 'Reports', 'Orders', 'Suppliers', 'Teams', 'Settings'];
     showRead: boolean = true;
     showUnread: boolean = true;
     unreadCount: number = 0;
     // archived notifications
     showArchived: boolean = false;
+
+    // HIDE FILTER ACCORDING TO NOTIFICATIONS SETTINGS
+    notificationSettings: NotificationSetting[] = [
+        { name: 'Inventory', enabled: true },
+        { name: 'Reports', enabled: true },
+        { name: 'Orders', enabled: true },
+        { name: 'Suppliers', enabled: true },
+        { name: 'Teams', enabled: true },
+    ];
     
     constructor(
         private titleService: TitleService,
@@ -125,27 +141,6 @@ export class HeaderComponent implements OnInit {
         private router: Router,
         private dialog: MatDialog
     ) { }
-
-    // ngAfterViewInit() {
-    //     this.checkScrollPosition();
-    // }
-    
-    // checkScrollPosition() {
-    //     const element = this.filterControls.nativeElement;
-    //     this.isScrolledToStart = element.scrollLeft <= 0;
-    //     this.isScrolledToEnd = element.scrollLeft + element.clientWidth >= element.scrollWidth;
-    // }
-
-    // scrollFilters(direction: 'left' | 'right') {
-    //     const element = this.filterControls.nativeElement;
-    //     const scrollAmount = element.clientWidth / 2;
-    //     if (direction === 'left') {
-    //         element.scrollLeft -= scrollAmount;
-    //     } else {
-    //         element.scrollLeft += scrollAmount;
-    //     }
-    //     setTimeout(() => this.checkScrollPosition(), 100);
-    // }
 
     
     @HostListener('window:resize', ['$event']) onResize(event: Event) {
@@ -171,6 +166,7 @@ export class HeaderComponent implements OnInit {
         this.loadUserInfo();
         this.filteredNotifications = this.notifications;
         this.updateFilteredNotifications();
+        this.loadNotificationSettings(); // implement later
     }
 
     // LOADER
@@ -217,15 +213,6 @@ export class HeaderComponent implements OnInit {
         this.filterMenuTrigger.closeMenu();
     }
 
-    // onTabChange(index: number) {
-    //     const filters = ['All', 'Inventory', 'Reports', 'Settings', 'Orders', 'Suppliers', 'Teams'];
-    //     this.filterNotifications(filters[index]);
-    // }
-
-    // onTabChange(event: MatTabChangeEvent) {
-    //     this.filterNotifications(this.filters[event.index]);
-    // }
-
     onTabChange(index: number) {
         this.filterNotifications(this.filters[index]);
     }
@@ -240,11 +227,11 @@ export class HeaderComponent implements OnInit {
         this.updateFilteredNotifications();
     }
 
+    // HEY TRISTAN !!
     getNotificationIcon(type: string): string {
         switch (type) {
             case 'Inventory': return 'inventory';
             case 'Reports': return 'assessment';
-            case 'Settings': return 'settings';
             case 'Orders': return 'shopping_cart';
             case 'Suppliers': return 'business';
             case 'Teams': return 'group';
@@ -279,15 +266,24 @@ export class HeaderComponent implements OnInit {
         this.updateFilteredNotifications();
     }
 
+    // HEY TRISTAN !!
     // update filtered notifications
     updateFilteredNotifications() {
         this.filteredNotifications = this.notifications.filter(n => {
-            // Always show archived notifications if showArchived is true
+            const settingEnabled = this.notificationSettings.find(s => s.name === n.type)?.enabled;
+            
+            if (!settingEnabled) {
+                return false;
+            }
+
+            if (this.activeFilter !== 'All' && this.activeFilter !== 'Settings' && n.type !== this.activeFilter) {
+                return false;
+            }
+
             if (this.showArchived && n.archived) {
                 return true;
             }
             
-            // For non-archived notifications, apply read/unread filters
             if (!n.archived) {
                 if (this.showRead && this.showUnread) {
                     return true;
@@ -296,16 +292,10 @@ export class HeaderComponent implements OnInit {
                 } else if (this.showUnread) {
                     return !n.read;
                 }
-                return false;
             }
             
-            // If showArchived is false, don't show archived notifications
             return false;
         });
-    
-        if (this.activeFilter !== 'All') {
-            this.filteredNotifications = this.filteredNotifications.filter(n => n.type === this.activeFilter);
-        }
     
         this.filteredNotifications.sort((a, b) => {
             if (a.archived === b.archived) {
@@ -315,8 +305,9 @@ export class HeaderComponent implements OnInit {
             return a.archived ? 1 : -1;
         });
     
-        this.unreadCount = this.notifications.filter(n => !n.read && !n.archived).length;
+        this.unreadCount = this.notifications.filter(n => !n.read && !n.archived && this.notificationSettings.find(s => s.name === n.type)?.enabled).length;
     }
+
 
     toggleShowArchived() {
         this.showArchived = !this.showArchived;
@@ -353,4 +344,39 @@ export class HeaderComponent implements OnInit {
         this.updateFilteredNotifications();
     }
 
+    // HEY TRISTAN !!
+    // quick explanation users can filter which notifications to see and which not to see, 
+    // notifications they dont want to see, won't show in the notification tab
+    // all controlled in the settings :)
+    
+    updateNotificationSettings(setting: NotificationSetting) {
+        // Update the filters based on the enabled settings
+        this.filters = ['All', 'Settings'];
+        this.notificationSettings.forEach(s => {
+            if (s.enabled) {
+                this.filters.push(s.name);
+            }
+        });
+
+        // Update the filtered notifications
+        this.updateFilteredNotifications();
+
+        // If the current filter is disabled, switch to 'All'
+        if (!this.filters.includes(this.activeFilter)) {
+            this.activeFilter = 'All';
+        }
+
+        // Save settings
+        this.saveNotificationSettings();
+    }
+    
+    saveNotificationSettings() {
+        console.log('Saving notification settings:', this.notificationSettings);
+    }
+
+    // u can implement this later to save the users notifications settings for the session //  backend stuff
+    loadNotificationSettings() {
+        // Implement logic to load settings from local storage or backend
+        
+    }
 }

@@ -16,7 +16,7 @@ import { fetchAuthSession } from 'aws-amplify/auth';
 import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
 import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
 import outputs from '../../../../../amplify_outputs.json';
-
+import { LoadingSpinnerComponent } from 'app/components/loader/loading-spinner.component';
 
 @Component({
     selector: 'app-order-report',
@@ -30,7 +30,8 @@ import outputs from '../../../../../amplify_outputs.json';
         MatProgressSpinnerModule,
         ScatterplotComponent,
         StackedbarchartComponent,
-        DonutTemplateComponent
+        DonutTemplateComponent,
+        LoadingSpinnerComponent
     ],
     templateUrl: './order-report.component.html',
     styleUrl: './order-report.component.css',
@@ -84,6 +85,7 @@ export class OrderReportComponent implements OnInit {
         this.updateOrderStatuses(this.rowData, this.supplierQuote);
         this.prepareChartData();
         this.scatterPlotChartData = this.prepareScatterPlotData();
+        this.isLoading = false;
         console.log('scatter plot in parent', this.scatterPlotChartData);
     }
 
@@ -281,7 +283,7 @@ export class OrderReportComponent implements OnInit {
     }
 
     async fetchOrders() {
-        this.isLoading = true;
+        // this.isLoading = true;
         try {
             const session = await fetchAuthSession();
 
@@ -329,7 +331,7 @@ export class OrderReportComponent implements OnInit {
             console.error('Error in loadOrdersData:', error);
             this.rowData = [];
         } finally {
-            this.isLoading = false;
+            // this.isLoading = false;
         }
     }
 

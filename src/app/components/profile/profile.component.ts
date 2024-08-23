@@ -73,7 +73,7 @@ export class ProfileComponent implements OnInit {
         private cognitoService: CognitoService,
         private authenticator: AuthenticatorService,
         private router: Router,
-        private themeService: ThemeService,
+        private themeService: ThemeService
     ) {}
 
     ngOnInit() {
@@ -93,7 +93,7 @@ export class ProfileComponent implements OnInit {
             (error) => {
                 console.error('Error loading user profile:', error);
                 this.snackBar.open('Error loading user profile', 'Close', { duration: 3000 });
-            },
+            }
         );
     }
 
@@ -116,7 +116,7 @@ export class ProfileComponent implements OnInit {
             (error) => {
                 console.error('Error updating profile:', error);
                 this.snackBar.open('Error updating profile. Please try again.', 'Close', { duration: 3000 });
-            },
+            }
         );
     }
 
@@ -135,7 +135,49 @@ export class ProfileComponent implements OnInit {
             (error) => {
                 console.error('Error changing password:', error);
                 this.snackBar.open('Error changing password. Please try again.', 'Close', { duration: 3000 });
+            }
+        );
+    }
+
+    toggleDeleteAccount() {
+        this.isDeleteAccountVisible = !this.isDeleteAccountVisible;
+    }
+
+    handleDeleteAccount() {
+        if (!this.password.currentDelete || !this.profile.confirmEmailDelete) {
+            this.snackBar.open('Please fill in all fields', 'Close', { duration: 3000 });
+            return;
+        }
+
+        if (this.profile.confirmEmailDelete !== this.profile.email) {
+            this.snackBar.open('Confirmation email does not match your email', 'Close', { duration: 3000 });
+            return;
+        }
+
+        this.cognitoService.verifyCurrentPassword(this.profile.email, this.password.currentDelete).subscribe(
+            (isValid) => {
+                if (isValid) {
+                    this.cognitoService.deleteAccount().subscribe(
+                        () => {
+                            this.snackBar.open('Account deleted successfully', 'Close', { duration: 3000 });
+                            this.authenticator.signOut();
+                            this.router.navigate(['/login']);
+                        },
+                        (error) => {
+                            console.error('Error deleting account:', error);
+                            this.snackBar.open('Error deleting account. Please try again.', 'Close', {
+                                duration: 3000,
+                            });
+                        }
+                    );
+                } else {
+                    this.snackBar.open('Invalid password', 'Close', { duration: 3000 });
+                }
             },
+            (error) => {
+                console.error('Error verifying password:', error);
+                this.snackBar.open('Error verifying password. Please try again.', 'Close', { duration: 3000 });
+            }
         );
     }
 
@@ -216,7 +258,7 @@ export class ProfileComponent implements OnInit {
             (error) => {
                 console.error('Error changing password:', error);
                 this.snackBar.open('Error changing password. Please try again.', 'Close', { duration: 3000 });
-            },
+            }
         );
     }
 

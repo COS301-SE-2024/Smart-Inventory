@@ -20,6 +20,7 @@ import { AuthenticatorService } from '@aws-amplify/ui-angular';
 import { Router } from '@angular/router';
 import { ThemeService } from '../../services/theme.service';
 import { ProfileComponent } from '../../components/profile/profile.component';
+import { AutomationSettingsComponent } from '../../components/automation-settings/automation-settings.component';
 
 @Component({
     selector: 'app-settings',
@@ -42,6 +43,7 @@ import { ProfileComponent } from '../../components/profile/profile.component';
         MatCheckboxModule,
         MatGridListModule,
         ProfileComponent,
+        AutomationSettingsComponent,
     ],
     templateUrl: './settings.component.html',
     styleUrl: './settings.component.css',

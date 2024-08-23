@@ -58,6 +58,16 @@ mat-dialog-content {
     overflow-y: auto;
 }
 
+.btnAdd {
+    border-radius: 20px;
+    margin-right: 10px;
+    --mdc-outlined-button-label-text-color: black;
+    --mdc-outlined-button-outline-color: #74777f;
+    border-radius: 5px;
+    width: 200px;
+    height: 40px;
+}
+
 /* ... */
 
 .popup-content h2 {
@@ -97,9 +107,11 @@ mat-dialog-content {
 
 .button-group button {
     padding: 8px 16px;
-    background-color: #4a4a4a;
-    color: white;
-    border: none;
+    border: solid black 1px;
+    color: black;
+    --mdc-outlined-button-label-text-color: black;
+    --mdc-outlined-button-outline-color: #74777f;
+    border: solid black 1px;
     border-radius: 4px;
     font-size: 14px;
     cursor: pointer;
@@ -107,16 +119,16 @@ mat-dialog-content {
     margin-left: 10px;
 }
 
-.button-group button:hover {
-    background-color: #333333;
-}
+/* .button-group button:hover {
+    background-color: #999999;
+} */
 
 .button-group button[type='submit'] {
-    background-color: #888888;
+    background-color: #d7d7d7;
 }
 
 .button-group button[type='submit']:hover {
-    background-color: #666666;
+    background-color: #b0b0b0;
 }
 
 .error-message {

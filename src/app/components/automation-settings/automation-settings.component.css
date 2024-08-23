@@ -1,0 +1,84 @@
+.mat-mdc-card-header {
+    display: contents;
+}
+
+.header-content {
+    display: flex;
+    flex-direction: column;
+    width: 500px;
+    height: 160px;
+}
+
+.view-report-button {
+    width: 100%;
+    background-color: #f1f1f1;
+    color: black;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 8px 16px;
+    font-size: inherit;
+}
+
+.view-report-button span {
+    flex-grow: 1;
+    text-align: center;
+}
+
+.view-report-button mat-icon {
+    font-size: 18px;
+    margin-left: 8px;
+}
+
+mat-card-actions {
+    margin-top: auto;
+    width: 90%;
+}
+.card-container {
+    height: 85%;
+    width: 85%;
+    padding: 10px;
+}
+
+.card {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 98%;
+    background-color: linear-gradient(white, #f1f1f1);
+    box-shadow:
+        0px 6px 6px -3px rgba(0, 0, 0, 0.2),
+        0px 10px 14px 1px rgba(0, 0, 0, 0.14),
+        0px 4px 18px 3px rgba(0, 0, 0, 0.12);
+    border-radius: 8px;
+}
+
+.card-header {
+    text-align: center;
+    align-self: center;
+}
+
+.subtitle {
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    margin-bottom: 8px;
+}
+
+.subtitle:hover {
+    -webkit-line-clamp: unset;
+}
+
+.subtitle:hover .header-content {
+    height: 180px;
+}
+
+.card {
+    transition: transform 0.2s ease;
+}
+
+.card:hover {
+    transform: scale(1.05);
+}

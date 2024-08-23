@@ -7,14 +7,28 @@
 </div> -->
 
 <div class="main-container gridster-container">
+    <div class="modal" *ngIf="showDeleteModal">
+        <div class="modal-content">
+            <h2>Confirm Deletion</h2>
+            <p>Are you sure you want to delete the selected widget(s)?</p>
+            <div class="modal-buttons">
+                <button mat-raised-button color="warn" (click)="confirmDelete()">Confirm Delete</button>
+                <button mat-raised-button (click)="cancelDelete()">Cancel</button>
+            </div>
+        </div>
+    </div>
     <div class="help-button-container">
         <a id="help-button">
-            <button class="btnAdd" mat-raised-button [matMenuTriggerFor]="mainMenu">Quick Actions</button>
+            <button *ngIf="!isDeleteMode" class="btnAdd" mat-raised-button [matMenuTriggerFor]="mainMenu">Quick
+                Actions</button>
+            <button *ngIf="isDeleteMode" class="btnDelete" mat-raised-button color="warn"
+                (click)="openDeleteConfirmModal()">Delete</button>
+
             <mat-menu #mainMenu="matMenu" yPosition="above">
-                <button mat-menu-item (click)="openSidePanel()">Add a Widget</button>
-                <button mat-menu-item (click)="toggleDeleteMode()">Delete a Widget</button>
+                <button mat-menu-item class="QAButtons" (click)="openSidePanel()">Add a Widget</button>
+                <button mat-menu-item class="QAButtons" (click)="toggleDeleteMode()">Delete a Widget</button>
                 <!-- <button mat-menu-item routerLink="/help">Help</button>
-                <button mat-menu-item routerLink="/settings">Settings</button> -->
+    <button mat-menu-item routerLink="/settings">Settings</button> -->
             </mat-menu>
         </a>
     </div>
@@ -27,29 +41,17 @@
                 </button>
             </div>
             <div class="charts-container">
-                <!-- Add more chart previews as needed -->
                 <div *ngFor="let config of chartConfigs">
-                    <app-templatechart
-                        [chartType]="config.type"
-                        [chartData]="config.data"
+
+                    <app-templatechart 
+                        [chartType]="config.type" 
+                        [chartData]="config.data" 
                         [chartTitle]="config.title"
-                        (chartSelected)="openCustomizeModal($event)"
-                    ></app-templatechart>
+                        (click)="addChartToDashboard(config)">
+                    </app-templatechart>
                 </div>
             </div>
         </mat-sidenav>
-        <mat-sidenav-content>
-            <!-- Your main dashboard content here -->
-            <!-- <gridster [options]="options"> -->
-            <!-- <gridster-item [item]="item" *ngFor="let item of dashboard"> -->
-            <!-- <ng-container *ngIf="item.type === 'chart'"> -->
-            <!-- You'll need to create a component that can render different chart types -->
-            <!-- <app-templatechart></app-templatechart> -->
-            <!-- </ng-container> -->
-            <!-- Other gridster items -->
-            <!-- </gridster-item> -->
-            <!-- </gridster> -->
-        </mat-sidenav-content>
     </mat-sidenav-container>
 
     <gridster [options]="options">
@@ -198,12 +200,17 @@
             <app-donutchart></app-donutchart>
         </gridster-item>
     </gridster>
-    <div *ngFor="let config of newCharts">
-        <app-templatechart
-            [chartType]="config.chartType"
-            [chartData]="config.data"
-            [chartTitle]="config.title"
-            style="width: 400px; height: 400px"
-        ></app-templatechart>
+    <div class="new-charts-container">
+        <div *ngFor="let config of newCharts; let i = index" class="new-chart-item">
+            <app-templatechart 
+                [chartType]="config.chartType" 
+                [chartData]="config.data" 
+                [chartTitle]="config.title">
+            </app-templatechart>
+            <button *ngIf="isDeleteMode" mat-mini-fab color="warn" class="delete-icon"
+                (click)="removeNewChart(i)">
+                <mat-icon>delete_outline</mat-icon>
+            </button>
+        </div>
     </div>
 </div>

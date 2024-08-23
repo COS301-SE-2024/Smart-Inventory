@@ -1,0 +1,170 @@
+/* PLACEHOLDER */
+::placeholder {
+    text-align: left;
+}
+
+input.mat-input-element {
+    text-align: left;
+}
+
+mat-form-field {
+    width: 100%;
+    margin-bottom: 15px;
+    --mdc-filled-text-field-label-text-color: #000000;
+    --mdc-filled-text-field-container-color: #f1f1f1;
+}
+
+mat-dialog-content {
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.mat-mdc-card-header {
+    display: flex;
+    padding: 16px 16px 0;
+    width: 100%;
+}
+
+.btn {
+    border-radius: 20px;
+    margin-right: 10px;
+    --mdc-outlined-button-label-text-color: black;
+    --mdc-outlined-button-outline-color: #74777f;
+    border-radius: 5px;
+    width: 200px;
+    height: 40px;
+}
+
+/* width */
+::-webkit-scrollbar {
+    margin-left: 5px;
+    width: 10px;
+    border-radius: 50px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 50px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: none;
+    border-radius: 50px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: none;
+}
+
+.body {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+/* Mat-form-field Styles */
+mat-form-field {
+    width: 100%;
+    background-color: none !important;
+    border-radius: 15px;
+}
+
+.mdc-text-field--filled.mdc-text-field--disabled {
+    background-color: white !important;
+    border-radius: 15px !important;
+}
+
+mat-label {
+    color: #000 !important;
+}
+
+.mat-mdc-button .mat-mdc-button-touch-target {
+    position: absolute;
+    top: 50%;
+    height: 50px;
+    left: 0;
+    right: 0;
+    transform: translateY(-50%);
+    display: var(--mat-text-button-touch-target-display);
+    background-color: #f1f1f1;
+    border-radius: 5px;
+}
+
+.mat-mdc-form-field-infix {
+    min-width: 0;
+    width: 180px;
+    position: relative;
+    box-sizing: border-box;
+}
+
+.mat-mdc-text-field-wrapper.mdc-text-field.mdc-text-field--filled {
+    border-radius: 15px;
+}
+
+.card {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    flex-wrap: wrap;
+    text-align: center;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    background-color: linear-gradient(white, #f1f1f1);
+    box-shadow:
+        0px 6px 6px -3px rgba(0, 0, 0, 0.2),
+        0px 10px 14px 1px rgba(0, 0, 0, 0.14),
+        0px 4px 18px 3px rgba(0, 0, 0, 0.12);
+    border-radius: 8px;
+}
+
+.message-field {
+    height: 120px; /* Make the message field slightly bigger */
+}
+
+.message-field textarea {
+    height: 100px;
+}
+
+.centered-title {
+    width: 100%;
+    text-align: center;
+    padding: 16px 0;
+  }
+  
+  /* Update the existing mat-card-header rule */
+  .mat-mdc-card-header {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+  }
+
+/* Custom Snackbar Styles */
+::ng-deep .custom-snackbar {
+    background-color: #323232;
+    color: white;
+  }
+  
+  ::ng-deep .custom-snackbar .mat-simple-snackbar {
+    font-size: 14px;
+    line-height: 22px;
+  }
+  
+  ::ng-deep .custom-snackbar .mat-simple-snackbar-action {
+    color: #69f0ae;
+  }
+  
+  ::ng-deep .custom-snackbar .mat-button {
+    background-color: transparent !important;
+    color: #69f0ae !important;
+    font-weight: bold;
+  }

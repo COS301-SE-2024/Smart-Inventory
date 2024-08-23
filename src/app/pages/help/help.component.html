@@ -600,7 +600,7 @@
         </mat-tab>
         <mat-tab label="Contact Support">
             <ng-container>
-                <div class="form-container" style="width: 100%; padding: 10px">
+                <!-- <div class="form-container" style="width: 100%; padding: 10px">
                     <form style="height: 100%; width: 40%">
                         <h4>How can we help?</h4>
                         <mat-form-field appearance="fill" style="padding-top: 5px">
@@ -618,10 +618,14 @@
                         <div class="button-container">
                             <button class="test" mat-stroked-button (click)="onSend()">Send</button>
                         </div>
-                    </form>
+                    </form> -->
                     <!-- <div class="column-one" style="width: 100vh">
                         <img src="assets/svg/Active-Support-amico.svg" alt="Support Image" style="width: 50vh" />
                     </div> -->
+                <!-- </div> -->
+
+                <div style="height: 85vh; width: 100%; overflow-y: scroll; align-content: center">
+                    <app-contact-support></app-contact-support>
                 </div>
             </ng-container>
         </mat-tab>

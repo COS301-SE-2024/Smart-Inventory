@@ -16,7 +16,7 @@ import { LoadingSpinnerComponent } from '../../components/loader/loading-spinner
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatDialogModule } from '@angular/material/dialog';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MaterialModule } from 'app/components/material/material.module';
 @Component({
     selector: 'app-suppliers',
@@ -91,6 +91,7 @@ export class SuppliersComponent implements OnInit {
     constructor(
         private titleService: TitleService,
         private dialog: MatDialog,
+        private snackBar: MatSnackBar
     ) {
         Amplify.configure(outputs);
     }
@@ -294,6 +295,11 @@ export class SuppliersComponent implements OnInit {
                 country: '',
             },
         };
+        this.snackBar.open('Saved successfully', 'Close', {
+            duration: 6000,
+            horizontalPosition: 'center',
+            verticalPosition: 'top',
+        });
     }
 
     openEditAddressPopup(supplier: any) {
@@ -312,6 +318,11 @@ export class SuppliersComponent implements OnInit {
             postal_code: '',
             country: '',
         };
+        this.snackBar.open('Changes saved successfully', 'Close', {
+            duration: 6000,
+            horizontalPosition: 'center',
+            verticalPosition: 'top',
+        });
     }
 
     async onEditAddressSubmit(formData: any) {
@@ -478,6 +489,11 @@ export class SuppliersComponent implements OnInit {
             this.gridComponent.removeConfirmedRows(this.rowsToDelete);
             this.rowsToDelete = [];
             await this.loadSuppliersData(); // Refresh the data after deletion
+            this.snackBar.open('Removed successfully', 'Close', {
+                duration: 6000,
+                horizontalPosition: 'center',
+                verticalPosition: 'top',
+              });
         }
     }
 

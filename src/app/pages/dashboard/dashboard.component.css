@@ -13,8 +13,23 @@ gridster.scrollVertical {
 .btnAdd {
     border-radius: 20px;
     /* margin-right: 10px; */
+    color: #000;
     --mdc-protected-button-label-text-color: #000000;
-    background-color: #f1f1f1;
+    background-color: #fff;
+    width: 200px;
+}
+
+.QAButtons:hover{
+    background-color: #b0b0b0;
+}
+
+.QAButtons {
+    width: 200px;
+    background-color: white;
+    --mat-menu-container-color: #74777f;
+    --mat-menu-item-hover-state-layer-color: #74777f;
+    border: #74777f;
+    color: #000000;
 }
 
 gridster-item {
@@ -234,7 +249,7 @@ gridster {
 
 a#help-button {
     position: absolute;
-    left: 92%;
+    left: 88%;
 }
 
 /* gear-tab.component.css */

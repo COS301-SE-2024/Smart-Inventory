@@ -10,9 +10,9 @@
     <div class="help-button-container">
         <a id="help-button">
             <button class="btnAdd" mat-raised-button [matMenuTriggerFor]="mainMenu">Quick Actions</button>
-            <mat-menu #mainMenu="matMenu" yPosition="above">
-                <button mat-menu-item (click)="openSidePanel()">Add a Widget</button>
-                <button mat-menu-item (click)="toggleDeleteMode()">Delete a Widget</button>
+            <mat-menu #mainMenu="matMenu" class="menu" style="padding: 0;" yPosition="above">
+                <button mat-menu-item class="QAButtons" (click)="openSidePanel()">Add a Widget</button>
+                <button mat-menu-item class="QAButtons" (click)="toggleDeleteMode()">Delete a Widget</button>
                 <!-- <button mat-menu-item routerLink="/help">Help</button>
                 <button mat-menu-item routerLink="/settings">Settings</button> -->
             </mat-menu>

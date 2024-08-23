@@ -1,9 +1,4 @@
 <div style="height: 100%; display: block; overflow: scroll">
-    <mat-toolbar style="width: 100%">
-        <button mat-button style="width: 100%; background-color: #f1f1f1; color: black" (click)="back()">
-            Back to reports
-        </button>
-    </mat-toolbar>
     <!-- order-report-metrics.component.html -->
     <div class="metrics-container">
         <button mat-icon-button (click)="scrollTiles('left')">
@@ -44,8 +39,10 @@
                     </mat-card-title>
                     <mat-card-content style="align-items: center">
                         <ul style="list-style: none; padding: 0; margin: 0">
-                            <li *ngFor="let metric of OrderReport.metrics | keyvalue"
-                                style="font-size: 15px; padding: 8px 0; border-bottom: 1px solid lightgrey">
+                            <li
+                                *ngFor="let metric of OrderReport.metrics | keyvalue"
+                                style="font-size: 15px; padding: 8px 0; border-bottom: 1px solid lightgrey"
+                            >
                                 {{ metric.value }}
                             </li>
                         </ul>
@@ -62,18 +59,32 @@
         </mat-grid-tile>
 
         <mat-grid-tile [colspan]="5" [rowspan]="2">
-            <div style="padding: 10px; height: 100%; width: 100%;">
-                <mat-card style="height: 100%; width: 100%;">
+            <div style="padding: 10px; height: 100%; width: 100%">
+                <mat-card style="height: 100%; width: 100%">
                     <app-scatterplot [data]="scatterPlotChartData"></app-scatterplot>
                 </mat-card>
             </div>
         </mat-grid-tile>
         <mat-grid-tile [colspan]="3" [rowspan]="2">
-            <div style="padding: 10px; height: 100%; width: 100%;">
-                <mat-card style="height: 100%; width: 100%;">
+            <div style="padding: 10px; height: 100%; width: 100%">
+                <mat-card style="height: 100%; width: 100%">
                     <app-donuttemplate [orderData]="rowData"></app-donuttemplate>
                 </mat-card>
             </div>
         </mat-grid-tile>
     </mat-grid-list>
 </div>
+<mat-toolbar
+    style="
+        position: sticky;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        border-radius: 20px;
+        height: 50px;
+        z-index: 1;
+        background-color: transparent;
+    "
+>
+    <button mat-flat-button class="btn" (click)="back()"><mat-icon>arrow_back</mat-icon> Back To Reports</button>
+</mat-toolbar>

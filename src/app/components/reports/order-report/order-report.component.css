@@ -6,6 +6,15 @@ mat-card.mat-mdc-card.mdc-card {
     background-color: white;
     box-shadow: 0 4px 8px rgb(0 0 0 / 30%);
 }
+.btn {
+    border-radius: 20px;
+    margin-right: 10px;
+    --mdc-outlined-button-label-text-color: black;
+    --mdc-outlined-button-outline-color: #74777f;
+    border-radius: 5px;
+    width: 200px;
+    height: 40px;
+}
 
 /* order-report-metrics.component.css */
 .metrics-container {

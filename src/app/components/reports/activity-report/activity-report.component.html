@@ -1,15 +1,18 @@
 <div style="height: 100%; display: block; overflow: scroll">
-    <mat-toolbar style="width: 100%">
-        <button mat-button style="width: 100%; background-color: #f1f1f1; color: black" (click)="back()">
-            Back to reports
-        </button>
-    </mat-toolbar>
     <mat-grid-list cols="9" rowHeight="20vh" gutterSize="15px">
         <mat-grid-tile [colspan]="3" [rowspan]="2">
             <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
                 <mat-card style="height: 100%; width: 100%">
                     <mat-card-content>
-                        <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%;">
+                        <div
+                            style="
+                                display: flex;
+                                flex-direction: column;
+                                justify-content: center;
+                                align-items: center;
+                                height: 100%;
+                            "
+                        >
                             <div>
                                 <mat-icon>{{ ActivityReport.metrics[0].icon }}</mat-icon>
                                 <span>{{ ActivityReport.metrics[0].name }}</span>
@@ -26,7 +29,15 @@
             <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
                 <mat-card style="height: 100%; width: 100%">
                     <mat-card-content>
-                        <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%;">
+                        <div
+                            style="
+                                display: flex;
+                                flex-direction: column;
+                                justify-content: center;
+                                align-items: center;
+                                height: 100%;
+                            "
+                        >
                             <div>
                                 <mat-icon>{{ ActivityReport.metrics[1].icon }}</mat-icon>
                                 <span>{{ ActivityReport.metrics[1].name }}</span>
@@ -43,7 +54,15 @@
             <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
                 <mat-card style="height: 100%; width: 100%">
                     <mat-card-content>
-                        <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%;">
+                        <div
+                            style="
+                                display: flex;
+                                flex-direction: column;
+                                justify-content: center;
+                                align-items: center;
+                                height: 100%;
+                            "
+                        >
                             <div>
                                 <mat-icon>{{ ActivityReport.metrics[2].icon }}</mat-icon>
                                 <span>{{ ActivityReport.metrics[2].name }}</span>
@@ -65,7 +84,20 @@
         </mat-grid-tile>
     </mat-grid-list>
 </div>
-
+<mat-toolbar
+    style="
+        position: sticky;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        border-radius: 20px;
+        height: 50px;
+        z-index: 1;
+        background-color: transparent;
+    "
+>
+    <button mat-flat-button class="btn" (click)="back()"><mat-icon>arrow_back</mat-icon> Back To Reports</button>
+</mat-toolbar>
 <div *ngIf="isLoading" class="loading-overlay">
     <app-loading-spinner></app-loading-spinner>
 </div>

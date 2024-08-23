@@ -19,7 +19,7 @@ import outputs from '../../../../amplify_outputs.json';
     standalone: true,
     imports: [CommonModule, MatMenuModule, MatButtonModule],
     template: `
-        <button mat-button [matMenuTriggerFor]="roleMenu" class="role-button">
+        <button mat-stroked-button [matMenuTriggerFor]="roleMenu" class="role-button">
             {{ value }}
         </button>
         <mat-menu #roleMenu="matMenu">

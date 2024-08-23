@@ -102,11 +102,12 @@ export class TeamComponent implements OnInit {
             });
             const getUserResponse = await cognitoClient.send(getUserCommand);
 
-            const givenName = getUserResponse.UserAttributes?.find(attr => attr.Name === 'given_name')?.Value || '';
-            const familyName = getUserResponse.UserAttributes?.find(attr => attr.Name === 'family_name')?.Value || '';
+            const givenName = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'given_name')?.Value || '';
+            const familyName = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'family_name')?.Value || '';
             this.userName = `${givenName} ${familyName}`.trim();
 
-            this.tenantId = getUserResponse.UserAttributes?.find(attr => attr.Name === 'custom:tenentId')?.Value || '';
+            this.tenantId =
+                getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value || '';
 
             const lambdaClient = new LambdaClient({
                 region: outputs.auth.aws_region,
@@ -126,14 +127,15 @@ export class TeamComponent implements OnInit {
             const lambdaResponse = await lambdaClient.send(invokeCommand);
             const users = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
 
-            const currentUser = users.find((user: any) => 
-                user.Attributes.find((attr: any) => attr.Name === 'email')?.Value === session.tokens?.accessToken.payload['username']
+            const currentUser = users.find(
+                (user: any) =>
+                    user.Attributes.find((attr: any) => attr.Name === 'email')?.Value ===
+                    session.tokens?.accessToken.payload['username'],
             );
 
             if (currentUser && currentUser.Groups.length > 0) {
                 this.userRole = this.getRoleDisplayName(currentUser.Groups[0].GroupName);
             }
-
         } catch (error) {
             console.error('Error fetching user info:', error);
         }
@@ -142,12 +144,12 @@ export class TeamComponent implements OnInit {
     async logActivity(task: string, details: string) {
         try {
             const session = await fetchAuthSession();
-    
+
             const lambdaClient = new LambdaClient({
                 region: outputs.auth.aws_region,
                 credentials: session.credentials,
             });
-    
+
             const payload = JSON.stringify({
                 tenentId: this.tenantId,
                 memberId: this.tenantId,
@@ -158,15 +160,15 @@ export class TeamComponent implements OnInit {
                 idleTime: 0,
                 details: details,
             });
-    
+
             const invokeCommand = new InvokeCommand({
                 FunctionName: 'userActivity-createItem',
                 Payload: new TextEncoder().encode(JSON.stringify({ body: payload })),
             });
-    
+
             const lambdaResponse = await lambdaClient.send(invokeCommand);
             const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-    
+
             if (responseBody.statusCode === 201) {
                 console.log('Activity logged successfully');
             } else {
@@ -200,7 +202,10 @@ export class TeamComponent implements OnInit {
             dialogRef.afterClosed().subscribe(async (result) => {
                 if (result) {
                     console.log('Role change confirmed');
-                    await this.logActivity('Changed user role', `Changed role for ${event.data.email} to ${event.newValue}`);
+                    await this.logActivity(
+                        'Changed user role',
+                        `Changed role for ${event.data.email} to ${event.newValue}`,
+                    );
                 } else {
                     event.node.setDataValue('role', event.oldValue);
                 }
@@ -231,7 +236,10 @@ export class TeamComponent implements OnInit {
 
                 await client.send(updateUserAttributesCommand);
                 console.log('User attribute updated successfully');
-                await this.logActivity('Updated user attribute', `Updated ${event.column.colId} for ${event.data.email}`);
+                await this.logActivity(
+                    'Updated user attribute',
+                    `Updated ${event.column.colId} for ${event.data.email}`,
+                );
             } catch (error) {
                 console.error('Error updating user attribute:', error);
                 event.node.setDataValue(event.column.colId, event.oldValue);

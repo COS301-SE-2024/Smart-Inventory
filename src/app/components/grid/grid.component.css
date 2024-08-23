@@ -13,7 +13,6 @@
     /* Adjust this value as needed */
 }
 
-
 .icon {
     font-size: 20px;
     border-radius: 50%;
@@ -22,7 +21,7 @@
     align-items: inherit;
     height: 100%;
     width: 100%;
-    color: #3a3a3a54;
+    color: #74777f;
 }
 
 .btn-holder {
@@ -35,37 +34,44 @@
 .btnAdd {
     border-radius: 20px;
     margin-right: 10px;
-    --mdc-protected-button-label-text-color: #000000;
-    background-color: #f1f1f1;
+    --mdc-outlined-button-label-text-color: black;
+    --mdc-outlined-button-outline-color: #74777f;
+    border-radius: 5px;
+    width: 200px;
+    height: 40px;
 }
 
 .input-container {
-    border: 1px solid grey;
+    border: 1px solid #74777f;
     border-radius: 5px;
     height: 40px;
     width: 350px;
 }
 
 .input-box {
-    height: 36px;
-    width: 323px;
+    height: 35px;
+    width: 322px;
     padding-left: 5px;
     padding-right: 5px;
-    padding-top: 2px;
-    padding-bottom: 2px;
+    padding-top: 0px;
+    padding-bottom: 0px;
     border: none;
-    background-color: none;
 }
-
+.cdk-text-field-autofill-monitored:not(:-webkit-autofill) {
+    outline: none;
+}
 mat-select {
-    border: 1px solid grey;
+    border: 1px solid #74777f;
     border-radius: 5px;
     margin-left: 10px;
     align-content: center;
-    padding: 5px;
+    padding-left: 5px;
+    padding-right: 5px;
     width: 200px;
     height: 40px;
     font-size: 15px;
+    padding-top: 0px;
+    padding-bottom: 0px;
 }
 
 mat-select {
@@ -90,6 +96,11 @@ mat-select {
     align-items: center;
 }
 
-#mat-menu-panel-1{
-    width: 135px;
+.QAButtons {
+    width: 200px;
+    background-color: white;
+    --mat-menu-container-color: #74777f;
+    --mat-menu-item-hover-state-layer-color: #74777f;
+    border: #74777f;
+    color: #000000;
 }

@@ -4,17 +4,14 @@
 }
 
 .test {
-    width: 30vh;
-    color: #1a1b1f;
-    background-color: #f2f2f2;
-    border: 1px solid grey;
+    border-radius: 20px;
+    margin-right: 10px;
+    --mdc-outlined-button-label-text-color: black;
+    --mdc-outlined-button-outline-color: #74777f;
     border-radius: 5px;
-    margin-left: 10px;
-    align-content: center;
-    padding: 5px;
-    width: 200px;
+    width: 160px;
     height: 40px;
-    font-size: 15px;
+    padding: 5px;
 }
 
 /* width */
@@ -367,6 +364,8 @@
     --mdc-tab-indicator-active-indicator-color: var(--tab-indicator-color);
     --mat-tab-header-active-hover-label-text-color: var(--tab-hover-color);
     --mat-tab-header-inactive-ripple-color: var(--tab-ripple-color);
+    --mat-tab-header-active-focus-indicator-color: #000;
+    --mdc-secondary-navigation-tab-container-height: 35px;
 }
 
 .content .second-row .right-pane .troubleshooting-section .troubleshooting-row-three .troubleshooting-banner {
@@ -379,19 +378,39 @@
     border-radius: 15px;
 }
 
-.content .second-row .right-pane .troubleshooting-section .troubleshooting-row-three .troubleshooting-banner .banner-text h3 {
+.content
+    .second-row
+    .right-pane
+    .troubleshooting-section
+    .troubleshooting-row-three
+    .troubleshooting-banner
+    .banner-text
+    h3 {
     margin: 0;
     margin-bottom: 5px;
     font-size: 30px;
 }
 
-.content .second-row .right-pane .troubleshooting-section .troubleshooting-row-three .troubleshooting-banner .banner-text p {
+.content
+    .second-row
+    .right-pane
+    .troubleshooting-section
+    .troubleshooting-row-three
+    .troubleshooting-banner
+    .banner-text
+    p {
     font-size: 20px;
     margin: 0;
     font-weight: 500;
 }
 
-.content .second-row .right-pane .troubleshooting-section .troubleshooting-row-three .troubleshooting-banner .get-in-touch-button {
+.content
+    .second-row
+    .right-pane
+    .troubleshooting-section
+    .troubleshooting-row-three
+    .troubleshooting-banner
+    .get-in-touch-button {
     background-color: black;
     color: white;
     font-size: 20px;
@@ -475,7 +494,15 @@
     border-radius: 15px;
 }
 
-.content .second-row .right-pane .customer-support-section .customer-support-row-two .column-two form mat-form-field .mdc-text-field--filled:not(.mdc-text-field--disabled) {
+.content
+    .second-row
+    .right-pane
+    .customer-support-section
+    .customer-support-row-two
+    .column-two
+    form
+    mat-form-field
+    .mdc-text-field--filled:not(.mdc-text-field--disabled) {
     background-color: #fff !important;
     border-radius: 15px !important;
     max-width: fit-content;
@@ -503,11 +530,27 @@ mat-form-field.mat-mdc-form-field.mat-mdc-form-field-type-mat-input.mat-form-fie
 }
 
 /* REMOVE UNDERLINE IN FORM FIELDS */
-.content .second-row .right-pane .customer-support-section .customer-support-row-two .column-two form mat-form-field .mdc-line-ripple {
+.content
+    .second-row
+    .right-pane
+    .customer-support-section
+    .customer-support-row-two
+    .column-two
+    form
+    mat-form-field
+    .mdc-line-ripple {
     display: none;
 }
 
-.content .second-row .right-pane .customer-support-section .customer-support-row-two .column-two form mat-form-field textarea {
+.content
+    .second-row
+    .right-pane
+    .customer-support-section
+    .customer-support-row-two
+    .column-two
+    form
+    mat-form-field
+    textarea {
     height: 120px;
     background-color: #fff;
 }
@@ -519,7 +562,14 @@ mat-form-field.mat-mdc-form-field.mat-mdc-form-field-type-mat-input.mat-form-fie
     display: none !important;
 }
 
-.content .second-row .right-pane .customer-support-section .customer-support-row-two .column-two form .button-container {
+.content
+    .second-row
+    .right-pane
+    .customer-support-section
+    .customer-support-row-two
+    .column-two
+    form
+    .button-container {
     display: flex;
     justify-content: flex-end;
     /* Align the button to the right */
@@ -543,19 +593,39 @@ mat-form-field.mat-mdc-form-field.mat-mdc-form-field-type-mat-input.mat-form-fie
     border-radius: 15px;
 }
 
-.content .second-row .right-pane .customer-support-section .customer-support-row-three .customer-support-banner .banner-text h3 {
+.content
+    .second-row
+    .right-pane
+    .customer-support-section
+    .customer-support-row-three
+    .customer-support-banner
+    .banner-text
+    h3 {
     margin: 0;
     margin-bottom: 5px;
     font-size: 30px;
 }
 
-.content .second-row .right-pane .customer-support-section .customer-support-row-three .customer-support-banner .banner-text p {
+.content
+    .second-row
+    .right-pane
+    .customer-support-section
+    .customer-support-row-three
+    .customer-support-banner
+    .banner-text
+    p {
     font-size: 20px;
     margin: 0;
     font-weight: 500;
 }
 
-.content .second-row .right-pane .customer-support-section .customer-support-row-three .customer-support-banner .get-in-touch-button {
+.content
+    .second-row
+    .right-pane
+    .customer-support-section
+    .customer-support-row-three
+    .customer-support-banner
+    .get-in-touch-button {
     background-color: black;
     color: white;
     font-size: 20px;
@@ -830,13 +900,27 @@ p {
     border-radius: 15px;
 } */
 
-.content .second-row .right-pane .release-notes-section .release-notes-row.release-notes-row-three .release-notes-banner .banner-text h3 {
+.content
+    .second-row
+    .right-pane
+    .release-notes-section
+    .release-notes-row.release-notes-row-three
+    .release-notes-banner
+    .banner-text
+    h3 {
     margin: 0;
     margin-bottom: 5px;
     font-size: 30px;
 }
 
-.content .second-row .right-pane .release-notes-section .release-notes-row.release-notes-row-three .release-notes-banner .banner-text p {
+.content
+    .second-row
+    .right-pane
+    .release-notes-section
+    .release-notes-row.release-notes-row-three
+    .release-notes-banner
+    .banner-text
+    p {
     font-size: 20px;
     margin: 0;
     font-weight: 500;
@@ -919,13 +1003,14 @@ button mat-button {
     font-weight: 400;
 }
 
-
 .mat-expansion-panel {
     box-sizing: content-box;
     display: block;
     margin: 0;
     overflow: hidden;
-    transition: margin 225ms cubic-bezier(0.4, 0, 0.2, 1), box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1);
+    transition:
+        margin 225ms cubic-bezier(0.4, 0, 0.2, 1),
+        box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     background: var(--help-accordion-bg-color) !important;
     color: var(--help-accordion-text-color) !important;

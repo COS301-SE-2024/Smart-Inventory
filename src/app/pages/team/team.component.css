@@ -15,8 +15,10 @@
     background: white;
     border-radius: 8px;
     padding: 24px;
+    padding-left: 40px;
+    padding-right: 40px;
     width: 90%;
-    max-width: 400px;
+    max-width: 500px;
     max-height: 90vh;
     overflow-y: auto;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -42,8 +44,19 @@ form {
 
 mat-form-field {
     width: 100%;
+    --mdc-filled-text-field-label-text-color: #000000;
+    --mdc-filled-text-field-container-color: #f1f1f1;
 }
 
+.btn {
+    border-radius: 20px;
+    margin-right: 10px;
+    --mdc-outlined-button-label-text-color: black;
+    --mdc-outlined-button-outline-color: #74777f;
+    border-radius: 5px;
+    width: 20px;
+    height: 40px;
+}
 .button-group {
     display: flex;
     justify-content: end;

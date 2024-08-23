@@ -11,6 +11,13 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { DonutTemplateComponent } from 'app/components/charts/donuttemplate/donuttemplate.component';
 import { StackedbarchartComponent } from '../../charts/stackedbarchart/stackedbarchart.component';
 import { ScatterplotComponent } from '../../charts/scatterplot/scatterplot.component';
+import { Amplify } from 'aws-amplify';
+import { fetchAuthSession } from 'aws-amplify/auth';
+import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
+import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
+import outputs from '../../../../../amplify_outputs.json';
+
+
 @Component({
     selector: 'app-order-report',
     standalone: true,
@@ -31,11 +38,14 @@ import { ScatterplotComponent } from '../../charts/scatterplot/scatterplot.compo
 export class OrderReportComponent implements OnInit {
     stackedBarChartData: any[] = [];
     scatterPlotChartData: any[] = [];
+    isLoading: boolean = true;
     constructor(
         private titleService: TitleService,
         private router: Router,
         private route: ActivatedRoute,
-    ) { }
+    ) {
+        Amplify.configure(outputs);
+    }
 
     rowData: any[] = [];
 
@@ -48,8 +58,8 @@ export class OrderReportComponent implements OnInit {
         subtitle:
             'Have an overall view of your inventory, relevant metrics to assist you in automation and ordering and provide analytics associated with it.',
         metrics: {
-            metric_1: 'Total orders: ',
-            metric_2: 'Orders in progress: ',
+            // metric_1: 'Total orders: ',
+            // metric_2: 'Orders in progress: ',
             metric_3: 'Total orders through automation: ',
             // metric_4: 'Average order time: ',
             // metric_5: 'Supplier performance index: ',
@@ -65,31 +75,71 @@ export class OrderReportComponent implements OnInit {
     async ngOnInit() {
         this.titleService.updateTitle(this.getCurrentRoute());
         this.updateVisibleMetrics();
-        this.rowData = await this.fetchOrders();
+        await this.fetchOrders();
         this.calculateMetrics();
+        const data = this.calculateOrderMetrics();
+        this.OrderReport.metrics.metric_8 += data.orderPlacementFrequency;
+        this.OrderReport.metrics.metric_11 += data.perfectOrderRate;
         this.supplierQuote = await this.supplierQuotePrices();
         this.updateOrderStatuses(this.rowData, this.supplierQuote);
         this.prepareChartData();
         this.scatterPlotChartData = this.prepareScatterPlotData();
-        console.log('scatter plot in parent', this.scatterPlotChartData)
+        console.log('scatter plot in parent', this.scatterPlotChartData);
     }
 
-    calculateMetrics() {
-        // this.OrderReport.metrics.metric_1 += this.rowData.length;
-        // this.OrderReport.metrics.metric_2 += this.rowData.filter(order => order.status === 'In Progress').length;
-        // this.OrderReport.metrics.metric_4 += this.calculateAverageOrderTime() + ' days';
-        // this.OrderReport.metrics.metric_5 += this.calculateSupplierPerformance() + '%';
-        // this.OrderReport.metrics.metric_6 += 'R ' + this.calculateOrderCostAnalysis().averageCost.toFixed(2);
+    calculateOrderMetrics() {
+        const orders = this.rowData;
+        // Sort orders by date
+        orders.sort((a, b) => new Date(a.orderIssuedDate).getTime() - new Date(b.orderIssuedDate).getTime());
+
+        // Calculate days between orders
+        let totalDaysBetweenOrders = 0;
+        for (let i = 1; i < orders.length; i++) {
+            const daysBetween = (new Date(orders[i].orderIssuedDate).getTime() - new Date(orders[i - 1].orderIssuedDate).getTime()) / (1000 * 60 * 60 * 24);
+            totalDaysBetweenOrders += daysBetween;
+        }
+
+        // Calculate average days between orders
+        const averageDaysBetweenOrders = totalDaysBetweenOrders / (orders.length - 1);
+
+        // Perfect Order Rate calculation
+        const validOrders = orders.filter(order => order.status === "Completed");
+        const perfectOrders = validOrders.filter(order =>
+            order.expectedOrderDate && order.orderReceivedDate &&
+            new Date(order.orderReceivedDate) <= new Date(order.expectedOrderDate)
+        );
+        const perfectOrderRate = (perfectOrders.length / validOrders.length) * 100;
+
+        return {
+            orderPlacementFrequency: averageDaysBetweenOrders.toFixed(1) + " days",
+            perfectOrderRate: perfectOrderRate.toFixed(2) + "%"
+        };
     }
 
-    calculateAverageOrderTime() {
-        const totalDays = this.rowData.reduce((sum, order) => {
+    calculateAverageOrderTime(): number {
+        const validOrders = this.rowData.filter(order =>
+            order.orderIssuedDate &&
+            order.orderReceivedDate &&
+            order.status === 'Completed'
+        );
+
+        const uniqueOrders = validOrders.reduce((acc, current) => {
+            const x = acc.find((item: { orderID: any; }) => item.orderID === current.orderID);
+            if (!x) {
+                return acc.concat([current]);
+            } else {
+                return acc;
+            }
+        }, []);
+
+        const totalDays = uniqueOrders.reduce((sum: number, order: { orderIssuedDate: string | number | Date; orderReceivedDate: string | number | Date; }) => {
             const issuedDate = new Date(order.orderIssuedDate);
             const receivedDate = new Date(order.orderReceivedDate);
-            const timeDifference = (receivedDate.getTime() - issuedDate.getTime()) / (1000 * 60 * 60 * 24);
+            const timeDifference = Math.max(1, (receivedDate.getTime() - issuedDate.getTime()) / (1000 * 60 * 60 * 24));
             return sum + timeDifference;
         }, 0);
-        return totalDays / this.rowData.length;
+
+        return uniqueOrders.length > 0 ? totalDays / uniqueOrders.length : 0;
     }
 
     calculateSupplierPerformance() {
@@ -125,29 +175,91 @@ export class OrderReportComponent implements OnInit {
     }
 
     async supplierQuotePrices() {
-        const supplierQuotePrices = [
-            { "QuoteID": "ZBx2K0", "upc_SupplierID": "6005001234012_JHBTraders", "AvailableQuantity": 45, "Discount": 3, "IsAvailable": true, "ItemSKU": "GF-301", "SupplierID": "JHB Traders", "tenentId": "1717667019559-j85syk", "Timestamp": "2024-08-16T10:20:30.123Z", "TotalPrice": 405.00, "UnitPrice": 9, "upc": "6005001234012" },
-            { "QuoteID": "Xwd3K1", "upc_SupplierID": "6004002345023_CapeSupplies", "AvailableQuantity": 30, "Discount": 5, "IsAvailable": false, "ItemSKU": "PK-100", "SupplierID": "Cape Supplies", "tenentId": "1717667019559-j85syk", "Timestamp": "2024-08-16T11:45:22.789Z", "TotalPrice": 570.00, "UnitPrice": 19, "upc": "6004002345023" },
-            { "QuoteID": "Hnq5T2", "upc_SupplierID": "6003001256034_DurbanGoods", "AvailableQuantity": 50, "Discount": 7, "IsAvailable": true, "ItemSKU": "LS-212", "SupplierID": "Durban Goods", "tenentId": "1717667019559-j85syk", "Timestamp": "2024-08-16T14:05:16.456Z", "TotalPrice": 650.00, "UnitPrice": 13, "upc": "6003001256034" },
-            { "QuoteID": "Mbq6U3", "upc_SupplierID": "6002004567045_PretoriaMerch", "AvailableQuantity": 20, "Discount": 10, "IsAvailable": true, "ItemSKU": "MT-104", "SupplierID": "Pretoria Merchandise", "tenentId": "1717667019559-j85syk", "Timestamp": "2024-08-16T16:30:18.789Z", "TotalPrice": 360.00, "UnitPrice": 18, "upc": "6002004567045" },
-            { "QuoteID": "Opy7V4", "upc_SupplierID": "6001007898056_BloemRetail", "AvailableQuantity": 40, "Discount": 15, "IsAvailable": true, "ItemSKU": "BT-502", "SupplierID": "Bloem Retail", "tenentId": "1717667019559-j85syk", "Timestamp": "2024-08-16T19:15:24.567Z", "TotalPrice": 480.00, "UnitPrice": 12, "upc": "6001007898056" },
-            { "QuoteID": "Lqd8W5", "upc_SupplierID": "6006009109067_EastCoastSupplies", "AvailableQuantity": 35, "Discount": 12, "IsAvailable": true, "ItemSKU": "EC-201", "SupplierID": "East Coast Supplies", "tenentId": "1717667019559-j85syk", "Timestamp": "2024-08-17T07:40:35.678Z", "TotalPrice": 490.00, "UnitPrice": 14, "upc": "6006009109067" },
-            { "QuoteID": "Ckd9X6", "upc_SupplierID": "6007003045078_KimberleyKits", "AvailableQuantity": 25, "Discount": 20, "IsAvailable": true, "ItemSKU": "KK-303", "SupplierID": "Kimberley Kits", "tenentId": "1717667019559-j85syk", "Timestamp": "2024-08-17T09:50:45.789Z", "TotalPrice": 375.00, "UnitPrice": 15, "upc": "6007003045078" },
-            { "QuoteID": "Vle0Y7", "upc_SupplierID": "6008004026089_PortElizabethProducts", "AvailableQuantity": 10, "Discount": 25, "IsAvailable": false, "ItemSKU": "PE-408", "SupplierID": "Port Elizabeth Products", "tenentId": "1717667019559-j85syk", "Timestamp": "2024-08-17T12:00:50.123Z", "TotalPrice": 150.00, "UnitPrice": 15, "upc": "6008004026089" },
-            { "QuoteID": "Ymf1Z8", "upc_SupplierID": "6009005037090_MpumalangaMovers", "AvailableQuantity": 60, "Discount": 5, "IsAvailable": true, "ItemSKU": "MM-502", "SupplierID": "Mpumalanga Movers", "tenentId": "1717667019559-j85syk", "Timestamp": "2024-08-17T15:20:55.234Z", "TotalPrice": 900.00, "UnitPrice": 15, "upc": "6009005037090" },
-            { "QuoteID": "Uon2A9", "upc_SupplierID": "6010006048101_NorthWestNecessities", "AvailableQuantity": 15, "Discount": 8, "IsAvailable": true, "ItemSKU": "NW-101", "SupplierID": "North West Necessities", "tenentId": "1717667019559-j85syk", "Timestamp": "2024-08-17T17:45:59.345Z", "TotalPrice": 225.00, "UnitPrice": 15, "upc": "6010006048101" }
-        ]
-        
-        return supplierQuotePrices;
+        try {
+            const session = await fetchAuthSession();
+
+            const cognitoClient = new CognitoIdentityProviderClient({
+                region: outputs.auth.aws_region,
+                credentials: session.credentials,
+            });
+
+            const getUserCommand = new GetUserCommand({
+                AccessToken: session.tokens?.accessToken.toString(),
+            });
+            const getUserResponse = await cognitoClient.send(getUserCommand);
+
+            const tenantId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
+            // const tenantId = "1717667019559-j85syk";
+            console.log('my id', tenantId);
+
+            if (!tenantId) {
+                console.error('TenantId not found in user attributes');
+                // this.rowData = [];
+                return;
+            }
+
+            const lambdaClient = new LambdaClient({
+                region: outputs.auth.aws_region,
+                credentials: session.credentials,
+            });
+
+            const invokeCommand = new InvokeCommand({
+                FunctionName: 'getSupplierQuotePrices',
+                Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: tenantId } })),
+            });
+
+            const lambdaResponse = await lambdaClient.send(invokeCommand);
+            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+            console.log('Response from Lambda:', responseBody);
+
+            if (responseBody.statusCode === 200) {
+                const supplierData = JSON.parse(responseBody.body);
+                return supplierData;
+            } else {
+                console.error('Error fetching inventory data:', responseBody.body);
+                // this.rowData = [];
+            }
+        } catch (error) {
+            console.error('Error in loadInventoryData:', error);
+            // this.rowData = [];
+        } finally {
+            // this.isLoading = false;
+        }
     }
 
     metrics: any[] = [
-        { icon: 'shopping_cart', iconLabel: 'Total orders', metricName: 'Total orders', value: '12' },
-        { icon: 'timer', iconLabel: 'Average order time', metricName: 'Average order time', value: '3.58 days' },
-        { icon: 'trending_up', iconLabel: 'Supplier performance index', metricName: 'Supplier performance index', value: '100.00%' },
-        { icon: 'attach_money', iconLabel: 'Order cost analysis', metricName: 'Order cost analysis', value: 'R 1229.17' },
-        { icon: 'assignment', iconLabel: 'Orders in progress', metricName: 'Orders in progress', value: '2' }
+        { icon: 'shopping_cart', iconLabel: 'Total orders', metricName: 'Total orders', value: '0' },
+        { icon: 'timer', iconLabel: 'Average order time', metricName: 'Average order time', value: '0 days' },
+        { icon: 'trending_up', iconLabel: 'Supplier performance index', metricName: 'Supplier performance index', value: '0%' },
+        { icon: 'attach_money', iconLabel: 'Order cost analysis', metricName: 'Order cost analysis', value: 'R 0' },
+        { icon: 'assignment', iconLabel: 'Orders in progress', metricName: 'Orders in progress', value: '0' }
     ];
+
+    calculateMetrics() {
+        if (this.rowData.length === 0) return;
+
+        // Total orders
+        this.metrics[0].value = this.rowData.length.toString();
+
+        // Average order time
+        const avgOrderTime = this.calculateAverageOrderTime();
+        this.metrics[1].value = `${avgOrderTime.toFixed(2)} days`;
+
+        // Supplier performance index
+        const supplierPerformance = this.calculateSupplierPerformance();
+        this.metrics[2].value = `${supplierPerformance}%`;
+
+        // Order cost analysis
+        const { averageCost } = this.calculateOrderCostAnalysis();
+        this.metrics[3].value = `R ${averageCost.toFixed(2)}`;
+
+        // Orders in progress
+        const ordersInProgress = this.rowData.filter(order => order.status === 'Pending Approval').length;
+        this.metrics[4].value = ordersInProgress.toString();
+
+        // Update visible metrics after calculation
+        this.updateVisibleMetrics();
+    }
 
     visibleMetrics: any[] = [];
     startIndex = 0;
@@ -169,26 +281,56 @@ export class OrderReportComponent implements OnInit {
     }
 
     async fetchOrders() {
-        const orders = [
-            { "orderID": 1, "orderIssuedDate": "2021-01-01", "expectedOrderDate": "2021-01-05", "supplier": "ProVision Supplies", "orderCost": 1000, "orderReceivedDate": "2021-01-04", "status": "Completed", "quoteStatus": "Approved", "address": "123 Elm St, Johannesburg" },
-            { "orderID": 2, "orderIssuedDate": "2022-02-15", "expectedOrderDate": "2022-02-20", "supplier": "Cape Industrial Goods", "orderCost": 1500, "orderReceivedDate": "2022-02-19", "status": "In Progress", "quoteStatus": "Approved", "address": "456 Oak St, Cape Town" },
-            { "orderID": 3, "orderIssuedDate": "2021-03-10", "expectedOrderDate": "2021-03-15", "supplier": "ProVision Supplies", "orderCost": 1200, "orderReceivedDate": "2021-03-14", "status": "Delayed", "quoteStatus": "No Status", "address": "789 Pine St, Durban" },
-            { "orderID": 4, "orderIssuedDate": "2022-04-22", "expectedOrderDate": "2022-04-25", "supplier": "Johannesburg Traders", "orderCost": 1100, "orderReceivedDate": "2022-04-24", "status": "Completed", "quoteStatus": "Approved", "address": "101 Maple Ave, Johannesburg" },
-            { "orderID": 5, "orderIssuedDate": "2023-05-05", "expectedOrderDate": "2023-05-10", "supplier": "Cape Industrial Goods", "orderCost": 1600, "orderReceivedDate": "2023-05-09", "status": "In Progress", "quoteStatus": "Approved", "address": "202 Birch Rd, Cape Town" },
-            { "orderID": 6, "orderIssuedDate": "2023-06-01", "expectedOrderDate": "2023-06-05", "supplier": "ProVision Supplies", "orderCost": 1300, "orderReceivedDate": "2023-06-04", "status": "Pending", "quoteStatus": "No Status", "address": "303 Cedar St, Durban" },
-            { "orderID": 7, "orderIssuedDate": "2021-07-07", "expectedOrderDate": "2021-07-12", "supplier": "Durban Warehouse", "orderCost": 1400, "orderReceivedDate": "2021-07-11", "status": "Pending", "quoteStatus": "No Status", "address": "404 Birch Rd, Cape Town" },
-            { "orderID": 8, "orderIssuedDate": "2022-08-15", "expectedOrderDate": "2022-08-20", "supplier": "ProVision Supplies", "orderCost": 950, "orderReceivedDate": "2022-08-19", "status": "Delayed", "quoteStatus": "No Status", "address": "505 Pine St, Durban" },
-            { "orderID": 9, "orderIssuedDate": "2023-09-10", "expectedOrderDate": "2023-09-15", "supplier": "Cape Industrial Goods", "orderCost": 1150, "orderReceivedDate": "2023-09-14", "status": "Completed", "quoteStatus": "Approved", "address": "606 Oak St, Cape Town" },
-            { "orderID": 10, "orderIssuedDate": "2021-10-20", "expectedOrderDate": "2021-10-25", "supplier": "Johannesburg Traders", "orderCost": 500, "orderReceivedDate": "2021-10-24", "status": "Cancelled", "quoteStatus": "No Status", "address": "707 Elm St, Johannesburg" },
-            { "orderID": 11, "orderIssuedDate": "2022-11-11", "expectedOrderDate": "2022-11-15", "supplier": "Durban Warehouse", "orderCost": 1250, "orderReceivedDate": "2022-11-14", "status": "Completed", "quoteStatus": "Approved", "address": "808 Cedar St, Durban" },
-            { "orderID": 12, "orderIssuedDate": "2023-12-05", "expectedOrderDate": "2023-12-10", "supplier": "ProVision Supplies", "orderCost": 1800, "orderReceivedDate": "2023-12-09", "status": "Delayed", "quoteStatus": "Approved", "address": "909 Birch Rd, Cape Town" },
-            { "orderID": 13, "orderIssuedDate": "2024-01-01", "expectedOrderDate": "2024-01-05", "supplier": "Cape Industrial Goods", "orderCost": 2000, "orderReceivedDate": "2024-01-04", "status": "In Progress", "quoteStatus": "Approved", "address": "110 Pine Ave, Cape Town" },
-            { "orderID": 14, "orderIssuedDate": "2024-02-10", "expectedOrderDate": "2024-02-15", "supplier": "Johannesburg Traders", "orderCost": 1700, "orderReceivedDate": "2024-02-14", "status": "Completed", "quoteStatus": "Approved", "address": "120 Oak St, Johannesburg" },
-            { "orderID": 15, "orderIssuedDate": "2024-03-15", "expectedOrderDate": "2024-03-20", "supplier": "Durban Warehouse", "orderCost": 1500, "orderReceivedDate": "2024-03-19", "status": "Pending", "quoteStatus": "No Status", "address": "130 Elm St, Durban" }
-        ];
+        this.isLoading = true;
+        try {
+            const session = await fetchAuthSession();
 
+            const cognitoClient = new CognitoIdentityProviderClient({
+                region: outputs.auth.aws_region,
+                credentials: session.credentials,
+            });
 
-        return orders;
+            const getUserCommand = new GetUserCommand({
+                AccessToken: session.tokens?.accessToken.toString(),
+            });
+            const getUserResponse = await cognitoClient.send(getUserCommand);
+
+            const tenentId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
+
+            if (!tenentId) {
+                console.error('TenentId not found in user attributes');
+                this.rowData = [];
+                return;
+            }
+
+            const lambdaClient = new LambdaClient({
+                region: outputs.auth.aws_region,
+                credentials: session.credentials,
+            });
+
+            const invokeCommand = new InvokeCommand({
+                FunctionName: 'getOrdersReport',
+                Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: tenentId } })),
+            });
+
+            const lambdaResponse = await lambdaClient.send(invokeCommand);
+            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+            console.log('Response from Lambda:', responseBody);
+
+            if (responseBody.statusCode === 200) {
+                const orders = JSON.parse(responseBody.body);
+                this.rowData = orders;
+                console.log('Processed orders:', this.rowData);
+            } else {
+                console.error('Error fetching orders data:', responseBody.body);
+                this.rowData = [];
+            }
+        } catch (error) {
+            console.error('Error in loadOrdersData:', error);
+            this.rowData = [];
+        } finally {
+            this.isLoading = false;
+        }
     }
 
     updateOrderStatuses(orders: any[], suppliers: any[]) {

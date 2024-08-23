@@ -3,11 +3,6 @@
 </div>
 
 <div *ngIf="!isLoading" style="height: 100%; display: block; overflow: scroll">
-    <mat-toolbar style="width: 100%">
-        <button mat-button style="width: 100%; background-color: #f1f1f1; color: black" (click)="back()">
-            Back to reports
-        </button>
-    </mat-toolbar>
     <div style="padding: 10px 10px 10px 10px; width: 100%">
         <div class="grid-container">
             <div class="chart-tile wide">
@@ -81,6 +76,8 @@
             background-color: transparent;
         "
     >
-        <button mat-flat-button class="btn" (click)="back()"><mat-icon>arrow_back</mat-icon> Back To Reports</button>
+        <button mat-flat-button class="btn" (click)="back()">
+            <mat-icon style="font-size: 24px; height: 24px; width: 24px">arrow_back</mat-icon> Back To Reports
+        </button>
     </mat-toolbar>
 </div>

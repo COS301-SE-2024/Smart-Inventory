@@ -1,6 +1,6 @@
-<div *ngIf="isLoading" class="loading-overlay">
+<!-- <div *ngIf="isLoading" class="loading-overlay">
     <app-loading-spinner></app-loading-spinner>
-</div>
+</div> -->
 
 <div style="height: 100%; display: block; overflow: scroll">
     <!-- order-report-metrics.component.html -->
@@ -90,5 +90,7 @@
         background-color: transparent;
     "
 >
-    <button mat-flat-button class="btn" (click)="back()"><mat-icon>arrow_back</mat-icon> Back To Reports</button>
+    <button mat-flat-button class="btn" (click)="back()">
+        <mat-icon style="font-size: 24px; height: 24px; width: 24px">arrow_back</mat-icon> Back To Reports
+    </button>
 </mat-toolbar>

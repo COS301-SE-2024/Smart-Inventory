@@ -77,6 +77,7 @@ export class InventoryComponent implements OnInit {
                 return '';
             },
         },
+        { field: 'unitCost', headerName: 'Unit Cost', filter: 'agSetColumnFilter' },
         { field: 'lowStockThreshold', headerName: 'Low Stock Threshold', filter: 'agSetColumnFilter' },
         { field: 'reorderAmount', headerName: 'Reorder Amount', filter: 'agSetColumnFilter' },
     ];
@@ -194,6 +195,7 @@ export class InventoryComponent implements OnInit {
                     expirationDate: item.expirationDate,
                     lowStockThreshold: item.lowStockThreshold,
                     reorderAmount: item.reorderAmount,
+                    unitCost: item.unitCost,
                 }));
                 console.log('Processed inventory items:', this.rowData);
 

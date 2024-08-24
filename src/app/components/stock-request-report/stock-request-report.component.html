@@ -1,1 +1,62 @@
-<p>stock-request-report works!</p>
+<div class="container">
+    <h2>Stock Request Report</h2>
+  
+    <mat-form-field>
+      <mat-label>Period</mat-label>
+      <mat-select [(ngModel)]="period">
+        <mat-option value="DAILY">Daily</mat-option>
+        <mat-option value="WEEKLY">Weekly</mat-option>
+      </mat-select>
+    </mat-form-field>
+  
+    <mat-form-field>
+      <mat-label>Start Date</mat-label>
+      <input matInput [matDatepicker]="startPicker" [(ngModel)]="startDate">
+      <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+      <mat-datepicker #startPicker></mat-datepicker>
+    </mat-form-field>
+  
+    <mat-form-field>
+      <mat-label>End Date</mat-label>
+      <input matInput [matDatepicker]="endPicker" [(ngModel)]="endDate">
+      <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+      <mat-datepicker #endPicker></mat-datepicker>
+    </mat-form-field>
+  
+    <mat-form-field class="search-field">
+        <mat-label>Search Items</mat-label>
+        <input matInput type="text" [(ngModel)]="searchTerm" (input)="filterItems()" [matAutocomplete]="auto">
+        <button mat-icon-button matSuffix *ngIf="selectedItem" (click)="clearSelection()" class="clear-button">
+          <mat-icon>close</mat-icon>
+        </button>
+        <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectItem($event.option.value)">
+          <mat-option *ngFor="let item of filteredItems" [value]="item">
+            {{item.SKU}} - {{item.description}}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+  
+      <button mat-raised-button color="primary" (click)="getAggregatedData()">Get Report</button>
+
+      <div *ngIf="aggregatedData.length > 0" class="aggregated-data">
+        <h3>Stock Request Data:</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>SKU</th>
+              <th>Category</th>
+              <th>Quantity</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of aggregatedData">
+              <td>{{item.date}}</td>
+              <td>{{item.sku}}</td>
+              <td>{{item.category}}</td>
+              <td>{{item.quantity}}</td>
+            </tr>
+          </tbody>
+      </table>
+    </div>
+  </div>

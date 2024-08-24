@@ -1,8 +1,11 @@
 .container {
-    max-width: 800px;
+    width: 100%;
     margin: 0 auto;
     padding: 20px;
     font-family: Arial, sans-serif;
+    /* Add these new properties */
+    max-height: 90vh; /* Limit the height to the viewport height */
+    overflow-y: auto; /* Enable vertical scrolling */
   }
   
   h2 {

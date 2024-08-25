@@ -104,6 +104,16 @@ export class OrdersComponent implements OnInit {
       }
     },
     { field: 'Selected_Supplier', headerName: 'Selected Supplier', filter: 'agSetColumnFilter' },
+    { 
+      field: 'Date_Accepted', 
+      headerName: 'Date Accepted', 
+      filter: 'agDateColumnFilter'
+    },
+    { 
+      field: 'Lead_Time', 
+      headerName: 'Lead Time (Days)', 
+      filter: 'agNumberColumnFilter'
+    },
     { field: 'Expected_Delivery_Date', headerName: 'Expected Delivery Date', filter: 'agDateColumnFilter' },
     { field: 'Actual_Delivery_Date', headerName: 'Actual Delivery Date', filter: 'agDateColumnFilter' },
   ];
@@ -450,7 +460,9 @@ export class OrdersComponent implements OnInit {
           Selected_Supplier: order.Selected_Supplier,
           Expected_Delivery_Date: order.Expected_Delivery_Date,
           Actual_Delivery_Date: order.Actual_Delivery_Date,
-          Creation_Time: order.Creation_Time // Add this line
+          Creation_Time: order.Creation_Time,
+          Date_Accepted: order.Date_Accepted,
+          Lead_Time: order.Lead_Time,
         }));
         console.log('Processed orders:', this.rowData);
       } else {

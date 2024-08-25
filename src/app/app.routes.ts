@@ -16,6 +16,7 @@ import { ActivityReportComponent } from './components/reports/activity-report/ac
 import { ProfileComponent } from './components/profile/profile.component';
 import { NotificationSettingsComponent } from './components/notification-settings/notification-settings.component';
 import { ContactSupportComponent } from './components/contact-support/contact-support.component';
+import { StockRequestReportComponent } from './components/stock-request-report/stock-request-report.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
@@ -36,6 +37,7 @@ export const routes: Routes = [
     { path: 'supplierReport/:supplierID/:orderID', component: SupplierReportComponent },
     { path: 'activityReport', component: ActivityReportComponent },
     { path: 'profile', component: ProfileComponent },
-    {path: 'contact-support', component: ContactSupportComponent},
+    { path: 'contact-support', component: ContactSupportComponent},
     { path: 'notifications', component: NotificationSettingsComponent },
+    { path: 'stock-requests-report', component: StockRequestReportComponent },
 ];

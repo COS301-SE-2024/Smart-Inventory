@@ -6,19 +6,23 @@
             >
             <input
                 class="input-box"
-                matInput
+                type="text"
                 [(ngModel)]="inputFilter"
-                (input)="filterGrid()"
+                (input)="onFilterTextBoxChanged()"
                 placeholder="Search..."
+                [matAutocomplete]="auto"
+                id="filter-text-box"
             />
+            <mat-autocomplete #auto="matAutocomplete">
+                <mat-option *ngFor="let option of filteredOptions" [value]="option">
+                    {{ option }}
+                </mat-option>
+            </mat-autocomplete>
         </div>
-        <mat-select [(ngModel)]="filterSelect" placeholder="Select Column">
-            <mat-option *ngFor="let option of selectOptions" [value]="option">{{ option }}</mat-option>
-        </mat-select>
         <div class="icon-container">
             <mat-icon
                 class="icon"
-                matTooltip="Select a column to search from, then enter your query in the search bar to filter the table."
+                matTooltip=" Type to filter across all columns. Clear the search to reset the table view. Searches are case-insensitive."
                 matTooltipPosition="right"
                 >info</mat-icon
             >
@@ -176,6 +180,7 @@
         (selectionChanged)="onSelectionChanged($event)"
         [rowData]="rowData"
         [class]="themeClass"
+        [cacheQuickFilter]="true"
         class="ag-theme-quartz aggrid"
         [ngStyle]="gridStyle"
         (gridReady)="onGridReady($event)"

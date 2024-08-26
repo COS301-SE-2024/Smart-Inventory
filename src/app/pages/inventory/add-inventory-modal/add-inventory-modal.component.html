@@ -1,13 +1,14 @@
 <h2 mat-dialog-title style="text-align: center">Add Inventory Item</h2>
 <mat-dialog-content>
     <form [formGroup]="inventoryForm">
-        <mat-form-field appearance="outline">
+        <mat-form-field appearance="outline" style="padding-top: 10px">
             <mat-label>Universal Product Code</mat-label>
             <input matInput formControlName="upc" />
         </mat-form-field>
         <mat-form-field appearance="outline">
             <mat-label>SKU</mat-label>
             <input matInput formControlName="sku" />
+            <button mat-stroked-button matSuffix class="btn" (click)="generateSKU()">Generate SKU</button>
         </mat-form-field>
         <mat-form-field appearance="outline">
             <mat-label>Description</mat-label>

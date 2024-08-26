@@ -30,6 +30,9 @@ import { CustomQuoteModalComponent } from '../custom-quote-modal/custom-quote-mo
 import { ReceivedQuotesSidePaneComponent } from '../received-quotes-side-pane/received-quotes-side-pane.component';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { ReactiveFormsModule } from '@angular/forms';
+
 @Component({
     selector: 'app-grid',
     standalone: true,
@@ -48,6 +51,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
         DateSelectCellEditorComponent,
         ReceivedQuotesSidePaneComponent,
         MatTooltip,
+        MatAutocompleteModule,
+        ReactiveFormsModule,
     ],
     templateUrl: './grid.component.html',
     styleUrl: './grid.component.css',
@@ -85,6 +90,9 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
     gridApi!: GridApi<any>;
     private themeObserver!: MutationObserver;
     gridStyle: any;
+    inputFilter = '';
+    filteredOptions: string[] = [];
+
     gridOptions = {
         pagination: true,
         paginationPageSize: 20, // Set the number of rows per page
@@ -98,7 +106,6 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
     // gridColumnApi: any;
 
     filterSelect: string = '';
-    inputFilter: string = '';
 
     selectOptions: any = [];
 
@@ -120,8 +127,22 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
         private _snackBar: MatSnackBar,
     ) {
         this.setupThemeObserver();
+    }
 
-        // this.setGridHeight();
+    onFilterTextBoxChanged() {
+        this.gridApi.setGridOption(
+            'quickFilterText',
+            (document.getElementById('filter-text-box') as HTMLInputElement).value,
+        );
+        this.updateFilteredOptions();
+    }
+
+    private updateFilteredOptions() {
+        const allValues = this.rowData.flatMap((row) => Object.values(row));
+        const uniqueValues = Array.from(new Set(allValues.map(String)));
+        this.filteredOptions = uniqueValues.filter((value) =>
+            value.toLowerCase().includes(this.inputFilter.toLowerCase()),
+        );
     }
 
     oopenSnackBar(message: string) {

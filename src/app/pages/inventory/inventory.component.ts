@@ -26,8 +26,10 @@ import {
     MatSnackBarAction,
     MatSnackBarActions,
     MatSnackBarLabel,
+    MatSnackBarModule,
     MatSnackBarRef,
 } from '@angular/material/snack-bar';
+
 @Component({
     selector: 'app-inventory',
     standalone: true,
@@ -43,6 +45,7 @@ import {
         RequestStockModalComponent,
         MatNativeDateModule,
         MatDatepickerModule,
+        MatSnackBarModule
     ],
     templateUrl: './inventory.component.html',
     styleUrls: ['./inventory.component.css'],
@@ -77,6 +80,9 @@ export class InventoryComponent implements OnInit {
                 return '';
             },
         },
+        { field: 'unitCost', headerName: 'Unit Cost', filter: 'agSetColumnFilter' },
+        { field: 'leadTime', headerName: 'Lead Time', filter: 'agSetColumnFilter' },
+        { field: 'deliveryCost', headerName: 'Delivery Cost', filter: 'agSetColumnFilter' },
         { field: 'lowStockThreshold', headerName: 'Low Stock Threshold', filter: 'agSetColumnFilter' },
         { field: 'reorderAmount', headerName: 'Reorder Amount', filter: 'agSetColumnFilter' },
     ];
@@ -86,6 +92,7 @@ export class InventoryComponent implements OnInit {
     constructor(
         private titleService: TitleService,
         private dialog: MatDialog,
+        private snackBar: MatSnackBar
     ) {
         Amplify.configure(outputs);
     }
@@ -194,6 +201,9 @@ export class InventoryComponent implements OnInit {
                     expirationDate: item.expirationDate,
                     lowStockThreshold: item.lowStockThreshold,
                     reorderAmount: item.reorderAmount,
+                    unitCost: item.unitCost,
+                    leadTime: item.leadTime,
+                    deliveryCost: item.deliveryCost
                 }));
                 console.log('Processed inventory items:', this.rowData);
 
@@ -445,14 +455,27 @@ export class InventoryComponent implements OnInit {
 
             if (responseBody.statusCode === 201) {
                 console.log('Stock request report created successfully');
-                await this.logActivity('Requested stock', quantity.toString() + 'of ' + item.sku);
+                await this.logActivity('Requested stock', quantity.toString() + ' of ' + item.sku);
                 await this.loadInventoryData();
+                
+                // Show success message using snackbar
+                this.snackBar.open('Stock requested successfully', 'Close', {
+                    duration: 3000, // Duration in milliseconds
+                    horizontalPosition: 'center',
+                    verticalPosition: 'top',
+                });
             } else {
                 throw new Error(JSON.stringify(responseBody.body));
             }
         } catch (error) {
             console.error('Error requesting stock:', error);
-            alert(`Error requesting stock: ${(error as Error).message}`);
+            
+            // Show error message using snackbar
+            this.snackBar.open('Error requesting stock: ' + (error as Error).message, 'Close', {
+                duration: 5000,
+                horizontalPosition: 'center',
+                verticalPosition: 'top',
+            });
         }
     }
 

@@ -26,6 +26,7 @@ interface OrderItem {
   reorderAmount: number;
   inventoryID: string;
   quoteID: string;
+  unitCost: number;
 }
 
 @Component({
@@ -101,7 +102,8 @@ export class ReceiveOrderModalComponent implements OnInit {
           lowStockThreshold: item.LowStockThreshold,
           reorderAmount: item.ReorderAmount,
           inventoryID: item.inventoryID,
-          quoteID: item.QuoteID
+          quoteID: item.QuoteID,
+          unitCost: item.UnitCost,
         }));
       } else {
         console.error('Error fetching quote items:', responseBody.body);
@@ -152,7 +154,8 @@ export class ReceiveOrderModalComponent implements OnInit {
           sku: item.sku,
           supplier: this.data.Selected_Supplier,
           tenentId: this.tenentId,
-          upc: item.upc
+          upc: item.upc,
+          unitCost: item.unitCost
         };
 
         console.log('Inventory item to be created:', inventoryItem);

@@ -109,7 +109,7 @@ export class OrderReportComponent implements OnInit {
         { cols: 12, rows: 2, y: 0, x: 0 },  // Metrics Container
         { cols: 8, rows: 4, y: 1, x: 0 },   // Inventory Grid
         { cols: 4, rows: 4, y: 1, x: 8 },   // Order Report
-        { cols: 6, rows: 4, y: 3, x: 0 },   // Stacked Bar Chart
+        { cols: 6, rows: 5, y: 3, x: 0 },   // Stacked Bar Chart
         { cols: 12, rows: 4, y: 3, x: 6 },   // Scatter Plot
         { cols: 6, rows: 4, y: 5, x: 4 }    // Donut Chart
     ];

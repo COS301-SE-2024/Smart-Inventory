@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, OnChanges, OnDestroy, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import * as echarts from 'echarts';
 
@@ -10,9 +10,10 @@ import * as echarts from 'echarts';
   styleUrl: './donuttemplate.component.css'
 })
 
-export class DonutTemplateComponent implements OnChanges, AfterViewInit, OnInit {
+export class DonutTemplateComponent implements OnChanges, AfterViewInit, OnInit, OnDestroy {
   @Input() orderData: any[] = [];
   @ViewChild('chartContainer', { static: true }) chartContainer!: ElementRef;
+  private resizeObserver!: ResizeObserver;
 
   private chart: echarts.ECharts | null = null;
   private data: any[] = [];
@@ -23,6 +24,7 @@ export class DonutTemplateComponent implements OnChanges, AfterViewInit, OnInit 
 
   ngAfterViewInit() {
     this.initChart();
+    this.observeResize();
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -31,6 +33,14 @@ export class DonutTemplateComponent implements OnChanges, AfterViewInit, OnInit 
       if (this.chart) {
         this.updateChart();
       }
+    }
+  }
+  ngOnDestroy(): void {
+    if (this.resizeObserver) {
+      this.resizeObserver.disconnect();
+    }
+    if (this.chart) {
+      this.chart.dispose();
     }
   }
 
@@ -49,6 +59,15 @@ export class DonutTemplateComponent implements OnChanges, AfterViewInit, OnInit 
       console.error('Chart container not found');
     }
   }
+  private observeResize(): void {
+    this.resizeObserver = new ResizeObserver(() => {
+      if (this.chart) {
+        this.chart.resize();
+      }
+    });
+    this.resizeObserver.observe(this.chartContainer.nativeElement);
+  }
+
 
   private updateChart() {
     if (!this.chart) return;
@@ -98,6 +117,7 @@ export class DonutTemplateComponent implements OnChanges, AfterViewInit, OnInit 
     };
 
     this.chart.setOption(option);
+    // this.chart.resize();
   }
 
   private processData(data: any[]) {

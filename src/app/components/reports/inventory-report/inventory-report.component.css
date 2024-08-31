@@ -2,6 +2,14 @@
     width: 50%;
 }
 
+gridster{
+    background-color: white !important;
+}
+
+gridster-item{
+    border-radius: 10px !important;
+}
+
 .loading-overlay {
     position: fixed;
     top: 0;
@@ -66,4 +74,55 @@ mat-card.mat-mdc-card.mdc-card {
     width: 100%;
     height: 300px;
     /* Adjust as needed */
+}
+
+.gridster-container {
+    height: calc(100vh - 64px); /* Adjust based on your layout */
+    width: 100%;
+    overflow: auto;
+}
+
+.chart-card, .grid-card, .metrics-card {
+    height: 100%;
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+}
+
+.chart-card ag-charts-angular,
+.grid-card app-grid {
+    flex-grow: 1;
+}
+
+.metrics-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.metrics-card li {
+    font-size: 15px;
+    padding: 8px 0;
+    border-bottom: 1px solid lightgrey;
+}
+
+.back-toolbar {
+    position: sticky;
+    bottom: 0px;
+    left: 20px;
+    width: auto;
+    border-radius: 20px;
+    height: 50px;
+    background-color: transparent;
+    z-index: 1;
+}
+
+.btn {
+    display: flex;
+    align-items: center;
+}
+
+.btn mat-icon {
+    margin-right: 8px;
 }

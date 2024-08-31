@@ -1,78 +1,38 @@
-<div style="height: 100%; display: block; overflow: scroll">
-    <mat-grid-list cols="9" rowHeight="20vh" gutterSize="15px">
-        <mat-grid-tile [colspan]="3" [rowspan]="1">
-            <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
-                <mat-card>
-                    <mat-card-content>
-                        <mat-card-content>
-                            <div class="metric-container" style="padding: 0">
-                                <div class="icon-container">
-                                    <mat-icon>{{ ActivityReport.metrics[0].icon }}</mat-icon>
-                                </div>
-                                <div class="text-container">
-                                    <span class="metric-name">{{ ActivityReport.metrics[0].name }}</span>
-                                    <h2 class="metric-value">{{ ActivityReport.metrics[0].value }}</h2>
-                                </div>
-                            </div>
-                        </mat-card-content>
-                    </mat-card-content>
-                </mat-card>
-            </div>
-        </mat-grid-tile>
-        <mat-grid-tile [colspan]="3" [rowspan]="1">
-            <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
+<gridster [options]="options">
+    <gridster-item [item]="item" *ngFor="let item of dashboard">
+        <ng-container [ngSwitch]="item.type">
+            <ng-container *ngSwitchCase="'metric'">
                 <mat-card>
                     <mat-card-content>
                         <div class="metric-container">
                             <div class="icon-container">
-                                <mat-icon>{{ ActivityReport.metrics[1].icon }}</mat-icon>
+                                <mat-icon >{{ item['data']?.icon }}</mat-icon>
                             </div>
                             <div class="text-container">
-                                <span class="metric-name">{{ ActivityReport.metrics[1].name }}</span>
-                                <h2 class="metric-value">{{ ActivityReport.metrics[1].value }}</h2>
+                                <span class="metric-name">{{ item['data']?.name }}</span>
+                                <h2 class="metric-value">{{ item['data']?.value }}</h2>
+                                <div class="metric-trend">
+                                    <!-- <mat-icon [ngClass]="item['data']?.trend">
+                                        {{ item['data']?.trend === 'up' ? 'trending_up' : item['data']?.trend === 'down'
+                                        ? 'trending_down' : 'trending_flat' }}
+                                    </mat-icon> -->
+                                    <!-- {{ item['data']?.percentage }}%y -->
+                                </div>
                             </div>
                         </div>
                     </mat-card-content>
                 </mat-card>
-            </div>
-        </mat-grid-tile>
-        <mat-grid-tile [colspan]="3" [rowspan]="1">
-            <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
-                <mat-card>
-                    <mat-card-content>
-                        <div class="metric-container">
-                            <div class="icon-container">
-                                <mat-icon>{{ ActivityReport.metrics[2].icon }}</mat-icon>
-                            </div>
-                            <div class="text-container">
-                                <span class="metric-name">{{ ActivityReport.metrics[2].name }}</span>
-                                <h2 class="metric-value">{{ ActivityReport.metrics[2].value }}</h2>
-                            </div>
-                        </div>
-                    </mat-card-content>
-                </mat-card>
-            </div>
-        </mat-grid-tile>
-        <mat-grid-tile [colspan]="9" [rowspan]="4">
-            <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
+            </ng-container>
+            <ng-container *ngSwitchCase="'grid'">
                 <div class="inventoryHolder">
-                    <app-grid [rowData]="rowData" [columnDefs]="colDefs" #gridComponent> </app-grid>
+                    <app-grid [rowData]="rowData" [columnDefs]="colDefs" #gridComponent></app-grid>
                 </div>
-            </div>
-        </mat-grid-tile>
-    </mat-grid-list>
-</div>
+            </ng-container>
+        </ng-container>
+    </gridster-item>
+</gridster>
 <mat-toolbar
-    style="
-        position: sticky;
-        bottom: 0;
-        left: 0;
-        width: 300px;
-        border-radius: 20px;
-        height: 50px;
-        background-color: transparent;
-    "
->
+    style="position: sticky; bottom: 0; left: 0; width: 300px; border-radius: 20px; height: 50px; background-color: transparent; z-index: 1;">
     <button mat-flat-button class="btn" (click)="back()">
         <mat-icon style="font-size: 24px; height: 24px; width: 24px">arrow_back</mat-icon> Back To Reports
     </button>

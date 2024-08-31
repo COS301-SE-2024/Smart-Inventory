@@ -24,6 +24,28 @@ import { AgChartsAngular } from 'ag-charts-angular';
 import { AgChartOptions } from 'ag-charts-community';
 import { ChartDataService } from '../../../services/chart-data.service';
 import { Router } from '@angular/router';
+import { CompactType, DisplayGrid, GridsterConfig, GridsterItem, GridType } from 'angular-gridster2';
+import { GridsterModule } from 'angular-gridster2';
+import { MatTooltip } from '@angular/material/tooltip';
+interface Metric {
+    name: string;
+    icon: string;
+    value: string;
+    percentage: number;
+    trend: 'up' | 'down' | 'neutral';
+    tooltip: string;
+}
+
+interface ActivityReportType {
+    title: string;
+    subtitle: string;
+    metrics: Metric[];
+}
+
+interface CustomGridsterItem extends GridsterItem {
+    type: string;
+    data?: Metric;
+}
 
 @Component({
     selector: 'app-activity-report',
@@ -41,6 +63,8 @@ import { Router } from '@angular/router';
         MatGridTile,
         MatCardModule,
         MatIconModule,
+        GridsterModule,
+        MatTooltip
     ],
     templateUrl: './activity-report.component.html',
     styleUrls: ['./activity-report.component.css'],
@@ -48,7 +72,7 @@ import { Router } from '@angular/router';
 export class ActivityReportComponent implements OnInit, AfterViewInit {
     @ViewChild('gridComponent') gridComponent!: GridComponent;
 
-    isLoading = true;
+    isLoading = false;
     rowData: any[] = [];
     options1!: AgChartOptions;
     options2!: AgChartOptions;
@@ -63,7 +87,7 @@ export class ActivityReportComponent implements OnInit, AfterViewInit {
         { field: 'details', headerName: 'Details' }
     ];
 
-    ActivityReport = {
+    ActivityReport: ActivityReportType = {
         title: 'Activity Report',
         subtitle: 'Overview of team member activities and relevant metrics.',
         metrics: [
@@ -102,20 +126,57 @@ export class ActivityReportComponent implements OnInit, AfterViewInit {
         ],
     };
 
+    @ViewChild('gridComponent') gridComponents!: any;
+    options!: GridsterConfig;
+    dashboard: Array<CustomGridsterItem> = [];
+
     constructor(
-        private titleService: TitleService, 
+        private titleService: TitleService,
         private dialog: MatDialog,
         private router: Router,
         private chartDataService: ChartDataService,
         private changeDetectorRef: ChangeDetectorRef
     ) {
         console.log('ActivityReportComponent constructed');
+    this.options = {
+        gridType: GridType.VerticalFixed,
+            displayGrid: DisplayGrid.None,
+            compactType: CompactType.CompactUpAndLeft,
+            draggable: {
+                enabled: false,
+            },
+            resizable: {
+                enabled: false,
+            },
+            pushItems: false,
+            minCols: 12,
+            maxCols: 12,
+            minRows: 20, // Increased minimum rows for better initial height
+            maxRows: 100,
+            minItemWidth: 100, // Minimum width each item can shrink to
+            minItemHeight: 50, // Minimum height each item can shrink to
+            minItemCols: 1, // Maximum columns an item can expand to
+            minItemRows: 1, // Maximum rows an item can expand to
+            fixedRowHeight: 150,
+            addEmptyRowsCount: 10,
+    };
+
     }
 
     async ngOnInit() {
         console.log('ngOnInit called');
         this.titleService.updateTitle('Activity Report');
         await this.fetchActivities();
+        setTimeout(() => {
+            this.dashboard = [
+                { cols: 4, rows: 1, y: 0, x: 0, type: 'metric', data: this.ActivityReport.metrics[0] },
+                { cols: 4, rows: 1, y: 0, x: 3, type: 'metric', data: this.ActivityReport.metrics[1] },
+                { cols: 4, rows: 1, y: 0, x: 6, type: 'metric', data: this.ActivityReport.metrics[2] },
+                { cols: 12, rows: 4, y: 1, x: 0, type: 'grid' }
+            ] as CustomGridsterItem[];
+            this.changeDetectorRef.detectChanges();
+        });
+        
     }
 
     ngAfterViewInit() {

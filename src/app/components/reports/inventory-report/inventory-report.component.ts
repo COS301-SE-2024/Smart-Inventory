@@ -19,6 +19,7 @@ import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-c
 import outputs from '../../../../../amplify_outputs.json';
 import { LoadingSpinnerComponent } from 'app/components/loader/loading-spinner.component';
 import { MatIconModule } from '@angular/material/icon';
+import { CompactType, DisplayGrid, GridsterConfig, GridsterItem, GridsterModule, GridType } from 'angular-gridster2';
 @Component({
     selector: 'app-inventory-report',
     templateUrl: './inventory-report.component.html',
@@ -35,6 +36,7 @@ import { MatIconModule } from '@angular/material/icon';
         GridComponent,
         LoadingSpinnerComponent,
         MatIconModule,
+        GridsterModule,
     ],
 })
 export class InventoryReportComponent implements OnInit {
@@ -42,13 +44,13 @@ export class InventoryReportComponent implements OnInit {
 
     rowData: any[] = [];
     colDefs: ColDef[] = [];
-    options1!: AgChartOptions;
-    options2!: AgChartOptions;
-    options3!: AgChartOptions;
-    options4!: AgChartOptions;
+    options: AgChartOptions[] = [];
     options5: any;
     InventoryReport: any;
     isLoading = true;
+
+    gridsterOptions: GridsterConfig;
+    gridsterItems: Array<GridsterItem>;
 
     constructor(
         private titleService: TitleService,
@@ -56,6 +58,62 @@ export class InventoryReportComponent implements OnInit {
         public service: ChartDataService,
     ) {
         Amplify.configure(outputs);
+        this.gridsterOptions = {
+            gridType: GridType.VerticalFixed,
+            displayGrid: DisplayGrid.None,
+            compactType: CompactType.CompactUpAndLeft,
+            draggable: {
+                enabled: false,
+            },
+            resizable: {
+                enabled: false,
+            },
+            pushItems: false,
+            margin: 10,
+            outerMargin: true,
+            outerMarginTop: null,
+            outerMarginRight: null,
+            outerMarginBottom: null,
+            outerMarginLeft: null,
+            useTransformPositioning: true,
+            mobileBreakpoint: 640,
+            minCols: 12,
+            maxCols: 12,
+            minRows: 20,
+            maxRows: 100,
+            maxItemCols: 100,
+            minItemCols: 1,
+            maxItemRows: 100,
+            minItemRows: 1,
+            maxItemArea: 2500,
+            minItemArea: 1,
+            defaultItemCols: 1,
+            defaultItemRows: 1,
+            fixedColWidth: 105,
+            fixedRowHeight: 105,
+            keepFixedHeightInMobile: false,
+            keepFixedWidthInMobile: false,
+            scrollSensitivity: 10,
+            scrollSpeed: 20,
+            enableEmptyCellClick: false,
+            enableEmptyCellContextMenu: false,
+            enableEmptyCellDrop: false,
+            enableEmptyCellDrag: false,
+            enableOccupiedCellDrop: false,
+            emptyCellDragMaxCols: 50,
+            emptyCellDragMaxRows: 50,
+            ignoreMarginInRow: false,
+
+        };
+        this.gridsterItems = [
+            { cols: 4, rows: 3, y: 0, x: 0, chartIndex: 0 },
+            { cols: 4, rows: 3, y: 0, x: 2, chartIndex: 1 },
+            { cols: 4, rows: 3, y: 0, x: 4, chartIndex: 2 },
+            { cols: 12, rows: 4, y: 1, x: 0, isGrid: true },
+            { cols: 10, rows: 5, y: 3, x: 0, chartIndex: 3 },
+            { cols: 2, rows: 5, y: 3, x: 3, isMetrics: true },
+            { cols: 8, rows:5, y: 4, x: 0, chartIndex: 4 },
+        ];
     }
 
     async ngOnInit() {
@@ -217,19 +275,18 @@ export class InventoryReportComponent implements OnInit {
     }
 
     setupCharts() {
-        this.options1 = this.service.setPieData(this.calculateCategoryTotalQuantities(), 'Quantity per Category');
-        this.options2 = this.service.setPieData(this.calculateCategoryTotalRequests(), 'Requests per Category');
-        this.options3 = this.service.setBarData(
-            this.calculateCategoryTotalQuantities(),
-            this.calculateCategoryTotalRequests(),
-            this.calculateCategoryTotalRequestsQuantity(),
-            'Requests Vs Quantity per Category',
-        );
-        this.options4 = this.service.setPieData(
-            this.calculateCategoryTotalRequestsQuantity(), // Changed from calculateCategoryTotalRequests
-            'Requests Quantity per Category',
-        );
-        this.options5 = this.setYearlyCorrelationData();
+        this.options = [
+            this.service.setPieData(this.calculateCategoryTotalQuantities(), 'Quantity per Category'),
+            this.service.setPieData(this.calculateCategoryTotalRequests(), 'Requests per Category'),
+            this.service.setPieData(this.calculateCategoryTotalRequestsQuantity(), 'Requests Quantity per Category'),
+            this.service.setBarData(
+                this.calculateCategoryTotalQuantities(),
+                this.calculateCategoryTotalRequests(),
+                this.calculateCategoryTotalRequestsQuantity(),
+                'Requests Vs Quantity per Category',
+            ),
+            this.setYearlyCorrelationData(),
+        ];
     }
 
     setYearlyCorrelationData(): any {

@@ -17,6 +17,7 @@ import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
 import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
 import outputs from '../../../../../amplify_outputs.json';
 import { LoadingSpinnerComponent } from 'app/components/loader/loading-spinner.component';
+import { GridsterConfig, GridType, DisplayGrid, GridsterModule, CompactType } from 'angular-gridster2';
 
 @Component({
     selector: 'app-order-report',
@@ -31,7 +32,8 @@ import { LoadingSpinnerComponent } from 'app/components/loader/loading-spinner.c
         ScatterplotComponent,
         StackedbarchartComponent,
         DonutTemplateComponent,
-        LoadingSpinnerComponent
+        LoadingSpinnerComponent,
+        GridsterModule
     ],
     templateUrl: './order-report.component.html',
     styleUrl: './order-report.component.css',
@@ -49,6 +51,69 @@ export class OrderReportComponent implements OnInit {
     }
 
     rowData: any[] = [];
+    options: GridsterConfig = {
+        gridType: GridType.VerticalFixed,
+        displayGrid: DisplayGrid.None,
+        compactType: CompactType.CompactUpAndLeft,
+        margin: 10,
+        outerMargin: true,
+        outerMarginTop: null,
+        outerMarginRight: null,
+        outerMarginBottom: null,
+        outerMarginLeft: null,
+        useTransformPositioning: true,
+        mobileBreakpoint: 640,
+        minCols: 1,
+        maxCols: 12,
+        minRows: 1,
+        maxRows: 100,
+        maxItemCols: 100,
+        minItemCols: 1,
+        maxItemRows: 100,
+        minItemRows: 1,
+        maxItemArea: 2500,
+        minItemArea: 1,
+        defaultItemCols: 1,
+        defaultItemRows: 1,
+        fixedColWidth: 105,
+        fixedRowHeight: 105,
+        keepFixedHeightInMobile: false,
+        keepFixedWidthInMobile: false,
+        scrollSensitivity: 10,
+        scrollSpeed: 20,
+        enableEmptyCellClick: false,
+        enableEmptyCellContextMenu: false,
+        enableEmptyCellDrop: false,
+        enableEmptyCellDrag: false,
+        emptyCellDragMaxCols: 50,
+        emptyCellDragMaxRows: 50,
+        ignoreMarginInRow: false,
+        draggable: {
+            enabled: true,
+        },
+        resizable: {
+            enabled: true,
+        },
+        swap: false,
+        pushItems: true,
+        disablePushOnDrag: false,
+        disablePushOnResize: false,
+        pushDirections: { north: true, east: true, south: true, west: true },
+        pushResizeItems: false,
+        disableWindowResize: false,
+        disableWarnings: false,
+        scrollToNewItems: false
+    };
+
+    layout: any[] = [
+        { cols: 12, rows: 2, y: 0, x: 0 },  // Metrics Container
+        { cols: 8, rows: 4, y: 1, x: 0 },   // Inventory Grid
+        { cols: 4, rows: 4, y: 1, x: 8 },   // Order Report
+        { cols: 6, rows: 4, y: 3, x: 0 },   // Stacked Bar Chart
+        { cols: 12, rows: 4, y: 3, x: 6 },   // Scatter Plot
+        { cols: 6, rows: 4, y: 5, x: 4 }    // Donut Chart
+    ];
+
 
     selectedItem: any = null;
     requestQuantity: number | null = null;
@@ -87,6 +152,7 @@ export class OrderReportComponent implements OnInit {
         this.scatterPlotChartData = this.prepareScatterPlotData();
         this.isLoading = false;
         console.log('scatter plot in parent', this.scatterPlotChartData);
+
     }
 
     calculateOrderMetrics() {

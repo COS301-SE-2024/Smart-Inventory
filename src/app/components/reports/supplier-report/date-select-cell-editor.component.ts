@@ -46,7 +46,7 @@ import outputs from '../../../../../amplify_outputs.json';
 export class DateSelectCellEditorComponent implements ICellRendererAngularComp {
     private params!: ICellRendererParams;
     public value!: string;
-    public roles: string[] = ['Admin', 'End User', 'Inventory Controller'];
+    public roles: string[] = [];
 
     constructor(private dialog: MatDialog) {}
 

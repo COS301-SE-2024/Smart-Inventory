@@ -4,82 +4,72 @@
 
 <div style="height: 100%; display: block; overflow: scroll">
     <!-- order-report-metrics.component.html -->
-    <div class="metrics-container">
-        <button mat-icon-button (click)="scrollTiles('left')">
-            <mat-icon>chevron_left</mat-icon>
-        </button>
+    <gridster [options]="options">
+        <!-- Metrics Container -->
+        <gridster-item [item]="layout[0]">
+            <div class="metrics-container">
+                <button mat-icon-button (click)="scrollTiles('left')">
+                    <mat-icon>chevron_left</mat-icon>
+                </button>
 
-        <div class="metrics-wrapper">
-            <mat-card *ngFor="let metric of visibleMetrics" class="metric-card">
-                <mat-card-header>
-                    <div mat-card-avatar class="metric-icon">
-                        <mat-icon class="icon" [attr.aria-label]="metric.iconLabel">{{ metric.icon }}</mat-icon>
-                    </div>
-                    <mat-card-title>{{ metric.metricName }}</mat-card-title>
-                </mat-card-header>
+                <div class="metrics-wrapper">
+                    <mat-card *ngFor="let metric of visibleMetrics" class="metric-card">
+                        <mat-card-header>
+                            <div mat-card-avatar class="metric-icon">
+                                <mat-icon class="icon" [attr.aria-label]="metric.iconLabel">{{ metric.icon }}</mat-icon>
+                            </div>
+                            <mat-card-title>{{ metric.metricName }}</mat-card-title>
+                        </mat-card-header>
+                        <mat-card-content>
+                            <p class="metric-value">{{ metric.value }}</p>
+                        </mat-card-content>
+                    </mat-card>
+                </div>
+
+                <button mat-icon-button (click)="scrollTiles('right')">
+                    <mat-icon>chevron_right</mat-icon>
+                </button>
+            </div>
+        </gridster-item>
+
+        <!-- Inventory Grid -->
+        <gridster-item [item]="layout[1]">
+            <div class="inventoryHolder">
+                <app-grid [rowData]="rowData" [columnDefs]="colDefs" #gridComponent></app-grid>
+            </div>
+        </gridster-item>
+
+        <!-- Order Report -->
+        <gridster-item [item]="layout[2]">
+            <mat-card>
+                <mat-card-title>{{ OrderReport.title }}</mat-card-title>
                 <mat-card-content>
-                    <p class="metric-value">{{ metric.value }}</p>
+                    <ul>
+                        <li *ngFor="let metric of OrderReport.metrics | keyvalue">
+                            {{ metric.value }}
+                        </li>
+                    </ul>
                 </mat-card-content>
             </mat-card>
-        </div>
+        </gridster-item>
 
-        <button mat-icon-button (click)="scrollTiles('right')">
-            <mat-icon>chevron_right</mat-icon>
-        </button>
-    </div>
-    <mat-grid-list cols="8" rowHeight="29vh" gutterSize="20px">
-        <mat-grid-tile [colspan]="8" [rowspan]="2">
-            <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
-                <div class="inventoryHolder">
-                    <app-grid [rowData]="rowData" [columnDefs]="colDefs" #gridComponent> </app-grid>
-                </div>
-            </div>
-        </mat-grid-tile>
-        <mat-grid-tile [colspan]="2" [rowspan]="2">
-            <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
-                <mat-card style="height: 100%; width: 100%">
-                    <mat-card-title style="margin-left: 15px; margin-top: 15px; font-size: 25px">
-                        {{ OrderReport.title }}
-                    </mat-card-title>
-                    <mat-card-content style="align-items: center">
-                        <ul style="list-style: none; padding: 0; margin: 0">
-                            <li
-                                *ngFor="let metric of OrderReport.metrics | keyvalue"
-                                style="font-size: 15px; padding: 8px 0; border-bottom: 1px solid lightgrey"
-                            >
-                                {{ metric.value }}
-                            </li>
-                        </ul>
-                    </mat-card-content>
-                </mat-card>
-            </div>
-        </mat-grid-tile>
-        <mat-grid-tile [colspan]="6" [rowspan]="2">
-            <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
-                <mat-card style="height: 100%; width: 100%">
-                    <app-stackedbarchart [data]="stackedBarChartData"></app-stackedbarchart>
-                </mat-card>
-            </div>
-        </mat-grid-tile>
+        <!-- Stacked Bar Chart -->
+        <gridster-item [item]="layout[3]">
+            <app-stackedbarchart [data]="stackedBarChartData"></app-stackedbarchart>
+        </gridster-item>
 
-        <mat-grid-tile [colspan]="5" [rowspan]="2">
-            <div style="padding: 10px; height: 100%; width: 100%">
-                <mat-card style="height: 100%; width: 100%">
-                    <app-scatterplot [data]="scatterPlotChartData"></app-scatterplot>
-                </mat-card>
-            </div>
-        </mat-grid-tile>
-        <mat-grid-tile [colspan]="3" [rowspan]="2">
-            <div style="padding: 10px; height: 100%; width: 100%">
-                <mat-card style="height: 100%; width: 100%">
-                    <app-donuttemplate [orderData]="rowData"></app-donuttemplate>
-                </mat-card>
-            </div>
-        </mat-grid-tile>
-    </mat-grid-list>
+        <!-- Scatter Plot -->
+        <gridster-item [item]="layout[4]">
+            <app-scatterplot [data]="scatterPlotChartData"></app-scatterplot>
+        </gridster-item>
+        
+        <!-- Donut Chart -->
+        <gridster-item [item]="layout[5]">
+            <app-donuttemplate [orderData]="rowData"></app-donuttemplate>
+        </gridster-item>
+    </gridster>
 </div>
-<mat-toolbar
-    style="
+<mat-toolbar style="
         position: sticky;
         bottom: 0;
         left: 0;
@@ -87,8 +77,7 @@
         border-radius: 20px;
         height: 50px;
         background-color: transparent;
-    "
->
+    ">
     <button mat-flat-button class="btn" (click)="back()">
         <mat-icon style="font-size: 24px; height: 24px; width: 24px">arrow_back</mat-icon> Back To Reports
     </button>

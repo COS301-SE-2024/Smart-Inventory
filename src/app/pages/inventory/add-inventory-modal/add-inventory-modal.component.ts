@@ -48,7 +48,7 @@ export class AddInventoryModalComponent {
         private fb: FormBuilder,
     ) {
         this.inventoryForm = this.fb.group({
-            generate: [true, Validators.required],
+            // generate: [true, Validators.required],
             upc: ['', Validators.required],
             sku: ['', Validators.required],
             description: ['', Validators.required],
@@ -71,7 +71,7 @@ export class AddInventoryModalComponent {
         this.dialogRef.close();
     }
 
-    generateSKU() {
-        this.inventoryForm.get('sku')?.setValue('test');
-    }
+    // generateSKU() {
+    //     this.inventoryForm.get('sku')?.setValue('test');
+    // }
 }

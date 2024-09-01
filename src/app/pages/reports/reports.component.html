@@ -2,26 +2,28 @@
     <mat-grid-list cols="2" rowHeight="440px" gutterSize="10px">
         <mat-grid-tile *ngFor="let report of reports | keyvalue">
             <div class="card-container">
-                <mat-card class="card">
-                    <mat-card-header class="card-header">
-                        <div mat-card-avatar class="header-image">
-                            <mat-icon style="font-size: 70px; width: 80px; height: 80px">{{
-                                report.value.icon
-                            }}</mat-icon>
-                        </div>
-                        <div class="header-content">
-                            <mat-card-title>{{ report.value.title }}</mat-card-title>
-                            <p class="subtitle">{{ report.value.subtitle }}</p>
-                            <!-- <mat-card-subtitle style="padding: 10px">{{ report.value.subtitle }}</mat-card-subtitle> -->
-                        </div>
-                    </mat-card-header>
-                    <mat-card-actions>
-                        <button mat-button class="view-report-button" (click)="viewFullReport(report.key)">
-                            <span>View Full Report</span>
-                            <mat-icon iconPositionEnd>arrow_forward</mat-icon>
-                        </button>
-                    </mat-card-actions>
-                </mat-card>
+                <a (click)="viewFullReport(report.key)" matTooltip="Click to view {{ report.value.title }}!">
+                    <mat-card class="card">
+                        <mat-card-header class="card-header">
+                            <div mat-card-avatar class="header-image">
+                                <mat-icon style="font-size: 70px; width: 80px; height: 80px">{{
+                                    report.value.icon
+                                }}</mat-icon>
+                            </div>
+                            <div class="header-content">
+                                <mat-card-title>{{ report.value.title }}</mat-card-title>
+                                <p class="subtitle">{{ report.value.subtitle }}</p>
+                                <!-- <mat-card-subtitle style="padding: 10px">{{ report.value.subtitle }}</mat-card-subtitle> -->
+                            </div>
+                        </mat-card-header>
+                        <!-- <mat-card-actions>
+                            <button mat-button class="view-report-button" (click)="viewFullReport(report.key)">
+                                <span>View Full Report</span>
+                                <mat-icon iconPositionEnd>arrow_forward</mat-icon>
+                            </button>
+                        </mat-card-actions> -->
+                    </mat-card></a
+                >
             </div>
         </mat-grid-tile>
     </mat-grid-list>

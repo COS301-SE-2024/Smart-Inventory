@@ -14,23 +14,20 @@ mat-form-field {
 }
 
 mat-dialog-content {
-    max-height: 70vh;
     overflow-y: auto;
 }
 
 .custom-dialog {
     background: white;
-    border-radius: 8px;
-    padding: 31px;
-    width: 100%;
-    max-width: 530px;
+    border-radius: 20px;
+    padding: 15px;
+    padding-left: 40px;
     max-height: 90vh;
+    padding-right: 40px;
+    max-width: 600px;
+    display: block;
     overflow-y: auto;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.custom-dialog h2{
-    text-align: center;
 }
 
 .popup-overlay {
@@ -51,18 +48,16 @@ mat-dialog-content {
     background-color: white;
     padding: 20px;
     border-radius: 4px;
-    max-width: 400px;
+    max-width: 600px;
     width: 100%;
     z-index: 10000;
-    max-height: 80vh;
+    max-height: 70vh;
     overflow-y: auto;
 }
 
 .btnAdd {
     border-radius: 20px;
     margin-right: 10px;
-    --mdc-outlined-button-label-text-color: black;
-    --mdc-outlined-button-outline-color: #74777f;
     border-radius: 5px;
     width: 200px;
     height: 40px;
@@ -87,7 +82,7 @@ mat-dialog-content {
 
 .form-group input {
     width: 100%;
-    padding: 8px;
+    padding: 16px;
     border: 1px solid #cccccc;
     border-radius: 4px;
     font-size: 14px;
@@ -101,16 +96,14 @@ mat-dialog-content {
 
 .button-group {
     display: flex;
-    justify-content: flex-end;
-    margin-top: 20px;
+    width: 100%;
+    justify-content: center;
 }
 
 .button-group button {
     padding: 8px 16px;
     border: solid black 1px;
     color: black;
-    --mdc-outlined-button-label-text-color: black;
-    --mdc-outlined-button-outline-color: #74777f;
     border: solid black 1px;
     border-radius: 4px;
     font-size: 14px;
@@ -122,14 +115,6 @@ mat-dialog-content {
 /* .button-group button:hover {
     background-color: #999999;
 } */
-
-.button-group button[type='submit'] {
-    background-color: #d7d7d7;
-}
-
-.button-group button[type='submit']:hover {
-    background-color: #b0b0b0;
-}
 
 .error-message {
     color: #ff4d4d;

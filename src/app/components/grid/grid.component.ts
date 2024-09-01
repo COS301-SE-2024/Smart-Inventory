@@ -32,6 +32,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MatCardModule } from '@angular/material/card';
 
 @Component({
     selector: 'app-grid',
@@ -53,6 +54,7 @@ import { ReactiveFormsModule } from '@angular/forms';
         MatTooltip,
         MatAutocompleteModule,
         ReactiveFormsModule,
+        MatCardModule,
     ],
     templateUrl: './grid.component.html',
     styleUrl: './grid.component.css',

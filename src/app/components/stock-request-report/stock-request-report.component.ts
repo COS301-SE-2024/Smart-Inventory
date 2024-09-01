@@ -87,7 +87,7 @@ export class StockRequestReportComponent implements OnInit {
 
         const command = new InvokeCommand({
             FunctionName: 'inventorySummary-getItems',
-            //Payload: JSON.stringify({ tenentId: this.tenentId }),
+            Payload: JSON.stringify({ tenentId: this.tenentId }),
         });
 
         try {
@@ -135,13 +135,13 @@ export class StockRequestReportComponent implements OnInit {
 
         const command = new InvokeCommand({
             FunctionName: 'getStockRequestAggregates',
-            // Payload: JSON.stringify({
-            //   tenentId: this.tenentId,
-            //   period: this.period,
-            //   startDate: this.startDate.toISOString().split('T')[0],
-            //   endDate: this.endDate.toISOString().split('T')[0],
-            //   sku: this.selectedItem?.SKU
-            // }),
+            Payload: JSON.stringify({
+                tenentId: this.tenentId,
+                period: this.period,
+                startDate: this.startDate.toISOString().split('T')[0],
+                endDate: this.endDate.toISOString().split('T')[0],
+                sku: this.selectedItem?.SKU,
+            }),
         });
 
         try {

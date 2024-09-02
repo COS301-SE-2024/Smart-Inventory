@@ -1,30 +1,42 @@
 <div class="side-pane" [class.open]="isOpen">
-  <div class="side-pane-header">
-    <button mat-icon-button class="close-button" (click)="close()">
-      <mat-icon>close</mat-icon>
-    </button>
-    <h3>Received Quotes</h3>
-  </div>
-  <div class="side-pane-content">
-    <div *ngIf="selectedOrder">
-      <!-- <h4>Order ID: {{ selectedOrder.Order_ID }}</h4>
-      <h5>Quote ID: {{ selectedOrder.Quote_ID }}</h5> -->
-      <div class="supplier-quotes">
-        <mat-card *ngFor="let quote of supplierQuotes" class="supplier-quote-card" (click)="viewQuoteDetails(quote)">
-          <mat-card-header>
-            <mat-card-title>Supplier ID: {{ quote.supplier_name }}</mat-card-title>
-            <mat-card-subtitle>Quote Value: {{ quote.Total_Quote_Value | currency:quote.Currency:'symbol':'1.2-2' }}</mat-card-subtitle>
-          </mat-card-header>
-          <mat-card-content>
-            <p><strong>Delivery Date:</strong> {{ quote.Delivery_Date | date:'mediumDate' }}</p>
-            <p><strong>Delivery Cost:</strong> {{ quote.Delivery_Cost | currency:quote.Currency:'symbol':'1.2-2' }}</p>
-          </mat-card-content>
-        </mat-card>
-      </div>
+    <div class="side-pane-header">
+        <div style="width: 100%; height: 50px; display: flex; padding: 5px; justify-content: space-between">
+            <h2 style="font-size: 25px">Automation Templates</h2>
+            <button mat-icon-button class="close-button" (click)="close()">
+                <mat-icon>close</mat-icon>
+            </button>
+        </div>
     </div>
-    <div *ngIf="!selectedOrder" class="no-order-selected">
-      <mat-icon>info</mat-icon>
-      <p>No order selected</p>
+    <div class="side-pane-content">
+        <div *ngIf="selectedOrder">
+            <div class="supplier-quotes">
+                <mat-card
+                    *ngFor="let quote of supplierQuotes"
+                    class="supplier-quote-card"
+                    (click)="viewQuoteDetails(quote)"
+                >
+                    <mat-card-header>
+                        <mat-card-title>Supplier ID: {{ quote.supplier_name }}</mat-card-title>
+                        <mat-card-subtitle
+                            >Quote Value:
+                            {{
+                                quote.Total_Quote_Value | currency: quote.Currency : 'symbol' : '1.2-2'
+                            }}</mat-card-subtitle
+                        >
+                    </mat-card-header>
+                    <mat-card-content>
+                        <p><strong>Delivery Date:</strong> {{ quote.Delivery_Date | date: 'mediumDate' }}</p>
+                        <p>
+                            <strong>Delivery Cost:</strong>
+                            {{ quote.Delivery_Cost | currency: quote.Currency : 'symbol' : '1.2-2' }}
+                        </p>
+                    </mat-card-content>
+                </mat-card>
+            </div>
+        </div>
+        <div *ngIf="!selectedOrder" class="no-order-selected">
+            <mat-icon>info</mat-icon>
+            <p>No order selected</p>
+        </div>
     </div>
-  </div>
 </div>

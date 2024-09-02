@@ -87,6 +87,7 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
     @Output() viewReceivedQuotesClicked = new EventEmitter<void>();
     @Output() markOrderAsReceivedClicked = new EventEmitter<any>();
     @Output() viewAutomationSettingsClicked = new EventEmitter<void>();
+    @Output() viewAutomationTemplatesClicked = new EventEmitter<void>();
 
     @ViewChild(AgGridAngular) agGrid!: AgGridAngular;
     gridApi!: GridApi<any>;
@@ -391,6 +392,10 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
 
     onViewReceivedQuotes() {
         this.viewReceivedQuotesClicked.emit();
+    }
+
+    onViewTemplates() {
+        this.viewAutomationTemplatesClicked.emit();
     }
 
     onMarkOrderAsReceived() {

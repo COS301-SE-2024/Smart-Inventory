@@ -26,6 +26,20 @@
     margin: 0;
     font-size: 18px;
 }
+.btnAdd {
+    border-radius: 20px;
+    margin-right: 10px;
+    border-radius: 5px;
+    width: 200px;
+    display: flex;
+    background-color: white;
+    color: #000000;
+    height: 40px;
+    box-shadow: 1px 3px 6px 0px #74777f;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
+}
 
 .side-pane-content {
     flex-grow: 1;

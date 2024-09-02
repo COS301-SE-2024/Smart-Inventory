@@ -2,6 +2,14 @@
     width: 50%;
 }
 
+gridster{
+    background-color: white !important;
+}
+
+gridster-item{
+    border-radius: 10px !important;
+}
+
 mat-card.mat-mdc-card.mdc-card {
     background-color: white;
     box-shadow: 0 4px 8px rgb(0 0 0 / 30%);
@@ -123,4 +131,22 @@ mat-card.mat-mdc-card.mdc-card {
     justify-content: center;
     align-items: center;
     z-index: 9999;
+}
+
+.inventoryHolder {
+    padding-left: 17px;
+    padding-right: 17px;
+}
+
+.report {
+    padding: 10px;
+}
+
+gridster-item:not(.order-report-item) {
+    box-shadow:
+        0 4px 8px rgba(0, 0, 0, 0.1),
+        0 6px 20px rgba(0, 0, 0, 0.15);
+    margin-left: 2px;
+    background: transparent !important;
+    border-radius: 10px;
 }

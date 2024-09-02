@@ -56,16 +56,9 @@ export class OrderReportComponent implements OnInit {
         displayGrid: DisplayGrid.None,
         compactType: CompactType.CompactUpAndLeft,
         margin: 10,
-        outerMargin: true,
-        outerMarginTop: null,
-        outerMarginRight: null,
-        outerMarginBottom: null,
-        outerMarginLeft: null,
-        useTransformPositioning: true,
-        mobileBreakpoint: 640,
-        minCols: 1,
+        minCols: 12,
         maxCols: 12,
-        minRows: 1,
+        minRows: 100,
         maxRows: 100,
         maxItemCols: 100,
         minItemCols: 1,
@@ -81,18 +74,16 @@ export class OrderReportComponent implements OnInit {
         keepFixedWidthInMobile: false,
         scrollSensitivity: 10,
         scrollSpeed: 20,
-        enableEmptyCellClick: false,
-        enableEmptyCellContextMenu: false,
         enableEmptyCellDrop: false,
         enableEmptyCellDrag: false,
         emptyCellDragMaxCols: 50,
         emptyCellDragMaxRows: 50,
         ignoreMarginInRow: false,
         draggable: {
-            enabled: true,
+            enabled: false,
         },
         resizable: {
-            enabled: true,
+            enabled: false,
         },
         swap: false,
         pushItems: true,
@@ -107,11 +98,11 @@ export class OrderReportComponent implements OnInit {
 
     layout: any[] = [
         { cols: 12, rows: 2, y: 0, x: 0 },  // Metrics Container
-        { cols: 8, rows: 4, y: 1, x: 0 },   // Inventory Grid
-        { cols: 4, rows: 4, y: 1, x: 8 },   // Order Report
+        { cols: 8, rows: 5, y: 1, x: 0 },   // Inventory Grid
+        { cols: 4, rows: 1.5, y: 1, x: 8 },   // Order Report
         { cols: 6, rows: 5, y: 3, x: 0 },   // Stacked Bar Chart
         { cols: 12, rows: 4, y: 3, x: 6 },   // Scatter Plot
-        { cols: 6, rows: 4, y: 5, x: 4 }    // Donut Chart
+        { cols: 6, rows: 5, y: 5, x: 4 }    // Donut Chart
     ];
 
 

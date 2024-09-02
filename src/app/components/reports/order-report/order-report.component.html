@@ -6,7 +6,7 @@
     <!-- order-report-metrics.component.html -->
     <gridster [options]="options">
         <!-- Metrics Container -->
-        <gridster-item [item]="layout[0]">
+        <gridster-item [item]="layout[0]" class="order-report-item">
             <div class="metrics-container">
                 <button mat-icon-button (click)="scrollTiles('left')">
                     <mat-icon>chevron_left</mat-icon>
@@ -33,15 +33,15 @@
         </gridster-item>
 
         <!-- Inventory Grid -->
-        <gridster-item [item]="layout[1]">
+        <gridster-item [item]="layout[1]" class="order-report-item">
             <div class="inventoryHolder">
                 <app-grid [rowData]="rowData" [columnDefs]="colDefs" #gridComponent></app-grid>
             </div>
         </gridster-item>
 
         <!-- Order Report -->
-        <gridster-item [item]="layout[2]">
-            <mat-card>
+        <gridster-item [item]="layout[2]" >
+            <mat-card class="report">
                 <mat-card-title>{{ OrderReport.title }}</mat-card-title>
                 <mat-card-content>
                     <ul>
@@ -62,14 +62,13 @@
         <gridster-item [item]="layout[4]">
             <app-scatterplot [data]="scatterPlotChartData"></app-scatterplot>
         </gridster-item>
-        
+
         <!-- Donut Chart -->
         <gridster-item [item]="layout[5]">
             <app-donuttemplate [orderData]="rowData"></app-donuttemplate>
         </gridster-item>
     </gridster>
-</div>
-<mat-toolbar style="
+    <mat-toolbar style="
         position: sticky;
         bottom: 0;
         left: 0;
@@ -77,8 +76,10 @@
         border-radius: 20px;
         height: 50px;
         background-color: transparent;
+        z-index: 1;
     ">
-    <button mat-flat-button class="btn" (click)="back()">
-        <mat-icon style="font-size: 24px; height: 24px; width: 24px">arrow_back</mat-icon> Back To Reports
-    </button>
-</mat-toolbar>
+        <button mat-flat-button class="btn" (click)="back()">
+            <mat-icon style="font-size: 24px; height: 24px; width: 24px">arrow_back</mat-icon> Back To Reports
+        </button>
+    </mat-toolbar>
+</div>

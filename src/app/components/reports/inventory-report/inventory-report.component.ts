@@ -103,7 +103,6 @@ export class InventoryReportComponent implements OnInit {
             emptyCellDragMaxCols: 50,
             emptyCellDragMaxRows: 50,
             ignoreMarginInRow: false,
-
         };
         this.gridsterItems = [
             { cols: 4, rows: 3, y: 0, x: 0, chartIndex: 0 },

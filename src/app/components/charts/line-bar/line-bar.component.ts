@@ -13,21 +13,11 @@ type ChartData = {
   templateUrl: './line-bar.component.html',
   styleUrl: './line-bar.component.css'
 })
-export class LineBarComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges {
+export class LineBarComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges, OnDestroy {
   @ViewChild('chartContainer') chartContainer!: ElementRef;
   private myChart!: echarts.ECharts;
   @Input() data!: ChartData; // Input property to accept data
-
-  // private extendedData = {
-  //   source: [
-  //     ["Metric", "2021", "2022", "2023", "2024", "2025", "2026"],
-  //     ["Supplier S001 Total Spent", 56.5, 82.1, 88.7, 70.1, 53.4, 85.1],
-  //     ["Supplier S002 Total Spent", 51.1, 51.4, 55.1, 53.3, 73.8, 68.7],
-  //     ["Supplier S003 Total Spent", 40.1, 62.2, 69.5, 36.4, 45.2, 32.5],
-  //     ["Supplier S004 Total Spent", 25.2, 37.1, 41.2, 18, 33.9, 49.1],
-  //     ["Supplier S005 Total Spent", 62.2, 37.0, 18, 88.7, 49.1, 56.5],
-  //   ]
-  // };
+  private resizeObserver!: ResizeObserver;
 
   constructor() { }
 
@@ -36,6 +26,16 @@ export class LineBarComponent implements OnInit, OnDestroy, AfterViewInit, OnCha
 
   ngAfterViewInit(): void {
     this.initChart();
+    this.observeResize();
+  }
+
+  private observeResize(): void {
+    this.resizeObserver = new ResizeObserver(() => {
+      if (this.myChart) {
+        this.myChart.resize();
+      }
+    });
+    this.resizeObserver.observe(this.chartContainer.nativeElement);
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -52,12 +52,20 @@ export class LineBarComponent implements OnInit, OnDestroy, AfterViewInit, OnCha
       const dataSource = this.data.source;
 
       const option: EChartsOption = {
-        title: { text: 'Total amount spent over periods' },
+        title: {
+          text: 'Total amount spent over periods',
+          left: 'center',
+          top: '5%'
+        },
         tooltip: {
           trigger: 'axis',
           showContent: false
         },
-        legend: {},
+        legend: {
+          orient: 'horizontal',
+          bottom: '1%',
+          left: 'center'
+        },
         dataset: {
           source: dataSource
         },
@@ -119,7 +127,10 @@ export class LineBarComponent implements OnInit, OnDestroy, AfterViewInit, OnCha
 
 
   ngOnDestroy(): void {
-    if (this.myChart != null) {
+    if (this.resizeObserver) {
+      this.resizeObserver.disconnect();
+    }
+    if (this.myChart) {
       this.myChart.dispose();
     }
   }

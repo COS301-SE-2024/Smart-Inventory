@@ -22,6 +22,7 @@ import { LineComponent } from '../../charts/line/line.component';
 import { RadarComponent } from '../../charts/radar/radar.component';
 import { RowNode } from 'ag-grid-community';
 import { AgGridAngular } from 'ag-grid-angular';
+import { CompactType, DisplayGrid, GridsterConfig, GridsterItem, GridsterModule, GridType } from 'angular-gridster2';
 
 type ChartMetric = 'On Time Delivery Rate' | 'Order Accuracy Rate' | 'Out Standing Payments' | 'TotalSpent';
 type ChartData = {
@@ -43,7 +44,8 @@ type ChartData = {
         DateSelectCellEditorComponent,
         RoleSelectCellEditorComponent,
         LineComponent,
-        RadarComponent
+        RadarComponent,
+        GridsterModule
     ],
     templateUrl: './supplier-report.component.html',
     styleUrl: './supplier-report.component.css',
@@ -62,6 +64,60 @@ export class SupplierReportComponent implements OnInit {
     chartData: any;
     initialInventory: number = 500;  // Starting inventory at the beginning of the period
     endingInventory: number = 600;  // Ending inventory at the end of the period
+
+    options: GridsterConfig = {
+        gridType: GridType.VerticalFixed,
+        displayGrid: DisplayGrid.None,
+        compactType: CompactType.CompactUpAndLeft,
+        margin: 10,
+        minCols: 12,
+        maxCols: 12,
+        minRows: 100,
+        maxRows: 100,
+        maxItemCols: 100,
+        minItemCols: 1,
+        maxItemRows: 100,
+        minItemRows: 1,
+        maxItemArea: 2500,
+        minItemArea: 1,
+        defaultItemCols: 1,
+        defaultItemRows: 1,
+        fixedColWidth: 105,
+        fixedRowHeight: 105,
+        keepFixedHeightInMobile: false,
+        keepFixedWidthInMobile: false,
+        scrollSensitivity: 10,
+        scrollSpeed: 20,
+        enableEmptyCellDrop: false,
+        enableEmptyCellDrag: false,
+        emptyCellDragMaxCols: 50,
+        emptyCellDragMaxRows: 50,
+        ignoreMarginInRow: false,
+        draggable: {
+            enabled: false,
+        },
+        resizable: {
+            enabled: false,
+        },
+        swap: false,
+        pushItems: true,
+        disablePushOnDrag: false,
+        disablePushOnResize: false,
+        pushDirections: { north: true, east: true, south: true, west: true },
+        pushResizeItems: false,
+        disableWindowResize: false,
+        disableWarnings: false,
+        scrollToNewItems: false
+    };
+
+    items: Array<GridsterItem> = [
+        { cols: 12, rows: 5, y: 0, x: 0 },
+        { cols: 3, rows: 4, y: 2, x: 0 },
+        { cols: 9, rows: 4, y: 2, x: 2 },
+        { cols: 6, rows: 4, y: 4, x: 0 },
+        { cols: 6, rows: 4, y: 4, x: 4 },
+        { cols: 12, rows: 1.9, y: 0, x: 0 },
+    ];
 
     updateVisibleTiles() {
         this.visibleTiles = this.tiles.slice(this.currentIndex, this.currentIndex + 4);
@@ -116,7 +172,7 @@ export class SupplierReportComponent implements OnInit {
     }
 
     async ngOnInit() {
-        
+
         this.titleService.updateTitle(this.getCurrentRoute());
         await this.loadSuppliersData();
 

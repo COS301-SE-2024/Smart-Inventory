@@ -76,7 +76,7 @@ export class DonutTemplateComponent implements OnChanges, AfterViewInit, OnInit,
       title: {
         text: 'Order Costs by Supplier',
         left: 'center',
-        top: '5%'
+        top: '0px'
       },
       tooltip: {
         trigger: 'item',

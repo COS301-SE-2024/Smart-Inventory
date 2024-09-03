@@ -55,15 +55,22 @@ export class LineBarComponent implements OnInit, OnDestroy, AfterViewInit, OnCha
         title: {
           text: 'Total amount spent over periods',
           left: 'center',
-          top: '5%'
+          top: '0px',
         },
         tooltip: {
           trigger: 'axis',
           showContent: false
         },
+        grid: {
+          left: '3%',
+          right: '4%',
+          bottom: '12%',
+          top: '15%',
+          containLabel: true
+        },
         legend: {
           orient: 'horizontal',
-          bottom: '1%',
+          bottom: '5%',
           left: 'center'
         },
         dataset: {
@@ -71,7 +78,6 @@ export class LineBarComponent implements OnInit, OnDestroy, AfterViewInit, OnCha
         },
         xAxis: { type: 'category' },
         yAxis: {},
-        grid: { top: '55%' },
         series: [
           ...dataSource.slice(1).map(() => ({
             type: 'line',

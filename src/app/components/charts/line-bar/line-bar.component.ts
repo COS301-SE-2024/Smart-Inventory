@@ -13,16 +13,15 @@ type ChartData = {
   templateUrl: './line-bar.component.html',
   styleUrl: './line-bar.component.css'
 })
-export class LineBarComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges, OnDestroy {
+export class LineBarComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges {
   @ViewChild('chartContainer') chartContainer!: ElementRef;
   private myChart!: echarts.ECharts;
-  @Input() data!: ChartData; // Input property to accept data
+  @Input() data!: ChartData;
   private resizeObserver!: ResizeObserver;
 
   constructor() { }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void { }
 
   ngAfterViewInit(): void {
     this.initChart();
@@ -40,14 +39,15 @@ export class LineBarComponent implements OnInit, OnDestroy, AfterViewInit, OnCha
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['data'] && !changes['data'].firstChange) {
-      // console.log('tf: ', this.data);
-      this.initChart();  // Re-initialize the chart when input data changes
+      this.initChart();
     }
   }
 
   initChart(): void {
     if (this.chartContainer && this.data && this.data.source) {
-      this.myChart = echarts.init(this.chartContainer.nativeElement);
+      if (!this.myChart) {
+        this.myChart = echarts.init(this.chartContainer.nativeElement);
+      }
 
       const dataSource = this.data.source;
 
@@ -55,22 +55,22 @@ export class LineBarComponent implements OnInit, OnDestroy, AfterViewInit, OnCha
         title: {
           text: 'Total amount spent over periods',
           left: 'center',
-          top: '0px',
+          top: '2%',
         },
         tooltip: {
           trigger: 'axis',
           showContent: false
         },
         grid: {
-          left: '3%',
-          right: '4%',
-          bottom: '12%',
-          top: '15%',
+          left: '5%',
+          right: '5%',
+          bottom: '15%',
+          top: '50%',
           containLabel: true
         },
         legend: {
           orient: 'horizontal',
-          bottom: '5%',
+          bottom: '2%',
           left: 'center'
         },
         dataset: {
@@ -88,16 +88,15 @@ export class LineBarComponent implements OnInit, OnDestroy, AfterViewInit, OnCha
           {
             type: 'pie',
             id: 'pie',
-            radius: '30%',
-            center: ['50%', '25%'],
+            radius: '25%',
+            center: ['50%', '30%'],
             emphasis: { focus: 'self' },
             label: {
-              // Ensure the formatter uses the correct data and field names
               formatter: '{b}: {@2021} ({d}%)'
             },
             encode: {
-              itemName: 'Supplier ID', // Assuming 'Supplier ID' is the name field
-              value: '2021', // Assuming '2021' is a column with numeric values
+              itemName: 'Supplier ID',
+              value: '2021',
               tooltip: '2021'
             }
           }
@@ -106,7 +105,6 @@ export class LineBarComponent implements OnInit, OnDestroy, AfterViewInit, OnCha
 
       this.myChart.setOption(option);
 
-      // Update the chart when the axis pointer updates
       this.myChart.on('updateAxisPointer', (event: any) => {
         const xAxisInfo = event.axesInfo[0];
         if (xAxisInfo) {
@@ -115,22 +113,18 @@ export class LineBarComponent implements OnInit, OnDestroy, AfterViewInit, OnCha
             series: [{
               id: 'pie',
               label: {
-                // Ensure dynamic year updates correctly
                 formatter: `{b}: {@[${dataSource[0][dimension]}]} ({d}%)`
               },
               encode: {
-                value: dataSource[0][dimension], // Dynamically picking the correct year
+                value: dataSource[0][dimension],
                 tooltip: dataSource[0][dimension]
               }
             }] as echarts.SeriesOption[]
           });
         }
       });
-    } else {
-      console.error("No data available or chart container is not ready.");
     }
   }
-
 
   ngOnDestroy(): void {
     if (this.resizeObserver) {
@@ -140,5 +134,4 @@ export class LineBarComponent implements OnInit, OnDestroy, AfterViewInit, OnCha
       this.myChart.dispose();
     }
   }
-
 }

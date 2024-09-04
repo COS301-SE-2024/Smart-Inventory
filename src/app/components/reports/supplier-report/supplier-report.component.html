@@ -40,7 +40,7 @@
             </div>
         </gridster-item>
 
-        <gridster-item [item]="items[1]">
+        <!-- <gridster-item [item]="items[1]">
             <div class="grid-item-content">
                 <mat-card style="height: 100%; width: 100%;">
                     <mat-card-title style="margin-left: 15px; margin-top: 15px; font-size: 25px;">
@@ -56,13 +56,9 @@
                     </mat-card-content>
                 </mat-card>
             </div>
-        </gridster-item>
+        </gridster-item> -->
 
-        <gridster-item [item]="items[2]">
-            <div class="grid-item-content">
-                <app-line-bar [data]="lineBarData"></app-line-bar>
-            </div>
-        </gridster-item>
+        
 
         <gridster-item [item]="items[3]">
             <div class="grid-item-content">
@@ -74,6 +70,11 @@
         <gridster-item [item]="items[4]">
             <div class="grid-item-content">
                 <app-radar [data]="topSuppliersData"></app-radar>
+            </div>
+        </gridster-item>
+        <gridster-item [item]="items[2]">
+            <div class="grid-item-content">
+                <app-line-bar [data]="lineBarData"></app-line-bar>
             </div>
         </gridster-item>
         <mat-toolbar style="

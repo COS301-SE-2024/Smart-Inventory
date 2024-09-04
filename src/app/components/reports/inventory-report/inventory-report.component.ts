@@ -105,13 +105,13 @@ export class InventoryReportComponent implements OnInit {
             ignoreMarginInRow: false,
         };
         this.gridsterItems = [
-            { cols: 4, rows: 3, y: 0, x: 0, chartIndex: 0 },
-            { cols: 4, rows: 3, y: 0, x: 2, chartIndex: 1 },
-            { cols: 4, rows: 3, y: 0, x: 4, chartIndex: 2 },
-            { cols: 12, rows: 4, y: 1, x: 0, isGrid: true },
-            { cols: 10, rows: 5, y: 3, x: 0, chartIndex: 3 },
-            { cols: 2, rows: 5, y: 3, x: 3, isMetrics: true },
-            { cols: 8, rows:5, y: 4, x: 0, chartIndex: 4 },
+            { cols: 4, rows: 3, y: 0, x: 0, chartIndex: 0 }, //0
+            { cols: 4, rows: 3, y: 0, x: 2, chartIndex: 1 },    //1
+            { cols: 4, rows: 3, y: 0, x: 4, chartIndex: 2 },    //2
+            { cols: 12, rows: 4, y: 1, x: 0, isGrid: true },    //3
+            { cols: 10, rows: 5, y: 3, x: 0, chartIndex: 3 },   //4
+            { cols: 2, rows: 5, y: 3, x: 3, isMetrics: true },  //5
+            { cols: 8, rows:5, y: 4, x: 0, chartIndex: 4 },     //6
         ];
     }
 

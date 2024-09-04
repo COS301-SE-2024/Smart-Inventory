@@ -10,7 +10,7 @@
                     <ag-charts-angular [options]="options[item['chartIndex']]"></ag-charts-angular>
                 </mat-card>
             </ng-container>
-            <ng-container *ngIf="item['isGrid']">
+            <ng-container *ngIf="item['isGrid']" class="grid-card">
                 <mat-card class="grid-card">
                     <app-grid [rowData]="rowData" [columnDefs]="colDefs" #gridComponent></app-grid>
                 </mat-card>

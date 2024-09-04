@@ -116,7 +116,7 @@ export class SupplierReportComponent implements OnInit {
         { cols: 12, rows: 4, y: 2, x: 2 },
         { cols: 6, rows: 4, y: 4, x: 0 },
         { cols: 6, rows: 4, y: 4, x: 4 },
-        { cols: 12, rows: 1.9, y: 0, x: 0 },
+        { cols: 12, rows: 2, y: 0, x: 0 },
     ];
 
     updateVisibleTiles() {

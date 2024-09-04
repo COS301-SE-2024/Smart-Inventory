@@ -2,12 +2,17 @@
     width: 50%;
 }
 
-gridster{
+gridster {
     background-color: white !important;
 }
 
-gridster-item{
-    border-radius: 10px !important;
+gridster-item:not(.grid-card) {
+    box-shadow:
+        0 4px 8px rgba(0, 0, 0, 0.1),
+        0 6px 20px rgba(0, 0, 0, 0.15);
+    margin-left: 2px;
+    background: transparent !important;
+    border-radius: 10px;
 }
 
 .loading-overlay {

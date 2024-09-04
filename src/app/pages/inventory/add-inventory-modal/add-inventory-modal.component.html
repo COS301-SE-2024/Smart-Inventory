@@ -47,6 +47,22 @@
             <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
             <mat-datepicker #picker></mat-datepicker>
         </mat-form-field>
+        <mat-form-field appearance="outline">
+            <mat-label>Unit Cost</mat-label>
+            <input matInput type="number" formControlName="unitCost" />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+            <mat-label>Lead Time (Days)</mat-label>
+            <input matInput type="number" formControlName="leadTime" />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+            <mat-label>Delivery Cost</mat-label>
+            <input matInput type="number" formControlName="deliveryCost" />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+            <mat-label>Projected Daily Demand</mat-label>
+            <input matInput type="number" formControlName="dailyDemand" />
+        </mat-form-field>
     </form>
 </mat-dialog-content>
 <mat-dialog-actions align="end">

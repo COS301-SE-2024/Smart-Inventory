@@ -58,7 +58,12 @@ export class AddInventoryModalComponent {
       lowStockThreshold: [0, [Validators.required, Validators.min(0)]],
       reorderAmount: [0, [Validators.required, Validators.min(0)]],
       supplier: ['', Validators.required],
-      expirationDate: ['', Validators.required]
+      expirationDate: ['', Validators.required],
+      unitCost: [0, [Validators.required, Validators.min(0)]],
+      leadTime: [0, [Validators.required, Validators.min(0)]],
+      deliveryCost: [0, [Validators.required, Validators.min(0)]],
+      dailyDemand: [0, [Validators.required, Validators.min(0)]]
+
     });
   }
 

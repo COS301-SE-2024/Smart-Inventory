@@ -72,6 +72,7 @@ export class InventoryComponent implements OnInit {
             field: 'expirationDate',
             headerName: 'Expiration Date',
             filter: 'agSetColumnFilter',
+            cellEditor: "agDateCellEditor",
             valueFormatter: (params) => {
                 if (params.value) {
                     const date = new Date(params.value);
@@ -372,6 +373,20 @@ export class InventoryComponent implements OnInit {
     }
 
     async handleCellValueChanged(event: { data: any; field: string; newValue: any }) {
+        // Check if the edited field is allowed
+        if (event.field !== 'quantity' && event.field !== 'expirationDate') {
+            // Show snackbar for unauthorized edit
+            this.snackBar.open('You can only edit quantity and expiration date.', 'Close', {
+                duration: 3000,
+                horizontalPosition: 'center',
+                verticalPosition: 'top',
+            });
+            
+            // Revert the change in the grid
+            this.gridComponent.updateRow(event.data);
+            return; // Exit the function early for unauthorized edits
+        }
+    
         try {
             const session = await fetchAuthSession();
     
@@ -406,7 +421,7 @@ export class InventoryComponent implements OnInit {
                 
                 // Show success message using snackbar
                 this.snackBar.open('Inventory item updated successfully', 'Close', {
-                    duration: 3000, // Duration in milliseconds
+                    duration: 3000,
                     horizontalPosition: 'center',
                     verticalPosition: 'top',
                 });
@@ -415,13 +430,6 @@ export class InventoryComponent implements OnInit {
             }
         } catch (error) {
             console.error('Error updating inventory item:', error);
-            
-            // Show error message using snackbar
-            this.snackBar.open('Error updating inventory item: ' + (error as Error).message, 'Close', {
-                duration: 5000,
-                horizontalPosition: 'center',
-                verticalPosition: 'top',
-            });
             
             // Revert the change in the grid
             this.gridComponent.updateRow(event.data);

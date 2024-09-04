@@ -71,14 +71,20 @@ export class InventoryComponent implements OnInit {
         {
             field: 'expirationDate',
             headerName: 'Expiration Date',
-            filter: 'agSetColumnFilter',
-            cellEditor: "agDateCellEditor",
+            cellEditor: 'agDateStringCellEditor',
             valueFormatter: (params) => {
                 if (params.value) {
                     const date = new Date(params.value);
-                    return date.toISOString().split('T')[0]; // Format: YYYY-MM-DD
+                    return date.toISOString().split('T')[0];
                 }
                 return '';
+            },
+            valueParser: (params) => {
+                if (params.newValue) {
+                    const date = new Date(params.newValue);
+                    return date.toISOString();
+                }
+                return null;
             },
         },
         { field: 'unitCost', headerName: 'Unit Cost', filter: 'agSetColumnFilter' },

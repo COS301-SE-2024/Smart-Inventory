@@ -349,12 +349,25 @@ export class InventoryComponent implements OnInit {
             if (responseBody.statusCode === 200) {
                 console.log('Inventory item deleted successfully');
                 await this.logActivity('Deleted inventory item', inventoryID + ' was deleted.');
+                
+                // Show success message using snackbar
+                this.snackBar.open('Inventory item deleted successfully', 'Close', {
+                    duration: 3000, // Duration in milliseconds
+                    horizontalPosition: 'center',
+                    verticalPosition: 'top',
+                });
             } else {
                 throw new Error(responseBody.body);
             }
         } catch (error) {
             console.error('Error deleting inventory item:', error);
-            alert(`Error deleting inventory item: ${(error as Error).message}`);
+            
+            // Show error message using snackbar
+            this.snackBar.open('Error deleting inventory item: ' + (error as Error).message, 'Close', {
+                duration: 5000,
+                horizontalPosition: 'center',
+                verticalPosition: 'top',
+            });
         }
     }
 

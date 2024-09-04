@@ -27,6 +27,7 @@ import { Router } from '@angular/router';
 import { CompactType, DisplayGrid, GridsterConfig, GridsterItem, GridType } from 'angular-gridster2';
 import { GridsterModule } from 'angular-gridster2';
 import { MatTooltip } from '@angular/material/tooltip';
+
 interface Metric {
     name: string;
     icon: string;
@@ -138,28 +139,52 @@ export class ActivityReportComponent implements OnInit, AfterViewInit {
         private changeDetectorRef: ChangeDetectorRef
     ) {
         console.log('ActivityReportComponent constructed');
-    this.options = {
-        gridType: GridType.VerticalFixed,
+        this.options = {
+            gridType: GridType.VerticalFixed,
             displayGrid: DisplayGrid.None,
             compactType: CompactType.CompactUpAndLeft,
+            margin: 10,
+            minCols: 12,
+            maxCols: 12,
+            minRows: 100,
+            maxRows: 100,
+            minItemWidth: 100,
+            minItemHeight: 50,
+            maxItemCols: 100,
+            minItemCols: 1,
+            maxItemRows: 100,
+            minItemRows: 1,
+            maxItemArea: 2500,
+            minItemArea: 1,
+            defaultItemCols: 1,
+            defaultItemRows: 1,
+            fixedColWidth: 105,
+            fixedRowHeight: 140,
+            keepFixedHeightInMobile: false,
+            keepFixedWidthInMobile: false,
+            scrollSensitivity: 10,
+            scrollSpeed: 20,
+            enableEmptyCellDrop: false,
+            enableEmptyCellDrag: false,
+            emptyCellDragMaxCols: 50,
+            emptyCellDragMaxRows: 50,
+            ignoreMarginInRow: false,
             draggable: {
                 enabled: false,
             },
             resizable: {
                 enabled: false,
             },
-            pushItems: false,
-            minCols: 12,
-            maxCols: 12,
-            minRows: 20, // Increased minimum rows for better initial height
-            maxRows: 100,
-            minItemWidth: 100, // Minimum width each item can shrink to
-            minItemHeight: 50, // Minimum height each item can shrink to
-            minItemCols: 1, // Maximum columns an item can expand to
-            minItemRows: 1, // Maximum rows an item can expand to
-            fixedRowHeight: 150,
-            addEmptyRowsCount: 10,
-    };
+            swap: false,
+            pushItems: true,
+            disablePushOnDrag: false,
+            disablePushOnResize: false,
+            pushDirections: { north: true, east: true, south: true, west: true },
+            pushResizeItems: false,
+            disableWindowResize: false,
+            disableWarnings: false,
+            scrollToNewItems: false
+        };
 
     }
 
@@ -176,7 +201,7 @@ export class ActivityReportComponent implements OnInit, AfterViewInit {
             ] as CustomGridsterItem[];
             this.changeDetectorRef.detectChanges();
         });
-        
+
     }
 
     ngAfterViewInit() {

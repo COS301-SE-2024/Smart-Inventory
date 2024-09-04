@@ -3,17 +3,16 @@
 }
 
 gridster{
-    background-color: white !important;
-}
-
-gridster-item{
-    border-radius: 10px !important;
+    background-color: transparent !important;
 }
 
 mat-card.mat-mdc-card.mdc-card {
-    background-color: white;
-    box-shadow: 0 4px 8px rgb(0 0 0 / 30%);
+    background-color: transparent;
+    box-shadow:
+        0 4px 8px rgba(0, 0, 0, 0.1),
+        0 6px 20px rgba(0, 0, 0, 0.15);
 }
+
 .btn {
     border-radius: 20px;
     margin-right: 10px;
@@ -33,6 +32,19 @@ mat-card.mat-mdc-card.mdc-card {
     margin-top: 25px;
     padding: 0 10px;
 }
+
+.metrics-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.metrics-card li {
+    font-size: 15px;
+    padding: 8px 0;
+    border-bottom: 1px solid lightgrey;
+}
+
 
 .metrics-wrapper {
     display: flex;
@@ -149,4 +161,10 @@ gridster-item:not(.order-report-item) {
     margin-left: 2px;
     background: transparent !important;
     border-radius: 10px;
+}
+
+gridster-item{
+    overflow: visible !important;
+    border-radius: 10px !important;
+    background-color: transparent !important;
 }

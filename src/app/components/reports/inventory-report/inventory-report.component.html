@@ -4,35 +4,39 @@
 
 <div *ngIf="!isLoading" class="gridster-container">
     <gridster [options]="gridsterOptions">
-        <gridster-item *ngFor="let item of gridsterItems" [item]="item">
+        <gridster-item *ngFor="let item of gridsterItems" [item]="item" [ngClass]="{'grid-card': item['isGrid']}">
             <ng-container *ngIf="item['chartIndex'] !== undefined">
                 <mat-card class="chart-card">
                     <ag-charts-angular [options]="options[item['chartIndex']]"></ag-charts-angular>
                 </mat-card>
             </ng-container>
-            <ng-container *ngIf="item['isGrid']" class="grid-card">
+            <ng-container *ngIf="item['isGrid']">
                 <mat-card class="grid-card">
                     <app-grid [rowData]="rowData" [columnDefs]="colDefs" #gridComponent></app-grid>
                 </mat-card>
             </ng-container>
             <ng-container *ngIf="item['isMetrics']">
                 <mat-card class="metrics-card">
-                    <mat-card-title>{{ InventoryReport.title }}</mat-card-title>
+                    <mat-card-header>
+                        <mat-card-title>{{InventoryReport.title}}</mat-card-title>
+                        <mat-card-subtitle>{{InventoryReport.subtitle}}</mat-card-subtitle>
+                    </mat-card-header>
                     <mat-card-content>
-                        <ul>
-                            <li *ngFor="let metric of InventoryReport.metrics | keyvalue">
-                                {{ metric.value }}
-                            </li>
-                        </ul>
+                        <mat-list>
+                            <mat-list-item *ngFor="let metric of InventoryReport.metrics | keyvalue">
+                                <mat-icon matListItemIcon>{{metric.value.icon}}</mat-icon>
+                                <span matListItemTitle>{{metric.value.label}}: {{metric.value.value}}</span>
+                            </mat-list-item>
+                        </mat-list>
                     </mat-card-content>
                 </mat-card>
             </ng-container>
         </gridster-item>
+        <mat-toolbar class="back-toolbar">
+            <button mat-flat-button class="btn" (click)="back()">
+                <mat-icon>arrow_back</mat-icon> Back To Reports
+            </button>
+        </mat-toolbar>
     </gridster>
-    <mat-toolbar class="back-toolbar">
-        <button mat-flat-button class="btn" (click)="back()">
-            <mat-icon>arrow_back</mat-icon> Back To Reports
-        </button>
-    </mat-toolbar>
-</div>
 
+</div>

@@ -19,6 +19,7 @@ import outputs from '../../../../../amplify_outputs.json';
 import { LoadingSpinnerComponent } from 'app/components/loader/loading-spinner.component';
 import { GridsterConfig, GridType, DisplayGrid, GridsterModule, CompactType } from 'angular-gridster2';
 
+
 @Component({
     selector: 'app-order-report',
     standalone: true,
@@ -53,56 +54,42 @@ export class OrderReportComponent implements OnInit {
     rowData: any[] = [];
     options: GridsterConfig = {
         gridType: GridType.VerticalFixed,
-        displayGrid: DisplayGrid.None,
-        compactType: CompactType.CompactUpAndLeft,
-        margin: 10,
-        minCols: 12,
-        maxCols: 12,
-        minRows: 100,
-        maxRows: 100,
-        maxItemCols: 100,
-        minItemCols: 1,
-        maxItemRows: 100,
-        minItemRows: 1,
-        maxItemArea: 2500,
-        minItemArea: 1,
-        defaultItemCols: 1,
-        defaultItemRows: 1,
-        fixedColWidth: 105,
-        fixedRowHeight: 105,
-        keepFixedHeightInMobile: false,
-        keepFixedWidthInMobile: false,
-        scrollSensitivity: 10,
-        scrollSpeed: 20,
-        enableEmptyCellDrop: false,
-        enableEmptyCellDrag: false,
-        emptyCellDragMaxCols: 50,
-        emptyCellDragMaxRows: 50,
-        ignoreMarginInRow: false,
-        draggable: {
-            enabled: false,
-        },
-        resizable: {
-            enabled: false,
-        },
-        swap: false,
-        pushItems: true,
-        disablePushOnDrag: false,
-        disablePushOnResize: false,
-        pushDirections: { north: true, east: true, south: true, west: true },
-        pushResizeItems: false,
-        disableWindowResize: false,
-        disableWarnings: false,
-        scrollToNewItems: false
+            displayGrid: DisplayGrid.None,
+            compactType: CompactType.CompactUpAndLeft,
+            draggable: {
+                enabled: false,
+            },
+            resizable: {
+                enabled: false,
+            },
+            pushItems: false,
+            margin: 10,
+            minCols: 12,
+            maxCols: 12,
+            minRows: 100, // Increased minimum rows for better initial height
+            maxRows: 100,
+            minItemWidth: 100, // Minimum width each item can shrink to
+            minItemHeight: 50, // Minimum height each item can shrink to
+            minItemCols: 1, // Maximum columns an item can expand to
+            minItemRows: 1, // Maximum rows an item can expand to
+            fixedRowHeight: 150,
+            addEmptyRowsCount: 10,
+            disablePushOnDrag: false,
+            disablePushOnResize: false,
+            pushDirections: { north: true, east: true, south: true, west: true },
+            pushResizeItems: false,
+            disableWindowResize: false,
+            disableWarnings: false,
+            scrollToNewItems: false
     };
 
     layout: any[] = [
-        { cols: 12, rows: 2, y: 0, x: 0 },  // Metrics Container
-        { cols: 8, rows: 5, y: 1, x: 0 },   // Inventory Grid
-        { cols: 4, rows: 1.5, y: 1, x: 8 },   // Order Report
-        { cols: 6, rows: 5, y: 3, x: 0 },   // Stacked Bar Chart
-        { cols: 12, rows: 4, y: 3, x: 6 },   // Scatter Plot
-        { cols: 6, rows: 5, y: 5, x: 4 }    // Donut Chart
+        { cols: 12, rows: 1.1, y: 0, x: 0 },  // Metrics Container
+        { cols: 8, rows: 3, y: 1, x: 0 },   // Inventory Grid
+        { cols: 4, rows: 3, y: 1, x: 8 },   // Order Report
+        { cols: 6, rows: 4, y: 3, x: 0 },   // Stacked Bar Chart
+        { cols: 12, rows: 3, y: 3, x: 6 },   // Scatter Plot
+        { cols: 6, rows: 4, y: 5, x: 4 }    // Donut Chart
     ];
 
 
@@ -115,28 +102,38 @@ export class OrderReportComponent implements OnInit {
         subtitle:
             'Have an overall view of your inventory, relevant metrics to assist you in automation and ordering and provide analytics associated with it.',
         metrics: {
-            // metric_1: 'Total orders: ',
-            // metric_2: 'Orders in progress: ',
-            metric_3: 'Total orders through automation: ',
-            // metric_4: 'Average order time: ',
-            // metric_5: 'Supplier performance index: ',
-            // metric_6: 'Order cost analysis: ',
-            metric_7: 'Rate of returns: ',
-            metric_8: 'Order placement frequency: ',
-            // metric_9: 'Average order trips reduced: ',
-            metric_10: 'Automated order frequency: ',
-            metric_11: 'Perfect Order Rate: ',
+            metric_3: {
+                text: 'Total orders through automation: ',
+                icon: 'auto_awesome'
+            },
+            metric_7: {
+                text: 'Rate of returns: ',
+                icon: 'assignment_return'
+            },
+            metric_8: {
+                text: 'Order placement frequency: ',
+                icon: 'schedule'
+            },
+            metric_10: {
+                text: 'Automated order frequency: ',
+                icon: 'update'
+            },
+            metric_11: {
+                text: 'Perfect Order Rate: ',
+                icon: 'thumb_up'
+            },
         },
         graphs: [],
     };
+
     async ngOnInit() {
         this.titleService.updateTitle(this.getCurrentRoute());
         this.updateVisibleMetrics();
         await this.fetchOrders();
         this.calculateMetrics();
         const data = this.calculateOrderMetrics();
-        this.OrderReport.metrics.metric_8 += data.orderPlacementFrequency;
-        this.OrderReport.metrics.metric_11 += data.perfectOrderRate;
+        this.OrderReport.metrics.metric_8.text += data.orderPlacementFrequency;
+        this.OrderReport.metrics.metric_11.text += data.perfectOrderRate;
         this.supplierQuote = await this.supplierQuotePrices();
         this.updateOrderStatuses(this.rowData, this.supplierQuote);
         this.prepareChartData();

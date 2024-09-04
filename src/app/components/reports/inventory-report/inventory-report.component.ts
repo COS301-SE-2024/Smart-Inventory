@@ -6,7 +6,7 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AgChartsAngular } from 'ag-charts-angular';
-import { AgChartOptions, AgCartesianChartOptions } from 'ag-charts-community';
+import { AgChartOptions } from 'ag-charts-community';
 import { GridComponent } from '../../grid/grid.component';
 import { ColDef } from 'ag-grid-community';
 import { Router } from '@angular/router';
@@ -20,6 +20,22 @@ import outputs from '../../../../../amplify_outputs.json';
 import { LoadingSpinnerComponent } from 'app/components/loader/loading-spinner.component';
 import { MatIconModule } from '@angular/material/icon';
 import { CompactType, DisplayGrid, GridsterConfig, GridsterItem, GridsterModule, GridType } from 'angular-gridster2';
+import { MaterialModule } from 'app/components/material/material.module';
+
+interface Metric {
+    label: string;
+    value: string | number;
+    icon: string;
+}
+
+interface InventoryReportType {
+    title: string;
+    subtitle: string;
+    metrics: {
+        [key: string]: Metric;
+    };
+}
+
 @Component({
     selector: 'app-inventory-report',
     templateUrl: './inventory-report.component.html',
@@ -37,6 +53,7 @@ import { CompactType, DisplayGrid, GridsterConfig, GridsterItem, GridsterModule,
         LoadingSpinnerComponent,
         MatIconModule,
         GridsterModule,
+        MaterialModule
     ],
 })
 export class InventoryReportComponent implements OnInit {
@@ -46,7 +63,7 @@ export class InventoryReportComponent implements OnInit {
     colDefs: ColDef[] = [];
     options: AgChartOptions[] = [];
     options5: any;
-    InventoryReport: any;
+    InventoryReport!: InventoryReportType;
     isLoading = true;
 
     gridsterOptions: GridsterConfig;
@@ -108,12 +125,18 @@ export class InventoryReportComponent implements OnInit {
             { cols: 4, rows: 3, y: 0, x: 0, chartIndex: 0 }, //0
             { cols: 4, rows: 3, y: 0, x: 2, chartIndex: 1 },    //1
             { cols: 4, rows: 3, y: 0, x: 4, chartIndex: 2 },    //2
-            { cols: 12, rows: 4, y: 1, x: 0, isGrid: true },    //3
-            { cols: 10, rows: 5, y: 3, x: 0, chartIndex: 3 },   //4
-            { cols: 2, rows: 5, y: 3, x: 3, isMetrics: true },  //5
-            { cols: 8, rows:5, y: 4, x: 0, chartIndex: 4 },     //6
+            { cols: 12, rows: 3, y: 1, x: 0, isGrid: true },    //3
+            { cols: 8, rows: 5, y: 3, x: 0, chartIndex: 3 },   //4
+            { cols: 4, rows: 5, y: 1, x: 3, isMetrics: true },  //5
+            { cols: 12, rows: 5, y: 4, x: 0, chartIndex: 4 },     //6
         ];
     }
+
+    options1!: AgChartOptions;
+    options2!: AgChartOptions;
+    options3!: AgChartOptions;
+    options4!: AgChartOptions;
+
 
     async ngOnInit() {
         this.titleService.updateTitle('Inventory Report');
@@ -355,21 +378,53 @@ export class InventoryReportComponent implements OnInit {
             title: 'Inventory Report',
             subtitle: 'Overall view of inventory, metrics, and analytics.',
             metrics: {
-                metric_1: `Total Stock Items: ${this.calculateTotal('quantity')}`,
-                metric_2: `Total Requests: ${this.calculateTotal('requests')}`,
-                metric_3: `Total Stock Quantity Requested: ${this.calculateTotal('requestsQuantity')}`,
-                metric_4: `Total Low Stock Items: ${this.calculateTotalLowStock()}`,
-                metric_5: `Inventory Accuracy: ${this.calculateAccuracy()}%`,
-                metric_6: `Stock to Request Ratio: ${this.calculateRatio()}`,
-                // metric_7: `Fulfilled requests: ${this.calculateFulfilledRequests()}`,
-                // metric_8: `Pending/Failed requests: ${this.calculatePendingFailedRequests()}`,
-                //metric_9: `Service Level: ${this.calculateServiceLevel()}%`,
-                //metric_10: `Accuracy of Forecast Demand: ${this.calculateForecastAccuracy()}%`,
-                metric_11: `Inventory Shrinkage: ${this.calculateInventoryShrinkage()}%`,
-                metric_12: `Deadstock (due to expiration): ${this.calculateDeadstock()}`,
-                metric_13: `Lost Sales Ratio: ${this.calculateLostSalesRatio()}%`,
+                metric_1: {
+                    label: 'Total Stock Items',
+                    value: this.calculateTotal('quantity'),
+                    icon: 'inventory_2'
+                },
+                metric_2: {
+                    label: 'Total Requests',
+                    value: this.calculateTotal('requests'),
+                    icon: 'assignment_turned_in'
+                },
+                metric_3: {
+                    label: 'Total Stock Quantity Requested',
+                    value: this.calculateTotal('requestsQuantity'),
+                    icon: 'shopping_cart'
+                },
+                metric_4: {
+                    label: 'Total Low Stock Items',
+                    value: this.calculateTotalLowStock(),
+                    icon: 'warning'
+                },
+                metric_5: {
+                    label: 'Inventory Accuracy',
+                    value: `${this.calculateAccuracy()}%`,
+                    icon: 'bar_chart'
+                },
+                metric_6: {
+                    label: 'Stock to Request Ratio',
+                    value: this.calculateRatio(),
+                    icon: 'compare_arrows'
+                },
+                metric_11: {
+                    label: 'Inventory Shrinkage',
+                    value: `${this.calculateInventoryShrinkage()}%`,
+                    icon: 'trending_down'
+                },
+                metric_12: {
+                    label: 'Deadstock (due to expiration)',
+                    value: this.calculateDeadstock(),
+                    icon: 'event_busy'
+                },
+                metric_13: {
+                    label: 'Lost Sales Ratio',
+                    value: `${this.calculateLostSalesRatio()}%`,
+                    icon: 'money_off'
+                },
             },
-        };
+        } as InventoryReportType;
     }
 
     calculateTotal(column: string): number {

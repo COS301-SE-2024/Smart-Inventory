@@ -6,13 +6,18 @@ gridster {
     background-color: white !important;
 }
 
+gridster-item {
+    border-radius: 10px;
+    background-color: transparent;
+}
+
 gridster-item:not(.grid-card) {
     box-shadow:
         0 4px 8px rgba(0, 0, 0, 0.1),
         0 6px 20px rgba(0, 0, 0, 0.15);
     margin-left: 2px;
     background: transparent !important;
-    border-radius: 10px;
+    
 }
 
 .loading-overlay {
@@ -29,8 +34,7 @@ gridster-item:not(.grid-card) {
 }
 
 mat-card.mat-mdc-card.mdc-card {
-    background-color: white;
-    box-shadow: 0 4px 8px rgb(0 0 0 / 30%);
+    background-color: transparent;
 }
 
 .grid-container {
@@ -87,7 +91,7 @@ mat-card.mat-mdc-card.mdc-card {
     overflow: auto;
 }
 
-.chart-card, .grid-card, .metrics-card {
+.chart-card, .metrics-card {
     height: 100%;
     width: 100%;
     box-sizing: border-box;
@@ -114,7 +118,7 @@ mat-card.mat-mdc-card.mdc-card {
 
 .back-toolbar {
     position: sticky;
-    bottom: 0px;
+    top: 94%;
     left: 20px;
     width: auto;
     border-radius: 20px;

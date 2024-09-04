@@ -382,8 +382,8 @@ export class InventoryComponent implements OnInit {
         // Check if the edited field is allowed
         if (event.field !== 'quantity' && event.field !== 'expirationDate') {
             // Show snackbar for unauthorized edit
-            this.snackBar.open('You can only edit quantity and expiration date.', 'Close', {
-                duration: 3000,
+            this.snackBar.open('You can only edit quantity and expiration date. To edit an items Description, Category, Low Stock Threshold or Reorder Amount please use the Inventory Summary page.', 'Close', {
+                duration: 15000,
                 horizontalPosition: 'center',
                 verticalPosition: 'top',
             });

@@ -11,6 +11,7 @@ import { fetchAuthSession } from 'aws-amplify/auth';
 import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
 import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
 import outputs from '../../../../amplify_outputs.json';
+import { TitleService } from 'app/components/header/title.service';
 
 @Component({
   selector: 'app-inventory-summary',
@@ -43,11 +44,12 @@ export class InventorySummaryComponent implements OnInit {
     { field: 'updatedAt', headerName: 'Last Updated', filter: 'agSetColumnFilter' },
   ];
 
-  constructor(private snackBar: MatSnackBar) {
+  constructor(private snackBar: MatSnackBar, private titleService: TitleService) {
     Amplify.configure(outputs);
   }
 
   async ngOnInit(): Promise<void> {
+    this.titleService.updateTitle('Inventory Summary');
     try {
       const session = await fetchAuthSession();
       this.tenentId = await this.getTenentId(session);

@@ -68,17 +68,18 @@ export class RoleSelectCellEditorComponent implements ICellRendererAngularComp {
 
     async onRoleChange(newRole: string): Promise<void> {
         if (newRole !== this.value) {
+            const oldRole = this.value;  // Store the old role before changing
             const dialogRef = this.dialog.open(RoleChangeConfirmationDialogComponent, {
                 width: '350px',
                 data: {
                     given_name: this.params.data.given_name,
                     family_name: this.params.data.family_name,
                     email: this.params.data.email,
-                    oldRole: this.value,
+                    oldRole: oldRole,
                     newRole: newRole,
                 },
             });
-
+    
             dialogRef.afterClosed().subscribe(async (result) => {
                 if (result) {
                     try {
@@ -87,15 +88,15 @@ export class RoleSelectCellEditorComponent implements ICellRendererAngularComp {
                             region: outputs.auth.aws_region,
                             credentials: session.credentials,
                         });
-
+    
                         // Remove user from the current group
                         const removeFromGroupCommand = new AdminRemoveUserFromGroupCommand({
-                            GroupName: this.value.toLowerCase().replace(' ', ''),
+                            GroupName: oldRole.toLowerCase().replace(' ', ''),
                             Username: this.params.data.email,
                             UserPoolId: outputs.auth.user_pool_id,
                         });
                         await client.send(removeFromGroupCommand);
-
+    
                         // Add user to the new group
                         const addToGroupCommand = new AdminAddUserToGroupCommand({
                             GroupName: newRole.toLowerCase().replace(' ', ''),
@@ -103,18 +104,17 @@ export class RoleSelectCellEditorComponent implements ICellRendererAngularComp {
                             UserPoolId: outputs.auth.user_pool_id,
                         });
                         await client.send(addToGroupCommand);
-
-                        console.log(`User role changed from ${this.value} to ${newRole}`);
-                        this.value = newRole;
+    
+                        console.log(`User role changed from ${oldRole} to ${newRole}`);
+                        this.value = newRole;  // Update the value after successful change
                         this.params.api.stopEditing();
-
+    
                         // Create notification
                         const teamComponent = this.params.context.componentParent;
                         await teamComponent.createNotification(
-                            `User ${this.params.data.given_name} ${this.params.data.family_name}'s role changed from ${this.value} to ${newRole}`,
+                            `User ${this.params.data.given_name} ${this.params.data.family_name}'s role changed from ${oldRole} to ${newRole}`,
                             'ROLE_CHANGED'
                         );
-
                     } catch (error) {
                         console.error('Error changing user role:', error);
                         this.params.api.stopEditing();

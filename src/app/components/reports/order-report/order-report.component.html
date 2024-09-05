@@ -2,7 +2,7 @@
     <app-loading-spinner></app-loading-spinner>
 </div> -->
 
-<div style="height: 100%; display: block; overflow: scroll">
+<div style="height: 100%; display: block; overflow: none">
     <!-- order-report-metrics.component.html -->
     <gridster [options]="options">
         <!-- Metrics Container -->
@@ -71,10 +71,9 @@
         <gridster-item [item]="layout[5]">
             <app-donuttemplate [orderData]="rowData"></app-donuttemplate>
         </gridster-item>
-    </gridster>
-    <mat-toolbar style="
+        <mat-toolbar style="
         position: sticky;
-        bottom: 0;
+        top: 93%;
         left: 0;
         width: 300px;
         border-radius: 20px;
@@ -86,4 +85,6 @@
             <mat-icon style="font-size: 24px; height: 24px; width: 24px">arrow_back</mat-icon> Back To Reports
         </button>
     </mat-toolbar>
+    </gridster>
+    
 </div>

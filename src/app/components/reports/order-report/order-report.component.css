@@ -33,6 +33,13 @@ mat-card.mat-mdc-card.mdc-card {
     padding: 0 10px;
 }
 
+.metrics-container button{
+    background-color: white;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border-radius: 50%;
+    margin: 10px;
+}
+
 .metrics-card ul {
     list-style: none;
     padding: 0;
@@ -51,7 +58,7 @@ mat-card.mat-mdc-card.mdc-card {
     gap: 29px;
     /* overflow: hidden; */
     width: 100%;
-    justify-content: center;
+    justify-content: space-between;
 }
 
 .metric-card {

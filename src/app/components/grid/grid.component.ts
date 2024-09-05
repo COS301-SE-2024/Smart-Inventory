@@ -70,6 +70,7 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
     private _rowData: any[] = [];
     @Input() columnDefs: ColDef[] = [];
     @Input() addButton: { text: string } = { text: 'Add' };
+    @Input() context: any;
     @Output() rowsToDelete = new EventEmitter<any[]>();
     @Output() addNewClicked = new EventEmitter<void>();
     @Output() itemToUpdate = new EventEmitter<{ data: any; field: string; newValue: any }>();

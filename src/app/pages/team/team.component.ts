@@ -68,11 +68,17 @@ export class TeamComponent implements OnInit {
             headerName: 'Role',
             filter: 'agSetColumnFilter',
             cellRenderer: RoleSelectCellEditorComponent,
+            cellRendererParams: {
+                context: this.getContext()
+            },
             width: 100,
         },
         {
             headerName: 'Remove Member',
             cellRenderer: DeleteButtonRendererComponent,
+            cellRendererParams: {
+                context: this.getContext()
+            },
             width: 100,
         },
     ];
@@ -412,5 +418,9 @@ export class TeamComponent implements OnInit {
           var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
           return v.toString(16);
         });
+      }
+
+      getContext() {
+        return { componentParent: this };
       }
 }

@@ -120,9 +120,63 @@ export class InventorySummaryComponent implements OnInit {
     }
   }
 
-  handleCellValueChanged(event: { data: any; field: string; newValue: any }) {
-    // Implement logic to update the inventory summary item
-    console.log('Cell value changed:', event);
-    // You may want to call a Lambda function to update the item in DynamoDB
+  async handleCellValueChanged(event: { data: any; field: string; newValue: any }) {
+    try {
+      const session = await fetchAuthSession();
+  
+      const lambdaClient = new LambdaClient({
+        region: outputs.auth.aws_region,
+        credentials: session.credentials,
+      });
+  
+      const updatedData: any = {
+        SKU: event.data.SKU,
+        tenentId: this.tenentId,
+        [event.field]: event.newValue
+      };
+  
+      // Convert to numbers if necessary
+      if (event.field === 'lowStockThreshold' || event.field === 'reorderAmount') {
+        updatedData[event.field] = Number(event.newValue);
+      }
+  
+      const invokeCommand = new InvokeCommand({
+        FunctionName: 'inventorySummary-updateItem',
+        Payload: new TextEncoder().encode(JSON.stringify({ body: JSON.stringify(updatedData) })),
+      });
+  
+      const lambdaResponse = await lambdaClient.send(invokeCommand);
+      const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+  
+      if (responseBody.statusCode === 200) {
+        console.log('Item updated successfully');
+        const updatedItem = JSON.parse(responseBody.body);
+        
+        // Update the local data to reflect the change
+        const index = this.rowData.findIndex(item => item.SKU === updatedItem.SKU);
+        if (index !== -1) {
+          this.rowData[index] = { ...this.rowData[index], ...updatedItem };
+        }
+  
+        this.snackBar.open('Item updated successfully', 'Close', {
+          duration: 3000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+        });
+      } else {
+        throw new Error(responseBody.body);
+      }
+    } catch (error) {
+      console.error('Error updating inventory Item:', error);
+      
+      // Revert the change in the grid
+      this.gridComponent.updateRow(event.data);
+  
+      this.snackBar.open('Error updating inventory summary item: ' + (error as Error).message, 'Close', {
+        duration: 5000,
+        horizontalPosition: 'center',
+        verticalPosition: 'top',
+      });
+    }
   }
 }

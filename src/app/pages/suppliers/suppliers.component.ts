@@ -74,9 +74,9 @@ export class SuppliersComponent implements OnInit {
     colDefs: ColDef[] = [
         { field: 'supplierID', headerName: 'Supplier ID', hide: true },
         { field: 'company_name', headerName: 'Company Name', filter: 'agSetColumnFilter' },
-        { field: 'contact_name', headerName: 'Contact Name', filter: 'agSetColumnFilter' },
-        { field: 'contact_email', headerName: 'Contact Email', filter: 'agSetColumnFilter' },
-        { field: 'phone_number', headerName: 'Phone Number', filter: 'agSetColumnFilter' },
+        { field: 'contact_name', headerName: 'Contact Name', filter: 'agSetColumnFilter', editable: true },
+        { field: 'contact_email', headerName: 'Contact Email', filter: 'agSetColumnFilter', editable: true },
+        { field: 'phone_number', headerName: 'Phone Number', filter: 'agSetColumnFilter', editable: true },
         {
             field: 'address',
             headerName: 'Address',

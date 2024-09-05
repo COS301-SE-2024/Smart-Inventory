@@ -35,10 +35,10 @@ export class InventorySummaryComponent implements OnInit {
 
   colDefs: ColDef[] = [
     { field: 'SKU', headerName: 'SKU', filter: 'agSetColumnFilter' },
-    { field: 'description', headerName: 'Description', filter: 'agSetColumnFilter' },
+    { field: 'description', headerName: 'Description', filter: 'agSetColumnFilter', editable: true },
     { field: 'quantity', headerName: 'Quantity', filter: 'agSetColumnFilter' },
-    { field: 'lowStockThreshold', headerName: 'Low Stock Threshold', filter: 'agSetColumnFilter' },
-    { field: 'reorderAmount', headerName: 'Reorder Amount', filter: 'agSetColumnFilter' },
+    { field: 'lowStockThreshold', headerName: 'Low Stock Threshold', filter: 'agSetColumnFilter', editable: true },
+    { field: 'reorderAmount', headerName: 'Reorder Amount', filter: 'agSetColumnFilter', editable: true },
     { field: 'EOQ', headerName: 'EOQ', filter: 'agSetColumnFilter' },
     { field: 'safetyStock', headerName: 'Safety Stock', filter: 'agSetColumnFilter' },
     { field: 'updatedAt', headerName: 'Last Updated', filter: 'agSetColumnFilter' },

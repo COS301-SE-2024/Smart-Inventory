@@ -67,11 +67,12 @@ export class InventoryComponent implements OnInit {
         { field: 'upc', headerName: 'Universal Product Code', filter: 'agSetColumnFilter' },
         { field: 'description', headerName: 'Description', filter: 'agSetColumnFilter' },
         { field: 'category', headerName: 'Category', filter: 'agSetColumnFilter' },
-        { field: 'quantity', headerName: 'Quantity', filter: 'agSetColumnFilter' },
+        { field: 'quantity', headerName: 'Quantity', filter: 'agSetColumnFilter', editable: true },
         { field: 'supplier', headerName: 'Supplier', filter: 'agSetColumnFilter' },
         {
             field: 'expirationDate',
             headerName: 'Expiration Date',
+            editable: true,
             cellEditor: 'agDateStringCellEditor',
             valueFormatter: (params) => {
                 if (params.value) {

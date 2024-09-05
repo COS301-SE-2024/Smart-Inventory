@@ -32,6 +32,7 @@ import outputs from '../../../../amplify_outputs.json';
         `
             .role-button {
                 border-radius: 0;
+                border: none;
                 width: 100%;
                 color: #000;
                 font-weight: inherit;

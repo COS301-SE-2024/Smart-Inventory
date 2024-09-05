@@ -223,7 +223,7 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
         this.selectOptions = this.columnDefs.map((f: any) => f.field);
 
         // Make all columns editable
-        this.columnDefs = this.columnDefs.map((col) => ({ ...col, editable: true }));
+        this.columnDefs = this.columnDefs.map((col) => ({ ...col, }));
         this.setGridHeight();
     }
 

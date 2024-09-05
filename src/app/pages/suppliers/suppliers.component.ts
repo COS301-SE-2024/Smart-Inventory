@@ -524,20 +524,30 @@ export class SuppliersComponent implements OnInit {
 
             const lambdaResponse = await lambdaClient.send(invokeCommand);
             const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
+        
             if (responseBody.statusCode === 200) {
-                console.log('Supplier deleted successfully');
-                this.snackBar.open('Supplier deleted successfully', 'Close', {
-                    duration: 6000,
-                    horizontalPosition: 'center',
-                    verticalPosition: 'top',
-                });
+              console.log('Supplier deleted successfully');
+              this.snackBar.open('Supplier deleted successfully', 'Close', {
+                duration: 6000,
+                horizontalPosition: 'center',
+                verticalPosition: 'top',
+              });
+            } else if (responseBody.statusCode === 400 && responseBody.body.includes('Supplier cannot be deleted')) {
+              this.snackBar.open('Supplier cannot be deleted because they are already being used in the system', 'Close', {
+                duration: 6000,
+                horizontalPosition: 'center',
+                verticalPosition: 'top',
+              });
             } else {
-                throw new Error(responseBody.body);
+              throw new Error(responseBody.body);
             }
-        } catch (error) {
+          } catch (error) {
             console.error('Error deleting supplier:', error);
-            alert(`Error deleting supplier: ${(error as Error).message}`);
+            this.snackBar.open(`Error deleting supplier: ${(error as Error).message}`, 'Close', {
+              duration: 6000,
+              horizontalPosition: 'center',
+              verticalPosition: 'top',
+            });
         }
     }
 

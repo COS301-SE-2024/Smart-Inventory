@@ -375,18 +375,13 @@ export class SuppliersComponent implements OnInit {
             if (responseBody.statusCode === 200) {
                 console.log('Supplier address updated successfully');
                 const updatedSupplier = JSON.parse(responseBody.body);
-                const index = this.rowData.findIndex((supplier) => supplier.supplierID === updatedSupplier.supplierID);
-                if (index !== -1) {
-                    this.rowData[index].address = updatedSupplier.address;
 
-                    // Refresh the grid data
-                    this.gridComponent.rowData = [...this.rowData];
-                }
-                this.closeEditAddressPopup();
                 await this.logActivity(
                     'Updated supplier address',
                     `Updated address for supplier ${this.selectedSupplier.company_name}`,
                 );
+                this.closeEditAddressPopup();
+                this.loadSuppliersData();
             } else {
                 throw new Error(responseBody.body);
             }

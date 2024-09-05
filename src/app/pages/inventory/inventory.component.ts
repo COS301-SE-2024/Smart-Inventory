@@ -18,6 +18,7 @@ import { AddInventoryModalComponent } from './add-inventory-modal/add-inventory-
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { RequestStockModalComponent } from './request-stock-modal/request-stock-modal.component';
 import { MatNativeDateModule } from '@angular/material/core';
+import { Router } from '@angular/router';
 
 import { timestamp } from 'rxjs';
 
@@ -99,7 +100,8 @@ export class InventoryComponent implements OnInit {
     constructor(
         private titleService: TitleService,
         private dialog: MatDialog,
-        private snackBar: MatSnackBar
+        private snackBar: MatSnackBar,
+        private router: Router
     ) {
         Amplify.configure(outputs);
     }
@@ -453,6 +455,10 @@ export class InventoryComponent implements OnInit {
                 this.requestStock(item, result);
             }
         });
+    }
+
+    onViewInventorySummary() {
+        this.router.navigate(['/inventory-summary']);
     }
 
     async requestStock(item: any, quantity: number) {

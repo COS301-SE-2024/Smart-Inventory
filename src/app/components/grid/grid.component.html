@@ -47,6 +47,14 @@
             <button
                 class="QAButtons"
                 mat-menu-item
+                *ngIf="getCurrentRoute('inventory')"
+                color="primary"
+            >
+                <mat-icon>inventory</mat-icon><span>View Inventory Summary</span>
+            </button>
+            <button
+                class="QAButtons"
+                mat-menu-item
                 color="primary"
                 (click)="addRow()"
                 *ngIf="getCurrentRoute('inventory')"

@@ -295,11 +295,6 @@ export class SuppliersComponent implements OnInit {
                 country: '',
             },
         };
-        this.snackBar.open('Saved successfully', 'Close', {
-            duration: 6000,
-            horizontalPosition: 'center',
-            verticalPosition: 'top',
-        });
     }
 
     openEditAddressPopup(supplier: any) {
@@ -318,11 +313,6 @@ export class SuppliersComponent implements OnInit {
             postal_code: '',
             country: '',
         };
-        this.snackBar.open('Changes saved successfully', 'Close', {
-            duration: 6000,
-            horizontalPosition: 'center',
-            verticalPosition: 'top',
-        });
     }
 
     async onEditAddressSubmit(formData: any) {
@@ -382,6 +372,11 @@ export class SuppliersComponent implements OnInit {
                 );
                 this.closeEditAddressPopup();
                 this.loadSuppliersData();
+                this.snackBar.open('Supplier address updated successfully', 'Close', {
+                    duration: 6000,
+                    horizontalPosition: 'center',
+                    verticalPosition: 'top',
+                  });
             } else {
                 throw new Error(responseBody.body);
             }
@@ -445,6 +440,11 @@ export class SuppliersComponent implements OnInit {
                 console.log('Supplier added successfully');
                 await this.loadSuppliersData();
                 this.closeAddPopup();
+                this.snackBar.open('Supplier added successfully', 'Close', {
+                    duration: 6000,
+                    horizontalPosition: 'center',
+                    verticalPosition: 'top',
+                });
                 await this.logActivity('Added new supplier', `Added supplier ${formData.company_name}`);
             } else {
                 throw new Error(responseBody.body);
@@ -484,11 +484,6 @@ export class SuppliersComponent implements OnInit {
             this.gridComponent.removeConfirmedRows(this.rowsToDelete);
             this.rowsToDelete = [];
             await this.loadSuppliersData(); // Refresh the data after deletion
-            this.snackBar.open('Removed successfully', 'Close', {
-                duration: 6000,
-                horizontalPosition: 'center',
-                verticalPosition: 'top',
-              });
         }
     }
 
@@ -532,6 +527,11 @@ export class SuppliersComponent implements OnInit {
 
             if (responseBody.statusCode === 200) {
                 console.log('Supplier deleted successfully');
+                this.snackBar.open('Supplier deleted successfully', 'Close', {
+                    duration: 6000,
+                    horizontalPosition: 'center',
+                    verticalPosition: 'top',
+                });
             } else {
                 throw new Error(responseBody.body);
             }
@@ -593,6 +593,11 @@ export class SuppliersComponent implements OnInit {
                 if (index !== -1) {
                     this.rowData[index] = { ...this.rowData[index], ...updatedSupplier };
                 }
+                this.snackBar.open('Supplier updated successfully', 'Close', {
+                    duration: 6000,
+                    horizontalPosition: 'center',
+                    verticalPosition: 'top',
+                  });
             } else {
                 throw new Error(responseBody.body);
             }

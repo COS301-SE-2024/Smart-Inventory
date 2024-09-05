@@ -17,6 +17,7 @@ import { ProfileComponent } from './components/profile/profile.component';
 import { NotificationSettingsComponent } from './components/notification-settings/notification-settings.component';
 import { ContactSupportComponent } from './components/contact-support/contact-support.component';
 import { StockRequestReportComponent } from './components/stock-request-report/stock-request-report.component';
+import { InventorySummaryComponent } from './pages/inventory-summary/inventory-summary.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
@@ -40,4 +41,5 @@ export const routes: Routes = [
     { path: 'contact-support', component: ContactSupportComponent},
     { path: 'notifications', component: NotificationSettingsComponent },
     { path: 'stock-requests-report', component: StockRequestReportComponent },
+    { path: 'inventory-summary', component: InventorySummaryComponent },
 ];

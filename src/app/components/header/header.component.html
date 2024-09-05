@@ -1,5 +1,5 @@
 <!-- Header component HTML -->
-<mat-toolbar>
+<mat-toolbar style="background-color: white">
     <span class="pageTitle">{{ pageTitle }}</span>
     <span class="flex-spacer"></span>
     <!-- Notification bell -->
@@ -15,7 +15,6 @@
     <!-- User profile -->
     <div class="user-profile" [matMenuTriggerFor]="menu">
         <div class="profile-box">
-            <mat-icon class="theme-svg" style="width: 50px; height: 50px; font-size: 50px">account_circle</mat-icon>
             <div class="user-info">
                 <span class="username">{{ userName }}</span>
                 <span class="role">{{ userEmail }}</span>
@@ -110,22 +109,30 @@
     <div class="notification-content">
         <ng-container *ngIf="activeFilter !== 'Settings'; else settingsView">
             <mat-list>
-                <mat-list-item *ngFor="let notification of filteredNotifications" [ngClass]="{'unread': !notification.read, 'archived': notification.archived}" (click)="openNotification(notification)">
+                <mat-list-item
+                    *ngFor="let notification of filteredNotifications"
+                    [ngClass]="{ unread: !notification.read, archived: notification.archived }"
+                    (click)="openNotification(notification)"
+                >
                     <!-- <mat-icon matListIcon>{{ getNotificationIcon(notification.type) }}</mat-icon> -->
                     <div matListItemTitle>
                         <mat-icon>{{ getNotificationIcon(notification.type) }}</mat-icon>
                         {{ notification.title }}
                     </div>
-                    <div matListItemLine>{{ notification.date | date:'short' }}</div>
+                    <div matListItemLine>{{ notification.date | date: 'short' }}</div>
                     <div matListItemLine>{{ notification.info }}</div>
-                    <button mat-icon-button 
-                            (click)="toggleReadStatus($event, notification)" 
-                            [matTooltip]="notification.read ? 'Mark as unread' : 'Mark as read'">
+                    <button
+                        mat-icon-button
+                        (click)="toggleReadStatus($event, notification)"
+                        [matTooltip]="notification.read ? 'Mark as unread' : 'Mark as read'"
+                    >
                         <mat-icon>{{ notification.read ? 'markunread' : 'done' }}</mat-icon>
                     </button>
-                    <button mat-icon-button 
-                            (click)="toggleArchive($event, notification)" 
-                            [matTooltip]="notification.archived ? 'Unarchive' : 'Archive'">
+                    <button
+                        mat-icon-button
+                        (click)="toggleArchive($event, notification)"
+                        [matTooltip]="notification.archived ? 'Unarchive' : 'Archive'"
+                    >
                         <mat-icon>{{ notification.archived ? 'unarchive' : 'archive' }}</mat-icon>
                     </button>
                 </mat-list-item>
@@ -134,14 +141,13 @@
 
         <ng-template #settingsView>
             <mat-list>
-              <mat-list-item *ngFor="let setting of notificationSettings">
-                <mat-slide-toggle [(ngModel)]="setting.enabled" (change)="updateNotificationSettings(setting)">
-                  {{ setting.name }}
-                </mat-slide-toggle>
-              </mat-list-item>
+                <mat-list-item *ngFor="let setting of notificationSettings">
+                    <mat-slide-toggle [(ngModel)]="setting.enabled" (change)="updateNotificationSettings(setting)">
+                        {{ setting.name }}
+                    </mat-slide-toggle>
+                </mat-list-item>
             </mat-list>
-          </ng-template>
-
+        </ng-template>
     </div>
 </div>
 

@@ -27,8 +27,8 @@ mat-toolbar {
 .profile-box {
     display: flex;
     align-items: center;
-    border-left: 1px solid var(--header-bg-color);
-    padding: 11px;
+    border-left: 1px solid #c4c6d0;
+    padding: 10px;
     height: 50px;
 }
 

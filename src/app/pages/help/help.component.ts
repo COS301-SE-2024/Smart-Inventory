@@ -370,10 +370,6 @@ export class HelpComponent implements OnInit {
         this.titleService.updateTitle('Help');
     }
 
-    renameTitle(t: string) {
-        this.titleService.updateTitle('Help > ' + t);
-    }
-
     onItemSelected(item: MenuItem) {
         this.selectedMenuItem = item;
         this.selectedContent = item.content;

@@ -6,6 +6,7 @@ import { MatCardModule } from '@angular/material/card';
 import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
 import { fetchAuthSession } from 'aws-amplify/auth';
 import outputs from '../../../../amplify_outputs.json';
+import { templateQuoteModalComponent } from '../template-quote-modal/template-quote-modal.component';
 import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
 import {
     MatDialog,
@@ -47,6 +48,7 @@ export class ConfirmationDialogComponent {
         MatDialogModule,
         MatDialogTitle,
         MatDialogContent,
+        templateQuoteModalComponent,
     ],
     templateUrl: './templates-quotes-side-pane.component.html',
     styleUrls: ['./templates-quotes-side-pane.component.css'],
@@ -67,22 +69,59 @@ export class TemplatesQuotesSidePaneComponent implements OnChanges {
         template1: {
             title: 'Amazon',
             subtitle: 'Order to be Automated',
-            frequency: 'Monthly',
-            items: '',
-        },
-        template2: {
-            title: 'Takealot',
-            subtitle: 'Order to be Automated',
-            frequency: 'Weekly',
-            items: '',
-        },
-        template3: {
-            title: 'Uber Eats',
-            subtitle: 'Order to be Automated',
-            frequency: 'Quaterly',
-            items: '',
+            frequency: '01/01/2002',
+            items: '10',
+            Delivery_Date: 'IDk',
         },
     };
+
+    openTemplateQuoteModal() {
+        const dialogRef = this.dialog.open(templateQuoteModalComponent, {
+            width: '500px',
+            data: {}, // You can pass data to the modal if needed
+        });
+
+        dialogRef.afterClosed().subscribe((result) => {
+            if (result && result.action === 'createOrder') {
+                // Create a new template card
+                const newTemplateKey = `template${Object.keys(this.templates).length + 1}`;
+                this.templates[newTemplateKey] = {
+                    title: result.data.title,
+                    subtitle: 'Order to be Automated',
+                    frequency: result.data.frequency,
+                    items: result.data.items.length,
+                    supplier: result.data.supplier,
+                    Delivery_Date: this.calculateNextDeliveryDate(result.data.frequency),
+                };
+
+                this.snackBar.open('New template created successfully', 'Close', {
+                    duration: 3000,
+                });
+            }
+        });
+    }
+
+    calculateNextDeliveryDate(frequency: string): string {
+        const today = new Date();
+        let nextDate = new Date(today);
+
+        switch (frequency) {
+            case 'Weekly':
+                nextDate.setDate(today.getDate() + 7);
+                break;
+            case 'Monthly':
+                nextDate.setMonth(today.getMonth() + 1);
+                break;
+            case 'Quarterly':
+                nextDate.setMonth(today.getMonth() + 3);
+                break;
+            case 'Yearly':
+                nextDate.setFullYear(today.getFullYear() + 1);
+                break;
+        }
+
+        return nextDate.toISOString().split('T')[0]; // Returns date in YYYY-MM-DD format
+    }
 
     removeTemplate(key: string): void {
         const templateName = this.templates[key]?.title || 'Unknown';

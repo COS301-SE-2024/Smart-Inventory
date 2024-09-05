@@ -1,13 +1,14 @@
 .sidenav-container {
     height: 100vh;
     width: 100%; /* Ensures the sidenav container takes full available space */
+    background-color: white;
 }
 
 .sidenav {
     height: 100vh;
     width: 50px; /* Standard width for sidenav */
     /* background-color: var(--sidebar-bg-color); */ /* Light grey background */
-    background-color: var(--sidebar-bg-color);
+    background-color: white;
     transition: width 0.4s;
     transition-delay: 0s;
     height: 100vh;

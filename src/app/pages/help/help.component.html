@@ -7,7 +7,21 @@
                         <div class="filter-buttons">
                             <button
                                 class="test"
-                                mat-stroked-button
+                                mat-fab
+                                extended
+                                style="
+                                    border-radius: 20px;
+                                    margin-right: 4px;
+                                    border-radius: 5px;
+                                    width: 150px;
+                                    background-color: white;
+                                    color: #000000;
+                                    height: 40px;
+                                    box-shadow: 2px 2px 2px 0px #e0e0e0;
+                                    border-color: #c4c6d0;
+                                    border-width: 1px;
+                                    border-style: solid;
+                                "
                                 *ngFor="let filter of faqFilters"
                                 (click)="onFilterClick(filter)"
                             >
@@ -69,12 +83,9 @@
         </mat-tab>
         <mat-tab label="Contact Support">
             <ng-container>
-
-
                 <div style="height: 85vh; width: 100%; overflow-y: scroll; align-content: center">
                     <app-contact-support></app-contact-support>
                 </div>
-
             </ng-container>
         </mat-tab>
     </mat-tab-group>

@@ -641,9 +641,27 @@ export class OrdersComponent implements OnInit {
     console.log('Saving delivery information:', deliveryInfo);
   }
 
-  viewReceivedQuotes() {
+  viewReceivedQuotes(selectedOrder: any) {
+    if (!selectedOrder) {
+        this.snackBar.open('Please select an order to view received quotes', 'Close', {
+            duration: 3000,
+            horizontalPosition: 'center',
+            verticalPosition: 'top',
+        });
+        return;
+    }
+
+    if (selectedOrder.Quote_Status === 'Draft') {
+        this.snackBar.open('This order is in draft status. There are no received quotes.', 'Close', {
+            duration: 5000,
+            horizontalPosition: 'center',
+            verticalPosition: 'top',
+        });
+        return;
+    }
+
     this.isSidePaneOpen = true;
-  }
+}
   
   async openReceiveOrderModal(orderData: any) {
     const dialogRef = this.dialog.open(ReceiveOrderModalComponent, {

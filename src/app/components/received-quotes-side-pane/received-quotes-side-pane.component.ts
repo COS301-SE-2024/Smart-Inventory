@@ -27,20 +27,32 @@ interface SupplierQuote {
   styleUrls: ['./received-quotes-side-pane.component.css']
 })
 export class ReceivedQuotesSidePaneComponent implements OnChanges {
-  @Input() isOpen: boolean = false;
   @Input() selectedOrder: any;
   @Output() closed = new EventEmitter<void>();
   @Output() quoteAccepted = new EventEmitter<void>();
 
+  @Input() set isOpen(value: boolean) {
+    this._isOpen = value;
+    if (value && this.selectedOrder) {
+        this.fetchSupplierQuotes();
+    }
+  }
+
+  get isOpen(): boolean {
+      return this._isOpen;
+  }
+  
+  private _isOpen: boolean = false;
+
+  ngOnChanges(changes: SimpleChanges) {
+      if (changes['selectedOrder'] && this.selectedOrder && this.isOpen) {
+          this.fetchSupplierQuotes();
+      }
+  }
+
   supplierQuotes: SupplierQuote[] = [];
 
   constructor(private dialog: MatDialog) {}
-
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes['selectedOrder'] && this.selectedOrder) {
-      this.fetchSupplierQuotes();
-    }
-  }
 
   close() {
     this.closed.emit();

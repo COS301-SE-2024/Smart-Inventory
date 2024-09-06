@@ -139,7 +139,29 @@ export class AddInventoryModalComponent implements OnInit {
 
     onSave() {
         if (this.inventoryForm.valid) {
-            this.dialogRef.close(this.inventoryForm.value);
+            // Use getRawValue() to include disabled fields
+            const formData = this.inventoryForm.getRawValue();
+            
+            // If it's an existing item, we want to keep the original values for certain fields
+            if (this.itemExists) {
+                // Only update the editable fields
+                const updatedData = {
+                    sku: formData.sku,
+                    quantity: formData.quantity,
+                    supplier: formData.supplier,
+                    expirationDate: formData.expirationDate,
+                    // Include other fields that should not be changed
+                    upc: formData.upc,
+                    description: formData.description,
+                    category: formData.category,
+                    lowStockThreshold: formData.lowStockThreshold,
+                    reorderAmount: formData.reorderAmount
+                };
+                this.dialogRef.close(updatedData);
+            } else {
+                // For new items, we can send all the form data
+                this.dialogRef.close(formData);
+            }
         }
     }
 

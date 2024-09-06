@@ -124,6 +124,7 @@ export class ReceivedQuotesSidePaneComponent implements OnChanges {
     const dialogRef = this.dialog.open(SupplierQuoteDetailsComponent, {
       width: '90%',
       maxWidth: '1350px',
+      height: '90vh',
       data: {
         quoteID: quote.QuoteID,
         supplierID: quote.SupplierID,

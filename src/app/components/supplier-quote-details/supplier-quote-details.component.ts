@@ -9,6 +9,7 @@ import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-c
 import outputs from '../../../../amplify_outputs.json';
 import { QuoteAcceptConfirmationDialogComponent } from './quote-accept-confirmation-dialog.component';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { LoadingSpinnerComponent } from '../loader/loading-spinner.component';
 
 interface QuoteItem {
   description: string;
@@ -35,7 +36,7 @@ interface QuoteSummary {
 @Component({
   selector: 'app-supplier-quote-details',
   standalone: true,
-  imports: [CommonModule, MatDialogModule, MatIconModule, MatButtonModule, QuoteAcceptConfirmationDialogComponent, MatSnackBarModule],
+  imports: [CommonModule, MatDialogModule, MatIconModule, MatButtonModule, QuoteAcceptConfirmationDialogComponent, MatSnackBarModule, LoadingSpinnerComponent],
   templateUrl: './supplier-quote-details.component.html',
   styleUrl: './supplier-quote-details.component.css'
 })

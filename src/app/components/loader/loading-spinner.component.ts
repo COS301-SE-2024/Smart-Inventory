@@ -12,7 +12,6 @@ import { Component } from '@angular/core';
     styles: [
         `
             .spinner {
-                margin: 100px auto 0;
                 width: 70px;
                 text-align: center;
             }

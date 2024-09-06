@@ -664,6 +664,16 @@ export class OrdersComponent implements OnInit {
   }
   
   async openReceiveOrderModal(orderData: any) {
+
+    if (orderData.Order_Status === 'Completed') {
+      this.snackBar.open('This order has already been marked as received.', 'Close', {
+        duration: 5000,
+        horizontalPosition: 'center',
+        verticalPosition: 'top',
+      });
+      return;
+    }
+
     if (orderData.Quote_Status !== 'Accepted') {
       this.snackBar.open('Only orders with accepted quotes can be marked as received.', 'Close', {
         duration: 5000,

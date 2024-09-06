@@ -12,6 +12,7 @@ import { QuoteSubmissionService } from '../../../../amplify/services/quote-submi
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { NotificationService } from '../../../../amplify/services/notification.service';
 import { v4 as uuidv4 } from 'uuid';
+import { LoadingSpinnerComponent } from '../loader/loading-spinner.component';
 
 interface QuoteItem {
   upc: string;
@@ -47,7 +48,7 @@ interface DeliveryAddress {
 @Component({
   selector: 'app-supplier-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, CustomCurrencyPipe],
+  imports: [CommonModule, FormsModule, CustomCurrencyPipe, LoadingSpinnerComponent],
   templateUrl: './supplier-form.component.html',
   styleUrl: './supplier-form.component.css'
 })
@@ -57,6 +58,7 @@ export class SupplierFormComponent implements OnInit {
   quoteID: string = '';
   deliveryID: string = '';
   tenentId: string = '';
+  isSubmitting: boolean = false;
 
 
   constructor(
@@ -255,6 +257,7 @@ export class SupplierFormComponent implements OnInit {
   }
 
   submitQuote() {
+    this.isSubmitting = true;
     const quoteData = {
       quoteItems: this.quoteItems.map(item => ({
         upc: item.upc,
@@ -289,6 +292,7 @@ export class SupplierFormComponent implements OnInit {
           horizontalPosition: 'center',
           verticalPosition: 'top',
         });
+        this.isSubmitting = false;
         // Handle any additional logic after successful submission
       },
       (error) => {
@@ -298,6 +302,7 @@ export class SupplierFormComponent implements OnInit {
           horizontalPosition: 'center',
           verticalPosition: 'top',
         });
+        this.isSubmitting = false;
         // Handle any additional error logic
       }
     );

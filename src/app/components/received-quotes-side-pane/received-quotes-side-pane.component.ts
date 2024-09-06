@@ -53,6 +53,7 @@ export class ReceivedQuotesSidePaneComponent implements OnChanges {
 
   supplierQuotes: SupplierQuote[] = [];
   isLoading: boolean = false;
+  noQuotesReceived: boolean = false;
 
   constructor(private dialog: MatDialog) {}
 
@@ -86,12 +87,15 @@ export class ReceivedQuotesSidePaneComponent implements OnChanges {
 
       if (responseBody.statusCode === 200) {
         this.supplierQuotes = JSON.parse(responseBody.body);
+        this.noQuotesReceived = this.supplierQuotes.length === 0;
         console.log('Supplier quotes:', this.supplierQuotes);
       } else {
         console.error('Error fetching supplier quotes:', responseBody.body);
+        this.noQuotesReceived = true;
       }
     } catch (error) {
       console.error('Error in fetchSupplierQuotes:', error);
+      this.noQuotesReceived = true;
     } finally {
       this.isLoading = false;
     }

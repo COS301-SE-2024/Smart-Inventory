@@ -20,6 +20,7 @@
   padding: 10px 20px;
   background-color: #f0f0f0;
   border-bottom: 1px solid #e0e0e0;
+  position: relative;
 }
 
 .side-pane-header h3 {
@@ -36,13 +37,38 @@
 .side-pane-content {
   flex-grow: 1;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.centered-content {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #757575;
   padding: 20px;
+}
+
+.centered-content mat-icon {
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
+  margin-bottom: 10px;
+}
+
+.order-content {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .supplier-quotes {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 20px;
+  padding: 20px;
 }
 
 .supplier-quote-card {
@@ -71,27 +97,4 @@
 .supplier-quote-card mat-card-content {
   margin-top: 10px;
   font-size: 14px;
-}
-
-.no-order-selected {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  color: #757575;
-}
-
-.no-order-selected mat-icon {
-  font-size: 48px;
-  width: 48px;
-  height: 48px;
-  margin-bottom: 10px;
-}
-
-.loading-spinner-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
 }

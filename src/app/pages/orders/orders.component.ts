@@ -497,7 +497,11 @@ export class OrdersComponent implements OnInit {
     }
 
     if (this.selectedOrder.Quote_Status !== 'Draft') {
-      alert('Only orders with Draft quote status can be deleted');
+      this.snackBar.open('Only orders in draft status can be deleted', 'Close', {
+        duration: 6000, // Duration in milliseconds
+        horizontalPosition: 'center',
+        verticalPosition: 'top',
+      });
       return;
     }
 
@@ -572,8 +576,6 @@ export class OrdersComponent implements OnInit {
     // Reload the orders data
     await this.loadOrdersData();
     
-    // Refresh the grid
-    this.gridComponent.refreshGrid(this.rowData);
     } catch (error) {
       console.error('Error sending quote:', error);
       

@@ -16,6 +16,8 @@ mat-dialog-content {
     overflow-y: auto;
 }
 
+mat-form-field:first-of-type {    margin-top: 10px;}
+
 .btn {
     border-radius: 20px;
     margin-right: 10px;

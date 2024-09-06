@@ -2,12 +2,7 @@
     <app-grid
         [rowData]="rowData"
         [columnDefs]="colDefs"
-        [addButton]="addButton"
-        (rowsToDelete)="handleRowsToDelete($event)"
-        (addNewClicked)="openAddItemPopup()"
         (itemToUpdate)="handleCellValueChanged($event)"
-        (requestStock)="openRequestStockPopup($event)"
-        (viewInventorySummary)="onViewInventorySummary()"
         #gridComponent
     >
     </app-grid>

@@ -68,11 +68,17 @@ export class TeamComponent implements OnInit {
             headerName: 'Role',
             filter: 'agSetColumnFilter',
             cellRenderer: RoleSelectCellEditorComponent,
+            cellRendererParams: {
+                context: this.getContext()
+            },
             width: 100,
         },
         {
             headerName: 'Remove Member',
             cellRenderer: DeleteButtonRendererComponent,
+            cellRendererParams: {
+                context: this.getContext()
+            },
             width: 100,
         },
     ];
@@ -296,6 +302,7 @@ export class TeamComponent implements OnInit {
 
             console.log('User created and added to the group successfully');
             await this.logActivity('Added new team member', `Added ${formData.email} as ${formData.role}`);
+            await this.createNotification(`New user ${formData.name} ${formData.surname} added as ${formData.role}`, 'USER_ADDED');
 
             this.fetchUsers();
             this.closePopup();
@@ -367,4 +374,53 @@ export class TeamComponent implements OnInit {
                 return '';
         }
     }
+
+    async createNotification(message: string, type: string) {
+        try {
+          const session = await fetchAuthSession();
+          const lambdaClient = new LambdaClient({
+            region: outputs.auth.aws_region,
+            credentials: session.credentials,
+          });
+      
+          const notificationId = this.generateUUID();
+          const timestamp = new Date().toISOString();
+      
+          const payload = JSON.stringify({
+            tenentId: this.tenantId,
+            timestamp: timestamp,
+            notificationId: notificationId,
+            type: type,
+            message: message,
+            isRead: false
+          });
+      
+          const invokeCommand = new InvokeCommand({
+            FunctionName: 'notification-createItem',
+            Payload: new TextEncoder().encode(JSON.stringify({ body: payload })),
+          });
+      
+          const lambdaResponse = await lambdaClient.send(invokeCommand);
+          const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+      
+          if (responseBody.statusCode === 201) {
+            console.log('Notification created successfully');
+          } else {
+            throw new Error(responseBody.body);
+          }
+        } catch (error) {
+          console.error('Error creating notification:', error);
+        }
+      }
+      
+      generateUUID() {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+          var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+          return v.toString(16);
+        });
+      }
+
+      getContext() {
+        return { componentParent: this };
+      }
 }

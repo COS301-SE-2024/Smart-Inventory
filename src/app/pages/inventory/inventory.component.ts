@@ -14,10 +14,11 @@ import { LoadingSpinnerComponent } from '../../components/loader/loading-spinner
 import { MatDialog } from '@angular/material/dialog';
 import { InventoryDeleteConfirmationDialogComponent } from './inventory-delete-confirmation-dialogue.component';
 import { MatDialogModule } from '@angular/material/dialog';
-import { AddInventoryModalComponent } from './add-inventory-modal/add-inventory-modal.component';
+import { AddInventoryModalComponent } from '../../components/add-inventory-modal/add-inventory-modal.component';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { RequestStockModalComponent } from './request-stock-modal/request-stock-modal.component';
+import { RequestStockModalComponent } from 'app/components/request-stock-modal/request-stock-modal.component';
 import { MatNativeDateModule } from '@angular/material/core';
+import { Router } from '@angular/router';
 
 import { timestamp } from 'rxjs';
 
@@ -66,18 +67,26 @@ export class InventoryComponent implements OnInit {
         { field: 'upc', headerName: 'Universal Product Code', filter: 'agSetColumnFilter' },
         { field: 'description', headerName: 'Description', filter: 'agSetColumnFilter' },
         { field: 'category', headerName: 'Category', filter: 'agSetColumnFilter' },
-        { field: 'quantity', headerName: 'Quantity', filter: 'agSetColumnFilter' },
+        { field: 'quantity', headerName: 'Quantity', filter: 'agSetColumnFilter', editable: true },
         { field: 'supplier', headerName: 'Supplier', filter: 'agSetColumnFilter' },
         {
             field: 'expirationDate',
             headerName: 'Expiration Date',
-            filter: 'agSetColumnFilter',
+            editable: true,
+            cellEditor: 'agDateStringCellEditor',
             valueFormatter: (params) => {
                 if (params.value) {
                     const date = new Date(params.value);
-                    return date.toISOString().split('T')[0]; // Format: YYYY-MM-DD
+                    return date.toISOString().split('T')[0];
                 }
                 return '';
+            },
+            valueParser: (params) => {
+                if (params.newValue) {
+                    const date = new Date(params.newValue);
+                    return date.toISOString();
+                }
+                return null;
             },
         },
         { field: 'unitCost', headerName: 'Unit Cost', filter: 'agSetColumnFilter' },
@@ -92,7 +101,8 @@ export class InventoryComponent implements OnInit {
     constructor(
         private titleService: TitleService,
         private dialog: MatDialog,
-        private snackBar: MatSnackBar
+        private snackBar: MatSnackBar,
+        private router: Router
     ) {
         Amplify.configure(outputs);
     }
@@ -252,9 +262,9 @@ export class InventoryComponent implements OnInit {
     openAddItemPopup() {
         const dialogRef = this.dialog.open(AddInventoryModalComponent, {
             width: '600px',
-            data: { suppliers: this.suppliers },
+            data: { suppliers: this.suppliers, tenentId: this.tenantId },
         });
-
+    
         dialogRef.afterClosed().subscribe((result) => {
             if (result) {
                 this.onSubmit(result);
@@ -298,6 +308,11 @@ export class InventoryComponent implements OnInit {
                 console.log('Inventory item added successfully');
                 await this.logActivity('Added new inventory item', formData.upc + ' was added.');
                 await this.loadInventoryData();
+                this.snackBar.open('Inventory item added successfully', 'Close', {
+                    duration: 3000, // Duration in milliseconds
+                    horizontalPosition: 'center',
+                    verticalPosition: 'top',
+                });
             } else {
                 throw new Error(responseBody.body);
             }
@@ -349,38 +364,51 @@ export class InventoryComponent implements OnInit {
             if (responseBody.statusCode === 200) {
                 console.log('Inventory item deleted successfully');
                 await this.logActivity('Deleted inventory item', inventoryID + ' was deleted.');
+                
+                // Show success message using snackbar
+                this.snackBar.open('Inventory item deleted successfully', 'Close', {
+                    duration: 3000, // Duration in milliseconds
+                    horizontalPosition: 'center',
+                    verticalPosition: 'top',
+                });
             } else {
                 throw new Error(responseBody.body);
             }
         } catch (error) {
             console.error('Error deleting inventory item:', error);
-            alert(`Error deleting inventory item: ${(error as Error).message}`);
+            
+            // Show error message using snackbar
+            this.snackBar.open('Error deleting inventory item: ' + (error as Error).message, 'Close', {
+                duration: 5000,
+                horizontalPosition: 'center',
+                verticalPosition: 'top',
+            });
         }
     }
 
     async handleCellValueChanged(event: { data: any; field: string; newValue: any }) {
         try {
             const session = await fetchAuthSession();
-
+    
             const lambdaClient = new LambdaClient({
                 region: outputs.auth.aws_region,
                 credentials: session.credentials,
             });
-
+    
             const updatedData = {
                 inventoryID: event.data.inventoryID,
                 tenentId: this.tenantId,
                 [event.field]: event.newValue,
             };
-
+    
             const invokeCommand = new InvokeCommand({
                 FunctionName: 'Inventory-updateItem',
                 Payload: new TextEncoder().encode(JSON.stringify({ body: JSON.stringify(updatedData) })),
             });
-
+    
             const lambdaResponse = await lambdaClient.send(invokeCommand);
             const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
+    
             if (responseBody.statusCode === 200) {
                 console.log('Inventory item updated successfully');
                 await this.logActivity('Updated inventory item', event.data.upc + ' was updated.');
@@ -390,23 +418,41 @@ export class InventoryComponent implements OnInit {
                 if (index !== -1) {
                     this.rowData[index] = { ...this.rowData[index], ...updatedItem };
                 }
+                
+                // Show success message using snackbar
+                this.snackBar.open('Inventory item updated successfully', 'Close', {
+                    duration: 3000,
+                    horizontalPosition: 'center',
+                    verticalPosition: 'top',
+                });
             } else {
                 throw new Error(responseBody.body);
             }
         } catch (error) {
             console.error('Error updating inventory item:', error);
-            alert(`Error updating inventory item: ${(error as Error).message}`);
+            
             // Revert the change in the grid
             this.gridComponent.updateRow(event.data);
+            
+            // Show error message using snackbar
+            this.snackBar.open('Error updating inventory item: ' + (error as Error).message, 'Close', {
+                duration: 5000,
+                horizontalPosition: 'center',
+                verticalPosition: 'top',
+            });
         }
     }
 
     openRequestStockPopup(item: any) {
         const dialogRef = this.dialog.open(RequestStockModalComponent, {
             width: '400px',
-            data: { sku: item.sku, supplier: item.supplier },
+            data: { 
+                sku: item.sku, 
+                supplier: item.supplier, 
+                availableQuantity: item.quantity 
+            },
         });
-
+    
         dialogRef.afterClosed().subscribe((result) => {
             if (result) {
                 this.requestStock(item, result);
@@ -414,16 +460,24 @@ export class InventoryComponent implements OnInit {
         });
     }
 
+    onViewInventorySummary() {
+        this.router.navigate(['/inventory-summary']);
+    }
+
     async requestStock(item: any, quantity: number) {
         try {
+            if (quantity > item.quantity) {
+                throw new Error('Requested quantity exceeds available stock');
+            }
+    
             const session = await fetchAuthSession();
-
+    
             const lambdaClient = new LambdaClient({
                 region: outputs.auth.aws_region,
                 credentials: session.credentials,
             });
-
-            // First, update the inventory
+    
+            // Update the inventory
             const updatedQuantity = item.quantity - quantity;
             const updateEvent = {
                 data: item,
@@ -431,8 +485,8 @@ export class InventoryComponent implements OnInit {
                 newValue: updatedQuantity,
             };
             await this.handleCellValueChanged(updateEvent);
-
-            // Then, create the stock request report
+    
+            // Create the stock request report
             const reportPayload = {
                 tenentId: this.tenantId,
                 sku: item.sku,
@@ -440,27 +494,26 @@ export class InventoryComponent implements OnInit {
                 supplier: item.supplier,
                 quantityRequested: quantity.toString(),
             };
-
+    
             console.log('Report Payload:', reportPayload);
-
+    
             const createReportCommand = new InvokeCommand({
                 FunctionName: 'Report-createItem',
                 Payload: new TextEncoder().encode(JSON.stringify({ body: JSON.stringify(reportPayload) })),
             });
-
+    
             const lambdaResponse = await lambdaClient.send(createReportCommand);
             const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
+    
             console.log('Lambda Response:', responseBody);
-
+    
             if (responseBody.statusCode === 201) {
                 console.log('Stock request report created successfully');
                 await this.logActivity('Requested stock', quantity.toString() + ' of ' + item.sku);
                 await this.loadInventoryData();
                 
-                // Show success message using snackbar
                 this.snackBar.open('Stock requested successfully', 'Close', {
-                    duration: 3000, // Duration in milliseconds
+                    duration: 3000,
                     horizontalPosition: 'center',
                     verticalPosition: 'top',
                 });
@@ -470,7 +523,6 @@ export class InventoryComponent implements OnInit {
         } catch (error) {
             console.error('Error requesting stock:', error);
             
-            // Show error message using snackbar
             this.snackBar.open('Error requesting stock: ' + (error as Error).message, 'Close', {
                 duration: 5000,
                 horizontalPosition: 'center',

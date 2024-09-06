@@ -38,6 +38,15 @@
             Quick Actions
         </button>
         <mat-menu #menu="matMenu" class="menu" style="width: 150px">
+            <button
+                class="QAButtons"
+                mat-menu-item
+                *ngIf="getCurrentRoute('inventory')"
+                color="primary"
+                (click)="onViewInventorySummary()"
+            >
+                <mat-icon>inventory</mat-icon><span>View Inventory Summary</span>
+            </button>
             <button class="QAButtons" mat-menu-item color="primary" (click)="downloadCSV()">
                 <mat-icon>download</mat-icon><span>Export Excel</span>
             </button>

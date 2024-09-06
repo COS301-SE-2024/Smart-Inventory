@@ -3,7 +3,7 @@ mat-toolbar {
     align-items: center;
     background-color: var(--header-bg-color);
     font-weight: 450;
-    font-size: 35px;
+    font-size: 25px;
     height: 60px;
 }
 

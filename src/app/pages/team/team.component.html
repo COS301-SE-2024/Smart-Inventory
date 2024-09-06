@@ -5,6 +5,7 @@
         [addButton]="addButton"
         (addNewClicked)="openAddMemberPopup()"
         (nameCellValueChanged)="onNameCellValueChanged($event)"
+        [context]="getContext()"
         #gridComponent
     >
     </app-grid>

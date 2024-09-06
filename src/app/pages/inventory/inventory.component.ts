@@ -14,7 +14,7 @@ import { LoadingSpinnerComponent } from '../../components/loader/loading-spinner
 import { MatDialog } from '@angular/material/dialog';
 import { InventoryDeleteConfirmationDialogComponent } from './inventory-delete-confirmation-dialogue.component';
 import { MatDialogModule } from '@angular/material/dialog';
-import { AddInventoryModalComponent } from './add-inventory-modal/add-inventory-modal.component';
+import { AddInventoryModalComponent } from '../../components/add-inventory-modal/add-inventory-modal.component';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { RequestStockModalComponent } from './request-stock-modal/request-stock-modal.component';
 import { MatNativeDateModule } from '@angular/material/core';

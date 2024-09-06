@@ -308,6 +308,11 @@ export class InventoryComponent implements OnInit {
                 console.log('Inventory item added successfully');
                 await this.logActivity('Added new inventory item', formData.upc + ' was added.');
                 await this.loadInventoryData();
+                this.snackBar.open('Inventory item added successfully', 'Close', {
+                    duration: 3000, // Duration in milliseconds
+                    horizontalPosition: 'center',
+                    verticalPosition: 'top',
+                });
             } else {
                 throw new Error(responseBody.body);
             }

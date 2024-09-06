@@ -69,6 +69,8 @@ export class CustomQuoteModalComponent implements OnInit {
   isEditing: boolean = false;
   isNewQuote: boolean = false;
   hasUnsavedChanges: boolean = false;
+  isSendingQuote: boolean = false;
+  isSavingChanges: boolean = false;
 
   orderId: string | null = null;
   quoteId: string | null = null;
@@ -323,6 +325,7 @@ export class CustomQuoteModalComponent implements OnInit {
 
 
   async saveChanges() {
+    this.isSavingChanges = true;
     const updatedQuote = {
       quoteId: this.quoteId,
       items: this.quoteItems.map(({ item, quantity }) => ({
@@ -354,6 +357,8 @@ export class CustomQuoteModalComponent implements OnInit {
         horizontalPosition: 'center',
         verticalPosition: 'top',
       });
+    } finally {
+      this.isSavingChanges = false; // Set saving state back to false
     }
   }
 
@@ -444,19 +449,32 @@ export class CustomQuoteModalComponent implements OnInit {
       return;
     }
     if (!this.isNewQuote) {
-      console.log('Sending quote...');
-      const emailData = await this.prepareEmailData();
-      
-      // Send emails
-      await this.sendEmails(emailData);
+      this.isSendingQuote = true; // Set loading state to true
+      try {
+        console.log('Sending quote...');
+        const emailData = await this.prepareEmailData();
+        
+        // Send emails
+        await this.sendEmails(emailData);
 
-      this.dialogRef.close({ action: 'sendQuote', data: {
-        quoteId: this.quoteId,
-        items: this.quoteItems,
-        suppliers: this.selectedSuppliers,
-        emailData: emailData
-      }});
+        this.dialogRef.close({ action: 'sendQuote', data: {
+          quoteId: this.quoteId,
+          items: this.quoteItems,
+          suppliers: this.selectedSuppliers,
+          emailData: emailData
+        }});
+      } catch (error) {
+        console.error('Error sending quote:', error);
+        this.snackBar.open('Error sending quote. Please try again.', 'Close', {
+          duration: 5000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+        });
+      } finally {
+        this.isSendingQuote = false; // Set loading state back to false
+      }
     }
+
   }
 
   async prepareEmailData() {

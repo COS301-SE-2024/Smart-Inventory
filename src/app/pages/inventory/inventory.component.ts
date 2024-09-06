@@ -262,9 +262,9 @@ export class InventoryComponent implements OnInit {
     openAddItemPopup() {
         const dialogRef = this.dialog.open(AddInventoryModalComponent, {
             width: '600px',
-            data: { suppliers: this.suppliers },
+            data: { suppliers: this.suppliers, tenentId: this.tenantId },
         });
-
+    
         dialogRef.afterClosed().subscribe((result) => {
             if (result) {
                 this.onSubmit(result);

@@ -122,6 +122,7 @@ export class AddInventoryModalComponent implements OnInit {
             lowStockThreshold: item.lowStockThreshold,
             reorderAmount: item.reorderAmount,
             supplier: item.supplier,
+            upc: item.upc
         });
 
         // Enable only certain fields

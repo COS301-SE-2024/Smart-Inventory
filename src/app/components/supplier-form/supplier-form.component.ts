@@ -10,6 +10,8 @@ import { DeliveryService } from '../../../../amplify/services/delivery.service';
 import { QuoteService } from '../../../../amplify/services/quote-items.service';
 import { QuoteSubmissionService } from '../../../../amplify/services/quote-submission.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { NotificationService } from '../../../../amplify/services/notification.service';
+import { v4 as uuidv4 } from 'uuid';
 
 interface QuoteItem {
   upc: string;
@@ -64,7 +66,8 @@ export class SupplierFormComponent implements OnInit {
     private deliveryService: DeliveryService, 
     private quoteService: QuoteService, 
     private quoteSubmissionService: QuoteSubmissionService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private notificationService: NotificationService
   ) {}
 
   openUpdateContactModal() {
@@ -80,9 +83,33 @@ export class SupplierFormComponent implements OnInit {
   }
 
   sendUpdateContactRequest() {
-    // Implement the logic to send the update contact request
-    console.log('Sending update contact request');
-    // You would typically make an API call here
+    const notificationData = {
+      tenentId: this.tenentId,
+      timestamp: new Date().toISOString(),
+      notificationId: uuidv4(),
+      type: 'SUPPLIER_CONTACT_UPDATE_REQUEST',
+      message: `${this.supplierInfo.companyName} requested to update their contact information`,
+      isRead: false
+    };
+  
+    this.notificationService.createNotification(notificationData).subscribe(
+      (response) => {
+        console.log('Notification created successfully:', response);
+        this.snackBar.open('Contact update request sent successfully!', 'Close', {
+          duration: 3000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+        });
+      },
+      (error) => {
+        console.error('Error creating notification:', error);
+        this.snackBar.open('Error sending update request. Please try again.', 'Close', {
+          duration: 3000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+        });
+      }
+    );
   }
 
   additionalComments: string = '';

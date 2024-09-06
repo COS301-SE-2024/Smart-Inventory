@@ -661,9 +661,18 @@ export class OrdersComponent implements OnInit {
     }
 
     this.isSidePaneOpen = true;
-}
+  }
   
   async openReceiveOrderModal(orderData: any) {
+    if (orderData.Quote_Status !== 'Accepted') {
+      this.snackBar.open('Only orders with accepted quotes can be marked as received.', 'Close', {
+        duration: 5000,
+        horizontalPosition: 'center',
+        verticalPosition: 'top',
+      });
+      return;
+    }
+
     const dialogRef = this.dialog.open(ReceiveOrderModalComponent, {
       width: '50vw',
       maxWidth: '2700px',

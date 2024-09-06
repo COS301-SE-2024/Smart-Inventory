@@ -1,6 +1,6 @@
-<!-- <div *ngIf="isLoading" class="loading-overlay">
+<div *ngIf="isLoading" class="loading-overlay">
     <app-loading-spinner></app-loading-spinner>
-</div> -->
+</div>
 
 <div style="height: 100%; display: block; overflow: none">
     <!-- order-report-metrics.component.html -->
@@ -33,9 +33,11 @@
         </gridster-item>
 
         <!-- Inventory Grid -->
-        <gridster-item [item]="layout[1]" class="order-report-item">
-            <div class="inventoryHolder">
-                <app-grid [rowData]="rowData" [columnDefs]="colDefs" #gridComponent></app-grid>
+        <gridster-item [item]="layout[1]" class="order-report-item app-grid-container">
+            <div class="grid-item-content">
+                <div class="inventoryHolder">
+                    <app-grid [rowData]="rowData" [columnDefs]="colDefs" #gridComponent></app-grid>
+                </div>
             </div>
         </gridster-item>
 

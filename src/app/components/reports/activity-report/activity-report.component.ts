@@ -159,7 +159,7 @@ export class ActivityReportComponent implements OnInit, AfterViewInit {
             defaultItemCols: 1,
             defaultItemRows: 1,
             fixedColWidth: 105,
-            fixedRowHeight: 140,
+            fixedRowHeight: 142,
             keepFixedHeightInMobile: false,
             keepFixedWidthInMobile: false,
             scrollSensitivity: 10,
@@ -197,7 +197,7 @@ export class ActivityReportComponent implements OnInit, AfterViewInit {
                 { cols: 4, rows: 1, y: 0, x: 0, type: 'metric', data: this.ActivityReport.metrics[0] },
                 { cols: 4, rows: 1, y: 0, x: 3, type: 'metric', data: this.ActivityReport.metrics[1] },
                 { cols: 4, rows: 1, y: 0, x: 6, type: 'metric', data: this.ActivityReport.metrics[2] },
-                { cols: 12, rows: 4, y: 1, x: 0, type: 'grid' }
+                { cols: 12, rows: 5, y: 1, x: 0, type: 'grid' }
             ] as CustomGridsterItem[];
             this.changeDetectorRef.detectChanges();
         });

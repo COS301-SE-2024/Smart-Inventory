@@ -62,7 +62,7 @@ export class OrderReportComponent implements OnInit {
             resizable: {
                 enabled: false,
             },
-            pushItems: false,
+            pushItems: true,
             margin: 10,
             minCols: 12,
             maxCols: 12,
@@ -85,7 +85,7 @@ export class OrderReportComponent implements OnInit {
 
     layout: any[] = [
         { cols: 12, rows: 1.1, y: 0, x: 0 },  // Metrics Container
-        { cols: 8, rows: 3, y: 1, x: 0 },   // Inventory Grid
+        { cols: 8, rows: 4, y: 1, x: 0 },   // Inventory Grid
         { cols: 4, rows: 3, y: 1, x: 8 },   // Order Report
         { cols: 6, rows: 4, y: 3, x: 0 },   // Stacked Bar Chart
         { cols: 12, rows: 3, y: 3, x: 6 },   // Scatter Plot

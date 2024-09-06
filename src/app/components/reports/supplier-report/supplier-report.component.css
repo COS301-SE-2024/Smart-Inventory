@@ -17,7 +17,7 @@ gridster {
     background-color: white !important;
 }
 
-gridster-item{
+gridster-item {
     overflow: visible;
 }
 
@@ -347,4 +347,27 @@ mat-card-content.mat-mdc-card-content {
     /* Optional: Adds shadow for better depth */
     overflow: hidden;
     /* Ensures no content spills out */
+}
+
+.app-grid-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+}
+
+.app-grid-container .grid-item-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.app-grid-container .inventoryHolder {
+    flex-grow: 1;
+    overflow: hidden;
+}
+
+.app-grid-container app-grid {
+    height: 100%;
+    width: 100%;
 }

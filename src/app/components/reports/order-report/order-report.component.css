@@ -175,3 +175,26 @@ gridster-item{
     border-radius: 10px !important;
     background-color: transparent !important;
 }
+
+.app-grid-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+}
+
+.app-grid-container .grid-item-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.app-grid-container .inventoryHolder {
+    flex-grow: 1;
+    overflow: hidden;
+}
+
+.app-grid-container app-grid {
+    height: 100%;
+    width: 100%;
+}

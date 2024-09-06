@@ -9,6 +9,7 @@ import outputs from '../../../../amplify_outputs.json';
 import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
 import { MatDialog } from '@angular/material/dialog';
 import { SupplierQuoteDetailsComponent } from '../supplier-quote-details/supplier-quote-details.component';
+import { LoadingSpinnerComponent } from '../loader/loading-spinner.component';
 
 interface SupplierQuote {
   SupplierID: string;
@@ -22,7 +23,7 @@ interface SupplierQuote {
 @Component({
   selector: 'app-received-quotes-side-pane',
   standalone: true,
-  imports: [CommonModule, MatButtonModule, MatIconModule, MatCardModule],
+  imports: [CommonModule, MatButtonModule, MatIconModule, MatCardModule, LoadingSpinnerComponent],
   templateUrl: './received-quotes-side-pane.component.html',
   styleUrls: ['./received-quotes-side-pane.component.css']
 })
@@ -51,6 +52,7 @@ export class ReceivedQuotesSidePaneComponent implements OnChanges {
   }
 
   supplierQuotes: SupplierQuote[] = [];
+  isLoading: boolean = false;
 
   constructor(private dialog: MatDialog) {}
 
@@ -59,6 +61,7 @@ export class ReceivedQuotesSidePaneComponent implements OnChanges {
   }
 
   async fetchSupplierQuotes() {
+    this.isLoading = true;
     try {
       const session = await fetchAuthSession();
       const tenentId = await this.getTenentId(session);
@@ -89,6 +92,8 @@ export class ReceivedQuotesSidePaneComponent implements OnChanges {
       }
     } catch (error) {
       console.error('Error in fetchSupplierQuotes:', error);
+    } finally {
+      this.isLoading = false;
     }
   }
 

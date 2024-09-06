@@ -3,11 +3,13 @@ import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatDialog } from '@angular/material/dialog';
 import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
 import { fetchAuthSession } from 'aws-amplify/auth';
 import outputs from '../../../../amplify_outputs.json';
 import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
-import { MatDialog } from '@angular/material/dialog';
 import { SupplierQuoteDetailsComponent } from '../supplier-quote-details/supplier-quote-details.component';
 import { LoadingSpinnerComponent } from '../loader/loading-spinner.component';
 
@@ -23,7 +25,15 @@ interface SupplierQuote {
 @Component({
   selector: 'app-received-quotes-side-pane',
   standalone: true,
-  imports: [CommonModule, MatButtonModule, MatIconModule, MatCardModule, LoadingSpinnerComponent],
+  imports: [
+    CommonModule, 
+    MatButtonModule, 
+    MatIconModule, 
+    MatCardModule, 
+    MatFormFieldModule, 
+    MatSelectModule,
+    LoadingSpinnerComponent
+  ],
   templateUrl: './received-quotes-side-pane.component.html',
   styleUrls: ['./received-quotes-side-pane.component.css']
 })
@@ -32,11 +42,45 @@ export class ReceivedQuotesSidePaneComponent implements OnChanges {
   @Output() closed = new EventEmitter<void>();
   @Output() quoteAccepted = new EventEmitter<void>();
 
+  sortCriteria: string = 'price';
+  sortOrder: 'asc' | 'desc' = 'asc';
+  sortedQuotes: SupplierQuote[] = [];
+  paneWidth = 800; // Initial width
+  private resizing = false;
+
   @Input() set isOpen(value: boolean) {
     this._isOpen = value;
     if (value && this.selectedOrder) {
         this.fetchSupplierQuotes();
     }
+  }
+
+  applySorting() {
+    this.sortedQuotes = [...this.supplierQuotes].sort((a, b) => {
+      let valueA, valueB;
+      switch (this.sortCriteria) {
+        case 'price':
+          valueA = a.Total_Quote_Value;
+          valueB = b.Total_Quote_Value;
+          break;
+        case 'date':
+          valueA = new Date(a.Delivery_Date).getTime();
+          valueB = new Date(b.Delivery_Date).getTime();
+          break;
+        case 'deliveryCost':
+          valueA = a.Delivery_Cost;
+          valueB = b.Delivery_Cost;
+          break;
+        default:
+          return 0;
+      }
+      return this.sortOrder === 'asc' ? valueA - valueB : valueB - valueA;
+    });
+  }
+
+  toggleSortOrder() {
+    this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
+    this.applySorting();
   }
 
   get isOpen(): boolean {
@@ -59,6 +103,23 @@ export class ReceivedQuotesSidePaneComponent implements OnChanges {
 
   close() {
     this.closed.emit();
+  }
+
+  setSortCriteria(criteria: string) {
+    if (this.sortCriteria === criteria) {
+      this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortCriteria = criteria;
+      this.sortOrder = 'asc';
+    }
+    this.applySorting();
+  }
+
+  getSortIcon(criteria: string): string {
+    if (this.sortCriteria !== criteria) {
+      return 'unfold_more';
+    }
+    return this.sortOrder === 'asc' ? 'arrow_upward' : 'arrow_downward';
   }
 
   async fetchSupplierQuotes() {
@@ -88,6 +149,7 @@ export class ReceivedQuotesSidePaneComponent implements OnChanges {
       if (responseBody.statusCode === 200) {
         this.supplierQuotes = JSON.parse(responseBody.body);
         this.noQuotesReceived = this.supplierQuotes.length === 0;
+        this.applySorting();
         console.log('Supplier quotes:', this.supplierQuotes);
       } else {
         console.error('Error fetching supplier quotes:', responseBody.body);
@@ -144,6 +206,32 @@ export class ReceivedQuotesSidePaneComponent implements OnChanges {
         this.quoteAccepted.emit();
       }
     });
+  }
+
+  startResize(event: MouseEvent) {
+    this.resizing = true;
+    event.preventDefault();
+    document.addEventListener('mousemove', this.resize);
+    document.addEventListener('mouseup', this.stopResize);
+  }
+
+  private resize = (event: MouseEvent) => {
+    if (this.resizing) {
+      const newWidth = window.innerWidth - event.clientX;
+      if (newWidth > 400 && newWidth < 1200) { // Set min and max width
+        this.paneWidth = newWidth;
+      }
+    }
+  }
+
+  private stopResize = () => {
+    this.resizing = false;
+    document.removeEventListener('mousemove', this.resize);
+    document.removeEventListener('mouseup', this.stopResize);
+  }
+
+  ngOnDestroy() {
+    this.stopResize();
   }
 
 }

@@ -170,7 +170,12 @@ export class AddInventoryModalComponent implements OnInit {
     }
 
     generateSKU() {
-        // Implement your SKU generation logic here
-        this.inventoryForm.get('sku')?.setValue('Generated SKU');
+        // Generate a random SKU
+        const randomPart = Math.random().toString(36).substring(2, 8).toUpperCase();
+        const timestamp = new Date().getTime().toString().slice(-4);
+        const newSKU = `SKU-${randomPart}-${timestamp}`;
+        
+        // Update the form control
+        this.inventoryForm.get('sku')?.setValue(newSKU);
     }
 }

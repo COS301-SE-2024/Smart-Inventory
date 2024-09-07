@@ -154,7 +154,8 @@ export class SupplierQuoteDetailsComponent implements OnInit {
         orderDate: this.data.orderDate,
         selectedSupplier: this.supplierInfo.company_name,
         supplierID: this.data.supplierID,
-        expectedDeliveryDate: this.quoteSummary?.Delivery_Date
+        expectedDeliveryDate: this.quoteSummary?.Delivery_Date,
+        tenentId: tenentId
       };
   
       // Console log the payload

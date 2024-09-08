@@ -98,7 +98,10 @@ export class OrdersComponent implements OnInit {
           return { backgroundColor: sentToSuppliersColor };
         } else if (params.value === 'Accepted') {
           return { backgroundColor: completedColor };
-        } else {
+        } else if (params.value === 'Renegotiation Requested') {
+          return { backgroundColor: sentToSuppliersColor };
+        } 
+        else {
           return { backgroundColor: pendingApprovalColor };
         }
       }

@@ -2,9 +2,6 @@
   <div class="side-pane-header">
     <h2>Receive Order</h2>
     <div class="header-buttons">
-      <button mat-raised-button color="primary" class="receive-order-button" (click)="markAsReceived()">
-        Mark Order As Received
-      </button>
       <button mat-icon-button class="close-button" (click)="close()">
         <mat-icon>close</mat-icon>
       </button>
@@ -57,5 +54,10 @@
         <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
       </table>
     </div>
+  </div>
+  <div class="modal-footer">
+    <button mat-raised-button color="primary" class="receive-order-button" (click)="markAsReceived()">
+      Mark Order As Received
+    </button>
   </div>
 </div>

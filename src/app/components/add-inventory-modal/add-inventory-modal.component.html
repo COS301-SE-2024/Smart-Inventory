@@ -21,7 +21,13 @@
             <mat-form-field appearance="outline">
                 <mat-label>Supplier</mat-label>
                 <mat-select formControlName="supplier">
-                    <mat-option *ngFor="let supplier of data.suppliers" [value]="supplier.company_name">
+                    <mat-option>
+                        <ngx-mat-select-search [formControl]="supplierControl" 
+                                               placeholderLabel="Search suppliers..."
+                                               noEntriesFoundLabel="No matching suppliers found">
+                        </ngx-mat-select-search>
+                    </mat-option>
+                    <mat-option *ngFor="let supplier of filteredSuppliers | async" [value]="supplier.company_name">
                         {{ supplier.company_name }}
                     </mat-option>
                 </mat-select>

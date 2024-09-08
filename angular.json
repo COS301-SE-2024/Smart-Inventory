@@ -13,7 +13,6 @@
                 "build": {
                     "builder": "@angular-devkit/build-angular:application",
                     "options": {
-                        
                         "outputPath": "dist/smart-inventory",
                         "index": "src/index.html",
                         "browser": "src/main.ts",
@@ -41,9 +40,7 @@
                             "@aws-crypto/sha256-browser",
                             "bowser",
                             "fast-xml-parser",
-                            "@aws-crypto/crc32",
-                            "uuid",
-                            "@aws-sdk/client-lambda"
+                            "@aws-crypto/crc32"
                         ]
                     },
                     "configurations": {

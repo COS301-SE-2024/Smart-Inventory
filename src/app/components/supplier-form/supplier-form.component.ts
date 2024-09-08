@@ -155,7 +155,7 @@ export class SupplierFormComponent implements OnInit {
   deliveryCost: number = 0; // Will store the delivery cost
 
   ngOnInit() {
-
+    this.isSubmitting = true;
     this.route.params.subscribe(params => {
       this.supplierID = params['supplierID'] || '';
       this.quoteID = params['quoteID'] || '';
@@ -176,12 +176,12 @@ export class SupplierFormComponent implements OnInit {
         this.loadQuoteItems();
       }
 
-
     });
 
     this.quoteItems = [];
     this.updateAllTotals();
     this.setDefaultDeliveryDate();
+    this.isSubmitting = false;
   }
 
   loadSupplierData() {

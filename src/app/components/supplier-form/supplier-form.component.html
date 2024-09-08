@@ -166,13 +166,13 @@
         <span *ngIf="!isSubmitting">Submit Quote</span>
         <span *ngIf="isSubmitting">Submitting...</span>
     </button>
+</div>
 
-    <div *ngIf="isDeadlinePassed" class="deadline-overlay">
-        <div class="deadline-message">
-          <h2>Submission Deadline Passed</h2>
-          <p>The deadline for this quote submission has passed. You can no longer submit or edit this quote.</p>
-        </div>
-    </div>    
+<div *ngIf="isDeadlinePassed" class="deadline-overlay">
+    <div class="deadline-message">
+        <h2>Submission Deadline Passed</h2>
+        <p>The deadline for this quote submission has passed. You can no longer submit or edit this quote.</p>
+    </div>
 </div>
 
 <div *ngIf="isSubmitting" class="loading-overlay">

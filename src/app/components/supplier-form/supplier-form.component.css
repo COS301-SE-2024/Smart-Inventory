@@ -200,6 +200,10 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   resize: vertical;
 }
 
+.additional-info {
+  margin-bottom: 20px;
+}
+
 .attachments input[type="file"] {
   margin-bottom: 10px;
 }

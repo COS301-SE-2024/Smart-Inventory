@@ -1,7 +1,7 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormControl } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
@@ -11,6 +11,9 @@ import { MatNativeDateModule, provideNativeDateAdapter } from '@angular/material
 import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
 import { fetchAuthSession } from 'aws-amplify/auth';
 import outputs from '../../../../amplify_outputs.json';
+import { ReplaySubject, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 
 @Component({
     selector: 'app-add-inventory-modal',
@@ -25,12 +28,13 @@ import outputs from '../../../../amplify_outputs.json';
         MatSelectModule,
         MatDatepickerModule,
         MatNativeDateModule,
+        NgxMatSelectSearchModule,
     ],
     providers: [provideNativeDateAdapter()],
     templateUrl: './add-inventory-modal.component.html',
     styleUrls: ['./add-inventory-modal.component.css'],
 })
-export class AddInventoryModalComponent implements OnInit {
+export class AddInventoryModalComponent implements OnInit, OnDestroy {
     inventoryForm: FormGroup;
     categories: string[] = [
         'Food: Perishable',
@@ -46,6 +50,11 @@ export class AddInventoryModalComponent implements OnInit {
     ];
     showFullForm = false;
     itemExists = false;
+
+    supplierControl = new FormControl();
+    filteredSuppliers: ReplaySubject<{ company_name: string; supplierID: string }[]> = new ReplaySubject<{ company_name: string; supplierID: string }[]>(1);
+
+    protected _onDestroy = new Subject<void>();
 
     constructor(
         public dialogRef: MatDialogRef<AddInventoryModalComponent>,
@@ -66,7 +75,36 @@ export class AddInventoryModalComponent implements OnInit {
     }
 
     ngOnInit() {
-        // No need to disable controls here as they are already set up as disabled in the constructor
+        // Set initial filtered suppliers
+        this.filteredSuppliers.next(this.data.suppliers.slice());
+
+        // Listen for supplier search field value changes
+        this.supplierControl.valueChanges
+            .pipe(takeUntil(this._onDestroy))
+            .subscribe(() => {
+                this.filterSuppliers();
+            });
+    }
+
+    ngOnDestroy() {
+        this._onDestroy.next();
+        this._onDestroy.complete();
+    }
+
+    private filterSuppliers() {
+        if (!this.data.suppliers) {
+            return;
+        }
+        let search = this.supplierControl.value;
+        if (!search) {
+            this.filteredSuppliers.next(this.data.suppliers.slice());
+            return;
+        } else {
+            search = search.toLowerCase();
+        }
+        this.filteredSuppliers.next(
+            this.data.suppliers.filter(supplier => supplier.company_name.toLowerCase().indexOf(search) > -1)
+        );
     }
 
     async onNext() {

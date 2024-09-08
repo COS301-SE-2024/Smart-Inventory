@@ -12,6 +12,7 @@ import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
 import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
 import outputs from '../../../../amplify_outputs.json';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { LoadingSpinnerComponent } from '../loader/loading-spinner.component';
 
 interface DeliveryAddress {
   company: string;
@@ -36,7 +37,8 @@ interface DeliveryAddress {
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
-    MatSnackBarModule
+    MatSnackBarModule, 
+    LoadingSpinnerComponent
   ],
   templateUrl: './delivery-information-modal.component.html',
   styleUrl: './delivery-information-modal.component.css'
@@ -67,7 +69,9 @@ export class DeliveryInformationModalComponent implements OnInit {
   }
 
   async ngOnInit() {
+    this.isLoading = true;
     await this.loadDeliveryInfo();
+    this.isLoading = false;
   }
 
   async loadDeliveryInfo() {
@@ -133,6 +137,7 @@ export class DeliveryInformationModalComponent implements OnInit {
 
   async onSave() {
     if (this.deliveryForm.valid) {
+      this.isLoading = true;
       try {
         const session = await fetchAuthSession();
   
@@ -190,6 +195,8 @@ export class DeliveryInformationModalComponent implements OnInit {
           verticalPosition: 'top'
         });
         // Handle the error (e.g., show an error message to the user)
+      } finally {
+        this.isLoading = false;
       }
     }
   }

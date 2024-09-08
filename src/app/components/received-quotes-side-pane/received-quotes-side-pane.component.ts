@@ -204,6 +204,7 @@ export class ReceivedQuotesSidePaneComponent implements OnChanges {
         // Quote was accepted, refresh the data and notify the parent component
         this.fetchSupplierQuotes();
         this.quoteAccepted.emit();
+        this.close();
       }
     });
   }

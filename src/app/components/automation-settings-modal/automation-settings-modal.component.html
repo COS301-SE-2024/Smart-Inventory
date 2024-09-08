@@ -1,31 +1,37 @@
 <!-- automation-settings-modal.component.html -->
-<h2 mat-dialog-title>Automation Settings</h2>
-<mat-dialog-content>
-  <div class="next-scan-info">
-    <p><strong>Next scheduled scan:</strong> {{ nextScheduledScan | date:'medium' }}</p>
-    <p><strong>Time until next scan:</strong> {{ countdownTime }}</p>
+<div class="automation-settings-container">
+  <h2 mat-dialog-title>Automation Settings</h2>
+  <mat-dialog-content>
+    <div class="next-scan-info">
+      <p><strong>Next scheduled scan:</strong> {{ nextScheduledScan | date:'medium' }}</p>
+      <p><strong>Time until next scan:</strong> {{ countdownTime }}</p>
+    </div>
+    <mat-tab-group [(selectedIndex)]="selectedTabIndex" (selectedIndexChange)="onTabChange($event)">
+      <mat-tab label="Daily">
+        <div class="daily-scan-time">
+          <mat-form-field>
+            <mat-label>Daily Scan Time</mat-label>
+            <input matInput type="time" [(ngModel)]="dailyTime">
+          </mat-form-field>
+        </div>
+      </mat-tab>
+      <mat-tab label="Weekly">
+        <div class="weekly-schedule">
+          <mat-form-field *ngFor="let day of ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']">
+            <mat-label>{{day | titlecase}}</mat-label>
+            <input matInput type="time" [(ngModel)]="weeklySchedule[day]">
+          </mat-form-field>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-button (click)="cancel()" [disabled]="isLoading">Cancel</button>
+    <button mat-raised-button color="primary" (click)="saveSettings()" [disabled]="isLoading">Save Settings</button>
+    <button mat-raised-button color="primary" (click)="scanNow()" [disabled]="isLoading">Scan Now</button>
+  </mat-dialog-actions>
+
+  <div *ngIf="isLoading" class="loading-overlay">
+    <app-loading-spinner></app-loading-spinner>
   </div>
-  <mat-tab-group [(selectedIndex)]="selectedTabIndex" (selectedIndexChange)="onTabChange($event)">
-    <mat-tab label="Daily">
-      <div class="daily-scan-time">
-        <mat-form-field>
-          <mat-label>Daily Scan Time</mat-label>
-          <input matInput type="time" [(ngModel)]="dailyTime">
-        </mat-form-field>
-      </div>
-    </mat-tab>
-    <mat-tab label="Weekly">
-      <div class="weekly-schedule">
-        <mat-form-field *ngFor="let day of ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']">
-          <mat-label>{{day | titlecase}}</mat-label>
-          <input matInput type="time" [(ngModel)]="weeklySchedule[day]">
-        </mat-form-field>
-      </div>
-    </mat-tab>
-  </mat-tab-group>
-</mat-dialog-content>
-<mat-dialog-actions align="end">
-  <button mat-button (click)="cancel()">Cancel</button>
-  <button mat-raised-button color="primary" (click)="saveSettings()">Save Settings</button>
-  <button mat-raised-button color="primary" (click)="scanNow()">Scan Now</button>
-</mat-dialog-actions>
+</div>

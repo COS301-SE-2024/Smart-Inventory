@@ -138,7 +138,7 @@ export class SupplierQuoteDetailsComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.isAcceptingQuote = true; // Set to true before accepting the quote
+        this.isLoading = true; // Set to true before accepting the quote
         this.acceptQuote();
       }
     });
@@ -193,7 +193,7 @@ export class SupplierQuoteDetailsComponent implements OnInit {
         verticalPosition: 'top'
       });
     } finally {
-      this.isAcceptingQuote = false; // Set back to false after the process completes
+      this.isLoading = false; // Set back to false after the process completes
     }
   }
 

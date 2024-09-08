@@ -191,8 +191,11 @@ export class SupplierQuoteDetailsComponent implements OnInit {
     }
   }
 
+
   openRenegotiateModal(): void {
-    const dialogRef = this.dialog.open(SupplierRenegotiationModalComponent, {
+    this.dialogRef.close(); // Close the supplier-quote-details modal
+
+    const renegotiateDialogRef = this.dialog.open(SupplierRenegotiationModalComponent, {
       width: '800px',
       data: {
         supplierName: this.supplierInfo.company_name,
@@ -201,11 +204,19 @@ export class SupplierQuoteDetailsComponent implements OnInit {
         supplierID: this.data.supplierID
       }
     });
-  
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        // Handle the result if needed
+
+    renegotiateDialogRef.afterClosed().subscribe(result => {
+      if (result === 'cancelled') {
+        // Reopen the supplier-quote-details modal if renegotiation was cancelled
+        this.dialog.open(SupplierQuoteDetailsComponent, {
+          width: '90%',
+          maxWidth: '1350px',
+          data: this.data
+        });
+      } else if (result) {
+        // Handle successful renegotiation
         console.log('Renegotiation email sent:', result);
+        // You may want to show a success message or perform other actions here
       }
     });
   }

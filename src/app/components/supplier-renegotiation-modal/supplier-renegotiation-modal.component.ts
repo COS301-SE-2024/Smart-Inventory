@@ -79,7 +79,7 @@ Best regards,
   }
 
   onCancel() {
-    this.dialogRef.close();
+    this.dialogRef.close('cancelled');
   }
 
   getPreviewContent(): string {

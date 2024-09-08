@@ -19,6 +19,16 @@
     <app-loading-spinner></app-loading-spinner>
   </div>
   <ng-container *ngIf="!isLoading">
+  
+    <div class="submission-deadline-section">
+      <h3>Submission Deadline</h3>
+      <mat-form-field appearance="outline">
+        <mat-label>Submission Deadline</mat-label>
+        <input matInput [matDatepicker]="picker" [(ngModel)]="submissionDeadline" (ngModelChange)="onQuoteChanged()">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+    </div>
     <div class="items-section">
       <h3>Quote Items</h3>
       <mat-form-field appearance="outline" class="full-width search-field">

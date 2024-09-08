@@ -21,6 +21,7 @@ import { MatCardModule } from '@angular/material/card';
 import { ReceiveOrderModalComponent } from 'app/components/receive-order-modal/receive-order-modal.component';
 import { AutomationSettingsModalComponent } from 'app/components/automation-settings-modal/automation-settings-modal.component';
 
+
 interface DeliveryAddress {
   company: string;
   street: string;
@@ -119,6 +120,18 @@ export class OrdersComponent implements OnInit {
     },
     { field: 'Expected_Delivery_Date', headerName: 'Expected Delivery Date', filter: 'agDateColumnFilter' },
     { field: 'Actual_Delivery_Date', headerName: 'Actual Delivery Date', filter: 'agDateColumnFilter' },
+    { 
+      field: 'Submission_Deadline', 
+      headerName: 'Submission Deadline', 
+      filter: 'agDateColumnFilter',
+      valueFormatter: (params) => {
+        if (params.value) {
+          const date = new Date(params.value);
+          return date.toLocaleDateString();
+        }
+        return '';
+      }
+    },
   ];
 
   deliveryAddress: DeliveryAddress = {
@@ -164,14 +177,14 @@ export class OrdersComponent implements OnInit {
     }
     try {
       const quoteDetails = await this.fetchQuoteDetails(this.selectedOrder.Quote_ID);
-      this.openCustomQuoteModal(quoteDetails, this.selectedOrder.Order_ID, this.selectedOrder.Quote_ID);
+      this.openCustomQuoteModal(quoteDetails, this.selectedOrder.Order_ID, this.selectedOrder.Quote_ID, this.selectedOrder.Submission_Deadline, this.selectedOrder.Order_Date);
     } catch (error) {
       console.error('Error fetching quote details:', error);
       alert('Error fetching quote details');
     }
   }
   
-  openCustomQuoteModal(quoteDetails: any, orderId: string, quoteId: string) {
+  openCustomQuoteModal(quoteDetails: any, orderId: string, quoteId: string, submissionDeadline: string, orderDate: string) {
     const dialogRef = this.dialog.open(CustomQuoteModalComponent, {
       width: '60vw',
       maxWidth: '100vw',
@@ -179,13 +192,16 @@ export class OrdersComponent implements OnInit {
         quoteDetails: {
           ...quoteDetails,
           orderId: orderId,
-          quoteId: quoteId
+          quoteId: quoteId,
+          Submission_Deadline: submissionDeadline,
+          orderDate: orderDate // Add this line
         },
         isEditing: false,
         isNewQuote: !orderId
       },
-      disableClose: true // Prevent closing on backdrop click or ESC key
+      disableClose: true
     });
+  
   
     dialogRef.afterClosed().subscribe(result => {
       if (result && result.action === 'saveChanges') {
@@ -298,8 +314,10 @@ export class OrdersComponent implements OnInit {
         credentials: session.credentials,
       });
   
+      const orderDate = new Date().toISOString().split('T')[0];
+  
       const newOrder = {
-        Order_Date: new Date().toISOString().split('T')[0],
+        Order_Date: orderDate,
         Order_Status: 'Pending Approval',
         Quote_Status: quoteData.Quote_Status || 'Draft',
         Selected_Supplier: null,
@@ -307,6 +325,7 @@ export class OrdersComponent implements OnInit {
         Actual_Delivery_Date: null,
         tenentId: tenentId,
         Creation_Time: new Date().toISOString(),
+        Submission_Deadline: quoteData.Submission_Deadline,
         quoteItems: quoteData.items.map((item: any) => ({
           ItemSKU: item.ItemSKU,
           Quantity: item.Quantity,
@@ -355,12 +374,14 @@ export class OrdersComponent implements OnInit {
           orderId: orderId,
           quoteId: quoteId,
           items: quoteData.items,
-          suppliers: quoteData.suppliers
+          suppliers: quoteData.suppliers,
+          Submission_Deadline: quoteData.Submission_Deadline,
+          orderDate: orderDate  // Include the orderDate here
         };
         
         // Open the generated quote modal after a delay
         setTimeout(() => {
-          this.openCustomQuoteModal(quoteDetails, orderId, quoteId);
+          this.openCustomQuoteModal(quoteDetails, orderId, quoteId, quoteData.Submission_Deadline, orderDate);
         }, 3000);
       } else {
         throw new Error(responseBody.body || 'Unknown error occurred');
@@ -379,17 +400,22 @@ export class OrdersComponent implements OnInit {
 
   async handleNewCustomQuote(event: { type: string, data: any }) {
     if (event.type === 'order') {
-      await this.createNewOrder(event.data);
+      await this.createNewOrder({
+        ...event.data,
+        Submission_Deadline: event.data.Submission_Deadline
+      });
     }
     if (event.type === 'draft') {
       await this.createNewOrder({
         ...event.data,
-        Quote_Status: 'Draft'
+        Quote_Status: 'Draft',
+        Submission_Deadline: event.data.Submission_Deadline
       });
     } else if (event.type === 'quote') {
       await this.createNewOrder({
         ...event.data,
-        Quote_Status: 'Sent'
+        Quote_Status: 'Sent',
+        Submission_Deadline: event.data.Submission_Deadline
       });
     }
   }
@@ -467,6 +493,7 @@ export class OrdersComponent implements OnInit {
           Creation_Time: order.Creation_Time,
           Date_Accepted: order.Date_Accepted,
           Lead_Time: order.Lead_Time,
+          Submission_Deadline: order.Submission_Deadline,
         }));
         console.log('Processed orders:', this.rowData);
       } else {

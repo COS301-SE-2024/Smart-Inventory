@@ -13,6 +13,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { NotificationService } from '../../../../amplify/services/notification.service';
 import { v4 as uuidv4 } from 'uuid';
 import { LoadingSpinnerComponent } from '../loader/loading-spinner.component';
+import { SubmissionDeadlineService } from '../../../../amplify/services/submission-deadline.service';
 
 interface QuoteItem {
   upc: string;
@@ -59,6 +60,7 @@ export class SupplierFormComponent implements OnInit {
   deliveryID: string = '';
   tenentId: string = '';
   isSubmitting: boolean = false;
+  submissionDeadline: Date | null = null;
 
 
   constructor(
@@ -69,7 +71,8 @@ export class SupplierFormComponent implements OnInit {
     private quoteService: QuoteService, 
     private quoteSubmissionService: QuoteSubmissionService,
     private snackBar: MatSnackBar,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private submissionDeadlineService: SubmissionDeadlineService
   ) {}
 
   openUpdateContactModal() {
@@ -127,8 +130,6 @@ export class SupplierFormComponent implements OnInit {
     { code: 'CAD', name: 'Canadian Dollar' },
   ];
 
-  submissionDeadline: string = '2024-08-15T17:00:00'; 
-
   deliveryAddress: DeliveryAddress = {
     company: '',
     street: '',
@@ -174,6 +175,7 @@ export class SupplierFormComponent implements OnInit {
       }
       if (this.quoteID && this.tenentId) {
         this.loadQuoteItems();
+        this.loadSubmissionDeadline();
       }
 
     });
@@ -199,6 +201,19 @@ export class SupplierFormComponent implements OnInit {
       },
       (error) => {
         console.error('Error fetching supplier data:', error);
+        // Handle error (e.g., show error message to user)
+      }
+    );
+  }
+
+  loadSubmissionDeadline() {
+    this.submissionDeadlineService.getSubmissionDeadline(this.quoteID).subscribe(
+      (deadline) => {
+        this.submissionDeadline = deadline;
+        console.log('Submission deadline:', this.submissionDeadline);
+      },
+      (error) => {
+        console.error('Error fetching submission deadline:', error);
         // Handle error (e.g., show error message to user)
       }
     );

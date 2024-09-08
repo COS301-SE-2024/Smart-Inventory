@@ -8,6 +8,10 @@
     </div>
   </div>
 
+  <div *ngIf="isAcceptingQuote" class="loading-spinner-container">
+    <app-loading-spinner></app-loading-spinner>
+  </div>
+
   <div *ngIf="isLoading" class="loading-spinner-container">
     <app-loading-spinner></app-loading-spinner>
   </div>

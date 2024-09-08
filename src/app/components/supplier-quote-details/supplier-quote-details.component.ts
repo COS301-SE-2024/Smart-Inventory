@@ -46,6 +46,7 @@ export class SupplierQuoteDetailsComponent implements OnInit {
   quoteItems: QuoteItem[] = [];
   quoteSummary: QuoteSummary | null = null;
   isLoading = true;
+  isAcceptingQuote = false;
   error: string | null = null;
 
   constructor(
@@ -137,6 +138,7 @@ export class SupplierQuoteDetailsComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
+        this.isAcceptingQuote = true; // Set to true before accepting the quote
         this.acceptQuote();
       }
     });
@@ -190,6 +192,8 @@ export class SupplierQuoteDetailsComponent implements OnInit {
         duration: 6000,
         verticalPosition: 'top'
       });
+    } finally {
+      this.isAcceptingQuote = false; // Set back to false after the process completes
     }
   }
 

@@ -61,6 +61,7 @@ export class SupplierFormComponent implements OnInit {
   tenentId: string = '';
   isSubmitting: boolean = false;
   submissionDeadline: Date | null = null;
+  isDeadlinePassed: boolean = false;
 
 
   constructor(
@@ -156,7 +157,6 @@ export class SupplierFormComponent implements OnInit {
   deliveryCost: number = 0; // Will store the delivery cost
 
   ngOnInit() {
-    this.isSubmitting = true;
     this.route.params.subscribe(params => {
       this.supplierID = params['supplierID'] || '';
       this.quoteID = params['quoteID'] || '';
@@ -183,7 +183,6 @@ export class SupplierFormComponent implements OnInit {
     this.quoteItems = [];
     this.updateAllTotals();
     this.setDefaultDeliveryDate();
-    this.isSubmitting = false;
   }
 
   loadSupplierData() {
@@ -211,6 +210,7 @@ export class SupplierFormComponent implements OnInit {
       (deadline) => {
         this.submissionDeadline = deadline;
         console.log('Submission deadline:', this.submissionDeadline);
+        this.checkDeadline(); // Call checkDeadline after setting the deadline
       },
       (error) => {
         console.error('Error fetching submission deadline:', error);
@@ -395,6 +395,13 @@ export class SupplierFormComponent implements OnInit {
         // Handle error (e.g., show error message to user)
       }
     );
+  }
+
+  checkDeadline() {
+    if (this.submissionDeadline) {
+      this.isDeadlinePassed = new Date() > this.submissionDeadline;
+      console.log('Is deadline passed:', this.isDeadlinePassed);
+    }
   }
 
   

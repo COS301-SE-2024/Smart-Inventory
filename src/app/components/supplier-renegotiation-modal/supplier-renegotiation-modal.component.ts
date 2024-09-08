@@ -46,7 +46,7 @@ export class SupplierRenegotiationModalComponent implements OnInit {
     const defaultSubject = `Renegotiation Request for Quote`;
     const defaultEmailBody = `Dear ${this.data.supplierName},
 
-We would like to request a renegotiation for the quote ${this.data.quoteID}. Please review our request and submit an updated quote using the following link:
+We would like to request a renegotiation for the quote. Please review our request and submit an updated quote using the following link:
 
 ${this.WEB_FORM_URL}
 

@@ -7,6 +7,11 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { fetchAuthSession } from 'aws-amplify/auth';
+import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
+import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
+import outputs from '../../../../amplify_outputs.json';
+
 
 @Component({
   selector: 'app-supplier-renegotiation-modal',
@@ -69,12 +74,69 @@ Best regards,
     return null;
   }
 
-  onSend() {
+  async onSend() {
+
+    const session = await fetchAuthSession();
+    
     if (this.renegotiationForm.valid) {
-      // Here you would typically send the email using a service
-      console.log('Sending renegotiation email:', this.renegotiationForm.value);
-      this.showSuccessNotification();
-      this.dialogRef.close(this.renegotiationForm.value);
+      try {
+        const emailData = {
+          supplierEmail: this.data.supplierEmail,
+          emailBody: this.renegotiationForm.get('emailBody')?.value,
+          quoteId: this.data.quoteId,
+          orderId: this.data.orderId,
+          supplierName: this.data.supplierName,
+          tenentId: await this.getTenentId(session),
+          supplierID: this.data.supplierID
+        };
+
+        console.log(emailData);
+  
+        const success = await this.sendRenegotiationEmail(emailData);
+        if (success) {
+          this.dialogRef.close({ action: 'renegotiationSent' });
+          this.snackBar.open('Renegotiation email sent successfully', 'Close', {
+            duration: 3000, // Duration in milliseconds
+            horizontalPosition: 'center',
+            verticalPosition: 'top',
+        });
+        }
+      } catch (error) {
+        console.error('Error in onSend:', error);
+        this.snackBar.open('Failed to send renegotiation email', 'Close', {
+          duration: 3000, // Duration in milliseconds
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+      });
+      }
+    }
+  }
+
+  async sendRenegotiationEmail(emailData: any) {
+    try {
+      const session = await fetchAuthSession();
+      const lambdaClient = new LambdaClient({
+        region: outputs.auth.aws_region,
+        credentials: session.credentials,
+      });
+  
+      const invokeCommand = new InvokeCommand({
+        FunctionName: 'sendRenegotiationEmail',
+        Payload: new TextEncoder().encode(JSON.stringify(emailData)),
+      });
+  
+      const lambdaResponse = await lambdaClient.send(invokeCommand);
+      const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+  
+      if (responseBody.statusCode === 200) {
+        console.log('Renegotiation email sent successfully:', responseBody.body);
+        return true;
+      } else {
+        throw new Error(`Failed to send renegotiation email: ${responseBody.body}`);
+      }
+    } catch (error) {
+      console.error('Error sending renegotiation email:', error);
+      throw error;
     }
   }
 
@@ -111,4 +173,27 @@ ${this.renegotiationForm.get('emailBody')?.value || ''}`;
       this.renegotiationForm.patchValue({ emailBody: textarea.value });
     }
   }
+
+  async getTenentId(session: any): Promise<string> {
+    const cognitoClient = new CognitoIdentityProviderClient({
+      region: outputs.auth.aws_region,
+      credentials: session.credentials,
+    });
+
+    const getUserCommand = new GetUserCommand({
+      AccessToken: session.tokens?.accessToken.toString(),
+    });
+    const getUserResponse = await cognitoClient.send(getUserCommand);
+
+    const tenentId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
+
+    if (!tenentId) {
+      throw new Error('TenentId not found in user attributes');
+    }
+
+    console.log(tenentId);
+
+    return tenentId;
+  }
+
 }

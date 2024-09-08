@@ -203,6 +203,11 @@ h3 {
   justify-content: flex-end;
 }
 
+.renegotiate-button,
 .accept-quote-button {
-  margin-left: auto; /* Push the button to the right */
+  flex: 0 0 auto; /* This prevents the buttons from stretching */
+}
+
+.accept-quote-button {
+  margin-left: 20px;
 }

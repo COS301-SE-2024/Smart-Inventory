@@ -160,5 +160,12 @@
         </ul>
     </div>
 
-    <button class="submit-btn" (click)="submitQuote()">Submit Quote</button>
+    <button class="submit-btn" (click)="submitQuote()" [disabled]="isSubmitting">
+        <span *ngIf="!isSubmitting">Submit Quote</span>
+        <span *ngIf="isSubmitting">Submitting...</span>
+    </button>
+</div>
+
+<div *ngIf="isSubmitting" class="loading-overlay">
+    <app-loading-spinner></app-loading-spinner>
 </div>

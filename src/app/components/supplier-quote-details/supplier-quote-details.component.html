@@ -2,7 +2,12 @@
   <div class="side-pane-header">
     <h2>Supplier Quote Details</h2>
     <div class="header-buttons">
-      <button mat-raised-button color="primary" class="accept-quote-button" (click)="openAcceptQuoteDialog()">
+      <button 
+        mat-raised-button 
+        color="primary" 
+        class="accept-quote-button" 
+        (click)="openAcceptQuoteDialog()"
+        *ngIf="!isLoading"> <!-- Only show the button when not loading -->
         Accept Quote
       </button>
       <button mat-icon-button class="close-button" (click)="close()">
@@ -11,8 +16,8 @@
     </div>
   </div>
 
-  <div *ngIf="isLoading" class="loading">
-    Loading quote details...
+  <div *ngIf="isLoading" class="loading-spinner-container">
+    <app-loading-spinner></app-loading-spinner>
   </div>
 
   <div *ngIf="error" class="error">

@@ -497,7 +497,11 @@ export class OrdersComponent implements OnInit {
     }
 
     if (this.selectedOrder.Quote_Status !== 'Draft') {
-      alert('Only orders with Draft quote status can be deleted');
+      this.snackBar.open('Only orders in draft status can be deleted', 'Close', {
+        duration: 6000, // Duration in milliseconds
+        horizontalPosition: 'center',
+        verticalPosition: 'top',
+      });
       return;
     }
 
@@ -572,8 +576,6 @@ export class OrdersComponent implements OnInit {
     // Reload the orders data
     await this.loadOrdersData();
     
-    // Refresh the grid
-    this.gridComponent.refreshGrid(this.rowData);
     } catch (error) {
       console.error('Error sending quote:', error);
       
@@ -639,11 +641,48 @@ export class OrdersComponent implements OnInit {
     console.log('Saving delivery information:', deliveryInfo);
   }
 
-  viewReceivedQuotes() {
+  viewReceivedQuotes(selectedOrder: any) {
+    if (!selectedOrder) {
+        this.snackBar.open('Please select an order to view received quotes', 'Close', {
+            duration: 3000,
+            horizontalPosition: 'center',
+            verticalPosition: 'top',
+        });
+        return;
+    }
+
+    if (selectedOrder.Quote_Status === 'Draft') {
+        this.snackBar.open('This order is in draft status. There are no received quotes.', 'Close', {
+            duration: 5000,
+            horizontalPosition: 'center',
+            verticalPosition: 'top',
+        });
+        return;
+    }
+
     this.isSidePaneOpen = true;
   }
   
   async openReceiveOrderModal(orderData: any) {
+
+    if (orderData.Order_Status === 'Completed') {
+      this.snackBar.open('This order has already been marked as received.', 'Close', {
+        duration: 5000,
+        horizontalPosition: 'center',
+        verticalPosition: 'top',
+      });
+      return;
+    }
+
+    if (orderData.Quote_Status !== 'Accepted') {
+      this.snackBar.open('Only orders with accepted quotes can be marked as received.', 'Close', {
+        duration: 5000,
+        horizontalPosition: 'center',
+        verticalPosition: 'top',
+      });
+      return;
+    }
+
     const dialogRef = this.dialog.open(ReceiveOrderModalComponent, {
       width: '50vw',
       maxWidth: '2700px',

@@ -390,7 +390,12 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     onViewReceivedQuotes() {
-        this.viewReceivedQuotesClicked.emit();
+        const selectedRows = this.gridApi.getSelectedRows();
+        if (selectedRows && selectedRows.length > 0) {
+            this.viewReceivedQuotesClicked.emit(selectedRows[0]);
+        } else {
+            this.oopenSnackBar('Please select an order to view received quotes');
+        }
     }
 
     onMarkOrderAsReceived() {

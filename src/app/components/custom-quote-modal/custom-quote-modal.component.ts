@@ -69,6 +69,8 @@ export class CustomQuoteModalComponent implements OnInit {
   isEditing: boolean = false;
   isNewQuote: boolean = false;
   hasUnsavedChanges: boolean = false;
+  isSendingQuote: boolean = false;
+  isSavingChanges: boolean = false;
 
   orderId: string | null = null;
   quoteId: string | null = null;
@@ -180,12 +182,11 @@ export class CustomQuoteModalComponent implements OnInit {
 
   filterItems(value: string, index: number) {
     const filterValue = value.toLowerCase();
-    this.quoteItems[index].filteredItems.next(
-      this.inventoryItems.filter(item =>
-        item.sku.toLowerCase().includes(filterValue) ||
-        item.description.toLowerCase().includes(filterValue)
-      )
+    const filteredItems = this.inventoryItems.filter(item =>
+      item.sku.toLowerCase().includes(filterValue) ||
+      item.description.toLowerCase().includes(filterValue)
     );
+    this.quoteItems[index].filteredItems.next(filteredItems);
   }
 
   addItem() {
@@ -262,27 +263,28 @@ export class CustomQuoteModalComponent implements OnInit {
     try {
       const session = await fetchAuthSession();
       const tenentId = await this.getTenentId(session);
-
+  
       const lambdaClient = new LambdaClient({
         region: outputs.auth.aws_region,
         credentials: session.credentials,
       });
-
+  
       const invokeCommand = new InvokeCommand({
         FunctionName: 'Inventory-getItems',
         Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: tenentId } })),
       });
-
+  
       const lambdaResponse = await lambdaClient.send(invokeCommand);
       const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
+  
       if (responseBody.statusCode === 200) {
         const inventoryItems = JSON.parse(responseBody.body);
-        this.inventoryItems = inventoryItems.map((item: any) => ({
+        const uniqueItems = this.filterDuplicateSKUs(inventoryItems.map((item: any) => ({
           sku: item.SKU,
           description: item.description,
-          inventoryID: item.inventoryID // Add this line
-        }));
+          inventoryID: item.inventoryID
+        })));
+        this.inventoryItems = uniqueItems;
         // Initialize filtered items for each quote item
         this.quoteItems.forEach(quoteItem => {
           quoteItem.filteredItems.next(this.inventoryItems.slice());
@@ -323,6 +325,7 @@ export class CustomQuoteModalComponent implements OnInit {
 
 
   async saveChanges() {
+    this.isSavingChanges = true;
     const updatedQuote = {
       quoteId: this.quoteId,
       items: this.quoteItems.map(({ item, quantity }) => ({
@@ -354,6 +357,8 @@ export class CustomQuoteModalComponent implements OnInit {
         horizontalPosition: 'center',
         verticalPosition: 'top',
       });
+    } finally {
+      this.isSavingChanges = false; // Set saving state back to false
     }
   }
 
@@ -444,19 +449,32 @@ export class CustomQuoteModalComponent implements OnInit {
       return;
     }
     if (!this.isNewQuote) {
-      console.log('Sending quote...');
-      const emailData = await this.prepareEmailData();
-      
-      // Send emails
-      await this.sendEmails(emailData);
+      this.isSendingQuote = true; // Set loading state to true
+      try {
+        console.log('Sending quote...');
+        const emailData = await this.prepareEmailData();
+        
+        // Send emails
+        await this.sendEmails(emailData);
 
-      this.dialogRef.close({ action: 'sendQuote', data: {
-        quoteId: this.quoteId,
-        items: this.quoteItems,
-        suppliers: this.selectedSuppliers,
-        emailData: emailData
-      }});
+        this.dialogRef.close({ action: 'sendQuote', data: {
+          quoteId: this.quoteId,
+          items: this.quoteItems,
+          suppliers: this.selectedSuppliers,
+          emailData: emailData
+        }});
+      } catch (error) {
+        console.error('Error sending quote:', error);
+        this.snackBar.open('Error sending quote. Please try again.', 'Close', {
+          duration: 5000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+        });
+      } finally {
+        this.isSendingQuote = false; // Set loading state back to false
+      }
     }
+
   }
 
   async prepareEmailData() {
@@ -582,6 +600,16 @@ export class CustomQuoteModalComponent implements OnInit {
     } else {
       throw new Error('Failed to get deliveryInfoID');
     }
+  }
+
+  private filterDuplicateSKUs(items: InventoryItem[]): InventoryItem[] {
+    const uniqueItems = new Map<string, InventoryItem>();
+    items.forEach(item => {
+      if (!uniqueItems.has(item.sku)) {
+        uniqueItems.set(item.sku, item);
+      }
+    });
+    return Array.from(uniqueItems.values());
   }
 
 }

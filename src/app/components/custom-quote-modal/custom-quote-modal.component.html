@@ -12,6 +12,12 @@
   <div *ngIf="isLoading" class="loading-overlay">
     <app-loading-spinner></app-loading-spinner>
   </div>
+  <div *ngIf="isSendingQuote" class="loading-overlay">
+    <app-loading-spinner></app-loading-spinner>
+  </div>
+  <div *ngIf="isSendingQuote || isSavingChanges" class="loading-overlay">
+    <app-loading-spinner></app-loading-spinner>
+  </div>
   <ng-container *ngIf="!isLoading">
     <div class="items-section">
       <h3>Quote Items</h3>
@@ -86,6 +92,11 @@
 <mat-dialog-actions align="end">
   <button mat-button (click)="cancel()">Cancel</button>
   <button mat-raised-button color="primary" *ngIf="isNewQuote" (click)="createOrder()">Create Order</button>
-  <button mat-raised-button color="primary" *ngIf="!isNewQuote" (click)="saveChanges()" [disabled]="!hasUnsavedChanges">Save Changes</button>
-  <button mat-raised-button color="primary" *ngIf="!isNewQuote" (click)="sendQuote()" [disabled]="hasUnsavedChanges">Send Quote</button>
+  <button mat-raised-button color="primary" *ngIf="!isNewQuote" (click)="saveChanges()" 
+          [disabled]="!hasUnsavedChanges || isSavingChanges">
+    {{ isSavingChanges ? 'Saving...' : 'Save Changes' }}
+  </button>
+  <button mat-raised-button color="primary" *ngIf="!isNewQuote" (click)="sendQuote()" [disabled]="hasUnsavedChanges || isSendingQuote">
+    {{ isSendingQuote ? 'Sending...' : 'Send Quote' }}
+  </button>
 </mat-dialog-actions>

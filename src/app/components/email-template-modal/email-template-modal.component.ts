@@ -11,6 +11,7 @@ import { fetchAuthSession } from 'aws-amplify/auth';
 import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
 import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
 import outputs from '../../../../amplify_outputs.json';
+import { LoadingSpinnerComponent } from '../loader/loading-spinner.component';
 
 @Component({
   selector: 'app-email-template-modal',
@@ -23,12 +24,15 @@ import outputs from '../../../../amplify_outputs.json';
     MatInputModule,
     MatButtonModule,
     MatTabsModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    LoadingSpinnerComponent
   ],
   templateUrl: './email-template-modal.component.html',
   styleUrls: ['./email-template-modal.component.css']
 })
 export class EmailTemplateModalComponent implements OnInit {
+  isLoading = true;
+  isSaving = false;
   emailForm: FormGroup;
   WEB_FORM_URL = '{{WEB_FORM_URL}}';
   SUPPLIER_NAME = '{{SUPPLIER_NAME}}';
@@ -55,6 +59,7 @@ Best regards`;
   }
 
   async ngOnInit() {
+    this.isLoading = true;
     try {
       const existingTemplate = await this.getEmailTemplate();
       if (existingTemplate) {
@@ -65,6 +70,24 @@ Best regards`;
     } catch (error) {
       console.error('Error fetching email template:', error);
       this.emailForm.patchValue({ emailBody: this.defaultEmailBody });
+    } finally {
+      this.isLoading = false;
+    }
+  }
+
+  async onSave() {
+    if (this.emailForm.valid) {
+      this.isSaving = true;
+      try {
+        const savedTemplate = await this.saveEmailTemplate(this.emailForm.value.emailBody);
+        this.showSuccessNotification();
+        this.dialogRef.close(savedTemplate);
+      } catch (error) {
+        console.error('Error saving email template:', error);
+        this.showErrorNotification(error);
+      } finally {
+        this.isSaving = false;
+      }
     }
   }
 
@@ -74,19 +97,6 @@ Best regards`;
       return { 'noWebFormUrl': true };
     }
     return null;
-  }
-
-  async onSave() {
-    if (this.emailForm.valid) {
-      try {
-        const savedTemplate = await this.saveEmailTemplate(this.emailForm.value.emailBody);
-        this.showSuccessNotification();
-        this.dialogRef.close(savedTemplate);
-      } catch (error) {
-        console.error('Error saving email template:', error);
-        this.showErrorNotification(error);
-      }
-    }
   }
 
   onCancel() {

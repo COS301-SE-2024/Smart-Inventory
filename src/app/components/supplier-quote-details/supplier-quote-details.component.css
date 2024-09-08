@@ -60,6 +60,7 @@ h3 {
   overflow-y: auto;
   flex-grow: 1;
   padding-right: 15px;
+  flex: 1;
 }
 
 .supplier-info {
@@ -192,4 +193,16 @@ h3 {
   justify-content: center;
   align-items: center;
   height: 100%;
+}
+
+.modal-footer {
+  padding: 16px;
+  background-color: #f5f5f5;
+  border-top: 1px solid #e0e0e0;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.accept-quote-button {
+  margin-left: auto; /* Push the button to the right */
 }

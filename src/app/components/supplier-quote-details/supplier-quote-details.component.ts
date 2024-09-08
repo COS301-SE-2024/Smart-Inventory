@@ -10,6 +10,7 @@ import outputs from '../../../../amplify_outputs.json';
 import { QuoteAcceptConfirmationDialogComponent } from './quote-accept-confirmation-dialog.component';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { LoadingSpinnerComponent } from '../loader/loading-spinner.component';
+import { SupplierRenegotiationModalComponent } from '../supplier-renegotiation-modal/supplier-renegotiation-modal.component';
 
 interface QuoteItem {
   description: string;
@@ -36,7 +37,7 @@ interface QuoteSummary {
 @Component({
   selector: 'app-supplier-quote-details',
   standalone: true,
-  imports: [CommonModule, MatDialogModule, MatIconModule, MatButtonModule, QuoteAcceptConfirmationDialogComponent, MatSnackBarModule, LoadingSpinnerComponent],
+  imports: [CommonModule, MatDialogModule, MatIconModule, MatButtonModule, QuoteAcceptConfirmationDialogComponent, MatSnackBarModule, LoadingSpinnerComponent, SupplierRenegotiationModalComponent],
   templateUrl: './supplier-quote-details.component.html',
   styleUrl: './supplier-quote-details.component.css'
 })
@@ -188,5 +189,24 @@ export class SupplierQuoteDetailsComponent implements OnInit {
         verticalPosition: 'top'
       });
     }
+  }
+
+  openRenegotiateModal(): void {
+    const dialogRef = this.dialog.open(SupplierRenegotiationModalComponent, {
+      width: '800px',
+      data: {
+        supplierName: this.supplierInfo.company_name,
+        supplierEmail: this.supplierInfo.contact_email,
+        quoteID: this.data.quoteID,
+        supplierID: this.data.supplierID
+      }
+    });
+  
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        // Handle the result if needed
+        console.log('Renegotiation email sent:', result);
+      }
+    });
   }
 }

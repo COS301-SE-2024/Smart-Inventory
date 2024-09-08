@@ -1,0 +1,66 @@
+:host {
+    display: block;
+    width: 100%;
+    max-width: 800px;
+  }
+  
+  .renegotiation-form {
+    padding-top: 20px;
+  }
+  
+  mat-tab-group {
+    height: 100%;
+  }
+  
+  mat-dialog-content {
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+  
+  mat-form-field {
+    width: 100%;
+  }
+  
+  textarea {
+    min-height: 200px;
+  }
+  
+  mat-dialog-actions {
+    padding: 20px;
+  }
+  
+  button {
+    margin-left: 8px;
+  }
+  
+  .email-preview {
+    padding: 20px;
+    border-radius: 4px;
+  }
+  
+  .preview-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .preview-content pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    padding: 10px;
+    border-radius: 4px;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  
+  .placeholder-buttons {
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 30px;
+  }
+  
+  .placeholder-buttons button {
+    margin-right: 10px;
+  }

@@ -35,3 +35,7 @@
   <button mat-button (click)="onCancel()">Cancel</button>
   <button mat-raised-button color="primary" (click)="onSend()" [disabled]="!renegotiationForm.valid">Send</button>
 </mat-dialog-actions>
+
+<div *ngIf="isSending" class="loading-overlay">
+  <app-loading-spinner></app-loading-spinner>
+</div>

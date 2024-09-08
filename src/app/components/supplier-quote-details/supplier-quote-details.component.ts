@@ -57,7 +57,9 @@ export class SupplierQuoteDetailsComponent implements OnInit {
     orderDate: string;},
     private dialog: MatDialog,
     private snackBar: MatSnackBar
-  ) {}
+  ) {
+    console.log(data);
+  }
 
   ngOnInit() {
     this.loadQuoteDetails();
@@ -201,6 +203,7 @@ export class SupplierQuoteDetailsComponent implements OnInit {
         supplierName: this.supplierInfo.company_name,
         supplierEmail: this.supplierInfo.contact_email,
         quoteID: this.data.quoteID,
+        orderID: this.data.orderID,
         supplierID: this.data.supplierID
       }
     });

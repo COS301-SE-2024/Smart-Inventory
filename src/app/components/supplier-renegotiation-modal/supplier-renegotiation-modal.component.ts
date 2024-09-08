@@ -11,7 +11,7 @@ import { fetchAuthSession } from 'aws-amplify/auth';
 import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
 import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
 import outputs from '../../../../amplify_outputs.json';
-
+import { LoadingSpinnerComponent } from '../loader/loading-spinner.component';
 
 @Component({
   selector: 'app-supplier-renegotiation-modal',
@@ -24,7 +24,8 @@ import outputs from '../../../../amplify_outputs.json';
     MatInputModule,
     MatButtonModule,
     MatTabsModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    LoadingSpinnerComponent
   ],
   templateUrl: './supplier-renegotiation-modal.component.html',
   styleUrls: ['./supplier-renegotiation-modal.component.css']
@@ -32,6 +33,7 @@ import outputs from '../../../../amplify_outputs.json';
 export class SupplierRenegotiationModalComponent implements OnInit {
   renegotiationForm: FormGroup;
   WEB_FORM_URL = '{{WEB_FORM_URL}}';
+  isSending: boolean = false;
 
   @ViewChild('emailBodyTextarea') emailBodyTextarea?: ElementRef;
 
@@ -45,6 +47,7 @@ export class SupplierRenegotiationModalComponent implements OnInit {
       subject: ['', Validators.required],
       emailBody: ['', [Validators.required, this.webFormUrlValidator]]
     });
+    console.log(data);
   }
 
   ngOnInit() {
@@ -79,12 +82,14 @@ Best regards,
     const session = await fetchAuthSession();
     
     if (this.renegotiationForm.valid) {
+      this.isSending = true;
       try {
         const emailData = {
           supplierEmail: this.data.supplierEmail,
           emailBody: this.renegotiationForm.get('emailBody')?.value,
-          quoteId: this.data.quoteId,
-          orderId: this.data.orderId,
+          subject: this.renegotiationForm.get('subject')?.value,
+          quoteId: this.data.quoteID,
+          orderId: this.data.orderID,
           supplierName: this.data.supplierName,
           tenentId: await this.getTenentId(session),
           supplierID: this.data.supplierID
@@ -108,6 +113,8 @@ Best regards,
           horizontalPosition: 'center',
           verticalPosition: 'top',
       });
+      } finally {
+        this.isSending = false;
       }
     }
   }

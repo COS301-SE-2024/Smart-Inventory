@@ -8,6 +8,11 @@
     </div>
   </div>
 
+  <div *ngIf="isLoading" class="loading-spinner-container">
+    <app-loading-spinner></app-loading-spinner>
+  </div>
+
+  <ng-container *ngIf="!isLoading">
   <div class="scrollable-content">
     <div class="order-info">
       <h3>Order Details</h3>
@@ -60,4 +65,5 @@
       Mark Order As Received
     </button>
   </div>
+</ng-container>
 </div>

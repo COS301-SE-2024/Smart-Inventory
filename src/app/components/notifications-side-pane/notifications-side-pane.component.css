@@ -1,0 +1,114 @@
+.notification-panel {
+    position: fixed;
+    top: 64px;
+    right: 0;
+    height: calc(100% - 64px);
+    background-color: white;
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    transform: translateX(100%);
+}
+
+.notification-panel.open {
+    transform: translateX(0);
+}
+
+.resize-handle {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 5px;
+    cursor: ew-resize;
+    background-color: #e0e0e0;
+}
+
+.resize-handle:hover {
+    background-color: #bdbdbd;
+}
+
+.notification-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.notification-tabs {
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.notification-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 16px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.notification-content {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 16px;
+}
+
+mat-list-item {
+    margin-bottom: 8px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+}
+
+mat-list-item:hover {
+    transform: scale(1.02);
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+    z-index: 1;
+}
+
+.unread {
+    background-color: #e3f2fd;
+}
+
+.unread:hover {
+    background-color: #bbdefb;
+}
+
+.archived {
+    opacity: 0.7;
+}
+
+.archived:hover {
+    opacity: 0.9;
+}
+
+.filter-menu {
+    padding: 16px;
+}
+
+.filter-menu-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.filter-menu mat-checkbox {
+    display: block;
+    margin: 8px 0;
+}
+
+.unread-count {
+    color: #3f51b5;
+    white-space: nowrap;
+    margin-left: 16px;
+}
+
+@media (max-width: 800px) {
+    .notification-panel {
+        width: 100%;
+    }
+}

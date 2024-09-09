@@ -2,84 +2,69 @@
     <div class="resize-handle" (mousedown)="startResize($event)"></div>
 
     <div class="notification-header">
-        <h4>Notifications</h4>
+        <h2>Notifications</h2>
         <button mat-icon-button (click)="closeNotificationPanel()" matTooltip="Close">
             <mat-icon>close</mat-icon>
         </button>
     </div>
 
     <div class="notification-tabs">
-        <mat-tab-group mat-align-tabs="start" (selectedIndexChange)="onTabChange($event)">
-            <mat-tab *ngFor="let filter of filters">
-                <ng-template mat-tab-label>{{ filter }}</ng-template>
-            </mat-tab>
+        <mat-tab-group mat-align-tabs="start" (selectedTabChange)="onTabChange($event.tab.textLabel)">
+            <mat-tab *ngFor="let tab of tabs" [label]="tab"></mat-tab>
         </mat-tab-group>
     </div>
 
-    <div class="notification-actions">
-        <button mat-button [matMenuTriggerFor]="filterMenu" data-cy="filter-menu-button">
-            <mat-icon>tune</mat-icon>
-            Filters
-        </button>
-        <mat-menu #filterMenu="matMenu" [hasBackdrop]="false" class="filter-menu">
-            <div (click)="$event.stopPropagation()" data-cy="filter-menu-content">
-                <div class="filter-menu-header">
-                    <span>Filters</span>
-                    <button mat-icon-button (click)="filterMenu.closed.emit()" data-cy="close-filter-menu">
-                        <mat-icon>close</mat-icon>
-                    </button>
-                </div>
-                <mat-checkbox [(ngModel)]="showRead" (change)="updateFilteredNotifications()" data-cy="read-checkbox">
-                    Read
-                </mat-checkbox>
-                <mat-checkbox [(ngModel)]="showUnread" (change)="updateFilteredNotifications()" data-cy="unread-checkbox">
-                    Unread
-                </mat-checkbox>
-                <mat-checkbox [(ngModel)]="showArchived" (change)="updateFilteredNotifications()" data-cy="archived-checkbox">
-                    Show Archived
-                </mat-checkbox>
-            </div>
-        </mat-menu>
+    <ng-container *ngIf="activeTab !== 'Settings'">
+        <div class="notification-actions">
+            <mat-form-field appearance="outline" class="filter-select">
+                <mat-label>Filter</mat-label>
+                <mat-select [(value)]="activeFilter" (selectionChange)="filterNotifications($event.value)">
+                    <mat-option *ngFor="let filter of filters" [value]="filter">{{filter}}</mat-option>
+                </mat-select>
+            </mat-form-field>
 
-        <button mat-icon-button class="mark-all-read" color="primary" (click)="markAllAsRead()"
-            [disabled]="unreadCount === 0" matTooltip="Mark all as read">
-            <mat-icon>done_all</mat-icon>
-        </button>
+            <button mat-raised-button color="primary" class="mark-all-read" (click)="markAllAsRead()"
+                [disabled]="unreadCount === 0">
+                <mat-icon>done_all</mat-icon>
+                Mark all as read
+            </button>
 
-        <span class="unread-count">{{ unreadCount }} unread</span>
-    </div>
+            <span class="unread-count">{{ unreadCount }} unread</span>
+        </div>
 
-    <div class="notification-content">
-        <ng-container *ngIf="activeFilter !== 'Settings'; else settingsView">
-            <mat-list>
-                <mat-list-item *ngFor="let notification of filteredNotifications"
-                    [ngClass]="{'unread': !notification.read, 'archived': notification.archived}">
-                    <div matListItemTitle>
+        <div class="notification-content">
+            <mat-card *ngFor="let notification of filteredNotifications" class="notification-card"
+                [ngClass]="{'unread': !notification.read}" (click)="onNotificationClick(notification)">
+                <mat-card-header>
+                    <div mat-card-avatar class="notification-icon">
                         <mat-icon>{{ getNotificationIcon(notification.type) }}</mat-icon>
-                        {{ notification.title }}
                     </div>
-                    <div matListItemLine>{{ notification.date | date:'short' }}</div>
-                    <div matListItemLine>{{ notification.info }}</div>
-                    <button mat-icon-button (click)="toggleReadStatus($event, notification)"
-                        [matTooltip]="notification.read ? 'Mark as unread' : 'Mark as read'">
-                        <mat-icon>{{ notification.read ? 'markunread' : 'done' }}</mat-icon>
+                    <mat-card-title>{{ notification.title }}</mat-card-title>
+                    <mat-card-subtitle>{{ notification.date | date:'short' }}</mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                    <p>{{ notification.info }}</p>
+                </mat-card-content>
+                <mat-card-actions align="end">
+                    <button mat-button color="primary" (click)="markAsRead($event, notification)" *ngIf="!notification.read">
+                        <mat-icon>done</mat-icon>
+                        Mark as read
                     </button>
-                    <button mat-icon-button (click)="toggleArchive($event, notification)"
-                        [matTooltip]="notification.archived ? 'Unarchive' : 'Archive'">
-                        <mat-icon>{{ notification.archived ? 'unarchive' : 'archive' }}</mat-icon>
-                    </button>
-                </mat-list-item>
-            </mat-list>
-        </ng-container>
+                </mat-card-actions>
+            </mat-card>
+        </div>
+    </ng-container>
 
-        <ng-template #settingsView>
+    <ng-container *ngIf="activeTab === 'Settings'">
+        <div class="notification-content settings-content">
+            <p class="settings-description">Toggle switches to enable or disable notifications for each category.</p>
             <mat-list>
                 <mat-list-item *ngFor="let setting of notificationSettings">
-                    <mat-slide-toggle [(ngModel)]="setting.enabled" (change)="updateNotificationSettings(setting)">
+                    <mat-slide-toggle [(ngModel)]="setting.enabled" (change)="updateNotificationSettings(setting)" color="primary">
                         {{ setting.name }}
                     </mat-slide-toggle>
                 </mat-list-item>
             </mat-list>
-        </ng-template>
-    </div>
+        </div>
+    </ng-container>
 </div>

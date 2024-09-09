@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from '../material/material.module';
 import { FormsModule } from '@angular/forms';
@@ -11,7 +11,6 @@ interface Notification {
     date: Date;
     info: string;
     read: boolean;
-    archived: boolean;
 }
 
 interface NotificationSetting {
@@ -35,24 +34,22 @@ export class NotificationsSidePaneComponent implements OnInit {
     @Output() closePanel = new EventEmitter<void>();
     @Output() unreadCountChange = new EventEmitter<number>();
 
-    panelWidth: number = 400;
+    panelWidth: number = 800;
+    isResizing: boolean = false;
     notifications: Notification[] = [
-        { id: 1, type: 'Inventory', title: 'Low stock alert', date: new Date(), info: 'Item A is running low', read: false, archived: false },
-        { id: 2, type: 'Reports', title: 'Monthly report ready', date: new Date(), info: 'Your monthly report is available', read: true, archived: false },
-        { id: 3, type: 'Orders', title: 'New order received', date: new Date(), info: 'Order #1234 needs processing', read: true, archived: false },
-        { id: 4, type: 'Suppliers', title: 'Supplier update', date: new Date(), info: 'Supplier X has new contact information', read: false, archived: false },
-        { id: 5, type: 'Teams', title: 'New team member', date: new Date(), info: 'Welcome John Doe to the team', read: true, archived: false },
+        { id: 1, type: 'Inventory', title: 'Low stock alert', date: new Date(), info: 'Item A is running low', read: false },
+        { id: 2, type: 'Orders', title: 'New order received', date: new Date(), info: 'Order #1234 needs processing', read: true },
+        { id: 3, type: 'Suppliers', title: 'Supplier update', date: new Date(), info: 'Supplier X has new contact information', read: false },
+        { id: 4, type: 'Teams', title: 'New team member', date: new Date(), info: 'Welcome John Doe to the team', read: true },
     ];
     filteredNotifications: Notification[] = [];
     activeFilter: string = 'All';
-    filters: string[] = ['All', 'Inventory', 'Reports', 'Orders', 'Suppliers', 'Teams', 'Settings'];
-    showRead: boolean = true;
-    showUnread: boolean = true;
+    activeTab: string = 'All';
+    filters: string[] = ['All', 'Unread', 'Read'];
+    tabs: string[] = ['All', 'Inventory', 'Orders', 'Suppliers', 'Teams', 'Settings'];
     unreadCount: number = 0;
-    showArchived: boolean = false;
     notificationSettings: NotificationSetting[] = [
         { name: 'Inventory', enabled: true },
-        { name: 'Reports', enabled: true },
         { name: 'Orders', enabled: true },
         { name: 'Suppliers', enabled: true },
         { name: 'Teams', enabled: true },
@@ -68,8 +65,9 @@ export class NotificationsSidePaneComponent implements OnInit {
         this.closePanel.emit();
     }
 
-    onTabChange(index: number) {
-        this.filterNotifications(this.filters[index]);
+    onTabChange(tabName: string) {
+        this.activeTab = tabName;
+        this.updateFilteredNotifications();
     }
 
     filterNotifications(filter: string) {
@@ -85,48 +83,33 @@ export class NotificationsSidePaneComponent implements OnInit {
                 return false;
             }
 
-            if (this.activeFilter !== 'All' && this.activeFilter !== 'Settings' && n.type !== this.activeFilter) {
+            if (this.activeTab !== 'All' && this.activeTab !== 'Settings' && n.type !== this.activeTab) {
                 return false;
             }
 
-            if (this.showArchived && n.archived) {
+            if (this.activeFilter === 'All') {
                 return true;
-            }
-            
-            if (!n.archived) {
-                if (this.showRead && this.showUnread) {
-                    return true;
-                } else if (this.showRead) {
-                    return n.read;
-                } else if (this.showUnread) {
-                    return !n.read;
-                }
+            } else if (this.activeFilter === 'Unread') {
+                return !n.read;
+            } else if (this.activeFilter === 'Read') {
+                return n.read;
             }
             
             return false;
         });
     
         this.filteredNotifications.sort((a, b) => {
-            if (a.archived === b.archived) {
-                if (a.read === b.read) return 0;
-                return a.read ? 1 : -1;
-            }
-            return a.archived ? 1 : -1;
+            if (a.read === b.read) return 0;
+            return a.read ? 1 : -1;
         });
     
-        this.unreadCount = this.notifications.filter(n => !n.read && !n.archived && this.notificationSettings.find(s => s.name === n.type)?.enabled).length;
+        this.unreadCount = this.notifications.filter(n => !n.read && this.notificationSettings.find(s => s.name === n.type)?.enabled).length;
         this.unreadCountChange.emit(this.unreadCount);
     }
 
-    toggleArchive(event: Event, notification: Notification) {
+    markAsRead(event: Event, notification: Notification) {
         event.stopPropagation();
-        notification.archived = !notification.archived;
-        this.updateFilteredNotifications();
-    }
-
-    toggleReadStatus(event: Event, notification: Notification) {
-        event.stopPropagation();
-        notification.read = !notification.read;
+        notification.read = true;
         this.updateFilteredNotifications();
     }
 
@@ -138,18 +121,15 @@ export class NotificationsSidePaneComponent implements OnInit {
     }
 
     updateNotificationSettings(setting: NotificationSetting) {
-        this.filters = ['All', 'Settings'];
+        this.tabs = ['All'];
         this.notificationSettings.forEach(s => {
             if (s.enabled) {
-                this.filters.push(s.name);
+                this.tabs.push(s.name);
             }
         });
+        this.tabs.push('Settings');
 
         this.updateFilteredNotifications();
-
-        if (!this.filters.includes(this.activeFilter)) {
-            this.activeFilter = 'All';
-        }
 
         this.saveNotificationSettings();
     }
@@ -162,7 +142,6 @@ export class NotificationsSidePaneComponent implements OnInit {
     getNotificationIcon(type: string): string {
         switch (type) {
             case 'Inventory': return 'inventory';
-            case 'Reports': return 'assessment';
             case 'Orders': return 'shopping_cart';
             case 'Suppliers': return 'business';
             case 'Teams': return 'group';
@@ -171,6 +150,32 @@ export class NotificationsSidePaneComponent implements OnInit {
     }
 
     startResize(event: MouseEvent) {
-        // Implement resize logic here if needed
+        this.isResizing = true;
+        event.preventDefault();
+    }
+
+    @HostListener('document:mousemove', ['$event'])
+    onMouseMove(event: MouseEvent) {
+        if (this.isResizing) {
+            const newWidth = window.innerWidth - event.clientX;
+            this.panelWidth = Math.max(400, Math.min(1200, newWidth));
+        }
+    }
+
+    @HostListener('document:mouseup')
+    onMouseUp() {
+        this.isResizing = false;
+    }
+
+    onNotificationClick(notification: Notification) {
+        if (!notification.read) {
+            this.markAsRead(new Event('click'), notification);
+        }
+        // Here you can add more functionality, such as opening a dialog with more details
+        console.log('Notification clicked:', notification);
+        // For example, you could navigate to a specific page or open a dialog:
+        // this.router.navigate(['/details', notification.id]);
+        // or
+        // this.openNotificationDetailsDialog(notification);
     }
 }

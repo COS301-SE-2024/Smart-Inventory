@@ -34,19 +34,19 @@
 
         <div class="notification-content">
             <mat-card *ngFor="let notification of filteredNotifications" class="notification-card"
-                [ngClass]="{'unread': !notification.read}" (click)="onNotificationClick(notification)">
+                [ngClass]="{'unread': !notification.isRead}" (click)="onNotificationClick(notification)">
                 <mat-card-header>
                     <div mat-card-avatar class="notification-icon">
                         <mat-icon>{{ getNotificationIcon(notification.type) }}</mat-icon>
                     </div>
-                    <mat-card-title>{{ notification.title }}</mat-card-title>
-                    <mat-card-subtitle>{{ notification.date | date:'short' }}</mat-card-subtitle>
+                    <mat-card-title>{{ notification.type }}</mat-card-title>
+                    <mat-card-subtitle>{{ notification.timestamp | date:'short' }}</mat-card-subtitle>
                 </mat-card-header>
                 <mat-card-content>
-                    <p>{{ notification.info }}</p>
+                    <p>{{ notification.message }}</p>
                 </mat-card-content>
                 <mat-card-actions align="end">
-                    <button mat-button color="primary" (click)="markAsRead($event, notification)" *ngIf="!notification.read">
+                    <button mat-button color="primary" (click)="markAsRead($event, notification)" *ngIf="!notification.isRead">
                         <mat-icon>done</mat-icon>
                         Mark as read
                     </button>
@@ -57,14 +57,4 @@
 
     <ng-container *ngIf="activeTab === 'Settings'">
         <div class="notification-content settings-content">
-            <p class="settings-description">Toggle switches to enable or disable notifications for each category.</p>
-            <mat-list>
-                <mat-list-item *ngFor="let setting of notificationSettings">
-                    <mat-slide-toggle [(ngModel)]="setting.enabled" (change)="updateNotificationSettings(setting)" color="primary">
-                        {{ setting.name }}
-                    </mat-slide-toggle>
-                </mat-list-item>
-            </mat-list>
-        </div>
-    </ng-container>
-</div>
+            <p class="settings-description">Toggle switches to enable or disable

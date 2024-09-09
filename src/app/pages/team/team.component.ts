@@ -6,6 +6,7 @@ import {
     AdminAddUserToGroupCommand,
     GetUserCommand,
     AdminUpdateUserAttributesCommand,
+    AdminDeleteUserCommand
 } from '@aws-sdk/client-cognito-identity-provider';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -14,8 +15,6 @@ import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
 import { GridComponent } from '../../components/grid/grid.component';
 import { ColDef } from 'ag-grid-community';
 import { TitleService } from '../../components/header/title.service';
-import { DeleteButtonRendererComponent } from './delete-button-renderer.component';
-import { DeleteConfirmationDialogComponent } from './delete-confirmation-dialog.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -23,6 +22,9 @@ import { RoleChangeConfirmationDialogComponent } from './role-change-confirmatio
 import { RoleSelectCellEditorComponent } from './role-select-cell-editor.component';
 import { LoadingSpinnerComponent } from '../../components/loader/loading-spinner.component';
 import { MaterialModule } from 'app/components/material/material.module';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { DeleteConfirmationDialogComponent } from './delete-confirmation-dialog.component';
+
 @Component({
     selector: 'app-team',
     standalone: true,
@@ -30,7 +32,6 @@ import { MaterialModule } from 'app/components/material/material.module';
         CommonModule,
         FormsModule,
         GridComponent,
-        DeleteButtonRendererComponent,
         MatDialogModule,
         MatButtonModule,
         RoleChangeConfirmationDialogComponent,
@@ -45,6 +46,7 @@ export class TeamComponent implements OnInit {
     constructor(
         private titleService: TitleService,
         private dialog: MatDialog,
+        private snackBar: MatSnackBar
     ) {}
     showPopup = false;
     user = {
@@ -72,15 +74,7 @@ export class TeamComponent implements OnInit {
                 context: this.getContext()
             },
             width: 100,
-        },
-        {
-            headerName: 'Remove Member',
-            cellRenderer: DeleteButtonRendererComponent,
-            cellRendererParams: {
-                context: this.getContext()
-            },
-            width: 100,
-        },
+        }
     ];
 
     tenantId: string = '';
@@ -306,6 +300,11 @@ export class TeamComponent implements OnInit {
 
             this.fetchUsers();
             this.closePopup();
+            this.snackBar.open('User created and added to the group successfully', 'Close', {
+                duration: 3000,
+                horizontalPosition: 'center',
+                verticalPosition: 'top',
+              });
         } catch (error) {
             console.error('Error creating user and adding to group:', error);
         }
@@ -405,6 +404,7 @@ export class TeamComponent implements OnInit {
       
           if (responseBody.statusCode === 201) {
             console.log('Notification created successfully');
+            
           } else {
             throw new Error(responseBody.body);
           }
@@ -423,4 +423,84 @@ export class TeamComponent implements OnInit {
       getContext() {
         return { componentParent: this };
       }
+
+      async deleteMember() {
+        const selectedRows = this.gridComponent.gridApi.getSelectedRows();
+        if (selectedRows.length === 0) {
+          this.snackBar.open('Please select a member to delete', 'Close', {
+            duration: 3000,
+            horizontalPosition: 'center',
+            verticalPosition: 'top',
+          });
+          return;
+        }
+    
+        const selectedMember = selectedRows[0];
+        if (selectedMember.role === 'Admin') {
+          this.snackBar.open('Admin users cannot be deleted', 'Close', {
+            duration: 3000,
+            horizontalPosition: 'center',
+            verticalPosition: 'top',
+          });
+          return;
+        }
+    
+        const dialogRef = this.dialog.open(DeleteConfirmationDialogComponent, {
+          width: '350px',
+          data: {
+            given_name: selectedMember.given_name,
+            family_name: selectedMember.family_name,
+            email: selectedMember.email,
+          },
+        });
+    
+        dialogRef.componentInstance.deleteConfirmed.subscribe(async () => {
+          await this.deleteUser(selectedMember.email);
+          dialogRef.close();
+          this.fetchUsers();
+        });
+      }
+
+    async deleteUser(email: string) {
+        try {
+        const session = await fetchAuthSession();
+
+        const client = new CognitoIdentityProviderClient({
+            region: outputs.auth.aws_region,
+            credentials: session.credentials,
+        });
+
+        const input = {
+            UserPoolId: outputs.auth.user_pool_id,
+            Username: email,
+        };
+
+        const command = new AdminDeleteUserCommand(input);
+        await client.send(command);
+        console.log('User deleted successfully:', email);
+    
+
+        // Create notification
+        await this.createNotification(
+            `User ${email} has been deleted`,
+            'USER_DELETED'
+        );
+
+        this.snackBar.open('User deleted successfully', 'Close', {
+            duration: 3000,
+            horizontalPosition: 'center',
+            verticalPosition: 'top',
+        });
+
+        } catch (error) {
+        console.error('Error deleting user:', error);
+        this.snackBar.open('Error deleting user', 'Close', {
+            duration: 3000,
+            horizontalPosition: 'center',
+            verticalPosition: 'top',
+        });
+        }
+    }
+
+
 }

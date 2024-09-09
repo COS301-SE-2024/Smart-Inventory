@@ -29,7 +29,7 @@
 }
 
 .side-pane-header {
-  padding: 24px 30px;
+  padding: 16px;
   background-color: #f8f9fa;
   border-bottom: 1px solid #e9ecef;
   display: flex;
@@ -39,7 +39,7 @@
 
 .side-pane-header h2 {
   margin: 0;
-  font-size: 28px;
+  font-size: 24px;
   font-weight: 500;
   color: #343a40;
 }

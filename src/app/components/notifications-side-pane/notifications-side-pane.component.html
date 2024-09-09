@@ -34,12 +34,12 @@
 
         <div class="notification-content">
             <mat-card *ngFor="let notification of filteredNotifications" class="notification-card"
-                [ngClass]="{'unread': !notification.isRead}" (click)="onNotificationClick(notification)">
+            [ngClass]="{'unread': !notification.isRead}" (click)="onNotificationClick(notification)">
                 <mat-card-header>
                     <div mat-card-avatar class="notification-icon">
                         <mat-icon>{{ getNotificationIcon(notification.type) }}</mat-icon>
                     </div>
-                    <mat-card-title>{{ notification.type }}</mat-card-title>
+                    <mat-card-title>{{ formatNotificationType(notification.type) }}</mat-card-title>
                     <mat-card-subtitle>{{ notification.timestamp | date:'short' }}</mat-card-subtitle>
                 </mat-card-header>
                 <mat-card-content>
@@ -57,4 +57,14 @@
 
     <ng-container *ngIf="activeTab === 'Settings'">
         <div class="notification-content settings-content">
-            <p class="settings-description">Toggle switches to enable or disable
+            <p class="settings-description">Toggle switches to enable or disable notifications for each category.</p>
+            <mat-list>
+                <mat-list-item *ngFor="let setting of notificationSettings">
+                    <mat-slide-toggle [(ngModel)]="setting.enabled" (change)="updateNotificationSettings(setting)" color="primary">
+                        {{ setting.name }}
+                    </mat-slide-toggle>
+                </mat-list-item>
+            </mat-list>
+        </div>
+    </ng-container>
+</div>

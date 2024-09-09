@@ -81,7 +81,7 @@ export class NotificationsSidePaneComponent implements OnInit {
                 FunctionName: 'getNotifications', // Replace with your actual Lambda function name if different
                 Payload: new TextEncoder().encode(JSON.stringify({
                     tenentId: this.tenentId,
-                    limit: 20, // Adjust as needed
+                    limit: 200, // Adjust as needed
                     lastEvaluatedKey: null // For initial fetch
                 })),
             };
@@ -333,5 +333,12 @@ export class NotificationsSidePaneComponent implements OnInit {
         }
         console.log('Notification clicked:', notification);
         // TODO: Implement navigation or action based on notification type
+    }
+
+    formatNotificationType(type: string): string {
+        // Replace underscores with spaces and capitalize the first letter of each word
+        return type.split('_')
+          .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+          .join(' ');
     }
 }

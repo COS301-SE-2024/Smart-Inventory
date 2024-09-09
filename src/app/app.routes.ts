@@ -18,6 +18,7 @@ import { NotificationSettingsComponent } from './components/notification-setting
 import { ContactSupportComponent } from './components/contact-support/contact-support.component';
 import { StockRequestReportComponent } from './components/stock-request-report/stock-request-report.component';
 import { InventorySummaryComponent } from './pages/inventory-summary/inventory-summary.component';
+import { LandingPageComponent } from './pages/landing-page/landing-page.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
@@ -34,7 +35,6 @@ export const routes: Routes = [
     { path: 'inventoryReport', component: InventoryReportComponent },
     { path: 'orderReport', component: OrderReportComponent },
     { path: 'grid', component: GridComponent },
-    { path: 'supplier-form/:supplierID/:quoteID/:deliveryID/:tenentId', component: SupplierFormComponent },
     { path: 'supplierReport/:supplierID/:orderID', component: SupplierReportComponent },
     { path: 'activityReport', component: ActivityReportComponent },
     { path: 'profile', component: ProfileComponent },
@@ -42,4 +42,7 @@ export const routes: Routes = [
     { path: 'notifications', component: NotificationSettingsComponent },
     { path: 'stock-requests-report', component: StockRequestReportComponent },
     { path: 'inventory-summary', component: InventorySummaryComponent },
+    { path: '', redirectTo: '/landing', pathMatch: 'full' },
+    { path: 'landing', component: LandingPageComponent },
+    { path: 'supplier-form/:supplierID/:quoteID/:deliveryID/:tenentId', component: SupplierFormComponent },
 ];

@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit, HostListener } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, HostListener, ElementRef, Renderer2 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from '../material/material.module';
 import { FormsModule } from '@angular/forms';
@@ -36,6 +36,8 @@ export class NotificationsSidePaneComponent implements OnInit {
 
     panelWidth: number = 800;
     isResizing: boolean = false;
+    minWidth: number = 400;
+    maxWidth: number = 1200;
     notifications: Notification[] = [
         { id: 1, type: 'Inventory', title: 'Low stock alert', date: new Date(), info: 'Item A is running low', read: false },
         { id: 2, type: 'Orders', title: 'New order received', date: new Date(), info: 'Order #1234 needs processing', read: true },
@@ -55,7 +57,7 @@ export class NotificationsSidePaneComponent implements OnInit {
         { name: 'Teams', enabled: true },
     ];
 
-    constructor(private dialog: MatDialog) {}
+    constructor(private dialog: MatDialog, private el: ElementRef, private renderer: Renderer2) {}
 
     ngOnInit() {
         this.updateFilteredNotifications();
@@ -150,32 +152,32 @@ export class NotificationsSidePaneComponent implements OnInit {
     }
 
     startResize(event: MouseEvent) {
-        this.isResizing = true;
         event.preventDefault();
+        this.isResizing = true;
+        this.renderer.addClass(document.body, 'resize-active');
     }
 
     @HostListener('document:mousemove', ['$event'])
     onMouseMove(event: MouseEvent) {
         if (this.isResizing) {
             const newWidth = window.innerWidth - event.clientX;
-            this.panelWidth = Math.max(400, Math.min(1200, newWidth));
+            this.panelWidth = Math.max(this.minWidth, Math.min(this.maxWidth, newWidth));
+            this.renderer.setStyle(this.el.nativeElement.querySelector('.notification-panel'), 'width', `${this.panelWidth}px`);
         }
     }
 
     @HostListener('document:mouseup')
     onMouseUp() {
-        this.isResizing = false;
+        if (this.isResizing) {
+            this.isResizing = false;
+            this.renderer.removeClass(document.body, 'resize-active');
+        }
     }
 
     onNotificationClick(notification: Notification) {
         if (!notification.read) {
             this.markAsRead(new Event('click'), notification);
         }
-        // Here you can add more functionality, such as opening a dialog with more details
         console.log('Notification clicked:', notification);
-        // For example, you could navigate to a specific page or open a dialog:
-        // this.router.navigate(['/details', notification.id]);
-        // or
-        // this.openNotificationDetailsDialog(notification);
     }
 }

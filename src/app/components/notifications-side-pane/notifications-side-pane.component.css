@@ -5,11 +5,12 @@
     height: calc(100% - 60px);
     background-color: #ffffff;
     box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease-in-out, width 0.3s ease-in-out;
+    transition: transform 0.3s ease-in-out;
     z-index: 1000;
     display: flex;
     flex-direction: column;
     transform: translateX(100%);
+    width: 800px;
 }
 
 .notification-panel.open {
@@ -22,8 +23,8 @@
     top: 0;
     bottom: 0;
     width: 5px;
-    background-color: #e0e0e0;
     cursor: ew-resize;
+    background-color: #e0e0e0;
 }
 
 .notification-header {
@@ -79,6 +80,7 @@
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
+    cursor: pointer;
 }
 
 .notification-card:hover {
@@ -139,7 +141,7 @@ mat-card-actions button {
 
 .settings-description {
     color: #757575;
-    font-size: 16px;
+    font-size: 14px;
     margin-bottom: 16px;
 }
 
@@ -150,6 +152,16 @@ mat-card-actions button {
 
 ::ng-deep .mat-slide-toggle.mat-checked .mat-slide-toggle-thumb {
     background-color: #1976d2;
+}
+
+/* Styles for smooth resizing */
+body.resize-active {
+    cursor: ew-resize;
+    user-select: none;
+}
+
+body.resize-active .notification-panel {
+    transition: none;
 }
 
 @media (max-width: 600px) {

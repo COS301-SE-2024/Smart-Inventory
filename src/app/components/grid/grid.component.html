@@ -50,8 +50,11 @@
             <button class="QAButtons" mat-menu-item color="primary" (click)="downloadCSV()">
                 <mat-icon>download</mat-icon><span>Export Excel</span>
             </button>
-            <button class="QAButtons" mat-menu-item color="primary" (click)="importExcel()">
-                <mat-icon>upload</mat-icon><span>Import Excel</span>
+            <button class="QAButtons" mat-menu-item color="primary" (click)="importExcel()" *ngIf="getCurrentRoute('suppliers')">
+                <mat-icon>upload</mat-icon><span>Import Suppliers</span>
+            </button>
+            <button class="QAButtons" mat-menu-item color="primary" (click)="importExcel()" *ngIf="getCurrentRoute('inventory')">
+                <mat-icon>upload</mat-icon><span>Import Items</span>
             </button>
             <button
                 class="QAButtons"

@@ -1,0 +1,9 @@
+<h2 mat-dialog-title>Import Suppliers</h2>
+<ng-container mat-dialog-content>
+  <p>Upload a CSV or Excel file containing supplier details.</p>
+  <input type="file" (change)="onFileSelected($event)" accept=".csv,.xlsx,.xls" #fileInput>
+  <button mat-raised-button color="primary" (click)="uploadFile()" [disabled]="!selectedFile">Upload</button>
+</ng-container>
+<ng-container mat-dialog-actions>
+  <button mat-button (click)="onCancel()">Cancel</button>
+</ng-container>

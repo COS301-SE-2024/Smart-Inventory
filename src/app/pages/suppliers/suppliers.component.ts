@@ -18,6 +18,8 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MaterialModule } from 'app/components/material/material.module';
+import { UploadSuppliersModalComponent } from 'app/components/upload-suppliers-modal/upload-suppliers-modal.component';
+
 @Component({
     selector: 'app-suppliers',
     standalone: true,
@@ -618,4 +620,16 @@ export class SuppliersComponent implements OnInit {
             this.gridComponent.updateRow(event.data);
         }
     }
+
+    openImportSuppliersModal() {
+        console.log('Opening import suppliers modal');
+        const dialogRef = this.dialog.open(UploadSuppliersModalComponent, {
+        });
+    
+        dialogRef.afterClosed().subscribe(result => {
+          if (result) {
+            this.loadSuppliersData(); // Refresh the suppliers list
+          }
+        });
+      }
 }

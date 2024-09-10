@@ -24,6 +24,7 @@
         "@angular/router": "^18.0.0",
         "@aws-amplify/ui-angular": "^5.0.16",
         "@aws-sdk/client-cognito-identity-provider": "^3.590.0",
+        "@lottiefiles/lottie-player": "^2.0.4",
         "ag-charts-angular": "^9.3.1",
         "ag-charts-community": "^9.3.1",
         "ag-grid-angular": "^32.0.0",

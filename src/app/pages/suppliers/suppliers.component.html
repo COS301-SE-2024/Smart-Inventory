@@ -1,7 +1,7 @@
 <div class="supplierHolder">
     <app-grid [rowData]="rowData" [columnDefs]="colDefs" [addButton]="addButton"
         (addNewClicked)="openAddSupplierPopup()" (itemToUpdate)="handleCellValueChanged($event)"
-        (rowsToDelete)="handleRowsToDelete($event)" #gridComponent>
+        (rowsToDelete)="handleRowsToDelete($event)" (importExcelClicked)="openImportSuppliersModal()" #gridComponent>
     </app-grid>
 </div>
 

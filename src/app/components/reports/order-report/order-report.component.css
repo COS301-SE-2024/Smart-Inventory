@@ -2,7 +2,7 @@
     width: 50%;
 }
 
-gridster{
+gridster {
     background-color: transparent !important;
 }
 
@@ -33,7 +33,7 @@ mat-card.mat-mdc-card.mdc-card {
     padding: 0 10px;
 }
 
-.metrics-container button{
+.metrics-container button {
     background-color: white;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     border-radius: 50%;
@@ -62,37 +62,32 @@ mat-card.mat-mdc-card.mdc-card {
 }
 
 .metric-card {
-    width: 30%;
-    /* Card width */
+    width: 35%;
     height: 180px;
-    /* Card height */
-    flex-shrink: 0;
+    padding: 32px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 16px;
-    box-sizing: border-box;
+    justify-content: center;
 }
 
-.metric-icon {
-    flex: 0 0 50px;
+.icon-container {
     display: flex;
-    align-items: center;
     justify-content: center;
-    margin-right: 15px;
-}
-
-.icon {
-    font-size: 44px;
-    /* background-color: #e3f2fd; */
-    display: flex;
     align-items: center;
-    justify-content: center;
-    width: 80px;
-    height: 70px;
+    width: 48px;
+    height: 48px;
+    background-color: #f0f0f0;
     border-radius: 50%;
-    margin-bottom: 12px;
+    margin-right: 16px;
+    flex-shrink: 0;
+    /* Prevent icon from shrinking */
 }
+
+.icon-container mat-icon {
+    font-size: 24px;
+    color: #666;
+}
+
 
 .metric-name {
     font-size: 18px;
@@ -100,8 +95,18 @@ mat-card.mat-mdc-card.mdc-card {
     margin-bottom: 8px;
 }
 
+.title {
+    font-weight: 300;
+}
+
+.metric-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}
+
 .metric-value {
-    font-size: 28px;
+    font-size: 24px;
     font-weight: bold;
 }
 
@@ -139,6 +144,7 @@ mat-card.mat-mdc-card.mdc-card {
         font-size: 24px;
     }
 }
+
 .loading-overlay {
     position: fixed;
     top: 0;
@@ -150,6 +156,12 @@ mat-card.mat-mdc-card.mdc-card {
     justify-content: center;
     align-items: center;
     z-index: 9999;
+}
+
+.content-container {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 .inventoryHolder {
@@ -170,7 +182,7 @@ gridster-item:not(.order-report-item) {
     border-radius: 10px;
 }
 
-gridster-item{
+gridster-item {
     overflow: visible !important;
     border-radius: 10px !important;
     background-color: transparent !important;
@@ -207,7 +219,29 @@ mat-card-content.mat-mdc-card-content.content {
     margin-top: 10px;
 }
 
-.additional-info {
-    color: #666;
+mat-card-title {
     font-size: 17px;
+    margin-bottom: 8px;
+}
+
+
+.card-layout {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    /* Ensure full width of card */
+    gap: 10%;
+}
+
+.additional-info {
+    font-size: 14px;
+    color: #666;
+    text-align: right;
+    /* Align to the right */
+}
+
+.align {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }

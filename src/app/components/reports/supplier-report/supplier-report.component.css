@@ -371,3 +371,82 @@ mat-card-content.mat-mdc-card-content {
     height: 100%;
     width: 100%;
 }
+
+
+
+
+.supplier-report .metrics-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 10px;
+    position: relative;
+}
+
+.supplier-report .metric-card {
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.15);
+    border-radius: 10px;
+    padding: 16px;
+    box-sizing: border-box;
+}
+
+.supplier-report .mat-card-header {
+    display: flex;
+    align-items: center;
+}
+
+.supplier-report .metric-icon {
+    flex: 0 0 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+}
+
+.supplier-report .icon {
+    font-size: 24px;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f0f0f0;
+    border-radius: 50%;
+}
+
+.supplier-report mat-card-title {
+    font-size: 16px;
+    font-weight: normal;
+    margin-bottom: 4px;
+}
+
+.supplier-report .metric-value {
+    font-size: 28px;
+    font-weight: bold;
+    margin: 0;
+}
+
+.supplier-report .metric-info {
+    font-size: 14px;
+    color: #666;
+    margin: 0;
+}
+
+.supplier-report .metrics-container button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+    background-color: white;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border-radius: 50%;
+}
+
+.supplier-report .metrics-container button:first-child {
+    left: 0;
+}
+
+.supplier-report .metrics-container button:last-child {
+    right: 0;
+}

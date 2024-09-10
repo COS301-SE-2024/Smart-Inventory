@@ -198,3 +198,16 @@ gridster-item{
     height: 100%;
     width: 100%;
 }
+
+mat-card-content.mat-mdc-card-content.content {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 50px;
+    margin-top: 10px;
+}
+
+.additional-info {
+    color: #666;
+    font-size: 17px;
+}

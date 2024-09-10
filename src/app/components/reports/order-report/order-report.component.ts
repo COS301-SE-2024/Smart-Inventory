@@ -284,12 +284,94 @@ export class OrderReportComponent implements OnInit {
     }
 
     metrics: any[] = [
-        { icon: 'shopping_cart', iconLabel: 'Total orders', metricName: 'Total orders', value: '0' },
-        { icon: 'timer', iconLabel: 'Average order time', metricName: 'Average order time', value: '0 days' },
-        { icon: 'trending_up', iconLabel: 'Supplier performance index', metricName: 'Supplier performance index', value: '0%' },
-        { icon: 'attach_money', iconLabel: 'Order cost analysis', metricName: 'Order cost analysis', value: 'R 0' },
-        { icon: 'assignment', iconLabel: 'Orders in progress', metricName: 'Orders in progress', value: '0' }
+        {
+            icon: 'shopping_cart',
+            iconLabel: 'Total orders',
+            metricName: 'Total orders',
+            value: '0',
+            additionalInfo: [
+                { level: 'good', text: 'High order volume', threshold: '>100' },
+                { level: 'medium', text: 'Moderate order volume', threshold: '50-100' },
+                { level: 'bad', text: 'Low order volume', threshold: '<50' }
+            ]
+        },
+        {
+            icon: 'timer',
+            iconLabel: 'Average order time',
+            metricName: 'Average order time',
+            value: '0 days',
+            additionalInfo: [
+                { level: 'good', text: 'Fast processing', threshold: '<3 days' },
+                { level: 'medium', text: 'Average processing', threshold: '3-7 days' },
+                { level: 'bad', text: 'Slow processing', threshold: '>7 days' }
+            ]
+        },
+        {
+            icon: 'trending_up',
+            iconLabel: 'Supplier performance index',
+            metricName: 'Supplier performance index',
+            value: '0%',
+            additionalInfo: [
+                { level: 'good', text: 'Excellent performance', threshold: '>90%' },
+                { level: 'medium', text: 'Satisfactory performance', threshold: '70-90%' },
+                { level: 'bad', text: 'Poor performance', threshold: '<70%' }
+            ]
+        },
+        {
+            icon: 'attach_money',
+            iconLabel: 'Order cost analysis',
+            metricName: 'Order cost analysis',
+            value: 'R 0',
+            additionalInfo: [
+                { level: 'good', text: 'Cost-effective', threshold: '<R 1000' },
+                { level: 'medium', text: 'Average cost', threshold: 'R 1000-2000' },
+                { level: 'bad', text: 'High cost', threshold: '>R 2000' }
+            ]
+        },
+        {
+            icon: 'assignment',
+            iconLabel: 'Orders in progress',
+            metricName: 'Orders in progress',
+            value: '0',
+            additionalInfo: [
+                { level: 'good', text: 'Efficient processing', threshold: '<10' },
+                { level: 'medium', text: 'Moderate backlog', threshold: '10-20' },
+                { level: 'bad', text: 'High backlog', threshold: '>20' }
+            ]
+        }
     ];
+
+    getAdditionalInfoClass(metric: any): string {
+        const value = this.parseMetricValue(metric.value);
+        const info = metric.additionalInfo.find((i: { threshold: string; }) => 
+            this.isWithinThreshold(value, i.threshold)
+        );
+        return info ? info.level : 'medium';
+    }
+    
+    getAdditionalInfo(metric: any): string {
+        const value = this.parseMetricValue(metric.value);
+        const info = metric.additionalInfo.find((i: { threshold: string; }) => 
+            this.isWithinThreshold(value, i.threshold)
+        );
+        return info ? info.text : '';
+    }
+    
+    private parseMetricValue(value: string): number {
+        return parseFloat(value.replace(/[^0-9.-]+/g, ""));
+    }
+    
+    private isWithinThreshold(value: number, threshold: string): boolean {
+        if (threshold.includes('-')) {
+            const [min, max] = threshold.split('-').map(Number);
+            return value >= min && value <= max;
+        } else if (threshold.startsWith('<')) {
+            return value < parseFloat(threshold.slice(1));
+        } else if (threshold.startsWith('>')) {
+            return value > parseFloat(threshold.slice(1));
+        }
+        return false;
+    }
 
     calculateMetrics() {
         if (this.rowData.length === 0) return;

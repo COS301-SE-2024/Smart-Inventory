@@ -14,11 +14,11 @@
                             <div mat-card-avatar class="metric-icon">
                                 <mat-icon class="icon" [attr.aria-label]="metric.iconLabel">{{ metric.icon }}</mat-icon>
                             </div>
-                            <div class="content">
+                            <div >
                                 <mat-card-title>{{ metric.metricName }}</mat-card-title>
                                 <mat-card-content>
-                                    <p class="metric-value">{{ metric.value }}</p>
-                                    <span class="metric-info">{{ metric.additionalInfo }}</span>
+                                    <p class="metric-value" style="padding-right: 30px;">{{ metric.value }}</p>
+                                    <mat-card-subtitle class="metric-info">{{ metric.additionalInfo }}</mat-card-subtitle>
                                 </mat-card-content>
                             </div>
 

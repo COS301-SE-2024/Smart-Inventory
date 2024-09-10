@@ -20,8 +20,11 @@
                             </div>
                             <mat-card-title>{{ metric.metricName }}</mat-card-title>
                         </mat-card-header>
-                        <mat-card-content>
+                        <mat-card-content class="content">
                             <p class="metric-value">{{ metric.value }}</p>
+                            <p class="additional-info" [ngClass]="getAdditionalInfoClass(metric)">
+                                {{ getAdditionalInfo(metric) }}
+                            </p>
                         </mat-card-content>
                     </mat-card>
                 </div>
@@ -83,10 +86,10 @@
         background-color: transparent;
         z-index: 1;
     ">
-        <button mat-flat-button class="btn" (click)="back()">
-            <mat-icon style="font-size: 24px; height: 24px; width: 24px">arrow_back</mat-icon> Back To Reports
-        </button>
-    </mat-toolbar>
+            <button mat-flat-button class="btn" (click)="back()">
+                <mat-icon style="font-size: 24px; height: 24px; width: 24px">arrow_back</mat-icon> Back To Reports
+            </button>
+        </mat-toolbar>
     </gridster>
-    
+
 </div>

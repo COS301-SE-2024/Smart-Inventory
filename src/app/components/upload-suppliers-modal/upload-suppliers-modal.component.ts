@@ -58,36 +58,52 @@ export class UploadSuppliersModalComponent implements OnInit {
       this.tenentId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value || '';
     } catch (error) {
       console.error('Error fetching tenent ID:', error);
-      this.snackBar.open('Error fetching user information', 'Close', { duration: 3000 });
+      this.showSnackBar('Error fetching user information');
     }
   }
 
   onFileSelected(event: any) {
     this.selectedFile = event.target.files[0];
+    if (this.selectedFile) {
+      this.validateCsvFile(this.selectedFile);
+    }
+  }
+
+  validateCsvFile(file: File) {
+    const reader = new FileReader();
+    reader.onload = (e: any) => {
+      const contents = e.target.result;
+      const lines = contents.split('\n');
+      if (lines.length > 0) {
+        const headers = lines[0].split(',').map((header: string) => header.trim());
+        const requiredColumns = ['company_name', 'contact_name', 'contact_email', 'phone_number', 'street', 'city', 'state_province', 'postal_code', 'country'];
+        const missingColumns = requiredColumns.filter(col => !headers.includes(col));
+        
+        if (missingColumns.length > 0) {
+          this.showSnackBar(`Missing columns: ${missingColumns.join(', ')}`);
+          this.selectedFile = null;
+        } else {
+          this.showSnackBar('File validated successfully', 'success');
+        }
+      } else {
+        this.showSnackBar('The file is empty');
+        this.selectedFile = null;
+      }
+    };
+    reader.readAsText(file);
   }
 
   async uploadFile() {
     if (this.selectedFile && this.tenentId) {
       this.uploading = true;
       try {
-        console.log('Reading file as base64...');
         const fileContent = await this.readFileAsBase64(this.selectedFile);
-        console.log('File read successfully.');
-
-        console.log('Getting file type...');
         const fileType = this.getFileType(this.selectedFile.name);
-        console.log('File type:', fileType);
-
-        console.log('Fetching auth session...');
         const session = await fetchAuthSession();
-        console.log('Auth session fetched.');
-
-        console.log('Creating Lambda client...');
         const lambdaClient = new LambdaClient({
           region: outputs.auth.aws_region,
           credentials: session.credentials,
         });
-        console.log('Lambda client created.');
 
         const payload = JSON.stringify({
           fileContent,
@@ -95,45 +111,28 @@ export class UploadSuppliersModalComponent implements OnInit {
           tenentId: this.tenentId
         });
 
-        console.log('Invoking Lambda function...');
         const invokeCommand = new InvokeCommand({
           FunctionName: 'batchAddSuppliers',
           Payload: new TextEncoder().encode(JSON.stringify({ body: payload })),
         });
 
         const lambdaResponse = await lambdaClient.send(invokeCommand);
-        console.log('Lambda function invoked successfully.');
-        console.log('Raw Lambda response:', lambdaResponse);
-
-        let responseBody;
-        try {
-          responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-          console.log('Parsed Lambda response:', responseBody);
-        } catch (parseError) {
-          console.error('Error parsing Lambda response:', parseError);
-          console.log('Raw response payload:', new TextDecoder().decode(lambdaResponse.Payload));
-          throw new Error('Failed to parse Lambda response');
-        }
+        const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
 
         if (responseBody && responseBody.statusCode === 201) {
-          this.snackBar.open('Suppliers uploaded successfully', 'Close', { duration: 3000 });
+          this.showSnackBar('Suppliers uploaded successfully', 'success');
           this.dialogRef.close(true);
         } else {
-          const errorMessage = responseBody ? responseBody.body : 'Unknown error occurred';
-          throw new Error(errorMessage);
+          throw new Error(responseBody ? responseBody.body : 'Unknown error occurred');
         }
       } catch (error) {
         console.error('Error uploading suppliers:', error);
-        if (error instanceof Error) {
-          console.error('Error message:', error.message);
-          console.error('Error stack:', error.stack);
-        }
-        this.snackBar.open('Error uploading suppliers: ' + (error instanceof Error ? error.message : String(error)), 'Close', { duration: 5000 });
+        this.showSnackBar('Error uploading suppliers: ' + (error instanceof Error ? error.message : String(error)));
       } finally {
         this.uploading = false;
       }
     } else {
-      this.snackBar.open('Please select a file and ensure user information is loaded', 'Close', { duration: 3000 });
+      this.showSnackBar('Please select a valid file and ensure user information is loaded');
     }
   }
 
@@ -159,20 +158,28 @@ export class UploadSuppliersModalComponent implements OnInit {
     this.dialogRef.close();
   }
 
-  downloadSampleFile(fileType: string) {
-    const fileName = fileType === 'csv' ? 'sample_suppliers.csv' : 'sample_suppliers.xlsx';
-    const fileContent = this.getSampleFileContent(fileType);
-    const blob = new Blob([fileContent], { type: fileType === 'csv' ? 'text/csv' : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  downloadSampleFile() {
+    const fileName = 'sample_suppliers.csv';
+    const fileContent = this.getSampleFileContent();
+    const blob = new Blob([fileContent], { type: 'text/csv' });
     const link = document.createElement('a');
     link.href = window.URL.createObjectURL(blob);
     link.download = fileName;
     link.click();
   }
 
-  private getSampleFileContent(fileType: string): string {
-      return `company_name,contact_name,contact_email,phone_number,street,city,state_province,postal_code,country
+  private getSampleFileContent(): string {
+    return `company_name,contact_name,contact_email,phone_number,street,city,state_province,postal_code,country
 Acme Inc.,John Doe,john@acme.com,123-456-7890,123 Main St,Anytown,CA,12345,USA
 Global Tech,Jane Smith,jane@globaltech.com,987-654-3210,456 Oak Ave,Metropolis,NY,67890,USA`;
+  }
 
+  private showSnackBar(message: string, type: 'error' | 'success' = 'error') {
+    this.snackBar.open(message, 'Close', {
+      duration: 5000,
+      horizontalPosition: 'center',
+      verticalPosition: 'top',
+      panelClass: type === 'error' ? ['error-snackbar'] : ['success-snackbar']
+    });
   }
 }

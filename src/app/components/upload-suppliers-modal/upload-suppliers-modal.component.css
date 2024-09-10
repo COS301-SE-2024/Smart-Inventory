@@ -1,113 +1,137 @@
+/* upload-suppliers-modal.component.css */
+
 .modal-container {
-    font-family: 'Roboto', sans-serif;
-    max-width: 500px;
-    padding: 20px;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  }
-  
-  h2 {
-    color: #333;
-    font-size: 24px;
-    margin-bottom: 20px;
-    text-align: center;
-  }
-  
-  .file-upload-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 20px;
-  }
-  
-  .file-input-wrapper {
-    position: relative;
-    overflow: hidden;
-    display: inline-block;
-    margin-bottom: 10px;
-  }
-  
-  .file-input {
-    position: absolute;
-    font-size: 100px;
-    right: 0;
-    top: 0;
-    opacity: 0;
-  }
-  
-  .file-input-label {
-    display: inline-flex;
-    align-items: center;
-    padding: 8px 16px;
-    background-color: #e0e0e0;
-    color: #333;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
-  
-  .file-input-label:hover {
-    background-color: #d0d0d0;
-  }
-  
-  .file-input-label mat-icon {
-    margin-right: 8px;
-  }
-  
-  .file-name {
-    margin-left: 10px;
-    font-style: italic;
-  }
-  
-  .upload-button {
-    margin-top: 10px;
-  }
-  
-  .file-format-info {
-    background-color: #fff;
+  font-family: 'Roboto', sans-serif;
+  max-width: 500px;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+  color: #333;
+  font-size: 24px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.file-upload-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.file-input-wrapper {
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+  margin-bottom: 10px;
+}
+
+.file-input {
+  position: absolute;
+  font-size: 100px;
+  right: 0;
+  top: 0;
+  opacity: 0;
+}
+
+.file-input-label {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 16px;
+  background-color: #e0e0e0;
+  color: #333;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.1s;
+}
+
+.file-input-label:hover {
+  background-color: #d0d0d0;
+  transform: scale(1.05);
+}
+
+.file-input-label:active {
+  transform: scale(0.95);
+}
+
+.file-input-label mat-icon {
+  margin-right: 8px;
+}
+
+.file-name {
+  margin-left: 10px;
+  font-style: italic;
+}
+
+.error-message {
+  color: #f44336;
+  margin-top: 5px;
+  text-align: center;
+}
+
+.upload-button {
+  margin-top: 10px;
+}
+
+.file-format-info {
+  background-color: #fff;
+  padding: 15px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.file-format-info h3 {
+  color: #333;
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.file-format-info ul {
+  padding-left: 20px;
+  margin-bottom: 10px;
+}
+
+.sample-files {
+  text-align: center;
+}
+
+.sample-files h3 {
+  color: #333;
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.sample-button {
+  margin: 0 5px;
+}
+
+mat-dialog-actions {
+  justify-content: flex-end;
+}
+
+@media (max-width: 600px) {
+  .modal-container {
+    max-width: 100%;
     padding: 15px;
-    border-radius: 4px;
-    margin-bottom: 20px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   }
-  
-  .file-format-info h3 {
-    color: #333;
-    font-size: 18px;
-    margin-bottom: 10px;
-  }
-  
-  .file-format-info ul {
-    padding-left: 20px;
-    margin-bottom: 10px;
-  }
-  
-  .sample-files {
-    text-align: center;
-  }
-  
-  .sample-files h3 {
-    color: #333;
-    font-size: 18px;
-    margin-bottom: 10px;
-  }
-  
-  .sample-button {
-    margin: 0 5px;
-  }
-  
-  .cancel-button {
-    margin-top: 20px;
-  }
-  
-  mat-dialog-actions {
-    justify-content: flex-end;
-  }
-  
-  @media (max-width: 600px) {
-    .modal-container {
-      max-width: 100%;
-      padding: 15px;
-    }
-  }
+}
+
+/* Remove overflow scrollbar */
+::ng-deep .mat-dialog-container {
+  overflow: hidden !important;
+}
+
+.error-snackbar {
+  background: #f44336;
+  color: white;
+}
+
+.success-snackbar {
+  background: #4caf50;
+  color: white;
+}

@@ -1,15 +1,17 @@
 :host {
-    display: block;
-    width: 100%;
-    max-width: 800px;
-  }
-  
-  .quote-content {
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-    min-height: 500px; 
-  }
+  display: block;
+  width: 100%;
+  max-width: 100%;
+}
+
+.quote-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  height: 80vh;
+  overflow-y: auto;
+}
+
   
   .items-section, .suppliers-section {
     display: flex;

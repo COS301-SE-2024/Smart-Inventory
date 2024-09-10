@@ -14,6 +14,7 @@ import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
 import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
 import outputs from '../../../../amplify_outputs.json';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { LoadingSpinnerComponent } from '../loader/loading-spinner.component';
 
 interface OrderItem {
   sku: string;
@@ -41,7 +42,8 @@ interface OrderItem {
     MatDatepickerModule,
     MatNativeDateModule,
     FormsModule,
-    MatIconModule
+    MatIconModule,
+    LoadingSpinnerComponent
   ],
   providers: [
     MatDatepickerModule,
@@ -54,6 +56,7 @@ export class ReceiveOrderModalComponent implements OnInit {
   displayedColumns: string[] = ['sku', 'description', 'quantity', 'expirationDate'];
   orderItems: OrderItem[] = [];
   tenentId: string = '';
+  isLoading = true;
 
   constructor(
     public dialogRef: MatDialogRef<ReceiveOrderModalComponent>,
@@ -62,7 +65,9 @@ export class ReceiveOrderModalComponent implements OnInit {
   ) {}
 
   async ngOnInit() {
+    this.isLoading = true;
     await this.loadQuoteItems();
+    this.isLoading = false;
   }
 
   async loadQuoteItems() {

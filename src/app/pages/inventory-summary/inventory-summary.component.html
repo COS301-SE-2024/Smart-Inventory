@@ -1,0 +1,13 @@
+<div style="margin: 15px; width: 100%">
+    <app-grid
+        [rowData]="rowData"
+        [columnDefs]="colDefs"
+        (itemToUpdate)="handleCellValueChanged($event)"
+        #gridComponent
+    >
+    </app-grid>
+</div>
+
+<div *ngIf="isLoading" class="loading-overlay">
+    <app-loading-spinner></app-loading-spinner>
+</div>

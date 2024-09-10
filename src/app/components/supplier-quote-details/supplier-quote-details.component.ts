@@ -9,6 +9,8 @@ import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-c
 import outputs from '../../../../amplify_outputs.json';
 import { QuoteAcceptConfirmationDialogComponent } from './quote-accept-confirmation-dialog.component';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { LoadingSpinnerComponent } from '../loader/loading-spinner.component';
+import { SupplierRenegotiationModalComponent } from '../supplier-renegotiation-modal/supplier-renegotiation-modal.component';
 
 interface QuoteItem {
   description: string;
@@ -35,7 +37,7 @@ interface QuoteSummary {
 @Component({
   selector: 'app-supplier-quote-details',
   standalone: true,
-  imports: [CommonModule, MatDialogModule, MatIconModule, MatButtonModule, QuoteAcceptConfirmationDialogComponent, MatSnackBarModule],
+  imports: [CommonModule, MatDialogModule, MatIconModule, MatButtonModule, QuoteAcceptConfirmationDialogComponent, MatSnackBarModule, LoadingSpinnerComponent, SupplierRenegotiationModalComponent],
   templateUrl: './supplier-quote-details.component.html',
   styleUrl: './supplier-quote-details.component.css'
 })
@@ -44,6 +46,7 @@ export class SupplierQuoteDetailsComponent implements OnInit {
   quoteItems: QuoteItem[] = [];
   quoteSummary: QuoteSummary | null = null;
   isLoading = true;
+  isAcceptingQuote = false;
   error: string | null = null;
 
   constructor(
@@ -55,7 +58,9 @@ export class SupplierQuoteDetailsComponent implements OnInit {
     orderDate: string;},
     private dialog: MatDialog,
     private snackBar: MatSnackBar
-  ) {}
+  ) {
+    console.log(data);
+  }
 
   ngOnInit() {
     this.loadQuoteDetails();
@@ -133,6 +138,7 @@ export class SupplierQuoteDetailsComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
+        this.isLoading = true; // Set to true before accepting the quote
         this.acceptQuote();
       }
     });
@@ -153,7 +159,8 @@ export class SupplierQuoteDetailsComponent implements OnInit {
         orderDate: this.data.orderDate,
         selectedSupplier: this.supplierInfo.company_name,
         supplierID: this.data.supplierID,
-        expectedDeliveryDate: this.quoteSummary?.Delivery_Date
+        expectedDeliveryDate: this.quoteSummary?.Delivery_Date,
+        tenentId: tenentId
       };
   
       // Console log the payload
@@ -185,6 +192,39 @@ export class SupplierQuoteDetailsComponent implements OnInit {
         duration: 6000,
         verticalPosition: 'top'
       });
+    } finally {
+      this.isLoading = false; // Set back to false after the process completes
     }
+  }
+
+
+  openRenegotiateModal(): void {
+    this.dialogRef.close(); // Close the supplier-quote-details modal
+
+    const renegotiateDialogRef = this.dialog.open(SupplierRenegotiationModalComponent, {
+      width: '800px',
+      data: {
+        supplierName: this.supplierInfo.company_name,
+        supplierEmail: this.supplierInfo.contact_email,
+        quoteID: this.data.quoteID,
+        orderID: this.data.orderID,
+        supplierID: this.data.supplierID
+      }
+    });
+
+    renegotiateDialogRef.afterClosed().subscribe(result => {
+      if (result === 'cancelled') {
+        // Reopen the supplier-quote-details modal if renegotiation was cancelled
+        this.dialog.open(SupplierQuoteDetailsComponent, {
+          width: '90%',
+          maxWidth: '1350px',
+          data: this.data
+        });
+      } else if (result) {
+        // Handle successful renegotiation
+        console.log('Renegotiation email sent:', result);
+        // You may want to show a success message or perform other actions here
+      }
+    });
   }
 }

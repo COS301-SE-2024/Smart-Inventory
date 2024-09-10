@@ -25,11 +25,11 @@ export class RequestStockModalComponent {
 
   constructor(
     public dialogRef: MatDialogRef<RequestStockModalComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { sku: string, supplier: string },
+    @Inject(MAT_DIALOG_DATA) public data: { sku: string, supplier: string, availableQuantity: number },
     private fb: FormBuilder
   ) {
     this.requestForm = this.fb.group({
-      quantity: [null, [Validators.required, Validators.min(1)]]
+      quantity: [null, [Validators.required, Validators.min(1), Validators.max(this.data.availableQuantity)]]
     });
   }
 

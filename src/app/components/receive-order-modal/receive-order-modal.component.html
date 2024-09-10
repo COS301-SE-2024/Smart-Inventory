@@ -2,15 +2,17 @@
   <div class="side-pane-header">
     <h2>Receive Order</h2>
     <div class="header-buttons">
-      <button mat-raised-button color="primary" class="receive-order-button" (click)="markAsReceived()">
-        Mark Order As Received
-      </button>
       <button mat-icon-button class="close-button" (click)="close()">
         <mat-icon>close</mat-icon>
       </button>
     </div>
   </div>
 
+  <div *ngIf="isLoading" class="loading-spinner-container">
+    <app-loading-spinner></app-loading-spinner>
+  </div>
+
+  <ng-container *ngIf="!isLoading">
   <div class="scrollable-content">
     <div class="order-info">
       <h3>Order Details</h3>
@@ -58,4 +60,10 @@
       </table>
     </div>
   </div>
+  <div class="modal-footer">
+    <button mat-raised-button color="primary" class="receive-order-button" (click)="markAsReceived()">
+      Mark Order As Received
+    </button>
+  </div>
+</ng-container>
 </div>

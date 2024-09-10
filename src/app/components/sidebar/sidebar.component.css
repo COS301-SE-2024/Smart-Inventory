@@ -41,6 +41,9 @@ p {
     transition-delay: 0.4s;
 }
 
+.expanded #menu {
+    transform: rotate(90deg);
+}
 .sidenav:hover p {
     width: 100px;
     transition-delay: 0.4s;
@@ -85,7 +88,10 @@ a div {
 a.mat-mdc-list-item.mdc-list-item.mat-mdc-list-item-interactive.mat-mdc-list-item-single-line.mdc-list-item--with-one-line {
     height: 70px;
 }
-
+.sidenav:hover:not(.expanded) #menu {
+    transition: 0.4 ease;
+    transform: rotate(90deg);
+}
 .sidenav:not(:hover):not(.expanded) #dashboard {
     transition: 0.2s ease;
     transform: translateY(12px); /* Move icon to center when not expanded */

@@ -11,6 +11,7 @@ import { fetchAuthSession } from 'aws-amplify/auth';
 import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
 import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
 import outputs from '../../../../amplify_outputs.json';
+import { LoadingSpinnerComponent } from '../loader/loading-spinner.component';
 
 @Component({
   selector: 'app-upload-suppliers-modal',
@@ -20,7 +21,8 @@ import outputs from '../../../../amplify_outputs.json';
     MatDialogModule,
     MatButtonModule,
     MatIconModule,
-    MatTooltipModule
+    MatTooltipModule,
+    LoadingSpinnerComponent
   ],
   templateUrl: './upload-suppliers-modal.component.html',
   styleUrls: ['./upload-suppliers-modal.component.css']
@@ -30,6 +32,7 @@ export class UploadSuppliersModalComponent implements OnInit {
   selectedFile: File | null = null;
   tenentId: string = '';
   uploading: boolean = false;
+  isLoading: boolean = false;
 
   constructor(
     private dialogRef: MatDialogRef<UploadSuppliersModalComponent>,
@@ -95,6 +98,7 @@ export class UploadSuppliersModalComponent implements OnInit {
 
   async uploadFile() {
     if (this.selectedFile && this.tenentId) {
+      this.isLoading = true;
       this.uploading = true;
       try {
         const fileContent = await this.readFileAsBase64(this.selectedFile);
@@ -129,6 +133,7 @@ export class UploadSuppliersModalComponent implements OnInit {
         console.error('Error uploading suppliers:', error);
         this.showSnackBar('Error uploading suppliers: ' + (error instanceof Error ? error.message : String(error)));
       } finally {
+        this.isLoading = false;
         this.uploading = false;
       }
     } else {

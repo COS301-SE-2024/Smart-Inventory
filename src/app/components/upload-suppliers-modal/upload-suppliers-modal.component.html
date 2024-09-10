@@ -44,4 +44,8 @@
   <div mat-dialog-actions>
     <button mat-raised-button color="primary" (click)="onCancel()">Cancel</button>
   </div>
+
+  <div *ngIf="isLoading" class="loading-overlay">
+    <app-loading-spinner></app-loading-spinner>
+  </div>
 </div>

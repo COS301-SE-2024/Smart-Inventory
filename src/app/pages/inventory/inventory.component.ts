@@ -94,6 +94,7 @@ export class InventoryComponent implements OnInit {
         { field: 'deliveryCost', headerName: 'Delivery Cost', filter: 'agSetColumnFilter' },
         { field: 'lowStockThreshold', headerName: 'Low Stock Threshold', filter: 'agSetColumnFilter' },
         { field: 'reorderAmount', headerName: 'Reorder Amount', filter: 'agSetColumnFilter' },
+        { field: 'dailyDemand', headerName: 'Daily Demand', filter: 'agSetColumnFilter' },
     ];
 
     addButton = { text: 'Add New Item' };
@@ -213,7 +214,8 @@ export class InventoryComponent implements OnInit {
                     reorderAmount: item.reorderAmount,
                     unitCost: item.unitCost,
                     leadTime: item.leadTime,
-                    deliveryCost: item.deliveryCost
+                    deliveryCost: item.deliveryCost,
+                    dailyDemand: item.dailyDemand,
                 }));
                 console.log('Processed inventory items:', this.rowData);
 
@@ -288,10 +290,14 @@ export class InventoryComponent implements OnInit {
                 quantity: formData.quantity,
                 sku: formData.sku,
                 supplier: formData.supplier,
-                tenentId: this.tenantId,
-                expirationDate: formData.expirationDate,
                 lowStockThreshold: formData.lowStockThreshold,
                 reorderAmount: formData.reorderAmount,
+                tenentId: this.tenantId,
+                expirationDate: formData.expirationDate,
+                unitCost: formData.unitCost,
+                dailyDemand: formData.dailyDemand,
+                leadTime: formData.leadTime,
+                deliveryCost: formData.deliveryCost
             });
 
             console.log('Payload:', payload);

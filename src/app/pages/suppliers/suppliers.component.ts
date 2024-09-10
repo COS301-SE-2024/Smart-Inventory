@@ -624,7 +624,6 @@ export class SuppliersComponent implements OnInit {
     openImportSuppliersModal() {
         console.log('Opening import suppliers modal');
         const dialogRef = this.dialog.open(UploadSuppliersModalComponent, {
-          width: '400px'
         });
     
         dialogRef.afterClosed().subscribe(result => {

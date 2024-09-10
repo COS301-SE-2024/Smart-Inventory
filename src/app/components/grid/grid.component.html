@@ -66,6 +66,15 @@
                 <mat-icon>add</mat-icon><span>Add Member</span>
             </button>
             <button
+            class="QAButtons"
+            mat-menu-item
+            color="primary"
+            (click)="deleteRow()"
+            *ngIf="getCurrentRoute('team')"
+        >
+            <mat-icon>remove</mat-icon><span>Remove Member</span>
+        </button>
+            <button
                 class="QAButtons"
                 mat-menu-item
                 color="primary"

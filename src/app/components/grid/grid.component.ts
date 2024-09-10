@@ -87,6 +87,7 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
     @Output() markOrderAsReceivedClicked = new EventEmitter<any>();
     @Output() viewAutomationSettingsClicked = new EventEmitter<void>();
     @Output() viewInventorySummary = new EventEmitter<void>();
+    @Output() deleteRowClicked = new EventEmitter<void>();
 
     @ViewChild(AgGridAngular) agGrid!: AgGridAngular;
     gridApi!: GridApi<any>;

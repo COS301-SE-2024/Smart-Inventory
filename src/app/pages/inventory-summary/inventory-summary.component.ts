@@ -36,7 +36,18 @@ export class InventorySummaryComponent implements OnInit {
   colDefs: ColDef[] = [
     { field: 'SKU', headerName: 'SKU', filter: 'agSetColumnFilter' },
     { field: 'description', headerName: 'Description', filter: 'agSetColumnFilter', editable: true },
-    { field: 'quantity', headerName: 'Quantity', filter: 'agSetColumnFilter' },
+    { 
+      field: 'quantity', 
+      headerName: 'Quantity', 
+      filter: 'agSetColumnFilter',
+      cellStyle: (params) => {
+        if (params.value <= params.data.lowStockThreshold) {
+          return { backgroundColor: '#FFCDD2' }; // Light red for low stock
+        } else {
+          return { backgroundColor: '#E8F5E9' }; // Light green for normal stock
+        }
+      }
+    },
     { field: 'lowStockThreshold', headerName: 'Low Stock Threshold', filter: 'agSetColumnFilter', editable: true },
     { field: 'reorderAmount', headerName: 'Reorder Amount', filter: 'agSetColumnFilter', editable: true },
     { field: 'EOQ', headerName: 'EOQ', filter: 'agSetColumnFilter' },

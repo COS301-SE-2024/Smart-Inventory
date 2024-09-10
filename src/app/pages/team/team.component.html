@@ -1,10 +1,11 @@
 <div style="margin: 15px; width: 100%">
-    <app-grid
+        <app-grid
         [rowData]="rowData"
         [columnDefs]="colDefs"
         [addButton]="addButton"
         (addNewClicked)="openAddMemberPopup()"
         (nameCellValueChanged)="onNameCellValueChanged($event)"
+        (rowsToDelete)="deleteMember()"
         [context]="getContext()"
         #gridComponent
     >

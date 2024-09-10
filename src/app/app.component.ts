@@ -11,6 +11,7 @@ import { GridComponent } from './components/grid/grid.component';
 import { LoadingService } from './components/loader/loading.service';
 import { ThemeService } from './services/theme.service';
 import { CommonModule } from '@angular/common';
+import { filter } from 'rxjs/operators'; 
 
 Amplify.configure(outputs);
 @Component({
@@ -32,6 +33,7 @@ export class AppComponent implements OnInit {
     title = 'Smart-Inventory';
     sidebarCollapsed = false;
     isSupplierForm = false;
+    isLandingPage = false;
 
     constructor(public authenticator: AuthenticatorService, public loader: LoadingService, private themeService: ThemeService, private router: Router) {
         // Amplify.configure(outputs);
@@ -40,11 +42,13 @@ export class AppComponent implements OnInit {
 
     ngOnInit() {
         this.logAuthSession();
-        this.router.events.subscribe((event) => {
-            if (event instanceof NavigationEnd) {
-                this.isSupplierForm = event.urlAfterRedirects.startsWith('/supplier-form');
-            }
+        this.router.events.pipe(
+            filter(event => event instanceof NavigationEnd)
+        ).subscribe((event: NavigationEnd) => {
+            this.isSupplierForm = event.urlAfterRedirects.startsWith('/supplier-form');
+            this.isLandingPage = event.urlAfterRedirects === '/landing' || event.urlAfterRedirects === '/';
         });
+
     }
 
     //

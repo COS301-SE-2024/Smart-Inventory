@@ -1,5 +1,7 @@
-<div class="supplier-quote-container">
-    <p class="submission-deadline">Submission Deadline: {{ submissionDeadline | date: 'EEEE, MMMM d, y, h:mm a' }}</p>
+<div class="supplier-quote-container" [class.deadline-passed]="isDeadlinePassed">
+    <p class="submission-deadline" [class.deadline-passed]="isDeadlinePassed">
+        Submission Deadline: {{ submissionDeadline | date: 'EEEE, MMMM d, y, h:mm a' }}
+    </p>
 
     <div class="supplier-info">
         <div class="supplier-details">
@@ -160,5 +162,19 @@
         </ul>
     </div>
 
-    <button class="submit-btn" (click)="submitQuote()">Submit Quote</button>
+    <button class="submit-btn" (click)="submitQuote()" [disabled]="isSubmitting || isDeadlinePassed">
+        <span *ngIf="!isSubmitting">Submit Quote</span>
+        <span *ngIf="isSubmitting">Submitting...</span>
+    </button>
+</div>
+
+<div *ngIf="isDeadlinePassed" class="deadline-overlay">
+    <div class="deadline-message">
+        <h2>Submission Deadline Passed</h2>
+        <p>The deadline for this quote submission has passed. You can no longer submit or edit this quote.</p>
+    </div>
+</div>
+
+<div *ngIf="isSubmitting" class="loading-overlay">
+    <app-loading-spinner></app-loading-spinner>
 </div>

@@ -27,6 +27,16 @@ mat-card.mat-mdc-card.mdc-card {
     padding: 10px;
 }
 
+.btn {
+    border-radius: 20px;
+    margin-right: 10px;
+    --mdc-outlined-button-label-text-color: black;
+    --mdc-outlined-button-outline-color: #74777f;
+    border-radius: 5px;
+    width: 200px;
+    height: 40px;
+}
+
 .chart-tile {
     background-color: #fff;
     border-radius: 4px;

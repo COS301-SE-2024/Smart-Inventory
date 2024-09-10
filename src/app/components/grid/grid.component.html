@@ -6,19 +6,23 @@
             >
             <input
                 class="input-box"
-                matInput
+                type="text"
                 [(ngModel)]="inputFilter"
-                (input)="filterGrid()"
+                (input)="onFilterTextBoxChanged()"
                 placeholder="Search..."
+                [matAutocomplete]="auto"
+                id="filter-text-box"
             />
+            <mat-autocomplete #auto="matAutocomplete">
+                <mat-option *ngFor="let option of filteredOptions" [value]="option">
+                    {{ option }}
+                </mat-option>
+            </mat-autocomplete>
         </div>
-        <mat-select [(ngModel)]="filterSelect" placeholder="Select Column">
-            <mat-option *ngFor="let option of selectOptions" [value]="option">{{ option }}</mat-option>
-        </mat-select>
         <div class="icon-container">
             <mat-icon
                 class="icon"
-                matTooltip="Select a column to search from, then enter your query in the search bar to filter the table."
+                matTooltip=" Type to filter across all columns. Clear the search to reset the table view. Searches are case-insensitive."
                 matTooltipPosition="right"
                 >info</mat-icon
             >
@@ -34,6 +38,15 @@
             Quick Actions
         </button>
         <mat-menu #menu="matMenu" class="menu" style="width: 150px">
+            <button
+                class="QAButtons"
+                mat-menu-item
+                *ngIf="getCurrentRoute('inventory')"
+                color="primary"
+                (click)="onViewInventorySummary()"
+            >
+                <mat-icon>inventory</mat-icon><span>View Inventory Summary</span>
+            </button>
             <button class="QAButtons" mat-menu-item color="primary" (click)="downloadCSV()">
                 <mat-icon>download</mat-icon><span>Export Excel</span>
             </button>
@@ -52,6 +65,15 @@
             <button class="QAButtons" mat-menu-item color="primary" (click)="addRow()" *ngIf="getCurrentRoute('team')">
                 <mat-icon>add</mat-icon><span>Add Member</span>
             </button>
+            <button
+            class="QAButtons"
+            mat-menu-item
+            color="primary"
+            (click)="deleteRow()"
+            *ngIf="getCurrentRoute('team')"
+        >
+            <mat-icon>remove</mat-icon><span>Remove Member</span>
+        </button>
             <button
                 class="QAButtons"
                 mat-menu-item
@@ -176,6 +198,7 @@
         (selectionChanged)="onSelectionChanged($event)"
         [rowData]="rowData"
         [class]="themeClass"
+        [cacheQuickFilter]="true"
         class="ag-theme-quartz aggrid"
         [ngStyle]="gridStyle"
         (gridReady)="onGridReady($event)"

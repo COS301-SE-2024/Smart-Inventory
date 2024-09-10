@@ -30,6 +30,9 @@ import { CustomQuoteModalComponent } from '../custom-quote-modal/custom-quote-mo
 import { ReceivedQuotesSidePaneComponent } from '../received-quotes-side-pane/received-quotes-side-pane.component';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { ReactiveFormsModule } from '@angular/forms';
+
 @Component({
     selector: 'app-grid',
     standalone: true,
@@ -48,6 +51,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
         DateSelectCellEditorComponent,
         ReceivedQuotesSidePaneComponent,
         MatTooltip,
+        MatAutocompleteModule,
+        ReactiveFormsModule,
     ],
     templateUrl: './grid.component.html',
     styleUrl: './grid.component.css',
@@ -65,6 +70,7 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
     private _rowData: any[] = [];
     @Input() columnDefs: ColDef[] = [];
     @Input() addButton: { text: string } = { text: 'Add' };
+    @Input() context: any;
     @Output() rowsToDelete = new EventEmitter<any[]>();
     @Output() addNewClicked = new EventEmitter<void>();
     @Output() itemToUpdate = new EventEmitter<{ data: any; field: string; newValue: any }>();
@@ -80,11 +86,16 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
     @Output() viewReceivedQuotesClicked = new EventEmitter<void>();
     @Output() markOrderAsReceivedClicked = new EventEmitter<any>();
     @Output() viewAutomationSettingsClicked = new EventEmitter<void>();
+    @Output() viewInventorySummary = new EventEmitter<void>();
+    @Output() deleteRowClicked = new EventEmitter<void>();
 
     @ViewChild(AgGridAngular) agGrid!: AgGridAngular;
     gridApi!: GridApi<any>;
     private themeObserver!: MutationObserver;
     gridStyle: any;
+    inputFilter = '';
+    filteredOptions: string[] = [];
+
     gridOptions = {
         pagination: true,
         paginationPageSize: 20, // Set the number of rows per page
@@ -98,7 +109,6 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
     // gridColumnApi: any;
 
     filterSelect: string = '';
-    inputFilter: string = '';
 
     selectOptions: any = [];
 
@@ -120,8 +130,22 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
         private _snackBar: MatSnackBar,
     ) {
         this.setupThemeObserver();
+    }
 
-        // this.setGridHeight();
+    onFilterTextBoxChanged() {
+        this.gridApi.setGridOption(
+            'quickFilterText',
+            (document.getElementById('filter-text-box') as HTMLInputElement).value,
+        );
+        this.updateFilteredOptions();
+    }
+
+    private updateFilteredOptions() {
+        const allValues = this.rowData.flatMap((row) => Object.values(row));
+        const uniqueValues = Array.from(new Set(allValues.map(String)));
+        this.filteredOptions = uniqueValues.filter((value) =>
+            value.toLowerCase().includes(this.inputFilter.toLowerCase()),
+        );
     }
 
     oopenSnackBar(message: string) {
@@ -201,7 +225,7 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
         this.selectOptions = this.columnDefs.map((f: any) => f.field);
 
         // Make all columns editable
-        this.columnDefs = this.columnDefs.map((col) => ({ ...col, editable: true }));
+        this.columnDefs = this.columnDefs.map((col) => ({ ...col, }));
         this.setGridHeight();
     }
 
@@ -344,7 +368,8 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
 
     openCustomQuoteModal() {
         const dialogRef = this.dialog.open(CustomQuoteModalComponent, {
-            width: '500px',
+            width: '60vw',
+            maxWidth: '100vw',
             data: { isNewQuote: true },
         });
 
@@ -367,7 +392,12 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     onViewReceivedQuotes() {
-        this.viewReceivedQuotesClicked.emit();
+        const selectedRows = this.gridApi.getSelectedRows();
+        if (selectedRows && selectedRows.length > 0) {
+            this.viewReceivedQuotesClicked.emit(selectedRows[0]);
+        } else {
+            this.oopenSnackBar('Please select an order to view received quotes');
+        }
     }
 
     onMarkOrderAsReceived() {
@@ -382,5 +412,9 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
 
     openAutomationSettings() {
         this.viewAutomationSettingsClicked.emit();
+    }
+
+    onViewInventorySummary() {
+        this.viewInventorySummary.emit();
     }
 }

@@ -1,16 +1,11 @@
 <div style="height: 100%; display: block; overflow: scroll">
-    <mat-toolbar style="width: 100%">
-        <button mat-button style="width: 100%; background-color: #f1f1f1; color: black" (click)="back()">
-            Back to reports
-        </button>
-    </mat-toolbar>
     <mat-grid-list cols="9" rowHeight="20vh" gutterSize="15px">
         <mat-grid-tile [colspan]="3" [rowspan]="1">
             <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
                 <mat-card>
                     <mat-card-content>
                         <mat-card-content>
-                            <div class="metric-container" style="padding: 0;">
+                            <div class="metric-container" style="padding: 0">
                                 <div class="icon-container">
                                     <mat-icon>{{ ActivityReport.metrics[0].icon }}</mat-icon>
                                 </div>
@@ -67,7 +62,21 @@
         </mat-grid-tile>
     </mat-grid-list>
 </div>
-
+<mat-toolbar
+    style="
+        position: sticky;
+        bottom: 0;
+        left: 0;
+        width: 300px;
+        border-radius: 20px;
+        height: 50px;
+        background-color: transparent;
+    "
+>
+    <button mat-flat-button class="btn" (click)="back()">
+        <mat-icon style="font-size: 24px; height: 24px; width: 24px">arrow_back</mat-icon> Back To Reports
+    </button>
+</mat-toolbar>
 <div *ngIf="isLoading" class="loading-overlay">
     <app-loading-spinner></app-loading-spinner>
 </div>

@@ -1,6 +1,6 @@
-<ng-container *ngIf="isSupplierForm; else mainApp">
-    <router-outlet></router-outlet>
-  </ng-container>
+<ng-container *ngIf="isLandingPage || isSupplierForm; else mainApp">
+  <router-outlet></router-outlet>
+</ng-container>
   
   <ng-template #mainApp>
     <amplify-authenticator>

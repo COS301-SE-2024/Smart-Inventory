@@ -36,6 +36,16 @@
     align-items: center;
 }
 
+.btn {
+    border-radius: 20px;
+    margin-right: 10px;
+    --mdc-outlined-button-label-text-color: black;
+    --mdc-outlined-button-outline-color: #74777f;
+    border-radius: 5px;
+    width: 200px;
+    height: 40px;
+}
+
 .mat-icon {
     font-size: 48px;
     width: 48px;

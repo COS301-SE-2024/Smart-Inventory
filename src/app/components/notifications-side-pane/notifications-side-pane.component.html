@@ -1,0 +1,70 @@
+<div class="notification-panel" [class.open]="isPanelOpen" [style.width.px]="panelWidth">
+    <div class="resize-handle" (mousedown)="startResize($event)"></div>
+
+    <div class="notification-header">
+        <h2>Notifications</h2>
+        <button mat-icon-button (click)="closeNotificationPanel()" matTooltip="Close">
+            <mat-icon>close</mat-icon>
+        </button>
+    </div>
+
+    <div class="notification-tabs">
+        <mat-tab-group mat-align-tabs="start" (selectedTabChange)="onTabChange($event.tab.textLabel)">
+            <mat-tab *ngFor="let tab of tabs" [label]="tab"></mat-tab>
+        </mat-tab-group>
+    </div>
+
+    <ng-container *ngIf="activeTab !== 'Settings'">
+        <div class="notification-actions">
+            <mat-form-field appearance="outline" class="filter-select">
+                <mat-label>Filter</mat-label>
+                <mat-select [(value)]="activeFilter" (selectionChange)="filterNotifications($event.value)">
+                    <mat-option *ngFor="let filter of filters" [value]="filter">{{filter}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+
+            <button mat-raised-button color="primary" class="mark-all-read" (click)="markAllAsRead()"
+                [disabled]="unreadCount === 0">
+                <mat-icon>done_all</mat-icon>
+                Mark all as read
+            </button>
+
+            <span class="unread-count">{{ unreadCount }} unread</span>
+        </div>
+
+        <div class="notification-content">
+            <mat-card *ngFor="let notification of filteredNotifications" class="notification-card"
+            [ngClass]="{'unread': !notification.isRead}" (click)="onNotificationClick(notification)">
+                <mat-card-header>
+                    <div mat-card-avatar class="notification-icon">
+                        <mat-icon>{{ getNotificationIcon(notification.type) }}</mat-icon>
+                    </div>
+                    <mat-card-title>{{ formatNotificationType(notification.type) }}</mat-card-title>
+                    <mat-card-subtitle>{{ notification.timestamp | date:'short' }}</mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                    <p>{{ notification.message }}</p>
+                </mat-card-content>
+                <mat-card-actions align="end">
+                    <button mat-button color="primary" (click)="markAsRead($event, notification)" *ngIf="!notification.isRead">
+                        <mat-icon>done</mat-icon>
+                        Mark as read
+                    </button>
+                </mat-card-actions>
+            </mat-card>
+        </div>
+    </ng-container>
+
+    <ng-container *ngIf="activeTab === 'Settings'">
+        <div class="notification-content settings-content">
+            <p class="settings-description">Toggle switches to enable or disable notifications for each category.</p>
+            <mat-list>
+                <mat-list-item *ngFor="let setting of notificationSettings">
+                    <mat-slide-toggle [(ngModel)]="setting.enabled" (change)="updateNotificationSettings(setting)" color="primary">
+                        {{ setting.name }}
+                    </mat-slide-toggle>
+                </mat-list-item>
+            </mat-list>
+        </div>
+    </ng-container>
+</div>

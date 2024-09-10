@@ -1,6 +1,6 @@
 .receive-order-container {
     width: 2700px;
-    max-height: 90vh;
+    height: 90vh;
     padding: 20px;
     font-family: 'Arial', sans-serif;
     background-color: #f5f5f5;
@@ -92,6 +92,8 @@
   
   .mat-mdc-cell, .mat-mdc-header-cell {
     padding: 15px;
+    border-bottom: none; /* Remove bottom border */
+    border-top: none; /* Remove top border */
   }
   
   .mat-mdc-row:nth-child(even) {
@@ -111,4 +113,23 @@
     .order-table {
       min-width: 100%;
     }
+  }
+
+  .modal-footer {
+    padding: 16px;
+    background-color: #f5f5f5;
+    border-top: 1px solid #e0e0e0;
+    display: flex;
+    justify-content: flex-end;
+  }
+  
+  .receive-order-button {
+    margin-left: auto; /* Push the button to the right */
+  }
+
+  .loading-spinner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1;
   }

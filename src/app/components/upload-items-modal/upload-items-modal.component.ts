@@ -79,7 +79,7 @@ export class UploadItemsModalComponent implements OnInit {
       const lines = contents.split('\n');
       if (lines.length > 0) {
         const headers = lines[0].split(',').map((header: string) => header.trim());
-        const requiredColumns = ['sku', 'upc', 'description', 'category', 'quantity', 'supplier', 'lowStockThreshold', 'reorderAmount', 'unitCost', 'leadTime', 'deliveryCost', 'dailyDemand'];
+        const requiredColumns = ['SKU', 'upc', 'category', 'quantity', 'description', 'expirationDate', 'supplier', 'unitCost', 'deliveryCost', 'leadTime', 'lowStockThreshold', 'reorderAmount', 'annualDemand', 'dailyDemand', 'EOQ', 'holdingCost', 'safetyStock'];
         const missingColumns = requiredColumns.filter(col => !headers.includes(col));
         
         if (missingColumns.length > 0) {
@@ -108,30 +108,44 @@ export class UploadItemsModalComponent implements OnInit {
           region: outputs.auth.aws_region,
           credentials: session.credentials,
         });
-
+  
         const payload = JSON.stringify({
           fileContent,
           fileType,
           tenentId: this.tenentId
         });
-
+  
         const invokeCommand = new InvokeCommand({
           FunctionName: 'batchAddInventoryItems',
           Payload: new TextEncoder().encode(JSON.stringify({ body: payload })),
         });
-
+  
         const lambdaResponse = await lambdaClient.send(invokeCommand);
         const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
+  
+        console.log('Lambda response:', responseBody); // Log the full response for debugging
+  
         if (responseBody && responseBody.statusCode === 201) {
           this.showSnackBar('Items uploaded successfully', 'success');
           this.dialogRef.close(true);
+        } else if (responseBody && responseBody.statusCode === 400) {
+          const parsedBody = JSON.parse(responseBody.body);
+          const errorMessage = parsedBody.message || 'Some items could not be added';
+          this.showSnackBar(errorMessage, 'error');
+          console.error('Errors:', parsedBody.errors);
         } else {
-          throw new Error(responseBody ? responseBody.body : 'Unknown error occurred');
+          throw new Error(responseBody && responseBody.body ? JSON.parse(responseBody.body).message : 'Unknown error occurred');
         }
       } catch (error) {
         console.error('Error uploading items:', error);
-        this.showSnackBar('Error uploading items: ' + (error instanceof Error ? error.message : String(error)));
+        let errorMessage = 'Error uploading items: ';
+        if (error instanceof Error) {
+          errorMessage += error.message;
+          console.error('Error stack:', error.stack);
+        } else {
+          errorMessage += String(error);
+        }
+        this.showSnackBar(errorMessage);
       } finally {
         this.isLoading = false;
         this.uploading = false;
@@ -174,9 +188,9 @@ export class UploadItemsModalComponent implements OnInit {
   }
 
   private getSampleFileContent(): string {
-    return `sku,upc,description,category,quantity,supplier,lowStockThreshold,reorderAmount,unitCost,leadTime,deliveryCost,dailyDemand
-ITEM001,123456789012,Widget A,Electronics,100,Supplier A,20,50,10.99,5,2.50,5
-ITEM002,234567890123,Gadget B,Home Appliances,75,Supplier B,15,30,15.99,7,3.00,3`;
+    return `SKU,upc,category,quantity,description,expirationDate,supplier,unitCost,deliveryCost,leadTime,lowStockThreshold,reorderAmount,annualDemand,dailyDemand,EOQ,holdingCost,safetyStock
+ITEM001,123456789012,Electronics,100,Widget A,2024-12-31,Supplier A,10.99,2.50,5,20,50,1000,2.74,200,1.5,30
+ITEM002,234567890123,Home Appliances,75,Gadget B,2025-06-30,Supplier B,15.99,3.00,7,15,30,800,2.19,150,2.0,25`;
   }
 
   private showSnackBar(message: string, type: 'error' | 'success' = 'error') {

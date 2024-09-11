@@ -96,7 +96,6 @@ export class InventoryComponent implements OnInit {
         { field: 'deliveryCost', headerName: 'Delivery Cost', filter: 'agSetColumnFilter' },
         { field: 'lowStockThreshold', headerName: 'Low Stock Threshold', filter: 'agSetColumnFilter' },
         { field: 'reorderAmount', headerName: 'Reorder Amount', filter: 'agSetColumnFilter' },
-        { field: 'dailyDemand', headerName: 'Daily Demand', filter: 'agSetColumnFilter' },
     ];
 
     addButton = { text: 'Add New Item' };

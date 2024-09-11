@@ -1,482 +1,174 @@
-/* Hide scrollbar for Chrome, Safari and Opera */
-gridster.scrollVertical::-webkit-scrollbar {
-    display: none;
+.dashboard-container {
+    width: 101.5%;
+    height: calc(100vh - 64px);
+    /* Adjust based on your app's header height */
 }
 
-/* Hide scrollbar for IE, Edge and Firefox */
-gridster.scrollVertical {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-    overflow-y: auto;
-}
-
-.btnAdd {
-    border-radius: 20px;
-    /* margin-right: 10px; */
-    color: #000;
-    --mdc-protected-button-label-text-color: #000000;
-    background-color: #fff;
-    width: 200px;
-}
-
-.QAButtons:hover{
-    background-color: #b0b0b0;
-}
-
-.QAButtons {
-    width: 200px;
-    background-color: white;
-    --mat-menu-container-color: #74777f;
-    --mat-menu-item-hover-state-layer-color: #74777f;
-    border: #74777f;
-    color: #000000;
-}
-
-.modal {
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
+.dashboard-card {
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.4);
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    box-sizing: border-box;
+    padding: 16px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.modal-content {
-    background-color: #fefefe;
-    padding: 20px;
-    border-radius: 5px;
-    text-align: center;
-}
-
-.modal-buttons {
-    margin-top: 20px;
-}
-
-.modal-buttons button {
-    margin: 0 10px;
-}
-
-gridster-item {
-    box-shadow:
-        0 4px 8px rgba(0, 0, 0, 0.1),
-        0 6px 20px rgba(0, 0, 0, 0.15);
-    margin-left: 2px;
-    background: transparent !important;
-    border-radius: 10px;
-}
-
-.card {
+.card-content {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: var(--dash-cards-bg-color);
-    /* default background for non-Orders */
-    color: var(--dash-cards-text-color);
-    border-radius: 8px;
-    padding: 20px;
-    z-index: 2;
+    height: 100%;
 }
 
-.card.orders {
-    background-color: #66bb6a;
-    /* specific background for Orders */
-    color: white;
+.left-content {
+    display: flex;
+    align-items: center;
+    flex: 1;
 }
 
 .icon-container {
-    flex-grow: 0;
-    flex-shrink: 0;
-    width: 140px;
-    height: 120px;
     display: flex;
-    justify-content: center;
     align-items: center;
-}
-
-.icon {
-    font-size: 60px;
-    /* color: rgb(255, 0, 0); */
+    justify-content: center;
+    width: 48px;
+    height: 48px;
     border-radius: 50%;
-    padding: 20px;
+    background-color: #f5f5f5;
+    margin-right: 16px;
+    flex-shrink: 0;
+}
+
+.icon-container mat-icon {
+    font-size: 24px;
+    color: #757575;
+}
+
+.info-container {
     display: flex;
-    align-items: inherit;
-    /* justify-content: right; */
-    height: 100%;
-    width: 100%;
+    flex-direction: column;
+    min-width: 0;
 }
 
-.text-content {
-    flex-grow: 1;
-    padding-left: 20px;
-    /* space between icon and text */
+.card-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: #757575;
+    margin: 0 0 4px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-h4 {
-    font-size: 16px;
-    /* larger font size */
+.card-value {
+    font-size: 24px;
+    font-weight: bold;
+    color: #212121;
     margin: 0;
 }
 
-.analytic {
-    font-size: 24px;
+.right-content {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    width: 80px;
+    flex-shrink: 0;
+}
+
+.progress-ring {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-size: 100% 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    position: relative;
+}
+
+.progress-ring::after {
+    content: '';
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    right: 4px;
+    bottom: 4px;
+    background-color: white;
+    border-radius: 50%;
+}
+
+.change-value {
+    font-size: 14px;
     font-weight: bold;
-    margin: 5px 0;
+    position: relative;
+    z-index: 1;
 }
 
-.percentage {
-    font-size: 24px;
-    /* large percentage font size */
-    font-weight: bold;
-    margin-left: auto;
-    /* push to the right */
+.positive-change {
+    color: #4CAF50;
 }
 
-.increase {
-    color: #b2fab4;
-    /* lighter green for positive */
+.negative-change {
+    color: #F44336;
 }
 
-.decrease {
-    color: #ff8a65;
-    /* red for negative */
-}
+/* Responsive adjustments for smaller screens and zoom levels */
+@media (max-width: 768px),
+(min-width: 769px) and (max-width: 1200px) and (min-resolution: 1.25dppx) {
+    .dashboard-card {
+        padding: 12px;
+    }
 
-.full-width-card {
-    display: flex;
-    justify-content: space-between;
-    height: 100%;
-    background-color: var(--dash-cards-bg-color);
-}
-
-.statistics {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    background-color: var(--dash-cards-bg-color);
-}
-
-.sales,
-.earnings {
-    flex: 1;
-    padding: 10px;
-}
-
-.chart {
-    width: 50%;
-}
-
-.new-full-width-card {
-    display: flex;
-    justify-content: space-between;
-    height: 100%;
-    background-color: var(--dash-cards-bg-color);
-}
-
-.chart-section {
-    width: 50%;
-    /* Ensure there's enough space for the chart */
-}
-
-@media (max-width: 1024px) {
     .icon-container {
         display: none;
-        /* Hides the icon container */
+        /* Hide the icon */
     }
 
-    .card {
-        justify-content: center;
-        /* Centers the text content and percentage in the card */
-        height: 100%;
+    .left-content {
+        flex: 1;
     }
 
-    .text-content,
-    .percentage {
-        flex-grow: 1;
-        /* Allows text content and percentage to fill the card evenly */
-        text-align: center;
-        /* Centers the text within their containers */
-    }
-}
-
-.info-section {
-    width: 50%;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-}
-
-.report-btn {
-    background-color: var(--report-bg-color);
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 20px;
-}
-
-gridster {
-    position: relative;
-    box-sizing: border-box;
-    background: var(--dash-bg-color) !important;
-    width: 100%;
-    height: 100%;
-    -webkit-user-select: none;
-    user-select: none;
-    display: block;
-}
-
-.chart-card {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 100%;
-    padding: 10px;
-}
-
-.ag-chart-wrapper {
-    position: fixed !important;
-    /* Overrides the position style */
-    top: 50%;
-    /* Center the chart vertically */
-    left: 50%;
-    /* Center the chart horizontally */
-    transform: translate(-50%, -50%);
-    /* Adjusts the positioning to truly center it */
-    z-index: 1000;
-    /* Ensures it's above other content */
-    margin: 10px;
-    /* Adjust as needed */
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    /* Optional: Adds shadow for better depth */
-    overflow: hidden;
-    /* Ensures no content spills out */
-}
-
-@media (max-width: 768px) {
-    gridster-item {
-        margin: 5px;
-        /* Smaller margins on smaller screens */
+    .info-container {
+        width: 100%;
     }
 
-    .card,
-    .full-width-card,
-    .new-full-width-card {
-        padding: 10px;
-        /* Smaller padding on smaller screens */
+    .card-title {
+        font-size: 12px;
+    }
+
+    .card-value {
+        font-size: 20px;
+    }
+
+    .right-content {
+        width: 60px;
+    }
+
+    .progress-ring {
+        width: 50px;
+        height: 50px;
+    }
+
+    .change-value {
+        font-size: 12px;
     }
 }
 
-a#help-button {
-    position: absolute;
-    left: 88%;
-}
-
-/* gear-tab.component.css */
-.sidebar-container {
-    position: fixed;
-    top: 30%;
-    right: 0;
-    transform: translateY(-50%);
-    z-index: 1040;
-    /* Below help button, above dashboard */
-}
-
-.gear-icon {
-    position: absolute;
-    left: 80%;
-    top: 50%;
-    transform: translateY(-50%);
-    background-color: #f0f0f0;
-    border-radius: 41px;
-    width: 98px;
-    height: 67px;
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    cursor: pointer;
-    z-index: 1050;
-}
-
-.gear {
-    font-size: 30px;
-    color: #000;
-}
-
-.sidebar {
-    width: 300px;
-    background-color: #fff;
-    height: 100%;
-    transform: translateX(100%);
-    transition: transform 0.3s ease-in-out;
-    box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
-}
-
-.sidebar.active {
-    transform: translateX(0);
-}
-
-.sidebar-header {
-    padding: 20px;
-    font-size: 20px;
-    border-bottom: 1px solid #ccc;
-}
-
-.sidebar-content {
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.main-container {
-    /* position: relative; */
-    height: 100vh;
-    /* Full viewport height */
-    /* width: 100vh; */
-    /* Full viewport width */
-}
-
-.help-button-container {
-    position: sticky;
-    top: 94%;
-    /* Adjust based on desired visibility */
-    /* right: 20px; */
-    /* Keeps it visible at the top-right */
-    z-index: 1050;
-    /* Above all other content */
-}
-
-.overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 104;
-    /* Overlay z-index */
-    pointer-events: none;
-    /* Allows clicks to pass through */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.new-charts-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
-    margin-top: 20px;
-}
-
-.new-chart-item {
-    margin: 10px;
-    position: relative;
-}
-.blur {
-    /* filter: blur(1px); */
-    z-index: 101;
-    pointer-events: auto;
-}
-
-.delete-icon {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    z-index: 105;
-    /* Highest, so it's clickable */
-    pointer-events: auto;
-    /* Ensure they are clickable */
-    cursor: pointer;
-}
-
-.mat-drawer-container {
-    position: static !important;
-    z-index: 1;
-    color: var(--mat-sidenav-content-text-color);
-    background-color: var(--mat-sidenav-content-background-color);
-    box-sizing: border-box;
-    -webkit-overflow-scrolling: touch;
-    display: block;
-    overflow: hidden;
-}
-
-/* .sidenav-container {
-    width: 50%;
-    height: 50%;
-} */
-
-.sidenav-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    /* background-color: #f0f0f0;
-    border-bottom: 1px solid #e0e0e0; */
-}
-
-.charts-container {
-    display: flex;
-    flex-direction: column;
-    padding: 10px;
-}
-
-.sidenav-chart {
-    width: 100%;
-    height: 345px;
-    margin-bottom: 114px;
-    /* Space between charts */
-}
-
-.mat-drawer {
-    position: relative;
-    z-index: 4;
-    color: var(--mat-sidenav-container-text-color);
-    box-shadow: var(--mat-sidenav-container-elevation-shadow);
-    background-color: var(--card-bg-color) !important;
-    border-top-right-radius: var(--mat-sidenav-container-shape);
-    border-bottom-right-radius: var(--mat-sidenav-container-shape);
-    width: var(--mat-sidenav-container-width);
-    display: block;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    z-index: 3;
-    outline: 0;
-    box-sizing: border-box;
-    overflow-y: auto;
-    transform: translate3d(-100%, 0, 0);
-}
-
-/* Media queries to handle responsiveness */
-@media (max-width: 768px) {
-    .chart {
-        height: 150px;
-        /* Adjust height as necessary for smaller devices */
+/* Additional adjustments for very small screens */
+@media (max-width: 480px) {
+    .card-content {
+        flex-direction: column;
+        align-items: flex-start;
     }
-}
 
-.loading-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(255, 255, 255, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
+    .left-content {
+        margin-bottom: 8px;
+    }
+
+    .right-content {
+        width: 100%;
+        justify-content: flex-start;
+    }
 }

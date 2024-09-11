@@ -176,7 +176,7 @@ export class BarchartComponent implements AfterViewInit {
     constructor(private renderer: Renderer2, private el: ElementRef) {
         Amplify.configure(outputs);
         this.chartOptions = {};
-        this.initializeData();
+        // this.initializeData();
         this.setupThemeObserver();
     }
 
@@ -299,30 +299,30 @@ export class BarchartComponent implements AfterViewInit {
         }
     }
 
-    private initializeData() {
-        // Sample data initialization, replace this with actual data fetching logic
-        const inventories: InventoryItem[] = [
-            { category: 'Electronics', quantity: 120 },
-            { category: 'Food: Perishable', quantity: 80 },
-            { category: 'Beverages: Non-Alcoholic', quantity: 200 }
-        ];
-        const stockRequests: StockRequest[] = [
-            { category: 'Electronics', quantityRequested: 90 },
-            { category: 'Food: Perishable', quantityRequested: 100 },
-            { category: 'Beverages: Non-Alcoholic', quantityRequested: 150 }
-        ];
+    // private initializeData() {
+    //     // Sample data initialization, replace this with actual data fetching logic
+    //     const inventories: InventoryItem[] = [
+    //         { category: 'Electronics', quantity: 120 },
+    //         { category: 'Food: Perishable', quantity: 80 },
+    //         { category: 'Beverages: Non-Alcoholic', quantity: 200 }
+    //     ];
+    //     const stockRequests: StockRequest[] = [
+    //         { category: 'Electronics', quantityRequested: 90 },
+    //         { category: 'Food: Perishable', quantityRequested: 100 },
+    //         { category: 'Beverages: Non-Alcoholic', quantityRequested: 150 }
+    //     ];
 
-        // Aggregating data for chart
-        inventories.forEach(item => {
-            this.inventoryData[item.category] = { currentStock: item.quantity, requestedStock: 0 };
-        });
+    //     // Aggregating data for chart
+    //     inventories.forEach(item => {
+    //         this.inventoryData[item.category] = { currentStock: item.quantity, requestedStock: 0 };
+    //     });
 
-        stockRequests.forEach(request => {
-            if (this.inventoryData[request.category]) {
-                this.inventoryData[request.category].requestedStock += request.quantityRequested;
-            }
-        });
-    }
+    //     stockRequests.forEach(request => {
+    //         if (this.inventoryData[request.category]) {
+    //             this.inventoryData[request.category].requestedStock += request.quantityRequested;
+    //         }
+    //     });
+    // }
 
     async ngOnInit() {
         // this.updateChartData(this.selectedYear);

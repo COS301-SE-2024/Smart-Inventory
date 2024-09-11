@@ -22,6 +22,8 @@ import { LineComponent } from '../../charts/line/line.component';
 import { RadarComponent } from '../../charts/radar/radar.component';
 import { RowNode } from 'ag-grid-community';
 import { AgGridAngular } from 'ag-grid-angular';
+import { CompactType, DisplayGrid, GridsterConfig, GridsterItem, GridsterModule, GridType } from 'angular-gridster2';
+
 
 type ChartMetric = 'On Time Delivery Rate' | 'Order Accuracy Rate' | 'Out Standing Payments' | 'TotalSpent';
 type ChartData = {
@@ -43,7 +45,8 @@ type ChartData = {
         DateSelectCellEditorComponent,
         RoleSelectCellEditorComponent,
         LineComponent,
-        RadarComponent
+        RadarComponent,
+        GridsterModule
     ],
     templateUrl: './supplier-report.component.html',
     styleUrl: './supplier-report.component.css',
@@ -63,17 +66,85 @@ export class SupplierReportComponent implements OnInit {
     initialInventory: number = 500;  // Starting inventory at the beginning of the period
     endingInventory: number = 600;  // Ending inventory at the end of the period
 
-    updateVisibleTiles() {
-        this.visibleTiles = this.tiles.slice(this.currentIndex, this.currentIndex + 4);
+    options: GridsterConfig = {
+        gridType: GridType.VerticalFixed,
+        displayGrid: DisplayGrid.None,
+        compactType: CompactType.CompactUpAndLeft,
+        margin: 10,
+        outerMargin: true,
+        outerMarginTop: null,
+        outerMarginRight: null,
+        outerMarginBottom: null,
+        outerMarginLeft: null,
+        useTransformPositioning: true,
+        mobileBreakpoint: 640,
+        minCols: 12,
+        maxCols: 12,
+        minRows: 6,
+        maxRows: 100,
+        maxItemCols: 100,
+        minItemCols: 1,
+        maxItemRows: 100,
+        minItemRows: 1,
+        maxItemArea: 2500,
+        minItemArea: 1,
+        defaultItemCols: 1,
+        defaultItemRows: 1,
+        fixedColWidth: 105,
+        fixedRowHeight: 105,
+        keepFixedHeightInMobile: false,
+        keepFixedWidthInMobile: false,
+        scrollSensitivity: 10,
+        scrollSpeed: 20,
+        enableEmptyCellClick: false,
+        enableEmptyCellContextMenu: false,
+        enableEmptyCellDrop: false,
+        enableEmptyCellDrag: false,
+        enableOccupiedCellDrop: false,
+        emptyCellDragMaxCols: 50,
+        emptyCellDragMaxRows: 50,
+        ignoreMarginInRow: false,
+        draggable: {
+            enabled: false,
+        },
+        resizable: {
+            enabled: false,
+        },
+        swap: false,
+        pushItems: true,
+        disablePushOnDrag: false,
+        disablePushOnResize: false,
+        pushDirections: { north: true, east: true, south: true, west: true },
+        pushResizeItems: false,
+        disableWindowResize: false,
+        disableWarnings: false,
+        scrollToNewItems: false
+    };
+
+    items: Array<GridsterItem> = [
+        { cols: 8, rows: 6, y: 0, x: 0 },
+        { cols: 4, rows: 5, y: 2, x: 0 },
+        { cols: 12, rows: 4, y: 2, x: 2 },
+        { cols: 6, rows: 4, y: 4, x: 0 },
+        { cols: 6, rows: 4, y: 4, x: 4 },
+        { cols: 12, rows: 2, y: 0, x: 0 },
+    ];
+    startIndex = 0;
+    scrollTiles(direction: 'left' | 'right') {
+        if (direction === 'left') {
+            this.startIndex = (this.startIndex - 1 + this.tiles.length) % this.tiles.length;
+        } else {
+            this.startIndex = (this.startIndex + 1) % this.tiles.length;
+        }
+        this.updateVisibleMetrics();
     }
 
-    scrollTiles(direction: 'left' | 'right') {
-        if (direction === 'left' && this.currentIndex > 0) {
-            this.currentIndex--;
-        } else if (direction === 'right' && this.currentIndex < this.tiles.length - 4) {
-            this.currentIndex++;
+    private updateVisibleMetrics() {
+        this.visibleTiles = [];
+        for (let i = 0; i < 3; i++) {
+            const index = (this.startIndex + i) % this.tiles.length;
+            this.visibleTiles.push(this.tiles[index]);
         }
-        this.updateVisibleTiles();
     }
 
     automation: boolean = true;
@@ -91,15 +162,14 @@ export class SupplierReportComponent implements OnInit {
         subtitle:
             'Have an overall view of your inventory, relevant metrics to assist you in automation and ordering and provide analytics associated with it.',
         metrics: [
-            { name: 'Average supplier performance', value: null },  // Replace '90%' with the actual value
-            { name: 'Overall product defect rate', value: '0%' },    // Replace '2%' with the actual value
-            { name: 'Worst performer', value: null },        // Replace 'Supplier X' with the actual value
-            { name: 'Average delivery rate', value: null },         // Replace '95%' with the actual value
-            { name: 'Fill Rate', value: '0%' },                     // Replace '97%' with the actual value
-            { name: 'Total inventory turnover', value: 'null' },  // Replace '5 times' with the actual value
-            // { name: 'Critical/Major/Minor Defect Rate', value: '0%' }, // Replace '4%' with the actual value
-            { name: '“Right First Time” Rate', value: '0%' },       // Replace '92%' with the actual value
-            { name: 'On-time Order Completion Rate', value: 0 }  // Replace '99%' with the actual value
+            { name: 'Average supplier performance', value: null, icon: 'bar_chart' },
+            { name: 'Overall product defect rate', value: '0%', icon: 'error_outline' },
+            { name: 'Worst performer', value: null, icon: 'trending_down' },
+            { name: 'Average delivery rate', value: null, icon: 'local_shipping' },
+            { name: 'Fill Rate', value: '0%', icon: 'inventory_2' },
+            { name: 'Total inventory turnover', value: 'null', icon: 'loop' },
+            { name: '"Right First Time" Rate', value: '0%', icon: 'check_circle_outline' },
+            { name: 'On-time Order Completion Rate', value: 0, icon: 'schedule' }
         ],
         graphs: [],
     };
@@ -116,18 +186,18 @@ export class SupplierReportComponent implements OnInit {
     }
 
     async ngOnInit() {
-        
+
         this.titleService.updateTitle(this.getCurrentRoute());
         await this.loadSuppliersData();
 
         this.loadSupplierMetrics();
         await this.fetchMetrics(this.rowData);
-        // console.log(this.getMostAverageSupplier()['Supplier ID']);
-        // console.log(this.getWorstPerformingSupplier()['Supplier ID']);
-        // console.log(this.calculateAverageDeliveryRate());
-        // console.log(this.calculateOnTimeOrderCompletionRate());
-        this.updateVisibleTiles();
-        this.SupplierReport.metrics[0].value = await this.getMostAverageSupplier();
+        //console.log(this.getMostAverageSupplier()['Supplier ID']);
+        //console.log(this.getWorstPerformingSupplier()['Supplier ID']);
+        //console.log(this.calculateAverageDeliveryRate());
+        //console.log(this.calculateOnTimeOrderCompletionRate());
+        this.updateVisibleMetrics();
+        this.SupplierReport.metrics[0].value = this.getMostAverageSupplier()['Supplier ID'];
         this.SupplierReport.metrics[1].value = this.calculateDefectRate(this.orderFulfillmentDetails);
         this.SupplierReport.metrics[2].value = this.getWorstPerformingSupplier()['Supplier ID'];
         this.SupplierReport.metrics[3].value = this.calculateAverageDeliveryRate();
@@ -158,8 +228,6 @@ export class SupplierReportComponent implements OnInit {
             {
                 field: 'Date',
                 headerName: 'Date',
-                cellEditor: DateSelectCellEditorComponent,  // Make sure this is set if it should be editable
-                cellRenderer: DateSelectCellEditorComponent
             },
             { field: 'On Time Delivery Rate', headerName: 'On Time Delivery Rate' },
             { field: 'Order Accuracy Rate', headerName: 'Order Accuracy Rate' },
@@ -471,7 +539,7 @@ export class SupplierReportComponent implements OnInit {
     }
 
     // Determine average suppliers based on a threshold percentage
-    async getMostAverageSupplier(): Promise<any> {
+    getMostAverageSupplier(): any {
         const suppliers = this.originalData;
         // console.log('The suppliers:', suppliers);
 
@@ -758,7 +826,6 @@ export class SupplierReportComponent implements OnInit {
                 //     supplierID: supplier.supplierID,
                 // }));
                 this.originalData = suppliers;
-
                 this.rowData = this.processRowData(this.originalData);
 
                 console.log('Processed suppliers:', this.rowData);

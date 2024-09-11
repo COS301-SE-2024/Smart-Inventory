@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, SimpleChanges, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges, AfterViewInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import * as echarts from 'echarts';
 
 @Component({
@@ -8,22 +8,30 @@ import * as echarts from 'echarts';
   templateUrl: './stackedbarchart.component.html',
   styleUrl: './stackedbarchart.component.css'
 })
-export class StackedbarchartComponent implements OnChanges, AfterViewInit {
+export class StackedbarchartComponent implements OnChanges, AfterViewInit, OnDestroy {
   @Input() data: any[] = [];
   private chart: echarts.ECharts | null = null;
+  private resizeObserver!: ResizeObserver;
 
-  @ViewChild('chartContainer') private chartContainerRef: ElementRef<HTMLDivElement> | undefined;
-
-  constructor() { }
+  @ViewChild('chartContainer') private chartContainerRef!: ElementRef<HTMLDivElement>;
 
   ngAfterViewInit(): void {
     this.initChart();
+    this.observeResize();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['data']) {
-      console.log('New data received:', this.data);
       this.updateChartOptions();
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (this.resizeObserver) {
+      this.resizeObserver.disconnect();
+    }
+    if (this.chart) {
+      this.chart.dispose();
     }
   }
 
@@ -34,67 +42,74 @@ export class StackedbarchartComponent implements OnChanges, AfterViewInit {
     }
   }
 
+  private observeResize(): void {
+    this.resizeObserver = new ResizeObserver(() => {
+      if (this.chart) {
+        this.chart.resize();
+      }
+    });
+    this.resizeObserver.observe(this.chartContainerRef.nativeElement);
+  }
+
   private updateChartOptions(): void {
     if (!this.chart) return;
 
     const option: echarts.EChartsOption = {
       title: {
         text: 'Supplier Order Status Overview',
+        left: 'center',
+        top: '20px'
       },
       tooltip: {
         trigger: 'axis',
-        axisPointer: {
-          type: 'shadow'
-        }
+        axisPointer: { type: 'shadow' }
       },
       legend: {
         data: ['Completed', 'In Progress', 'Delayed'],
-        
+        orient: 'horizontal',
+        bottom: '10px',
+        left: 'center'
       },
       grid: {
         left: '3%',
         right: '4%',
-        bottom: '3%',
+        bottom: '12%',
+        top: '15%',
         containLabel: true
       },
       xAxis: {
-        type: 'category',  // Changed from 'value' to 'category'
-        data: this.data.map(item => item.supplier)  // Now on the x-axis
+        type: 'category',
+        data: this.data.map(item => item.supplier)
       },
       yAxis: {
-        type: 'value'  // Changed from 'category' to 'value'
+        type: 'value'
       },
       series: [
         {
           name: 'Completed',
           type: 'bar',
           stack: 'total',
-          emphasis: {
-            focus: 'series'
-          },
+          emphasis: { focus: 'series' },
           data: this.data.map(item => item.completed)
         },
         {
           name: 'In Progress',
           type: 'bar',
           stack: 'total',
-          emphasis: {
-            focus: 'series'
-          },
+          emphasis: { focus: 'series' },
           data: this.data.map(item => item.inProgress)
         },
         {
           name: 'Delayed',
           type: 'bar',
           stack: 'total',
-          emphasis: {
-            focus: 'series'
-          },
+          emphasis: { focus: 'series' },
           data: this.data.map(item => item.delayed)
         }
       ]
     };
 
     this.chart.setOption(option);
+    // this.chart.resize();
   }
 }

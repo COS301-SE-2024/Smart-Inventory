@@ -17,6 +17,8 @@ import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
 import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
 import outputs from '../../../../../amplify_outputs.json';
 import { LoadingSpinnerComponent } from 'app/components/loader/loading-spinner.component';
+import { GridsterConfig, GridType, DisplayGrid, GridsterModule, CompactType } from 'angular-gridster2';
+
 
 @Component({
     selector: 'app-order-report',
@@ -31,7 +33,8 @@ import { LoadingSpinnerComponent } from 'app/components/loader/loading-spinner.c
         ScatterplotComponent,
         StackedbarchartComponent,
         DonutTemplateComponent,
-        LoadingSpinnerComponent
+        LoadingSpinnerComponent,
+        GridsterModule
     ],
     templateUrl: './order-report.component.html',
     styleUrl: './order-report.component.css',
@@ -49,6 +52,46 @@ export class OrderReportComponent implements OnInit {
     }
 
     rowData: any[] = [];
+    options: GridsterConfig = {
+        gridType: GridType.VerticalFixed,
+            displayGrid: DisplayGrid.None,
+            compactType: CompactType.CompactUpAndLeft,
+            draggable: {
+                enabled: false,
+            },
+            resizable: {
+                enabled: false,
+            },
+            pushItems: true,
+            margin: 10,
+            minCols: 12,
+            maxCols: 12,
+            minRows: 100, // Increased minimum rows for better initial height
+            maxRows: 100,
+            minItemWidth: 100, // Minimum width each item can shrink to
+            minItemHeight: 50, // Minimum height each item can shrink to
+            minItemCols: 1, // Maximum columns an item can expand to
+            minItemRows: 1, // Maximum rows an item can expand to
+            fixedRowHeight: 150,
+            addEmptyRowsCount: 10,
+            disablePushOnDrag: false,
+            disablePushOnResize: false,
+            pushDirections: { north: true, east: true, south: true, west: true },
+            pushResizeItems: false,
+            disableWindowResize: false,
+            disableWarnings: false,
+            scrollToNewItems: false
+    };
+
+    layout: any[] = [
+        { cols: 12, rows: 1.1, y: 0, x: 0 },  // Metrics Container
+        { cols: 8, rows: 4, y: 1, x: 0 },   // Inventory Grid
+        { cols: 4, rows: 3, y: 1, x: 8 },   // Order Report
+        { cols: 6, rows: 4, y: 3, x: 0 },   // Stacked Bar Chart
+        { cols: 12, rows: 3, y: 3, x: 6 },   // Scatter Plot
+        { cols: 6, rows: 4, y: 5, x: 4 }    // Donut Chart
+    ];
+
 
     selectedItem: any = null;
     requestQuantity: number | null = null;
@@ -59,34 +102,45 @@ export class OrderReportComponent implements OnInit {
         subtitle:
             'Have an overall view of your inventory, relevant metrics to assist you in automation and ordering and provide analytics associated with it.',
         metrics: {
-            // metric_1: 'Total orders: ',
-            // metric_2: 'Orders in progress: ',
-            metric_3: 'Total orders through automation: ',
-            // metric_4: 'Average order time: ',
-            // metric_5: 'Supplier performance index: ',
-            // metric_6: 'Order cost analysis: ',
-            metric_7: 'Rate of returns: ',
-            metric_8: 'Order placement frequency: ',
-            // metric_9: 'Average order trips reduced: ',
-            metric_10: 'Automated order frequency: ',
-            metric_11: 'Perfect Order Rate: ',
+            metric_3: {
+                text: 'Total orders through automation: ',
+                icon: 'auto_awesome'
+            },
+            metric_7: {
+                text: 'Rate of returns: ',
+                icon: 'assignment_return'
+            },
+            metric_8: {
+                text: 'Order placement frequency: ',
+                icon: 'schedule'
+            },
+            metric_10: {
+                text: 'Automated order frequency: ',
+                icon: 'update'
+            },
+            metric_11: {
+                text: 'Perfect Order Rate: ',
+                icon: 'thumb_up'
+            },
         },
         graphs: [],
     };
+
     async ngOnInit() {
         this.titleService.updateTitle(this.getCurrentRoute());
         this.updateVisibleMetrics();
         await this.fetchOrders();
         this.calculateMetrics();
         const data = this.calculateOrderMetrics();
-        this.OrderReport.metrics.metric_8 += data.orderPlacementFrequency;
-        this.OrderReport.metrics.metric_11 += data.perfectOrderRate;
+        this.OrderReport.metrics.metric_8.text += data.orderPlacementFrequency;
+        this.OrderReport.metrics.metric_11.text += data.perfectOrderRate;
         this.supplierQuote = await this.supplierQuotePrices();
         this.updateOrderStatuses(this.rowData, this.supplierQuote);
         this.prepareChartData();
         this.scatterPlotChartData = this.prepareScatterPlotData();
         this.isLoading = false;
         console.log('scatter plot in parent', this.scatterPlotChartData);
+
     }
 
     calculateOrderMetrics() {
@@ -230,12 +284,94 @@ export class OrderReportComponent implements OnInit {
     }
 
     metrics: any[] = [
-        { icon: 'shopping_cart', iconLabel: 'Total orders', metricName: 'Total orders', value: '0' },
-        { icon: 'timer', iconLabel: 'Average order time', metricName: 'Average order time', value: '0 days' },
-        { icon: 'trending_up', iconLabel: 'Supplier performance index', metricName: 'Supplier performance index', value: '0%' },
-        { icon: 'attach_money', iconLabel: 'Order cost analysis', metricName: 'Order cost analysis', value: 'R 0' },
-        { icon: 'assignment', iconLabel: 'Orders in progress', metricName: 'Orders in progress', value: '0' }
+        {
+            icon: 'shopping_cart',
+            iconLabel: 'Total orders',
+            metricName: 'Total orders',
+            value: '0',
+            additionalInfo: [
+                { level: 'good', text: 'High order volume', threshold: '>100' },
+                { level: 'medium', text: 'Moderate order volume', threshold: '50-100' },
+                { level: 'bad', text: 'Low order volume', threshold: '<50' }
+            ]
+        },
+        {
+            icon: 'timer',
+            iconLabel: 'Average order time',
+            metricName: 'Average order time',
+            value: '0 days',
+            additionalInfo: [
+                { level: 'good', text: 'Fast processing', threshold: '<3 days' },
+                { level: 'medium', text: 'Average processing', threshold: '3-7 days' },
+                { level: 'bad', text: 'Slow processing', threshold: '>7 days' }
+            ]
+        },
+        {
+            icon: 'trending_up',
+            iconLabel: 'Supplier performance index',
+            metricName: 'Supplier performance index',
+            value: '0%',
+            additionalInfo: [
+                { level: 'good', text: 'Excellent performance', threshold: '>90%' },
+                { level: 'medium', text: 'Satisfactory performance', threshold: '70-90%' },
+                { level: 'bad', text: 'Poor performance', threshold: '<70%' }
+            ]
+        },
+        {
+            icon: 'attach_money',
+            iconLabel: 'Order cost analysis',
+            metricName: 'Order cost analysis',
+            value: 'R 0',
+            additionalInfo: [
+                { level: 'good', text: 'Cost-effective', threshold: '<R 1000' },
+                { level: 'medium', text: 'Average cost', threshold: 'R 1000-2000' },
+                { level: 'bad', text: 'High cost', threshold: '>R 2000' }
+            ]
+        },
+        {
+            icon: 'assignment',
+            iconLabel: 'Orders in progress',
+            metricName: 'Orders in progress',
+            value: '0',
+            additionalInfo: [
+                { level: 'good', text: 'Efficient processing', threshold: '<10' },
+                { level: 'medium', text: 'Moderate backlog', threshold: '10-20' },
+                { level: 'bad', text: 'High backlog', threshold: '>20' }
+            ]
+        }
     ];
+
+    getAdditionalInfoClass(metric: any): string {
+        const value = this.parseMetricValue(metric.value);
+        const info = metric.additionalInfo.find((i: { threshold: string; }) => 
+            this.isWithinThreshold(value, i.threshold)
+        );
+        return info ? info.level : 'medium';
+    }
+    
+    getAdditionalInfo(metric: any): string {
+        const value = this.parseMetricValue(metric.value);
+        const info = metric.additionalInfo.find((i: { threshold: string; }) => 
+            this.isWithinThreshold(value, i.threshold)
+        );
+        return info ? info.text : '';
+    }
+    
+    private parseMetricValue(value: string): number {
+        return parseFloat(value.replace(/[^0-9.-]+/g, ""));
+    }
+    
+    private isWithinThreshold(value: number, threshold: string): boolean {
+        if (threshold.includes('-')) {
+            const [min, max] = threshold.split('-').map(Number);
+            return value >= min && value <= max;
+        } else if (threshold.startsWith('<')) {
+            return value < parseFloat(threshold.slice(1));
+        } else if (threshold.startsWith('>')) {
+            return value > parseFloat(threshold.slice(1));
+        }
+        return false;
+    }
 
     calculateMetrics() {
         if (this.rowData.length === 0) return;

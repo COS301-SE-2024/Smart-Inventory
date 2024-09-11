@@ -12,6 +12,16 @@ import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
 import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
 import outputs from '../../../../amplify_outputs.json';
 
+
+type ReportType = {
+    icon: string;
+    title: string;
+    subtitle: string;
+};
+
+type ReportsObject = {
+    [key: string]: ReportType;
+};
 @Component({
     selector: 'app-reports',
     standalone: true,
@@ -30,34 +40,32 @@ export class ReportsComponent implements OnInit {
     constructor(
         private titleService: TitleService,
         private router: Router,
-    ) {}
+    ) { }
+    reportOrder: (keyof ReportsObject)[] = ['InventoryReport', 'OrderReport', 'SupplierReport', 'ActivityReport'];
 
-    reports = {
+    reports: ReportsObject = {
         InventoryReport: {
             icon: 'inventory_2',
             title: 'Inventory Report',
-            subtitle:
-                'The Inventory Report provides a holistic view of your inventory status, movements, and forecasts. By leveraging advanced analytics and predictive modeling, this powerful tool offers actionable insights to optimize inventory levels, automate ordering processes, and enhance overall supply chain efficiency.',
-        },
-        ActivityReport: {
-            icon: 'people',
-            title: 'Activity Report',
-            subtitle:
-                "The Team Activity Report provides a holistic view of your team's performance, activities, and associated analytics. This powerful tool streamlines team management by offering actionable insights through intuitive visualizations and detailed metrics.",
+            subtitle: 'The Inventory Report provides a holistic view of your inventory status, movements, and forecasts. By leveraging advanced analytics and predictive modeling, this powerful tool offers actionable insights to optimize inventory levels, automate ordering processes, and enhance overall supply chain efficiency.',
         },
         OrderReport: {
             icon: 'assignment',
             title: 'Order Report',
-            subtitle:
-                'The Order Report provides a holistic view of your ordering system, encompassing both manual and automated orders. This powerful tool offers insights into order quality, processing times, and associated analytics, enabling data-driven decisions to optimize your order fulfillment process.',
+            subtitle: 'The Order Report provides a holistic view of your ordering system, encompassing both manual and automated orders. This powerful tool offers insights into order quality, processing times, and associated analytics, enabling data-driven decisions to optimize your order fulfillment process.',
         },
         SupplierReport: {
             icon: 'local_shipping',
             title: 'Supplier Report',
-            subtitle:
-                'The Supplier Report provides a holistic view of your supplier network, their activities, performance metrics, and associated analytics. This powerful tool offers insights into supplier reliability, quality, cost-effectiveness, overall impact on your supply chain and enabling data-driven decisions to optimize supplier relationships.',
+            subtitle: 'The Supplier Report provides a holistic view of your supplier network, their activities, performance metrics, and associated analytics. This powerful tool offers insights into supplier reliability, quality, cost-effectiveness, overall impact on your supply chain and enabling data-driven decisions to optimize supplier relationships.',
+        },
+        ActivityReport: {
+            icon: 'people',
+            title: 'Activity Report',
+            subtitle: "The Team Activity Report provides a holistic view of your team's performance, activities, and associated analytics. This powerful tool streamlines team management by offering actionable insights through intuitive visualizations and detailed metrics.",
         },
     };
+
 
     tenantId: string = '';
     userName: string = '';
@@ -160,7 +168,7 @@ export class ReportsComponent implements OnInit {
         }
     }
 
-    async viewFullReport(report: string) {
+    async viewFullReport(report: keyof ReportsObject) {
         let reportDetails = '';
         switch (report) {
             case 'InventoryReport':

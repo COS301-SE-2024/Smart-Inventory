@@ -17,7 +17,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { ScanConfirmationDialogComponent } from './scan-confirmation-dialog.component';
 import { MatTabsModule } from '@angular/material/tabs';
 import { OrdersComponent } from 'app/pages/orders/orders.component';
-
+import { LoadingSpinnerComponent } from '../loader/loading-spinner.component';
 
 @Component({
   selector: 'app-automation-settings-modal',
@@ -34,10 +34,12 @@ import { OrdersComponent } from 'app/pages/orders/orders.component';
     MatSelectModule,
     MatRadioModule,
     ScanConfirmationDialogComponent,
-    MatTabsModule
+    MatTabsModule, 
+    LoadingSpinnerComponent
   ]
 })
 export class AutomationSettingsModalComponent implements OnInit {
+  isLoading = false;
   scheduleType: 'daily' | 'weekly' = 'daily';
   dailyTime: string = '00:00';
   weeklySchedule: { [key: string]: string } = {
@@ -55,10 +57,15 @@ export class AutomationSettingsModalComponent implements OnInit {
   ) {}
 
   async ngOnInit() {
-    await this.fetchCurrentSettings();
-    this.selectedTabIndex = this.scheduleType === 'daily' ? 0 : 1;
-    this.updateNextScheduledScan();
-    this.startCountdown();
+    this.isLoading = true;
+    try {
+      await this.fetchCurrentSettings();
+      this.selectedTabIndex = this.scheduleType === 'daily' ? 0 : 1;
+      this.updateNextScheduledScan();
+      this.startCountdown();
+    } finally {
+      this.isLoading = false;
+    }
   }
 
   onTabChange(index: number) {
@@ -120,8 +127,8 @@ export class AutomationSettingsModalComponent implements OnInit {
   }
 
   scanNow() {
+    this.isLoading = true;
     // Close the current dialog
-    this.dialogRef.close('opening_scan_confirmation');
 
     // Open the confirmation dialog
     const confirmDialogRef = this.dialog.open(ScanConfirmationDialogComponent, {
@@ -167,6 +174,9 @@ export class AutomationSettingsModalComponent implements OnInit {
             horizontalPosition: 'center',
             verticalPosition: 'top',
           });
+        }
+        finally {
+          this.isLoading = false;
         }
       } else {
         // If cancelled, reopen the Automation Settings modal
@@ -227,6 +237,7 @@ export class AutomationSettingsModalComponent implements OnInit {
   }
 
   async saveSettings() {
+    this.isLoading = true;
     this.updateNextScheduledScan();
     let scheduleConfig;
     if (this.selectedTabIndex === 0) {
@@ -275,6 +286,8 @@ export class AutomationSettingsModalComponent implements OnInit {
         horizontalPosition: 'center',
         verticalPosition: 'top',
       });
+    } finally {
+      this.isLoading = false;
     }
   }
 

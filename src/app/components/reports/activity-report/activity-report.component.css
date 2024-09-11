@@ -1,43 +1,89 @@
-.metric-card {
-    height: 100%;
-    width: 100%;
+.mat-grid-tile {
     display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 16px;
-    box-sizing: border-box;
+    justify-content: center;
+    align-items: center;
 }
 
-.metric-header {
+.mat-card {
+    width: 100%;
+    height: 100%;
     display: flex;
+    justify-content: center;
     align-items: center;
-    justify-content: flex-start;
-    margin-bottom: 8px;
+}
+
+.mat-card-content {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.metric-container {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 20px;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    padding: 15px;
+}
+
+.icon-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.btn {
+    border-radius: 20px;
+    margin-right: 10px;
+    --mdc-outlined-button-label-text-color: black;
+    --mdc-outlined-button-outline-color: #74777f;
+    border-radius: 5px;
+    width: 200px;
+    height: 40px;
+}
+
+.mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+}
+
+.text-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .metric-name {
-    margin-left: 8px;
-    font-size: 20px;
-    font-weight: 500;
+    font-size: 16px;
+    margin-bottom: 5px;
 }
 
 .metric-value {
-    text-align: center;
-}
-
-.metric-value h2 {
-    font-size: 36px;
-    margin: 16px 0;
-}
-
-.metric-trend {
-    text-align: center;
-}
-
-mat-icon {
     font-size: 24px;
-    height: 80px;
-    width: 24px;
+    font-weight: bold;
+    margin: 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .mat-icon {
+        font-size: 36px;
+        width: 36px;
+        height: 36px;
+    }
+
+    .metric-name {
+        font-size: 14px;
+    }
+
+    .metric-value {
+        font-size: 20px;
+    }
 }
 
 .text-success {
@@ -47,6 +93,7 @@ mat-icon {
 .text-danger {
     color: #f44336;
 }
+
 .loading-overlay {
     position: fixed;
     top: 0;

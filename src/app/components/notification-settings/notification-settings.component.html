@@ -1,0 +1,40 @@
+<ng-container>
+    <mat-toolbar style="width: 100%">
+        <button mat-button style="width: 100%; background-color: #f1f1f1; color: black" (click)="back()">
+            Back to Settings
+        </button>
+    </mat-toolbar>
+    <mat-grid-list cols="3" rowHeight="500px">
+        <mat-grid-tile></mat-grid-tile>
+        <mat-grid-tile>
+            <mat-card style="width: 95%; height: 95%">
+                <mat-card-title style="padding: 16px; text-align: center">Notifications</mat-card-title>
+                <mat-card-content style="padding: 10px">
+                    <mat-slide-toggle></mat-slide-toggle>
+                    Allow Low Stock Notifications
+                </mat-card-content>
+                <mat-card-content style="padding: 10px">
+                    <mat-slide-toggle></mat-slide-toggle>
+                    Supplier Updates
+                </mat-card-content>
+                <mat-card-content style="padding: 10px">
+                    <mat-slide-toggle></mat-slide-toggle>
+                    Autonomous Orders
+                </mat-card-content>
+                <mat-card-content style="padding: 10px">
+                    <mat-slide-toggle></mat-slide-toggle>
+                    Order Updates
+                </mat-card-content>
+                <mat-card-content style="padding: 10px">
+                    <mat-slide-toggle></mat-slide-toggle>
+                    Team Updates
+                </mat-card-content>
+                <mat-card-content style="padding: 10px">
+                    <mat-slide-toggle></mat-slide-toggle>
+                    Security Updates
+                </mat-card-content>
+            </mat-card>
+        </mat-grid-tile>
+        <mat-grid-tile> </mat-grid-tile>
+    </mat-grid-list>
+</ng-container>

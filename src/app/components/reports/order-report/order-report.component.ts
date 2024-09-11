@@ -7,10 +7,17 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import { MatCardModule } from '@angular/material/card';
 import { GridComponent } from '../../grid/grid.component';
 import { ColDef } from 'ag-grid-community';
-import { SaleschartComponent } from '../../charts/saleschart/saleschart.component';
 import { ActivatedRoute, Router } from '@angular/router';
+import { DonutTemplateComponent } from 'app/components/charts/donuttemplate/donuttemplate.component';
 import { StackedbarchartComponent } from '../../charts/stackedbarchart/stackedbarchart.component';
 import { ScatterplotComponent } from '../../charts/scatterplot/scatterplot.component';
+import { Amplify } from 'aws-amplify';
+import { fetchAuthSession } from 'aws-amplify/auth';
+import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
+import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
+import outputs from '../../../../../amplify_outputs.json';
+import { LoadingSpinnerComponent } from 'app/components/loader/loading-spinner.component';
+
 @Component({
     selector: 'app-order-report',
     standalone: true,
@@ -22,7 +29,9 @@ import { ScatterplotComponent } from '../../charts/scatterplot/scatterplot.compo
         CommonModule,
         MatProgressSpinnerModule,
         ScatterplotComponent,
-        StackedbarchartComponent
+        StackedbarchartComponent,
+        DonutTemplateComponent,
+        LoadingSpinnerComponent
     ],
     templateUrl: './order-report.component.html',
     styleUrl: './order-report.component.css',
@@ -30,11 +39,14 @@ import { ScatterplotComponent } from '../../charts/scatterplot/scatterplot.compo
 export class OrderReportComponent implements OnInit {
     stackedBarChartData: any[] = [];
     scatterPlotChartData: any[] = [];
+    isLoading: boolean = true;
     constructor(
         private titleService: TitleService,
         private router: Router,
         private route: ActivatedRoute,
-    ) { }
+    ) {
+        Amplify.configure(outputs);
+    }
 
     rowData: any[] = [];
 
@@ -47,12 +59,12 @@ export class OrderReportComponent implements OnInit {
         subtitle:
             'Have an overall view of your inventory, relevant metrics to assist you in automation and ordering and provide analytics associated with it.',
         metrics: {
-            metric_1: 'Total orders: ',
-            metric_2: 'Orders in progress: ',
+            // metric_1: 'Total orders: ',
+            // metric_2: 'Orders in progress: ',
             metric_3: 'Total orders through automation: ',
-            metric_4: 'Average order time: ',
-            metric_5: 'Supplier performance index: ',
-            metric_6: 'Order cost analysis: ',
+            // metric_4: 'Average order time: ',
+            // metric_5: 'Supplier performance index: ',
+            // metric_6: 'Order cost analysis: ',
             metric_7: 'Rate of returns: ',
             metric_8: 'Order placement frequency: ',
             // metric_9: 'Average order trips reduced: ',
@@ -63,32 +75,73 @@ export class OrderReportComponent implements OnInit {
     };
     async ngOnInit() {
         this.titleService.updateTitle(this.getCurrentRoute());
-
-        this.rowData = await this.fetchOrders();
+        this.updateVisibleMetrics();
+        await this.fetchOrders();
         this.calculateMetrics();
+        const data = this.calculateOrderMetrics();
+        this.OrderReport.metrics.metric_8 += data.orderPlacementFrequency;
+        this.OrderReport.metrics.metric_11 += data.perfectOrderRate;
         this.supplierQuote = await this.supplierQuotePrices();
         this.updateOrderStatuses(this.rowData, this.supplierQuote);
         this.prepareChartData();
         this.scatterPlotChartData = this.prepareScatterPlotData();
-        console.log('scatter plot in parent', this.scatterPlotChartData)
+        this.isLoading = false;
+        console.log('scatter plot in parent', this.scatterPlotChartData);
     }
 
-    calculateMetrics() {
-        this.OrderReport.metrics.metric_1 += this.rowData.length;
-        this.OrderReport.metrics.metric_2 += this.rowData.filter(order => order.status === 'In Progress').length;
-        this.OrderReport.metrics.metric_4 += this.calculateAverageOrderTime() + ' days';
-        this.OrderReport.metrics.metric_5 += this.calculateSupplierPerformance() + '%';
-        this.OrderReport.metrics.metric_6 += 'R ' + this.calculateOrderCostAnalysis().averageCost.toFixed(2);
+    calculateOrderMetrics() {
+        const orders = this.rowData;
+        // Sort orders by date
+        orders.sort((a, b) => new Date(a.orderIssuedDate).getTime() - new Date(b.orderIssuedDate).getTime());
+
+        // Calculate days between orders
+        let totalDaysBetweenOrders = 0;
+        for (let i = 1; i < orders.length; i++) {
+            const daysBetween = (new Date(orders[i].orderIssuedDate).getTime() - new Date(orders[i - 1].orderIssuedDate).getTime()) / (1000 * 60 * 60 * 24);
+            totalDaysBetweenOrders += daysBetween;
+        }
+
+        // Calculate average days between orders
+        const averageDaysBetweenOrders = totalDaysBetweenOrders / (orders.length - 1);
+
+        // Perfect Order Rate calculation
+        const validOrders = orders.filter(order => order.status === "Completed");
+        const perfectOrders = validOrders.filter(order =>
+            order.expectedOrderDate && order.orderReceivedDate &&
+            new Date(order.orderReceivedDate) <= new Date(order.expectedOrderDate)
+        );
+        const perfectOrderRate = (perfectOrders.length / validOrders.length) * 100;
+
+        return {
+            orderPlacementFrequency: averageDaysBetweenOrders.toFixed(1) + " days",
+            perfectOrderRate: perfectOrderRate.toFixed(2) + "%"
+        };
     }
 
-    calculateAverageOrderTime() {
-        const totalDays = this.rowData.reduce((sum, order) => {
+    calculateAverageOrderTime(): number {
+        const validOrders = this.rowData.filter(order =>
+            order.orderIssuedDate &&
+            order.orderReceivedDate &&
+            order.status === 'Completed'
+        );
+
+        const uniqueOrders = validOrders.reduce((acc, current) => {
+            const x = acc.find((item: { orderID: any; }) => item.orderID === current.orderID);
+            if (!x) {
+                return acc.concat([current]);
+            } else {
+                return acc;
+            }
+        }, []);
+
+        const totalDays = uniqueOrders.reduce((sum: number, order: { orderIssuedDate: string | number | Date; orderReceivedDate: string | number | Date; }) => {
             const issuedDate = new Date(order.orderIssuedDate);
             const receivedDate = new Date(order.orderReceivedDate);
-            const timeDifference = (receivedDate.getTime() - issuedDate.getTime()) / (1000 * 60 * 60 * 24);
+            const timeDifference = Math.max(1, (receivedDate.getTime() - issuedDate.getTime()) / (1000 * 60 * 60 * 24));
             return sum + timeDifference;
         }, 0);
-        return totalDays / this.rowData.length;
+
+        return uniqueOrders.length > 0 ? totalDays / uniqueOrders.length : 0;
     }
 
     calculateSupplierPerformance() {
@@ -124,40 +177,162 @@ export class OrderReportComponent implements OnInit {
     }
 
     async supplierQuotePrices() {
-        const supplierQuotePrices = [
-            { QuoteID: "lzh2zwopu8g5ianp60i", upc_SupplierID: "6001007025806_20f7ce39-aa7f-438f-8948-c412791deba5", AvailableQuantity: 58, Discount: 4, IsAvailable: true, ItemSKU: "BF-001", SupplierID: "20f7ce39-aa7f-438f-8948-c412791deba5", tenentId: "1717667019559-j85syk", Timestamp: "2024-08-06T21:23:35.783Z", TotalPrice: 334.08, UnitPrice: 6, upc: "6001007025806" },
-            { QuoteID: "lzh2zwopu8g5ianp60i", upc_SupplierID: "6001007025806_3126556f-a27b-448f-979f-035e8646442c", AvailableQuantity: 58, Discount: 4, IsAvailable: true, ItemSKU: "BF-001", SupplierID: "3126556f-a27b-448f-979f-035e8646442c", tenentId: "1717667019559-j85syk", Timestamp: "2024-08-06T21:21:21.794Z", TotalPrice: 111.36, UnitPrice: 2, upc: "6001007025806" },
-            { QuoteID: "lzh2zwopu8g5ianp60i", upc_SupplierID: "6001068344603_20f7ce39-aa7f-438f-8948-c412791deba5", AvailableQuantity: 20, Discount: 8, IsAvailable: true, ItemSKU: "MS-301", SupplierID: "20f7ce39-aa7f-438f-8948-c412791deba5", tenentId: "1717667019559-j85syk", Timestamp: "2024-08-06T21:23:35.783Z", TotalPrice: 220.8, UnitPrice: 12, upc: "6001068344603" },
-            { QuoteID: "lzh2zwopu8g5ianp60i", upc_SupplierID: "6001068344603_3126556f-a27b-448f-979f-035e8646442c", AvailableQuantity: 20, Discount: 8, IsAvailable: true, ItemSKU: "MS-301", SupplierID: "3126556f-a27b-448f-979f-035e8646442c", tenentId: "1717667019559-j85syk", Timestamp: "2024-08-06T21:21:21.794Z", TotalPrice: 73.6, UnitPrice: 4, upc: "6001068344603" },
-            { QuoteID: "lzh2zwopu8g5ianp60i", upc_SupplierID: "6001240100070_20f7ce39-aa7f-438f-8948-c412791deba5", AvailableQuantity: 13, Discount: 6, IsAvailable: true, ItemSKU: "CH-205", SupplierID: "20f7ce39-aa7f-438f-8948-c412791deba5", tenentId: "1717667019559-j85syk", Timestamp: "2024-08-06T21:23:35.783Z", TotalPrice: 109.98, UnitPrice: 9, upc: "6001240100070" },
-            { QuoteID: "lzh2zwopu8g5ianp60i", upc_SupplierID: "6001240100070_3126556f-a27b-448f-979f-035e8646442c", AvailableQuantity: 13, Discount: 6, IsAvailable: true, ItemSKU: "CH-205", SupplierID: "3126556f-a27b-448f-979f-035e8646442c", tenentId: "1717667019559-j85syk", Timestamp: "2024-08-06T21:21:21.794Z", TotalPrice: 36.66, UnitPrice: 3, upc: "6001240100070" },
-            { QuoteID: "lzh2zwopu8g5ianp60i", upc_SupplierID: "6009178231239_20f7ce39-aa7f-438f-8948-c412791deba5", AvailableQuantity: 29, Discount: 10, IsAvailable: true, ItemSKU: "RO-102", SupplierID: "20f7ce39-aa7f-438f-8948-c412791deba5", tenentId: "1717667019559-j85syk", Timestamp: "2024-08-06T21:23:35.783Z", TotalPrice: 391.5, UnitPrice: 15, upc: "6009178231239" },
-            { QuoteID: "lzh2zwopu8g5ianp60i", upc_SupplierID: "6009178231239_3126556f-a27b-448f-979f-035e8646442c", AvailableQuantity: 29, Discount: 10, IsAvailable: true, ItemSKU: "RO-102", SupplierID: "3126556f-a27b-448f-979f-035e8646442c", tenentId: "1717667019559-j85syk", Timestamp: "2024-08-06T21:21:21.794Z", TotalPrice: 130.5, UnitPrice: 5, upc: "6009178231239" },
-            { QuoteID: "lzh2zwopu8g5ianp60i", upc_SupplierID: "6009880328190_20f7ce39-aa7f-438f-8948-c412791deba5", AvailableQuantity: 14, Discount: 2, IsAvailable: true, ItemSKU: "AM-405", SupplierID: "20f7ce39-aa7f-438f-8948-c412791deba5", tenentId: "1717667019559-j85syk", Timestamp: "2024-08-06T21:23:35.783Z", TotalPrice: 41.16, UnitPrice: 3, upc: "6009880328190" },
-            { QuoteID: "lzh2zwopu8g5ianp60i", upc_SupplierID: "6009880328190_3126556f-a27b-448f-979f-035e8646442c", AvailableQuantity: 14, Discount: 2, IsAvailable: true, ItemSKU: "AM-405", SupplierID: "3126556f-a27b-448f-979f-035e8646442c", tenentId: "1717667019559-j85syk", Timestamp: "2024-08-06T21:21:21.794Z", TotalPrice: 13.72, UnitPrice: 1, upc: "6009880328190" }
-        ];
-        return supplierQuotePrices;
+        try {
+            const session = await fetchAuthSession();
+
+            const cognitoClient = new CognitoIdentityProviderClient({
+                region: outputs.auth.aws_region,
+                credentials: session.credentials,
+            });
+
+            const getUserCommand = new GetUserCommand({
+                AccessToken: session.tokens?.accessToken.toString(),
+            });
+            const getUserResponse = await cognitoClient.send(getUserCommand);
+
+            const tenantId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
+            // const tenantId = "1717667019559-j85syk";
+            console.log('my id', tenantId);
+
+            if (!tenantId) {
+                console.error('TenantId not found in user attributes');
+                // this.rowData = [];
+                return;
+            }
+
+            const lambdaClient = new LambdaClient({
+                region: outputs.auth.aws_region,
+                credentials: session.credentials,
+            });
+
+            const invokeCommand = new InvokeCommand({
+                FunctionName: 'getSupplierQuotePrices',
+                Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: tenantId } })),
+            });
+
+            const lambdaResponse = await lambdaClient.send(invokeCommand);
+            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+            console.log('Response from Lambda:', responseBody);
+
+            if (responseBody.statusCode === 200) {
+                const supplierData = JSON.parse(responseBody.body);
+                return supplierData;
+            } else {
+                console.error('Error fetching inventory data:', responseBody.body);
+                // this.rowData = [];
+            }
+        } catch (error) {
+            console.error('Error in loadInventoryData:', error);
+            // this.rowData = [];
+        } finally {
+            // this.isLoading = false;
+        }
     }
 
+    metrics: any[] = [
+        { icon: 'shopping_cart', iconLabel: 'Total orders', metricName: 'Total orders', value: '0' },
+        { icon: 'timer', iconLabel: 'Average order time', metricName: 'Average order time', value: '0 days' },
+        { icon: 'trending_up', iconLabel: 'Supplier performance index', metricName: 'Supplier performance index', value: '0%' },
+        { icon: 'attach_money', iconLabel: 'Order cost analysis', metricName: 'Order cost analysis', value: 'R 0' },
+        { icon: 'assignment', iconLabel: 'Orders in progress', metricName: 'Orders in progress', value: '0' }
+    ];
+
+    calculateMetrics() {
+        if (this.rowData.length === 0) return;
+
+        // Total orders
+        this.metrics[0].value = this.rowData.length.toString();
+
+        // Average order time
+        const avgOrderTime = this.calculateAverageOrderTime();
+        this.metrics[1].value = `${avgOrderTime.toFixed(2)} days`;
+
+        // Supplier performance index
+        const supplierPerformance = this.calculateSupplierPerformance();
+        this.metrics[2].value = `${supplierPerformance}%`;
+
+        // Order cost analysis
+        const { averageCost } = this.calculateOrderCostAnalysis();
+        this.metrics[3].value = `R ${averageCost.toFixed(2)}`;
+
+        // Orders in progress
+        const ordersInProgress = this.rowData.filter(order => order.status === 'Pending Approval').length;
+        this.metrics[4].value = ordersInProgress.toString();
+
+        // Update visible metrics after calculation
+        this.updateVisibleMetrics();
+    }
+
+    visibleMetrics: any[] = [];
+    startIndex = 0;
+    scrollTiles(direction: 'left' | 'right') {
+        if (direction === 'left') {
+            this.startIndex = (this.startIndex - 1 + this.metrics.length) % this.metrics.length;
+        } else {
+            this.startIndex = (this.startIndex + 1) % this.metrics.length;
+        }
+        this.updateVisibleMetrics();
+    }
+
+    private updateVisibleMetrics() {
+        this.visibleMetrics = [];
+        for (let i = 0; i < 3; i++) {
+            const index = (this.startIndex + i) % this.metrics.length;
+            this.visibleMetrics.push(this.metrics[index]);
+        }
+    }
 
     async fetchOrders() {
-        const orders = [
-            { orderID: 1, orderIssuedDate: '2021-01-01', expectedOrderDate: '2021-01-05', supplier: '20f7ce39-aa7f-438f-8948-c412791deba5', orderCost: 1000, orderReceivedDate: '2021-01-04', status: 'Completed', quoteStatus: 'Approved', address: '123 Elm St, Springfield' },
-            { orderID: 2, orderIssuedDate: '2022-02-15', expectedOrderDate: '2022-02-20', supplier: '3126556f-a27b-448f-979f-035e8646442c', orderCost: 1500, orderReceivedDate: '2022-02-19', status: 'In Progress', quoteStatus: 'Approved', address: '456 Oak St, Riverdale' },
-            { orderID: 3, orderIssuedDate: '2021-03-10', expectedOrderDate: '2021-03-15', supplier: '20f7ce39-aa7f-438f-8948-c412791deba5', orderCost: 1200, orderReceivedDate: '2021-03-14', status: 'No Status', quoteStatus: 'No Status', address: '789 Pine St, Shelbyville' },
-            { orderID: 4, orderIssuedDate: '2022-04-22', expectedOrderDate: '2022-04-25', supplier: 'unknown_supplier_id', orderCost: 1100, orderReceivedDate: '2022-04-24', status: 'Completed', quoteStatus: 'Approved', address: '101 Maple Ave, Springfield' },
-            { orderID: 5, orderIssuedDate: '2023-05-05', expectedOrderDate: '2023-05-10', supplier: '3126556f-a27b-448f-979f-035e8646442c', orderCost: 1600, orderReceivedDate: '2023-05-09', status: 'In Progress', quoteStatus: 'Approved', address: '202 Birch Rd, Riverdale' },
-            { orderID: 6, orderIssuedDate: '2023-06-01', expectedOrderDate: '2023-06-05', supplier: '20f7ce39-aa7f-438f-8948-c412791deba5', orderCost: 1300, orderReceivedDate: '2023-06-04', status: 'No Status', quoteStatus: 'No Status', address: '303 Cedar St, Shelbyville' },
-            { orderID: 7, orderIssuedDate: '2021-07-07', expectedOrderDate: '2021-07-12', supplier: 'unknown_supplier_id_2', orderCost: 1400, orderReceivedDate: '2021-07-11', status: 'No Status', quoteStatus: 'No Status', address: '404 Birch Rd, Riverdale' },
-            { orderID: 8, orderIssuedDate: '2022-08-15', expectedOrderDate: '2022-08-20', supplier: '20f7ce39-aa7f-438f-8948-c412791deba5', orderCost: 950, orderReceivedDate: '2022-08-19', status: 'No Status', quoteStatus: 'No Status', address: '505 Pine St, Shelbyville' },
-            { orderID: 9, orderIssuedDate: '2023-09-10', expectedOrderDate: '2023-09-15', supplier: '3126556f-a27b-448f-979f-035e8646442c', orderCost: 1150, orderReceivedDate: '2023-09-14', status: 'Completed', quoteStatus: 'Approved', address: '606 Oak St, Riverdale' },
-            { orderID: 10, orderIssuedDate: '2021-10-20', expectedOrderDate: '2021-10-25', supplier: 'unknown_supplier_id', orderCost: 500, orderReceivedDate: '2021-10-24', status: 'No Status', quoteStatus: 'No Status', address: '707 Elm St, Springfield' },
-            { orderID: 11, orderIssuedDate: '2022-11-11', expectedOrderDate: '2022-11-15', supplier: 'unknown_supplier_id_2', orderCost: 1250, orderReceivedDate: '2022-11-14', status: 'Completed', quoteStatus: 'Approved', address: '808 Cedar St, Shelbyville' },
-            { orderID: 12, orderIssuedDate: '2023-12-05', expectedOrderDate: '2023-12-10', supplier: '20f7ce39-aa7f-438f-8948-c412791deba5', orderCost: 1800, orderReceivedDate: '2023-12-09', status: 'Delayed', quoteStatus: 'Approved', address: '909 Birch Rd, Riverdale' }
-        ];
+        // this.isLoading = true;
+        try {
+            const session = await fetchAuthSession();
 
+            const cognitoClient = new CognitoIdentityProviderClient({
+                region: outputs.auth.aws_region,
+                credentials: session.credentials,
+            });
 
-        return orders;
+            const getUserCommand = new GetUserCommand({
+                AccessToken: session.tokens?.accessToken.toString(),
+            });
+            const getUserResponse = await cognitoClient.send(getUserCommand);
+
+            const tenentId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
+
+            if (!tenentId) {
+                console.error('TenentId not found in user attributes');
+                this.rowData = [];
+                return;
+            }
+
+            const lambdaClient = new LambdaClient({
+                region: outputs.auth.aws_region,
+                credentials: session.credentials,
+            });
+
+            const invokeCommand = new InvokeCommand({
+                FunctionName: 'getOrdersReport',
+                Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: tenentId } })),
+            });
+
+            const lambdaResponse = await lambdaClient.send(invokeCommand);
+            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+            console.log('Response from Lambda:', responseBody);
+
+            if (responseBody.statusCode === 200) {
+                const orders = JSON.parse(responseBody.body);
+                this.rowData = orders;
+                console.log('Processed orders:', this.rowData);
+            } else {
+                console.error('Error fetching orders data:', responseBody.body);
+                this.rowData = [];
+            }
+        } catch (error) {
+            console.error('Error in loadOrdersData:', error);
+            this.rowData = [];
+        } finally {
+            // this.isLoading = false;
+        }
     }
 
     updateOrderStatuses(orders: any[], suppliers: any[]) {

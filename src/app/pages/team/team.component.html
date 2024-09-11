@@ -1,6 +1,14 @@
-<div class="grid-container">
-    <app-grid [rowData]="rowData" [columnDefs]="colDefs" [addButton]="addButton" (addNewClicked)="openAddMemberPopup()"
-        (nameCellValueChanged)="onNameCellValueChanged($event)" #gridComponent>
+<div style="margin: 15px; width: 100%">
+        <app-grid
+        [rowData]="rowData"
+        [columnDefs]="colDefs"
+        [addButton]="addButton"
+        (addNewClicked)="openAddMemberPopup()"
+        (nameCellValueChanged)="onNameCellValueChanged($event)"
+        (rowsToDelete)="deleteMember()"
+        [context]="getContext()"
+        #gridComponent
+    >
     </app-grid>
 </div>
 
@@ -9,7 +17,6 @@
         <div class="popup-content">
             <h2>Add Member</h2>
             <form (ngSubmit)="onSubmit(userForm.value)" #userForm="ngForm">
-
                 <!-- Name Input -->
                 <mat-form-field appearance="outline">
                     <mat-label>Name</mat-label>
@@ -25,8 +32,15 @@
                 <!-- Email Input -->
                 <mat-form-field appearance="outline">
                     <mat-label>Email</mat-label>
-                    <input matInput type="email" id="email" name="email" [(ngModel)]="user.email" required
-                        #userEmail="ngModel" />
+                    <input
+                        matInput
+                        type="email"
+                        id="email"
+                        name="email"
+                        [(ngModel)]="user.email"
+                        required
+                        #userEmail="ngModel"
+                    />
                     <mat-error *ngIf="userEmail.invalid && (userEmail.dirty || userEmail.touched)">
                         <span *ngIf="userEmail.errors?.['required']">Email is required.</span>
                         <span *ngIf="userEmail.errors?.['email']">Please enter a valid email address.</span>
@@ -45,9 +59,16 @@
                 </mat-form-field>
                 <!-- Buttons -->
                 <div class="button-group">
-                    <button mat-button (click)="closePopup()">Cancel</button>
-                    <button mat-raised-button color="primary" type="submit"
-                        [disabled]="!userForm.form.valid">Submit</button>
+                    <button mat-stroked-button (click)="closePopup()" class="btn">Cancel</button>
+                    <button
+                        mat-stroked-button
+                        color="primary"
+                        type="submit"
+                        class="btn"
+                        [disabled]="!userForm.form.valid"
+                    >
+                        Submit
+                    </button>
                 </div>
             </form>
         </div>

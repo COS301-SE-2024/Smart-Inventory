@@ -1,0 +1,185 @@
+/* PLACEHOLDER */
+::placeholder {
+    text-align: left;
+}
+
+/* Ensure input text is left-aligned */
+input.mat-input-element {
+    text-align: left;
+}
+
+mat-form-field {
+    width: 100%;
+    margin-bottom: 15px;
+    --mdc-filled-text-field-label-text-color: #000000;
+    --mdc-filled-text-field-container-color: #f1f1f1;
+}
+
+mat-dialog-content {
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.mat-mdc-card-header {
+    display: flex;
+    padding: 16px 16px 0;
+    width: 100%;
+}
+
+.btn {
+    border-radius: 20px;
+    margin-right: 10px;
+    --mdc-outlined-button-label-text-color: black;
+    --mdc-outlined-button-outline-color: #74777f;
+    border-radius: 5px;
+    width: 200px;
+    height: 40px;
+}
+/* width */
+::-webkit-scrollbar {
+    margin-left: 5px;
+    width: 10px;
+    border-radius: 50px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 50px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: none;
+    border-radius: 50px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: none;
+}
+
+.body {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+/* Mat-form-field Styles */
+mat-form-field {
+    width: 100%;
+    background-color: none !important;
+    border-radius: 15px;
+}
+
+.mdc-text-field--filled.mdc-text-field--disabled {
+    background-color: white !important;
+    border-radius: 15px !important;
+}
+
+mat-label {
+    color: #000 !important;
+}
+
+.mat-mdc-button .mat-mdc-button-touch-target {
+    position: absolute;
+    top: 50%;
+    height: 50px;
+    left: 0;
+    right: 0;
+    transform: translateY(-50%);
+    display: var(--mat-text-button-touch-target-display);
+    background-color: #f1f1f1;
+    border-radius: 5px;
+}
+.mat-mdc-form-field-infix {
+    min-width: 0;
+    width: 180px;
+    position: relative;
+    box-sizing: border-box;
+    /*background-color: #f1f1f1;*/
+}
+.mat-mdc-text-field-wrapper.mdc-text-field.mdc-text-field--filled {
+    /*background-color: #f1f1f1;*/
+    border-radius: 15px;
+}
+/* EDIT PERSONAL INFORMATION */
+
+.card {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    flex-wrap: wrap;
+    text-align: center;
+    /* overflow-y: scroll; */
+    margin-top: 10px;
+    margin-bottom: 10px;
+    background-color: linear-gradient(white, #f1f1f1);
+    box-shadow:
+        0px 6px 6px -3px rgba(0, 0, 0, 0.2),
+        0px 10px 14px 1px rgba(0, 0, 0, 0.14),
+        0px 4px 18px 3px rgba(0, 0, 0, 0.12);
+    border-radius: 8px;
+}
+
+.mat-mdc-tab-body.mat-mdc-tab-body-active {
+    position: relative;
+    overflow-x: hidden;
+    display: flex;
+    z-index: 1;
+    flex-grow: 1;
+    align-content: center;
+    justify-content: center;
+    text-align: center;
+}
+button.delete-button {
+    color: #000 !important;
+}
+
+/* CONFIRM DELETE ACCOUNT PASSWORD */
+.confirm-delete-button {
+    background-color: rgb(253, 58, 58) !important;
+}
+
+/* Custom Form Field Styling */
+.form-row mat-form-field {
+    background-color: none;
+}
+
+/* FORM FIELD EDITING SH** TOOK LONG YALL */
+
+/* MAKE FORM FIELDS WHITE */
+mat-form-field .mdc-text-field--filled:not(.mdc-text-field--disabled) {
+    background-color: #fff;
+    border-radius: 15px;
+}
+
+/* REMOVE UNDERLINE IN FORM FIELDS */
+mat-form-field .mdc-line-ripple {
+    display: none;
+}
+
+.mat-form-field-flex {
+    background-color: white !important;
+    border-radius: 15px !important;
+}
+
+.mat-form-field-outline {
+    border-radius: 15px !important;
+}
+
+.mat-form-field-outline-start,
+.mat-form-field-outline-end {
+    border-radius: 15px !important;
+}
+
+.mat-form-field-outline-gap {
+    border-radius: 15px !important;
+}

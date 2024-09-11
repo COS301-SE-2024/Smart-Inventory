@@ -3,33 +3,26 @@
 </div>
 
 <div *ngIf="!isLoading" style="height: 100%; display: block; overflow: scroll">
-    <mat-toolbar style="width: 100%">
-        <button mat-button style="width: 100%; background-color: #f1f1f1; color: black" (click)="back()">
-            Back to reports
-        </button>
-    </mat-toolbar>
-    <mat-grid-list cols="9" rowHeight="29vh" gutterSize="15px">
-        <mat-grid-tile [colspan]="3" [rowspan]="2">
-            <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
-                <mat-card style="height: 100%; width: 100%">
-                    <ag-charts-angular [options]="options1" style="height: 100%" data-cy = "graph1"></ag-charts-angular>
-                </mat-card>
+    <div style="padding: 10px 10px 10px 10px; width: 100%">
+        <div class="grid-container">
+            <div class="chart-tile wide">
+                <div class="chart">
+                    <ag-charts-angular [options]="options1" data-cy="graph1"></ag-charts-angular>
+                </div>
             </div>
-        </mat-grid-tile>
-        <mat-grid-tile [colspan]="3" [rowspan]="2">
-            <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
-                <mat-card style="height: 100%; width: 100%">
-                    <ag-charts-angular [options]="options2" style="height: 100%" data-cy = "graph2"></ag-charts-angular>
-                </mat-card>
+            <div class="chart-tile wide">
+                <div class="chart">
+                    <ag-charts-angular [options]="options2" data-cy="graph2"></ag-charts-angular>
+                </div>
             </div>
-        </mat-grid-tile>
-        <mat-grid-tile [colspan]="3" [rowspan]="2">
-            <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
-                <mat-card style="height: 100%; width: 100%">
-                    <ag-charts-angular [options]="options4" style="height: 100%" data-cy = "graph3"></ag-charts-angular>
-                </mat-card>
+            <div class="chart-tile wide">
+                <div class="chart">
+                    <ag-charts-angular [options]="options4" data-cy="graph3"></ag-charts-angular>
+                </div>
             </div>
-        </mat-grid-tile>
+        </div>
+    </div>
+    <mat-grid-list cols="9" rowHeight="29vh" gutterSize="20px">
         <mat-grid-tile [colspan]="9" [rowspan]="2">
             <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
                 <div class="inventoryHolder">
@@ -49,7 +42,7 @@
         <mat-grid-tile [colspan]="2" [rowspan]="2">
             <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
                 <mat-card style="height: 100%; width: 100%">
-                    <mat-card-title style="text-align: center">{{InventoryReport.title}}</mat-card-title>
+                    <mat-card-title style="text-align: center">{{ InventoryReport.title }}</mat-card-title>
                     <mat-card-content style="align-items: center">
                         <ul style="list-style: none; padding: 0; margin: 0">
                             <li
@@ -71,4 +64,19 @@
             </div>
         </mat-grid-tile>
     </mat-grid-list>
+    <mat-toolbar
+        style="
+            position: sticky;
+            bottom: 0;
+            left: 0;
+            width: 300px;
+            border-radius: 20px;
+            height: 50px;
+            background-color: transparent;
+        "
+    >
+        <button mat-flat-button class="btn" (click)="back()">
+            <mat-icon style="font-size: 24px; height: 24px; width: 24px">arrow_back</mat-icon> Back To Reports
+        </button>
+    </mat-toolbar>
 </div>

@@ -19,6 +19,8 @@ import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
 import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
 import outputs from '../../../../amplify_outputs.json';
 import { LoadingSpinnerComponent } from '../loader/loading-spinner.component';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule, provideNativeDateAdapter } from '@angular/material/core';
 
 interface QuoteItem {
   item: { sku: string; description: string; inventoryID: string };
@@ -50,7 +52,10 @@ interface InventoryItem {
     NgxMatSelectSearchModule,
     LoadingSpinnerComponent,
     MatTooltipModule,
+    MatDatepickerModule,
+    MatNativeDateModule
   ],
+  providers: [provideNativeDateAdapter()],
   templateUrl: './custom-quote-modal.component.html',
   styleUrls: ['./custom-quote-modal.component.css']
 })
@@ -62,6 +67,7 @@ export class CustomQuoteModalComponent implements OnInit {
   selectedSuppliers: { company_name: string; supplierID: string }[] = [];
   suppliers: { company_name: string; supplierID: string }[] = [];
   inventoryItems: { sku: string; description: string }[] = [];
+  submissionDeadline: Date | null = null;
 
   supplierControl = new FormControl();
   filteredSuppliers: ReplaySubject<{ company_name: string; supplierID: string }[]> = new ReplaySubject<{ company_name: string; supplierID: string }[]>(1);
@@ -69,9 +75,12 @@ export class CustomQuoteModalComponent implements OnInit {
   isEditing: boolean = false;
   isNewQuote: boolean = false;
   hasUnsavedChanges: boolean = false;
+  isSendingQuote: boolean = false;
+  isSavingChanges: boolean = false;
 
   orderId: string | null = null;
   quoteId: string | null = null;
+  orderDate: string | null = null;
 
   protected _onDestroy = new Subject<void>();
 
@@ -125,6 +134,8 @@ export class CustomQuoteModalComponent implements OnInit {
   
     this.orderId = quoteDetails.orderId || null;
     this.quoteId = quoteDetails.quoteId || null;
+    this.orderDate = quoteDetails.orderDate || null;
+    this.submissionDeadline = quoteDetails.Submission_Deadline ? new Date(quoteDetails.Submission_Deadline) : null;
   
     if (quoteDetails.items && Array.isArray(quoteDetails.items)) {
       this.quoteItems = quoteDetails.items.map((item: any) => {
@@ -180,12 +191,11 @@ export class CustomQuoteModalComponent implements OnInit {
 
   filterItems(value: string, index: number) {
     const filterValue = value.toLowerCase();
-    this.quoteItems[index].filteredItems.next(
-      this.inventoryItems.filter(item =>
-        item.sku.toLowerCase().includes(filterValue) ||
-        item.description.toLowerCase().includes(filterValue)
-      )
+    const filteredItems = this.inventoryItems.filter(item =>
+      item.sku.toLowerCase().includes(filterValue) ||
+      item.description.toLowerCase().includes(filterValue)
     );
+    this.quoteItems[index].filteredItems.next(filteredItems);
   }
 
   addItem() {
@@ -262,27 +272,28 @@ export class CustomQuoteModalComponent implements OnInit {
     try {
       const session = await fetchAuthSession();
       const tenentId = await this.getTenentId(session);
-
+  
       const lambdaClient = new LambdaClient({
         region: outputs.auth.aws_region,
         credentials: session.credentials,
       });
-
+  
       const invokeCommand = new InvokeCommand({
         FunctionName: 'Inventory-getItems',
         Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: tenentId } })),
       });
-
+  
       const lambdaResponse = await lambdaClient.send(invokeCommand);
       const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
+  
       if (responseBody.statusCode === 200) {
         const inventoryItems = JSON.parse(responseBody.body);
-        this.inventoryItems = inventoryItems.map((item: any) => ({
+        const uniqueItems = this.filterDuplicateSKUs(inventoryItems.map((item: any) => ({
           sku: item.SKU,
           description: item.description,
-          inventoryID: item.inventoryID // Add this line
-        }));
+          inventoryID: item.inventoryID
+        })));
+        this.inventoryItems = uniqueItems;
         // Initialize filtered items for each quote item
         this.quoteItems.forEach(quoteItem => {
           quoteItem.filteredItems.next(this.inventoryItems.slice());
@@ -323,8 +334,11 @@ export class CustomQuoteModalComponent implements OnInit {
 
 
   async saveChanges() {
+    this.isSavingChanges = true;
     const updatedQuote = {
       quoteId: this.quoteId,
+      orderId: this.orderId,
+      orderDate: this.orderDate,
       items: this.quoteItems.map(({ item, quantity }) => ({
         ItemSKU: item.sku,
         Quantity: quantity,
@@ -333,27 +347,61 @@ export class CustomQuoteModalComponent implements OnInit {
       suppliers: this.selectedSuppliers.map(supplier => ({
         company_name: supplier.company_name,
         supplierID: supplier.supplierID
-      }))
+      })),
+      Submission_Deadline: this.submissionDeadline ? this.submissionDeadline.toISOString() : null
     };
-
+  
     console.log('Saving changes with data:', JSON.stringify(updatedQuote, null, 2));
   
     try {
-      await this.updateQuote(updatedQuote);
+      const session = await fetchAuthSession();
+      const tenentId = await this.getTenentId(session);
   
-      this.hasUnsavedChanges = false; // Reset the flag after saving
-      this.snackBar.open('Changes saved successfully', 'Close', {
-        duration: 3000,
-        horizontalPosition: 'center',
-        verticalPosition: 'top',
+      const lambdaClient = new LambdaClient({
+        region: outputs.auth.aws_region,
+        credentials: session.credentials,
       });
+  
+      const payload = {
+        pathParameters: {
+          tenentId: tenentId,
+          quoteId: updatedQuote.quoteId
+        },
+        body: JSON.stringify(updatedQuote)  // Send the entire updatedQuote object
+      };
+  
+      console.log('Updating quote with payload:', JSON.stringify(payload, null, 2));
+  
+      const invokeCommand = new InvokeCommand({
+        FunctionName: 'updateQuoteDetails',
+        Payload: new TextEncoder().encode(JSON.stringify(payload)),
+      });
+  
+      const lambdaResponse = await lambdaClient.send(invokeCommand);
+      const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+  
+      console.log('Lambda response:', JSON.stringify(responseBody, null, 2));
+  
+      if (responseBody.statusCode === 200) {
+        console.log('Quote updated successfully');
+        this.hasUnsavedChanges = false;
+        this.snackBar.open('Changes saved successfully', 'Close', {
+          duration: 3000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+        });
+      } else {
+        throw new Error(responseBody.body || 'Failed to update quote');
+      }
     } catch (error) {
-      console.error('Error saving changes:', error);
-      this.snackBar.open('Error saving changes', 'Close', {
-        duration: 3000,
+      console.error('Error updating quote:', error);
+      this.snackBar.open(`Error saving changes: ${(error as Error).message}`, 'Close', {
+        duration: 5000,
         horizontalPosition: 'center',
         verticalPosition: 'top',
       });
+    } finally {
+      this.isSavingChanges = false;
     }
   }
 
@@ -423,7 +471,8 @@ export class CustomQuoteModalComponent implements OnInit {
         company_name: supplier.company_name,
         supplierID: supplier.supplierID
       })),
-      Quote_Status: 'Draft'
+      Quote_Status: 'Draft',
+      Submission_Deadline: this.submissionDeadline ? this.submissionDeadline.toISOString() : null
     };
     console.log(order);
     this.dialogRef.close({ action: 'createOrder', data: order });
@@ -444,19 +493,32 @@ export class CustomQuoteModalComponent implements OnInit {
       return;
     }
     if (!this.isNewQuote) {
-      console.log('Sending quote...');
-      const emailData = await this.prepareEmailData();
-      
-      // Send emails
-      await this.sendEmails(emailData);
+      this.isSendingQuote = true; // Set loading state to true
+      try {
+        console.log('Sending quote...');
+        const emailData = await this.prepareEmailData();
+        
+        // Send emails
+        await this.sendEmails(emailData);
 
-      this.dialogRef.close({ action: 'sendQuote', data: {
-        quoteId: this.quoteId,
-        items: this.quoteItems,
-        suppliers: this.selectedSuppliers,
-        emailData: emailData
-      }});
+        this.dialogRef.close({ action: 'sendQuote', data: {
+          quoteId: this.quoteId,
+          items: this.quoteItems,
+          suppliers: this.selectedSuppliers,
+          emailData: emailData
+        }});
+      } catch (error) {
+        console.error('Error sending quote:', error);
+        this.snackBar.open('Error sending quote. Please try again.', 'Close', {
+          duration: 5000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+        });
+      } finally {
+        this.isSendingQuote = false; // Set loading state back to false
+      }
     }
+
   }
 
   async prepareEmailData() {
@@ -582,6 +644,16 @@ export class CustomQuoteModalComponent implements OnInit {
     } else {
       throw new Error('Failed to get deliveryInfoID');
     }
+  }
+
+  private filterDuplicateSKUs(items: InventoryItem[]): InventoryItem[] {
+    const uniqueItems = new Map<string, InventoryItem>();
+    items.forEach(item => {
+      if (!uniqueItems.has(item.sku)) {
+        uniqueItems.set(item.sku, item);
+      }
+    });
+    return Array.from(uniqueItems.values());
   }
 
 }

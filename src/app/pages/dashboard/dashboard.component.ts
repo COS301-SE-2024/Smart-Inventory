@@ -27,8 +27,7 @@ import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
 import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
 import outputs from '../../../../amplify_outputs.json';
 import { MatDialog } from '@angular/material/dialog';
-import { CustomizeComponent } from '../../components/modal/customize/customize.component';
-import { TemplatechartComponent } from '../../components/charts/templatechart/templatechart.component';
+import { TemplatechartComponent } from 'app/components/charts/templatechart/templatechart.component';
 import { LoadingSpinnerComponent } from 'app/components/loader/loading-spinner.component';
 interface DashboardItem extends GridsterItem {
     type: string;
@@ -65,7 +64,7 @@ interface DashboardItem extends GridsterItem {
         MatProgressSpinnerModule,
         TemplatechartComponent,
         LoadingSpinnerComponent
-    ],
+    ]
 })
 export class DashboardComponent implements OnInit {
     isDeleteMode: boolean = false;
@@ -103,7 +102,7 @@ export class DashboardComponent implements OnInit {
         requests: {
             totalRequests: 0,
             mostRequested: {
-                name: "None",
+                name: "None found",
                 percentage: 0
             },
             highestRequest: 0,
@@ -112,7 +111,7 @@ export class DashboardComponent implements OnInit {
             currentBackorders: 0,
             averageDelay: 0,
             longestBackorderItem: {
-                productName: 'None',
+                productName: 'None found',
                 delay: ''
             }
         }
@@ -206,21 +205,21 @@ export class DashboardComponent implements OnInit {
         bubbleChart: 'Initial Bubble Chart Title'
     };
 
-    openCustomizeModal(chartType: any) {
-        const dialogRef = this.dialog.open(CustomizeComponent, {
-            width: '400px',
-            data: {
-                chartType: chartType,
-            }
-        });
+    // openCustomizeModal(chartType: any) {
+    //     const dialogRef = this.dialog.open(CustomizeComponent, {
+    //         width: '400px',
+    //         data: {
+    //             chartType: chartType,
+    //         }
+    //     });
 
-        dialogRef.afterClosed().subscribe(result => {
-            if (result) {
-                console.log('The dialog was closed', result);
-                this.updateChartConfigs(result);
-            }
-        });
-    }
+    //     dialogRef.afterClosed().subscribe(result => {
+    //         if (result) {
+    //             console.log('The dialog was closed', result);
+    //             this.updateChartConfigs(result);
+    //         }
+    //     });
+    // }
 
     enableDragging(item: GridsterItem) {
         item.dragEnabled = true;
@@ -403,7 +402,7 @@ export class DashboardComponent implements OnInit {
             console.error('Error in dashboardData:', error);
             this.dashboardInfo = [];
         }
-        finally{
+        finally {
             // this..isLoading = false;
         }
     }
@@ -569,7 +568,7 @@ export class DashboardComponent implements OnInit {
         } catch (error) {
             console.error('Error fetching users:', error);
             this.userCount = 0; // Ensure user count is set to 0 in case of errors
-        }finally{
+        } finally {
             // this..isLoading = false;
         }
     }
@@ -669,6 +668,23 @@ export class DashboardComponent implements OnInit {
         ];
 
         return this.dashboard;
+    }
+
+
+    showDeleteModal = false;
+
+    openDeleteConfirmModal(): void {
+        this.showDeleteModal = true;
+    }
+
+    confirmDelete(): void {
+        this.finalizeDeletions();
+        this.showDeleteModal = false;
+    }
+
+    cancelDelete(): void {
+        this.showDeleteModal = false;
+        this.undoDeletions();
     }
 
     toggleDeleteMode(): void {
@@ -776,32 +792,45 @@ export class DashboardComponent implements OnInit {
         this.saveState();
     }
 
-    addNewChartToDashboard(chartConfig: any) {
-        const newChartItem: DashboardItem = {
-            cols: 2,
-            rows: 2,
-            y: 0,
-            x: 0,
-            type: 'chart',
-            name: chartConfig.title,
-            chartType: chartConfig.chartType,
-            chartData: chartConfig.data,
-            // You might want to add more properties here
+    addChartToDashboard(config: any) {
+        const newChart = {
+          chartType: config.type,
+          data: config.data,
+          title: config.title
         };
-
-        this.dashboard.push(newChartItem);
-        this.saveState();
-        this.sidenav.close(); // Close the side panel after adding the chart
-    }
+    
+        this.newCharts.push(newChart);
+        this.saveNewCharts();
+        this.closeSidePanel();
+        this.cdr.detectChanges(); // Force change detection
+      }
 
     setFilter(filter: string): void {
         this.filterService.changeFilter(filter);
     }
 
+    removeNewChart(index: number) {
+        this.newCharts.splice(index, 1);
+        this.saveNewCharts();
+        this.cdr.detectChanges(); // Force change detection
+      }
 
+    saveNewCharts() {
+        localStorage.setItem('newCharts', JSON.stringify(this.newCharts));
+    }
+
+    loadNewCharts() {
+        const savedNewCharts = localStorage.getItem('newCharts');
+        if (savedNewCharts) {
+          this.newCharts = JSON.parse(savedNewCharts);
+          console.log('Loaded charts:', this.newCharts); // Add this for debugging
+          this.cdr.detectChanges(); // Force change detection
+        }
+      }
 
     async ngOnInit() {
         this.loadState(); // Load the state on initialization
+        this.loadNewCharts();
         this.titleService.updateTitle('Dashboard');
 
         // await this.loadInventoryData();

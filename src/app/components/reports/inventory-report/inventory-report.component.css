@@ -19,3 +19,51 @@ mat-card.mat-mdc-card.mdc-card {
     background-color: white;
     box-shadow: 0 4px 8px rgb(0 0 0 / 30%);
 }
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    gap: 10px;
+    padding: 10px;
+}
+
+.btn {
+    border-radius: 20px;
+    margin-right: 10px;
+    --mdc-outlined-button-label-text-color: black;
+    --mdc-outlined-button-outline-color: #74777f;
+    border-radius: 5px;
+    width: 200px;
+    height: 40px;
+}
+
+.chart-tile {
+    background-color: #fff;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+}
+
+.chart-tile.wide {
+    grid-column: span 3;
+}
+
+.chart-tile.full-width {
+    grid-column: span 9;
+}
+
+.chart-tile.medium-width {
+    grid-column: span 7;
+}
+
+.chart {
+    width: 100%;
+    height: 300px;
+    /* Adjust as needed */
+}
+
+.inventory-holder {
+    width: 100%;
+    height: 300px;
+    /* Adjust as needed */
+}

@@ -13,17 +13,28 @@ import { FormsModule } from '@angular/forms';
 import { DeleteConfirmationDialogComponent } from './delete-confirmation-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { LoadingSpinnerComponent } from '../../components/loader/loading-spinner.component';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatDialogModule } from '@angular/material/dialog';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MaterialModule } from 'app/components/material/material.module';
+import { UploadSuppliersModalComponent } from 'app/components/upload-suppliers-modal/upload-suppliers-modal.component';
 
 @Component({
     selector: 'app-suppliers',
     standalone: true,
     imports: [
         GridComponent,
-        MatButtonModule,
+        // MatButtonModule,
         CommonModule,
         FormsModule,
         DeleteConfirmationDialogComponent,
         LoadingSpinnerComponent,
+        MatDialogModule,
+        FormsModule,
+        ReactiveFormsModule,
+        // MatFormFieldModule,
+        MaterialModule,
     ],
     templateUrl: './suppliers.component.html',
     styleUrl: './suppliers.component.css',
@@ -65,9 +76,9 @@ export class SuppliersComponent implements OnInit {
     colDefs: ColDef[] = [
         { field: 'supplierID', headerName: 'Supplier ID', hide: true },
         { field: 'company_name', headerName: 'Company Name', filter: 'agSetColumnFilter' },
-        { field: 'contact_name', headerName: 'Contact Name', filter: 'agSetColumnFilter' },
-        { field: 'contact_email', headerName: 'Contact Email', filter: 'agSetColumnFilter' },
-        { field: 'phone_number', headerName: 'Phone Number', filter: 'agSetColumnFilter' },
+        { field: 'contact_name', headerName: 'Contact Name', filter: 'agSetColumnFilter', editable: true },
+        { field: 'contact_email', headerName: 'Contact Email', filter: 'agSetColumnFilter', editable: true },
+        { field: 'phone_number', headerName: 'Phone Number', filter: 'agSetColumnFilter', editable: true },
         {
             field: 'address',
             headerName: 'Address',
@@ -82,6 +93,7 @@ export class SuppliersComponent implements OnInit {
     constructor(
         private titleService: TitleService,
         private dialog: MatDialog,
+        private snackBar: MatSnackBar
     ) {
         Amplify.configure(outputs);
     }
@@ -93,16 +105,15 @@ export class SuppliersComponent implements OnInit {
         await this.logActivity('Viewed suppliers', 'Suppliers page navigated');
     }
 
-
     async logActivity(task: string, details: string) {
         try {
             const session = await fetchAuthSession();
-    
+
             const lambdaClient = new LambdaClient({
                 region: outputs.auth.aws_region,
                 credentials: session.credentials,
             });
-    
+
             const payload = JSON.stringify({
                 tenentId: this.tenantId,
                 memberId: this.tenantId,
@@ -113,15 +124,15 @@ export class SuppliersComponent implements OnInit {
                 idleTime: 0,
                 details: details,
             });
-    
+
             const invokeCommand = new InvokeCommand({
                 FunctionName: 'userActivity-createItem',
                 Payload: new TextEncoder().encode(JSON.stringify({ body: payload })),
             });
-    
+
             const lambdaResponse = await lambdaClient.send(invokeCommand);
             const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-    
+
             if (responseBody.statusCode === 201) {
                 console.log('Activity logged successfully');
             } else {
@@ -159,11 +170,12 @@ export class SuppliersComponent implements OnInit {
             });
             const getUserResponse = await cognitoClient.send(getUserCommand);
 
-            const givenName = getUserResponse.UserAttributes?.find(attr => attr.Name === 'given_name')?.Value || '';
-            const familyName = getUserResponse.UserAttributes?.find(attr => attr.Name === 'family_name')?.Value || '';
+            const givenName = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'given_name')?.Value || '';
+            const familyName = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'family_name')?.Value || '';
             this.userName = `${givenName} ${familyName}`.trim();
 
-            this.tenantId = getUserResponse.UserAttributes?.find(attr => attr.Name === 'custom:tenentId')?.Value || '';
+            this.tenantId =
+                getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value || '';
 
             const lambdaClient = new LambdaClient({
                 region: outputs.auth.aws_region,
@@ -183,19 +195,19 @@ export class SuppliersComponent implements OnInit {
             const lambdaResponse = await lambdaClient.send(invokeCommand);
             const users = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
 
-            const currentUser = users.find((user: any) => 
-                user.Attributes.find((attr: any) => attr.Name === 'email')?.Value === session.tokens?.accessToken.payload['username']
+            const currentUser = users.find(
+                (user: any) =>
+                    user.Attributes.find((attr: any) => attr.Name === 'email')?.Value ===
+                    session.tokens?.accessToken.payload['username'],
             );
 
             if (currentUser && currentUser.Groups.length > 0) {
                 this.userRole = this.getRoleDisplayName(currentUser.Groups[0].GroupName);
             }
-
         } catch (error) {
             console.error('Error fetching user info:', error);
         }
     }
-
 
     async loadSuppliersData() {
         try {
@@ -355,15 +367,18 @@ export class SuppliersComponent implements OnInit {
             if (responseBody.statusCode === 200) {
                 console.log('Supplier address updated successfully');
                 const updatedSupplier = JSON.parse(responseBody.body);
-                const index = this.rowData.findIndex((supplier) => supplier.supplierID === updatedSupplier.supplierID);
-                if (index !== -1) {
-                    this.rowData[index].address = updatedSupplier.address;
 
-                    // Refresh the grid data
-                    this.gridComponent.rowData = [...this.rowData];
-                }
+                await this.logActivity(
+                    'Updated supplier address',
+                    `Updated address for supplier ${this.selectedSupplier.company_name}`,
+                );
                 this.closeEditAddressPopup();
-                await this.logActivity('Updated supplier address', `Updated address for supplier ${this.selectedSupplier.company_name}`);
+                this.loadSuppliersData();
+                this.snackBar.open('Supplier address updated successfully', 'Close', {
+                    duration: 6000,
+                    horizontalPosition: 'center',
+                    verticalPosition: 'top',
+                  });
             } else {
                 throw new Error(responseBody.body);
             }
@@ -427,6 +442,11 @@ export class SuppliersComponent implements OnInit {
                 console.log('Supplier added successfully');
                 await this.loadSuppliersData();
                 this.closeAddPopup();
+                this.snackBar.open('Supplier added successfully', 'Close', {
+                    duration: 6000,
+                    horizontalPosition: 'center',
+                    verticalPosition: 'top',
+                });
                 await this.logActivity('Added new supplier', `Added supplier ${formData.company_name}`);
             } else {
                 throw new Error(responseBody.body);
@@ -506,15 +526,30 @@ export class SuppliersComponent implements OnInit {
 
             const lambdaResponse = await lambdaClient.send(invokeCommand);
             const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
+        
             if (responseBody.statusCode === 200) {
-                console.log('Supplier deleted successfully');
+              console.log('Supplier deleted successfully');
+              this.snackBar.open('Supplier deleted successfully', 'Close', {
+                duration: 6000,
+                horizontalPosition: 'center',
+                verticalPosition: 'top',
+              });
+            } else if (responseBody.statusCode === 400 && responseBody.body.includes('Supplier cannot be deleted')) {
+              this.snackBar.open('Supplier cannot be deleted because they are already being used in the system', 'Close', {
+                duration: 6000,
+                horizontalPosition: 'center',
+                verticalPosition: 'top',
+              });
             } else {
-                throw new Error(responseBody.body);
+              throw new Error(responseBody.body);
             }
-        } catch (error) {
+          } catch (error) {
             console.error('Error deleting supplier:', error);
-            alert(`Error deleting supplier: ${(error as Error).message}`);
+            this.snackBar.open(`Error deleting supplier: ${(error as Error).message}`, 'Close', {
+              duration: 6000,
+              horizontalPosition: 'center',
+              verticalPosition: 'top',
+            });
         }
     }
 
@@ -570,6 +605,11 @@ export class SuppliersComponent implements OnInit {
                 if (index !== -1) {
                     this.rowData[index] = { ...this.rowData[index], ...updatedSupplier };
                 }
+                this.snackBar.open('Supplier updated successfully', 'Close', {
+                    duration: 6000,
+                    horizontalPosition: 'center',
+                    verticalPosition: 'top',
+                  });
             } else {
                 throw new Error(responseBody.body);
             }
@@ -580,4 +620,16 @@ export class SuppliersComponent implements OnInit {
             this.gridComponent.updateRow(event.data);
         }
     }
+
+    openImportSuppliersModal() {
+        console.log('Opening import suppliers modal');
+        const dialogRef = this.dialog.open(UploadSuppliersModalComponent, {
+        });
+    
+        dialogRef.afterClosed().subscribe(result => {
+          if (result) {
+            this.loadSuppliersData(); // Refresh the suppliers list
+          }
+        });
+      }
 }

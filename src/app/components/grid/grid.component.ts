@@ -1,4 +1,14 @@
-import { Component, Input, OnInit, OnDestroy, Output, EventEmitter, output, ChangeDetectorRef, ViewChild } from '@angular/core';
+import {
+    Component,
+    Input,
+    OnInit,
+    OnDestroy,
+    Output,
+    EventEmitter,
+    output,
+    ChangeDetectorRef,
+    ViewChild,
+} from '@angular/core';
 import { Renderer2, ElementRef, AfterViewInit, ViewEncapsulation } from '@angular/core';
 import { AgGridAngular } from 'ag-grid-angular';
 import { AgGridModule } from 'ag-grid-angular';
@@ -20,6 +30,9 @@ import { CustomQuoteModalComponent } from '../custom-quote-modal/custom-quote-mo
 import { ReceivedQuotesSidePaneComponent } from '../received-quotes-side-pane/received-quotes-side-pane.component';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { ReactiveFormsModule } from '@angular/forms';
+
 @Component({
     selector: 'app-grid',
     standalone: true,
@@ -38,6 +51,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
         DateSelectCellEditorComponent,
         ReceivedQuotesSidePaneComponent,
         MatTooltip,
+        MatAutocompleteModule,
+        ReactiveFormsModule,
     ],
     templateUrl: './grid.component.html',
     styleUrl: './grid.component.css',
@@ -55,6 +70,7 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
     private _rowData: any[] = [];
     @Input() columnDefs: ColDef[] = [];
     @Input() addButton: { text: string } = { text: 'Add' };
+    @Input() context: any;
     @Output() rowsToDelete = new EventEmitter<any[]>();
     @Output() addNewClicked = new EventEmitter<void>();
     @Output() itemToUpdate = new EventEmitter<{ data: any; field: string; newValue: any }>();
@@ -70,12 +86,22 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
     @Output() viewReceivedQuotesClicked = new EventEmitter<void>();
     @Output() markOrderAsReceivedClicked = new EventEmitter<any>();
     @Output() viewAutomationSettingsClicked = new EventEmitter<void>();
+    @Output() viewInventorySummary = new EventEmitter<void>();
+    @Output() deleteRowClicked = new EventEmitter<void>();
+    @Output() importExcelClicked = new EventEmitter<void>();
 
     @ViewChild(AgGridAngular) agGrid!: AgGridAngular;
     gridApi!: GridApi<any>;
     private themeObserver!: MutationObserver;
     gridStyle: any;
+    inputFilter = '';
+    filteredOptions: string[] = [];
 
+    gridOptions = {
+        pagination: true,
+        paginationPageSize: 20, // Set the number of rows per page
+        // other grid options...
+    };
     public themeClass: string = 'ag-theme-material'; // Default to light theme
 
     filteredRowData: any[] = [];
@@ -84,7 +110,6 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
     // gridColumnApi: any;
 
     filterSelect: string = '';
-    inputFilter: string = '';
 
     selectOptions: any = [];
 
@@ -103,10 +128,25 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
         private renderer: Renderer2,
         private el: ElementRef,
         private cdr: ChangeDetectorRef,
-        private _snackBar: MatSnackBar
+        private _snackBar: MatSnackBar,
     ) {
         this.setupThemeObserver();
-        // this.setGridHeight();
+    }
+
+    onFilterTextBoxChanged() {
+        this.gridApi.setGridOption(
+            'quickFilterText',
+            (document.getElementById('filter-text-box') as HTMLInputElement).value,
+        );
+        this.updateFilteredOptions();
+    }
+
+    private updateFilteredOptions() {
+        const allValues = this.rowData.flatMap((row) => Object.values(row));
+        const uniqueValues = Array.from(new Set(allValues.map(String)));
+        this.filteredOptions = uniqueValues.filter((value) =>
+            value.toLowerCase().includes(this.inputFilter.toLowerCase()),
+        );
     }
 
     oopenSnackBar(message: string) {
@@ -132,7 +172,7 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
             // Remove all existing rows
             const allRows = this.gridApi.getModel().getRowCount();
             if (allRows > 0) {
-                const rowsToRemove = this.gridApi.getModel().getRow(allRows - 1)!.data;
+                const rowsToRemove = this.gridApi.getModel().getRow(allRows)!.data;
                 this.gridApi.applyTransaction({ remove: [rowsToRemove] });
             }
 
@@ -151,16 +191,16 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     setGridHeight(): void {
-        const baseHeight = 33; // Base height in vh
+        const baseHeight = 35; // Base height in vh
         const rowHeight = 3; // Height per row in vh
-        const maxHeight = 52; // Maximum height in vh
+        const maxHeight = 75; // Maximum height in vh
 
-        let calculatedHeight = baseHeight + (this._rowData.length * rowHeight);
+        let calculatedHeight = baseHeight + this._rowData.length * rowHeight;
         let gridHeight = Math.min(calculatedHeight, maxHeight);
 
         this.gridStyle = {
             height: `${gridHeight}vh`,
-            maxHeight: `${maxHeight}vh`
+            maxHeight: `${maxHeight}vh`,
         };
 
         // Force change detection
@@ -172,6 +212,7 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
                 this.gridApi.sizeColumnsToFit();
                 this.gridApi.resetRowHeights();
             });
+            this.gridApi.updateGridOptions(this.gridOptions);
         }
     }
 
@@ -185,7 +226,7 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
         this.selectOptions = this.columnDefs.map((f: any) => f.field);
 
         // Make all columns editable
-        this.columnDefs = this.columnDefs.map((col) => ({ ...col, editable: true }));
+        this.columnDefs = this.columnDefs.map((col) => ({ ...col, }));
         this.setGridHeight();
     }
 
@@ -208,7 +249,7 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
         this.gridApi.sizeColumnsToFit();
         this.applyCurrentTheme();
         this.setGridHeight();
-        console.log('in grid component', this.rowData)
+        console.log('in grid component', this.rowData);
     }
 
     ngOnDestroy(): void {
@@ -279,7 +320,7 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     importExcel() {
-        alert('Import Not completed');
+        this.importExcelClicked.emit();
     }
 
     downloadCSV() {
@@ -328,7 +369,8 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
 
     openCustomQuoteModal() {
         const dialogRef = this.dialog.open(CustomQuoteModalComponent, {
-            width: '500px',
+            width: '60vw',
+            maxWidth: '100vw',
             data: { isNewQuote: true },
         });
 
@@ -351,7 +393,12 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     onViewReceivedQuotes() {
-        this.viewReceivedQuotesClicked.emit();
+        const selectedRows = this.gridApi.getSelectedRows();
+        if (selectedRows && selectedRows.length > 0) {
+            this.viewReceivedQuotesClicked.emit(selectedRows[0]);
+        } else {
+            this.oopenSnackBar('Please select an order to view received quotes');
+        }
     }
 
     onMarkOrderAsReceived() {
@@ -363,8 +410,12 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
             // console.log('No row selected for marking as received');
         }
     }
-    
+
     openAutomationSettings() {
         this.viewAutomationSettingsClicked.emit();
+    }
+
+    onViewInventorySummary() {
+        this.viewInventorySummary.emit();
     }
 }

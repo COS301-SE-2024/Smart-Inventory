@@ -13,12 +13,57 @@ gridster.scrollVertical {
 .btnAdd {
     border-radius: 20px;
     /* margin-right: 10px; */
+    color: #000;
     --mdc-protected-button-label-text-color: #000000;
-    background-color: #f1f1f1;
+    background-color: #fff;
+    width: 200px;
+}
+
+.QAButtons:hover{
+    background-color: #b0b0b0;
+}
+
+.QAButtons {
+    width: 200px;
+    background-color: white;
+    --mat-menu-container-color: #74777f;
+    --mat-menu-item-hover-state-layer-color: #74777f;
+    border: #74777f;
+    color: #000000;
+}
+
+.modal {
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: #fefefe;
+    padding: 20px;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.modal-buttons {
+    margin-top: 20px;
+}
+
+.modal-buttons button {
+    margin: 0 10px;
 }
 
 gridster-item {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.15);
+    box-shadow:
+        0 4px 8px rgba(0, 0, 0, 0.1),
+        0 6px 20px rgba(0, 0, 0, 0.15);
     margin-left: 2px;
     background: transparent !important;
     border-radius: 10px;
@@ -69,7 +114,6 @@ gridster-item {
     padding-left: 20px;
     /* space between icon and text */
 }
-
 
 h4 {
     font-size: 16px;
@@ -233,7 +277,7 @@ gridster {
 
 a#help-button {
     position: absolute;
-    left: 92%;
+    left: 88%;
 }
 
 /* gear-tab.component.css */
@@ -293,8 +337,6 @@ a#help-button {
     gap: 10px;
 }
 
-
-
 .main-container {
     /* position: relative; */
     height: 100vh;
@@ -332,7 +374,17 @@ a#help-button {
     align-items: center;
 }
 
+.new-charts-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    margin-top: 20px;
+}
 
+.new-chart-item {
+    margin: 10px;
+    position: relative;
+}
 .blur {
     /* filter: blur(1px); */
     z-index: 101;
@@ -384,7 +436,8 @@ a#help-button {
 .sidenav-chart {
     width: 100%;
     height: 345px;
-    margin-bottom: 114px; /* Space between charts */
+    margin-bottom: 114px;
+    /* Space between charts */
 }
 
 .mat-drawer {
@@ -410,7 +463,8 @@ a#help-button {
 /* Media queries to handle responsiveness */
 @media (max-width: 768px) {
     .chart {
-        height: 150px; /* Adjust height as necessary for smaller devices */
+        height: 150px;
+        /* Adjust height as necessary for smaller devices */
     }
 }
 

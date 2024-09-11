@@ -1,0 +1,54 @@
+<div class="modal-container">
+    <h2 mat-dialog-title>Import Inventory Items</h2>
+    <div mat-dialog-content>
+      <div class="file-upload-container">
+        <div class="file-input-wrapper">
+          <input type="file" (change)="onFileSelected($event)" accept=".csv" #fileInput id="fileInput" class="file-input">
+          <label for="fileInput" class="file-input-label">
+            <mat-icon>cloud_upload</mat-icon>
+            <span>Choose a file</span>
+          </label>
+          <span class="file-name" *ngIf="selectedFile">{{ selectedFile.name }}</span>
+        </div>
+        <button mat-raised-button color="primary" (click)="uploadFile()" [disabled]="!selectedFile || uploading" class="upload-button">
+          <mat-icon>upload</mat-icon>
+          {{ uploading ? 'Uploading...' : 'Upload' }}
+        </button>
+      </div>
+      <div class="file-format-info">
+        <h3>Accepted File Format:</h3>
+        <ul>
+          <li>CSV (.csv)</li>
+        </ul>
+        <p>Your file must contain the following columns:</p>
+        <ul>
+          <li>sku</li>
+          <li>upc</li>
+          <li>description</li>
+          <li>category</li>
+          <li>quantity</li>
+          <li>supplier</li>
+          <li>lowStockThreshold</li>
+          <li>reorderAmount</li>
+          <li>unitCost</li>
+          <li>leadTime</li>
+          <li>deliveryCost</li>
+          <li>dailyDemand</li>
+        </ul>
+      </div>
+      <div class="sample-files">
+        <h3>Download Sample File:</h3>
+        <button mat-stroked-button color="primary" (click)="downloadSampleFile()" class="sample-button">
+          <mat-icon>download</mat-icon>
+          Sample CSV
+        </button>
+      </div>
+    </div>
+    <div mat-dialog-actions>
+      <button mat-raised-button color="primary" (click)="onCancel()">Cancel</button>
+    </div>
+  
+    <div *ngIf="isLoading" class="loading-overlay">
+      <app-loading-spinner></app-loading-spinner>
+    </div>
+  </div>

@@ -13,6 +13,11 @@ import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-c
 import outputs from '../../../../amplify_outputs.json';
 import { LoadingSpinnerComponent } from '../loader/loading-spinner.component';
 
+interface ErrorItem {
+  SKU: string;
+  error: string;
+}
+
 @Component({
   selector: 'app-upload-items-modal',
   standalone: true,
@@ -41,11 +46,11 @@ export class UploadItemsModalComponent implements OnInit {
     Amplify.configure(outputs);
   }
 
-  async ngOnInit() {
+  async ngOnInit(): Promise<void> {
     await this.getTenentId();
   }
 
-  async getTenentId() {
+  async getTenentId(): Promise<void> {
     try {
       const session = await fetchAuthSession();
       const cognitoClient = new CognitoIdentityProviderClient({
@@ -59,23 +64,24 @@ export class UploadItemsModalComponent implements OnInit {
       const getUserResponse = await cognitoClient.send(getUserCommand);
 
       this.tenentId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value || '';
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error fetching tenent ID:', error);
-      this.showSnackBar('Error fetching user information');
+      this.showSnackBar('Error fetching user information. Please try again or contact support.');
     }
   }
 
-  onFileSelected(event: any) {
-    this.selectedFile = event.target.files[0];
-    if (this.selectedFile) {
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.selectedFile = input.files[0];
       this.validateCsvFile(this.selectedFile);
     }
   }
 
-  validateCsvFile(file: File) {
+  validateCsvFile(file: File): void {
     const reader = new FileReader();
-    reader.onload = (e: any) => {
-      const contents = e.target.result;
+    reader.onload = (e: ProgressEvent<FileReader>) => {
+      const contents = e.target?.result as string;
       const lines = contents.split('\n');
       if (lines.length > 0) {
         const headers = lines[0].split(',').map((header: string) => header.trim());
@@ -83,20 +89,20 @@ export class UploadItemsModalComponent implements OnInit {
         const missingColumns = requiredColumns.filter(col => !headers.includes(col));
         
         if (missingColumns.length > 0) {
-          this.showSnackBar(`Missing columns: ${missingColumns.join(', ')}`);
+          this.showSnackBar(`CSV file is missing the following required columns: ${missingColumns.join(', ')}. Please correct your file and try again.`);
           this.selectedFile = null;
         } else {
-          this.showSnackBar('File validated successfully', 'success');
+          this.showSnackBar('File validated successfully. You can now upload the items.', 'success');
         }
       } else {
-        this.showSnackBar('The file is empty');
+        this.showSnackBar('The CSV file is empty. Please upload a file with inventory data.');
         this.selectedFile = null;
       }
     };
     reader.readAsText(file);
   }
 
-  async uploadFile() {
+  async uploadFile(): Promise<void> {
     if (this.selectedFile && this.tenentId) {
       this.isLoading = true;
       this.uploading = true;
@@ -108,50 +114,59 @@ export class UploadItemsModalComponent implements OnInit {
           region: outputs.auth.aws_region,
           credentials: session.credentials,
         });
-  
+
         const payload = JSON.stringify({
           fileContent,
           fileType,
           tenentId: this.tenentId
         });
-  
+
         const invokeCommand = new InvokeCommand({
           FunctionName: 'batchAddInventoryItems',
           Payload: new TextEncoder().encode(JSON.stringify({ body: payload })),
         });
-  
+
         const lambdaResponse = await lambdaClient.send(invokeCommand);
         const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-  
-        console.log('Lambda response:', responseBody); // Log the full response for debugging
-  
+
         if (responseBody && responseBody.statusCode === 201) {
-          this.showSnackBar('Items uploaded successfully', 'success');
+          this.showSnackBar(`Successfully uploaded ${JSON.parse(responseBody.body).addedItems.length} inventory items.`, 'success');
           this.dialogRef.close(true);
         } else if (responseBody && responseBody.statusCode === 400) {
-          const parsedBody = JSON.parse(responseBody.body);
-          const errorMessage = parsedBody.message || 'Some items could not be added';
+          const errorData = JSON.parse(responseBody.body);
+          let errorMessage = 'Some items could not be added:\n\n';
+          
+          if (errorData.errors && errorData.errors.length > 0) {
+            const supplierErrors = errorData.errors.filter((error: ErrorItem) => error.error.includes('Supplier'));
+            const otherErrors = errorData.errors.filter((error: ErrorItem) => !error.error.includes('Supplier'));
+            
+            if (supplierErrors.length > 0) {
+              const invalidSuppliers = [...new Set(supplierErrors.map((error: ErrorItem) => error.error.match(/"([^"]*)"/)?.[1] || ''))];
+              errorMessage += `The following suppliers do not exist in your system: ${invalidSuppliers.join(', ')}. Please add these suppliers first.\n\n`;
+            }
+            
+            if (otherErrors.length > 0) {
+              errorMessage += 'Other errors:\n';
+              otherErrors.forEach((error: ErrorItem) => {
+                errorMessage += `- Item with SKU ${error.SKU}: ${error.error}\n`;
+              });
+            }
+          }
+          
           this.showSnackBar(errorMessage, 'error');
-          console.error('Errors:', parsedBody.errors);
+          console.error('Detailed errors:', errorData.errors);
         } else {
-          throw new Error(responseBody && responseBody.body ? JSON.parse(responseBody.body).message : 'Unknown error occurred');
+          throw new Error(responseBody ? responseBody.body : 'Unknown error occurred');
         }
-      } catch (error) {
+      } catch (error: unknown) {
         console.error('Error uploading items:', error);
-        let errorMessage = 'Error uploading items: ';
-        if (error instanceof Error) {
-          errorMessage += error.message;
-          console.error('Error stack:', error.stack);
-        } else {
-          errorMessage += String(error);
-        }
-        this.showSnackBar(errorMessage);
+        this.showSnackBar(`Error uploading items: ${error instanceof Error ? error.message : String(error)}. Please try again or contact support if the issue persists.`);
       } finally {
         this.isLoading = false;
         this.uploading = false;
       }
     } else {
-      this.showSnackBar('Please select a valid file and ensure user information is loaded');
+      this.showSnackBar('Please select a valid CSV file and ensure your user information is loaded before uploading.');
     }
   }
 
@@ -159,7 +174,7 @@ export class UploadItemsModalComponent implements OnInit {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = () => resolve(reader.result as string);
-      reader.onerror = error => reject(error);
+      reader.onerror = (error: ProgressEvent<FileReader>) => reject(error);
       reader.readAsDataURL(file);
     });
   }
@@ -169,15 +184,15 @@ export class UploadItemsModalComponent implements OnInit {
     if (extension === 'csv') {
       return 'csv';
     } else {
-      throw new Error('Only CSV files are supported');
+      throw new Error('Only CSV files are supported for inventory upload.');
     }
   }
 
-  onCancel() {
+  onCancel(): void {
     this.dialogRef.close();
   }
 
-  downloadSampleFile() {
+  downloadSampleFile(): void {
     const fileName = 'sample_inventory_items.csv';
     const fileContent = this.getSampleFileContent();
     const blob = new Blob([fileContent], { type: 'text/csv' });
@@ -193,9 +208,9 @@ ITEM001,123456789012,Electronics,100,Widget A,2024-12-31,Supplier A,10.99,2.50,5
 ITEM002,234567890123,Home Appliances,75,Gadget B,2025-06-30,Supplier B,15.99,3.00,7,15,30,800,2.19,150,2.0,25`;
   }
 
-  private showSnackBar(message: string, type: 'error' | 'success' = 'error') {
+  private showSnackBar(message: string, type: 'error' | 'success' = 'error'): void {
     this.snackBar.open(message, 'Close', {
-      duration: 5000,
+      duration: 10000,  // Increased duration to 10 seconds for longer messages
       horizontalPosition: 'center',
       verticalPosition: 'top',
       panelClass: type === 'error' ? ['error-snackbar'] : ['success-snackbar']

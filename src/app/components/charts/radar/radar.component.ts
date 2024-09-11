@@ -1,5 +1,6 @@
-import { AfterViewInit, Component, ElementRef, HostListener, Input, OnDestroy, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import * as echarts from 'echarts';
+
 @Component({
   selector: 'app-radar',
   standalone: true,
@@ -7,10 +8,12 @@ import * as echarts from 'echarts';
   templateUrl: './radar.component.html',
   styleUrl: './radar.component.css'
 })
-export class RadarComponent implements OnInit, AfterViewInit {
+export class RadarComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() data: any[] = [];
+  @ViewChild('chartContainer') chartContainer!: ElementRef;
 
   private chart: echarts.ECharts | null = null;
+  private resizeObserver!: ResizeObserver;
 
   constructor() { }
 
@@ -19,13 +22,13 @@ export class RadarComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    // this.initChart();
+    this.initChart();
+    this.observeResize();
   }
 
   private initChart(): void {
-    const element = document.querySelector('.echart-container') as HTMLElement;
-    if (element) {
-      this.chart = echarts.init(element);
+    if (this.chartContainer && this.chartContainer.nativeElement) {
+      this.chart = echarts.init(this.chartContainer.nativeElement);
       this.updateChartOptions();
     }
   }
@@ -33,13 +36,33 @@ export class RadarComponent implements OnInit, AfterViewInit {
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['data']) {
       console.log('New data received by RadarComponent:', this.data);
-      this.initChart();
+      this.updateChartOptions();
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (this.resizeObserver) {
+      this.resizeObserver.disconnect();
+    }
+    if (this.chart) {
+      this.chart.dispose();
+    }
+  }
+
+  private observeResize(): void {
+    this.resizeObserver = new ResizeObserver(() => {
+      if (this.chart) {
+        this.chart.resize();
+      }
+    });
+    if (this.chartContainer && this.chartContainer.nativeElement) {
+      this.resizeObserver.observe(this.chartContainer.nativeElement);
     }
   }
 
   private updateChartOptions(): void {
     if (!this.chart) return;
-    console.log('radar data recieved:', this.data)
+    console.log('radar data received:', this.data)
     const indicators = [
       { name: 'On Time Delivery(%)', max: 100 },
       { name: 'Order Accuracy(%)', max: 100 },
@@ -47,30 +70,25 @@ export class RadarComponent implements OnInit, AfterViewInit {
       { name: 'Total Spent', max: 1000000 }
     ];
 
-    const seriesData = this.data.map(supplier => ({
-      value: [
-        supplier['On Time Delivery Rate'],
-        supplier['Order Accuracy Rate'],
-        10000 - supplier['Out Standing Payments'], // Inverted scale for lower is better
-        supplier['Total Spent']
-      ],
-      name: supplier['Supplier ID']
-    }));
-
     const options: echarts.EChartsOption = {
       title: {
-        text: 'Supplier Performance Overview'
+        text: 'Supplier Performance Overview',
+        left: 'center',
+        top: '5%'
       },
       tooltip: {},
       legend: {
         data: this.data.map(item => item['Supplier ID']),
-        orient: 'vertical',
-        left: 'right'
+        orient: 'horizontal',
+        left: 'center',
+        bottom: '5%'
       },
       radar: {
         indicator: indicators,
         shape: 'circle',
-        splitNumber: 5
+        splitNumber: 5,
+        center: ['50%', '50%'],
+        radius: '60%'
       },
       series: this.data.map((supplier, index) => ({
         name: supplier['Supplier ID'],
@@ -80,8 +98,8 @@ export class RadarComponent implements OnInit, AfterViewInit {
           width: 3
         },
         areaStyle: {
-          opacity: 0.3, // Adjust opacity to ensure series are visible but distinct
-          color: this.getColor(index) // Function to get a color based on the index
+          opacity: 0.3,
+          color: this.getColor(index)
         },
         data: [
           {
@@ -102,6 +120,6 @@ export class RadarComponent implements OnInit, AfterViewInit {
 
   private getColor(index: number): string {
     const colors = ['#5470C6', '#91CC75', '#EE6666', '#73C0DE', '#3BA272', '#FC8452', '#9A60B4', '#ea7ccc'];
-    return colors[index % colors.length];  // Cycles through colors if there are more series than colors
+    return colors[index % colors.length];
   }
 }

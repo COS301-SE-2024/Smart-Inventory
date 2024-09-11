@@ -4,6 +4,24 @@
     align-items: center;
 }
 
+gridster{
+    background-color: transparent !important;
+}
+
+gridster-item{
+    border-radius: 10px !important;
+    background-color: transparent !important;
+}
+
+gridster-item:not(.act-report) {
+    box-shadow:
+        0 4px 8px rgba(0, 0, 0, 0.1),
+        0 6px 20px rgba(0, 0, 0, 0.15);
+    margin-left: 2px;
+    background: transparent !important;
+}
+
+
 .mat-card {
     width: 100%;
     height: 100%;
@@ -108,6 +126,8 @@
 }
 
 mat-card.mat-mdc-card.mdc-card {
-    background-color: white;
-    box-shadow: 0 4px 8px rgb(0 0 0 / 30%);
+    /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.15); */
+    /* margin-left: 2px; */
+    background: transparent !important;
+    /* border-radius: 10px; */
 }

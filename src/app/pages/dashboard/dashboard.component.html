@@ -22,6 +22,30 @@
                     </div>
                 </div>
             </mat-card>
+            <mat-card class="dashboard-card full-width-card" *ngIf="item.cols === 12 && item.rows === 3">
+                <div class="split-container">
+                    <div class="left-column">
+                        <div class="requests-section">
+                            <h3>Requests</h3>
+                            <p>Total Requests: {{ RequestOrders.requests.totalRequests }}</p>
+                            <p>Most Requested: {{ RequestOrders.requests.mostRequested.name }} ({{
+                                RequestOrders.requests.mostRequested.percentage }}%)</p>
+                            <p>Highest Request: {{ RequestOrders.requests.highestRequest }}</p>
+                        </div>
+                        <div class="divider"></div>
+                        <div class="backorders-section">
+                            <h3>Backorders</h3>
+                            <p>Current Backorders: {{ RequestOrders.backorders.currentBackorders }}</p>
+                            <p>Average Delay: {{ RequestOrders.backorders.averageDelay }} days</p>
+                            <p>Longest Backorder: {{ RequestOrders.backorders.longestBackorderItem.productName }} ({{
+                                RequestOrders.backorders.longestBackorderItem.delay }})</p>
+                        </div>
+                    </div>
+                    <div class="right-column">
+                        <app-saleschart></app-saleschart>
+                    </div>
+                </div>
+            </mat-card>
         </gridster-item>
     </gridster>
 </div>

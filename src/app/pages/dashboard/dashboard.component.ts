@@ -557,7 +557,7 @@ export class DashboardComponent implements OnInit {
                 // First full-width item
                 {
                     cols: 12,
-                    rows: 2,
+                    rows: 3,
                     y: 2,
                     x: 0,
                 },

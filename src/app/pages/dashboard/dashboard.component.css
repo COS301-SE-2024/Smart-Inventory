@@ -172,3 +172,74 @@
         justify-content: flex-start;
     }
 }
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .split-container {
+        flex-direction: column;
+    }
+
+    .left-column,
+    .right-column {
+        width: 100%;
+    }
+
+    .divider {
+        margin: 12px 0;
+    }
+}
+
+/* Styles for the full-width card */
+.full-width-card {
+    padding: 0;
+    overflow: hidden;
+}
+
+.split-container {
+    display: flex;
+    height: 100%;
+}
+
+.left-column,
+.right-column {
+    flex: 1;
+    padding: 16px;
+    overflow-y: auto;
+}
+
+.left-column {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.requests-section,
+.backorders-section {
+    flex: 1;
+}
+
+.divider {
+    height: 1px;
+    background-color: #e0e0e0;
+    margin: 16px 0;
+}
+
+h3 {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 12px;
+    color: #333;
+}
+
+p {
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: #666;
+}
+
+/* Ensure the SalesChart component fits within the right column */
+app-saleschart {
+    width: 100%;
+    height: 100%;
+    display: block;
+}

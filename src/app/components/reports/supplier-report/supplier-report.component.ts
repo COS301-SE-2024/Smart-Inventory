@@ -539,7 +539,7 @@ export class SupplierReportComponent implements OnInit {
     }
 
     // Determine average suppliers based on a threshold percentage
-    async getMostAverageSupplier(): Promise<any> {
+    getMostAverageSupplier(): any {
         const suppliers = this.originalData;
         // console.log('The suppliers:', suppliers);
 

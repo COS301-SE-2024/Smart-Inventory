@@ -193,18 +193,18 @@ export class InventoryReportComponent implements OnInit {
         }
     }
 
-    setupColumnDefs() {
-        this.colDefs = [
-            { field: 'sku', headerName: 'SKU' },
-            { field: 'category', headerName: 'Category' },
-            { field: 'description', headerName: 'Description' },
-            { field: 'quantity', headerName: 'Quantity' },
-            { field: 'supplier', headerName: 'Supplier' },
-            { field: 'expirationDate', headerName: 'Expiration Date' },
-            { field: 'requests', headerName: 'Requests' },
-            { field: 'requestsQuantity', headerName: 'Requests Quantity' },
-        ];
-    }
+  setupColumnDefs() {
+    this.colDefs = [
+      { field: 'sku', headerName: 'SKU' },
+      { field: 'category', headerName: 'Category' },
+      { field: 'description', headerName: 'Description' },
+      { field: 'quantity', headerName: 'Quantity' },
+      {field: 'lowStockThreshold', headerName: 'Low stock Threshold'},
+      { field: 'supplier', headerName: 'Supplier' },
+      { field: 'requests', headerName: 'Requests' },
+      { field: 'requestsQuantity', headerName: 'Requests Quantity'},
+    ];
+  }
 
     async updateInventoryWithRequests() {
         try {

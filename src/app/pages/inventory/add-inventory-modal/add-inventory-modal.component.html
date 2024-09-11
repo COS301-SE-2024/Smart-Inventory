@@ -1,14 +1,13 @@
 <h2 mat-dialog-title style="text-align: center">Add Inventory Item</h2>
 <mat-dialog-content>
     <form [formGroup]="inventoryForm">
-        <mat-form-field appearance="outline" style="padding-top: 10px">
+        <mat-form-field appearance="outline">
             <mat-label>Universal Product Code</mat-label>
             <input matInput formControlName="upc" />
         </mat-form-field>
         <mat-form-field appearance="outline">
             <mat-label>SKU</mat-label>
             <input matInput formControlName="sku" />
-            <button mat-stroked-button matSuffix class="btn" (click)="generateSKU()">Generate SKU</button>
         </mat-form-field>
         <mat-form-field appearance="outline">
             <mat-label>Description</mat-label>
@@ -47,6 +46,22 @@
             <input matInput [matDatepicker]="picker" formControlName="expirationDate" />
             <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
             <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+            <mat-label>Unit Cost</mat-label>
+            <input matInput type="number" formControlName="unitCost" />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+            <mat-label>Lead Time (Days)</mat-label>
+            <input matInput type="number" formControlName="leadTime" />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+            <mat-label>Delivery Cost</mat-label>
+            <input matInput type="number" formControlName="deliveryCost" />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+            <mat-label>Projected Daily Demand</mat-label>
+            <input matInput type="number" formControlName="dailyDemand" />
         </mat-form-field>
     </form>
 </mat-dialog-content>

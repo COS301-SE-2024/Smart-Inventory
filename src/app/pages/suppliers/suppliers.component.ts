@@ -18,6 +18,8 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MaterialModule } from 'app/components/material/material.module';
+import { UploadSuppliersModalComponent } from 'app/components/upload-suppliers-modal/upload-suppliers-modal.component';
+
 @Component({
     selector: 'app-suppliers',
     standalone: true,
@@ -74,9 +76,9 @@ export class SuppliersComponent implements OnInit {
     colDefs: ColDef[] = [
         { field: 'supplierID', headerName: 'Supplier ID', hide: true },
         { field: 'company_name', headerName: 'Company Name', filter: 'agSetColumnFilter' },
-        { field: 'contact_name', headerName: 'Contact Name', filter: 'agSetColumnFilter' },
-        { field: 'contact_email', headerName: 'Contact Email', filter: 'agSetColumnFilter' },
-        { field: 'phone_number', headerName: 'Phone Number', filter: 'agSetColumnFilter' },
+        { field: 'contact_name', headerName: 'Contact Name', filter: 'agSetColumnFilter', editable: true },
+        { field: 'contact_email', headerName: 'Contact Email', filter: 'agSetColumnFilter', editable: true },
+        { field: 'phone_number', headerName: 'Phone Number', filter: 'agSetColumnFilter', editable: true },
         {
             field: 'address',
             headerName: 'Address',
@@ -295,11 +297,6 @@ export class SuppliersComponent implements OnInit {
                 country: '',
             },
         };
-        this.snackBar.open('Saved successfully', 'Close', {
-            duration: 6000,
-            horizontalPosition: 'center',
-            verticalPosition: 'top',
-        });
     }
 
     openEditAddressPopup(supplier: any) {
@@ -318,11 +315,6 @@ export class SuppliersComponent implements OnInit {
             postal_code: '',
             country: '',
         };
-        this.snackBar.open('Changes saved successfully', 'Close', {
-            duration: 6000,
-            horizontalPosition: 'center',
-            verticalPosition: 'top',
-        });
     }
 
     async onEditAddressSubmit(formData: any) {
@@ -375,18 +367,18 @@ export class SuppliersComponent implements OnInit {
             if (responseBody.statusCode === 200) {
                 console.log('Supplier address updated successfully');
                 const updatedSupplier = JSON.parse(responseBody.body);
-                const index = this.rowData.findIndex((supplier) => supplier.supplierID === updatedSupplier.supplierID);
-                if (index !== -1) {
-                    this.rowData[index].address = updatedSupplier.address;
 
-                    // Refresh the grid data
-                    this.gridComponent.rowData = [...this.rowData];
-                }
-                this.closeEditAddressPopup();
                 await this.logActivity(
                     'Updated supplier address',
                     `Updated address for supplier ${this.selectedSupplier.company_name}`,
                 );
+                this.closeEditAddressPopup();
+                this.loadSuppliersData();
+                this.snackBar.open('Supplier address updated successfully', 'Close', {
+                    duration: 6000,
+                    horizontalPosition: 'center',
+                    verticalPosition: 'top',
+                  });
             } else {
                 throw new Error(responseBody.body);
             }
@@ -450,6 +442,11 @@ export class SuppliersComponent implements OnInit {
                 console.log('Supplier added successfully');
                 await this.loadSuppliersData();
                 this.closeAddPopup();
+                this.snackBar.open('Supplier added successfully', 'Close', {
+                    duration: 6000,
+                    horizontalPosition: 'center',
+                    verticalPosition: 'top',
+                });
                 await this.logActivity('Added new supplier', `Added supplier ${formData.company_name}`);
             } else {
                 throw new Error(responseBody.body);
@@ -489,11 +486,6 @@ export class SuppliersComponent implements OnInit {
             this.gridComponent.removeConfirmedRows(this.rowsToDelete);
             this.rowsToDelete = [];
             await this.loadSuppliersData(); // Refresh the data after deletion
-            this.snackBar.open('Removed successfully', 'Close', {
-                duration: 6000,
-                horizontalPosition: 'center',
-                verticalPosition: 'top',
-              });
         }
     }
 
@@ -534,15 +526,30 @@ export class SuppliersComponent implements OnInit {
 
             const lambdaResponse = await lambdaClient.send(invokeCommand);
             const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
+        
             if (responseBody.statusCode === 200) {
-                console.log('Supplier deleted successfully');
+              console.log('Supplier deleted successfully');
+              this.snackBar.open('Supplier deleted successfully', 'Close', {
+                duration: 6000,
+                horizontalPosition: 'center',
+                verticalPosition: 'top',
+              });
+            } else if (responseBody.statusCode === 400 && responseBody.body.includes('Supplier cannot be deleted')) {
+              this.snackBar.open('Supplier cannot be deleted because they are already being used in the system', 'Close', {
+                duration: 6000,
+                horizontalPosition: 'center',
+                verticalPosition: 'top',
+              });
             } else {
-                throw new Error(responseBody.body);
+              throw new Error(responseBody.body);
             }
-        } catch (error) {
+          } catch (error) {
             console.error('Error deleting supplier:', error);
-            alert(`Error deleting supplier: ${(error as Error).message}`);
+            this.snackBar.open(`Error deleting supplier: ${(error as Error).message}`, 'Close', {
+              duration: 6000,
+              horizontalPosition: 'center',
+              verticalPosition: 'top',
+            });
         }
     }
 
@@ -598,6 +605,11 @@ export class SuppliersComponent implements OnInit {
                 if (index !== -1) {
                     this.rowData[index] = { ...this.rowData[index], ...updatedSupplier };
                 }
+                this.snackBar.open('Supplier updated successfully', 'Close', {
+                    duration: 6000,
+                    horizontalPosition: 'center',
+                    verticalPosition: 'top',
+                  });
             } else {
                 throw new Error(responseBody.body);
             }
@@ -608,4 +620,16 @@ export class SuppliersComponent implements OnInit {
             this.gridComponent.updateRow(event.data);
         }
     }
+
+    openImportSuppliersModal() {
+        console.log('Opening import suppliers modal');
+        const dialogRef = this.dialog.open(UploadSuppliersModalComponent, {
+        });
+    
+        dialogRef.afterClosed().subscribe(result => {
+          if (result) {
+            this.loadSuppliersData(); // Refresh the suppliers list
+          }
+        });
+      }
 }

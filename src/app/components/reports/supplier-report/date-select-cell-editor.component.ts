@@ -106,6 +106,7 @@ export class DateSelectCellEditorComponent implements ICellRendererAngularComp {
                         console.log(`User role changed from ${this.value} to ${newRole}`);
                         this.value = newRole;
                         this.params.api.stopEditing();
+
                     } catch (error) {
                         console.error('Error changing user role:', error);
                         this.params.api.stopEditing();

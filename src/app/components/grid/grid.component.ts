@@ -70,6 +70,7 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
     private _rowData: any[] = [];
     @Input() columnDefs: ColDef[] = [];
     @Input() addButton: { text: string } = { text: 'Add' };
+    @Input() context: any;
     @Output() rowsToDelete = new EventEmitter<any[]>();
     @Output() addNewClicked = new EventEmitter<void>();
     @Output() itemToUpdate = new EventEmitter<{ data: any; field: string; newValue: any }>();
@@ -85,6 +86,9 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
     @Output() viewReceivedQuotesClicked = new EventEmitter<void>();
     @Output() markOrderAsReceivedClicked = new EventEmitter<any>();
     @Output() viewAutomationSettingsClicked = new EventEmitter<void>();
+    @Output() viewInventorySummary = new EventEmitter<void>();
+    @Output() deleteRowClicked = new EventEmitter<void>();
+    @Output() importExcelClicked = new EventEmitter<void>();
 
     @ViewChild(AgGridAngular) agGrid!: AgGridAngular;
     gridApi!: GridApi<any>;
@@ -222,7 +226,7 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
         this.selectOptions = this.columnDefs.map((f: any) => f.field);
 
         // Make all columns editable
-        this.columnDefs = this.columnDefs.map((col) => ({ ...col, editable: true }));
+        this.columnDefs = this.columnDefs.map((col) => ({ ...col, }));
         this.setGridHeight();
     }
 
@@ -316,7 +320,7 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     importExcel() {
-        alert('Import Not completed');
+        this.importExcelClicked.emit();
     }
 
     downloadCSV() {
@@ -365,7 +369,8 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
 
     openCustomQuoteModal() {
         const dialogRef = this.dialog.open(CustomQuoteModalComponent, {
-            width: '500px',
+            width: '60vw',
+            maxWidth: '100vw',
             data: { isNewQuote: true },
         });
 
@@ -388,7 +393,12 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     onViewReceivedQuotes() {
-        this.viewReceivedQuotesClicked.emit();
+        const selectedRows = this.gridApi.getSelectedRows();
+        if (selectedRows && selectedRows.length > 0) {
+            this.viewReceivedQuotesClicked.emit(selectedRows[0]);
+        } else {
+            this.oopenSnackBar('Please select an order to view received quotes');
+        }
     }
 
     onMarkOrderAsReceived() {
@@ -403,5 +413,9 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
 
     openAutomationSettings() {
         this.viewAutomationSettingsClicked.emit();
+    }
+
+    onViewInventorySummary() {
+        this.viewInventorySummary.emit();
     }
 }

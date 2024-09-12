@@ -30,11 +30,14 @@ import { MatDialog } from '@angular/material/dialog';
 import { TemplatechartComponent } from 'app/components/charts/templatechart/templatechart.component';
 import { LoadingSpinnerComponent } from 'app/components/loader/loading-spinner.component';
 import { DeleteConfirmationModalComponent } from './deleteWidget';
+import { BarChartComponent } from 'app/components/charts/widgets/widgetBar';
+import { LineChartComponent } from 'app/components/charts/widgets/widgetLine';
+import { PieChartComponent } from 'app/components/charts/widgets/widgetPie';
 interface CardData {
     title: string;
     value: string | number;
     icon: string;
-    type: 'currency' | 'number' | 'percentage';
+    type: 'currency' | 'number' | 'percentage' | 'string';
     change?: number;
 }
 
@@ -42,6 +45,25 @@ interface DashboardItem extends GridsterItem {
     cardId?: string;
     name?: string;
     component?: string;
+}
+
+
+interface ChartConfig {
+    type: string;
+    data: any;
+    title: string;
+    component: string;
+}
+
+interface DashboardData {
+    avgFulfillmentTime: number;
+    inventoryLevels: number;
+    topSeller: string;
+    baselineValues: {
+        fulfillmentDays: number;
+        backorders: number;
+        inventoryLevels: number;
+    };
 }
 
 @Component({
@@ -63,7 +85,10 @@ interface DashboardItem extends GridsterItem {
         BubblechartComponent,
         MatProgressSpinnerModule,
         TemplatechartComponent,
-        LoadingSpinnerComponent
+        LoadingSpinnerComponent,
+        LineChartComponent,
+        PieChartComponent,
+        BarChartComponent
     ]
 })
 export class DashboardComponent implements OnInit {
@@ -72,10 +97,9 @@ export class DashboardComponent implements OnInit {
     isDeleteMode: boolean = false;
     isSidepanelOpen: boolean = false;
     availableCharts: { name: string, component: string }[] = [
-        { name: 'Sales Chart', component: 'SaleschartComponent' },
-        { name: 'Bar Chart', component: 'BarchartComponent' },
-        { name: 'Bubble Chart', component: 'BubblechartComponent' },
-        { name: 'Donut Chart', component: 'DonutchartComponent' }
+        { name: 'Monthly Sales', component: 'BarChartComponent' },
+        { name: 'Quarterly Revenue', component: 'LineChartComponent' },
+        { name: 'Market Share', component: 'PieChartComponent' }
     ];
 
     Math: any;
@@ -95,12 +119,24 @@ export class DashboardComponent implements OnInit {
         'SaleschartComponent': SaleschartComponent,
         'BarchartComponent': BarchartComponent,
         'BubblechartComponent': BubblechartComponent,
-        'DonutchartComponent': DonutchartComponent
+        'DonutchartComponent': DonutchartComponent,
+        'BarChartComponent': BarChartComponent,
+        'LineChartComponent': LineChartComponent,
+        'PieChartComponent': PieChartComponent
     };
 
 
     rowData: any[] = [];
-    dashboardInfo: any[] = [];
+    dashboardData: DashboardData = {
+        avgFulfillmentTime: 0,
+        inventoryLevels: 0,
+        topSeller: 'N/A',
+        baselineValues: {
+            inventoryLevels: 10, // Baseline inventory levels
+            backorders: 5,      // Baseline backorders
+            fulfillmentDays: 390 // Baseline average fulfillment days (for comparison)
+        }
+    };
     inventoryCount: number = 0;
     userCount: number = 0;
 
@@ -109,10 +145,31 @@ export class DashboardComponent implements OnInit {
     orders: any[] = [];
 
     cardData: CardData[] = [
-        { title: 'Avg Fulfillment Time', value: 164455.00, icon: 'hourglass_full', type: 'currency', change: 5.2 },
-        { title: 'Backorders', value: 21790.00, icon: 'assignment_return', type: 'number', change: -3.1 },
-        { title: 'Inventory Levels', value: 20, icon: 'storage', type: 'number', change: 10 },
-        { title: 'Top Seller', value: 5, icon: 'star_rate', type: 'number', change: -15 },
+        // { title: 'Avg Fulfillment Time', value: 164455.00, icon: 'hourglass_full', type: 'currency', change: 5.2 },
+        // { title: 'Backorders', value: 21790.00, icon: 'assignment_return', type: 'number', change: -3.1 },
+        // { title: 'Inventory Levels', value: 20, icon: 'storage', type: 'number', change: 100 },
+        // { title: 'Top Seller', value: 'PS5', icon: 'star_rate', type: 'string', change: -15 },
+    ];
+
+    chartConfigs: ChartConfig[] = [
+        {
+            type: 'bar',
+            data: { categories: ['Jan', 'Feb', 'Mar'], values: [5, 10, 15] },
+            title: 'Monthly Sales',
+            component: 'BarChartComponent'
+        },
+        {
+            type: 'line',
+            data: { categories: ['Jan', 'Feb', 'Mar'], values: [3, 6, 9] },
+            title: 'Quarterly Revenue',
+            component: 'LineChartComponent'
+        },
+        {
+            type: 'pie',
+            data: [{ name: 'Item A', value: 30 }, { name: 'Item B', value: 70 }],
+            title: 'Market Share',
+            component: 'PieChartComponent'
+        },
     ];
 
     RequestOrders = {
@@ -150,7 +207,7 @@ export class DashboardComponent implements OnInit {
         this.options = {
             gridType: GridType.VerticalFixed,
             displayGrid: DisplayGrid.None,
-            compactType: CompactType.CompactUpAndLeft,
+            compactType: CompactType.CompactUp,
             margin: 30,
             minCols: 12,
             maxCols: 12,
@@ -256,7 +313,7 @@ export class DashboardComponent implements OnInit {
     // Integration
     inventoryLevel: number = 20;
 
-    async dashboardData() {
+    async dashData() {
         try {
             // Mocked baseline values (should be dynamically fetched or defined)
             const baselineValues = {
@@ -310,6 +367,12 @@ export class DashboardComponent implements OnInit {
                 const dashboardData = JSON.parse(responseBody.body);
                 // console.log('Dashboard Data:', dashboardData);
                 console.log('I am a metric', parseFloat((((dashboardData.inventoryLevels - baselineValues.inventoryLevels) / baselineValues.inventoryLevels) * 100).toFixed(2)));
+                this.dashboardData.inventoryLevels = parseFloat((((dashboardData.inventoryLevels - baselineValues.inventoryLevels) / baselineValues.inventoryLevels) * 100).toFixed(2));
+                this.dashboardData.avgFulfillmentTime = dashboardData.avgFulfillmentTime;
+                this.dashboardData.topSeller = dashboardData.topSeller;
+                // this.dashboardData.
+
+
 
                 // Update the dashboardInfo with new data from the Lambda function
                 // this.dashboard = [
@@ -366,21 +429,21 @@ export class DashboardComponent implements OnInit {
                 //         tooltip: 'The product with the highest requests.',
                 //     },
                 // ];
-                console.log('Processed dashboard data:', this.dashboardInfo);
+                console.log('Processed dashboard data:', dashboardData);
             } else {
                 console.error('Error fetching dashboard data:', responseBody.body);
-                this.dashboardInfo = [];
+                
             }
         } catch (error) {
             console.error('Error in dashboardData:', error);
-            this.dashboardInfo = [];
+            
         }
         finally {
             // this..isLoading = false;
         }
     }
 
-    isLoading: boolean = true;
+    isLoading: boolean = false;
     async loadOrdersData() {
         // this.isLoading = true;
         try {
@@ -552,17 +615,65 @@ export class DashboardComponent implements OnInit {
     }
 
     async ngOnInit() {
-        // this.loadState(); // Load the state on initialization
-        // this.loadNewCharts();
         this.titleService.updateTitle('Dashboard');
-        this.initializeDashboard();
-        // await this.loadInventoryData();
-        // await this.fetchUsers();
-        // await this.dashboardData();
-        // await this.loadOrdersData();
-        // await this.loadStockData();
-        // this.RequestOrders = await this.populateRequestOrders(this.stockRequest, this.orders);
-        this.isLoading = false;
+        // this.isLoading = true;
+
+        // try {
+            // await this.loadInventoryData();
+            await this.fetchUsers();
+            await this.dashData();
+            await this.loadOrdersData();
+            await this.loadStockData();
+            this.RequestOrders = await this.populateRequestOrders(this.stockRequest, this.orders);
+
+            // Update cardData with the fetched information
+            this.updateCardData();
+
+            this.initializeDashboard();
+        // } catch (error) {
+        //     console.error('Error initializing dashboard:', error);
+        // } finally {
+        //     // this.isLoading = false;
+        //     this.cdr.detectChanges();
+        // }
+    }
+
+    updateCardData() {
+        this.cardData = [
+            {
+                title: 'Avg Fulfillment Time',
+                value: this.dashboardData.avgFulfillmentTime || 0,
+                icon: 'hourglass_full',
+                type: 'number',
+                change: this.calculateChange(this.dashboardData.avgFulfillmentTime, this.dashboardData.baselineValues.fulfillmentDays)
+            },
+            {
+                title: 'Backorders',
+                value: this.RequestOrders.backorders.currentBackorders || 0,
+                icon: 'assignment_return',
+                type: 'number',
+                change: this.calculateChange(this.RequestOrders.backorders.currentBackorders, this.dashboardData.baselineValues.backorders)
+            },
+            {
+                title: 'Inventory Levels',
+                value: this.dashboardData.inventoryLevels || 0,
+                icon: 'storage',
+                type: 'number',
+                change: this.calculateChange(this.dashboardData.inventoryLevels, this.dashboardData.baselineValues.inventoryLevels)
+            },
+            {
+                title: 'Top Seller',
+                value: this.dashboardData.topSeller || 'N/A',
+                icon: 'star_rate',
+                type: 'string',
+                change: 0 // You might want to calculate this based on some criteria
+            },
+        ];
+    }
+
+    calculateChange(currentValue: number, baselineValue: number): number {
+        if (baselineValue === 0) return 0;
+        return parseFloat((((currentValue - baselineValue) / baselineValue) * 100).toFixed(2));
     }
 
     toggleDeleteMode() {
@@ -592,15 +703,16 @@ export class DashboardComponent implements OnInit {
     }
 
 
-    addWidget(chart: { name: string, component: string }) {
+    addWidget(chartConfig: any) {
         const newItem: GridsterItem = {
-            cols: 1,
-            rows: 1,
+            cols: 6,
+            rows: 2,
             y: 0,
             x: 0,
-            cardId: chart.name.toLowerCase().replace(' ', '-'),
-            name: chart.name,
-            component: chart.component
+            cardId: chartConfig.title.toLowerCase().replace(' ', '-'),
+            name: chartConfig.title,
+            component: chartConfig.component,
+            chartConfig: chartConfig
         };
         this.dashboard.push(newItem);
         this.closeSidepanel();
@@ -677,7 +789,10 @@ export class DashboardComponent implements OnInit {
         if (typeof value === 'number') {
             switch (type) {
                 case 'currency':
-                    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value);
+                    return new Intl.NumberFormat('af', {
+                        style: 'currency',
+                        currency: 'ZAR',
+                    }).format(value);
                 case 'number':
                     return value.toString();
                 default:

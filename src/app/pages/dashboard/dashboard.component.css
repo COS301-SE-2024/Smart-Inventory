@@ -1,6 +1,7 @@
 .dashboard-container {
     width: 101.5%;
     height: calc(100vh - 64px);
+    position: relative;
     /* Adjust based on your app's header height */
 }
 
@@ -218,6 +219,10 @@
     flex: 1;
 }
 
+.left-column.req-back {
+    padding: 36px;
+}
+
 .divider {
     height: 1px;
     background-color: #e0e0e0;
@@ -225,15 +230,15 @@
 }
 
 h3 {
-    font-size: 18px;
+    font-size: 29px;
     font-weight: bold;
     margin-bottom: 12px;
     color: #333;
 }
 
 p {
-    margin-bottom: 8px;
-    font-size: 14px;
+    margin-bottom: 15px;
+    font-size: 17px;
     color: #666;
 }
 
@@ -242,4 +247,251 @@ app-saleschart {
     width: 100%;
     height: 100%;
     display: block;
+}
+
+
+
+
+.report-container {
+    font-family: Arial, sans-serif;
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #f0f4f8;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.chart {
+    background-color: white;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    padding: 20px;
+    position: relative;
+}
+
+.bar-chart {
+    display: flex;
+    align-items: flex-end;
+    height: 200px;
+    padding-top: 20px;
+}
+
+.bar {
+    width: 60px;
+    background-color: #3b82f6;
+    margin-right: 20px;
+    transition: height 0.3s ease;
+}
+
+.bar:nth-child(2) {
+    height: 120px;
+}
+
+.bar:nth-child(3) {
+    height: 180px;
+}
+
+.bar:nth-child(4) {
+    height: 150px;
+}
+
+.icon {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    background-color: #3b82f6;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+}
+
+.dollar-icon {
+    top: -20px;
+    right: -20px;
+}
+
+.plant-icon {
+    bottom: -20px;
+    left: -20px;
+}
+
+.person {
+    position: absolute;
+    bottom: 0;
+    right: 20px;
+    width: 100px;
+    height: 200px;
+}
+
+.person-body {
+    width: 60px;
+    height: 100px;
+    background-color: #4f88df;
+    border-radius: 30px 30px 0 0;
+    position: absolute;
+    bottom: 0;
+    left: 20px;
+}
+
+.person-head {
+    width: 40px;
+    height: 40px;
+    background-color: #4f88df;
+    border-radius: 50%;
+    position: absolute;
+    top: 45px;
+    left: 30px;
+}
+
+.person-legs {
+    width: 20px;
+    height: 60px;
+    background-color: #3b82f6;
+    position: absolute;
+    bottom: 0;
+}
+
+.person-legs::before {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 60px;
+    background-color: #3b82f6;
+    left: 40px;
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+
+    100% {
+        transform: translateY(0px);
+    }
+}
+
+.floating-element {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    background-color: #3b82f6;
+    border-radius: 50%;
+    opacity: 0.6;
+    animation: float 3s infinite ease-in-out;
+}
+
+.floating-element:nth-child(1) {
+    top: 20px;
+    left: 20px;
+}
+
+.floating-element:nth-child(2) {
+    top: 60px;
+    right: 40px;
+}
+
+.floating-element:nth-child(3) {
+    bottom: 40px;
+    left: 50px;
+}
+
+
+.right-column {
+    display: flex;
+    align-content: center;
+    flex-wrap: wrap;
+}
+
+
+
+gridster-item {
+    box-shadow:
+        0 4px 8px rgba(0, 0, 0, 0.1),
+        0 6px 20px rgba(0, 0, 0, 0.15);
+    margin-left: 2px;
+    background: transparent !important;
+    border-radius: 10px;
+}
+
+gridster {
+    position: relative;
+    box-sizing: border-box;
+    background: var(--dash-bg-color) !important;
+    width: 100%;
+    height: 100%;
+    -webkit-user-select: none;
+    user-select: none;
+    display: block;
+}
+
+
+
+.quick-actions {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    z-index: 1000;
+}
+
+.widget-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.delete-button {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    z-index: 10;
+    background-color: rgba(255, 255, 255, 0.8);
+    border: none;
+    border-radius: 50%;
+    padding: 5px;
+    cursor: pointer;
+}
+
+.sidepanel {
+    position: fixed;
+    top: 0;
+    right: -300px;
+    width: 300px;
+    height: 100vh;
+    background-color: white;
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+    transition: right 0.3s ease-in-out;
+    z-index: 1001;
+}
+
+.sidepanel.open {
+    right: 0;
+}
+
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.sidepanel h2 {
+    margin: 20px;
+}
+
+.sidepanel mat-list-item {
+    cursor: pointer;
+}
+
+.sidepanel mat-list-item:hover {
+    background-color: #f0f0f0;
 }

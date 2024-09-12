@@ -29,12 +29,19 @@ import outputs from '../../../../amplify_outputs.json';
 import { MatDialog } from '@angular/material/dialog';
 import { TemplatechartComponent } from 'app/components/charts/templatechart/templatechart.component';
 import { LoadingSpinnerComponent } from 'app/components/loader/loading-spinner.component';
+import { DeleteConfirmationModalComponent } from './deleteWidget';
 interface CardData {
     title: string;
     value: string | number;
     icon: string;
     type: 'currency' | 'number' | 'percentage';
     change?: number;
+}
+
+interface DashboardItem extends GridsterItem {
+    cardId?: string;
+    name?: string;
+    component?: string;
 }
 
 @Component({
@@ -60,8 +67,16 @@ interface CardData {
     ]
 })
 export class DashboardComponent implements OnInit {
-    isDeleteMode: boolean = false;
     @ViewChild('sidenav') sidenav!: MatSidenav;
+
+    isDeleteMode: boolean = false;
+    isSidepanelOpen: boolean = false;
+    availableCharts: { name: string, component: string }[] = [
+        { name: 'Sales Chart', component: 'SaleschartComponent' },
+        { name: 'Bar Chart', component: 'BarchartComponent' },
+        { name: 'Bubble Chart', component: 'BubblechartComponent' },
+        { name: 'Donut Chart', component: 'DonutchartComponent' }
+    ];
 
     Math: any;
 
@@ -76,13 +91,20 @@ export class DashboardComponent implements OnInit {
     private saveTrigger = new Subject<void>();
 
 
+    charts: { [key: string]: Type<any> } = {
+        'SaleschartComponent': SaleschartComponent,
+        'BarchartComponent': BarchartComponent,
+        'BubblechartComponent': BubblechartComponent,
+        'DonutchartComponent': DonutchartComponent
+    };
+
+
     rowData: any[] = [];
     dashboardInfo: any[] = [];
     inventoryCount: number = 0;
     userCount: number = 0;
 
     options: GridsterConfig;
-    charts: Type<any>[] = [];
     stockRequest: any[] = [];
     orders: any[] = [];
 
@@ -112,7 +134,7 @@ export class DashboardComponent implements OnInit {
         }
     };
 
-    dashboard!: Array<GridsterItem>;
+    dashboard!: Array<DashboardItem>;
 
     public chartOptions!: AgChartOptions;
 
@@ -129,7 +151,7 @@ export class DashboardComponent implements OnInit {
             gridType: GridType.VerticalFixed,
             displayGrid: DisplayGrid.None,
             compactType: CompactType.CompactUpAndLeft,
-            margin: 20,
+            margin: 30,
             minCols: 12,
             maxCols: 12,
             minRows: 100,
@@ -543,6 +565,47 @@ export class DashboardComponent implements OnInit {
         this.isLoading = false;
     }
 
+    toggleDeleteMode() {
+        this.isDeleteMode = !this.isDeleteMode;
+    }
+
+    deleteWidget(item: GridsterItem) {
+        const dialogRef = this.dialog.open(DeleteConfirmationModalComponent, {
+            width: '300px',
+            data: { itemName: item['name'] }
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                this.dashboard = this.dashboard.filter(dashboardItem => dashboardItem !== item);
+                this.isDeleteMode = false;
+            }
+        });
+    }
+
+    openSidepanel() {
+        this.isSidepanelOpen = true;
+    }
+
+    closeSidepanel() {
+        this.isSidepanelOpen = false;
+    }
+
+
+    addWidget(chart: { name: string, component: string }) {
+        const newItem: GridsterItem = {
+            cols: 1,
+            rows: 1,
+            y: 0,
+            x: 0,
+            cardId: chart.name.toLowerCase().replace(' ', '-'),
+            name: chart.name,
+            component: chart.component
+        };
+        this.dashboard.push(newItem);
+        this.closeSidepanel();
+    }
+
     initializeDashboard() {
         if (this.cardData && this.cardData.length > 0) {
             this.dashboard = [
@@ -557,30 +620,42 @@ export class DashboardComponent implements OnInit {
                 // First full-width item
                 {
                     cols: 12,
-                    rows: 3,
+                    rows: 4,
                     y: 2,
                     x: 0,
+                    cardId: 'sales-chart',
+                    name: 'Sales Chart',
+                    component: 'SaleschartComponent'
                 },
                 // Second full-width item
                 {
                     cols: 12,
-                    rows: 2,
+                    rows: 4,
                     y: 4,
                     x: 0,
+                    cardId: 'bar-chart',
+                    name: 'Bar Chart',
+                    component: 'BarchartComponent'
                 },
                 // First half-width item
                 {
                     cols: 6,
-                    rows: 2,
+                    rows: 3,
                     y: 6,
                     x: 0,
+                    cardId: 'bubble-chart',
+                    name: 'Bubble Chart',
+                    component: 'BubblechartComponent'
                 },
                 // Second half-width item
                 {
                     cols: 6,
-                    rows: 2,
+                    rows: 3,
                     y: 6,
                     x: 6,
+                    cardId: 'donut-chart',
+                    name: 'Donut Chart',
+                    component: 'DonutchartComponent'
                 }
             ];
         }

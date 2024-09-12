@@ -52,7 +52,6 @@ export class InventorySummaryComponent implements OnInit {
     { field: 'reorderAmount', headerName: 'Reorder Amount', filter: 'agSetColumnFilter', editable: true },
     { field: 'EOQ', headerName: 'EOQ', filter: 'agSetColumnFilter' },
     { field: 'safetyStock', headerName: 'Safety Stock', filter: 'agSetColumnFilter' },
-    { field: 'updatedAt', headerName: 'Last Updated', filter: 'agSetColumnFilter' },
   ];
 
   constructor(private snackBar: MatSnackBar, private titleService: TitleService) {

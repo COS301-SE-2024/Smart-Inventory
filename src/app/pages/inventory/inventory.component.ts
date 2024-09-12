@@ -19,6 +19,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { RequestStockModalComponent } from 'app/components/request-stock-modal/request-stock-modal.component';
 import { MatNativeDateModule } from '@angular/material/core';
 import { Router } from '@angular/router';
+import { UploadItemsModalComponent } from 'app/components/upload-items-modal/upload-items-modal.component';
 
 import { timestamp } from 'rxjs';
 
@@ -46,7 +47,8 @@ import {
         RequestStockModalComponent,
         MatNativeDateModule,
         MatDatepickerModule,
-        MatSnackBarModule
+        MatSnackBarModule,
+        UploadItemsModalComponent
     ],
     templateUrl: './inventory.component.html',
     styleUrls: ['./inventory.component.css'],
@@ -94,7 +96,6 @@ export class InventoryComponent implements OnInit {
         { field: 'deliveryCost', headerName: 'Delivery Cost', filter: 'agSetColumnFilter' },
         { field: 'lowStockThreshold', headerName: 'Low Stock Threshold', filter: 'agSetColumnFilter' },
         { field: 'reorderAmount', headerName: 'Reorder Amount', filter: 'agSetColumnFilter' },
-        { field: 'dailyDemand', headerName: 'Daily Demand', filter: 'agSetColumnFilter' },
     ];
 
     addButton = { text: 'Add New Item' };
@@ -573,5 +574,17 @@ export class InventoryComponent implements OnInit {
         } catch (error) {
             console.error('Error logging activity:', error);
         }
+    }
+
+    openImportItemsModal() {
+        console.log('Opening import items modal');
+        const dialogRef = this.dialog.open(UploadItemsModalComponent, {
+        });
+      
+        dialogRef.afterClosed().subscribe(result => {
+          if (result) {
+            this.loadInventoryData(); // Refresh the inventory list
+          }
+        });
     }
 }

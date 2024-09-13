@@ -33,9 +33,14 @@ export class AppComponent implements OnInit {
     sidebarCollapsed = false;
     isSupplierForm = false;
 
-    constructor(public authenticator: AuthenticatorService, public loader: LoadingService, private themeService: ThemeService, private router: Router) {
+    constructor(
+        public authenticator: AuthenticatorService,
+        public loader: LoadingService,
+        private themeService: ThemeService,
+        private router: Router,
+    ) {
         // Amplify.configure(outputs);
-        this.loadTheme();
+        // this.loadTheme();
     }
 
     ngOnInit() {
@@ -49,21 +54,20 @@ export class AppComponent implements OnInit {
 
     //
 
-    toggleTheme(): void {
-        const newTheme = this.themeService.getTheme() === 'dark' ? 'light' : 'dark';
-        this.themeService.setTheme(newTheme);
-    }
+    // toggleTheme(): void {
+    //     const newTheme = this.themeService.getTheme() === 'dark' ? 'light' : 'dark';
+    //     this.themeService.setTheme(newTheme);
+    // }
 
-    loadTheme(): void {
-        this.themeService.setTheme(this.themeService.getTheme());
-    }
+    // loadTheme(): void {
+    //     this.themeService.setTheme(this.themeService.getTheme());
+    // }
 
     //
 
     async logAuthSession() {
         try {
             const session = await fetchAuthSession();
-            console.log(session);
         } catch (error) {
             console.error('Error fetching auth session:', error);
         }

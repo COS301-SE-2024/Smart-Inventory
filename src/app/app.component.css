@@ -47,10 +47,7 @@
     /* overflow-y: auto; */
 }
 
-.container,
-.app-sidebar,
-.app-header,
-.content {
+.container {
     background-color: #f0f0f0;
     color: var(--text-color);
 }

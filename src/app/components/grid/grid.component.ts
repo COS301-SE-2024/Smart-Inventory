@@ -33,6 +33,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
+import { fetchAuthSession } from 'aws-amplify/auth';
 
 @Component({
     selector: 'app-grid',
@@ -70,6 +71,7 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
         return this._rowData;
     }
     private _rowData: any[] = [];
+    private role: string = '';
     @Input() columnDefs: ColDef[] = [];
     @Input() addButton: { text: string } = { text: 'Add' };
     @Output() rowsToDelete = new EventEmitter<any[]>();
@@ -227,6 +229,28 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
         // Make all columns editable
         this.columnDefs = this.columnDefs.map((col) => ({ ...col, editable: true }));
         this.setGridHeight();
+        this.logAuthSession();
+    }
+
+    async logAuthSession() {
+        try {
+            const session = await fetchAuthSession();
+            this.role = '' + session.tokens?.idToken?.payload?.['cognito:groups']?.toString();
+        } catch (error) {
+            console.error('Error fetching auth session:', error);
+        }
+    }
+
+    isAdmin() {
+        return this.role == 'admin';
+    }
+
+    isInvCont() {
+        return this.role == 'inventorycontroller';
+    }
+
+    isEndUser() {
+        return this.role == 'enduser';
     }
 
     ngAfterViewInit() {

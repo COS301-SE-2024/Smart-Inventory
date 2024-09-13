@@ -1,0 +1,28 @@
+<div style="height: 100%; display: block; overflow-y: scroll">
+    <div class="btn-holder">
+        <button class="btnAdd" mat-fab extended matTooltip="Quickly access and manage tasks related to current page.">
+            <span>Quick Actions</span>
+            <!-- <mat-icon style="color: black">manufacturing</mat-icon> -->
+        </button>
+    </div>
+    <mat-grid-list cols="2" rowHeight="440px" gutterSize="10px">
+        <mat-grid-tile *ngFor="let template of templates | keyvalue">
+            <div class="card-container">
+                <a (click)="openDialog(template.value)">
+                    <mat-card class="card">
+                        <mat-card-header class="card-header">
+                            <div class="header-content">
+                                <mat-card-title>{{ template.value.title }}</mat-card-title>
+                                <p class="subtitle">{{ template.value.subtitle }}</p>
+                                <!-- <mat-card-subtitle style="padding: 10px">{{ report.value.subtitle }}</mat-card-subtitle> -->
+                            </div>
+                        </mat-card-header>
+                        <mat-card-content>
+                            {{ template.value.frequency }}
+                        </mat-card-content>
+                    </mat-card></a
+                >
+            </div>
+        </mat-grid-tile>
+    </mat-grid-list>
+</div>

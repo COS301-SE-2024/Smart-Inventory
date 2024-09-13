@@ -1,26 +1,38 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { MatExpansionModule } from '@angular/material/expansion';
 import { MatListModule } from '@angular/material/list';
 import { FormControl, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
-import { MatTabsModule } from '@angular/material/tabs';
 import { MatCardModule } from '@angular/material/card';
-import { MatCheckboxModule } from '@angular/material/checkbox';
 import { TitleService } from '../../components/header/title.service';
-import { MatGridListModule } from '@angular/material/grid-list';
 import { CognitoService } from '../../_services/cognito.service';
 import { AuthenticatorService } from '@aws-amplify/ui-angular';
 import { Router } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { ThemeService } from '../../services/theme.service';
+import { DeliveryInformationModalComponent } from '../../components/delivery-information-modal/delivery-information-modal.component';
+import { EmailTemplateModalComponent } from '../email-template-modal/email-template-modal.component';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { TemplatesQuotesSidePaneComponent } from 'app/components/templates-quotes-side-pane/templates-quotes-side-pane.component';
+import { fetchAuthSession } from 'aws-amplify/auth';
 
+interface DeliveryAddress {
+    company: string;
+    street: string;
+    city: string;
+    state: string;
+    postalCode: string;
+    country: string;
+    instructions: string;
+    contactName: string;
+    email: string;
+    phone: string;
+}
 @Component({
     selector: 'app-profile',
     standalone: true,
@@ -31,24 +43,23 @@ import { ThemeService } from '../../services/theme.service';
         MatIconModule,
         MatButtonModule,
         MatSnackBarModule,
-        MatSlideToggleModule,
         FormsModule,
         ReactiveFormsModule,
-        MatExpansionModule,
         MatListModule,
         MatSelectModule,
-        MatTabsModule,
         MatCardModule,
-        MatCheckboxModule,
         MatToolbarModule,
-        MatGridListModule,
+        DeliveryInformationModalComponent,
+        MatDialogModule,
+        TemplatesQuotesSidePaneComponent,
     ],
     templateUrl: './profile.component.html',
     styleUrl: './profile.component.css',
 })
 export class ProfileComponent implements OnInit {
     emailFormControl = new FormControl('', [Validators.required, Validators.email]);
-
+    isTemplateSidePaneOpen: boolean = false;
+    private role: string = '';
     profile = {
         name: '',
         surname: '',
@@ -73,13 +84,96 @@ export class ProfileComponent implements OnInit {
         private cognitoService: CognitoService,
         private authenticator: AuthenticatorService,
         private router: Router,
-        private themeService: ThemeService
+        private themeService: ThemeService,
+        private dialog: MatDialog,
     ) {}
+
+    viewEmailTemplate() {
+        const dialogRef = this.dialog.open(EmailTemplateModalComponent, {
+            width: '600px',
+            data: { emailTemplate: this.getEmailTemplate() },
+        });
+
+        dialogRef.afterClosed().subscribe((result: any) => {
+            if (result) {
+                this.saveEmailTemplate(result);
+            }
+        });
+    }
+
+    viewTemplatesQuotes() {
+        this.isTemplateSidePaneOpen = true;
+    }
+
+    getEmailTemplate() {
+        // Implement logic to get the current email template
+        // This could be from a service or local storage
+        return {
+            greeting: 'Dear Supplier,',
+            explanation: 'We are requesting a quote for the following items:',
+            items: '',
+            requirements: 'Please provide your best price and delivery time for these items.',
+            instructions: 'Submit your quote through our web form at [Your Web Form URL]',
+            contactInfo: 'If you have any questions, please contact us at [Your Contact Information]',
+        };
+    }
+
+    saveEmailTemplate(template: any) {
+        // Implement logic to save the email template
+        // This could be to a service or local storage
+        console.log('Saving email template:', template);
+    }
+    deliveryAddress: DeliveryAddress = {
+        company: '',
+        street: '',
+        city: '',
+        state: '',
+        postalCode: '',
+        country: '',
+        instructions: '',
+        contactName: '',
+        email: '',
+        phone: '',
+    };
+
+    viewDeliveryInfo() {
+        const dialogRef = this.dialog.open(DeliveryInformationModalComponent, {
+            width: '600px',
+            data: { deliveryAddress: this.deliveryAddress },
+        });
+
+        dialogRef.afterClosed().subscribe((result) => {
+            if (result) {
+                this.deliveryAddress = result;
+                this.saveDeliveryInfo(result);
+            }
+        });
+    }
+
+    saveDeliveryInfo(deliveryInfo: DeliveryAddress) {
+        // Implement logic to save the delivery information
+        // This could be to a service or API
+        console.log('Saving delivery information:', deliveryInfo);
+    }
 
     ngOnInit() {
         this.titleService.updateTitle('Settings');
         this.loadUserProfile();
         this.currentTheme = this.themeService.getTheme();
+        this.logAuthSession();
+    }
+
+    async logAuthSession() {
+        try {
+            const session = await fetchAuthSession();
+            this.role = '' + session.tokens?.idToken?.payload?.['cognito:groups']?.toString();
+        } catch (error) {
+            console.error('Error fetching auth session:', error);
+        }
+    }
+
+    notEndUser() {
+        return this.role == 'enduser';
     }
 
     loadUserProfile() {
@@ -93,7 +187,7 @@ export class ProfileComponent implements OnInit {
             (error) => {
                 console.error('Error loading user profile:', error);
                 this.snackBar.open('Error loading user profile', 'Close', { duration: 3000 });
-            }
+            },
         );
     }
 
@@ -116,7 +210,7 @@ export class ProfileComponent implements OnInit {
             (error) => {
                 console.error('Error updating profile:', error);
                 this.snackBar.open('Error updating profile. Please try again.', 'Close', { duration: 3000 });
-            }
+            },
         );
     }
 
@@ -135,7 +229,7 @@ export class ProfileComponent implements OnInit {
             (error) => {
                 console.error('Error changing password:', error);
                 this.snackBar.open('Error changing password. Please try again.', 'Close', { duration: 3000 });
-            }
+            },
         );
     }
 
@@ -168,7 +262,7 @@ export class ProfileComponent implements OnInit {
                             this.snackBar.open('Error deleting account. Please try again.', 'Close', {
                                 duration: 3000,
                             });
-                        }
+                        },
                     );
                 } else {
                     this.snackBar.open('Invalid password', 'Close', { duration: 3000 });
@@ -177,7 +271,7 @@ export class ProfileComponent implements OnInit {
             (error) => {
                 console.error('Error verifying password:', error);
                 this.snackBar.open('Error verifying password. Please try again.', 'Close', { duration: 3000 });
-            }
+            },
         );
     }
 
@@ -258,7 +352,7 @@ export class ProfileComponent implements OnInit {
             (error) => {
                 console.error('Error changing password:', error);
                 this.snackBar.open('Error changing password. Please try again.', 'Close', { duration: 3000 });
-            }
+            },
         );
     }
 

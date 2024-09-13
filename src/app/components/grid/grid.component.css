@@ -43,8 +43,14 @@
     border-color: #c4c6d0;
     border-width: 1px;
     border-style: solid;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
-
+.btnAdd mat-icon {
+    position: absolute;
+    left: 170px;
+}
 .card {
     width: 100%;
     margin-top: 10px;

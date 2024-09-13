@@ -10,11 +10,16 @@ input.mat-input-element {
 
 mat-form-field {
     width: 100%;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
     --mdc-filled-text-field-label-text-color: #000000;
     --mdc-filled-text-field-container-color: #f1f1f1;
 }
-
+.cardTitle {
+    padding-top: 25px;
+    padding-bottom: 16px;
+    align-self: flex-start;
+    padding-left: 35px;
+}
 mat-dialog-content {
     max-height: 70vh;
     overflow-y: auto;
@@ -27,13 +32,17 @@ mat-dialog-content {
 }
 
 .btn {
-    border-radius: 20px;
-    margin-right: 10px;
-    --mdc-outlined-button-label-text-color: black;
-    --mdc-outlined-button-outline-color: #74777f;
     border-radius: 5px;
     width: 200px;
+    color: white;
     height: 40px;
+    box-shadow: 2px 2px 2px 0px #e0e0e0;
+    border-width: 1px;
+    /* border-style: solid; */
+    margin-left: 5px;
+    background-color: #005cbb;
+    margin-right: 5px;
+    margin-bottom: 5px;
 }
 /* width */
 ::-webkit-scrollbar {
@@ -59,6 +68,20 @@ mat-dialog-content {
     background: none;
 }
 
+.mat-grid-tile-content ::ng-deep {
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    position: absolute;
+    display: flex;
+    align-items: center;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    align-content: flex-start;
+    flex-wrap: wrap;
+}
 .body {
     height: 100%;
     display: flex;
@@ -117,16 +140,23 @@ mat-label {
     align-items: center;
     flex-direction: column;
     flex-wrap: wrap;
-    text-align: center;
+    text-align: left;
     /* overflow-y: scroll; */
     margin-top: 10px;
     margin-bottom: 10px;
     background-color: linear-gradient(white, #f1f1f1);
-    box-shadow:
-        0px 6px 6px -3px rgba(0, 0, 0, 0.2),
-        0px 10px 14px 1px rgba(0, 0, 0, 0.14),
-        0px 4px 18px 3px rgba(0, 0, 0, 0.12);
+
     border-radius: 8px;
+}
+
+.mdc-card__actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-sizing: border-box;
+    min-height: 40px;
+    padding: 5px;
+    justify-content: center;
 }
 
 .mat-mdc-tab-body.mat-mdc-tab-body-active {

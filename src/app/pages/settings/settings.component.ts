@@ -21,6 +21,7 @@ import { Router } from '@angular/router';
 import { ThemeService } from '../../services/theme.service';
 import { ProfileComponent } from '../../components/profile/profile.component';
 import { QrCodeGeneratorComponent } from './qr-code-generator.component';
+
 @Component({
     selector: 'app-settings',
     standalone: true,
@@ -65,8 +66,6 @@ export class SettingsComponent implements OnInit {
     };
     isChangingPassword = false;
     hidePassword = true;
-
-    currentTheme = 'light';
     isDeleteAccountVisible = false;
 
     constructor(
@@ -81,7 +80,6 @@ export class SettingsComponent implements OnInit {
     ngOnInit() {
         this.titleService.updateTitle('Settings');
         this.loadUserProfile();
-        this.currentTheme = this.themeService.getTheme();
     }
 
     loadUserProfile() {
@@ -183,10 +181,10 @@ export class SettingsComponent implements OnInit {
         );
     }
 
-    selectTheme(theme: string): void {
-        this.currentTheme = theme;
-        this.themeService.setTheme(theme);
-    }
+    // selectTheme(theme: string): void {
+    //     this.currentTheme = theme;
+    //     this.themeService.setManualTheme(this.);
+    // }
 
     // password update
     initiatePasswordChange() {

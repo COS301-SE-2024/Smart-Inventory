@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, HostListener, Inject } from '@angular/core';
 import { MaterialModule } from '../material/material.module';
 import { signOut, fetchUserAttributes } from 'aws-amplify/auth';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { TitleService } from './title.service';
 import { CognitoService } from '../../_services/cognito.service';
 import { AuthenticatorService } from '@aws-amplify/ui-angular';
@@ -40,17 +40,12 @@ interface NotificationSetting {
 @Component({
     selector: 'app-notification-dialog',
     standalone: true,
-    imports: [
-        CommonModule,
-        MatDialogModule,
-        MatButtonModule,
-        DatePipe,
-    ],
+    imports: [CommonModule, MatDialogModule, MatButtonModule, DatePipe, RouterLink],
     template: `
         <h2 mat-dialog-title>{{ data.title }}</h2>
         <mat-dialog-content>
             <p>{{ data.info }}</p>
-            <p>Date: {{ data.date | date:'short' }}</p>
+            <p>Date: {{ data.date | date: 'short' }}</p>
             <p>Type: {{ data.type }}</p>
         </mat-dialog-content>
         <mat-dialog-actions>
@@ -80,13 +75,12 @@ export class NotificationDialogComponent {
         NotificationDialogComponent,
         MatTooltipModule,
         MatMenuModule,
-        MatMenuTrigger
+        MatMenuTrigger,
     ],
     templateUrl: './header.component.html',
     styleUrl: './header.component.css',
 })
 export class HeaderComponent implements OnInit {
-
     @ViewChild('MatMenuTrigger') trigger!: MatMenuTrigger;
     @ViewChild('filterMenuTrigger') filterMenuTrigger!: MatMenuTrigger;
 
@@ -103,15 +97,53 @@ export class HeaderComponent implements OnInit {
 
     // HEY TRISTAN!!!
     notifications: Notification[] = [
-        { id: 1, type: 'Inventory', title: 'Low stock alert', date: new Date(), info: 'Item A is running low', read: false, archived: false },
-        { id: 2, type: 'Reports', title: 'Monthly report ready', date: new Date(), info: 'Your monthly report is available', read: true, archived: false },
-        { id: 3, type: 'Orders', title: 'New order received', date: new Date(), info: 'Order #1234 needs processing', read: true, archived: false },
-        { id: 4, type: 'Suppliers', title: 'Supplier update', date: new Date(), info: 'Supplier X has new contact information', read: false, archived: false },
-        { id: 5, type: 'Teams', title: 'New team member', date: new Date(), info: 'Welcome John Doe to the team', read: true, archived: false },
+        {
+            id: 1,
+            type: 'Inventory',
+            title: 'Low stock alert',
+            date: new Date(),
+            info: 'Item A is running low',
+            read: false,
+            archived: false,
+        },
+        {
+            id: 2,
+            type: 'Reports',
+            title: 'Monthly report ready',
+            date: new Date(),
+            info: 'Your monthly report is available',
+            read: true,
+            archived: false,
+        },
+        {
+            id: 3,
+            type: 'Orders',
+            title: 'New order received',
+            date: new Date(),
+            info: 'Order #1234 needs processing',
+            read: true,
+            archived: false,
+        },
+        {
+            id: 4,
+            type: 'Suppliers',
+            title: 'Supplier update',
+            date: new Date(),
+            info: 'Supplier X has new contact information',
+            read: false,
+            archived: false,
+        },
+        {
+            id: 5,
+            type: 'Teams',
+            title: 'New team member',
+            date: new Date(),
+            info: 'Welcome John Doe to the team',
+            read: true,
+            archived: false,
+        },
     ];
-    
-    
-    
+
     filteredNotifications: Notification[] = [];
     activeFilter: string = 'All';
 
@@ -133,18 +165,21 @@ export class HeaderComponent implements OnInit {
         { name: 'Suppliers', enabled: true },
         { name: 'Teams', enabled: true },
     ];
-    
+
     constructor(
         private titleService: TitleService,
         private cognitoService: CognitoService,
         private auth: AuthenticatorService,
         private router: Router,
-        private dialog: MatDialog
-    ) { }
+        private dialog: MatDialog,
+    ) {}
 
-    
     @HostListener('window:resize', ['$event']) onResize(event: Event) {
         this.updateFilterSize();
+    }
+
+    clickSettings() {
+        this.router.navigate(['/settings']);
     }
 
     updateFilterSize() {
@@ -178,7 +213,7 @@ export class HeaderComponent implements OnInit {
             },
             (error) => {
                 console.error('Error loading user info:', error);
-            }
+            },
         );
     }
 
@@ -195,7 +230,7 @@ export class HeaderComponent implements OnInit {
     // NOTIFICATIONS FUNCTIONS
 
     markAllAsRead() {
-        this.notifications.forEach(notification => {
+        this.notifications.forEach((notification) => {
             notification.read = true;
         });
         this.updateFilteredNotifications();
@@ -230,12 +265,18 @@ export class HeaderComponent implements OnInit {
     // HEY TRISTAN !!
     getNotificationIcon(type: string): string {
         switch (type) {
-            case 'Inventory': return 'inventory';
-            case 'Reports': return 'assessment';
-            case 'Orders': return 'shopping_cart';
-            case 'Suppliers': return 'business';
-            case 'Teams': return 'group';
-            default: return 'notifications';
+            case 'Inventory':
+                return 'inventory';
+            case 'Reports':
+                return 'assessment';
+            case 'Orders':
+                return 'shopping_cart';
+            case 'Suppliers':
+                return 'business';
+            case 'Teams':
+                return 'group';
+            default:
+                return 'notifications';
         }
     }
 
@@ -247,10 +288,10 @@ export class HeaderComponent implements OnInit {
     @HostListener('window:mousemove', ['$event'])
     onMouseMove(event: MouseEvent) {
         if (!this.isResizing) return;
-        
+
         const screenWidth = window.innerWidth;
         const newWidth = screenWidth - event.clientX;
-        
+
         // Set minimum and maximum widths
         this.panelWidth = Math.max(300, Math.min(newWidth, screenWidth * 0.8));
     }
@@ -269,9 +310,9 @@ export class HeaderComponent implements OnInit {
     // HEY TRISTAN !!
     // update filtered notifications
     updateFilteredNotifications() {
-        this.filteredNotifications = this.notifications.filter(n => {
-            const settingEnabled = this.notificationSettings.find(s => s.name === n.type)?.enabled;
-            
+        this.filteredNotifications = this.notifications.filter((n) => {
+            const settingEnabled = this.notificationSettings.find((s) => s.name === n.type)?.enabled;
+
             if (!settingEnabled) {
                 return false;
             }
@@ -283,7 +324,7 @@ export class HeaderComponent implements OnInit {
             if (this.showArchived && n.archived) {
                 return true;
             }
-            
+
             if (!n.archived) {
                 if (this.showRead && this.showUnread) {
                     return true;
@@ -293,10 +334,10 @@ export class HeaderComponent implements OnInit {
                     return !n.read;
                 }
             }
-            
+
             return false;
         });
-    
+
         this.filteredNotifications.sort((a, b) => {
             if (a.archived === b.archived) {
                 if (a.read === b.read) return 0;
@@ -304,10 +345,11 @@ export class HeaderComponent implements OnInit {
             }
             return a.archived ? 1 : -1;
         });
-    
-        this.unreadCount = this.notifications.filter(n => !n.read && !n.archived && this.notificationSettings.find(s => s.name === n.type)?.enabled).length;
-    }
 
+        this.unreadCount = this.notifications.filter(
+            (n) => !n.read && !n.archived && this.notificationSettings.find((s) => s.name === n.type)?.enabled,
+        ).length;
+    }
 
     toggleShowArchived() {
         this.showArchived = !this.showArchived;
@@ -323,10 +365,10 @@ export class HeaderComponent implements OnInit {
     openNotification(notification: Notification) {
         const dialogRef = this.dialog.open(NotificationDialogComponent, {
             width: '400px',
-            data: notification
+            data: notification,
         });
 
-        dialogRef.afterClosed().subscribe(result => {
+        dialogRef.afterClosed().subscribe((result) => {
             if (result) {
                 notification.read = true;
                 this.updateFilteredNotifications();
@@ -345,14 +387,14 @@ export class HeaderComponent implements OnInit {
     }
 
     // HEY TRISTAN !!
-    // quick explanation users can filter which notifications to see and which not to see, 
+    // quick explanation users can filter which notifications to see and which not to see,
     // notifications they dont want to see, won't show in the notification tab
     // all controlled in the settings :)
-    
+
     updateNotificationSettings(setting: NotificationSetting) {
         // Update the filters based on the enabled settings
         this.filters = ['All', 'Settings'];
-        this.notificationSettings.forEach(s => {
+        this.notificationSettings.forEach((s) => {
             if (s.enabled) {
                 this.filters.push(s.name);
             }
@@ -369,7 +411,7 @@ export class HeaderComponent implements OnInit {
         // Save settings
         this.saveNotificationSettings();
     }
-    
+
     saveNotificationSettings() {
         console.log('Saving notification settings:', this.notificationSettings);
     }
@@ -377,6 +419,5 @@ export class HeaderComponent implements OnInit {
     // u can implement this later to save the users notifications settings for the session //  backend stuff
     loadNotificationSettings() {
         // Implement logic to load settings from local storage or backend
-        
     }
 }

@@ -1,16 +1,22 @@
 <div class="sidenav-container">
     <div #sidenav mode="side" opened="true" class="sidenav" [ngClass]="{ expanded: isExpanded }">
-        <mat-toolbar color="primary" style="background-color: white">
-            <!-- Adds a toolbar at the top of the sidenav -->
-            <button mat-icon-button (click)="toggleSidenav()">
-                <mat-icon style="font-weight: 560; color: black; font-size: 30px; height: 100%" id="menu"
-                    >menu</mat-icon
-                >
+        <div
+            style="
+                height: 60px;
+                display: flex;
+                width: 100%;
+                align-content: center;
+                align-items: center;
+                justify-content: center;
+            "
+        >
+            <!-- Adds a toolbar at the top of the sidenav --><button mat-icon-button (click)="toggleSidenav()">
+                <mat-icon class="grad" id="menu">menu</mat-icon>
                 <!-- This is the menu icon -->
             </button>
-        </mat-toolbar>
+        </div>
         <mat-nav-list>
-            <div *ngFor="let item of menuItems">
+            <div *ngFor="let item of filteredMenuItems">
                 <a mat-list-item *ngIf="!item.click" [routerLink]="item.routerLink"
                     ><mat-icon id="{{ item.icon }}">{{ item.icon }}</mat-icon>
                     <p>{{ item.label }}</p></a

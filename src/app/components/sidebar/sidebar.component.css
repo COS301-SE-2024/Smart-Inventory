@@ -4,6 +4,21 @@
     background-color: white;
 }
 
+.grad {
+    color: black;
+    font-weight: 500;
+    font-size: x-large;
+    font-variation-settings:
+        'GRAD' 200,
+        'wght' 500;
+}
+.material-symbols-outlined {
+    font-variation-settings:
+        'FILL' 0,
+        'wght' 400,
+        'GRAD' 200,
+        'opsz' 24;
+}
 .sidenav {
     height: 100vh;
     width: 50px; /* Standard width for sidenav */
@@ -58,8 +73,12 @@ mat-toolbar {
     height: 60px; /* Standard toolbar height */
     background-color: var(--sidebar-bg-color); /* Slightly darker shade for the toolbar */
 }
-
-mat-icon {
+.mdc-list {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+mat-icon:not(#menu) {
     display: block; /* Block display for icons */
     margin: auto;
     font-size: 24px; /* Standard Material icon size */
@@ -81,15 +100,17 @@ a {
 
 a:hover {
     height: 70px;
-    background-color: var(--sidebar-hover-bg-color); /* Adds a hover effect  */
+    background-color: #f0f0f0;
+    /* Adds a hover effect  */
+    border-radius: 0px;
 }
 
 a div {
     margin-top: 5px;
 }
-
 a.mat-mdc-list-item.mdc-list-item.mat-mdc-list-item-interactive.mat-mdc-list-item-single-line.mdc-list-item--with-one-line {
     height: 70px;
+    border-radius: 0px;
 }
 .sidenav:hover:not(.expanded) #menu {
     transition: 0.4 ease;

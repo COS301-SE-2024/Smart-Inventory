@@ -73,9 +73,6 @@ export class templateQuoteModalComponent implements OnInit {
     isNewQuote: boolean = false;
     hasUnsavedChanges: boolean = false;
 
-    orderId: string | null = null;
-    quoteId: string | null = null;
-
     protected _onDestroy = new Subject<void>();
 
     constructor(
@@ -85,11 +82,8 @@ export class templateQuoteModalComponent implements OnInit {
     ) {
         this.isEditing = data.isEditing || false;
         this.isNewQuote = data.isNewQuote || false;
-        this.quoteId = data.quoteDetails?.quoteId || null;
-        this.orderId = data.quoteDetails?.orderId || null;
 
         console.log('Received data in modal:', data); // Add this log
-        console.log('orderId:', this.orderId, 'quoteId:', this.quoteId); // Add this log
     }
 
     private defaultEmailBody = `Dear {{SUPPLIER_NAME}},
@@ -123,10 +117,6 @@ export class templateQuoteModalComponent implements OnInit {
 
     initializeQuoteData(quoteDetails: any) {
         console.log('Initializing quote data:', quoteDetails); // Add this log
-
-        this.orderId = quoteDetails.orderId || null;
-        this.quoteId = quoteDetails.quoteId || null;
-
         if (quoteDetails.items && Array.isArray(quoteDetails.items)) {
             this.quoteItems = quoteDetails.items.map((item: any) => {
                 const inventoryItem = this.inventoryItems.find((invItem) => invItem.sku === item.ItemSKU);
@@ -324,40 +314,41 @@ export class templateQuoteModalComponent implements OnInit {
         return item1 && item2 ? item1.sku === item2.sku : item1 === item2;
     }
 
-    async saveChanges() {
-        const updatedQuote = {
-            quoteId: this.quoteId,
-            items: this.quoteItems.map(({ item, quantity }) => ({
-                ItemSKU: item.sku,
-                Quantity: quantity,
-                inventoryID: item.inventoryID,
-            })),
-            suppliers: this.selectedSuppliers.map((supplier) => ({
-                company_name: supplier.company_name,
-                supplierID: supplier.supplierID,
-            })),
-        };
+    // async saveChanges() {
+    //     const updatedQuote = {
+    //         quoteId: this.quoteId,
+    //         items: this.quoteItems.map(({ item, quantity }) => ({
+    //             ItemSKU: item.sku,
+    //             Quantity: quantity,
+    //             inventoryID: item.inventoryID,
+    //         })),
+    //         suppliers: this.selectedSuppliers.map((supplier) => ({
+    //             company_name: supplier.company_name,
+    //             supplierID: supplier.supplierID,
+    //         })),
+    //     };
 
-        console.log('Saving changes with data:', JSON.stringify(updatedQuote, null, 2));
+    //     console.log('Saving changes with data:', JSON.stringify(updatedQuote, null, 2));
 
-        try {
-            await this.updateQuote(updatedQuote);
+    //     try {
+    //         await this.updateQuote(updatedQuote);
 
-            this.hasUnsavedChanges = false; // Reset the flag after saving
-            this.snackBar.open('Changes saved successfully', 'Close', {
-                duration: 3000,
-                horizontalPosition: 'center',
-                verticalPosition: 'top',
-            });
-        } catch (error) {
-            console.error('Error saving changes:', error);
-            this.snackBar.open('Error saving changes', 'Close', {
-                duration: 3000,
-                horizontalPosition: 'center',
-                verticalPosition: 'top',
-            });
-        }
-    }
+    //         this.hasUnsavedChanges = false; // Reset the flag after saving
+    //         this.snackBar.open('Changes saved successfully', 'Close', {
+    //             duration: 3000,
+    //             horizontalPosition: 'center',
+    //             verticalPosition: 'top',
+    //         });
+    //     } catch (error) {
+    //         console.error('Error saving changes:', error);
+    //         this.snackBar.open('Error saving changes', 'Close', {
+    //             duration: 3000,
+    //             horizontalPosition: 'center',
+    //             verticalPosition: 'top',
+    //         });
+    //     }
+    // }
+    saveChanges() {}
 
     private async updateQuote(updatedQuote: any) {
         try {
@@ -414,23 +405,24 @@ export class templateQuoteModalComponent implements OnInit {
         this.hasUnsavedChanges = true;
     }
 
-    createOrder() {
-        const order = {
-            items: this.quoteItems.map(({ item, quantity }) => ({
-                ItemSKU: item.sku,
-                Quantity: quantity,
-                inventoryID: item.inventoryID,
-            })),
-            suppliers: this.selectedSuppliers.map((supplier) => ({
-                company_name: supplier.company_name,
-                supplierID: supplier.supplierID,
-            })),
-            Quote_Status: 'Draft',
-            frequency: this.selectedFrequency,
-        };
-        console.log(order);
-        this.dialogRef.close({ action: 'createOrder', data: order });
-    }
+    createOrder() {}
+    // createOrder() {
+    //     const order = {
+    //         items: this.quoteItems.map(({ item, quantity }) => ({
+    //             ItemSKU: item.sku,
+    //             Quantity: quantity,
+    //             inventoryID: item.inventoryID,
+    //         })),
+    //         suppliers: this.selectedSuppliers.map((supplier) => ({
+    //             company_name: supplier.company_name,
+    //             supplierID: supplier.supplierID,
+    //         })),
+    //         Quote_Status: 'Draft',
+    //         frequency: this.selectedFrequency,
+    //     };
+    //     console.log(order);
+    //     this.dialogRef.close({ action: 'createOrder', data: order });
+    // }
 
     cancel() {
         this.dialogRef.close({ action: 'cancel' });
@@ -464,130 +456,130 @@ export class templateQuoteModalComponent implements OnInit {
     //     }
     // }
 
-    async prepareEmailData() {
-        const session = await fetchAuthSession();
-        const tenentId = await this.getTenentId(session);
-        const deliveryInfoID = await this.getDeliveryInfoID(tenentId);
-        const emailTemplate = await this.getEmailTemplate(tenentId);
+    // async prepareEmailData() {
+    //     const session = await fetchAuthSession();
+    //     const tenentId = await this.getTenentId(session);
+    //     const deliveryInfoID = await this.getDeliveryInfoID(tenentId);
+    //     const emailTemplate = await this.getEmailTemplate(tenentId);
 
-        const emailDataPromises = this.selectedSuppliers.map(async (supplier) => {
-            const supplierDetails = await this.getSupplierDetails(tenentId, supplier.supplierID);
-            const uniqueLink = `http://localhost:4200/supplier-form/${supplier.supplierID}/${this.quoteId}/${deliveryInfoID}/${tenentId}`;
+    //     const emailDataPromises = this.selectedSuppliers.map(async (supplier) => {
+    //         const supplierDetails = await this.getSupplierDetails(tenentId, supplier.supplierID);
+    //         const uniqueLink = `http://localhost:4200/supplier-form/${supplier.supplierID}/${this.quoteId}/${deliveryInfoID}/${tenentId}`;
 
-            let emailBody = emailTemplate || this.defaultEmailBody;
-            emailBody = emailBody
-                .replace('{{SUPPLIER_NAME}}', supplier.company_name)
-                .replace('{{WEB_FORM_URL}}', uniqueLink);
+    //         let emailBody = emailTemplate || this.defaultEmailBody;
+    //         emailBody = emailBody
+    //             .replace('{{SUPPLIER_NAME}}', supplier.company_name)
+    //             .replace('{{WEB_FORM_URL}}', uniqueLink);
 
-            return {
-                supplierEmail: supplierDetails.contact_email,
-                supplierName: supplier.company_name,
-                emailBody: emailBody,
-                orderId: this.orderId, // Include the order ID in the email data
-                quoteId: this.quoteId, // Include the quote ID as well for completeness
-            };
-        });
+    //         return {
+    //             supplierEmail: supplierDetails.contact_email,
+    //             supplierName: supplier.company_name,
+    //             emailBody: emailBody,
+    //             orderId: this.orderId, // Include the order ID in the email data
+    //             quoteId: this.quoteId, // Include the quote ID as well for completeness
+    //         };
+    //     });
 
-        const emailData = await Promise.all(emailDataPromises);
-        console.log('Email data:', emailData);
-        return emailData;
-    }
+    //     const emailData = await Promise.all(emailDataPromises);
+    //     console.log('Email data:', emailData);
+    //     return emailData;
+    // }
 
-    async getEmailTemplate(tenentId: string): Promise<string | null> {
-        const lambdaClient = new LambdaClient({
-            region: outputs.auth.aws_region,
-            credentials: (await fetchAuthSession()).credentials,
-        });
+    // async getEmailTemplate(tenentId: string): Promise<string | null> {
+    //     const lambdaClient = new LambdaClient({
+    //         region: outputs.auth.aws_region,
+    //         credentials: (await fetchAuthSession()).credentials,
+    //     });
 
-        const invokeCommand = new InvokeCommand({
-            FunctionName: 'getEmailTemplate',
-            Payload: new TextEncoder().encode(
-                JSON.stringify({
-                    pathParameters: { tenentId: tenentId },
-                }),
-            ),
-        });
+    //     const invokeCommand = new InvokeCommand({
+    //         FunctionName: 'getEmailTemplate',
+    //         Payload: new TextEncoder().encode(
+    //             JSON.stringify({
+    //                 pathParameters: { tenentId: tenentId },
+    //             }),
+    //         ),
+    //     });
 
-        const lambdaResponse = await lambdaClient.send(invokeCommand);
-        const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+    //     const lambdaResponse = await lambdaClient.send(invokeCommand);
+    //     const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
 
-        if (responseBody.statusCode === 200) {
-            const { emailBody } = JSON.parse(responseBody.body);
-            return emailBody;
-        } else if (responseBody.statusCode === 404) {
-            console.log('No custom email template found for this tenant. Using default template.');
-            return null;
-        } else {
-            console.error('Error fetching email template:', responseBody.body);
-            return null;
-        }
-    }
+    //     if (responseBody.statusCode === 200) {
+    //         const { emailBody } = JSON.parse(responseBody.body);
+    //         return emailBody;
+    //     } else if (responseBody.statusCode === 404) {
+    //         console.log('No custom email template found for this tenant. Using default template.');
+    //         return null;
+    //     } else {
+    //         console.error('Error fetching email template:', responseBody.body);
+    //         return null;
+    //     }
+    // }
 
-    async sendEmails(emailData: any[]) {
-        const lambdaClient = new LambdaClient({
-            region: outputs.auth.aws_region,
-            credentials: (await fetchAuthSession()).credentials,
-        });
+    // async sendEmails(emailData: any[]) {
+    //     const lambdaClient = new LambdaClient({
+    //         region: outputs.auth.aws_region,
+    //         credentials: (await fetchAuthSession()).credentials,
+    //     });
 
-        const invokeCommand = new InvokeCommand({
-            FunctionName: 'sendSupplierEmails',
-            Payload: new TextEncoder().encode(JSON.stringify({ emailData: emailData })),
-        });
+    //     const invokeCommand = new InvokeCommand({
+    //         FunctionName: 'sendSupplierEmails',
+    //         Payload: new TextEncoder().encode(JSON.stringify({ emailData: emailData })),
+    //     });
 
-        const lambdaResponse = await lambdaClient.send(invokeCommand);
-        const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+    //     const lambdaResponse = await lambdaClient.send(invokeCommand);
+    //     const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
 
-        if (responseBody.statusCode === 200) {
-            console.log('Emails sent successfully:', responseBody.body);
-        } else {
-            throw new Error(`Failed to send emails: ${responseBody.body}`);
-        }
-    }
+    //     if (responseBody.statusCode === 200) {
+    //         console.log('Emails sent successfully:', responseBody.body);
+    //     } else {
+    //         throw new Error(`Failed to send emails: ${responseBody.body}`);
+    //     }
+    // }
 
-    async getSupplierDetails(tenentId: string, supplierID: string): Promise<any> {
-        const lambdaClient = new LambdaClient({
-            region: outputs.auth.aws_region,
-            credentials: (await fetchAuthSession()).credentials,
-        });
+    // async getSupplierDetails(tenentId: string, supplierID: string): Promise<any> {
+    //     const lambdaClient = new LambdaClient({
+    //         region: outputs.auth.aws_region,
+    //         credentials: (await fetchAuthSession()).credentials,
+    //     });
 
-        const invokeCommand = new InvokeCommand({
-            FunctionName: 'getSupplier',
-            Payload: new TextEncoder().encode(
-                JSON.stringify({
-                    pathParameters: { tenentId: tenentId, supplierID: supplierID },
-                }),
-            ),
-        });
+    //     const invokeCommand = new InvokeCommand({
+    //         FunctionName: 'getSupplier',
+    //         Payload: new TextEncoder().encode(
+    //             JSON.stringify({
+    //                 pathParameters: { tenentId: tenentId, supplierID: supplierID },
+    //             }),
+    //         ),
+    //     });
 
-        const lambdaResponse = await lambdaClient.send(invokeCommand);
-        const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+    //     const lambdaResponse = await lambdaClient.send(invokeCommand);
+    //     const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
 
-        if (responseBody.statusCode === 200) {
-            return JSON.parse(responseBody.body);
-        } else {
-            throw new Error(`Failed to get supplier details: ${responseBody.body}`);
-        }
-    }
+    //     if (responseBody.statusCode === 200) {
+    //         return JSON.parse(responseBody.body);
+    //     } else {
+    //         throw new Error(`Failed to get supplier details: ${responseBody.body}`);
+    //     }
+    // }
 
-    async getDeliveryInfoID(tenentId: string): Promise<string> {
-        const lambdaClient = new LambdaClient({
-            region: outputs.auth.aws_region,
-            credentials: (await fetchAuthSession()).credentials,
-        });
+    // async getDeliveryInfoID(tenentId: string): Promise<string> {
+    //     const lambdaClient = new LambdaClient({
+    //         region: outputs.auth.aws_region,
+    //         credentials: (await fetchAuthSession()).credentials,
+    //     });
 
-        const invokeCommand = new InvokeCommand({
-            FunctionName: 'getDeliveryID',
-            Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: tenentId } })),
-        });
+    //     const invokeCommand = new InvokeCommand({
+    //         FunctionName: 'getDeliveryID',
+    //         Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: tenentId } })),
+    //     });
 
-        const lambdaResponse = await lambdaClient.send(invokeCommand);
-        const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+    //     const lambdaResponse = await lambdaClient.send(invokeCommand);
+    //     const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
 
-        if (responseBody.statusCode === 200) {
-            const { deliveryInfoID } = JSON.parse(responseBody.body);
-            return deliveryInfoID;
-        } else {
-            throw new Error('Failed to get deliveryInfoID');
-        }
-    }
+    //     if (responseBody.statusCode === 200) {
+    //         const { deliveryInfoID } = JSON.parse(responseBody.body);
+    //         return deliveryInfoID;
+    //     } else {
+    //         throw new Error('Failed to get deliveryInfoID');
+    //     }
+    // }
 }

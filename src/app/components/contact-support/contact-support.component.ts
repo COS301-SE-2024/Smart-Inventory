@@ -9,70 +9,73 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { TitleService } from '../../components/header/title.service';
 
 @Component({
-  selector: 'app-contact-support',
-  standalone: true,
-  imports: [
-    CommonModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatSnackBarModule,
-    MatCardModule,
-    ReactiveFormsModule,
-  ],
-  templateUrl: './contact-support.component.html',
-  styleUrls: ['./contact-support.component.css'],
+    selector: 'app-contact-support',
+    standalone: true,
+    imports: [
+        CommonModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatButtonModule,
+        MatSnackBarModule,
+        MatCardModule,
+        ReactiveFormsModule,
+    ],
+    templateUrl: './contact-support.component.html',
+    styleUrls: ['./contact-support.component.css'],
 })
 export class ContactSupportComponent implements OnInit {
-  supportForm: FormGroup;
+    supportForm: FormGroup;
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private snackBar: MatSnackBar,
-    private titleService: TitleService
-  ) {
-    this.supportForm = this.formBuilder.group({
-      name: ['', Validators.required],
-      surname: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
-      message: ['', Validators.required]
-    });
-  }
-
-  ngOnInit() {
-    this.titleService.updateTitle('Contact Support');
-  }
-
-  onSubmit() {
-    if (this.supportForm.valid) {
-      // Here you would typically send the form data to your backend
-      console.log(this.supportForm.value);
-      
-      const config = new MatSnackBarConfig();
-      config.duration = 3000;
-      config.horizontalPosition = 'center';
-      config.verticalPosition = 'bottom';
-      config.panelClass = ['custom-snackbar'];
-
-      this.snackBar.open('Your message has been sent successfully!', 'Close', config);
-      
-      // Reset the form without triggering validation
-      this.supportForm.reset({
-        name: '',
-        surname: '',
-        email: '',
-        message: ''
-      }, { emitEvent: false, onlySelf: true });
-
-      // Update the form control states
-      Object.keys(this.supportForm.controls).forEach(key => {
-        const control = this.supportForm.get(key);
-        control?.setErrors(null);
-        control?.markAsUntouched();
-        control?.markAsPristine();
-      });
-    } else {
-      this.snackBar.open('Please fill all required fields correctly.', 'Close', { duration: 3000 });
+    constructor(
+        private formBuilder: FormBuilder,
+        private snackBar: MatSnackBar,
+        private titleService: TitleService,
+    ) {
+        this.supportForm = this.formBuilder.group({
+            name: ['', Validators.required],
+            surname: ['', Validators.required],
+            email: ['', [Validators.required, Validators.email]],
+            message: ['', Validators.required],
+        });
     }
-  }
+
+    ngOnInit() {
+        this.titleService.updateTitle('Help');
+    }
+
+    onSubmit() {
+        if (this.supportForm.valid) {
+            // Here you would typically send the form data to your backend
+            console.log(this.supportForm.value);
+
+            const config = new MatSnackBarConfig();
+            config.duration = 3000;
+            config.horizontalPosition = 'center';
+            config.verticalPosition = 'bottom';
+            config.panelClass = ['custom-snackbar'];
+
+            this.snackBar.open('Your message has been sent successfully!', 'Close', config);
+
+            // Reset the form without triggering validation
+            this.supportForm.reset(
+                {
+                    name: '',
+                    surname: '',
+                    email: '',
+                    message: '',
+                },
+                { emitEvent: false, onlySelf: true },
+            );
+
+            // Update the form control states
+            Object.keys(this.supportForm.controls).forEach((key) => {
+                const control = this.supportForm.get(key);
+                control?.setErrors(null);
+                control?.markAsUntouched();
+                control?.markAsPristine();
+            });
+        } else {
+            this.snackBar.open('Please fill all required fields correctly.', 'Close', { duration: 3000 });
+        }
+    }
 }

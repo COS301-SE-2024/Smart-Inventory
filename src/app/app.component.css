@@ -47,8 +47,8 @@
     /* overflow-y: auto; */
 }
 
-.container, .app-sidebar, .app-header, .content {
-    background-color: var(--background-color);
+.container {
+    background-color: #f0f0f0;
     color: var(--text-color);
 }
 
@@ -57,5 +57,5 @@
 }
 
 .app-header {
-    background-color: var(--header-bg-color);
+    background-color: #f1f1f1;
 }

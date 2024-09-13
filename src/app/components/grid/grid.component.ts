@@ -32,6 +32,8 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MatCardModule } from '@angular/material/card';
+import { fetchAuthSession } from 'aws-amplify/auth';
 
 @Component({
     selector: 'app-grid',
@@ -53,6 +55,7 @@ import { ReactiveFormsModule } from '@angular/forms';
         MatTooltip,
         MatAutocompleteModule,
         ReactiveFormsModule,
+        MatCardModule,
     ],
     templateUrl: './grid.component.html',
     styleUrl: './grid.component.css',
@@ -68,6 +71,7 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
         return this._rowData;
     }
     private _rowData: any[] = [];
+    private role: string = '';
     @Input() columnDefs: ColDef[] = [];
     @Input() addButton: { text: string } = { text: 'Add' };
     @Input() context: any;
@@ -89,6 +93,7 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
     @Output() viewInventorySummary = new EventEmitter<void>();
     @Output() deleteRowClicked = new EventEmitter<void>();
     @Output() importExcelClicked = new EventEmitter<void>();
+    @Output() viewAutomationTemplatesClicked = new EventEmitter<void>();
 
     @ViewChild(AgGridAngular) agGrid!: AgGridAngular;
     gridApi!: GridApi<any>;
@@ -226,8 +231,30 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
         this.selectOptions = this.columnDefs.map((f: any) => f.field);
 
         // Make all columns editable
-        this.columnDefs = this.columnDefs.map((col) => ({ ...col, }));
+        this.columnDefs = this.columnDefs.map((col) => ({ ...col }));
         this.setGridHeight();
+        this.logAuthSession();
+    }
+
+    async logAuthSession() {
+        try {
+            const session = await fetchAuthSession();
+            this.role = '' + session.tokens?.idToken?.payload?.['cognito:groups']?.toString();
+        } catch (error) {
+            console.error('Error fetching auth session:', error);
+        }
+    }
+
+    isAdmin() {
+        return this.role == 'admin';
+    }
+
+    isInvCont() {
+        return this.role == 'inventorycontroller';
+    }
+
+    isEndUser() {
+        return this.role == 'enduser';
     }
 
     ngAfterViewInit() {

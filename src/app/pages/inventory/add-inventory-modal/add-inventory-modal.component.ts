@@ -10,70 +10,67 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule, provideNativeDateAdapter } from '@angular/material/core';
 
 @Component({
-  selector: 'app-add-inventory-modal',
-  standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    MatDialogModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatSelectModule,
-    MatDatepickerModule,
-    MatNativeDateModule
-  ],
-  providers: [
-    provideNativeDateAdapter()
-  ],
-  templateUrl: './add-inventory-modal.component.html',
-  styleUrls: ['./add-inventory-modal.component.css']
+    selector: 'app-add-inventory-modal',
+    standalone: true,
+    imports: [
+        CommonModule,
+        ReactiveFormsModule,
+        MatDialogModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatButtonModule,
+        MatSelectModule,
+        MatDatepickerModule,
+        MatNativeDateModule,
+    ],
+    providers: [provideNativeDateAdapter()],
+    templateUrl: './add-inventory-modal.component.html',
+    styleUrls: ['./add-inventory-modal.component.css'],
 })
 export class AddInventoryModalComponent {
-  inventoryForm: FormGroup;
-  categories: string[] = [
-    'Food: Perishable',
-    'Food: Non-Perishable',
-    'Beverages: Alcoholic',
-    'Beverages: Non-Alcoholic',
-    'Cleaning Supplies',
-    'Kitchen Equipment',
-    'Utensils and Tableware',
-    'Office Supplies',
-    'Packaging Materials',
-    'Paper Goods'
-  ];
+    inventoryForm: FormGroup;
+    categories: string[] = [
+        'Food: Perishable',
+        'Food: Non-Perishable',
+        'Beverages: Alcoholic',
+        'Beverages: Non-Alcoholic',
+        'Cleaning Supplies',
+        'Kitchen Equipment',
+        'Utensils and Tableware',
+        'Office Supplies',
+        'Packaging Materials',
+        'Paper Goods',
+    ];
 
-  constructor(
-    public dialogRef: MatDialogRef<AddInventoryModalComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { suppliers: any[] },
-    private fb: FormBuilder
-  ) {
-    this.inventoryForm = this.fb.group({
-      upc: ['', Validators.required],
-      sku: ['', Validators.required],
-      description: ['', Validators.required],
-      category: ['', Validators.required],
-      quantity: [0, [Validators.required, Validators.min(0)]],
-      lowStockThreshold: [0, [Validators.required, Validators.min(0)]],
-      reorderAmount: [0, [Validators.required, Validators.min(0)]],
-      supplier: ['', Validators.required],
-      expirationDate: ['', Validators.required],
-      unitCost: [0, [Validators.required, Validators.min(0)]],
-      leadTime: [0, [Validators.required, Validators.min(0)]],
-      deliveryCost: [0, [Validators.required, Validators.min(0)]],
-      dailyDemand: [0, [Validators.required, Validators.min(0)]]
-
-    });
-  }
-
-  onSave() {
-    if (this.inventoryForm.valid) {
-      this.dialogRef.close(this.inventoryForm.value);
+    constructor(
+        public dialogRef: MatDialogRef<AddInventoryModalComponent>,
+        @Inject(MAT_DIALOG_DATA) public data: { suppliers: any[] },
+        private fb: FormBuilder,
+    ) {
+        this.inventoryForm = this.fb.group({
+            upc: ['', Validators.required],
+            sku: ['', Validators.required],
+            description: ['', Validators.required],
+            category: ['', Validators.required],
+            quantity: [0, [Validators.required, Validators.min(0)]],
+            lowStockThreshold: [0, [Validators.required, Validators.min(0)]],
+            reorderAmount: [0, [Validators.required, Validators.min(0)]],
+            supplier: ['', Validators.required],
+            expirationDate: ['', Validators.required],
+            unitCost: [0, [Validators.required, Validators.min(0)]],
+            leadTime: [0, [Validators.required, Validators.min(0)]],
+            deliveryCost: [0, [Validators.required, Validators.min(0)]],
+            dailyDemand: [0, [Validators.required, Validators.min(0)]],
+        });
     }
-  }
 
-  onCancel() {
-    this.dialogRef.close();
-  }
+    onSave() {
+        if (this.inventoryForm.valid) {
+            this.dialogRef.close(this.inventoryForm.value);
+        }
+    }
+
+    onCancel() {
+        this.dialogRef.close();
+    }
 }

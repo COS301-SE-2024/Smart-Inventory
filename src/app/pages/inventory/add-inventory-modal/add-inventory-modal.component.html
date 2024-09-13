@@ -1,4 +1,4 @@
-<h2 mat-dialog-title style="text-align: center">Add Inventory Item</h2>
+<h1 mat-dialog-title style="text-align: center; --mdc-dialog-subhead-size: 30px">Add Inventory Item</h1>
 <mat-dialog-content>
     <form [formGroup]="inventoryForm">
         <mat-form-field appearance="outline">
@@ -65,9 +65,9 @@
         </mat-form-field>
     </form>
 </mat-dialog-content>
-<mat-dialog-actions align="end">
-    <button mat-stroked-button (click)="onCancel()" class="btn">Cancel</button>
-    <button mat-stroked-button color="primary" class="btn" (click)="onSave()" [disabled]="!inventoryForm.valid">
+<mat-dialog-actions style="--mat-dialog-actions-alignment: center">
+    <button mat-flat-button (click)="onCancel()" class="btn">Cancel</button>
+    <button mat-flat-button color="primary" class="btn" (click)="onSave()" [disabled]="!inventoryForm.valid">
         Save
     </button>
 </mat-dialog-actions>

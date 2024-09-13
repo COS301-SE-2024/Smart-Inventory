@@ -16,153 +16,153 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
 @Component({
-  selector: 'app-stock-request-report',
-  standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    MatAutocompleteModule,
-    MatInputModule,
-    MatFormFieldModule,
-    MatDatepickerModule,
-    MatNativeDateModule,
-    MatSelectModule,
-    MatButtonModule,
-    MatIconModule
-  ],
-  templateUrl: './stock-request-report.component.html',
-  styleUrls: ['./stock-request-report.component.css']
+    selector: 'app-stock-request-report',
+    standalone: true,
+    imports: [
+        CommonModule,
+        FormsModule,
+        MatAutocompleteModule,
+        MatInputModule,
+        MatFormFieldModule,
+        MatDatepickerModule,
+        MatNativeDateModule,
+        MatSelectModule,
+        MatButtonModule,
+        MatIconModule,
+    ],
+    templateUrl: './stock-request-report.component.html',
+    styleUrls: ['./stock-request-report.component.css'],
 })
 export class StockRequestReportComponent implements OnInit {
-  
-  @ViewChild(MatAutocompleteTrigger) autocompleteTrigger!: MatAutocompleteTrigger;
-  
-  tenentId: string = '';
-  period: string = 'DAILY';
-  startDate: Date = new Date();
-  endDate: Date = new Date();
-  searchTerm: string = '';
-  selectedItem: any = null;
-  aggregatedData: any[] = [];
-  inventoryItems: any[] = [];
-  filteredItems: any[] = [];
+    @ViewChild(MatAutocompleteTrigger) autocompleteTrigger!: MatAutocompleteTrigger;
 
-  constructor(
-    private titleService: TitleService,
-    private changeDetectorRef: ChangeDetectorRef
-  ) {}
+    tenentId: string = '';
+    period: string = 'DAILY';
+    startDate: Date = new Date();
+    endDate: Date = new Date();
+    searchTerm: string = '';
+    selectedItem: any = null;
+    aggregatedData: any[] = [];
+    inventoryItems: any[] = [];
+    filteredItems: any[] = [];
 
-  async ngOnInit() {
-    const session = await fetchAuthSession();
-    this.titleService.updateTitle('Stock Requests Report');
-    this.tenentId = await this.getTenentId(session);
-    await this.getInventoryItems();
-  }
+    constructor(
+        private titleService: TitleService,
+        private changeDetectorRef: ChangeDetectorRef,
+    ) {}
 
-  async getTenentId(session: any): Promise<string> {
-    const cognitoClient = new CognitoIdentityProviderClient({
-      region: outputs.auth.aws_region,
-      credentials: session.credentials,
-    });
-
-    const getUserCommand = new GetUserCommand({
-      AccessToken: session.tokens?.accessToken.toString(),
-    });
-    const getUserResponse = await cognitoClient.send(getUserCommand);
-
-    const tenentId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
-
-    if (!tenentId) {
-      throw new Error('TenantId not found in user attributes');
+    async ngOnInit() {
+        const session = await fetchAuthSession();
+        this.titleService.updateTitle('Stock Requests Report');
+        this.tenentId = await this.getTenentId(session);
+        await this.getInventoryItems();
     }
 
-    return tenentId;
-  }
+    async getTenentId(session: any): Promise<string> {
+        const cognitoClient = new CognitoIdentityProviderClient({
+            region: outputs.auth.aws_region,
+            credentials: session.credentials,
+        });
 
-  async getInventoryItems() {
-    const session = await fetchAuthSession();
-    const lambdaClient = new LambdaClient({
-      region: outputs.auth.aws_region,
-      credentials: session.credentials
-    });
+        const getUserCommand = new GetUserCommand({
+            AccessToken: session.tokens?.accessToken.toString(),
+        });
+        const getUserResponse = await cognitoClient.send(getUserCommand);
 
-    const command = new InvokeCommand({
-      FunctionName: 'inventorySummary-getItems',
-      Payload: JSON.stringify({ tenentId: this.tenentId }),
-    });
+        const tenentId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
 
-    try {
-      const { Payload } = await lambdaClient.send(command);
-      const result = JSON.parse(new TextDecoder().decode(Payload));
-      if (result.statusCode === 200) {
-        this.inventoryItems = JSON.parse(result.body);
-        this.filteredItems = this.inventoryItems;
-      }
-    } catch (error) {
-      console.error('Error fetching inventory items:', error);
+        if (!tenentId) {
+            throw new Error('TenantId not found in user attributes');
+        }
+
+        return tenentId;
     }
-  }
 
-  filterItems() {
-    this.filteredItems = this.inventoryItems.filter(item =>
-      item.SKU.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-      item.description.toLowerCase().includes(this.searchTerm.toLowerCase())
-    );
-  }
+    async getInventoryItems() {
+        const session = await fetchAuthSession();
+        const lambdaClient = new LambdaClient({
+            region: outputs.auth.aws_region,
+            credentials: session.credentials,
+        });
 
-  selectItem(item: any) {
-    this.selectedItem = item;
-    this.searchTerm = item.SKU;
-    this.aggregatedData = []; // Clear previous results when a new item is selected
-    this.filteredItems = []; // Clear filtered items
-    this.autocompleteTrigger.closePanel(); // Close the autocomplete panel
-    this.changeDetectorRef.detectChanges(); // Force change detection
-  }
+        const command = new InvokeCommand({
+            FunctionName: 'inventorySummary-getItems',
+            Payload: JSON.stringify({ tenentId: this.tenentId }),
+        });
 
-  clearSelection() {
-    this.selectedItem = null;
-    this.searchTerm = '';
-    this.aggregatedData = []; // Clear results when selection is cleared
-    this.filteredItems = this.inventoryItems; // Reset filtered items to all items
-    this.changeDetectorRef.detectChanges(); // Force change detection
-  }
-  async getAggregatedData() {
-    const session = await fetchAuthSession();
-    const lambdaClient = new LambdaClient({
-      region: outputs.auth.aws_region,
-      credentials: session.credentials
-    });
-
-    const command = new InvokeCommand({
-      FunctionName: 'getStockRequestAggregates',
-      Payload: JSON.stringify({
-        tenentId: this.tenentId,
-        period: this.period,
-        startDate: this.startDate.toISOString().split('T')[0],
-        endDate: this.endDate.toISOString().split('T')[0],
-        sku: this.selectedItem?.SKU
-      }),
-    });
-
-    try {
-      const { Payload } = await lambdaClient.send(command);
-      const result = JSON.parse(new TextDecoder().decode(Payload));
-      if (result.statusCode === 200) {
-        this.aggregatedData = JSON.parse(result.body);
-        this.sortAggregatedData();
-        this.changeDetectorRef.detectChanges();
-      }
-    } catch (error) {
-      console.error('Error fetching aggregated data:', error);
+        try {
+            const { Payload } = await lambdaClient.send(command);
+            const result = JSON.parse(new TextDecoder().decode(Payload));
+            if (result.statusCode === 200) {
+                this.inventoryItems = JSON.parse(result.body);
+                this.filteredItems = this.inventoryItems;
+            }
+        } catch (error) {
+            console.error('Error fetching inventory items:', error);
+        }
     }
-  }
 
-  sortAggregatedData() {
-    this.aggregatedData.sort((a, b) => {
-      if (a.date !== b.date) {
-        return a.date.localeCompare(b.date);
-      }
-      return a.sku.localeCompare(b.sku);
-    });
-  }
+    filterItems() {
+        this.filteredItems = this.inventoryItems.filter(
+            (item) =>
+                item.SKU.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+                item.description.toLowerCase().includes(this.searchTerm.toLowerCase()),
+        );
+    }
+
+    selectItem(item: any) {
+        this.selectedItem = item;
+        this.searchTerm = item.SKU;
+        this.aggregatedData = []; // Clear previous results when a new item is selected
+        this.filteredItems = []; // Clear filtered items
+        this.autocompleteTrigger.closePanel(); // Close the autocomplete panel
+        this.changeDetectorRef.detectChanges(); // Force change detection
+    }
+
+    clearSelection() {
+        this.selectedItem = null;
+        this.searchTerm = '';
+        this.aggregatedData = []; // Clear results when selection is cleared
+        this.filteredItems = this.inventoryItems; // Reset filtered items to all items
+        this.changeDetectorRef.detectChanges(); // Force change detection
+    }
+    async getAggregatedData() {
+        const session = await fetchAuthSession();
+        const lambdaClient = new LambdaClient({
+            region: outputs.auth.aws_region,
+            credentials: session.credentials,
+        });
+
+        const command = new InvokeCommand({
+            FunctionName: 'getStockRequestAggregates',
+            Payload: JSON.stringify({
+                tenentId: this.tenentId,
+                period: this.period,
+                startDate: this.startDate.toISOString().split('T')[0],
+                endDate: this.endDate.toISOString().split('T')[0],
+                sku: this.selectedItem?.SKU,
+            }),
+        });
+
+        try {
+            const { Payload } = await lambdaClient.send(command);
+            const result = JSON.parse(new TextDecoder().decode(Payload));
+            if (result.statusCode === 200) {
+                this.aggregatedData = JSON.parse(result.body);
+                this.sortAggregatedData();
+                this.changeDetectorRef.detectChanges();
+            }
+        } catch (error) {
+            console.error('Error fetching aggregated data:', error);
+        }
+    }
+
+    sortAggregatedData() {
+        this.aggregatedData.sort((a, b) => {
+            if (a.date !== b.date) {
+                return a.date.localeCompare(b.date);
+            }
+            return a.sku.localeCompare(b.sku);
+        });
+    }
 }

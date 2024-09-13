@@ -30,12 +30,16 @@
 .test {
     border-radius: 20px;
     margin-right: 10px;
-    --mdc-outlined-button-label-text-color: black;
-    --mdc-outlined-button-outline-color: #74777f;
     border-radius: 5px;
-    width: 160px;
+    width: 200px;
+    background-color: white;
+    color: #000000;
     height: 40px;
-    padding: 5px;
+    /* border: 1px solid #74777f; */
+    box-shadow: 2px 2px 2px 0px #e0e0e0;
+    border-color: #c4c6d0;
+    border-width: 1px;
+    border-style: solid;
 }
 
 /* width */
@@ -150,7 +154,11 @@
     --mat-tab-header-active-focus-indicator-color: #000;
     --mdc-secondary-navigation-tab-container-height: 35px;
 }
-
+.mat-mdc-tab-labels {
+    display: flex;
+    flex: 1 0 auto;
+    background-color: white;
+}
 .content
     .second-row
     .right-pane

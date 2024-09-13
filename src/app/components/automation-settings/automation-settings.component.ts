@@ -17,6 +17,9 @@ import { TitleService } from '../../components/header/title.service';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { CognitoService } from '../../_services/cognito.service';
 import { AuthenticatorService } from '@aws-amplify/ui-angular';
+import { MatDialog } from '@angular/material/dialog';
+import { CustomQuoteModalComponent } from '../../components/custom-quote-modal/custom-quote-modal.component';
+import { TemplateDialogComponent } from './template-dialog.component';
 @Component({
     selector: 'app-automation-settings',
     standalone: true,
@@ -38,8 +41,46 @@ import { AuthenticatorService } from '@aws-amplify/ui-angular';
         MatCheckboxModule,
         MatGridListModule,
         AutomationSettingsComponent,
+        CustomQuoteModalComponent,
     ],
     templateUrl: './automation-settings.component.html',
     styleUrl: './automation-settings.component.css',
 })
-export class AutomationSettingsComponent {}
+export class AutomationSettingsComponent {
+    constructor(private dialog: MatDialog) {}
+    templates = {
+        template1: {
+            title: 'Amazon',
+            subtitle: 'Order to be Automated',
+            frequency: 'Monthly',
+            items: '',
+        },
+        template2: {
+            title: 'Takealot',
+            subtitle: 'Order to be Automated',
+            frequency: 'Weekly',
+            items: '',
+        },
+        template3: {
+            title: 'Uber Eats',
+            subtitle: 'Order to be Automated',
+            frequency: 'Quaterly',
+            items: '',
+        },
+    };
+
+    openDialog(template: any): void {
+        const dialogRef = this.dialog.open(TemplateDialogComponent, {
+            width: '250px',
+            data: { template: template },
+        });
+
+        dialogRef.afterClosed().subscribe((result) => {
+            if (result) {
+                // Handle the result
+                console.log('Dialog result:', result);
+            }
+        });
+    }
+    
+}

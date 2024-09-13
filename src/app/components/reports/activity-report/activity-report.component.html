@@ -40,14 +40,10 @@
         border-radius: 20px;
         height: 50px;
         background-color: transparent;
+        z-index: 1;
     "
 >
-    <button
-        mat-flat-button
-        class="btn"
-        (click)="back()"
-        style="background-color: #005cbb; border-radius: 5px; height: 40px"
-    >
+    <button mat-flat-button class="btn" (click)="back()">
         <mat-icon style="font-size: 24px; height: 24px; width: 24px">arrow_back</mat-icon> Back To Reports
     </button>
 </mat-toolbar>

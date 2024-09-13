@@ -47,6 +47,10 @@ export class HeaderComponent implements OnInit {
         );
     }
 
+    clickSettings() {
+        this.router.navigate(['/settings']);
+    }
+
     async logout() {
         try {
             await signOut();

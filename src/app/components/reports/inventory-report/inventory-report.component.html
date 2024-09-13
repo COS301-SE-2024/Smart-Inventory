@@ -4,7 +4,7 @@
 
 <div *ngIf="!isLoading" class="gridster-container">
     <gridster [options]="gridsterOptions">
-        <gridster-item *ngFor="let item of gridsterItems" [item]="item" [ngClass]="{'grid-card': item['isGrid']}">
+        <gridster-item *ngFor="let item of gridsterItems" [item]="item" [ngClass]="{ 'grid-card': item['isGrid'] }">
             <ng-container *ngIf="item['chartIndex'] !== undefined">
                 <mat-card class="chart-card">
                     <ag-charts-angular [options]="options[item['chartIndex']]"></ag-charts-angular>
@@ -18,46 +18,24 @@
             <ng-container *ngIf="item['isMetrics']">
                 <mat-card class="metrics-card">
                     <mat-card-header>
-                        <mat-card-title>{{InventoryReport.title}}</mat-card-title>
-                        <mat-card-subtitle>{{InventoryReport.subtitle}}</mat-card-subtitle>
+                        <mat-card-title>{{ InventoryReport.title }}</mat-card-title>
+                        <mat-card-subtitle>{{ InventoryReport.subtitle }}</mat-card-subtitle>
                     </mat-card-header>
                     <mat-card-content>
                         <mat-list>
                             <mat-list-item *ngFor="let metric of InventoryReport.metrics | keyvalue">
-                                <mat-icon matListItemIcon>{{metric.value.icon}}</mat-icon>
-                                <span matListItemTitle>{{metric.value.label}}: {{metric.value.value}}</span>
+                                <mat-icon matListItemIcon>{{ metric.value.icon }}</mat-icon>
+                                <span matListItemTitle>{{ metric.value.label }}: {{ metric.value.value }}</span>
                             </mat-list-item>
                         </mat-list>
                     </mat-card-content>
                 </mat-card>
-            </div>
-        </mat-grid-tile>
-        <mat-grid-tile [colspan]="7" [rowspan]="2">
-            <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
-                <mat-card style="height: 100%; width: 100%">
-                    <ag-charts-angular [options]="options5" style="height: 100%"></ag-charts-angular>
-                </mat-card>
-            </div>
-        </mat-grid-tile>
-    </mat-grid-list>
-    <mat-toolbar
-        style="
-            position: sticky;
-            bottom: 0;
-            left: 0;
-            width: 300px;
-            border-radius: 20px;
-            height: 50px;
-            background-color: transparent;
-        "
-    >
-        <button
-            mat-flat-button
-            class="btn"
-            (click)="back()"
-            style="background-color: #005cbb; border-radius: 5px; height: 40px"
-        >
-            <mat-icon style="font-size: 24px; height: 24px; width: 24px">arrow_back</mat-icon> Back To Reports
-        </button>
-    </mat-toolbar>
+            </ng-container>
+        </gridster-item>
+        <mat-toolbar class="back-toolbar">
+            <button mat-flat-button class="btn" (click)="back()">
+                <mat-icon>arrow_back</mat-icon> Back To Reports
+            </button>
+        </mat-toolbar>
+    </gridster>
 </div>

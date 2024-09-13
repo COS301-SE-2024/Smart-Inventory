@@ -289,6 +289,10 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
         this.viewGeneratedQuoteClicked.emit();
     }
 
+    onViewTemplates() {
+        this.viewAutomationTemplatesClicked.emit();
+    }
+
     addRow() {
         this.addNewClicked.emit();
     }

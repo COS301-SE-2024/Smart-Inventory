@@ -203,6 +203,10 @@ export class OrdersComponent implements OnInit {
         }
     }
 
+    viewTemplatesQuotes() {
+        this.isTemplateSidePaneOpen = true;
+    }
+
     openCustomQuoteModal(
         quoteDetails: any,
         orderId: string,

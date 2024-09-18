@@ -252,11 +252,15 @@ export class DashboardComponent implements OnInit {
             emptyCellDragMaxCols: 50,
             emptyCellDragMaxRows: 50,
             ignoreMarginInRow: false,
+            itemChangeCallback: () => this.saveState(),
+            itemResizeCallback: () => this.saveState(),
             draggable: {
                 enabled: true,
+                stop: () => this.saveState()
             },
             resizable: {
                 enabled: true,
+                stop: () => this.saveState()
             },
             swap: true,
             pushItems: false,
@@ -268,6 +272,11 @@ export class DashboardComponent implements OnInit {
             disableWarnings: false,
             scrollToNewItems: false
         };
+        this.saveTrigger.pipe(
+            debounceTime(500) // Debounce for 500ms
+        ).subscribe(() => {
+            this.persistState();
+        });
 
         // this.dashboard = [
         //     { cols: 3, rows: 2, y: 0, x: 0, cardData: this.cardData[0] },
@@ -656,9 +665,9 @@ export class DashboardComponent implements OnInit {
 
     async ngOnInit() {
         this.titleService.updateTitle('Dashboard');
-        // this.isLoading = true;
 
-        // try {
+
+
         await this.loadInventoryData();
         await this.fetchUsers();
         // await this.dashData();
@@ -672,6 +681,35 @@ export class DashboardComponent implements OnInit {
         this.updateCardData();
 
         this.initializeDashboard();
+        this.loadState();
+    }
+
+    loadState() {
+        try {
+            const savedState = localStorage.getItem('dashboardState');
+            if (savedState) {
+                const parsedState = JSON.parse(savedState);
+                if (Array.isArray(parsedState)) {
+                    this.dashboard = parsedState;
+                } else {
+                    console.error('Saved state is not an array, initializing default dashboard');
+                    this.initializeDashboard();
+                }
+            } else {
+                this.initializeDashboard();
+            }
+        } catch (error) {
+            console.error('Error loading dashboard state:', error);
+            this.initializeDashboard();
+        }
+    }
+
+    saveState() {
+        this.saveTrigger.next();
+    }
+
+    private persistState() {
+        localStorage.setItem('dashboardState', JSON.stringify(this.dashboard));
     }
 
     processDashboardData() {
@@ -842,6 +880,7 @@ export class DashboardComponent implements OnInit {
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
                 this.dashboard = this.dashboard.filter(dashboardItem => dashboardItem !== item);
+                this.saveState();
                 this.isDeleteMode = false;
             }
         });
@@ -868,6 +907,7 @@ export class DashboardComponent implements OnInit {
             chartConfig: chartConfig
         };
         this.dashboard.push(newItem);
+        this.saveState();
         this.closeSidepanel();
     }
 
@@ -915,7 +955,7 @@ export class DashboardComponent implements OnInit {
                 // Second half-width item
                 {
                     cols: 6,
-                    rows: 3,
+                    rows: 4,
                     y: 6,
                     x: 6,
                     cardId: 'donut-chart',

@@ -29,8 +29,8 @@
                     </div>
                     <div class="right-content">
                         <div class="progress-ring"
-                            [style.background-image]="getProgressRingStyle(item['cardData'].change)">
-                            <span class="change-value" [ngClass]="getChangeColor(item['cardData'].change)">
+                            [style.background-image]="getProgressRingStyle(item['cardData'].change, item['cardData'].color)">
+                            <span class="change-value" [ngClass]="getColor(item['cardData'].color)">
                                 {{ item['cardData'].change > 0 ? '+' : '' }}{{ item['cardData'].change }}%
                             </span>
                         </div>

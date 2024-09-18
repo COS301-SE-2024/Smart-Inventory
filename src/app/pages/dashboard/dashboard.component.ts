@@ -33,12 +33,14 @@ import { DeleteConfirmationModalComponent } from './deleteWidget';
 import { BarChartComponent } from 'app/components/charts/widgets/widgetBar';
 import { LineChartComponent } from 'app/components/charts/widgets/widgetLine';
 import { PieChartComponent } from 'app/components/charts/widgets/widgetPie';
+import { DataServiceService } from './data-service.service';
 interface CardData {
     title: string;
     value: string | number;
     icon: string;
     type: 'currency' | 'number' | 'percentage' | 'string';
     change?: number;
+    color: string;
 }
 
 interface DashboardItem extends GridsterItem {
@@ -59,12 +61,39 @@ interface DashboardData {
     avgFulfillmentTime: number;
     inventoryLevels: number;
     topSeller: string;
+    backorders: number;
     baselineValues: {
         fulfillmentDays: number;
         backorders: number;
         inventoryLevels: number;
     };
 }
+
+
+interface MetricPerformance {
+    value: number | string;
+    percentageChange: number;
+    color: 'green' | 'yellow' | 'red';
+}
+
+interface StockRequest {
+    tenentId: string;
+    sku: string;
+    quantityRequested: number;
+}
+
+interface Order {
+    tenentId: string;
+    Order_Status: string;
+    Expected_Delivery_Date: string | null;
+    Order_Date: string;
+    Selected_Supplier?: string;
+}
+
+interface SkuCounts {
+    [sku: string]: number;
+}
+
 
 @Component({
     selector: 'app-dashboard',
@@ -127,29 +156,17 @@ export class DashboardComponent implements OnInit {
 
 
     rowData: any[] = [];
-    dashboardData: DashboardData = {
-        avgFulfillmentTime: 0,
-        inventoryLevels: 0,
-        topSeller: 'N/A',
-        baselineValues: {
-            inventoryLevels: 10, // Baseline inventory levels
-            backorders: 5,      // Baseline backorders
-            fulfillmentDays: 390 // Baseline average fulfillment days (for comparison)
-        }
-    };
+    metricPerformance: Record<string, MetricPerformance> = {};
+    dashboardData: any;
     inventoryCount: number = 0;
     userCount: number = 0;
 
     options: GridsterConfig;
     stockRequest: any[] = [];
+    inventory: any[] = [];
     orders: any[] = [];
 
-    cardData: CardData[] = [
-        // { title: 'Avg Fulfillment Time', value: 164455.00, icon: 'hourglass_full', type: 'currency', change: 5.2 },
-        // { title: 'Backorders', value: 21790.00, icon: 'assignment_return', type: 'number', change: -3.1 },
-        // { title: 'Inventory Levels', value: 20, icon: 'storage', type: 'number', change: 100 },
-        // { title: 'Top Seller', value: 'PS5', icon: 'star_rate', type: 'string', change: -15 },
-    ];
+    cardData: CardData[] = [];
 
     chartConfigs: ChartConfig[] = [
         {
@@ -201,7 +218,8 @@ export class DashboardComponent implements OnInit {
         private titleService: TitleService,
         private filterService: FilterService,
         private cdr: ChangeDetectorRef,
-        private dialog: MatDialog
+        private dialog: MatDialog,
+        private service: DataServiceService
     ) {
         Amplify.configure(outputs);
         this.options = {
@@ -259,59 +277,146 @@ export class DashboardComponent implements OnInit {
         // ];
     }
 
-    async populateRequestOrders(stockRequests: any[], orders: any[]) {
-        const requestSummary = new Map<string, number>();
+    async populateRequestOrders(stockRequests: StockRequest[], orders: Order[]): Promise<any> {
+        const session = await fetchAuthSession();
+        this.loader.setLoading(false);
 
-        // Aggregate stock requests
-        stockRequests.forEach(request => {
-            requestSummary.set(request.sku, (requestSummary.get(request.sku) || 0) + request.quantityRequested);
+        const cognitoClient = new CognitoIdentityProviderClient({
+            region: outputs.auth.aws_region,
+            credentials: session.credentials,
         });
 
-        const totalRequests = Array.from(requestSummary.values()).reduce((a, b) => a + b, 0);
-        const highestRequest = Math.max(...requestSummary.values());
-        const mostRequestedSku = [...requestSummary.entries()].reduce((a, b) => a[1] > b[1] ? a : b)[0];
-        const mostRequestedPercentage = (requestSummary.get(mostRequestedSku)! / totalRequests) * 100;
+        const getUserCommand = new GetUserCommand({
+            AccessToken: session.tokens?.accessToken.toString(),
+        });
+        const getUserResponse = await cognitoClient.send(getUserCommand);
 
-        // Process orders for backorder details
-        const backorders = orders.filter(order => order.Order_Status === "Pending Approval" && order.Expected_Delivery_Date);
+        const tenantId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
+        // Filter stock requests by tenantId
+        const filteredStockRequests = stockRequests.filter(request => request.tenentId === tenantId);
+
+        // Calculate requests data
+        const skuCounts: SkuCounts = filteredStockRequests.reduce((counts, request) => {
+            counts[request.sku] = (counts[request.sku] || 0) + request.quantityRequested;
+            return counts;
+        }, {} as SkuCounts);
+
+        const totalRequests: number = Object.values(skuCounts).reduce((sum, count) => sum + count, 0);
+        const highestRequest: number = Math.max(...Object.values(skuCounts));
+        const mostRequestedEntry = Object.entries(skuCounts).reduce((a, b) => a[1] > b[1] ? a : b);
+        const mostRequestedSku = mostRequestedEntry[0];
+        const mostRequestedPercentage = (skuCounts[mostRequestedSku] / totalRequests) * 100;
+
+        // Calculate backorders data
+        const backorders = orders.filter(order =>
+            order.tenentId === tenantId &&
+            order.Order_Status === "Pending Approval" &&
+            order.Expected_Delivery_Date
+        );
+        const currentBackorders = backorders.length;
+
         const delays = backorders.map(order => this.calculateDelay(order.Order_Date, order.Expected_Delivery_Date!));
-        const totalDelay = delays.reduce((a, b) => a + b, 0);
-        const averageDelay = delays.length > 0 ? totalDelay / delays.length : 0;
-        const longestDelay = Math.max(...delays);
-        const longestBackorderItem = orders.find(order => this.calculateDelay(order.Order_Date, order.Expected_Delivery_Date!) === longestDelay);
+        const totalDelay = delays.reduce((sum, delay) => sum + delay, 0);
+        const averageDelay = currentBackorders > 0 ? totalDelay / currentBackorders : 0;
 
-        return {
+        const longestDelay = Math.max(...delays);
+        const longestBackorderItem = backorders.find(order =>
+            this.calculateDelay(order.Order_Date, order.Expected_Delivery_Date!) === longestDelay
+        );
+
+        // Populate RequestOrders
+        this.RequestOrders = {
             requests: {
                 totalRequests,
                 mostRequested: {
-                    name: mostRequestedSku,
-                    percentage: mostRequestedPercentage
+                    name: mostRequestedSku || "None found",
+                    percentage: Number(mostRequestedPercentage.toFixed(2)) || 0
                 },
                 highestRequest
             },
             backorders: {
-                currentBackorders: backorders.length,
-                averageDelay,
+                currentBackorders,
+                averageDelay: Number(averageDelay.toFixed(2)),
                 longestBackorderItem: {
-                    productName: longestBackorderItem && longestBackorderItem.Selected_Supplier ? longestBackorderItem.Selected_Supplier : "Up to date",
-                    delay: longestBackorderItem ? this.formatDelay(longestDelay) : ""
+                    productName: longestBackorderItem?.Selected_Supplier || 'None found',
+                    delay: longestDelay > 0 ? this.formatDelay(longestDelay) : ''
                 }
             }
         };
-    }
 
+        console.log('Populated RequestOrders:', this.RequestOrders);
+    }
+    // Helper methods (make sure these are part of your component)
     private calculateDelay(orderDate: string, expectedDate: string): number {
         const order = new Date(orderDate);
         const expected = new Date(expectedDate);
-        return (expected.getTime() - order.getTime()) / (1000 * 3600 * 24);
+        return Math.max(0, (expected.getTime() - order.getTime()) / (1000 * 60 * 60 * 24));
     }
 
     private formatDelay(delay: number): string {
-        return delay > 0 ? delay.toString() : "";  // Return an empty string if delay is zero or not calculable
+        return delay > 0 ? `${delay.toFixed(0)} days` : "";
     }
-
     // Integration
     inventoryLevel: number = 20;
+
+
+    async loadInventoryData() {
+        try {
+            const session = await fetchAuthSession();
+            this.loader.setLoading(false);
+
+            const cognitoClient = new CognitoIdentityProviderClient({
+                region: outputs.auth.aws_region,
+                credentials: session.credentials,
+            });
+
+            const getUserCommand = new GetUserCommand({
+                AccessToken: session.tokens?.accessToken.toString(),
+            });
+            const getUserResponse = await cognitoClient.send(getUserCommand);
+
+            const tenantId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
+
+            if (!tenantId) {
+                console.error('TenantId not found in user attributes');
+                this.rowData = [];
+                return;
+            }
+
+            const lambdaClient = new LambdaClient({
+                region: outputs.auth.aws_region,
+                credentials: session.credentials,
+            });
+
+
+            const invokeCommand = new InvokeCommand({
+                FunctionName: 'Inventory-getItems',
+                Payload: new TextEncoder().encode(JSON.stringify({
+                    pathParameters: {
+                        tenentId: tenantId, // Spelling as expected by the Lambda function
+                    }
+                })),
+            });
+
+            const lambdaResponse = await lambdaClient.send(invokeCommand);
+            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+            console.log('Response from Lambda:', responseBody);
+
+            if (responseBody.statusCode === 200) {
+                const inventoryItems = JSON.parse(responseBody.body);
+                this.inventory = inventoryItems;
+                console.log('Processed inventory items:', this.rowData);
+            } else {
+                console.error('Error fetching inventory data:', responseBody.body);
+                this.rowData = [];
+            }
+        } catch (error) {
+            console.error('Error in loadInventoryData:', error);
+            this.rowData = [];
+        } finally {
+            this.isLoading = false;
+        }
+    }
 
     async dashData() {
         try {
@@ -366,77 +471,20 @@ export class DashboardComponent implements OnInit {
             if (responseBody.statusCode === 200) {
                 const dashboardData = JSON.parse(responseBody.body);
                 // console.log('Dashboard Data:', dashboardData);
-                console.log('I am a metric', parseFloat((((dashboardData.inventoryLevels - baselineValues.inventoryLevels) / baselineValues.inventoryLevels) * 100).toFixed(2)));
+                // console.log('I am a metric', parseFloat((((dashboardData.inventoryLevels - baselineValues.inventoryLevels) / baselineValues.inventoryLevels) * 100).toFixed(2)));
                 this.dashboardData.inventoryLevels = parseFloat((((dashboardData.inventoryLevels - baselineValues.inventoryLevels) / baselineValues.inventoryLevels) * 100).toFixed(2));
                 this.dashboardData.avgFulfillmentTime = dashboardData.avgFulfillmentTime;
                 this.dashboardData.topSeller = dashboardData.topSeller;
+                this.dashboardData.backorders = dashboardData.backorders;
                 // this.dashboardData.
-
-
-
-                // Update the dashboardInfo with new data from the Lambda function
-                // this.dashboard = [
-                //     {
-                //         cols: 1,
-                //         rows: 1,
-                //         y: 0,
-                //         x: 4,
-                //         name: 'Inventory Levels',
-                //         icon: 'storage',
-                //         analytic: dashboardData.inventoryLevels.toString(),
-                //         percentage: parseFloat((((dashboardData.inventoryLevels - baselineValues.inventoryLevels) / baselineValues.inventoryLevels) * 100).toFixed(2)), // Update this if needed from dashboardData
-                //         type: 'card',
-                //         isActive: true,
-                //         tooltip: 'Current inventory stock count.',
-                //     },
-                //     {
-                //         cols: 1,
-                //         rows: 1,
-                //         y: 0,
-                //         x: 5,
-                //         name: 'Backorders',
-                //         icon: 'assignment_return',
-                //         analytic: dashboardData.backorders.toString(),
-                //         percentage: parseFloat((((dashboardData.backorders - baselineValues.backorders) / baselineValues.backorders) * 100).toFixed(2)), // Update this if needed from dashboardData
-                //         type: 'card',
-                //         isActive: true,
-                //         tooltip: 'Orders pending due to lack of stock.',
-                //     },
-                //     {
-                //         cols: 1,
-                //         rows: 1,
-                //         y: 0,
-                //         x: 6,
-                //         name: 'Avg Fulfillment Time',
-                //         icon: 'hourglass_full',
-                //         analytic: dashboardData.avgFulfillmentTime,
-                //         percentage: parseFloat((((parseFloat(dashboardData.avgFulfillmentTime.split(" days")[0]) - baselineValues.fulfillmentDays) / baselineValues.fulfillmentDays) * 100).toFixed(2)), // Update this if needed from dashboardData
-                //         type: 'card',
-                //         isActive: true,
-                //         tooltip: 'Average time taken from order placement to shipment.',
-                //     },
-                //     {
-                //         cols: 1,
-                //         rows: 1,
-                //         y: 0,
-                //         x: 7,
-                //         name: 'Top Seller',
-                //         icon: 'star_rate',
-                //         analytic: dashboardData.topSeller,
-                //         percentage: parseFloat("0.12"), // Update this if needed from dashboardData
-                //         type: 'card',
-                //         isActive: true,
-                //         tooltip: 'The product with the highest requests.',
-                //     },
-                // ];
                 console.log('Processed dashboard data:', dashboardData);
             } else {
                 console.error('Error fetching dashboard data:', responseBody.body);
-                
+
             }
         } catch (error) {
             console.error('Error in dashboardData:', error);
-            
+
         }
         finally {
             // this..isLoading = false;
@@ -484,7 +532,7 @@ export class DashboardComponent implements OnInit {
             if (responseBody.statusCode === 200) {
                 const orders = JSON.parse(responseBody.body);
                 this.orders = orders;
-                console.log('Processed orders:', orders);
+                console.log('Processed orders from orders:', orders);
 
             } else {
                 console.error('Error fetching orders data:', responseBody.body);
@@ -537,17 +585,9 @@ export class DashboardComponent implements OnInit {
             console.log('Response from Lambda:', responseBody);
 
             if (responseBody.statusCode === 200) {
-                const orders = JSON.parse(responseBody.body);
-                // orders.forEach((request: { category: string | number; quantityRequested: number; }) => {
-                //     if (this.inventoryData[request.category]) {
-                //         this.inventoryData[request.category].requestedStock = (this.inventoryData[request.category].requestedStock || 0) + request.quantityRequested;
-                //     } else {
-                //         this.inventoryData[request.category] = { currentStock: 0, requestedStock: request.quantityRequested };
-                //     }
-                // });
-                // this.updateChartData();
-                this.stockRequest = orders;
-                console.log('Processed orders:', orders);
+                const stock = JSON.parse(responseBody.body);
+                this.stockRequest = stock;
+                console.log('Processed stock requests:', stock);
             } else {
                 console.error('Error fetching orders data:', responseBody.body);
                 // this.rowData = [];
@@ -619,61 +659,174 @@ export class DashboardComponent implements OnInit {
         // this.isLoading = true;
 
         // try {
-            // await this.loadInventoryData();
-            await this.fetchUsers();
-            await this.dashData();
-            await this.loadOrdersData();
-            await this.loadStockData();
-            this.RequestOrders = await this.populateRequestOrders(this.stockRequest, this.orders);
+        await this.loadInventoryData();
+        await this.fetchUsers();
+        // await this.dashData();
+        await this.loadOrdersData();
+        await this.loadStockData();
+        this.processDashboardData();
+        this.populateRequestOrders(this.stockRequest, this.orders);
+        // this.RequestOrders = await this.populateRequestOrders(this.stockRequest, this.orders);
 
-            // Update cardData with the fetched information
-            this.updateCardData();
+        // Update cardData with the fetched information
+        this.updateCardData();
 
-            this.initializeDashboard();
-        // } catch (error) {
-        //     console.error('Error initializing dashboard:', error);
-        // } finally {
-        //     // this.isLoading = false;
-        //     this.cdr.detectChanges();
-        // }
+        this.initializeDashboard();
+    }
+
+    processDashboardData() {
+        this.dashboardData = this.service.processDashboardData(
+            this.orders,
+            this.stockRequest,
+            this.inventory
+        );
+        this.calculateMetricPerformance();
+    }
+
+    calculateMetricPerformance() {
+        if (!this.dashboardData || !this.dashboardData.metricConfigs) {
+            console.error('Dashboard data or metric configs are missing');
+            return;
+        }
+
+        const metrics = ['avgFulfillmentTime', 'backorders', 'inventoryLevels'];
+        metrics.forEach(metric => {
+            const config = this.dashboardData.metricConfigs[metric];
+            if (!config) {
+                console.warn(`Config for metric ${metric} is missing`);
+                return;
+            }
+
+            let currentValue = this.dashboardData[metric];
+            if (currentValue === undefined) {
+                console.warn(`Value for metric ${metric} is missing`);
+                return;
+            }
+
+            if (metric === 'avgFulfillmentTime') {
+                currentValue = this.parseTimeToHours(currentValue);
+            }
+
+            let percentageChange = config.baseline !== 0
+                ? ((currentValue - config.baseline) / config.baseline) * 100
+                : 0;
+            if (config.isInverted) {
+                percentageChange = -percentageChange;
+            }
+
+            let color: 'green' | 'yellow' | 'red';
+            if (percentageChange >= config.goodThreshold) {
+                color = 'green';
+            } else if (percentageChange <= config.badThreshold) {
+                color = 'red';
+            } else {
+                color = 'yellow';
+            }
+
+            this.metricPerformance[metric] = {
+                value: this.dashboardData[metric],
+                percentageChange: Number(percentageChange.toFixed(2)),
+                color
+            };
+        });
+
+        // Handle topSeller separately
+        if (this.dashboardData.topSeller && this.dashboardData.topSellerPercentage !== undefined) {
+            this.metricPerformance['topSeller'] = {
+                value: `${this.dashboardData.topSeller} (${this.dashboardData.topSellerPercentage.toFixed(1)}%)`,
+                percentageChange: this.dashboardData.topSellerPercentage,
+                color: 'green' // You might want to implement a different logic for color here
+            };
+        } else {
+            console.warn('Top seller data is missing');
+        }
     }
 
     updateCardData() {
         this.cardData = [
             {
                 title: 'Avg Fulfillment Time',
-                value: this.dashboardData.avgFulfillmentTime || 0,
+                value: this.dashboardData.avgFulfillmentTime,
                 icon: 'hourglass_full',
-                type: 'number',
-                change: this.calculateChange(this.dashboardData.avgFulfillmentTime, this.dashboardData.baselineValues.fulfillmentDays)
+                type: 'string',
+                change: this.metricPerformance['avgFulfillmentTime'].percentageChange,
+                color: this.metricPerformance['avgFulfillmentTime'].color
             },
             {
                 title: 'Backorders',
-                value: this.RequestOrders.backorders.currentBackorders || 0,
+                value: this.dashboardData.backorders,
                 icon: 'assignment_return',
                 type: 'number',
-                change: this.calculateChange(this.RequestOrders.backorders.currentBackorders, this.dashboardData.baselineValues.backorders)
+                change: this.metricPerformance['backorders'].percentageChange,
+                color: this.metricPerformance['backorders'].color
             },
             {
                 title: 'Inventory Levels',
-                value: this.dashboardData.inventoryLevels || 0,
+                value: this.dashboardData.inventoryLevels,
                 icon: 'storage',
                 type: 'number',
-                change: this.calculateChange(this.dashboardData.inventoryLevels, this.dashboardData.baselineValues.inventoryLevels)
+                change: this.metricPerformance['inventoryLevels'].percentageChange,
+                color: this.metricPerformance['inventoryLevels'].color
             },
             {
                 title: 'Top Seller',
-                value: this.dashboardData.topSeller || 'N/A',
+                value: `${this.dashboardData.topSeller}`,
                 icon: 'star_rate',
                 type: 'string',
-                change: 0 // You might want to calculate this based on some criteria
+                change: this.metricPerformance['topSeller'].percentageChange,
+                color: this.metricPerformance['topSeller'].color
             },
         ];
     }
 
+    calculateTimeChange(currentValue: string, baselineValue: string): number {
+        const current = this.parseTimeToHours(currentValue);
+        const baseline = this.parseTimeToHours(baselineValue);
+
+        if (baseline === 0) return 0;
+        return parseFloat((((current - baseline) / baseline) * 100).toFixed(2));
+    }
+
+    parseTimeToHours(value: string): number {
+        const parts = value.split(' ');
+        let hours = 0;
+        for (let i = 0; i < parts.length; i += 2) {
+            const amount = parseInt(parts[i], 10);
+            const unit = parts[i + 1].toLowerCase();
+            if (unit.startsWith('day')) {
+                hours += amount * 24;
+            } else if (unit.startsWith('hr')) {
+                hours += amount;
+            }
+        }
+        return hours;
+    }
+
     calculateChange(currentValue: number, baselineValue: number): number {
-        if (baselineValue === 0) return 0;
+        if (baselineValue === 0) return currentValue > 0 ? 100 : 0;
         return parseFloat((((currentValue - baselineValue) / baselineValue) * 100).toFixed(2));
+    }
+
+    private parseTimeValue(value: number | string): number {
+        if (typeof value === 'number') return value;
+
+        const timeRegex = /(\d+)\s*(hrs?|hours?|days?)/i;
+        const match = value.match(timeRegex);
+
+        if (match) {
+            const amount = parseInt(match[1], 10);
+            const unit = match[2].toLowerCase();
+
+            if (unit.startsWith('hr') || unit.startsWith('hour')) {
+                return amount;
+            } else if (unit.startsWith('day')) {
+                return amount * 24; // Convert days to hours
+            }
+        }
+
+        // If the string doesn't match the expected format, try parsing it as a number
+        const numericValue = parseFloat(value);
+        return isNaN(numericValue) ? 0 : numericValue;
     }
 
     toggleDeleteMode() {
@@ -732,17 +885,17 @@ export class DashboardComponent implements OnInit {
                 // First full-width item
                 {
                     cols: 12,
-                    rows: 4,
+                    rows: 3,
                     y: 2,
                     x: 0,
                     cardId: 'sales-chart',
                     name: 'Sales Chart',
                     component: 'SaleschartComponent'
                 },
-                // Second full-width item
+                // Second full-width item(0)
                 {
                     cols: 12,
-                    rows: 4,
+                    rows: 3,
                     y: 4,
                     x: 0,
                     cardId: 'bar-chart',
@@ -775,9 +928,13 @@ export class DashboardComponent implements OnInit {
         this.cdr.detectChanges();
     }
 
-    getColor(change: number | undefined): string {
-        if (change === undefined) return 'text-gray-500';
-        return change >= 0 ? 'text-green-500' : 'text-red-500';
+    getColor(color: string): string {
+        switch (color) {
+            case 'green': return 'text-green-500';
+            case 'red': return 'text-red-500';
+            case 'yellow': return 'text-yellow-500';
+            default: return 'text-gray-500';
+        }
     }
 
     getIcon(change: number | undefined): string {
@@ -802,12 +959,21 @@ export class DashboardComponent implements OnInit {
         return value;
     }
 
-    getProgressRingStyle(change: number): string {
+    getProgressRingStyle(change: number, color: string): string {
         const absChange = Math.abs(change);
-        const color = change >= 0 ? '#4CAF50' : '#F44336';
         const degree = (absChange / 100) * 360;
-        return `conic-gradient(${color} 0deg ${degree}deg, #f0f0f0 ${degree}deg 360deg)`;
+        return `conic-gradient(${this.getColorHex(color)} 0deg ${degree}deg, #f0f0f0 ${degree}deg 360deg)`;
     }
+
+    getColorHex(color: string): string {
+        switch (color) {
+            case 'green': return '#4CAF50';
+            case 'red': return '#F44336';
+            case 'yellow': return '#FFC107';
+            default: return '#9E9E9E';
+        }
+    }
+
 
     getChangeColor(change: number): string {
         return change >= 0 ? 'positive-change' : 'negative-change';

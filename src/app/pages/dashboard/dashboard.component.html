@@ -40,7 +40,7 @@
 
 
             <!-- Full-width items -->
-            <mat-card class="dashboard-card full-width-card" *ngIf="item.name == 'Sales Chart'">
+            <mat-card class="dashboard-card full-width-card" *ngIf="item.name === 'Sales Chart'">
                 <button *ngIf="isDeleteMode" class="delete-button" (click)="deleteWidget(item)">
                     <mat-icon>delete</mat-icon>
                 </button>
@@ -76,7 +76,7 @@
 
 
 
-            <mat-card class="dashboard-card full-width-card" *ngIf="item.name == 'Bar Chart'">
+            <mat-card class="dashboard-card full-width-card" *ngIf="item.name === 'Bar Chart'">
                 <button *ngIf="isDeleteMode" class="delete-button" (click)="deleteWidget(item)">
                     <mat-icon>delete</mat-icon>
                 </button>

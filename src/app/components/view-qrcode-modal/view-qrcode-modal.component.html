@@ -1,10 +1,19 @@
-<h2 mat-dialog-title>QR Code for SKU: {{ data.sku }}</h2>
-<mat-dialog-content>
-  <div id="qrCodeImage">
-    <img [src]="data.qrCode" alt="QR Code">
+<div class="qr-modal-container">
+    <mat-dialog-content>
+      <div id="qrCodePrintArea">
+        <div class="product-info">
+            <h3>SKU: {{ data.sku }}</h3>
+            <p>{{ data.description }}</p>
+          </div>
+        <div class="qr-code-container">
+          <img [src]="data.qrCode" alt="QR Code">
+        </div>
+      </div>
+    </mat-dialog-content>
+    <mat-dialog-actions>
+      <button mat-flat-button (click)="printQRCode()">
+        <mat-icon>print</mat-icon> Print QR Code
+      </button>
+      <button mat-flat-button (click)="onClose()">Close</button>
+    </mat-dialog-actions>
   </div>
-</mat-dialog-content>
-<mat-dialog-actions>
-  <button mat-button (click)="printQRCode()">Print</button>
-  <button mat-button (click)="closeDialog()">Close</button>
-</mat-dialog-actions>

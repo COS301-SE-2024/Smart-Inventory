@@ -457,8 +457,12 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
           const selectedItem = selectedRows[0];
           if (selectedItem.qrCode) {
             this.dialog.open(ViewQrcodeModalComponent, {
-              width: '400px',
-              data: { qrCode: selectedItem.qrCode, sku: selectedItem.sku }
+              width: '600px',
+              data: { 
+                qrCode: selectedItem.qrCode, 
+                sku: selectedItem.sku,
+                description: selectedItem.description
+              }
             });
           } else {
             this.snackBar.open('No QR code available for this item', 'Close', {
@@ -474,5 +478,5 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
             verticalPosition: 'top'
           });
         }
-      }
+    }
 }

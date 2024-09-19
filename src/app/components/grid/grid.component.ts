@@ -35,6 +35,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { fetchAuthSession } from 'aws-amplify/auth';
 import { ViewQrcodeModalComponent } from '../view-qrcode-modal/view-qrcode-modal.component';
+import { ScanQrcodeModalComponent } from '../scan-qrcode-modal/scan-qrcode-modal.component';
 
 @Component({
     selector: 'app-grid',
@@ -95,6 +96,7 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
     @Output() deleteRowClicked = new EventEmitter<void>();
     @Output() importExcelClicked = new EventEmitter<void>();
     @Output() viewAutomationTemplatesClicked = new EventEmitter<void>();
+    @Output() scanQRCode = new EventEmitter<string>();
 
     @ViewChild(AgGridAngular) agGrid!: AgGridAngular;
     gridApi!: GridApi<any>;
@@ -479,4 +481,20 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
           });
         }
     }
+
+    onScanQRCode() {
+        const dialogRef = this.dialog.open(ScanQrcodeModalComponent, {
+          width: '90%',
+          maxWidth: '600px',
+          height: '90%',
+          maxHeight: '600px',
+        });
+    
+        dialogRef.afterClosed().subscribe((result: string | undefined) => {
+          if (result) {
+            this.scanQRCode.emit(result);
+          }
+        });
+    }
+    
 }

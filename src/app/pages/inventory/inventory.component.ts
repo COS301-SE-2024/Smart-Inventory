@@ -455,7 +455,7 @@ export class InventoryComponent implements OnInit {
         const dialogRef = this.dialog.open(RequestStockModalComponent, {
             width: '400px',
             data: { 
-                sku: item.sku, 
+                sku: item.sku || item.SKU, 
                 supplier: item.supplier, 
                 availableQuantity: item.quantity 
             },
@@ -497,7 +497,7 @@ export class InventoryComponent implements OnInit {
             // Create the stock request report
             const reportPayload = {
                 tenentId: this.tenantId,
-                sku: item.sku,
+                sku: item.sku || item.SKU,
                 category: item.category,
                 supplier: item.supplier,
                 quantityRequested: quantity.toString(),
@@ -588,4 +588,57 @@ export class InventoryComponent implements OnInit {
           }
         });
     }
+
+    handleQRCodeScan(qrCodeData: string | null) {
+        if (!qrCodeData) {
+          console.log('QR code scan cancelled or failed');
+          return;
+        }
+      
+        try {
+          const { inventoryID, tenentId } = JSON.parse(qrCodeData);
+          if (inventoryID && tenentId) {
+            this.getInventoryItem(inventoryID, tenentId).then(item => {
+              if (item) {
+                this.openRequestStockPopup(item);
+              } else {
+                this.snackBar.open('Item not found', 'Close', { duration: 3000 });
+              }
+            });
+          } else {
+            throw new Error('Invalid QR code data');
+          }
+        } catch (error) {
+          console.error('Error processing QR code:', error);
+          this.snackBar.open('Error processing QR code', 'Close', { duration: 3000 });
+        }
+      }
+
+    async getInventoryItem(inventoryID: string, tenantId: string) {
+        try {
+          const session = await fetchAuthSession();
+          const lambdaClient = new LambdaClient({
+            region: outputs.auth.aws_region,
+            credentials: session.credentials,
+          });
+    
+          const payload = JSON.stringify({ inventoryID, tenantId });
+          const invokeCommand = new InvokeCommand({
+            FunctionName: 'getInventoryItem',
+            Payload: new TextEncoder().encode(payload),
+          });
+    
+          const lambdaResponse = await lambdaClient.send(invokeCommand);
+          const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+    
+          if (responseBody.statusCode === 200) {
+            return JSON.parse(responseBody.body);
+          } else {
+            throw new Error(responseBody.body);
+          }
+        } catch (error) {
+          console.error('Error fetching inventory item:', error);
+          return null;
+        }
+      }
 }

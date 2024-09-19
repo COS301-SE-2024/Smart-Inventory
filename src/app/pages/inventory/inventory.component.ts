@@ -216,7 +216,8 @@ export class InventoryComponent implements OnInit {
                     unitCost: item.unitCost,
                     leadTime: item.leadTime,
                     deliveryCost: item.deliveryCost,
-                    dailyDemand: item.dailyDemand,
+                    dailyDemand: item.dailyDemand,    	
+                    qrCode: item.qrCode
                 }));
                 console.log('Processed inventory items:', this.rowData);
 

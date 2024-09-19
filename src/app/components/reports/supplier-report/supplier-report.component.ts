@@ -24,7 +24,6 @@ import { RowNode } from 'ag-grid-community';
 import { AgGridAngular } from 'ag-grid-angular';
 import { CompactType, DisplayGrid, GridsterConfig, GridsterItem, GridsterModule, GridType } from 'angular-gridster2';
 
-
 type ChartMetric = 'On Time Delivery Rate' | 'Order Accuracy Rate' | 'Out Standing Payments' | 'TotalSpent';
 type ChartData = {
     source: any[];
@@ -46,7 +45,7 @@ type ChartData = {
         RoleSelectCellEditorComponent,
         LineComponent,
         RadarComponent,
-        GridsterModule
+        GridsterModule,
     ],
     templateUrl: './supplier-report.component.html',
     styleUrl: './supplier-report.component.css',
@@ -63,8 +62,8 @@ export class SupplierReportComponent implements OnInit {
     visibleTiles: any[] = []; // Holds the tiles currently being displayed
     currentIndex = 0;
     chartData: any;
-    initialInventory: number = 500;  // Starting inventory at the beginning of the period
-    endingInventory: number = 600;  // Ending inventory at the end of the period
+    initialInventory: number = 500; // Starting inventory at the beginning of the period
+    endingInventory: number = 600; // Ending inventory at the end of the period
 
     options: GridsterConfig = {
         gridType: GridType.VerticalFixed,
@@ -118,7 +117,7 @@ export class SupplierReportComponent implements OnInit {
         pushResizeItems: false,
         disableWindowResize: false,
         disableWarnings: false,
-        scrollToNewItems: false
+        scrollToNewItems: false,
     };
 
     items: Array<GridsterItem> = [
@@ -169,7 +168,7 @@ export class SupplierReportComponent implements OnInit {
             { name: 'Fill Rate', value: '0%', icon: 'inventory_2' },
             { name: 'Total inventory turnover', value: 'null', icon: 'loop' },
             { name: '"Right First Time" Rate', value: '0%', icon: 'check_circle_outline' },
-            { name: 'On-time Order Completion Rate', value: 0, icon: 'schedule' }
+            { name: 'On-time Order Completion Rate', value: 0, icon: 'schedule' },
         ],
         graphs: [],
     };
@@ -186,7 +185,6 @@ export class SupplierReportComponent implements OnInit {
     }
 
     async ngOnInit() {
-
         this.titleService.updateTitle(this.getCurrentRoute());
         await this.loadSuppliersData();
 
@@ -202,17 +200,21 @@ export class SupplierReportComponent implements OnInit {
         this.SupplierReport.metrics[2].value = this.getWorstPerformingSupplier()['Supplier ID'];
         this.SupplierReport.metrics[3].value = this.calculateAverageDeliveryRate();
         this.SupplierReport.metrics[4].value = this.calculateOrderFulfillmentRate(this.orderFulfillmentDetails);
-        this.SupplierReport.metrics[5].value = this.calculateInventoryTurnover(this.stockRequests, this.initialInventory, this.endingInventory);;
+        this.SupplierReport.metrics[5].value = this.calculateInventoryTurnover(
+            this.stockRequests,
+            this.initialInventory,
+            this.endingInventory,
+        );
         this.SupplierReport.metrics[6].value = this.calculateRightFirstTimeRate(this.orderFulfillmentDetails);
         this.SupplierReport.metrics[7].value = this.calculateOnTimeOrderCompletionRate();
         // console.log(this.getChartData());
         // console.log(this.visibleTiles);
         this.chartData = this.getChartData();
-        console.log('chartdata:', this.chartData.seriesData)
+        console.log('chartdata:', this.chartData.seriesData);
         this.processData();
         this.inventory = await this.loadInventoryData();
         this.topSuppliersData = this.calculateTopSuppliers();
-        console.log('supplier data:', this.topSuppliersData)
+        console.log('supplier data:', this.topSuppliersData);
         // console.log('inventory ', this.inventory)
         // console.log('my defect rate', this.calculateDefectRate(this.orderFulfillmentDetails));
         // console.log('my rowData', this.rowData)
@@ -224,17 +226,18 @@ export class SupplierReportComponent implements OnInit {
 
     getCurrentRoute() {
         this.colDefs = [
-            { field: 'Supplier ID', headerName: 'Supplier ID' },
+            { field: 'Supplier ID', headerName: 'Supplier ID', filter: 'agSetColumnFilter' },
             {
                 field: 'Date',
                 headerName: 'Date',
+                filter: 'agSetColumnFilter',
             },
-            { field: 'On Time Delivery Rate', headerName: 'On Time Delivery Rate' },
-            { field: 'Order Accuracy Rate', headerName: 'Order Accuracy Rate' },
-            { field: 'Out Standing Payments', headerName: 'Out Standing Payments' },
-            { field: 'Reorder Level', headerName: 'Reorder Level' },
-            { field: 'RiskScore', headerName: 'Risk Score' },
-            { field: 'TotalSpent', headerName: 'Total Spent' },
+            { field: 'On Time Delivery Rate', headerName: 'On Time Delivery Rate', filter: 'agSetColumnFilter' },
+            { field: 'Order Accuracy Rate', headerName: 'Order Accuracy Rate', filter: 'agSetColumnFilter' },
+            { field: 'Out Standing Payments', headerName: 'Out Standing Payments', filter: 'agSetColumnFilter' },
+            { field: 'Reorder Level', headerName: 'Reorder Level', filter: 'agSetColumnFilter' },
+            { field: 'RiskScore', headerName: 'Risk Score', filter: 'agSetColumnFilter' },
+            { field: 'TotalSpent', headerName: 'Total Spent', filter: 'agSetColumnFilter' },
         ];
         return 'Supplier Report';
     }
@@ -284,65 +287,65 @@ export class SupplierReportComponent implements OnInit {
 
     orderFulfillmentDetails: any[] = [
         {
-            OrderID: "ORD001",
-            SupplierID: "SUP001",
-            QuoteID: "QT001",
-            UPC: "012345678901",
+            OrderID: 'ORD001',
+            SupplierID: 'SUP001',
+            QuoteID: 'QT001',
+            UPC: '012345678901',
             OrderedQuantity: 100,
             DeliveredQuantity: 100,
-            ItemCondition: "Good",
-            OrderDate: new Date("2024-07-01"),
-            DeliveryDate: new Date("2024-07-03"),
-            Category: "Electronics"
+            ItemCondition: 'Good',
+            OrderDate: new Date('2024-07-01'),
+            DeliveryDate: new Date('2024-07-03'),
+            Category: 'Electronics',
         },
         {
-            OrderID: "ORD002",
-            SupplierID: "SUP002",
-            QuoteID: "QT002",
-            UPC: "012345678902",
+            OrderID: 'ORD002',
+            SupplierID: 'SUP002',
+            QuoteID: 'QT002',
+            UPC: '012345678902',
             OrderedQuantity: 200,
             DeliveredQuantity: 190,
-            ItemCondition: "Critical",
-            OrderDate: new Date("2024-07-02"),
-            DeliveryDate: new Date("2024-07-04"),
-            Category: "Appliances"
+            ItemCondition: 'Critical',
+            OrderDate: new Date('2024-07-02'),
+            DeliveryDate: new Date('2024-07-04'),
+            Category: 'Appliances',
         },
         {
-            OrderID: "ORD003",
-            SupplierID: "SUP003",
-            QuoteID: "QT003",
-            UPC: "012345678903",
+            OrderID: 'ORD003',
+            SupplierID: 'SUP003',
+            QuoteID: 'QT003',
+            UPC: '012345678903',
             OrderedQuantity: 150,
             DeliveredQuantity: 145,
-            ItemCondition: "Minor",
-            OrderDate: new Date("2024-07-01"),
-            DeliveryDate: new Date("2024-07-03"),
-            Category: "Furniture"
+            ItemCondition: 'Minor',
+            OrderDate: new Date('2024-07-01'),
+            DeliveryDate: new Date('2024-07-03'),
+            Category: 'Furniture',
         },
         {
-            OrderID: "ORD004",
-            SupplierID: "SUP004",
-            QuoteID: "QT004",
-            UPC: "012345678904",
+            OrderID: 'ORD004',
+            SupplierID: 'SUP004',
+            QuoteID: 'QT004',
+            UPC: '012345678904',
             OrderedQuantity: 120,
             DeliveredQuantity: 120,
-            ItemCondition: "Good",
-            OrderDate: new Date("2024-07-02"),
-            DeliveryDate: new Date("2024-07-05"),
-            Category: "Electronics"
+            ItemCondition: 'Good',
+            OrderDate: new Date('2024-07-02'),
+            DeliveryDate: new Date('2024-07-05'),
+            Category: 'Electronics',
         },
         {
-            OrderID: "ORD005",
-            SupplierID: "SUP005",
-            QuoteID: "QT005",
-            UPC: "012345678905",
+            OrderID: 'ORD005',
+            SupplierID: 'SUP005',
+            QuoteID: 'QT005',
+            UPC: '012345678905',
             OrderedQuantity: 300,
             DeliveredQuantity: 290,
-            ItemCondition: "Major",
-            OrderDate: new Date("2024-07-03"),
-            DeliveryDate: new Date("2024-07-06"),
-            Category: "Tools"
-        }
+            ItemCondition: 'Major',
+            OrderDate: new Date('2024-07-03'),
+            DeliveryDate: new Date('2024-07-06'),
+            Category: 'Tools',
+        },
     ];
 
     calculateInventoryTurnover(stockRequests: any[], initialInventory: number, endingInventory: number): string {
@@ -356,7 +359,7 @@ export class SupplierReportComponent implements OnInit {
         let totalOrdered = 0;
         let totalDelivered = 0;
 
-        details.forEach(detail => {
+        details.forEach((detail) => {
             totalOrdered += detail.OrderedQuantity;
             totalDelivered += detail.DeliveredQuantity;
         });
@@ -368,7 +371,7 @@ export class SupplierReportComponent implements OnInit {
         let totalItemsReceived = 0;
         let defectiveItems = 0;
 
-        details.forEach(detail => {
+        details.forEach((detail) => {
             totalItemsReceived += detail.DeliveredQuantity;
             // Consider any condition that is not 'Good' as defective
             if (detail.ItemCondition !== 'Good') {
@@ -381,7 +384,9 @@ export class SupplierReportComponent implements OnInit {
 
     calculateRightFirstTimeRate(details: any[]): number {
         let totalOrders = details.length;
-        let rightFirstTimeCount = details.filter(detail => detail.DeliveredQuantity === detail.OrderedQuantity && detail.ItemCondition === 'Good').length;
+        let rightFirstTimeCount = details.filter(
+            (detail) => detail.DeliveredQuantity === detail.OrderedQuantity && detail.ItemCondition === 'Good',
+        ).length;
 
         return (rightFirstTimeCount / totalOrders) * 100;
     }
@@ -399,13 +404,15 @@ export class SupplierReportComponent implements OnInit {
         const yAxisName = title; // Assuming you use the title as the yAxisName, adjust if necessary
 
         // Extract years dynamically from the data and sort them
-        const years = [...new Set(this.originalData.map(item => item['Date'].slice(0, 4)))].sort();
-        const supplierIds = [...new Set(this.originalData.map(item => item['Supplier ID']))];
+        const years = [...new Set(this.originalData.map((item) => item['Date'].slice(0, 4)))].sort();
+        const supplierIds = [...new Set(this.originalData.map((item) => item['Supplier ID']))];
 
         // Aggregate data for all metrics into one series per supplier
-        const seriesData = supplierIds.map(supplierId => {
-            const data = years.map(year => {
-                const yearData = this.originalData.filter(d => d['Supplier ID'] === supplierId && d['Date'].startsWith(year));
+        const seriesData = supplierIds.map((supplierId) => {
+            const data = years.map((year) => {
+                const yearData = this.originalData.filter(
+                    (d) => d['Supplier ID'] === supplierId && d['Date'].startsWith(year),
+                );
                 // Sum or average data based on metric, here we assume it's sum
                 return yearData.reduce((acc, item) => acc + Number(item[title] || 0), 0);
             });
@@ -418,7 +425,7 @@ export class SupplierReportComponent implements OnInit {
             xAxisData: years,
             seriesData,
             title,
-            yAxisName
+            yAxisName,
         };
     }
     async fetchMetrics(data: any[]) {
@@ -577,7 +584,7 @@ export class SupplierReportComponent implements OnInit {
             }
         });
 
-        if(mostAverageSupplier){
+        if (mostAverageSupplier) {
             return mostAverageSupplier['Supplier ID'];
         }
 
@@ -644,7 +651,7 @@ export class SupplierReportComponent implements OnInit {
         // Calculate the average delivery rate
         // Ensure we do not divide by zero
         const averageDeliveryRate = count > 0 ? totalDeliveryRate / count : 0;
-        return (averageDeliveryRate).toFixed(2);
+        return averageDeliveryRate.toFixed(2);
     }
 
     calculateOnTimeOrderCompletionRate(): string {
@@ -656,89 +663,88 @@ export class SupplierReportComponent implements OnInit {
     async loadInventoryData() {
         const inventoryData = [
             {
-                inventoryID: "bc9040cb-3834-4391-9ab7-153968c1d13a",
-                tenentId: "1717667019559-j85syk",
-                category: "Food: Perishable",
-                createdAt: "2024-08-05T13:14:26.211Z",
-                description: "Maize Meal - Super Fine, 5kg",
-                expirationDate: "2024-09-24T22:00:00.000Z",
+                inventoryID: 'bc9040cb-3834-4391-9ab7-153968c1d13a',
+                tenentId: '1717667019559-j85syk',
+                category: 'Food: Perishable',
+                createdAt: '2024-08-05T13:14:26.211Z',
+                description: 'Maize Meal - Super Fine, 5kg',
+                expirationDate: '2024-09-24T22:00:00.000Z',
                 lowStockThreshold: 20,
                 quantity: 72,
                 reorderFreq: 30,
-                SKU: "MS-301",
-                supplier: "Foodcorp",
-                upc: "6001070000000",
-                updatedAt: "2024-08-05T13:14:26.211Z",
-                condition: "good"
+                SKU: 'MS-301',
+                supplier: 'Foodcorp',
+                upc: '6001070000000',
+                updatedAt: '2024-08-05T13:14:26.211Z',
+                condition: 'good',
             },
             {
-                inventoryID: "7860ac1c-9b39-4c9b-bf2f-1efbb87cbdf3",
-                tenentId: "1717667019559-j85syk",
-                category: "Beverages: Non-Alcoholic",
-                createdAt: "2024-08-05T13:17:16.112Z",
-                description: "Amarula Cream Liqueur, 750ml",
-                expirationDate: "2024-08-07T22:00:00.000Z",
+                inventoryID: '7860ac1c-9b39-4c9b-bf2f-1efbb87cbdf3',
+                tenentId: '1717667019559-j85syk',
+                category: 'Beverages: Non-Alcoholic',
+                createdAt: '2024-08-05T13:17:16.112Z',
+                description: 'Amarula Cream Liqueur, 750ml',
+                expirationDate: '2024-08-07T22:00:00.000Z',
                 lowStockThreshold: 15,
                 quantity: 48,
                 reorderFreq: 15,
-                SKU: "AM-405",
-                supplier: "Eskort",
-                upc: "6009880000000",
-                updatedAt: "2024-08-05T13:17:16.112Z",
-                condition: "moderate"
+                SKU: 'AM-405',
+                supplier: 'Eskort',
+                upc: '6009880000000',
+                updatedAt: '2024-08-05T13:17:16.112Z',
+                condition: 'moderate',
             },
             {
-                inventoryID: "1525c187-b594-4992-96a7-6acd0e1c1901",
-                tenentId: "1717667019559-j85syk",
-                category: "Food: Perishable",
-                createdAt: "2024-08-05T13:11:38.253Z",
-                description: "Rooibos Tea - Organic, 40 Bags",
-                expirationDate: "2024-08-30T22:00:00.000Z",
+                inventoryID: '1525c187-b594-4992-96a7-6acd0e1c1901',
+                tenentId: '1717667019559-j85syk',
+                category: 'Food: Perishable',
+                createdAt: '2024-08-05T13:11:38.253Z',
+                description: 'Rooibos Tea - Organic, 40 Bags',
+                expirationDate: '2024-08-30T22:00:00.000Z',
                 lowStockThreshold: 10,
                 quantity: 52,
                 reorderFreq: 7,
-                SKU: "RO-102",
-                supplier: "BOS Brands",
-                upc: "6009180000000",
-                updatedAt: "2024-08-05T13:11:38.253Z",
-                condition: "good"
+                SKU: 'RO-102',
+                supplier: 'BOS Brands',
+                upc: '6009180000000',
+                updatedAt: '2024-08-05T13:11:38.253Z',
+                condition: 'good',
             },
             {
-                inventoryID: "97053b80-40f0-416e-8844-5a65bce1c577",
-                tenentId: "1",
-                category: "Sample Category",
-                createdAt: "2024-08-05T11:50:03.967Z",
-                description: "Sample Product",
-                expirationDate: "2024-07-02T00:00:00.000Z",
+                inventoryID: '97053b80-40f0-416e-8844-5a65bce1c577',
+                tenentId: '1',
+                category: 'Sample Category',
+                createdAt: '2024-08-05T11:50:03.967Z',
+                description: 'Sample Product',
+                expirationDate: '2024-07-02T00:00:00.000Z',
                 lowStockThreshold: 10,
                 quantity: 100,
                 reorderFreq: 30,
-                SKU: "SAMPLE_SKU",
-                supplier: "Sample Supplier",
-                upc: "6a9c12a1-22fc-4f6d-92ad-bc1c86c3466f",
-                updatedAt: "2024-08-05T11:50:03.967Z",
-                condition: "bad"
+                SKU: 'SAMPLE_SKU',
+                supplier: 'Sample Supplier',
+                upc: '6a9c12a1-22fc-4f6d-92ad-bc1c86c3466f',
+                updatedAt: '2024-08-05T11:50:03.967Z',
+                condition: 'bad',
             },
             {
-                inventoryID: "6b51adf0-0716-467d-b566-84db02c9e7f4",
-                tenentId: "1717667019559-j85syk",
-                category: "Food: Perishable",
-                createdAt: "2024-08-05T13:05:53.445Z",
-                description: "Biltong Snapstix - Original Beef",
-                expirationDate: "2024-08-30T22:00:00.000Z",
+                inventoryID: '6b51adf0-0716-467d-b566-84db02c9e7f4',
+                tenentId: '1717667019559-j85syk',
+                category: 'Food: Perishable',
+                createdAt: '2024-08-05T13:05:53.445Z',
+                description: 'Biltong Snapstix - Original Beef',
+                expirationDate: '2024-08-30T22:00:00.000Z',
                 lowStockThreshold: 10,
                 quantity: 54,
                 reorderFreq: 7,
-                SKU: "BF-001",
-                supplier: "Fredy Hirsch Brands",
-                upc: "6001010000000",
-                updatedAt: "2024-08-05T13:05:53.445Z",
-                condition: "moderate"
-            }
+                SKU: 'BF-001',
+                supplier: 'Fredy Hirsch Brands',
+                upc: '6001010000000',
+                updatedAt: '2024-08-05T13:05:53.445Z',
+                condition: 'moderate',
+            },
         ];
 
         return inventoryData;
-
     }
 
     topSuppliersData: any[] = [];
@@ -754,7 +760,7 @@ export class SupplierReportComponent implements OnInit {
                     averageOnTimeDelivery: 0,
                     averageOrderAccuracy: 0,
                     averageOutstandingPayments: 0,
-                    count: 0
+                    count: 0,
                 };
             }
             acc[id].totalSpent += data.TotalSpent;
@@ -770,18 +776,25 @@ export class SupplierReportComponent implements OnInit {
             supplier.averageOnTimeDelivery /= supplier.count;
             supplier.averageOrderAccuracy /= supplier.count;
             supplier.averageOutstandingPayments /= supplier.count;
-            supplier.score = (supplier.averageOnTimeDelivery + supplier.averageOrderAccuracy - supplier.averageOutstandingPayments / 1000 + supplier.totalSpent / 100000);
+            supplier.score =
+                supplier.averageOnTimeDelivery +
+                supplier.averageOrderAccuracy -
+                supplier.averageOutstandingPayments / 1000 +
+                supplier.totalSpent / 100000;
             return supplier;
         });
 
         // Step 3: Sort by score and select the top 5
-        return scoredSuppliers.sort((a, b) => b.score - a.score).slice(0, 3).map(supplier => ({
-            'Supplier ID': supplier.supplierId,
-            'Total Spent': supplier.totalSpent,
-            'On Time Delivery Rate': supplier.averageOnTimeDelivery,
-            'Order Accuracy Rate': supplier.averageOrderAccuracy,
-            'Out Standing Payments': supplier.averageOutstandingPayments
-        }));
+        return scoredSuppliers
+            .sort((a, b) => b.score - a.score)
+            .slice(0, 3)
+            .map((supplier) => ({
+                'Supplier ID': supplier.supplierId,
+                'Total Spent': supplier.totalSpent,
+                'On Time Delivery Rate': supplier.averageOnTimeDelivery,
+                'Order Accuracy Rate': supplier.averageOrderAccuracy,
+                'Out Standing Payments': supplier.averageOutstandingPayments,
+            }));
     }
 
     async loadSuppliersData() {
@@ -863,21 +876,30 @@ export class SupplierReportComponent implements OnInit {
             return acc;
         }, {});
 
-        return Object.values(grouped).sort((a: any, b: any) => b.TotalSpent - a.TotalSpent).slice(0, 5);
+        return Object.values(grouped)
+            .sort((a: any, b: any) => b.TotalSpent - a.TotalSpent)
+            .slice(0, 5);
     }
 
     formatDataForChart(data: any[]): any {
         // Extract years directly from the data parameter instead of the whole dataset to match exactly the top suppliers
-        const years = [...new Set(data.flatMap((supplier: any) =>
-            this.originalData.filter(item => item['Supplier ID'] === supplier['Supplier ID']).map(item => item.Date.slice(0, 4))
-        ))].sort();
-        const header = ["Supplier ID", ...years];
+        const years = [
+            ...new Set(
+                data.flatMap((supplier: any) =>
+                    this.originalData
+                        .filter((item) => item['Supplier ID'] === supplier['Supplier ID'])
+                        .map((item) => item.Date.slice(0, 4)),
+                ),
+            ),
+        ].sort();
+        const header = ['Supplier ID', ...years];
 
         // Map each supplier to a row in the chart data
         const chartData = data.map((supplier: any) => {
             const row = [supplier['Supplier ID'], ...Array(years.length).fill(0)];
-            this.originalData.filter(item => item['Supplier ID'] === supplier['Supplier ID'])
-                .forEach(item => {
+            this.originalData
+                .filter((item) => item['Supplier ID'] === supplier['Supplier ID'])
+                .forEach((item) => {
                     const yearIndex = years.indexOf(item.Date.slice(0, 4)) + 1; // Find correct index for the year
                     row[yearIndex] += item.TotalSpent; // Accumulate total spent for the year
                 });
@@ -885,15 +907,13 @@ export class SupplierReportComponent implements OnInit {
         });
 
         return {
-            source: [header, ...chartData]
+            source: [header, ...chartData],
         };
     }
 
-
-
     processRowData(rawData: any[]): any[] {
         const groupedData = this.groupDataBySupplier(rawData);
-        console.log('groupedData', groupedData)
+        console.log('groupedData', groupedData);
         return this.prepareRowData(groupedData);
     }
 
@@ -928,9 +948,39 @@ export class SupplierReportComponent implements OnInit {
     }
 
     stockRequests: any[] = [
-        { stockRequestId: "001", tenentId: "1001", category: "Electronics", createdAt: "2024-01-01T10:00:00.000Z", quantityRequested: 100, quantityFulfilled: 95, sku: "ELEC-001", supplier: "SupplierA", type: "STOCK_REQUEST" },
-        { stockRequestId: "002", tenentId: "1001", category: "Appliances", createdAt: "2024-01-02T10:00:00.000Z", quantityRequested: 50, quantityFulfilled: 50, sku: "APPL-002", supplier: "SupplierB", type: "STOCK_REQUEST" },
-        { stockRequestId: "003", tenentId: "1001", category: "Tools", createdAt: "2024-01-03T10:00:00.000Z", quantityRequested: 30, quantityFulfilled: 30, sku: "TOOL-003", supplier: "SupplierC", type: "STOCK_REQUEST" }
+        {
+            stockRequestId: '001',
+            tenentId: '1001',
+            category: 'Electronics',
+            createdAt: '2024-01-01T10:00:00.000Z',
+            quantityRequested: 100,
+            quantityFulfilled: 95,
+            sku: 'ELEC-001',
+            supplier: 'SupplierA',
+            type: 'STOCK_REQUEST',
+        },
+        {
+            stockRequestId: '002',
+            tenentId: '1001',
+            category: 'Appliances',
+            createdAt: '2024-01-02T10:00:00.000Z',
+            quantityRequested: 50,
+            quantityFulfilled: 50,
+            sku: 'APPL-002',
+            supplier: 'SupplierB',
+            type: 'STOCK_REQUEST',
+        },
+        {
+            stockRequestId: '003',
+            tenentId: '1001',
+            category: 'Tools',
+            createdAt: '2024-01-03T10:00:00.000Z',
+            quantityRequested: 30,
+            quantityFulfilled: 30,
+            sku: 'TOOL-003',
+            supplier: 'SupplierC',
+            type: 'STOCK_REQUEST',
+        },
     ];
 
     async loadSupplierMetrics() {

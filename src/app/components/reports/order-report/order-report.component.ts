@@ -19,7 +19,6 @@ import outputs from '../../../../../amplify_outputs.json';
 import { LoadingSpinnerComponent } from 'app/components/loader/loading-spinner.component';
 import { GridsterConfig, GridType, DisplayGrid, GridsterModule, CompactType } from 'angular-gridster2';
 
-
 @Component({
     selector: 'app-order-report',
     standalone: true,
@@ -34,7 +33,7 @@ import { GridsterConfig, GridType, DisplayGrid, GridsterModule, CompactType } fr
         StackedbarchartComponent,
         DonutTemplateComponent,
         LoadingSpinnerComponent,
-        GridsterModule
+        GridsterModule,
     ],
     templateUrl: './order-report.component.html',
     styleUrl: './order-report.component.css',
@@ -54,44 +53,43 @@ export class OrderReportComponent implements OnInit {
     rowData: any[] = [];
     options: GridsterConfig = {
         gridType: GridType.VerticalFixed,
-            displayGrid: DisplayGrid.None,
-            compactType: CompactType.CompactUpAndLeft,
-            draggable: {
-                enabled: false,
-            },
-            resizable: {
-                enabled: false,
-            },
-            pushItems: true,
-            margin: 10,
-            minCols: 12,
-            maxCols: 12,
-            minRows: 100, // Increased minimum rows for better initial height
-            maxRows: 100,
-            minItemWidth: 100, // Minimum width each item can shrink to
-            minItemHeight: 50, // Minimum height each item can shrink to
-            minItemCols: 1, // Maximum columns an item can expand to
-            minItemRows: 1, // Maximum rows an item can expand to
-            fixedRowHeight: 150,
-            addEmptyRowsCount: 10,
-            disablePushOnDrag: false,
-            disablePushOnResize: false,
-            pushDirections: { north: true, east: true, south: true, west: true },
-            pushResizeItems: false,
-            disableWindowResize: false,
-            disableWarnings: false,
-            scrollToNewItems: false
+        displayGrid: DisplayGrid.None,
+        compactType: CompactType.CompactUpAndLeft,
+        draggable: {
+            enabled: false,
+        },
+        resizable: {
+            enabled: false,
+        },
+        pushItems: true,
+        margin: 10,
+        minCols: 12,
+        maxCols: 12,
+        minRows: 100, // Increased minimum rows for better initial height
+        maxRows: 100,
+        minItemWidth: 100, // Minimum width each item can shrink to
+        minItemHeight: 50, // Minimum height each item can shrink to
+        minItemCols: 1, // Maximum columns an item can expand to
+        minItemRows: 1, // Maximum rows an item can expand to
+        fixedRowHeight: 150,
+        addEmptyRowsCount: 10,
+        disablePushOnDrag: false,
+        disablePushOnResize: false,
+        pushDirections: { north: true, east: true, south: true, west: true },
+        pushResizeItems: false,
+        disableWindowResize: false,
+        disableWarnings: false,
+        scrollToNewItems: false,
     };
 
     layout: any[] = [
-        { cols: 12, rows: 1.1, y: 0, x: 0 },  // Metrics Container
-        { cols: 8, rows: 4, y: 1, x: 0 },   // Inventory Grid
-        { cols: 4, rows: 3, y: 1, x: 8 },   // Order Report
-        { cols: 6, rows: 4, y: 3, x: 0 },   // Stacked Bar Chart
-        { cols: 12, rows: 3, y: 3, x: 6 },   // Scatter Plot
-        { cols: 6, rows: 4, y: 5, x: 4 }    // Donut Chart
+        { cols: 12, rows: 1.1, y: 0, x: 0 }, // Metrics Container
+        { cols: 8, rows: 4, y: 1, x: 0 }, // Inventory Grid
+        { cols: 4, rows: 3, y: 1, x: 8 }, // Order Report
+        { cols: 6, rows: 4, y: 3, x: 0 }, // Stacked Bar Chart
+        { cols: 12, rows: 3, y: 3, x: 6 }, // Scatter Plot
+        { cols: 6, rows: 4, y: 5, x: 4 }, // Donut Chart
     ];
-
 
     selectedItem: any = null;
     requestQuantity: number | null = null;
@@ -104,23 +102,23 @@ export class OrderReportComponent implements OnInit {
         metrics: {
             metric_3: {
                 text: 'Total orders through automation: ',
-                icon: 'auto_awesome'
+                icon: 'auto_awesome',
             },
             metric_7: {
                 text: 'Rate of returns: ',
-                icon: 'assignment_return'
+                icon: 'assignment_return',
             },
             metric_8: {
                 text: 'Order placement frequency: ',
-                icon: 'schedule'
+                icon: 'schedule',
             },
             metric_10: {
                 text: 'Automated order frequency: ',
-                icon: 'update'
+                icon: 'update',
             },
             metric_11: {
                 text: 'Perfect Order Rate: ',
-                icon: 'thumb_up'
+                icon: 'thumb_up',
             },
         },
         graphs: [],
@@ -140,7 +138,6 @@ export class OrderReportComponent implements OnInit {
         this.scatterPlotChartData = this.prepareScatterPlotData();
         this.isLoading = false;
         console.log('scatter plot in parent', this.scatterPlotChartData);
-
     }
 
     calculateOrderMetrics() {
@@ -151,7 +148,9 @@ export class OrderReportComponent implements OnInit {
         // Calculate days between orders
         let totalDaysBetweenOrders = 0;
         for (let i = 1; i < orders.length; i++) {
-            const daysBetween = (new Date(orders[i].orderIssuedDate).getTime() - new Date(orders[i - 1].orderIssuedDate).getTime()) / (1000 * 60 * 60 * 24);
+            const daysBetween =
+                (new Date(orders[i].orderIssuedDate).getTime() - new Date(orders[i - 1].orderIssuedDate).getTime()) /
+                (1000 * 60 * 60 * 24);
             totalDaysBetweenOrders += daysBetween;
         }
 
@@ -159,28 +158,28 @@ export class OrderReportComponent implements OnInit {
         const averageDaysBetweenOrders = totalDaysBetweenOrders / (orders.length - 1);
 
         // Perfect Order Rate calculation
-        const validOrders = orders.filter(order => order.status === "Completed");
-        const perfectOrders = validOrders.filter(order =>
-            order.expectedOrderDate && order.orderReceivedDate &&
-            new Date(order.orderReceivedDate) <= new Date(order.expectedOrderDate)
+        const validOrders = orders.filter((order) => order.status === 'Completed');
+        const perfectOrders = validOrders.filter(
+            (order) =>
+                order.expectedOrderDate &&
+                order.orderReceivedDate &&
+                new Date(order.orderReceivedDate) <= new Date(order.expectedOrderDate),
         );
         const perfectOrderRate = (perfectOrders.length / validOrders.length) * 100;
 
         return {
-            orderPlacementFrequency: averageDaysBetweenOrders.toFixed(1) + " days",
-            perfectOrderRate: perfectOrderRate.toFixed(2) + "%"
+            orderPlacementFrequency: averageDaysBetweenOrders.toFixed(1) + ' days',
+            perfectOrderRate: perfectOrderRate.toFixed(2) + '%',
         };
     }
 
     calculateAverageOrderTime(): number {
-        const validOrders = this.rowData.filter(order =>
-            order.orderIssuedDate &&
-            order.orderReceivedDate &&
-            order.status === 'Completed'
+        const validOrders = this.rowData.filter(
+            (order) => order.orderIssuedDate && order.orderReceivedDate && order.status === 'Completed',
         );
 
         const uniqueOrders = validOrders.reduce((acc, current) => {
-            const x = acc.find((item: { orderID: any; }) => item.orderID === current.orderID);
+            const x = acc.find((item: { orderID: any }) => item.orderID === current.orderID);
             if (!x) {
                 return acc.concat([current]);
             } else {
@@ -188,18 +187,27 @@ export class OrderReportComponent implements OnInit {
             }
         }, []);
 
-        const totalDays = uniqueOrders.reduce((sum: number, order: { orderIssuedDate: string | number | Date; orderReceivedDate: string | number | Date; }) => {
-            const issuedDate = new Date(order.orderIssuedDate);
-            const receivedDate = new Date(order.orderReceivedDate);
-            const timeDifference = Math.max(1, (receivedDate.getTime() - issuedDate.getTime()) / (1000 * 60 * 60 * 24));
-            return sum + timeDifference;
-        }, 0);
+        const totalDays = uniqueOrders.reduce(
+            (
+                sum: number,
+                order: { orderIssuedDate: string | number | Date; orderReceivedDate: string | number | Date },
+            ) => {
+                const issuedDate = new Date(order.orderIssuedDate);
+                const receivedDate = new Date(order.orderReceivedDate);
+                const timeDifference = Math.max(
+                    1,
+                    (receivedDate.getTime() - issuedDate.getTime()) / (1000 * 60 * 60 * 24),
+                );
+                return sum + timeDifference;
+            },
+            0,
+        );
 
         return uniqueOrders.length > 0 ? totalDays / uniqueOrders.length : 0;
     }
 
     calculateSupplierPerformance() {
-        const onTimeCount = this.rowData.filter(order => {
+        const onTimeCount = this.rowData.filter((order) => {
             const expectedDate = new Date(order.expectedOrderDate);
             const receivedDate = new Date(order.orderReceivedDate);
             return receivedDate <= expectedDate;
@@ -217,15 +225,15 @@ export class OrderReportComponent implements OnInit {
 
     getCurrentRoute() {
         this.colDefs = [
-            { field: 'orderID', headerName: 'Order ID' },
-            { field: 'orderIssuedDate', headerName: 'Issued Date' },
-            { field: 'expectedOrderDate', headerName: 'Expected Date' },
-            { field: 'supplier', headerName: 'Supplier' },
-            { field: 'address', headerName: 'Address' },
-            { field: 'orderCost', headerName: 'Order Cost' },
-            { field: 'orderReceivedDate', headerName: 'Received Date' },
-            { field: 'status', headerName: 'Status' },
-            { field: 'quoteStatus', headerName: 'Quote Status' },
+            { field: 'orderID', headerName: 'Order ID', filter: 'agSetColumnFilter' },
+            { field: 'orderIssuedDate', headerName: 'Issued Date', filter: 'agSetColumnFilter' },
+            { field: 'expectedOrderDate', headerName: 'Expected Date', filter: 'agSetColumnFilter' },
+            { field: 'supplier', headerName: 'Supplier', filter: 'agSetColumnFilter' },
+            { field: 'address', headerName: 'Address', filter: 'agSetColumnFilter' },
+            { field: 'orderCost', headerName: 'Order Cost', filter: 'agSetColumnFilter' },
+            { field: 'orderReceivedDate', headerName: 'Received Date', filter: 'agSetColumnFilter' },
+            { field: 'status', headerName: 'Status', filter: 'agSetColumnFilter' },
+            { field: 'quoteStatus', headerName: 'Quote Status', filter: 'agSetColumnFilter' },
         ];
         return 'Order Report';
     }
@@ -292,8 +300,8 @@ export class OrderReportComponent implements OnInit {
             additionalInfo: [
                 { level: 'good', text: 'High order volume', threshold: '>100' },
                 { level: 'medium', text: 'Moderate order volume', threshold: '50-100' },
-                { level: 'bad', text: 'Low order volume', threshold: '<50' }
-            ]
+                { level: 'bad', text: 'Low order volume', threshold: '<50' },
+            ],
         },
         {
             icon: 'timer',
@@ -303,8 +311,8 @@ export class OrderReportComponent implements OnInit {
             additionalInfo: [
                 { level: 'good', text: 'Fast processing', threshold: '<3 days' },
                 { level: 'medium', text: 'Average processing', threshold: '3-7 days' },
-                { level: 'bad', text: 'Slow processing', threshold: '>7 days' }
-            ]
+                { level: 'bad', text: 'Slow processing', threshold: '>7 days' },
+            ],
         },
         {
             icon: 'trending_up',
@@ -314,8 +322,8 @@ export class OrderReportComponent implements OnInit {
             additionalInfo: [
                 { level: 'good', text: 'Excellent performance', threshold: '>90%' },
                 { level: 'medium', text: 'Satisfactory performance', threshold: '70-90%' },
-                { level: 'bad', text: 'Poor performance', threshold: '<70%' }
-            ]
+                { level: 'bad', text: 'Poor performance', threshold: '<70%' },
+            ],
         },
         {
             icon: 'attach_money',
@@ -325,8 +333,8 @@ export class OrderReportComponent implements OnInit {
             additionalInfo: [
                 { level: 'good', text: 'Cost-effective', threshold: '<R 1000' },
                 { level: 'medium', text: 'Average cost', threshold: 'R 1000-2000' },
-                { level: 'bad', text: 'High cost', threshold: '>R 2000' }
-            ]
+                { level: 'bad', text: 'High cost', threshold: '>R 2000' },
+            ],
         },
         {
             icon: 'assignment',
@@ -336,31 +344,31 @@ export class OrderReportComponent implements OnInit {
             additionalInfo: [
                 { level: 'good', text: 'Efficient processing', threshold: '<10' },
                 { level: 'medium', text: 'Moderate backlog', threshold: '10-20' },
-                { level: 'bad', text: 'High backlog', threshold: '>20' }
-            ]
-        }
+                { level: 'bad', text: 'High backlog', threshold: '>20' },
+            ],
+        },
     ];
 
     getAdditionalInfoClass(metric: any): string {
         const value = this.parseMetricValue(metric.value);
-        const info = metric.additionalInfo.find((i: { threshold: string; }) => 
-            this.isWithinThreshold(value, i.threshold)
+        const info = metric.additionalInfo.find((i: { threshold: string }) =>
+            this.isWithinThreshold(value, i.threshold),
         );
         return info ? info.level : 'medium';
     }
-    
+
     getAdditionalInfo(metric: any): string {
         const value = this.parseMetricValue(metric.value);
-        const info = metric.additionalInfo.find((i: { threshold: string; }) => 
-            this.isWithinThreshold(value, i.threshold)
+        const info = metric.additionalInfo.find((i: { threshold: string }) =>
+            this.isWithinThreshold(value, i.threshold),
         );
         return info ? info.text : '';
     }
-    
+
     private parseMetricValue(value: string): number {
-        return parseFloat(value.replace(/[^0-9.-]+/g, ""));
+        return parseFloat(value.replace(/[^0-9.-]+/g, ''));
     }
-    
+
     private isWithinThreshold(value: number, threshold: string): boolean {
         if (threshold.includes('-')) {
             const [min, max] = threshold.split('-').map(Number);
@@ -392,7 +400,7 @@ export class OrderReportComponent implements OnInit {
         this.metrics[3].value = `R ${averageCost.toFixed(2)}`;
 
         // Orders in progress
-        const ordersInProgress = this.rowData.filter(order => order.status === 'Pending Approval').length;
+        const ordersInProgress = this.rowData.filter((order) => order.status === 'Pending Approval').length;
         this.metrics[4].value = ordersInProgress.toString();
 
         // Update visible metrics after calculation
@@ -472,8 +480,8 @@ export class OrderReportComponent implements OnInit {
     }
 
     updateOrderStatuses(orders: any[], suppliers: any[]) {
-        const supplierIDs = suppliers.map(supplier => supplier.SupplierID);
-        orders.forEach(order => {
+        const supplierIDs = suppliers.map((supplier) => supplier.SupplierID);
+        orders.forEach((order) => {
             if (supplierIDs.includes(order.supplier)) {
                 order.quoteStatus = 'Accepted';
                 order.status = 'Pending';
@@ -484,7 +492,7 @@ export class OrderReportComponent implements OnInit {
     prepareChartData(): void {
         const dataMap = new Map();
 
-        this.rowData.forEach(order => {
+        this.rowData.forEach((order) => {
             if (!dataMap.has(order.supplier)) {
                 dataMap.set(order.supplier, { completed: 0, inProgress: 0, delayed: 0 });
             }
@@ -503,18 +511,18 @@ export class OrderReportComponent implements OnInit {
             supplier: supplier,
             completed: counts.completed,
             inProgress: counts.inProgress,
-            delayed: counts.delayed
+            delayed: counts.delayed,
         }));
 
         console.log('Prepared Chart Data:', this.stackedBarChartData);
     }
 
     prepareScatterPlotData() {
-        const supplierQuoteData = this.supplierQuote.map(item => ({
+        const supplierQuoteData = this.supplierQuote.map((item) => ({
             unitPrice: item.UnitPrice,
             discount: item.Discount,
             availableQuantity: item.AvailableQuantity,
-            itemSKU: item.ItemSKU
+            itemSKU: item.ItemSKU,
         }));
 
         return supplierQuoteData;

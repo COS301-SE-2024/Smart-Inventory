@@ -2,10 +2,7 @@
     <h1 mat-dialog-title style="text-align: center; --mdc-dialog-subhead-size: 30px">Create Custom Quote</h1>
 </ng-container>
 <ng-container *ngIf="!isNewQuote">
-    <div class="quote-header">
-        <div>Order ID: {{ orderId }}</div>
-        <div>Quote ID: {{ quoteId }}</div>
-    </div>
+    <h1 mat-dialog-title style="text-align: center; --mdc-dialog-subhead-size: 30px">Generated Quote</h1>
 </ng-container>
 
 <mat-dialog-content class="quote-content">
@@ -19,6 +16,10 @@
         <app-loading-spinner></app-loading-spinner>
     </div>
     <ng-container *ngIf="!isLoading">
+        <div class="quote-header" *ngIf="!isNewQuote">
+            <div>Order ID: {{ orderId }}</div>
+            <div>Quote ID: {{ quoteId }}</div>
+        </div>
         <div class="items-section">
             <h2 style="font-size: 24px">Quote Items</h2>
             <mat-form-field appearance="outline" class="full-width search-field">
@@ -77,7 +78,7 @@
                     </button>
                 </div>
             </div>
-            <button mat-flat-button (click)="addItem()" class="btn"><mat-icon>add</mat-icon> Add Item</button>
+            <button mat-flat-button (click)="addItem()" class="btn2"><mat-icon>add</mat-icon> Add Item</button>
         </div>
 
         <div class="suppliers-section">
@@ -142,13 +143,15 @@
     >
         {{ isSavingChanges ? 'Saving...' : 'Save Changes' }}
     </button>
-    <button
-        mat-flat-button
-        *ngIf="!isNewQuote"
-        (click)="sendQuote()"
-        [disabled]="hasUnsavedChanges || isSendingQuote"
-        class="btn"
-    >
-        {{ isSendingQuote ? 'Sending...' : 'Send Quote' }}
-    </button>
+    <div style="display: flex; width: 100%; margin-top: 10px">
+        <button
+            mat-flat-button
+            *ngIf="!isNewQuote"
+            (click)="sendQuote()"
+            [disabled]="hasUnsavedChanges || isSendingQuote"
+            class="btn3"
+        >
+            {{ isSendingQuote ? 'Sending...' : 'Send Quote' }}
+        </button>
+    </div>
 </mat-dialog-actions>

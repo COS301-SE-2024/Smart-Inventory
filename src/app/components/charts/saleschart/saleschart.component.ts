@@ -207,28 +207,28 @@ export class SaleschartComponent implements OnInit, OnDestroy, AfterViewInit, On
                     // Creation_Time: order.Creation_Time // Add this line
                 }));
                 console.log('Processed orders:', this.ordersData);
-                this.ordersData.push(
-                    { orderDate: '8-7-2024', orderStatus: 'Completed', deliveryDate: '8/7/2024' },
-                    { orderDate: '8-7-2024', orderStatus: 'Pending Approval', deliveryDate: null },
-                    { orderDate: '8-5-2024', orderStatus: 'Completed', deliveryDate: '8/7/2024' },
-                    { orderDate: '8-3-2024', orderStatus: 'Completed', deliveryDate: '8/4/2024' },
-                    { orderDate: '8-1-2024', orderStatus: 'Cancelled', deliveryDate: null },
-                    { orderDate: '7-30-2024', orderStatus: 'Completed', deliveryDate: '8/1/2024' },
-                    { orderDate: '7-28-2024', orderStatus: 'Pending Approval', deliveryDate: null },
-                    { orderDate: '7-25-2024', orderStatus: 'Completed', deliveryDate: '7/27/2024' },
-                    { orderDate: '7-23-2024', orderStatus: 'Completed', deliveryDate: '7/25/2024' },
-                    { orderDate: '7-21-2024', orderStatus: 'Cancelled', deliveryDate: null },
-                    { orderDate: '6-15-2024', orderStatus: 'Completed', deliveryDate: '6/17/2024' },
-                    { orderDate: '6-12-2024', orderStatus: 'Pending Approval', deliveryDate: null },
-                    { orderDate: '6-10-2024', orderStatus: 'Completed', deliveryDate: '6/11/2024' },
-                    { orderDate: '5-29-2024', orderStatus: 'Completed', deliveryDate: '5/30/2024' },
-                    { orderDate: '5-20-2024', orderStatus: 'Cancelled', deliveryDate: null },
-                    { orderDate: '5-15-2024', orderStatus: 'Completed', deliveryDate: '5/17/2024' },
-                    { orderDate: '5-10-2024', orderStatus: 'Pending Approval', deliveryDate: null },
-                    { orderDate: '4-25-2024', orderStatus: 'Completed', deliveryDate: '4/27/2024' },
-                    { orderDate: '4-20-2024', orderStatus: 'Completed', deliveryDate: '4/21/2024' },
-                    { orderDate: '4-15-2024', orderStatus: 'Cancelled', deliveryDate: null },
-                );
+                // this.ordersData.push(
+                //     { orderDate: '8-7-2024', orderStatus: 'Completed', deliveryDate: '8/7/2024' },
+                //     { orderDate: '8-7-2024', orderStatus: 'Pending Approval', deliveryDate: null },
+                //     { orderDate: '8-5-2024', orderStatus: 'Completed', deliveryDate: '8/7/2024' },
+                //     { orderDate: '8-3-2024', orderStatus: 'Completed', deliveryDate: '8/4/2024' },
+                //     { orderDate: '8-1-2024', orderStatus: 'Cancelled', deliveryDate: null },
+                //     { orderDate: '7-30-2024', orderStatus: 'Completed', deliveryDate: '8/1/2024' },
+                //     { orderDate: '7-28-2024', orderStatus: 'Pending Approval', deliveryDate: null },
+                //     { orderDate: '7-25-2024', orderStatus: 'Completed', deliveryDate: '7/27/2024' },
+                //     { orderDate: '7-23-2024', orderStatus: 'Completed', deliveryDate: '7/25/2024' },
+                //     { orderDate: '7-21-2024', orderStatus: 'Cancelled', deliveryDate: null },
+                //     { orderDate: '6-15-2024', orderStatus: 'Completed', deliveryDate: '6/17/2024' },
+                //     { orderDate: '6-12-2024', orderStatus: 'Pending Approval', deliveryDate: null },
+                //     { orderDate: '6-10-2024', orderStatus: 'Completed', deliveryDate: '6/11/2024' },
+                //     { orderDate: '5-29-2024', orderStatus: 'Completed', deliveryDate: '5/30/2024' },
+                //     { orderDate: '5-20-2024', orderStatus: 'Cancelled', deliveryDate: null },
+                //     { orderDate: '5-15-2024', orderStatus: 'Completed', deliveryDate: '5/17/2024' },
+                //     { orderDate: '5-10-2024', orderStatus: 'Pending Approval', deliveryDate: null },
+                //     { orderDate: '4-25-2024', orderStatus: 'Completed', deliveryDate: '4/27/2024' },
+                //     { orderDate: '4-20-2024', orderStatus: 'Completed', deliveryDate: '4/21/2024' },
+                //     { orderDate: '4-15-2024', orderStatus: 'Cancelled', deliveryDate: null },
+                // );
             } else {
                 console.error('Error fetching orders data:', responseBody.body);
                 // this.rowData = [];

@@ -29,20 +29,71 @@ import outputs from '../../../../amplify_outputs.json';
 import { MatDialog } from '@angular/material/dialog';
 import { TemplatechartComponent } from 'app/components/charts/templatechart/templatechart.component';
 import { LoadingSpinnerComponent } from 'app/components/loader/loading-spinner.component';
-interface DashboardItem extends GridsterItem {
-    type: string;
-    cols: number;
-    rows: number;
-    y: number;
-    x: number;
-    isActive?: boolean; // This flag will control the visibility
-    name?: string;
-    icon?: string;
-    analytic?: string;
-    percentage?: number; // Ensure this is defined as a number if using the percent pipe
-    component?: any;
-    tooltip?: string;
+import { DeleteConfirmationModalComponent } from './deleteWidget';
+import { BarChartComponent } from 'app/components/charts/widgets/widgetBar';
+import { LineChartComponent } from 'app/components/charts/widgets/widgetLine';
+import { PieChartComponent } from 'app/components/charts/widgets/widgetPie';
+import { DataServiceService } from './data-service.service';
+interface CardData {
+    title: string;
+    value: string | number;
+    icon: string;
+    type: 'currency' | 'number' | 'percentage' | 'string';
+    change?: number;
+    color: string;
 }
+
+interface DashboardItem extends GridsterItem {
+    cardId?: string;
+    name?: string;
+    component?: string;
+}
+
+
+interface ChartConfig {
+    type: string;
+    data: any;
+    title: string;
+    component: string;
+}
+
+interface DashboardData {
+    avgFulfillmentTime: number;
+    inventoryLevels: number;
+    topSeller: string;
+    backorders: number;
+    baselineValues: {
+        fulfillmentDays: number;
+        backorders: number;
+        inventoryLevels: number;
+    };
+}
+
+
+interface MetricPerformance {
+    value: number | string;
+    percentageChange: number;
+    color: 'green' | 'yellow' | 'red';
+}
+
+interface StockRequest {
+    tenentId: string;
+    sku: string;
+    quantityRequested: number;
+}
+
+interface Order {
+    tenentId: string;
+    Order_Status: string;
+    Expected_Delivery_Date: string | null;
+    Order_Date: string;
+    Selected_Supplier?: string;
+}
+
+interface SkuCounts {
+    [sku: string]: number;
+}
+
 
 @Component({
     selector: 'app-dashboard',
@@ -63,12 +114,24 @@ interface DashboardItem extends GridsterItem {
         BubblechartComponent,
         MatProgressSpinnerModule,
         TemplatechartComponent,
-        LoadingSpinnerComponent
+        LoadingSpinnerComponent,
+        LineChartComponent,
+        PieChartComponent,
+        BarChartComponent
     ]
 })
 export class DashboardComponent implements OnInit {
-    isDeleteMode: boolean = false;
     @ViewChild('sidenav') sidenav!: MatSidenav;
+
+    isDeleteMode: boolean = false;
+    isSidepanelOpen: boolean = false;
+    availableCharts: { name: string, component: string }[] = [
+        { name: 'Monthly Sales', component: 'BarChartComponent' },
+        { name: 'Quarterly Revenue', component: 'LineChartComponent' },
+        { name: 'Market Share', component: 'PieChartComponent' }
+    ];
+
+    Math: any;
 
     openSidePanel() {
         this.sidenav.open();
@@ -80,23 +143,51 @@ export class DashboardComponent implements OnInit {
 
     private saveTrigger = new Subject<void>();
 
-    chartConfigs = [
-        { type: 'bar', data: { categories: ['Jan', 'Feb', 'Mar'], values: [5, 10, 15] }, title: 'Monthly Sales' },
-        { type: 'line', data: { categories: ['Jan', 'Feb', 'Mar'], values: [3, 6, 9] }, title: 'Quarterly Revenue' },
-        { type: 'pie', data: [{ name: 'Item A', value: 30 }, { name: 'Item B', value: 70 }], title: 'Market Share' },
-        { type: 'sunburst', data: [], title: 'Inventory Breakdown' } // Populate with appropriate data
-    ];
+
+    charts: { [key: string]: Type<any> } = {
+        'SaleschartComponent': SaleschartComponent,
+        'BarchartComponent': BarchartComponent,
+        'BubblechartComponent': BubblechartComponent,
+        'DonutchartComponent': DonutchartComponent,
+        'BarChartComponent': BarChartComponent,
+        'LineChartComponent': LineChartComponent,
+        'PieChartComponent': PieChartComponent
+    };
+
+
     rowData: any[] = [];
-    dashboardInfo: any[] = [];
+    metricPerformance: Record<string, MetricPerformance> = {};
+    dashboardData: any;
     inventoryCount: number = 0;
     userCount: number = 0;
 
     options: GridsterConfig;
-    charts: Type<any>[] = [];
-    pendingDeletions: DashboardItem[] = [];
-    standaloneDeletions: DashboardItem[] = [];
     stockRequest: any[] = [];
+    inventory: any[] = [];
     orders: any[] = [];
+
+    cardData: CardData[] = [];
+
+    chartConfigs: ChartConfig[] = [
+        {
+            type: 'bar',
+            data: { categories: ['Jan', 'Feb', 'Mar'], values: [5, 10, 15] },
+            title: 'Monthly Sales',
+            component: 'BarChartComponent'
+        },
+        {
+            type: 'line',
+            data: { categories: ['Jan', 'Feb', 'Mar'], values: [3, 6, 9] },
+            title: 'Quarterly Revenue',
+            component: 'LineChartComponent'
+        },
+        {
+            type: 'pie',
+            data: [{ name: 'Item A', value: 30 }, { name: 'Item B', value: 70 }],
+            title: 'Market Share',
+            component: 'PieChartComponent'
+        },
+    ];
 
     RequestOrders = {
         requests: {
@@ -117,39 +208,7 @@ export class DashboardComponent implements OnInit {
         }
     };
 
-    dashboard: DashboardItem[];
-    largeItem: DashboardItem = {
-        cols: 4,
-        rows: 4,
-        y: 1,
-        x: 0,
-        type: 'large',
-        isActive: true,
-    };
-    newLargeItem: DashboardItem = {
-        cols: 4,
-        rows: 4,
-        y: 2,
-        x: 0,
-        type: 'newLarge',
-        isActive: true,
-    };
-    SalesvsTarget: DashboardItem = {
-        cols: 2,
-        rows: 3,
-        y: 2,
-        x: 0,
-        type: 'salesVsTarget',
-        isActive: true,
-    };
-    Product: DashboardItem = {
-        cols: 2,
-        rows: 4,
-        y: 2,
-        x: 0,
-        type: 'product',
-        isActive: true,
-    };
+    dashboard!: Array<DashboardItem>;
 
     public chartOptions!: AgChartOptions;
 
@@ -159,131 +218,216 @@ export class DashboardComponent implements OnInit {
         private titleService: TitleService,
         private filterService: FilterService,
         private cdr: ChangeDetectorRef,
-        private dialog: MatDialog
+        private dialog: MatDialog,
+        private service: DataServiceService
     ) {
         Amplify.configure(outputs);
         this.options = {
             gridType: GridType.VerticalFixed,
             displayGrid: DisplayGrid.None,
-            compactType: CompactType.CompactUpAndLeft,
+            compactType: CompactType.CompactUp,
+            margin: 30,
+            minCols: 12,
+            maxCols: 12,
+            minRows: 100,
+            maxRows: 100,
+            minItemWidth: 100,
+            minItemHeight: 50,
+            maxItemCols: 100,
+            minItemCols: 1,
+            maxItemRows: 100,
+            minItemRows: 1,
+            maxItemArea: 2500,
+            minItemArea: 1,
+            defaultItemCols: 1,
+            defaultItemRows: 1,
+            fixedColWidth: 105,
+            fixedRowHeight: 142,
+            keepFixedHeightInMobile: false,
+            keepFixedWidthInMobile: false,
+            scrollSensitivity: 10,
+            scrollSpeed: 20,
+            enableEmptyCellDrop: false,
+            enableEmptyCellDrag: false,
+            emptyCellDragMaxCols: 50,
+            emptyCellDragMaxRows: 50,
+            ignoreMarginInRow: false,
+            itemChangeCallback: () => this.saveState(),
+            itemResizeCallback: () => this.saveState(),
             draggable: {
                 enabled: true,
-                stop: (event) => this.saveState(),
+                stop: () => this.saveState()
             },
             resizable: {
                 enabled: true,
-                stop: (event) => this.saveState(),
+                stop: () => this.saveState()
             },
+            swap: true,
             pushItems: false,
-            minCols: 4,
-            maxCols: 4,
-            minRows: 4, // Increased minimum rows for better initial height
-            maxRows: 100,
-            minItemWidth: 100, // Minimum width each item can shrink to
-            minItemHeight: 50, // Minimum height each item can shrink to
-            minItemCols: 1, // Maximum columns an item can expand to
-            minItemRows: 1, // Maximum rows an item can expand to
-            fixedRowHeight: 150,
-            addEmptyRowsCount: 10,
+            disablePushOnDrag: false,
+            disablePushOnResize: false,
+            pushDirections: { north: true, east: true, south: true, west: true },
+            pushResizeItems: false,
+            disableWindowResize: false,
+            disableWarnings: false,
+            scrollToNewItems: false
         };
-
-        this.dashboard = [];
-
-        this.saveTrigger
-            .pipe(
-                debounceTime(1000) // Adjust the time based on your needs, 1000 ms is just an example
-            )
-            .subscribe(() => {
-                this.performSaveState();
-            });
-    }
-
-    // Titles for each chart
-    chartTitles: { [key: string]: string } = {
-        salesChart: 'Initial Sales Chart Title',
-        barChart: 'Initial Bar Chart Title',
-        bubbleChart: 'Initial Bubble Chart Title'
-    };
-
-    // openCustomizeModal(chartType: any) {
-    //     const dialogRef = this.dialog.open(CustomizeComponent, {
-    //         width: '400px',
-    //         data: {
-    //             chartType: chartType,
-    //         }
-    //     });
-
-    //     dialogRef.afterClosed().subscribe(result => {
-    //         if (result) {
-    //             console.log('The dialog was closed', result);
-    //             this.updateChartConfigs(result);
-    //         }
-    //     });
-    // }
-
-    enableDragging(item: GridsterItem) {
-        item.dragEnabled = true;
-    }
-
-    disableDragging(item: GridsterItem) {
-        item.dragEnabled = false;
-    }
-
-    async populateRequestOrders(stockRequests: any[], orders: any[]) {
-        const requestSummary = new Map<string, number>();
-
-        // Aggregate stock requests
-        stockRequests.forEach(request => {
-            requestSummary.set(request.sku, (requestSummary.get(request.sku) || 0) + request.quantityRequested);
+        this.saveTrigger.pipe(
+            debounceTime(500) // Debounce for 500ms
+        ).subscribe(() => {
+            this.persistState();
         });
 
-        const totalRequests = Array.from(requestSummary.values()).reduce((a, b) => a + b, 0);
-        const highestRequest = Math.max(...requestSummary.values());
-        const mostRequestedSku = [...requestSummary.entries()].reduce((a, b) => a[1] > b[1] ? a : b)[0];
-        const mostRequestedPercentage = (requestSummary.get(mostRequestedSku)! / totalRequests) * 100;
+        // this.dashboard = [
+        //     { cols: 3, rows: 2, y: 0, x: 0, cardData: this.cardData[0] },
+        //     { cols: 3, rows: 2, y: 0, x: 1, cardData: this.cardData[1] },
+        //     { cols: 3, rows: 2, y: 0, x: 2, cardData: this.cardData[2] },
+        //     { cols: 3, rows: 2, y: 0, x: 3, cardData: this.cardData[3] },
+        // ];
+    }
 
-        // Process orders for backorder details
-        const backorders = orders.filter(order => order.Order_Status === "Pending Approval" && order.Expected_Delivery_Date);
+    async populateRequestOrders(stockRequests: StockRequest[], orders: Order[]): Promise<any> {
+        const session = await fetchAuthSession();
+        this.loader.setLoading(false);
+
+        const cognitoClient = new CognitoIdentityProviderClient({
+            region: outputs.auth.aws_region,
+            credentials: session.credentials,
+        });
+
+        const getUserCommand = new GetUserCommand({
+            AccessToken: session.tokens?.accessToken.toString(),
+        });
+        const getUserResponse = await cognitoClient.send(getUserCommand);
+
+        const tenantId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
+        // Filter stock requests by tenantId
+        const filteredStockRequests = stockRequests.filter(request => request.tenentId === tenantId);
+
+        // Calculate requests data
+        const skuCounts: SkuCounts = filteredStockRequests.reduce((counts, request) => {
+            counts[request.sku] = (counts[request.sku] || 0) + request.quantityRequested;
+            return counts;
+        }, {} as SkuCounts);
+
+        const totalRequests: number = Object.values(skuCounts).reduce((sum, count) => sum + count, 0);
+        const highestRequest: number = Math.max(...Object.values(skuCounts));
+        const mostRequestedEntry = Object.entries(skuCounts).reduce((a, b) => a[1] > b[1] ? a : b);
+        const mostRequestedSku = mostRequestedEntry[0];
+        const mostRequestedPercentage = (skuCounts[mostRequestedSku] / totalRequests) * 100;
+
+        // Calculate backorders data
+        const backorders = orders.filter(order =>
+            order.tenentId === tenantId &&
+            order.Order_Status === "Pending Approval" &&
+            order.Expected_Delivery_Date
+        );
+        const currentBackorders = backorders.length;
+
         const delays = backorders.map(order => this.calculateDelay(order.Order_Date, order.Expected_Delivery_Date!));
-        const totalDelay = delays.reduce((a, b) => a + b, 0);
-        const averageDelay = delays.length > 0 ? totalDelay / delays.length : 0;
-        const longestDelay = Math.max(...delays);
-        const longestBackorderItem = orders.find(order => this.calculateDelay(order.Order_Date, order.Expected_Delivery_Date!) === longestDelay);
+        const totalDelay = delays.reduce((sum, delay) => sum + delay, 0);
+        const averageDelay = currentBackorders > 0 ? totalDelay / currentBackorders : 0;
 
-        return {
+        const longestDelay = Math.max(...delays);
+        const longestBackorderItem = backorders.find(order =>
+            this.calculateDelay(order.Order_Date, order.Expected_Delivery_Date!) === longestDelay
+        );
+
+        // Populate RequestOrders
+        this.RequestOrders = {
             requests: {
                 totalRequests,
                 mostRequested: {
-                    name: mostRequestedSku,
-                    percentage: mostRequestedPercentage
+                    name: mostRequestedSku || "None found",
+                    percentage: Number(mostRequestedPercentage.toFixed(2)) || 0
                 },
                 highestRequest
             },
             backorders: {
-                currentBackorders: backorders.length,
-                averageDelay,
+                currentBackorders,
+                averageDelay: Number(averageDelay.toFixed(2)),
                 longestBackorderItem: {
-                    productName: longestBackorderItem && longestBackorderItem.Selected_Supplier ? longestBackorderItem.Selected_Supplier : "Up to date",
-                    delay: longestBackorderItem ? this.formatDelay(longestDelay) : ""
+                    productName: longestBackorderItem?.Selected_Supplier || 'None found',
+                    delay: longestDelay > 0 ? this.formatDelay(longestDelay) : ''
                 }
             }
         };
-    }
 
+        console.log('Populated RequestOrders:', this.RequestOrders);
+    }
+    // Helper methods (make sure these are part of your component)
     private calculateDelay(orderDate: string, expectedDate: string): number {
         const order = new Date(orderDate);
         const expected = new Date(expectedDate);
-        return (expected.getTime() - order.getTime()) / (1000 * 3600 * 24);
+        return Math.max(0, (expected.getTime() - order.getTime()) / (1000 * 60 * 60 * 24));
     }
 
     private formatDelay(delay: number): string {
-        return delay > 0 ? delay.toString() : "";  // Return an empty string if delay is zero or not calculable
+        return delay > 0 ? `${delay.toFixed(0)} days` : "";
     }
-
     // Integration
     inventoryLevel: number = 20;
 
-    async dashboardData() {
+
+    async loadInventoryData() {
+        try {
+            const session = await fetchAuthSession();
+            this.loader.setLoading(false);
+
+            const cognitoClient = new CognitoIdentityProviderClient({
+                region: outputs.auth.aws_region,
+                credentials: session.credentials,
+            });
+
+            const getUserCommand = new GetUserCommand({
+                AccessToken: session.tokens?.accessToken.toString(),
+            });
+            const getUserResponse = await cognitoClient.send(getUserCommand);
+
+            const tenantId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
+
+            if (!tenantId) {
+                console.error('TenantId not found in user attributes');
+                this.rowData = [];
+                return;
+            }
+
+            const lambdaClient = new LambdaClient({
+                region: outputs.auth.aws_region,
+                credentials: session.credentials,
+            });
+
+
+            const invokeCommand = new InvokeCommand({
+                FunctionName: 'Inventory-getItems',
+                Payload: new TextEncoder().encode(JSON.stringify({
+                    pathParameters: {
+                        tenentId: tenantId, // Spelling as expected by the Lambda function
+                    }
+                })),
+            });
+
+            const lambdaResponse = await lambdaClient.send(invokeCommand);
+            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+            console.log('Response from Lambda:', responseBody);
+
+            if (responseBody.statusCode === 200) {
+                const inventoryItems = JSON.parse(responseBody.body);
+                this.inventory = inventoryItems;
+                console.log('Processed inventory items:', this.rowData);
+            } else {
+                console.error('Error fetching inventory data:', responseBody.body);
+                this.rowData = [];
+            }
+        } catch (error) {
+            console.error('Error in loadInventoryData:', error);
+            this.rowData = [];
+        } finally {
+            this.isLoading = false;
+        }
+    }
+
+    async dashData() {
         try {
             // Mocked baseline values (should be dynamically fetched or defined)
             const baselineValues = {
@@ -336,78 +480,27 @@ export class DashboardComponent implements OnInit {
             if (responseBody.statusCode === 200) {
                 const dashboardData = JSON.parse(responseBody.body);
                 // console.log('Dashboard Data:', dashboardData);
-                console.log('I am a metric', parseFloat((((dashboardData.inventoryLevels - baselineValues.inventoryLevels) / baselineValues.inventoryLevels) * 100).toFixed(2)));
-
-                // Update the dashboardInfo with new data from the Lambda function
-                this.dashboard = [
-                    {
-                        cols: 1,
-                        rows: 1,
-                        y: 0,
-                        x: 4,
-                        name: 'Inventory Levels',
-                        icon: 'storage',
-                        analytic: dashboardData.inventoryLevels.toString(),
-                        percentage: parseFloat((((dashboardData.inventoryLevels - baselineValues.inventoryLevels) / baselineValues.inventoryLevels) * 100).toFixed(2)), // Update this if needed from dashboardData
-                        type: 'card',
-                        isActive: true,
-                        tooltip: 'Current inventory stock count.',
-                    },
-                    {
-                        cols: 1,
-                        rows: 1,
-                        y: 0,
-                        x: 5,
-                        name: 'Backorders',
-                        icon: 'assignment_return',
-                        analytic: dashboardData.backorders.toString(),
-                        percentage: parseFloat((((dashboardData.backorders - baselineValues.backorders) / baselineValues.backorders) * 100).toFixed(2)), // Update this if needed from dashboardData
-                        type: 'card',
-                        isActive: true,
-                        tooltip: 'Orders pending due to lack of stock.',
-                    },
-                    {
-                        cols: 1,
-                        rows: 1,
-                        y: 0,
-                        x: 6,
-                        name: 'Avg Fulfillment Time',
-                        icon: 'hourglass_full',
-                        analytic: dashboardData.avgFulfillmentTime,
-                        percentage: parseFloat((((parseFloat(dashboardData.avgFulfillmentTime.split(" days")[0]) - baselineValues.fulfillmentDays) / baselineValues.fulfillmentDays) * 100).toFixed(2)), // Update this if needed from dashboardData
-                        type: 'card',
-                        isActive: true,
-                        tooltip: 'Average time taken from order placement to shipment.',
-                    },
-                    {
-                        cols: 1,
-                        rows: 1,
-                        y: 0,
-                        x: 7,
-                        name: 'Top Seller',
-                        icon: 'star_rate',
-                        analytic: dashboardData.topSeller,
-                        percentage: parseFloat("0.12"), // Update this if needed from dashboardData
-                        type: 'card',
-                        isActive: true,
-                        tooltip: 'The product with the highest requests.',
-                    },
-                ];
-                console.log('Processed dashboard data:', this.dashboardInfo);
+                // console.log('I am a metric', parseFloat((((dashboardData.inventoryLevels - baselineValues.inventoryLevels) / baselineValues.inventoryLevels) * 100).toFixed(2)));
+                this.dashboardData.inventoryLevels = parseFloat((((dashboardData.inventoryLevels - baselineValues.inventoryLevels) / baselineValues.inventoryLevels) * 100).toFixed(2));
+                this.dashboardData.avgFulfillmentTime = dashboardData.avgFulfillmentTime;
+                this.dashboardData.topSeller = dashboardData.topSeller;
+                this.dashboardData.backorders = dashboardData.backorders;
+                // this.dashboardData.
+                console.log('Processed dashboard data:', dashboardData);
             } else {
                 console.error('Error fetching dashboard data:', responseBody.body);
-                this.dashboardInfo = [];
+
             }
         } catch (error) {
             console.error('Error in dashboardData:', error);
-            this.dashboardInfo = [];
+
         }
         finally {
             // this..isLoading = false;
         }
     }
 
-    isLoading: boolean = true;
+    isLoading: boolean = false;
     async loadOrdersData() {
         // this.isLoading = true;
         try {
@@ -448,7 +541,7 @@ export class DashboardComponent implements OnInit {
             if (responseBody.statusCode === 200) {
                 const orders = JSON.parse(responseBody.body);
                 this.orders = orders;
-                console.log('Processed orders:', orders);
+                console.log('Processed orders from orders:', orders);
 
             } else {
                 console.error('Error fetching orders data:', responseBody.body);
@@ -501,17 +594,9 @@ export class DashboardComponent implements OnInit {
             console.log('Response from Lambda:', responseBody);
 
             if (responseBody.statusCode === 200) {
-                const orders = JSON.parse(responseBody.body);
-                // orders.forEach((request: { category: string | number; quantityRequested: number; }) => {
-                //     if (this.inventoryData[request.category]) {
-                //         this.inventoryData[request.category].requestedStock = (this.inventoryData[request.category].requestedStock || 0) + request.quantityRequested;
-                //     } else {
-                //         this.inventoryData[request.category] = { currentStock: 0, requestedStock: request.quantityRequested };
-                //     }
-                // });
-                // this.updateChartData();
-                this.stockRequest = orders;
-                console.log('Processed orders:', orders);
+                const stock = JSON.parse(responseBody.body);
+                this.stockRequest = stock;
+                console.log('Processed stock requests:', stock);
             } else {
                 console.error('Error fetching orders data:', responseBody.body);
                 // this.rowData = [];
@@ -523,7 +608,6 @@ export class DashboardComponent implements OnInit {
             // this..isLoading = false;
         }
     }
-
 
     async fetchUsers() {
         try {
@@ -573,272 +657,365 @@ export class DashboardComponent implements OnInit {
         }
     }
 
-
-
-    //
-
-    performSaveState() {
-        console.log('Saving state:', this.dashboard); // Log to debug
-        const state = {
-            dashboard: [...this.dashboard], // Use spread to ensure a new array reference
-            standaloneItems: {
-                largeItem: this.largeItem,
-                newLargeItem: this.newLargeItem,
-                SalesvsTarget: this.SalesvsTarget,
-                Product: this.Product,
-            },
-        };
-        localStorage.setItem('dashboardState', JSON.stringify(state));
-    }
-
-    saveState() {
-        this.saveTrigger.next();
-    }
-
-    loadState() {
-        const savedState = localStorage.getItem('dashboardState');
-        if (savedState) {
-            const state = JSON.parse(savedState);
-            this.dashboard = state.dashboard || this.getDefaultDashboard(); // Fallback to default
-            this.largeItem = state.standaloneItems.largeItem;
-            this.newLargeItem = state.standaloneItems.newLargeItem;
-            this.SalesvsTarget = state.standaloneItems.SalesvsTarget;
-            this.Product = state.standaloneItems.Product;
-        } else {
-            this.dashboard = this.getDefaultDashboard();
-        }
-        this.cdr.detectChanges(); // Force change detection
-    }
-
-    getDefaultDashboard(): DashboardItem[] {
-        // return default dashboard setup
-        this.dashboard = [
-            {
-                cols: 1,
-                rows: 1,
-                y: 0,
-                x: 4,
-                name: 'Inventory Levels',
-                icon: 'storage',
-                analytic: '1234',
-                percentage: 0.04,
-                type: 'card',
-                isActive: true,
-                tooltip: 'Current inventory stock count.',
-            },
-            {
-                cols: 1,
-                rows: 1,
-                y: 0,
-                x: 5,
-                name: 'Backorders',
-                icon: 'assignment_return',
-                analytic: '320',
-                percentage: -0.01,
-                type: 'card',
-                isActive: true,
-                tooltip: 'Orders pending due to lack of stock.',
-            },
-            {
-                cols: 1,
-                rows: 1,
-                y: 0,
-                x: 6,
-                name: 'Avg Fulfillment Time',
-                icon: 'hourglass_full',
-                analytic: '48 hrs',
-                percentage: -0.05,
-                type: 'card',
-                isActive: true,
-                tooltip: 'Average time taken from order placement to shipment.',
-            },
-            {
-                cols: 1,
-                rows: 1,
-                y: 0,
-                x: 7,
-                name: 'Top Seller',
-                icon: 'star_rate',
-                analytic: 'Product123',
-                percentage: 0.12,
-                type: 'card',
-                isActive: true,
-                tooltip: 'The product with the highest requests.',
-            },
-        ];
-
-        return this.dashboard;
-    }
-
-
-    showDeleteModal = false;
-
-    openDeleteConfirmModal(): void {
-        this.showDeleteModal = true;
-    }
-
-    confirmDelete(): void {
-        this.finalizeDeletions();
-        this.showDeleteModal = false;
-    }
-
-    cancelDelete(): void {
-        this.showDeleteModal = false;
-        this.undoDeletions();
-    }
-
-    toggleDeleteMode(): void {
-        this.isDeleteMode = !this.isDeleteMode;
-    }
-
-    markForDeletion(item: DashboardItem, event: MouseEvent | TouchEvent): void {
-        event.preventDefault();
-        event.stopPropagation();
-
-        // Determine if the item is part of the dashboard or standalone items
-        if (this.dashboard.includes(item)) {
-            this.toggleItemInArray(item, this.pendingDeletions);
-        } else {
-            this.toggleItemInArray(item, this.standaloneDeletions);
-        }
-    }
-
-    toggleItemInArray(item: DashboardItem, targetArray: DashboardItem[]): void {
-        const index = targetArray.indexOf(item);
-        if (index === -1) {
-            targetArray.push(item);
-        } else {
-            targetArray.splice(index, 1);
-        }
-    }
-
-    removeItem(item: DashboardItem): void {
-        item.isActive = false;
-        this.cdr.detectChanges(); // Refresh the view to reflect the removal
-    }
-
-    toggleItemDeletion(item: DashboardItem): void {
-        const index = this.pendingDeletions.indexOf(item);
-        if (index > -1) {
-            this.pendingDeletions.splice(index, 1); // Remove from deletions if already marked
-        } else {
-            this.pendingDeletions.push(item); // Add to deletions if not already marked
-        }
-    }
-
-    finalizeDeletions(): void {
-        this.dashboard = this.dashboard.filter((item) => !this.pendingDeletions.includes(item));
-        this.pendingDeletions = [];
-
-        // Toggle isActive for standalone items
-        [this.largeItem, this.newLargeItem, this.SalesvsTarget, this.Product].forEach((item) => {
-            if (this.standaloneDeletions.includes(item)) {
-                item.isActive = false; // Mark as inactive instead of deleting
-            }
-        });
-
-        this.standaloneDeletions = [];
-        this.toggleDeleteMode();
-    }
-
-    undoDeletions(): void {
-        [...this.pendingDeletions, ...this.standaloneDeletions].forEach((item) => (item.isActive = true));
-        this.pendingDeletions = [];
-        this.standaloneDeletions = [];
-        this.toggleDeleteMode();
-    }
     sidebarOpen: boolean = false;
 
     toggleSidebar() {
         this.sidebarOpen = !this.sidebarOpen;
     }
 
-    addChart(type: string): void {
-        let component: Type<any> | null = null;
-
-        if (type === 'bar') {
-            component = BarchartComponent;
-        } else if (type === 'donut') {
-            component = DonutchartComponent;
-        } else if (type === 'area') {
-            component = SaleschartComponent;
-        }
-
-        if (component) {
-            // Calculate new position, assume each card takes 1 column and starts at row 0
-            const positionX = this.dashboard.length % 4; // This will place new chart in next available column
-            const positionY = Math.floor(this.dashboard.length / 4); // This increases the row number every 4 charts
-
-            this.dashboard.push({
-                cols: 2, // You might want to standardize or customize this based on type
-                rows: 3, // Same as above
-                y: positionY,
-                x: positionX,
-                name: type.charAt(0).toUpperCase() + type.slice(1) + ' Chart',
-                type: 'chart',
-
-                component: component,
-            });
-        } else {
-            console.error('Invalid chart type:', type);
-        }
-    }
-
-    newCharts: any[] = [];
-
-    updateChartConfigs(newConfig: any): void {
-        this.newCharts.push(newConfig);
-        this.dashboard.push(newConfig);
-        this.saveState();
-    }
-
-    addChartToDashboard(config: any) {
-        const newChart = {
-          chartType: config.type,
-          data: config.data,
-          title: config.title
-        };
-    
-        this.newCharts.push(newChart);
-        this.saveNewCharts();
-        this.closeSidePanel();
-        this.cdr.detectChanges(); // Force change detection
-      }
-
-    setFilter(filter: string): void {
-        this.filterService.changeFilter(filter);
-    }
-
-    removeNewChart(index: number) {
-        this.newCharts.splice(index, 1);
-        this.saveNewCharts();
-        this.cdr.detectChanges(); // Force change detection
-      }
-
-    saveNewCharts() {
-        localStorage.setItem('newCharts', JSON.stringify(this.newCharts));
-    }
-
-    loadNewCharts() {
-        const savedNewCharts = localStorage.getItem('newCharts');
-        if (savedNewCharts) {
-          this.newCharts = JSON.parse(savedNewCharts);
-          console.log('Loaded charts:', this.newCharts); // Add this for debugging
-          this.cdr.detectChanges(); // Force change detection
-        }
-      }
-
     async ngOnInit() {
-        this.loadState(); // Load the state on initialization
-        this.loadNewCharts();
         this.titleService.updateTitle('Dashboard');
 
-        // await this.loadInventoryData();
+
+
+        await this.loadInventoryData();
         await this.fetchUsers();
-        await this.dashboardData();
+        // await this.dashData();
         await this.loadOrdersData();
         await this.loadStockData();
-        this.RequestOrders = await this.populateRequestOrders(this.stockRequest, this.orders);
-        this.isLoading = false;
+        this.processDashboardData();
+        this.populateRequestOrders(this.stockRequest, this.orders);
+        // this.RequestOrders = await this.populateRequestOrders(this.stockRequest, this.orders);
+
+        // Update cardData with the fetched information
+        this.updateCardData();
+
+        this.initializeDashboard();
+        this.loadState();
+    }
+
+    loadState() {
+        try {
+            const savedState = localStorage.getItem('dashboardState');
+            if (savedState) {
+                const parsedState = JSON.parse(savedState);
+                if (Array.isArray(parsedState)) {
+                    this.dashboard = parsedState;
+                } else {
+                    console.error('Saved state is not an array, initializing default dashboard');
+                    this.initializeDashboard();
+                }
+            } else {
+                this.initializeDashboard();
+            }
+        } catch (error) {
+            console.error('Error loading dashboard state:', error);
+            this.initializeDashboard();
+        }
+    }
+
+    saveState() {
+        this.saveTrigger.next();
+    }
+
+    private persistState() {
+        localStorage.setItem('dashboardState', JSON.stringify(this.dashboard));
+    }
+
+    processDashboardData() {
+        this.dashboardData = this.service.processDashboardData(
+            this.orders,
+            this.stockRequest,
+            this.inventory
+        );
+        this.calculateMetricPerformance();
+    }
+
+    calculateMetricPerformance() {
+        if (!this.dashboardData || !this.dashboardData.metricConfigs) {
+            console.error('Dashboard data or metric configs are missing');
+            return;
+        }
+
+        const metrics = ['avgFulfillmentTime', 'backorders', 'inventoryLevels'];
+        metrics.forEach(metric => {
+            const config = this.dashboardData.metricConfigs[metric];
+            if (!config) {
+                console.warn(`Config for metric ${metric} is missing`);
+                return;
+            }
+
+            let currentValue = this.dashboardData[metric];
+            if (currentValue === undefined) {
+                console.warn(`Value for metric ${metric} is missing`);
+                return;
+            }
+
+            if (metric === 'avgFulfillmentTime') {
+                currentValue = this.parseTimeToHours(currentValue);
+            }
+
+            let percentageChange = config.baseline !== 0
+                ? ((currentValue - config.baseline) / config.baseline) * 100
+                : 0;
+            if (config.isInverted) {
+                percentageChange = -percentageChange;
+            }
+
+            let color: 'green' | 'yellow' | 'red';
+            if (percentageChange >= config.goodThreshold) {
+                color = 'green';
+            } else if (percentageChange <= config.badThreshold) {
+                color = 'red';
+            } else {
+                color = 'yellow';
+            }
+
+            this.metricPerformance[metric] = {
+                value: this.dashboardData[metric],
+                percentageChange: Number(percentageChange.toFixed(2)),
+                color
+            };
+        });
+
+        // Handle topSeller separately
+        if (this.dashboardData.topSeller && this.dashboardData.topSellerPercentage !== undefined) {
+            this.metricPerformance['topSeller'] = {
+                value: `${this.dashboardData.topSeller} (${this.dashboardData.topSellerPercentage.toFixed(1)}%)`,
+                percentageChange: this.dashboardData.topSellerPercentage,
+                color: 'green' // You might want to implement a different logic for color here
+            };
+        } else {
+            console.warn('Top seller data is missing');
+        }
+    }
+
+    updateCardData() {
+        this.cardData = [
+            {
+                title: 'Avg Fulfillment Time',
+                value: this.dashboardData.avgFulfillmentTime,
+                icon: 'hourglass_full',
+                type: 'string',
+                change: this.metricPerformance['avgFulfillmentTime'].percentageChange,
+                color: this.metricPerformance['avgFulfillmentTime'].color
+            },
+            {
+                title: 'Backorders',
+                value: this.dashboardData.backorders,
+                icon: 'assignment_return',
+                type: 'number',
+                change: this.metricPerformance['backorders'].percentageChange,
+                color: this.metricPerformance['backorders'].color
+            },
+            {
+                title: 'Inventory Levels',
+                value: this.dashboardData.inventoryLevels,
+                icon: 'storage',
+                type: 'number',
+                change: this.metricPerformance['inventoryLevels'].percentageChange,
+                color: this.metricPerformance['inventoryLevels'].color
+            },
+            {
+                title: 'Top Seller',
+                value: `${this.dashboardData.topSeller}`,
+                icon: 'star_rate',
+                type: 'string',
+                change: this.metricPerformance['topSeller'].percentageChange,
+                color: this.metricPerformance['topSeller'].color
+            },
+        ];
+    }
+
+    calculateTimeChange(currentValue: string, baselineValue: string): number {
+        const current = this.parseTimeToHours(currentValue);
+        const baseline = this.parseTimeToHours(baselineValue);
+
+        if (baseline === 0) return 0;
+        return parseFloat((((current - baseline) / baseline) * 100).toFixed(2));
+    }
+
+    parseTimeToHours(value: string): number {
+        const parts = value.split(' ');
+        let hours = 0;
+        for (let i = 0; i < parts.length; i += 2) {
+            const amount = parseInt(parts[i], 10);
+            const unit = parts[i + 1].toLowerCase();
+            if (unit.startsWith('day')) {
+                hours += amount * 24;
+            } else if (unit.startsWith('hr')) {
+                hours += amount;
+            }
+        }
+        return hours;
+    }
+
+    calculateChange(currentValue: number, baselineValue: number): number {
+        if (baselineValue === 0) return currentValue > 0 ? 100 : 0;
+        return parseFloat((((currentValue - baselineValue) / baselineValue) * 100).toFixed(2));
+    }
+
+    private parseTimeValue(value: number | string): number {
+        if (typeof value === 'number') return value;
+
+        const timeRegex = /(\d+)\s*(hrs?|hours?|days?)/i;
+        const match = value.match(timeRegex);
+
+        if (match) {
+            const amount = parseInt(match[1], 10);
+            const unit = match[2].toLowerCase();
+
+            if (unit.startsWith('hr') || unit.startsWith('hour')) {
+                return amount;
+            } else if (unit.startsWith('day')) {
+                return amount * 24; // Convert days to hours
+            }
+        }
+
+        // If the string doesn't match the expected format, try parsing it as a number
+        const numericValue = parseFloat(value);
+        return isNaN(numericValue) ? 0 : numericValue;
+    }
+
+    toggleDeleteMode() {
+        this.isDeleteMode = !this.isDeleteMode;
+    }
+
+    deleteWidget(item: GridsterItem) {
+        const dialogRef = this.dialog.open(DeleteConfirmationModalComponent, {
+            width: '300px',
+            data: { itemName: item['name'] }
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                this.dashboard = this.dashboard.filter(dashboardItem => dashboardItem !== item);
+                this.saveState();
+                this.isDeleteMode = false;
+            }
+        });
+    }
+
+    openSidepanel() {
+        this.isSidepanelOpen = true;
+    }
+
+    closeSidepanel() {
+        this.isSidepanelOpen = false;
+    }
+
+
+    addWidget(chartConfig: any) {
+        const newItem: GridsterItem = {
+            cols: 6,
+            rows: 2,
+            y: 0,
+            x: 0,
+            cardId: chartConfig.title.toLowerCase().replace(' ', '-'),
+            name: chartConfig.title,
+            component: chartConfig.component,
+            chartConfig: chartConfig
+        };
+        this.dashboard.push(newItem);
+        this.saveState();
+        this.closeSidepanel();
+    }
+
+    initializeDashboard() {
+        if (this.cardData && this.cardData.length > 0) {
+            this.dashboard = [
+                // Existing cards
+                ...this.cardData.map((data, index) => ({
+                    cols: 3,
+                    rows: 1,
+                    y: 0,
+                    x: index * 3,
+                    cardData: data
+                })),
+                // First full-width item
+                {
+                    cols: 12,
+                    rows: 3,
+                    y: 2,
+                    x: 0,
+                    cardId: 'sales-chart',
+                    name: 'Sales Chart',
+                    component: 'SaleschartComponent'
+                },
+                // Second full-width item(0)
+                {
+                    cols: 12,
+                    rows: 3,
+                    y: 4,
+                    x: 0,
+                    cardId: 'bar-chart',
+                    name: 'Bar Chart',
+                    component: 'BarchartComponent'
+                },
+                // First half-width item
+                {
+                    cols: 6,
+                    rows: 3,
+                    y: 6,
+                    x: 0,
+                    cardId: 'bubble-chart',
+                    name: 'Bubble Chart',
+                    component: 'BubblechartComponent'
+                },
+                // Second half-width item
+                {
+                    cols: 6,
+                    rows: 4,
+                    y: 6,
+                    x: 6,
+                    cardId: 'donut-chart',
+                    name: 'Donut Chart',
+                    component: 'DonutchartComponent'
+                }
+            ];
+        }
+
+        this.cdr.detectChanges();
+    }
+
+    getColor(color: string): string {
+        switch (color) {
+            case 'green': return 'text-green-500';
+            case 'red': return 'text-red-500';
+            case 'yellow': return 'text-yellow-500';
+            default: return 'text-gray-500';
+        }
+    }
+
+    getIcon(change: number | undefined): string {
+        if (change === undefined) return 'remove';
+        return change >= 0 ? 'arrow_upward' : 'arrow_downward';
+    }
+
+    formatValue(value: number | string, type: string): string {
+        if (typeof value === 'number') {
+            switch (type) {
+                case 'currency':
+                    return new Intl.NumberFormat('af', {
+                        style: 'currency',
+                        currency: 'ZAR',
+                    }).format(value);
+                case 'number':
+                    return value.toString();
+                default:
+                    return value.toString();
+            }
+        }
+        return value;
+    }
+
+    getProgressRingStyle(change: number, color: string): string {
+        const absChange = Math.abs(change);
+        const degree = (absChange / 100) * 360;
+        return `conic-gradient(${this.getColorHex(color)} 0deg ${degree}deg, #f0f0f0 ${degree}deg 360deg)`;
+    }
+
+    getColorHex(color: string): string {
+        switch (color) {
+            case 'green': return '#4CAF50';
+            case 'red': return '#F44336';
+            case 'yellow': return '#FFC107';
+            default: return '#9E9E9E';
+        }
+    }
+
+
+    getChangeColor(change: number): string {
+        return change >= 0 ? 'positive-change' : 'negative-change';
     }
 }

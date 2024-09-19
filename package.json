@@ -41,6 +41,7 @@
         "ngx-mat-select-search": "^7.0.6",
         "npm": "^10.8.1",
         "qrcode": "^1.5.4",
+        "quagga": "^0.12.1",
         "rxjs": "~7.8.0",
         "smart-inventory": "file:",
         "tslib": "^2.3.0",

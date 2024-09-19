@@ -1,216 +1,171 @@
-<!-- <div *ngIf="isDeleteMode" class="overlay">
-    <div class="modal">
-        <p>{{ pendingDeletions.length + standaloneDeletions.length }} widgets marked for deletion.</p>
-        <button mat-button (click)="finalizeDeletions()">Confirm Deletions</button>
-        <button mat-button (click)="undoDeletions()">Undo</button>
+<div class="dashboard-container">
+    <div class="quick-actions">
+        <button mat-button [matMenuTriggerFor]="menu">Quick Actions</button>
+        <mat-menu #menu="matMenu" yPosition="above">
+            <button mat-menu-item (click)="openSidepanel()">Add Widget</button>
+            <button mat-menu-item (click)="toggleDeleteMode()">
+                {{ isDeleteMode ? 'Confirm Delete' : 'Delete Widget' }}
+            </button>
+        </mat-menu>
     </div>
-</div> -->
-
-<div class="main-container gridster-container">
-    <div class="modal" *ngIf="showDeleteModal">
-        <div class="modal-content">
-            <h2>Confirm Deletion</h2>
-            <p>Are you sure you want to delete the selected widget(s)?</p>
-            <div class="modal-buttons">
-                <button mat-raised-button color="warn" (click)="confirmDelete()">Confirm Delete</button>
-                <button mat-raised-button (click)="cancelDelete()">Cancel</button>
-            </div>
-        </div>
-    </div>
-    <div class="help-button-container">
-        <a id="help-button">
-            <button *ngIf="!isDeleteMode" class="btnAdd" mat-raised-button [matMenuTriggerFor]="mainMenu">Quick
-                Actions</button>
-            <button *ngIf="isDeleteMode" class="btnDelete" mat-raised-button color="warn"
-                (click)="openDeleteConfirmModal()">Delete</button>
-
-            <mat-menu #mainMenu="matMenu" yPosition="above">
-                <button mat-menu-item class="QAButtons" (click)="openSidePanel()">Add a Widget</button>
-                <button mat-menu-item class="QAButtons" (click)="toggleDeleteMode()">Delete a Widget</button>
-                <!-- <button mat-menu-item routerLink="/help">Help</button>
-    <button mat-menu-item routerLink="/settings">Settings</button> -->
-            </mat-menu>
-        </a>
-    </div>
-    <mat-sidenav-container class="sidenav-container">
-        <mat-sidenav #sidenav mode="side" opened="false" position="end" style="width: 25%; padding: 19px">
-            <div class="sidenav-header">
-                <h3>Select Widget</h3>
-                <button mat-icon-button (click)="closeSidePanel()">
-                    <mat-icon>close</mat-icon>
-                </button>
-            </div>
-            <div class="charts-container">
-                <div *ngFor="let config of chartConfigs">
-
-                    <app-templatechart 
-                        [chartType]="config.type" 
-                        [chartData]="config.data" 
-                        [chartTitle]="config.title"
-                        (click)="addChartToDashboard(config)">
-                    </app-templatechart>
-                </div>
-            </div>
-        </mat-sidenav>
-    </mat-sidenav-container>
 
     <gridster [options]="options">
         <gridster-item [item]="item" *ngFor="let item of dashboard">
-            <!-- Use ngSwitch to differentiate between card types -->
-            <div
-                [ngSwitch]="item.type"
-                [class.blur]="isDeleteMode && !pendingDeletions.includes(item)"
-                *ngIf="item.isActive"
-            >
-                <!-- Normal Cards -->
-                <div *ngSwitchCase="'card'" class="card" [ngClass]="{ orders: item.name === 'Orders' }">
-                    <button
-                        *ngIf="isDeleteMode"
-                        mat-mini-fab
-                        color="warn"
-                        class="delete-icon"
-                        (click)="markForDeletion(item, $event)"
-                    >
-                        <mat-icon>delete_outline</mat-icon>
-                    </button>
-                    <div class="icon-container">
-                        <mat-icon
-                            class="icon"
-                            [matTooltip]="item.tooltip ?? 'No description available'"
-                            matTooltipPosition="above"
-                            >{{ item.icon }}</mat-icon
-                        >
-                    </div>
-                    <div class="text-content">
-                        <h4>{{ item.name }}</h4>
-                        <p class="analytic">{{ item.analytic }}</p>
-                    </div>
-                    <div
-                        class="percentage"
-                        [ngClass]="{ increase: (item.percentage ?? 0) > 0, decrease: (item.percentage ?? 0) < 0 }"
-                    >
-                        {{ item.percentage }}<span>%</span>
-                    </div>
-                </div>
-            </div>
-            <ng-container *ngIf="item.type === 'chart'" [class.blur]="isDeleteMode && !pendingDeletions.includes(item)">
-                <button
-                    *ngIf="isDeleteMode"
-                    mat-mini-fab
-                    color="warn"
-                    class="delete-icon"
-                    (click)="markForDeletion(item, $event)"
-                >
-                    <mat-icon>delete_outline</mat-icon>
-                </button>
-                <ng-container *ngComponentOutlet="item.component"></ng-container>
-            </ng-container>
-        </gridster-item>
-        <gridster-item *ngIf="largeItem.isActive" [item]="largeItem">
-            <button
-                *ngIf="isDeleteMode"
-                mat-mini-fab
-                color="warn"
-                class="delete-icon"
-                (click)="markForDeletion(largeItem, $event)"
-            >
-                <mat-icon>delete_outline</mat-icon>
-            </button>
-            <div class="full-width-card">
-                <div class="statistics" style="width: 50%; padding: 20px">
-                    <div class="earnings">
-                        <h3 style="color: var(----dash-bg-color); margin-bottom: 10px">Requests</h3>
-                        <ul style="list-style: none; padding: 0; margin: 0">
-                            <li *ngIf="RequestOrders" style="padding: 8px 0; border-bottom: 1px solid #eee">
-                                Total Requests: {{ RequestOrders.requests.totalRequests }}
-                            </li>
-                            <li *ngIf="RequestOrders" style="padding: 8px 0; border-bottom: 1px solid #eee">
-                                Most Requested Category: {{ RequestOrders.requests.mostRequested.name }} ({{
-                                    RequestOrders.requests.mostRequested.percentage
-                                }}%)
-                            </li>
-                            <li *ngIf="RequestOrders" style="padding: 8px 0">
-                                Highest Requests: {{ RequestOrders.requests.highestRequest }}
-                            </li>
-                        </ul>
-                    </div>
-                    <hr />
-                    <div class="earnings">
-                        <h3 style="color: var(----dash-bg-color); margin-bottom: 10px">Backorders</h3>
-                        <ul style="list-style: none; padding: 0; margin: 0">
-                            <li *ngIf="RequestOrders" style="padding: 8px 0; border-bottom: 1px solid #eee">
-                                Current Backorders: {{ RequestOrders.backorders.currentBackorders }}
-                            </li>
-                            <li *ngIf="RequestOrders" style="padding: 8px 0; border-bottom: 1px solid #eee">
-                                Average Delay: {{ RequestOrders.backorders.averageDelay }} days
-                            </li>
-                            <li *ngIf="RequestOrders" style="padding: 8px 0">
-                                Longest Backorder Item: {{ RequestOrders.backorders.longestBackorderItem.productName }}
-                                -
-                                {{ RequestOrders.backorders.longestBackorderItem.delay }} days
-                            </li>
-                        </ul>
-                    </div>
-                </div>
 
-                <app-saleschart class="chart"></app-saleschart>
-            </div>
-        </gridster-item>
-        <gridster-item *ngIf="newLargeItem.isActive" [item]="newLargeItem">
-            <button
-                *ngIf="isDeleteMode"
-                mat-mini-fab
-                color="warn"
-                class="delete-icon"
-                (click)="markForDeletion(newLargeItem, $event)"
-            >
-                <mat-icon>delete_outline</mat-icon>
-            </button>
-            <div class="new-full-width-card">
-                <app-barchart class="chart-section"></app-barchart>
-                <div class="info-section">
-                    <h3>Want full report?</h3>
-                    <p>Awesome! You can see more detailed information and download it using this option.</p>
-                    <button class="report-btn" routerLink="/reports">See reports</button>
+            <mat-card class="dashboard-card" *ngIf="item['cardData']">
+                <button *ngIf="isDeleteMode" class="delete-button" (click)="deleteWidget(item)">
+                    <mat-icon>delete</mat-icon>
+                </button>
+                <div class="card-content">
+                    <div class="left-content">
+                        <div class="icon-container">
+                            <mat-icon>{{ item['cardData'].icon }}</mat-icon>
+                        </div>
+                        <div class="info-container">
+                            <h3 class="card-title">{{ item['cardData'].title }}</h3>
+                            <p class="card-value">{{ formatValue(item['cardData'].value, item['cardData'].type) }}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="right-content">
+                        <div class="progress-ring"
+                            [style.background-image]="getProgressRingStyle(item['cardData'].change, item['cardData'].color)">
+                            <span class="change-value" [ngClass]="getColor(item['cardData'].color)">
+                                {{ item['cardData'].change > 0 ? '+' : '' }}{{ item['cardData'].change }}%
+                            </span>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </gridster-item>
-        <gridster-item *ngIf="SalesvsTarget.isActive" [item]="SalesvsTarget">
-            <button
-                *ngIf="isDeleteMode"
-                mat-mini-fab
-                color="warn"
-                class="delete-icon"
-                (click)="markForDeletion(SalesvsTarget, $event)"
-            >
-                <mat-icon>delete_outline</mat-icon>
-            </button>
-            <app-bubblechart></app-bubblechart>
-        </gridster-item>
-        <gridster-item *ngIf="Product.isActive" [item]="Product">
-            <button
-                *ngIf="isDeleteMode"
-                mat-mini-fab
-                color="warn"
-                class="delete-icon"
-                (click)="markForDeletion(Product, $event)"
-            >
-                <mat-icon>delete_outline</mat-icon>
-            </button>
-            <app-donutchart></app-donutchart>
+            </mat-card>
+
+
+            <!-- Full-width items -->
+            <mat-card class="dashboard-card full-width-card" *ngIf="item.name === 'Sales Chart'">
+                <button *ngIf="isDeleteMode" class="delete-button" (click)="deleteWidget(item)">
+                    <mat-icon>delete</mat-icon>
+                </button>
+                <div class="split-container">
+                    <div class="left-column req-back">
+                        <!-- <ng-container *ngIf="item.cardId === 'sales-chart'"> -->
+                        <div class="requests-section">
+                            <h3>Requests</h3>
+                            <p>Total Requests: {{ RequestOrders.requests.totalRequests }}</p>
+                            <p>Most Requested: {{ RequestOrders.requests.mostRequested.name }} ({{
+                                RequestOrders.requests.mostRequested.percentage }}%)</p>
+                            <p>Highest Request: {{ RequestOrders.requests.highestRequest }}</p>
+                        </div>
+                        <div class="divider"></div>
+                        <div class="backorders-section">
+                            <h3>Backorders</h3>
+                            <p>Current Backorders: {{ RequestOrders.backorders.currentBackorders }}</p>
+                            <p>Average Delay: {{ RequestOrders.backorders.averageDelay }} days</p>
+                            <p>Longest Backorder: {{ RequestOrders.backorders.longestBackorderItem.productName }}
+                                ({{ RequestOrders.backorders.longestBackorderItem.delay }})</p>
+                        </div>
+                        <!-- </ng-container> -->
+
+                    </div>
+                    <div class="right-column">
+                        <ng-container *ngIf="item.cardId === 'sales-chart'">
+                            <app-saleschart></app-saleschart>
+                        </ng-container>
+                    </div>
+                </div>
+            </mat-card>
+
+
+
+
+            <mat-card class="dashboard-card full-width-card" *ngIf="item.name === 'Bar Chart'">
+                <button *ngIf="isDeleteMode" class="delete-button" (click)="deleteWidget(item)">
+                    <mat-icon>delete</mat-icon>
+                </button>
+                <div class="split-container">
+                    <div class="left-column">
+                        <ng-container *ngIf="item.cardId === 'bar-chart'">
+                            <ng-container *ngComponentOutlet="charts[item.component || '']"></ng-container>
+                        </ng-container>
+
+                    </div>
+                    <div class="right-column">
+                        <ng-container *ngIf="item.cardId === 'bar-chart'">
+                            <div class="report-container">
+                                <div class="info-section">
+                                    <h3>Want full report?</h3>
+                                    <p>Awesome! You can see more detailed information and download it using this
+                                        option.
+                                    </p>
+                                    <button mat-raised-button class="report-btn" routerLink="/reports">See
+                                        reports</button>
+                                </div>
+                            </div>
+                        </ng-container>
+                    </div>
+                </div>
+            </mat-card>
+
+
+
+            <!-- Half-width items -->
+            <mat-card class="dashboard-card half-width-card" *ngIf="item.cardId === 'bubble-chart'">
+                <button *ngIf="isDeleteMode" class="delete-button" (click)="deleteWidget(item)">
+                    <mat-icon>delete</mat-icon>
+                </button>
+                <app-bubblechart></app-bubblechart>
+            </mat-card>
+
+
+            <mat-card class="dashboard-card half-width-card" *ngIf="item.cardId === 'donut-chart'">
+                <button *ngIf="isDeleteMode" class="delete-button" (click)="deleteWidget(item)">
+                    <mat-icon>delete</mat-icon>
+                </button>
+                <ng-container *ngComponentOutlet="charts[item.component || '']"></ng-container>
+            </mat-card>
+            <!-- Half-width items -->
+
+            <mat-card class="dashboard-card half-width-card">
+                <button *ngIf="isDeleteMode" class="delete-button" (click)="deleteWidget(item)">
+                    <mat-icon>delete</mat-icon>
+                </button>
+                <ng-container [ngSwitch]="item.component">
+                    <ng-container *ngSwitchCase="'BarChartComponent'">
+                        <app-bar-chart [data]="item['chartConfig'].data"
+                            [title]="item['chartConfig'].title"></app-bar-chart>
+                    </ng-container>
+                    <ng-container *ngSwitchCase="'LineChartComponent'">
+                        <app-line-chart [data]="item['chartConfig'].data"
+                            [title]="item['chartConfig'].title"></app-line-chart>
+                    </ng-container>
+                    <ng-container *ngSwitchCase="'PieChartComponent'">
+                        <app-pie-chart [data]="item['chartConfig'].data"
+                            [title]="item['chartConfig'].title"></app-pie-chart>
+                    </ng-container>
+                </ng-container>
+            </mat-card>
+
         </gridster-item>
     </gridster>
-    <div class="new-charts-container">
-        <div *ngFor="let config of newCharts; let i = index" class="new-chart-item">
-            <app-templatechart 
-                [chartType]="config.chartType" 
-                [chartData]="config.data" 
-                [chartTitle]="config.title">
-            </app-templatechart>
-            <button *ngIf="isDeleteMode" mat-mini-fab color="warn" class="delete-icon"
-                (click)="removeNewChart(i)">
-                <mat-icon>delete_outline</mat-icon>
-            </button>
+</div>
+
+<div class="sidepanel" [class.open]="isSidepanelOpen">
+    <button class="close-button" (click)="closeSidepanel()">
+        <mat-icon>close</mat-icon>
+    </button>
+    <h2>Available Widgets</h2>
+    <div class="chart-previews">
+        <div class="chart-preview" *ngFor="let chart of chartConfigs" (click)="addWidget(chart)">
+            <h3>{{ chart.title }}</h3>
+            <div class="preview-container" [ngSwitch]="chart.component">
+                <app-bar-chart *ngSwitchCase="'BarChartComponent'" [data]="chart.data"
+                    [title]="chart.title"></app-bar-chart>
+                <app-line-chart *ngSwitchCase="'LineChartComponent'" [data]="chart.data"
+                    [title]="chart.title"></app-line-chart>
+                <app-pie-chart *ngSwitchCase="'PieChartComponent'" [data]="chart.data"
+                    [title]="chart.title"></app-pie-chart>
+                <ng-container *ngSwitchDefault>
+                    <ng-container *ngComponentOutlet="charts[chart.component]"></ng-container>
+                </ng-container>
+            </div>
         </div>
     </div>
 </div>

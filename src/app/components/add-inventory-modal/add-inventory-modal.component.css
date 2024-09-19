@@ -15,13 +15,21 @@ mat-dialog-content {
     overflow-y: auto;
 }
 
-mat-form-field:first-of-type {    margin-top: 10px;}
+mat-form-field:first-of-type {
+    margin-top: 10px;
+}
 
-.btn {
-    border-radius: 20px;
+.btn2 {
     margin-right: 10px;
     --mdc-outlined-button-label-text-color: black;
     --mdc-outlined-button-outline-color: #74777f;
+    border-radius: 5px;
+    width: 200px;
+    height: 40px;
+}
+.btn {
+    margin-right: auto;
+    margin-left: auto;
     border-radius: 5px;
     width: 200px;
     height: 40px;

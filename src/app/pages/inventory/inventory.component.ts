@@ -48,7 +48,7 @@ import {
         MatNativeDateModule,
         MatDatepickerModule,
         MatSnackBarModule,
-        UploadItemsModalComponent
+        UploadItemsModalComponent,
     ],
     templateUrl: './inventory.component.html',
     styleUrls: ['./inventory.component.css'],
@@ -104,7 +104,7 @@ export class InventoryComponent implements OnInit {
         private titleService: TitleService,
         private dialog: MatDialog,
         private snackBar: MatSnackBar,
-        private router: Router
+        private router: Router,
     ) {
         Amplify.configure(outputs);
     }
@@ -268,7 +268,7 @@ export class InventoryComponent implements OnInit {
             width: '600px',
             data: { suppliers: this.suppliers, tenentId: this.tenantId },
         });
-    
+
         dialogRef.afterClosed().subscribe((result) => {
             if (result) {
                 this.onSubmit(result);
@@ -299,7 +299,7 @@ export class InventoryComponent implements OnInit {
                 unitCost: formData.unitCost,
                 dailyDemand: formData.dailyDemand,
                 leadTime: formData.leadTime,
-                deliveryCost: formData.deliveryCost
+                deliveryCost: formData.deliveryCost,
             });
 
             console.log('Payload:', payload);
@@ -372,7 +372,7 @@ export class InventoryComponent implements OnInit {
             if (responseBody.statusCode === 200) {
                 console.log('Inventory item deleted successfully');
                 await this.logActivity('Deleted inventory item', inventoryID + ' was deleted.');
-                
+
                 // Show success message using snackbar
                 this.snackBar.open('Inventory item deleted successfully', 'Close', {
                     duration: 3000, // Duration in milliseconds
@@ -384,7 +384,7 @@ export class InventoryComponent implements OnInit {
             }
         } catch (error) {
             console.error('Error deleting inventory item:', error);
-            
+
             // Show error message using snackbar
             this.snackBar.open('Error deleting inventory item: ' + (error as Error).message, 'Close', {
                 duration: 5000,
@@ -397,26 +397,26 @@ export class InventoryComponent implements OnInit {
     async handleCellValueChanged(event: { data: any; field: string; newValue: any }) {
         try {
             const session = await fetchAuthSession();
-    
+
             const lambdaClient = new LambdaClient({
                 region: outputs.auth.aws_region,
                 credentials: session.credentials,
             });
-    
+
             const updatedData = {
                 inventoryID: event.data.inventoryID,
                 tenentId: this.tenantId,
                 [event.field]: event.newValue,
             };
-    
+
             const invokeCommand = new InvokeCommand({
                 FunctionName: 'Inventory-updateItem',
                 Payload: new TextEncoder().encode(JSON.stringify({ body: JSON.stringify(updatedData) })),
             });
-    
+
             const lambdaResponse = await lambdaClient.send(invokeCommand);
             const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-    
+
             if (responseBody.statusCode === 200) {
                 console.log('Inventory item updated successfully');
                 await this.logActivity('Updated inventory item', event.data.upc + ' was updated.');
@@ -426,7 +426,7 @@ export class InventoryComponent implements OnInit {
                 if (index !== -1) {
                     this.rowData[index] = { ...this.rowData[index], ...updatedItem };
                 }
-                
+
                 // Show success message using snackbar
                 this.snackBar.open('Inventory item updated successfully', 'Close', {
                     duration: 3000,
@@ -438,10 +438,10 @@ export class InventoryComponent implements OnInit {
             }
         } catch (error) {
             console.error('Error updating inventory item:', error);
-            
+
             // Revert the change in the grid
             this.gridComponent.updateRow(event.data);
-            
+
             // Show error message using snackbar
             this.snackBar.open('Error updating inventory item: ' + (error as Error).message, 'Close', {
                 duration: 5000,
@@ -460,7 +460,7 @@ export class InventoryComponent implements OnInit {
                 availableQuantity: item.quantity 
             },
         });
-    
+
         dialogRef.afterClosed().subscribe((result) => {
             if (result) {
                 this.requestStock(item, result);
@@ -477,14 +477,14 @@ export class InventoryComponent implements OnInit {
             if (quantity > item.quantity) {
                 throw new Error('Requested quantity exceeds available stock');
             }
-    
+
             const session = await fetchAuthSession();
-    
+
             const lambdaClient = new LambdaClient({
                 region: outputs.auth.aws_region,
                 credentials: session.credentials,
             });
-    
+
             // Update the inventory
             const updatedQuantity = item.quantity - quantity;
             const updateEvent = {
@@ -493,7 +493,7 @@ export class InventoryComponent implements OnInit {
                 newValue: updatedQuantity,
             };
             await this.handleCellValueChanged(updateEvent);
-    
+
             // Create the stock request report
             const reportPayload = {
                 tenentId: this.tenantId,
@@ -502,24 +502,24 @@ export class InventoryComponent implements OnInit {
                 supplier: item.supplier,
                 quantityRequested: quantity.toString(),
             };
-    
+
             console.log('Report Payload:', reportPayload);
-    
+
             const createReportCommand = new InvokeCommand({
                 FunctionName: 'Report-createItem',
                 Payload: new TextEncoder().encode(JSON.stringify({ body: JSON.stringify(reportPayload) })),
             });
-    
+
             const lambdaResponse = await lambdaClient.send(createReportCommand);
             const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-    
+
             console.log('Lambda Response:', responseBody);
-    
+
             if (responseBody.statusCode === 201) {
                 console.log('Stock request report created successfully');
                 await this.logActivity('Requested stock', quantity.toString() + ' of ' + item.sku);
                 await this.loadInventoryData();
-                
+
                 this.snackBar.open('Stock requested successfully', 'Close', {
                     duration: 3000,
                     horizontalPosition: 'center',
@@ -530,7 +530,7 @@ export class InventoryComponent implements OnInit {
             }
         } catch (error) {
             console.error('Error requesting stock:', error);
-            
+
             this.snackBar.open('Error requesting stock: ' + (error as Error).message, 'Close', {
                 duration: 5000,
                 horizontalPosition: 'center',
@@ -579,13 +579,12 @@ export class InventoryComponent implements OnInit {
 
     openImportItemsModal() {
         console.log('Opening import items modal');
-        const dialogRef = this.dialog.open(UploadItemsModalComponent, {
-        });
-      
-        dialogRef.afterClosed().subscribe(result => {
-          if (result) {
-            this.loadInventoryData(); // Refresh the inventory list
-          }
+        const dialogRef = this.dialog.open(UploadItemsModalComponent, {});
+
+        dialogRef.afterClosed().subscribe((result) => {
+            if (result) {
+                this.loadInventoryData(); // Refresh the inventory list
+            }
         });
     }
 

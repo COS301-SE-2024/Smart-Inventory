@@ -1,11 +1,22 @@
 <div style="margin: 15px; width: 100%">
-    <app-grid
-        [rowData]="rowData"
-        [columnDefs]="colDefs"
-        (itemToUpdate)="handleCellValueChanged($event)"
-        #gridComponent
-    >
+    <app-grid [rowData]="rowData" [columnDefs]="colDefs" (itemToUpdate)="handleCellValueChanged($event)" #gridComponent>
     </app-grid>
+    <mat-toolbar
+        style="
+            position: sticky;
+            top: 93%;
+            left: 0;
+            width: 300px;
+            border-radius: 20px;
+            height: 50px;
+            background-color: transparent;
+            z-index: 1;
+        "
+    >
+        <button mat-flat-button class="btn" (click)="back()">
+            <mat-icon style="font-size: 24px; height: 24px; width: 24px">arrow_back</mat-icon> Back To Reports
+        </button>
+    </mat-toolbar>
 </div>
 
 <div *ngIf="isLoading" class="loading-overlay">

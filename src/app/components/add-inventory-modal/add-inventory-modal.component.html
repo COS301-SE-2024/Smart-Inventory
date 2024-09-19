@@ -1,11 +1,11 @@
-<h2 mat-dialog-title style="text-align: center">Add Inventory Item</h2>
+<h1 mat-dialog-title style="text-align: center; --mdc-dialog-subhead-size: 30px">Add Inventory Item</h1>
 <mat-dialog-content>
     <form [formGroup]="inventoryForm">
         <ng-container *ngIf="!showFullForm">
             <mat-form-field appearance="outline">
                 <mat-label>SKU</mat-label>
                 <input matInput formControlName="sku" />
-                <button mat-stroked-button matSuffix class="btn" (click)="generateSKU()">Generate SKU</button>
+                <button mat-stroked-button matSuffix class="btn2" (click)="generateSKU()">Generate SKU</button>
             </mat-form-field>
         </ng-container>
 
@@ -22,9 +22,11 @@
                 <mat-label>Supplier</mat-label>
                 <mat-select formControlName="supplier">
                     <mat-option>
-                        <ngx-mat-select-search [formControl]="supplierControl" 
-                                               placeholderLabel="Search suppliers..."
-                                               noEntriesFoundLabel="No matching suppliers found">
+                        <ngx-mat-select-search
+                            [formControl]="supplierControl"
+                            placeholderLabel="Search suppliers..."
+                            noEntriesFoundLabel="No matching suppliers found"
+                        >
                         </ngx-mat-select-search>
                     </mat-option>
                     <mat-option *ngFor="let supplier of filteredSuppliers | async" [value]="supplier.company_name">
@@ -66,11 +68,17 @@
     </form>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
-    <button mat-stroked-button (click)="onCancel()" class="btn">Cancel</button>
-    <button *ngIf="!showFullForm" mat-stroked-button color="primary" class="btn" (click)="onNext()" [disabled]="!inventoryForm.get('sku')?.valid">
+    <button mat-flat-button (click)="onCancel()" class="btn">Cancel</button>
+    <button
+        *ngIf="!showFullForm"
+        mat-flat-button
+        class="btn"
+        (click)="onNext()"
+        [disabled]="!inventoryForm.get('sku')?.valid"
+    >
         Next
     </button>
-    <button *ngIf="showFullForm" mat-stroked-button color="primary" class="btn" (click)="onSave()" [disabled]="!inventoryForm.valid">
+    <button *ngIf="showFullForm" mat-flat-button class="btn" (click)="onSave()" [disabled]="!inventoryForm.valid">
         Save
     </button>
 </mat-dialog-actions>

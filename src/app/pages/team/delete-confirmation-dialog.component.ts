@@ -9,24 +9,36 @@ import { CommonModule } from '@angular/common';
     standalone: true,
     imports: [MatDialogModule, MatButtonModule, CommonModule],
     template: `
-        <h2 mat-dialog-title>Confirmation</h2>
+        <h1 mat-dialog-title style="text-align: center; --mdc-dialog-subhead-size: 30px">Confirmation</h1>
         <div mat-dialog-content>
             <p>{{ data.given_name }} {{ data.family_name }}: {{ data.email }}</p>
             <p>Are you sure you want to delete this user?</p>
         </div>
         <div mat-dialog-actions>
             <button
-                mat-stroked-button
+                mat-flat-button
                 (click)="onNoClick()"
-                style="border-radius: 20px;margin-right: 10px;--mdc-outlined-button-label-text-color: black;--mdc-outlined-button-outline-color: #74777f;border-radius: 5px; width: 20px;height: 40px;"
+                style="
+    margin-right: auto;
+    margin-left: auto;
+    border-radius: 5px;
+    width: 20px;
+    height: 40px;
+"
             >
                 No
             </button>
             <button
-                mat-stroked-button
+                mat-flat-button
                 color="primary"
                 (click)="onYesClick()"
-                style="border-radius: 20px;margin-right: 10px;--mdc-outlined-button-label-text-color: black;--mdc-outlined-button-outline-color: #74777f;border-radius: 5px; width: 20px;height: 40px;"
+                style="
+    margin-right: auto;
+    margin-left: auto;
+    border-radius: 5px;
+    width: 20px;
+    height: 40px;
+"
             >
                 Yes
             </button>

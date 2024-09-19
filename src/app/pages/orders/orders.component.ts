@@ -75,7 +75,7 @@ export class OrdersComponent implements OnInit {
 
     // Column Definitions: Defines & controls grid columns.
     colDefs: ColDef[] = [
-        { field: 'Order_ID', headerName: 'Order ID' },
+        { field: 'Order_ID', headerName: 'Order ID', filter: 'agSetColumnFilter' },
         { field: 'Order_Date', headerName: 'Order Date', filter: 'agDateColumnFilter' },
         {
             field: 'Creation_Time',
@@ -103,7 +103,7 @@ export class OrdersComponent implements OnInit {
                 }
             },
         },
-        { field: 'Quote_ID', headerName: 'Quote ID' },
+        { field: 'Quote_ID', headerName: 'Quote ID', filter: 'agSetColumnFilter' },
         {
             field: 'Quote_Status',
             headerName: 'Quote Status',
@@ -215,8 +215,8 @@ export class OrdersComponent implements OnInit {
         orderDate: string,
     ) {
         const dialogRef = this.dialog.open(CustomQuoteModalComponent, {
-            width: '60vw',
-            maxWidth: '100vw',
+            width: '600px',
+            maxWidth: '600px',
             data: {
                 quoteDetails: {
                     ...quoteDetails,
@@ -817,7 +817,7 @@ export class OrdersComponent implements OnInit {
 
     openAutomationSettingsModal() {
         const dialogRef = this.dialog.open(AutomationSettingsModalComponent, {
-            width: '400px',
+            width: '600px',
             data: { ordersComponent: this },
         });
 

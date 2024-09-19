@@ -99,6 +99,15 @@
                 <button
                     class="QAButtons"
                     mat-menu-item
+                    color="primary"
+                    (click)="deleteRow()"
+                    *ngIf="getCurrentRoute('team') && isAdmin()"
+                >
+                    <mat-icon>remove</mat-icon><span>Remove Member</span>
+                </button>
+                <button
+                    class="QAButtons"
+                    mat-menu-item
                     *ngIf="getCurrentRoute('orders') && !isEndUser()"
                     color="primary"
                     (click)="onViewGeneratedQuoteClick()"
@@ -148,7 +157,7 @@
                     color="primary"
                     (click)="openAutomationSettings()"
                 >
-                    <mat-icon>settings</mat-icon><span>Automation Settings</span>
+                    <mat-icon>document_scanner</mat-icon><span>Scan Inventory Now</span>
                 </button>
                 <button
                     class="QAButtons"
@@ -184,6 +193,16 @@
                 <button class="QAButtons" mat-menu-item *ngIf="getCurrentRoute('inventory')" color="primary" (click)="onScanQRCode()">
                     <mat-icon>qr_code_scanner</mat-icon><span>Scan QR code</span>
                 </button>
+                <button
+                    class="QAButtons"
+                    mat-menu-item
+                    *ngIf="getCurrentRoute('inventory') && !isEndUser()"
+                    color="primary"
+                    (click)="onViewInventorySummary()"
+                >
+                    <mat-icon>inventory</mat-icon><span>View Inventory Summary</span>
+                </button>
+
                 <button
                     class="QAButtons"
                     mat-menu-item

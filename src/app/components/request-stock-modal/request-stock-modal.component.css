@@ -1,7 +1,7 @@
 :host {
     display: block;
     width: 100%;
-    max-width: 400px;
+    max-width: 600px;
 }
 
 mat-form-field {
@@ -17,11 +17,9 @@ mat-dialog-content {
 }
 
 .btn {
-    border-radius: 20px;
-    margin-right: 10px;
-    --mdc-outlined-button-label-text-color: black;
-    --mdc-outlined-button-outline-color: #74777f;
+    margin-right: auto;
+    margin-left: auto;
     border-radius: 5px;
-    width: 20px;
+    width: 150px;
     height: 40px;
 }

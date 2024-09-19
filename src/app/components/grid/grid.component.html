@@ -178,9 +178,9 @@
                     <mat-icon>upcoming</mat-icon><span>Automation Templates</span>
                 </button>
 
-                <button class="QAButtons" mat-menu-item *ngIf="getCurrentRoute('inventory')" color="primary">
+                <button class="QAButtons" mat-menu-item *ngIf="getCurrentRoute('inventory')" color="primary" (click)="onViewQRCode()">
                     <mat-icon>qr_code_2</mat-icon><span>View QR code</span>
-                </button>
+                  </button>
                 <button class="QAButtons" mat-menu-item *ngIf="getCurrentRoute('inventory')" color="primary">
                     <mat-icon>qr_code_scanner</mat-icon><span>Scan QR code</span>
                 </button>

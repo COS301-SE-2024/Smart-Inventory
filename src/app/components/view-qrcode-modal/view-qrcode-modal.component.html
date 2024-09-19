@@ -1,1 +1,10 @@
-<p>view-qrcode-modal works!</p>
+<h2 mat-dialog-title>QR Code for SKU: {{ data.sku }}</h2>
+<mat-dialog-content>
+  <div id="qrCodeImage">
+    <img [src]="data.qrCode" alt="QR Code">
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button (click)="printQRCode()">Print</button>
+  <button mat-button (click)="closeDialog()">Close</button>
+</mat-dialog-actions>

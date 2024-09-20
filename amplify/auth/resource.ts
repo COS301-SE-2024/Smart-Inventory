@@ -24,6 +24,6 @@ export const auth = defineAuth({
     postConfirmation,
   },
   access: (allow) => [
-    allow.resource(postConfirmation).to(["addUserToGroup","updateUserAttributes"]),
+    allow.resource(postConfirmation).to(["addUserToGroup","updateUserAttributes", "getUser"]),
   ],
 });

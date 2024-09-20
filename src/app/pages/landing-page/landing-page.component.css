@@ -1,100 +1,115 @@
-.landing-container {
-  font-family: 'Arial', sans-serif;
-  color: #333;
+.landing-page {
+	font-family: 'Roboto', sans-serif;
+	background-color: #f0f4f8;
+	color: #333;
 }
 
 header {
-  padding: 1rem 2rem;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 1000;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 1rem 2rem;
+	background-color: white;
 }
 
-header h1 {
-  margin: 0;
+.logo {
+	font-size: 1.5rem;
+	font-weight: bold;
+	color: #1976d2;
 }
 
-.hero {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 100vh;
-  padding: 0 5%;
+nav a {
+	margin-left: 1rem;
+	text-decoration: none;
+	color: #333;
 }
 
-.hero-content {
-  flex: 1;
-  color: #333;
-  z-index: 1;
+main {
+	display: flex;
+	padding: 4rem 2rem;
+	align-items: center;
 }
 
-.hero-content h2 {
-  font-size: 2.5rem;
-  margin-bottom: 1rem;
+.content {
+	flex: 1;
+	max-width: 700px;
+	margin-right: 4rem;
 }
 
-.hero-content p {
-  font-size: 1.2rem;
-  margin-bottom: 2rem;
+.badge {
+	background-color: #e3f2fd;
+	color: #1976d2;
+	padding: 0.5rem 1rem;
+	border-radius: 20px;
+	font-size: 0.8rem;
+	font-weight: bold;
 }
 
-.cta-button {
-  padding: 1rem 2rem;
-  font-size: 1.2rem;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
+h1 {
+	font-size: 2.5rem;
+	margin: 1rem 0;
 }
 
-.cta-button:hover {
-  background-color: #0056b3;
+.image-showcase {
+	flex: 0 0 800px;
+	height: 600px;
+	position: relative;
+	overflow: hidden;
+	/* Removed background-color */
 }
 
-.lottie-container {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.spotlight {
+	position: absolute;
+	bottom: -100px;
+	left: 50%;
+	transform: translateX(-50%);
+	width: 100%;
+	/* Increased width for a wider spread */
+	height: 118%;
+	/* Increased height for a taller funnel */
+	background: radial-gradient(ellipse at bottom,
+			rgba(0, 128, 255, 0.8) 0%,
+			/* Bright center */
+			rgba(0, 128, 255, 0.6) 10%,
+			/* Slightly dimmer */
+			rgba(0, 128, 255, 0.4) 20%,
+			/* Fading out */
+			rgba(0, 128, 255, 0.2) 40%,
+			/* Further fading */
+			rgba(0, 128, 255, 0.1) 60%,
+			/* Almost transparent */
+			rgba(0, 128, 255, 0) 80%
+			/* Fully transparent */
+		);
+	z-index: 1;
+	pointer-events: none;
+	/* Ensures the spotlight doesn't interfere with clicks */
 }
 
-footer {
-  text-align: center;
-  padding: 1rem;
-  background-color: #333;
-  color: white;
+.image-container {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	/* Ensures images don't spill outside the container */
 }
 
-@media (max-width: 768px) {
-  .hero {
-    flex-direction: column;
-    text-align: center;
-  }
-
-  .hero-content, .lottie-container {
-    flex: none;
-    width: 100%;
-  }
-
-  .lottie-container {
-    order: -1;
-  }
-
-  .hero-content h2 {
-    font-size: 2rem;
-  }
-
-  .hero-content p {
-    font-size: 1rem;
-  }
+/* You might need to adjust these values based on your layout */
+.floating-image {
+	position: absolute;
+	width: 250px;
+	height: 250px;
+	object-fit: cover;
+	border-radius: 10px;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+	transition: all 0.8s ease;
+	z-index: 2;
 }
 
-@media (max-width: 480px) {
-  header {
-    text-align: center;
-  }
+/* You can adjust these variables to fine-tune the shuffling area */
+:landing {
+	--shuffle-area-width: 380px;
+	/* Adjust this to increase/decrease horizontal shuffling area */
+	--shuffle-area-height: 500px;
+	/* Adjust this to increase/decrease vertical shuffling area */
 }

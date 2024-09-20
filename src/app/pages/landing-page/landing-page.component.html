@@ -2,15 +2,14 @@
 	<header>
 		<div class="logo">Helix</div>
 		<nav>
-			<a href="#">Home</a>
-			<a href="#">Features</a>
-			<a href="#">Pricing</a>
-			<a href="#">About Us</a>
+			<a href="#home">Home</a>
+			<a href="#features">Features</a>
+			<a href="#solutions">Solutions</a>
 		</nav>
-		<button mat-raised-button color="primary">Login / Sign Up</button>
+		<button mat-raised-button color="primary" href="/">Login / Sign Up</button>
 	</header>
 
-	<main>
+	<main id="home">
 		<div class="content">
 			<span class="badge">SMART INVENTORY MANAGEMENT</span>
 			<h1>Revolutionize Your Supply Chain with Machine Learning Inventory Control</h1>
@@ -26,11 +25,20 @@
 			<button mat-raised-button color="primary">Start Now</button>
 		</div>
 		<div class="image-showcase">
-			
 			<div class="image-container">
 				<img *ngFor="let image of images" [src]="image.url" [alt]="image.alt" class="floating-image">
 			</div>
 			<div class="spotlight"></div>
 		</div>
 	</main>
+
+	<section id="features">
+		<h2>Features</h2>
+		<!-- Add feature content here -->
+	</section>
+
+	<section id="solutions">
+		<h2>Solutions</h2>
+		<!-- Add solutions content here -->
+	</section>
 </div>

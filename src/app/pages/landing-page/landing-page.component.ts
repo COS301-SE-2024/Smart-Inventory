@@ -26,8 +26,8 @@ export class LandingPageComponent implements OnInit, AfterViewInit, OnDestroy {
 		{ url: 'https://picsum.photos/id/1016/250/250', alt: 'Inventory item 4' },
 	];
 
-	private shuffleAreaWidth = 750;  // Adjust this value as needed
-	private shuffleAreaHeight = 550; // Adjust this value as needed
+	private shuffleAreaWidth = 700;  // Adjust this value as needed
+	private shuffleAreaHeight = 500; // Adjust this value as needed
 	private shuffleInterval: any;
 	private hoverSubscription: Subscription | null = null;
 	private clickSubscription: Subscription | null = null;
@@ -41,6 +41,7 @@ export class LandingPageComponent implements OnInit, AfterViewInit, OnDestroy {
 		this.startShuffleInterval();
 		this.setupHoverListener();
 		this.setupClickListener();
+		this.setupSmoothScroll();
 	}
 
 	ngOnDestroy() {
@@ -51,6 +52,20 @@ export class LandingPageComponent implements OnInit, AfterViewInit, OnDestroy {
 		if (this.clickSubscription) {
 			this.clickSubscription.unsubscribe();
 		}
+	}
+
+	setupSmoothScroll() {
+		const links = document.querySelectorAll('nav a');
+		links.forEach(link => {
+			link.addEventListener('click', (e) => {
+				e.preventDefault();
+				const targetId = (e.target as HTMLAnchorElement).getAttribute('href')?.substring(1);
+				const targetElement = document.getElementById(targetId || '');
+				if (targetElement) {
+					targetElement.scrollIntoView({ behavior: 'smooth' });
+				}
+			});
+		});
 	}
 
 	positionImages() {

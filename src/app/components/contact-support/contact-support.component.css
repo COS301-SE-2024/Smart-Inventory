@@ -26,10 +26,9 @@ mat-dialog-content {
 }
 
 .btn {
-    border-radius: 20px;
-    margin-right: 10px;
-    --mdc-outlined-button-label-text-color: black;
-    --mdc-outlined-button-outline-color: #74777f;
+    margin-right: auto;
+    margin-left: auto;
+    margin-top: 5px;
     border-radius: 5px;
     width: 200px;
     height: 40px;
@@ -124,7 +123,7 @@ mat-label {
         0px 6px 6px -3px rgba(0, 0, 0, 0.2),
         0px 10px 14px 1px rgba(0, 0, 0, 0.14),
         0px 4px 18px 3px rgba(0, 0, 0, 0.12);
-    border-radius: 8px;
+    border-radius: 20px;
 }
 
 .message-field {
@@ -139,32 +138,32 @@ mat-label {
     width: 100%;
     text-align: center;
     padding: 16px 0;
-  }
-  
-  /* Update the existing mat-card-header rule */
-  .mat-mdc-card-header {
+}
+
+/* Update the existing mat-card-header rule */
+.mat-mdc-card-header {
     display: flex;
     justify-content: center;
     width: 100%;
-  }
+}
 
 /* Custom Snackbar Styles */
 ::ng-deep .custom-snackbar {
     background-color: #323232;
     color: white;
-  }
-  
-  ::ng-deep .custom-snackbar .mat-simple-snackbar {
+}
+
+::ng-deep .custom-snackbar .mat-simple-snackbar {
     font-size: 14px;
     line-height: 22px;
-  }
-  
-  ::ng-deep .custom-snackbar .mat-simple-snackbar-action {
+}
+
+::ng-deep .custom-snackbar .mat-simple-snackbar-action {
     color: #69f0ae;
-  }
-  
-  ::ng-deep .custom-snackbar .mat-button {
+}
+
+::ng-deep .custom-snackbar .mat-button {
     background-color: transparent !important;
     color: #69f0ae !important;
     font-weight: bold;
-  }
+}

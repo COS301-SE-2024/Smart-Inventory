@@ -10,7 +10,12 @@
                                 class="btn"
                                 *ngFor="let filter of faqFilters"
                                 (click)="onFilterClick(filter)"
-                                style="border-radius: 5px"
+                                style="
+                                    border-radius: 5px;
+                                    background-color: white;
+                                    color: black;
+                                    box-shadow: 0px 1px 1px 0px grey;
+                                "
                             >
                                 {{ filter }}
                             </button>

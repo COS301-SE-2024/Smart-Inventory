@@ -9,14 +9,19 @@ import { Observable } from 'rxjs';
 export class InventoryService {
   private getItemsUrl = 'https://tt5uju7o6j.execute-api.us-east-1.amazonaws.com/default/Inventory-getItems';
   private updateItemUrl = 'https://ss0lx1hku8.execute-api.us-east-1.amazonaws.com/default/Inventory-updateItem';
+  private getUsersUrl = 'https://7tn45k7d02.execute-api.us-east-1.amazonaws.com/default/getUsersV2';
 
   constructor(private http: HttpClient) { }
 
-  getInventoryItems(tenantId: string): Observable<any> {
-    return this.http.get(`${this.getItemsUrl}?tenentId=${tenantId}`);
+  getInventoryItems(tenentId: string): Observable<any> {
+    return this.http.get(`${this.getItemsUrl}?tenentId=${tenentId}`);
   }
 
   updateInventoryItem(updatedData: any): Observable<any> {
     return this.http.post(this.updateItemUrl, updatedData);
+  }
+
+  getUsers(userPoolId: string, tenentId: string): Observable<any> {
+    return this.http.post(this.getUsersUrl, { userPoolId, tenentId });
   }
 }

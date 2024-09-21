@@ -381,60 +381,44 @@ export class InventoryComponent implements OnInit {
 
     async handleCellValueChanged(event: { data: any; field: string; newValue: any }) {
         try {
-            const session = await fetchAuthSession();
-
-            const lambdaClient = new LambdaClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
-
-            const updatedData = {
-                inventoryID: event.data.inventoryID,
-                tenentId: this.tenantId,
-                [event.field]: event.newValue,
-            };
-
-            const invokeCommand = new InvokeCommand({
-                FunctionName: 'Inventory-updateItem',
-                Payload: new TextEncoder().encode(JSON.stringify({ body: JSON.stringify(updatedData) })),
-            });
-
-            const lambdaResponse = await lambdaClient.send(invokeCommand);
-            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
-            if (responseBody.statusCode === 200) {
-                console.log('Inventory item updated successfully');
-                await this.logActivity('Updated inventory item', event.data.upc + ' was updated.');
-                // Update the local data to reflect the change
-                const updatedItem = JSON.parse(responseBody.body);
-                const index = this.rowData.findIndex((item) => item.inventoryID === updatedItem.inventoryID);
-                if (index !== -1) {
-                    this.rowData[index] = { ...this.rowData[index], ...updatedItem };
-                }
-
-                // Show success message using snackbar
-                this.snackBar.open('Inventory item updated successfully', 'Close', {
-                    duration: 3000,
-                    horizontalPosition: 'center',
-                    verticalPosition: 'top',
-                });
-            } else {
-                throw new Error(responseBody.body);
-            }
+          const updatedData = {
+            inventoryID: event.data.inventoryID,
+            tenentId: this.tenantId,
+            [event.field]: event.newValue,
+          };
+      
+          const response = await this.inventoryService.updateInventoryItem(updatedData).toPromise();
+      
+          console.log('Inventory item updated successfully');
+          await this.logActivity('Updated inventory item', event.data.upc + ' was updated.');
+          
+          // Update the local data to reflect the change
+          const updatedItem = response;
+          const index = this.rowData.findIndex((item) => item.inventoryID === updatedItem.inventoryID);
+          if (index !== -1) {
+            this.rowData[index] = { ...this.rowData[index], ...updatedItem };
+          }
+      
+          // Show success message using snackbar
+          this.snackBar.open('Inventory item updated successfully', 'Close', {
+            duration: 3000,
+            horizontalPosition: 'center',
+            verticalPosition: 'top',
+          });
         } catch (error) {
-            console.error('Error updating inventory item:', error);
-
-            // Revert the change in the grid
-            this.gridComponent.updateRow(event.data);
-
-            // Show error message using snackbar
-            this.snackBar.open('Error updating inventory item: ' + (error as Error).message, 'Close', {
-                duration: 5000,
-                horizontalPosition: 'center',
-                verticalPosition: 'top',
-            });
+          console.error('Error updating inventory item:', error);
+      
+          // Revert the change in the grid
+          this.gridComponent.updateRow(event.data);
+      
+          // Show error message using snackbar
+          this.snackBar.open('Error updating inventory item: ' + (error as any).message, 'Close', {
+            duration: 5000,
+            horizontalPosition: 'center',
+            verticalPosition: 'top',
+          });
         }
-    }
+      }
 
     openRequestStockPopup(item: any) {
         const dialogRef = this.dialog.open(RequestStockModalComponent, {

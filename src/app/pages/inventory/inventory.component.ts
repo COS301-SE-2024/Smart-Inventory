@@ -20,8 +20,7 @@ import { RequestStockModalComponent } from 'app/components/request-stock-modal/r
 import { MatNativeDateModule } from '@angular/material/core';
 import { Router } from '@angular/router';
 import { UploadItemsModalComponent } from 'app/components/upload-items-modal/upload-items-modal.component';
-
-import { timestamp } from 'rxjs';
+import { InventoryService } from '../../../../amplify/services/inventory.service';
 
 import {
     MatSnackBar,
@@ -105,6 +104,7 @@ export class InventoryComponent implements OnInit {
         private dialog: MatDialog,
         private snackBar: MatSnackBar,
         private router: Router,
+        private inventoryService: InventoryService
     ) {
         Amplify.configure(outputs);
     }
@@ -183,54 +183,39 @@ export class InventoryComponent implements OnInit {
     }
 
     async loadInventoryData() {
+        this.isLoading = true;
         try {
-            const session = await fetchAuthSession();
-
-            const lambdaClient = new LambdaClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
-
-            const invokeCommand = new InvokeCommand({
-                FunctionName: 'Inventory-getItems',
-                Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: this.tenantId } })),
-            });
-
-            const lambdaResponse = await lambdaClient.send(invokeCommand);
-            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-            console.log('Response from Lambda:', responseBody);
-
-            if (responseBody.statusCode === 200) {
-                const inventoryItems = JSON.parse(responseBody.body);
-                this.rowData = inventoryItems.map((item: any) => ({
-                    inventoryID: item.inventoryID,
-                    sku: item.SKU,
-                    category: item.category,
-                    upc: item.upc,
-                    description: item.description,
-                    quantity: item.quantity,
-                    supplier: item.supplier,
-                    expirationDate: item.expirationDate,
-                    lowStockThreshold: item.lowStockThreshold,
-                    reorderAmount: item.reorderAmount,
-                    unitCost: item.unitCost,
-                    leadTime: item.leadTime,
-                    deliveryCost: item.deliveryCost,
-                    dailyDemand: item.dailyDemand,    	
-                    qrCode: item.qrCode
-                }));
-                console.log('Processed inventory items:', this.rowData);
-
-                await this.logActivity('Viewed inventory', 'Inventory navigated');
-            } else {
-                console.error('Error fetching inventory data:', responseBody.body);
-                this.rowData = [];
-            }
+          const inventoryItems = await this.inventoryService.getInventoryItems(this.tenantId).toPromise();
+          this.rowData = inventoryItems.map((item: any) => ({
+            inventoryID: item.inventoryID,
+            sku: item.SKU,
+            category: item.category,
+            upc: item.upc,
+            description: item.description,
+            quantity: item.quantity,
+            supplier: item.supplier,
+            expirationDate: item.expirationDate,
+            lowStockThreshold: item.lowStockThreshold,
+            reorderAmount: item.reorderAmount,
+            unitCost: item.unitCost,
+            leadTime: item.leadTime,
+            deliveryCost: item.deliveryCost,
+            dailyDemand: item.dailyDemand,    	
+            qrCode: item.qrCode
+          }));
+          console.log('Processed inventory items:', this.rowData);
+    
+          await this.logActivity('Viewed inventory', 'Inventory navigated');
         } catch (error) {
-            console.error('Error in loadInventoryData:', error);
-            this.rowData = [];
+          console.error('Error in loadInventoryData:', error);
+          this.rowData = [];
+          this.snackBar.open('Error loading inventory data', 'Close', {
+            duration: 5000,
+            horizontalPosition: 'center',
+            verticalPosition: 'top',
+          });
         } finally {
-            this.isLoading = false;
+          this.isLoading = false;
         }
     }
 

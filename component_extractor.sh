@@ -31,7 +31,7 @@ process_input() {
     local found=false
 
     # Check if input is a folder
-    local folders=$(find ./src ./amplify/services -type d -name "$input" 2>/dev/null)
+    local folders=$(find ./src ./amplify -type d -name "$input" 2>/dev/null)
     if [ -n "$folders" ]; then
         for folder in $folders; do
             echo "Contents of folder $folder:" >> "$output_file"
@@ -50,7 +50,7 @@ process_input() {
         done
     else
         # If not a folder, search for the file
-        local files=$(find ./src ./amplify/services -type f -name "$input" 2>/dev/null)
+        local files=$(find ./src ./amplify -type f -name "$input" 2>/dev/null)
         if [ -n "$files" ]; then
             for file in $files; do
                 local filename=$(basename "$file")

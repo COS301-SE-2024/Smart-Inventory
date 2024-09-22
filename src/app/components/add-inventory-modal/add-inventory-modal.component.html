@@ -2,6 +2,8 @@
 <mat-dialog-content>
     <form [formGroup]="inventoryForm">
         <ng-container *ngIf="!showFullForm">
+            You can enter a already existing SKU code to automatically fill with values where you can change the
+            existing product details.
             <mat-form-field appearance="outline">
                 <mat-label>SKU</mat-label>
                 <input matInput formControlName="sku" />
@@ -15,8 +17,32 @@
                 <input matInput formControlName="sku" readonly />
             </mat-form-field>
             <mat-form-field appearance="outline">
+                <mat-label>Universal Product Code</mat-label>
+                <input matInput formControlName="upc" [readonly]="itemExists" />
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+                <mat-label>Description</mat-label>
+                <input matInput formControlName="description" [readonly]="itemExists" />
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+                <mat-label>Category</mat-label>
+                <mat-select formControlName="category" [disabled]="itemExists">
+                    <mat-option *ngFor="let category of categories" [value]="category">
+                        {{ category }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
                 <mat-label>Quantity</mat-label>
                 <input matInput type="number" formControlName="quantity" />
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+                <mat-label>Low Stock Threshold</mat-label>
+                <input matInput type="number" formControlName="lowStockThreshold" [readonly]="itemExists" />
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+                <mat-label>Reorder Amount</mat-label>
+                <input matInput type="number" formControlName="reorderAmount" [readonly]="itemExists" />
             </mat-form-field>
             <mat-form-field appearance="outline">
                 <mat-label>Supplier</mat-label>
@@ -40,29 +66,21 @@
                 <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                 <mat-datepicker #picker></mat-datepicker>
             </mat-form-field>
-            <mat-form-field appearance="outline" style="padding-top: 10px">
-                <mat-label>Universal Product Code</mat-label>
-                <input matInput formControlName="upc" [readonly]="itemExists" />
+            <mat-form-field appearance="outline">
+                <mat-label>Unit Cost</mat-label>
+                <input matInput type="number" formControlName="unitCost" />
             </mat-form-field>
             <mat-form-field appearance="outline">
-                <mat-label>Description</mat-label>
-                <input matInput formControlName="description" [readonly]="itemExists" />
+                <mat-label>Lead Time (Days)</mat-label>
+                <input matInput type="number" formControlName="leadTime" />
             </mat-form-field>
             <mat-form-field appearance="outline">
-                <mat-label>Category</mat-label>
-                <mat-select formControlName="category" [disabled]="itemExists">
-                    <mat-option *ngFor="let category of categories" [value]="category">
-                        {{ category }}
-                    </mat-option>
-                </mat-select>
+                <mat-label>Delivery Cost</mat-label>
+                <input matInput type="number" formControlName="deliveryCost" />
             </mat-form-field>
             <mat-form-field appearance="outline">
-                <mat-label>Low Stock Threshold</mat-label>
-                <input matInput type="number" formControlName="lowStockThreshold" [readonly]="itemExists" />
-            </mat-form-field>
-            <mat-form-field appearance="outline">
-                <mat-label>Reorder Amount</mat-label>
-                <input matInput type="number" formControlName="reorderAmount" [readonly]="itemExists" />
+                <mat-label>Projected Daily Demand</mat-label>
+                <input matInput type="number" formControlName="dailyDemand" />
             </mat-form-field>
         </ng-container>
     </form>

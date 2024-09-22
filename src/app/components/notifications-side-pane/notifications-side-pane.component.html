@@ -16,15 +16,28 @@
 
     <ng-container *ngIf="activeTab !== 'Settings'">
         <div class="notification-actions">
-            <mat-form-field appearance="outline" class="filter-select">
+            <mat-form-field
+                appearance="outline"
+                class="filter-select"
+                style="--mat-form-field-container-vertical-padding: 0px; --mat-form-field-container-height: 40px"
+            >
                 <mat-label>Filter</mat-label>
-                <mat-select [(value)]="activeFilter" (selectionChange)="filterNotifications($event.value)">
-                    <mat-option *ngFor="let filter of filters" [value]="filter">{{filter}}</mat-option>
+                <mat-select
+                    [(value)]="activeFilter"
+                    (selectionChange)="filterNotifications($event.value)"
+                    style="height: 40px; display: flex"
+                >
+                    <mat-option *ngFor="let filter of filters" [value]="filter">{{ filter }}</mat-option>
                 </mat-select>
             </mat-form-field>
 
-            <button mat-raised-button color="primary" class="mark-all-read" (click)="markAllAsRead()"
-                [disabled]="unreadCount === 0">
+            <button
+                mat-flat-button
+                color="primary"
+                class="btn"
+                (click)="markAllAsRead()"
+                [disabled]="unreadCount === 0"
+            >
                 <mat-icon>done_all</mat-icon>
                 Mark all as read
             </button>
@@ -33,20 +46,29 @@
         </div>
 
         <div class="notification-content">
-            <mat-card *ngFor="let notification of filteredNotifications" class="notification-card"
-            [ngClass]="{'unread': !notification.isRead}" (click)="onNotificationClick(notification)">
+            <mat-card
+                *ngFor="let notification of filteredNotifications"
+                class="notification-card"
+                [ngClass]="{ unread: !notification.isRead }"
+                (click)="onNotificationClick(notification)"
+            >
                 <mat-card-header>
                     <div mat-card-avatar class="notification-icon">
                         <mat-icon>{{ getNotificationIcon(notification.type) }}</mat-icon>
                     </div>
                     <mat-card-title>{{ formatNotificationType(notification.type) }}</mat-card-title>
-                    <mat-card-subtitle>{{ notification.timestamp | date:'short' }}</mat-card-subtitle>
+                    <mat-card-subtitle>{{ notification.timestamp | date: 'short' }}</mat-card-subtitle>
                 </mat-card-header>
                 <mat-card-content>
                     <p>{{ notification.message }}</p>
                 </mat-card-content>
                 <mat-card-actions align="end">
-                    <button mat-button color="primary" (click)="markAsRead($event, notification)" *ngIf="!notification.isRead">
+                    <button
+                        mat-button
+                        color="primary"
+                        (click)="markAsRead($event, notification)"
+                        *ngIf="!notification.isRead"
+                    >
                         <mat-icon>done</mat-icon>
                         Mark as read
                     </button>
@@ -60,7 +82,11 @@
             <p class="settings-description">Toggle switches to enable or disable notifications for each category.</p>
             <mat-list>
                 <mat-list-item *ngFor="let setting of notificationSettings">
-                    <mat-slide-toggle [(ngModel)]="setting.enabled" (change)="updateNotificationSettings(setting)" color="primary">
+                    <mat-slide-toggle
+                        [(ngModel)]="setting.enabled"
+                        (change)="updateNotificationSettings(setting)"
+                        color="primary"
+                    >
                         {{ setting.name }}
                     </mat-slide-toggle>
                 </mat-list-item>

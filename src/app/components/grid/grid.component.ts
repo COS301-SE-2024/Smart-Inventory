@@ -403,8 +403,8 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
 
     openCustomQuoteModal() {
         const dialogRef = this.dialog.open(CustomQuoteModalComponent, {
-            width: '60vw',
-            maxWidth: '100vw',
+            width: '600px',
+            maxWidth: '600px',
             data: { isNewQuote: true },
         });
 

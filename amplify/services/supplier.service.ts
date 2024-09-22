@@ -6,7 +6,7 @@ import { Observable, tap } from 'rxjs';
   providedIn: 'root'
 })
 export class SupplierService {
-  private apiUrl = 'https://hwkrvpjd3a.execute-api.us-east-1.amazonaws.com/dev';
+  private apiUrl = 'https://hwkrvpjd3a.execute-api.us-east-1.amazonaws.com/prod';
   constructor(private http: HttpClient) { }
 
   getSupplierInfo(tenentId: string, supplierID: string): Observable<any> {

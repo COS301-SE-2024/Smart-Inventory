@@ -2,28 +2,20 @@
     <mat-tab-group>
         <mat-tab label="FAQs">
             <ng-container>
-                <div class="faq-section" style="margin: 10px">
+                <div class="faq-section" style="margin-right: 20px; margin-left: 20px">
                     <div class="faq-row faq-row-one" style="padding: 10px">
                         <div class="filter-buttons">
                             <button
-                                class="test"
-                                mat-fab
-                                extended
-                                style="
-                                    border-radius: 20px;
-                                    margin-right: 4px;
-                                    border-radius: 5px;
-                                    width: 150px;
-                                    background-color: white;
-                                    color: #000000;
-                                    height: 40px;
-                                    box-shadow: 2px 2px 2px 0px #e0e0e0;
-                                    border-color: #c4c6d0;
-                                    border-width: 1px;
-                                    border-style: solid;
-                                "
+                                mat-flat-button
+                                class="btn"
                                 *ngFor="let filter of faqFilters"
                                 (click)="onFilterClick(filter)"
+                                style="
+                                    border-radius: 5px;
+                                    background-color: white;
+                                    color: black;
+                                    box-shadow: 0px 1px 1px 0px grey;
+                                "
                             >
                                 {{ filter }}
                             </button>
@@ -46,7 +38,7 @@
         </mat-tab>
         <mat-tab label="Troubleshooting">
             <ng-container ()="renameTitle('Troubleshooting')">
-                <div class="troubleshooting-section" style="margin: 10px">
+                <div class="troubleshooting-section" style="margin-right: 20px; margin-left: 20px; margin-top: 10px">
                     <div class="troubleshooting-row-two">
                         <mat-accordion>
                             <mat-expansion-panel *ngFor="let issue of troubleshootingIssues">

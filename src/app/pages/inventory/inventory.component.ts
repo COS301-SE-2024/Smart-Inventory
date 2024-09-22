@@ -20,8 +20,7 @@ import { RequestStockModalComponent } from 'app/components/request-stock-modal/r
 import { MatNativeDateModule } from '@angular/material/core';
 import { Router } from '@angular/router';
 import { UploadItemsModalComponent } from 'app/components/upload-items-modal/upload-items-modal.component';
-
-import { timestamp } from 'rxjs';
+import { InventoryService } from '../../../../amplify/services/inventory.service';
 
 import {
     MatSnackBar,
@@ -105,6 +104,7 @@ export class InventoryComponent implements OnInit {
         private dialog: MatDialog,
         private snackBar: MatSnackBar,
         private router: Router,
+        private inventoryService: InventoryService
     ) {
         Amplify.configure(outputs);
     }
@@ -118,56 +118,47 @@ export class InventoryComponent implements OnInit {
 
     async getUserInfo() {
         try {
-            const session = await fetchAuthSession();
-
-            const cognitoClient = new CognitoIdentityProviderClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
-
-            const getUserCommand = new GetUserCommand({
-                AccessToken: session.tokens?.accessToken.toString(),
-            });
-            const getUserResponse = await cognitoClient.send(getUserCommand);
-
-            const givenName = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'given_name')?.Value || '';
-            const familyName = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'family_name')?.Value || '';
-            this.userName = `${givenName} ${familyName}`.trim();
-
-            this.tenantId =
-                getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value || '';
-
-            const lambdaClient = new LambdaClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
-
-            const payload = JSON.stringify({
-                userPoolId: outputs.auth.user_pool_id,
-                username: session.tokens?.accessToken.payload['username'],
-            });
-
-            const invokeCommand = new InvokeCommand({
-                FunctionName: 'getUsersV2',
-                Payload: new TextEncoder().encode(payload),
-            });
-
-            const lambdaResponse = await lambdaClient.send(invokeCommand);
-            const users = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
-            const currentUser = users.find(
-                (user: any) =>
-                    user.Attributes.find((attr: any) => attr.Name === 'email')?.Value ===
-                    session.tokens?.accessToken.payload['username'],
-            );
-
-            if (currentUser && currentUser.Groups.length > 0) {
-                this.userRole = this.getRoleDisplayName(currentUser.Groups[0].GroupName);
-            }
+          const session = await fetchAuthSession();
+      
+          const cognitoClient = new CognitoIdentityProviderClient({
+            region: outputs.auth.aws_region,
+            credentials: session.credentials,
+          });
+      
+          const getUserCommand = new GetUserCommand({
+            AccessToken: session.tokens?.accessToken.toString(),
+          });
+          const getUserResponse = await cognitoClient.send(getUserCommand);
+      
+          const givenName = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'given_name')?.Value || '';
+          const familyName = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'family_name')?.Value || '';
+          this.userName = `${givenName} ${familyName}`.trim();
+      
+          this.tenantId =
+            getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value || '';
+      
+          // Use the InventoryService to get users
+          const users = await this.inventoryService.getUsers(outputs.auth.user_pool_id, this.tenantId).toPromise();
+      
+          const currentUser = users.find(
+            (user: any) =>
+              user.Attributes.find((attr: any) => attr.Name === 'email')?.Value ===
+              session.tokens?.accessToken.payload['username'],
+          );
+      
+          if (currentUser && currentUser.Groups.length > 0) {
+            this.userRole = this.getRoleDisplayName(currentUser.Groups[0].GroupName);
+          }
         } catch (error) {
-            console.error('Error fetching user info:', error);
+          console.error('Error fetching user info:', error);
+          // You might want to add some error handling here, such as showing an error message to the user
+          this.snackBar.open('Error fetching user info', 'Close', {
+            duration: 5000,
+            horizontalPosition: 'center',
+            verticalPosition: 'top',
+          });
         }
-    }
+      }
 
     private getRoleDisplayName(roleName: string): string {
         switch (roleName) {
@@ -183,85 +174,56 @@ export class InventoryComponent implements OnInit {
     }
 
     async loadInventoryData() {
+        this.isLoading = true;
         try {
-            const session = await fetchAuthSession();
-
-            const lambdaClient = new LambdaClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
-
-            const invokeCommand = new InvokeCommand({
-                FunctionName: 'Inventory-getItems',
-                Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: this.tenantId } })),
-            });
-
-            const lambdaResponse = await lambdaClient.send(invokeCommand);
-            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-            console.log('Response from Lambda:', responseBody);
-
-            if (responseBody.statusCode === 200) {
-                const inventoryItems = JSON.parse(responseBody.body);
-                this.rowData = inventoryItems.map((item: any) => ({
-                    inventoryID: item.inventoryID,
-                    sku: item.SKU,
-                    category: item.category,
-                    upc: item.upc,
-                    description: item.description,
-                    quantity: item.quantity,
-                    supplier: item.supplier,
-                    expirationDate: item.expirationDate,
-                    lowStockThreshold: item.lowStockThreshold,
-                    reorderAmount: item.reorderAmount,
-                    unitCost: item.unitCost,
-                    leadTime: item.leadTime,
-                    deliveryCost: item.deliveryCost,
-                    dailyDemand: item.dailyDemand,    	
-                    qrCode: item.qrCode
-                }));
-                console.log('Processed inventory items:', this.rowData);
-
-                await this.logActivity('Viewed inventory', 'Inventory navigated');
-            } else {
-                console.error('Error fetching inventory data:', responseBody.body);
-                this.rowData = [];
-            }
+          const inventoryItems = await this.inventoryService.getInventoryItems(this.tenantId).toPromise();
+          this.rowData = inventoryItems.map((item: any) => ({
+            inventoryID: item.inventoryID,
+            sku: item.SKU,
+            category: item.category,
+            upc: item.upc,
+            description: item.description,
+            quantity: item.quantity,
+            supplier: item.supplier,
+            expirationDate: item.expirationDate,
+            lowStockThreshold: item.lowStockThreshold,
+            reorderAmount: item.reorderAmount,
+            unitCost: item.unitCost,
+            leadTime: item.leadTime,
+            deliveryCost: item.deliveryCost,
+            dailyDemand: item.dailyDemand,    	
+            qrCode: item.qrCode
+          }));
+          console.log('Processed inventory items:', this.rowData);
+    
+          await this.logActivity('Viewed inventory', 'Inventory navigated');
         } catch (error) {
-            console.error('Error in loadInventoryData:', error);
-            this.rowData = [];
+          console.error('Error in loadInventoryData:', error);
+          this.rowData = [];
+          this.snackBar.open('Error loading inventory data', 'Close', {
+            duration: 5000,
+            horizontalPosition: 'center',
+            verticalPosition: 'top',
+          });
         } finally {
-            this.isLoading = false;
+          this.isLoading = false;
         }
     }
 
     async loadSuppliers() {
         try {
-            const session = await fetchAuthSession();
-
-            const lambdaClient = new LambdaClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
-
-            const invokeCommand = new InvokeCommand({
-                FunctionName: 'getSuppliers',
-                Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: this.tenantId } })),
-            });
-
-            const lambdaResponse = await lambdaClient.send(invokeCommand);
-            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
-            if (responseBody.statusCode === 200) {
-                this.suppliers = JSON.parse(responseBody.body);
-            } else {
-                console.error('Error fetching suppliers data:', responseBody.body);
-                this.suppliers = [];
-            }
+          this.suppliers = await this.inventoryService.getSuppliers(this.tenantId).toPromise();
+          console.log('Suppliers loaded:', this.suppliers);
         } catch (error) {
-            console.error('Error in loadSuppliers:', error);
-            this.suppliers = [];
+          console.error('Error in loadSuppliers:', error);
+          this.suppliers = [];
+          this.snackBar.open('Error loading suppliers', 'Close', {
+            duration: 5000,
+            horizontalPosition: 'center',
+            verticalPosition: 'top',
+          });
         }
-    }
+      }
 
     openAddItemPopup() {
         const dialogRef = this.dialog.open(AddInventoryModalComponent, {
@@ -278,57 +240,48 @@ export class InventoryComponent implements OnInit {
 
     async onSubmit(formData: any) {
         try {
-            const session = await fetchAuthSession();
-
-            const lambdaClient = new LambdaClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
+          const payload = {
+            upc: formData.upc,
+            description: formData.description,
+            category: formData.category,
+            quantity: formData.quantity,
+            sku: formData.sku,
+            supplier: formData.supplier,
+            lowStockThreshold: formData.lowStockThreshold,
+            reorderAmount: formData.reorderAmount,
+            tenentId: this.tenantId,
+            expirationDate: formData.expirationDate,
+            unitCost: formData.unitCost,
+            dailyDemand: formData.dailyDemand,
+            leadTime: formData.leadTime,
+            deliveryCost: formData.deliveryCost,
+          };
+      
+          console.log('Payload:', payload);
+      
+          const response = await this.inventoryService.createInventoryItem(payload).toPromise();
+      
+          if (response && response.inventoryID) {
+            console.log('Inventory item added successfully');
+            await this.logActivity('Added new inventory item', formData.upc + ' was added.');
+            await this.loadInventoryData();
+            this.snackBar.open('Inventory item added successfully', 'Close', {
+              duration: 3000,
+              horizontalPosition: 'center',
+              verticalPosition: 'top',
             });
-
-            const payload = JSON.stringify({
-                upc: formData.upc,
-                description: formData.description,
-                category: formData.category,
-                quantity: formData.quantity,
-                sku: formData.sku,
-                supplier: formData.supplier,
-                lowStockThreshold: formData.lowStockThreshold,
-                reorderAmount: formData.reorderAmount,
-                tenentId: this.tenantId,
-                expirationDate: formData.expirationDate,
-                unitCost: formData.unitCost,
-                dailyDemand: formData.dailyDemand,
-                leadTime: formData.leadTime,
-                deliveryCost: formData.deliveryCost,
-            });
-
-            console.log('Payload:', payload);
-
-            const invokeCommand = new InvokeCommand({
-                FunctionName: 'Inventory-CreateItem',
-                Payload: new TextEncoder().encode(JSON.stringify({ body: payload })),
-            });
-
-            const lambdaResponse = await lambdaClient.send(invokeCommand);
-            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
-            if (responseBody.statusCode === 201) {
-                console.log('Inventory item added successfully');
-                await this.logActivity('Added new inventory item', formData.upc + ' was added.');
-                await this.loadInventoryData();
-                this.snackBar.open('Inventory item added successfully', 'Close', {
-                    duration: 3000, // Duration in milliseconds
-                    horizontalPosition: 'center',
-                    verticalPosition: 'top',
-                });
-            } else {
-                throw new Error(responseBody.body);
-            }
+          } else {
+            throw new Error('Failed to add inventory item');
+          }
         } catch (error) {
-            console.error('Error:', (error as Error).message);
-            alert(`Error: ${(error as Error).message}`);
+          console.error('Error:', (error as Error).message);
+          this.snackBar.open(`Error: ${(error as Error).message}`, 'Close', {
+            duration: 5000,
+            horizontalPosition: 'center',
+            verticalPosition: 'top',
+          });
         }
-    }
+      }
 
     handleRowsToDelete(rows: any[]) {
         if (rows.length > 0) {
@@ -349,107 +302,72 @@ export class InventoryComponent implements OnInit {
 
     async deleteInventoryItem(inventoryID: string) {
         try {
-            const session = await fetchAuthSession();
-
-            const lambdaClient = new LambdaClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
-
-            const payload = JSON.stringify({
-                inventoryID: inventoryID,
-                tenentId: this.tenantId,
-            });
-
-            const invokeCommand = new InvokeCommand({
-                FunctionName: 'Inventory-removeItem',
-                Payload: new TextEncoder().encode(JSON.stringify({ body: payload })),
-            });
-
-            const lambdaResponse = await lambdaClient.send(invokeCommand);
-            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
-            if (responseBody.statusCode === 200) {
-                console.log('Inventory item deleted successfully');
-                await this.logActivity('Deleted inventory item', inventoryID + ' was deleted.');
-
-                // Show success message using snackbar
-                this.snackBar.open('Inventory item deleted successfully', 'Close', {
-                    duration: 3000, // Duration in milliseconds
-                    horizontalPosition: 'center',
-                    verticalPosition: 'top',
-                });
-            } else {
-                throw new Error(responseBody.body);
-            }
+          const response = await this.inventoryService.removeInventoryItem(inventoryID, this.tenantId).toPromise();
+      
+          console.log('Inventory item deleted successfully');
+          await this.logActivity('Deleted inventory item', inventoryID + ' was deleted.');
+      
+          // Show success message using snackbar
+          this.snackBar.open('Inventory item deleted successfully', 'Close', {
+            duration: 3000,
+            horizontalPosition: 'center',
+            verticalPosition: 'top',
+          });
+      
+          // Refresh the inventory data
+          await this.loadInventoryData();
         } catch (error) {
-            console.error('Error deleting inventory item:', error);
-
-            // Show error message using snackbar
-            this.snackBar.open('Error deleting inventory item: ' + (error as Error).message, 'Close', {
-                duration: 5000,
-                horizontalPosition: 'center',
-                verticalPosition: 'top',
-            });
+          console.error('Error deleting inventory item:', error);
+      
+          // Show error message using snackbar
+          this.snackBar.open('Error deleting inventory item: ' + (error as Error).message, 'Close', {
+            duration: 5000,
+            horizontalPosition: 'center',
+            verticalPosition: 'top',
+          });
         }
-    }
+      }
 
     async handleCellValueChanged(event: { data: any; field: string; newValue: any }) {
         try {
-            const session = await fetchAuthSession();
-
-            const lambdaClient = new LambdaClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
-
-            const updatedData = {
-                inventoryID: event.data.inventoryID,
-                tenentId: this.tenantId,
-                [event.field]: event.newValue,
-            };
-
-            const invokeCommand = new InvokeCommand({
-                FunctionName: 'Inventory-updateItem',
-                Payload: new TextEncoder().encode(JSON.stringify({ body: JSON.stringify(updatedData) })),
-            });
-
-            const lambdaResponse = await lambdaClient.send(invokeCommand);
-            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
-            if (responseBody.statusCode === 200) {
-                console.log('Inventory item updated successfully');
-                await this.logActivity('Updated inventory item', event.data.upc + ' was updated.');
-                // Update the local data to reflect the change
-                const updatedItem = JSON.parse(responseBody.body);
-                const index = this.rowData.findIndex((item) => item.inventoryID === updatedItem.inventoryID);
-                if (index !== -1) {
-                    this.rowData[index] = { ...this.rowData[index], ...updatedItem };
-                }
-
-                // Show success message using snackbar
-                this.snackBar.open('Inventory item updated successfully', 'Close', {
-                    duration: 3000,
-                    horizontalPosition: 'center',
-                    verticalPosition: 'top',
-                });
-            } else {
-                throw new Error(responseBody.body);
-            }
+          const updatedData = {
+            inventoryID: event.data.inventoryID,
+            tenentId: this.tenantId,
+            [event.field]: event.newValue,
+          };
+      
+          const response = await this.inventoryService.updateInventoryItem(updatedData).toPromise();
+      
+          console.log('Inventory item updated successfully');
+          await this.logActivity('Updated inventory item', event.data.upc + ' was updated.');
+          
+          // Update the local data to reflect the change
+          const updatedItem = response;
+          const index = this.rowData.findIndex((item) => item.inventoryID === updatedItem.inventoryID);
+          if (index !== -1) {
+            this.rowData[index] = { ...this.rowData[index], ...updatedItem };
+          }
+      
+          // Show success message using snackbar
+          this.snackBar.open('Inventory item updated successfully', 'Close', {
+            duration: 3000,
+            horizontalPosition: 'center',
+            verticalPosition: 'top',
+          });
         } catch (error) {
-            console.error('Error updating inventory item:', error);
-
-            // Revert the change in the grid
-            this.gridComponent.updateRow(event.data);
-
-            // Show error message using snackbar
-            this.snackBar.open('Error updating inventory item: ' + (error as Error).message, 'Close', {
-                duration: 5000,
-                horizontalPosition: 'center',
-                verticalPosition: 'top',
-            });
+          console.error('Error updating inventory item:', error);
+      
+          // Revert the change in the grid
+          this.gridComponent.updateRow(event.data);
+      
+          // Show error message using snackbar
+          this.snackBar.open('Error updating inventory item: ' + (error as any).message, 'Close', {
+            duration: 5000,
+            horizontalPosition: 'center',
+            verticalPosition: 'top',
+          });
         }
-    }
+      }
 
     openRequestStockPopup(item: any) {
         const dialogRef = this.dialog.open(RequestStockModalComponent, {
@@ -613,31 +531,19 @@ export class InventoryComponent implements OnInit {
         }
       }
 
-    async getInventoryItem(inventoryID: string, tenantId: string) {
+      async getInventoryItem(inventoryID: string, tenantId: string) {
         try {
-          const session = await fetchAuthSession();
-          const lambdaClient = new LambdaClient({
-            region: outputs.auth.aws_region,
-            credentials: session.credentials,
-          });
-    
-          const payload = JSON.stringify({ inventoryID, tenantId });
-          const invokeCommand = new InvokeCommand({
-            FunctionName: 'getInventoryItem',
-            Payload: new TextEncoder().encode(payload),
-          });
-    
-          const lambdaResponse = await lambdaClient.send(invokeCommand);
-          const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-    
-          if (responseBody.statusCode === 200) {
-            return JSON.parse(responseBody.body);
-          } else {
-            throw new Error(responseBody.body);
-          }
+          const item = await this.inventoryService.getInventoryItem(inventoryID, tenantId).toPromise();
+          return item;
         } catch (error) {
           console.error('Error fetching inventory item:', error);
+          this.snackBar.open('Error fetching inventory item', 'Close', {
+            duration: 5000,
+            horizontalPosition: 'center',
+            verticalPosition: 'top',
+          });
           return null;
         }
+        
       }
 }

@@ -254,57 +254,48 @@ export class InventoryComponent implements OnInit {
 
     async onSubmit(formData: any) {
         try {
-            const session = await fetchAuthSession();
-
-            const lambdaClient = new LambdaClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
+          const payload = {
+            upc: formData.upc,
+            description: formData.description,
+            category: formData.category,
+            quantity: formData.quantity,
+            sku: formData.sku,
+            supplier: formData.supplier,
+            lowStockThreshold: formData.lowStockThreshold,
+            reorderAmount: formData.reorderAmount,
+            tenentId: this.tenantId,
+            expirationDate: formData.expirationDate,
+            unitCost: formData.unitCost,
+            dailyDemand: formData.dailyDemand,
+            leadTime: formData.leadTime,
+            deliveryCost: formData.deliveryCost,
+          };
+      
+          console.log('Payload:', payload);
+      
+          const response = await this.inventoryService.createInventoryItem(payload).toPromise();
+      
+          if (response && response.inventoryID) {
+            console.log('Inventory item added successfully');
+            await this.logActivity('Added new inventory item', formData.upc + ' was added.');
+            await this.loadInventoryData();
+            this.snackBar.open('Inventory item added successfully', 'Close', {
+              duration: 3000,
+              horizontalPosition: 'center',
+              verticalPosition: 'top',
             });
-
-            const payload = JSON.stringify({
-                upc: formData.upc,
-                description: formData.description,
-                category: formData.category,
-                quantity: formData.quantity,
-                sku: formData.sku,
-                supplier: formData.supplier,
-                lowStockThreshold: formData.lowStockThreshold,
-                reorderAmount: formData.reorderAmount,
-                tenentId: this.tenantId,
-                expirationDate: formData.expirationDate,
-                unitCost: formData.unitCost,
-                dailyDemand: formData.dailyDemand,
-                leadTime: formData.leadTime,
-                deliveryCost: formData.deliveryCost,
-            });
-
-            console.log('Payload:', payload);
-
-            const invokeCommand = new InvokeCommand({
-                FunctionName: 'Inventory-CreateItem',
-                Payload: new TextEncoder().encode(JSON.stringify({ body: payload })),
-            });
-
-            const lambdaResponse = await lambdaClient.send(invokeCommand);
-            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
-            if (responseBody.statusCode === 201) {
-                console.log('Inventory item added successfully');
-                await this.logActivity('Added new inventory item', formData.upc + ' was added.');
-                await this.loadInventoryData();
-                this.snackBar.open('Inventory item added successfully', 'Close', {
-                    duration: 3000, // Duration in milliseconds
-                    horizontalPosition: 'center',
-                    verticalPosition: 'top',
-                });
-            } else {
-                throw new Error(responseBody.body);
-            }
+          } else {
+            throw new Error('Failed to add inventory item');
+          }
         } catch (error) {
-            console.error('Error:', (error as Error).message);
-            alert(`Error: ${(error as Error).message}`);
+          console.error('Error:', (error as Error).message);
+          this.snackBar.open(`Error: ${(error as Error).message}`, 'Close', {
+            duration: 5000,
+            horizontalPosition: 'center',
+            verticalPosition: 'top',
+          });
         }
-    }
+      }
 
     handleRowsToDelete(rows: any[]) {
         if (rows.length > 0) {

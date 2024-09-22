@@ -22,6 +22,7 @@ import { LoadingSpinnerComponent } from '../loader/loading-spinner.component';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule, provideNativeDateAdapter } from '@angular/material/core';
 import { InventoryService } from '../../../../amplify/services/inventory.service';
+import { SuppliersService } from '../../../../amplify/services/suppliers.service';
 
 interface QuoteItem {
   item: { sku: string; description: string; inventoryID: string };
@@ -89,7 +90,8 @@ export class CustomQuoteModalComponent implements OnInit {
     public dialogRef: MatDialogRef<CustomQuoteModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private snackBar: MatSnackBar,
-    private inventoryService: InventoryService
+    private inventoryService: InventoryService,
+    private suppliersService: SuppliersService
   ) {
     this.isEditing = data.isEditing || false;
     this.isNewQuote = data.isNewQuote || false;
@@ -238,32 +240,26 @@ export class CustomQuoteModalComponent implements OnInit {
   async loadSuppliers() {
     try {
       const session = await fetchAuthSession();
-      const tenentId = await this.getTenentId(session);
+      const tenantId = await this.getTenentId(session);
   
-      const lambdaClient = new LambdaClient({
-        region: outputs.auth.aws_region,
-        credentials: session.credentials,
-      });
-  
-      const invokeCommand = new InvokeCommand({
-        FunctionName: 'getSuppliers',
-        Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: tenentId } })),
-      });
-  
-      const lambdaResponse = await lambdaClient.send(invokeCommand);
-      const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-  
-      if (responseBody.statusCode === 200) {
-        const suppliers = JSON.parse(responseBody.body);
-        this.suppliers = suppliers.map((supplier: any) => ({
-          company_name: supplier.company_name,
-          supplierID: supplier.supplierID
-        }));
-        console.log('Suppliers:', this.suppliers);
-      } else {
-        console.error('Error fetching suppliers data:', responseBody.body);
-        this.suppliers = [];
-      }
+      this.suppliersService.getSuppliers(tenantId).subscribe(
+        (response: any) => {
+          if (response && Array.isArray(response)) {
+            this.suppliers = response.map((supplier: any) => ({
+              company_name: supplier.company_name,
+              supplierID: supplier.supplierID
+            }));
+            console.log('Suppliers:', this.suppliers);
+          } else {
+            console.error('Invalid response format for suppliers data');
+            this.suppliers = [];
+          }
+        },
+        (error) => {
+          console.error('Error fetching suppliers data:', error);
+          this.suppliers = [];
+        }
+      );
     } catch (error) {
       console.error('Error in loadSuppliers:', error);
       this.suppliers = [];

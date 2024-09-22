@@ -160,6 +160,9 @@
             </mat-card>
         </gridster-item>
     </gridster>
+    <div class="divider">
+        
+    </div>
 </div>
 
 <!-- <div class="sidepanel" [class.open]="isSidepanelOpen">
@@ -192,6 +195,12 @@
             </div>
         </div>
     </div>
+</div>
+
+<div *ngIf="isLoading" class="loading-overlay">
+    <app-loading-spinner></app-loading-spinner>
+</div>
+
 </div> -->
 <app-templates-side-pane
     [isAddWidgetOpen]="isSidepanelOpen"

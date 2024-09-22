@@ -838,17 +838,7 @@ export class DashboardComponent implements OnInit {
     }
 
     addWidget(chartConfig: any) {
-        const newItem: GridsterItem = {
-            cols: 6,
-            rows: 2,
-            y: 0,
-            x: 0,
-            cardId: chartConfig.title.toLowerCase().replace(' ', '-'),
-            name: chartConfig.title,
-            component: chartConfig.component,
-            chartConfig: chartConfig,
-        };
-        this.dashService.addWidget(newItem);
+        this.dashService.addWidget(chartConfig);
         this.closeSidepanel();
     }
 

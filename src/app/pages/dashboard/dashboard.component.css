@@ -2,7 +2,6 @@
     width: 101.5%;
     height: calc(100vh - 64px);
     position: relative;
-    background-color: #f0f0f0;
     /* Adjust based on your app's header height */
 }
 
@@ -423,7 +422,7 @@ gridster-item {
 gridster {
     position: relative;
     box-sizing: border-box;
-    background: #f0f0f0 !important;
+    background: transparent !important;
     width: 100%;
     height: 100%;
     -webkit-user-select: none;

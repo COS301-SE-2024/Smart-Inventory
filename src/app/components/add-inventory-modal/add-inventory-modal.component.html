@@ -2,6 +2,8 @@
 <mat-dialog-content>
     <form [formGroup]="inventoryForm">
         <ng-container *ngIf="!showFullForm">
+            You can enter a already existing SKU code to automatically fill with values where you can change the
+            existing product details.
             <mat-form-field appearance="outline">
                 <mat-label>SKU</mat-label>
                 <input matInput formControlName="sku" />

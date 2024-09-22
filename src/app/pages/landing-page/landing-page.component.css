@@ -56,7 +56,7 @@ h1 {
 
 .image-showcase {
 	flex: 0 0 800px;
-	height: 600px;
+	/* height: 600px; */
 	position: relative;
 	overflow: hidden;
 }

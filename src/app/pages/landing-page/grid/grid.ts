@@ -63,7 +63,7 @@ export class GridComponent implements OnInit, OnDestroy {
             headerName: 'Album Name',
             cellRenderer: this.albumRenderer
         },
-        { field: 'artist', headerName: 'Artist' },
+        { field: 'artist', headerName: 'Supplier' },
         { field: 'year', headerName: 'Year' },
         {
             field: 'status',
@@ -73,13 +73,6 @@ export class GridComponent implements OnInit, OnDestroy {
         { field: 'inventory', headerName: 'Inventory' },
         { field: 'incoming', headerName: 'Incoming' },
         { field: 'price', headerName: 'Price' },
-        { field: 'sold', headerName: 'Sold' },
-        { field: 'estProfit', headerName: 'Est. Profit' },
-        {
-            headerName: 'Actions',
-            cellRenderer: () => 'Hold Selling',
-            cellClass: 'action-button'
-        }
     ];
 
     defaultColDef: ColDef = {
@@ -138,6 +131,7 @@ export class GridComponent implements OnInit, OnDestroy {
     generateRowData(album: any) {
         return {
             ...album,
+            albumName: album.name,
             ...this.generateRandomValues()
         };
     }

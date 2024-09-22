@@ -4,6 +4,14 @@ import { debounceTime } from 'rxjs/operators';
 import { MaterialModule } from 'app/components/material/material.module';
 import '@lottiefiles/lottie-player';
 import { CommonModule } from '@angular/common';
+import { NgIconComponent, provideIcons } from '@ng-icons/core';
+import { iconRegistry } from './icon-registry';
+import { GridComponent } from './grid/grid';
+interface Statistic {
+	icon: any;
+	value: string;
+	label: string;
+}
 
 interface Image {
 	url: string;
@@ -13,12 +21,29 @@ interface Image {
 @Component({
 	selector: 'app-landing-page',
 	standalone: true,
-	imports: [CommonModule, MaterialModule],
+	imports: [
+		CommonModule,
+		MaterialModule,
+		NgIconComponent,
+		GridComponent
+	],
+	providers: [
+		provideIcons(iconRegistry)
+	],
 	templateUrl: './landing-page.component.html',
 	styleUrl: './landing-page.component.css'
 })
 
 export class LandingPageComponent implements OnInit, AfterViewInit, OnDestroy {
+	// statistics: Statistic[] = [
+	// 	{ icon: Globe, value: '15+', label: 'Countries Worldwide' },
+	// 	{ icon: Folders, value: '800+', label: 'Systems Implemented' },
+	// 	{ icon: TrendingUp, value: '30%', label: 'Consistent Growth' },
+	// 	{ icon: Users, value: '110+', label: 'Satisfied Customers' },
+	// 	{ icon: ThumbsUp, value: '87.3%', label: 'CX Rating' },
+	// 	{ icon: Star, value: '30+', label: 'Years in Project Delivery' }
+	// ];
+
 	images: Image[] = [
 		{ url: 'https://picsum.photos/id/1018/250/250', alt: 'Inventory item 1' },
 		{ url: 'https://picsum.photos/id/1015/250/250', alt: 'Inventory item 2' },
@@ -37,7 +62,7 @@ export class LandingPageComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	ngAfterViewInit() {
-		this.positionImages();
+		// this.positionImages();
 		this.startShuffleInterval();
 		this.setupHoverListener();
 		this.setupClickListener();
@@ -105,7 +130,7 @@ export class LandingPageComponent implements OnInit, AfterViewInit, OnDestroy {
 			});
 		}
 	}
-	
+
 	shuffleArray(array: number[]): number[] {
 		for (let i = array.length - 1; i > 0; i--) {
 			const j = Math.floor(Math.random() * (i + 1));

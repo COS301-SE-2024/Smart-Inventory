@@ -212,32 +212,18 @@ export class InventoryComponent implements OnInit {
 
     async loadSuppliers() {
         try {
-            const session = await fetchAuthSession();
-
-            const lambdaClient = new LambdaClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
-
-            const invokeCommand = new InvokeCommand({
-                FunctionName: 'getSuppliers',
-                Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: this.tenantId } })),
-            });
-
-            const lambdaResponse = await lambdaClient.send(invokeCommand);
-            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
-            if (responseBody.statusCode === 200) {
-                this.suppliers = JSON.parse(responseBody.body);
-            } else {
-                console.error('Error fetching suppliers data:', responseBody.body);
-                this.suppliers = [];
-            }
+          this.suppliers = await this.inventoryService.getSuppliers(this.tenantId).toPromise();
+          console.log('Suppliers loaded:', this.suppliers);
         } catch (error) {
-            console.error('Error in loadSuppliers:', error);
-            this.suppliers = [];
+          console.error('Error in loadSuppliers:', error);
+          this.suppliers = [];
+          this.snackBar.open('Error loading suppliers', 'Close', {
+            duration: 5000,
+            horizontalPosition: 'center',
+            verticalPosition: 'top',
+          });
         }
-    }
+      }
 
     openAddItemPopup() {
         const dialogRef = this.dialog.open(AddInventoryModalComponent, {

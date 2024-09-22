@@ -11,6 +11,7 @@ export class InventoryService {
   private updateItemUrl = 'https://ss0lx1hku8.execute-api.us-east-1.amazonaws.com/default/Inventory-updateItem';
   private getUsersUrl = 'https://7tn45k7d02.execute-api.us-east-1.amazonaws.com/default/getUsersV2';
   private createItemUrl = 'https://17thrdnx8a.execute-api.us-east-1.amazonaws.com/default/Inventory-CreateItem';
+  private getSuppliersUrl = 'https://ckfitxu8sc.execute-api.us-east-1.amazonaws.com/default/getSuppliers';
 
   constructor(private http: HttpClient) { }
 
@@ -28,6 +29,10 @@ export class InventoryService {
 
   createInventoryItem(formData: any): Observable<any> {
     return this.http.post(this.createItemUrl, formData);
+  }
+
+  getSuppliers(tenantId: string): Observable<any> {
+    return this.http.get(`${this.getSuppliersUrl}?tenentId=${tenantId}`);
   }
 
 }

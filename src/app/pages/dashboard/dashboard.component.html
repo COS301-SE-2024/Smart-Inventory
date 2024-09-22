@@ -197,11 +197,12 @@
     </div>
 </div>
 
-<div *ngIf="isLoading" class="loading-overlay">
-    <app-loading-spinner></app-loading-spinner>
-</div>
+
 </div> -->
 <app-templates-side-pane
     [isAddWidgetOpen]="isSidepanelOpen"
     (closed)="isSidepanelOpen = false"
 ></app-templates-side-pane>
+<div *ngIf="isLoading" class="loading-overlay">
+    <app-loading-spinner></app-loading-spinner>
+</div>

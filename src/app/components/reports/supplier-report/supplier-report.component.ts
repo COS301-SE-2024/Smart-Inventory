@@ -4,7 +4,7 @@ import { MaterialModule } from '../../material/material.module';
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatGridListModule } from '@angular/material/grid-list';
-import { MatCardModule } from '@angular/material/card';
+// import { MatCardModule } from '@angular/material/card';
 import { GridComponent } from '../../grid/grid.component';
 import { ColDef } from 'ag-grid-community';
 import { SaleschartComponent } from '../../charts/saleschart/saleschart.component';
@@ -33,7 +33,7 @@ type ChartData = {
     standalone: true,
     imports: [
         GridComponent,
-        MatCardModule,
+        // MatCardModule,
         MatGridListModule,
         MaterialModule,
         CommonModule,

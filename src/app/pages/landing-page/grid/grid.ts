@@ -4,13 +4,13 @@ import { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
 import { interval, Subscription } from 'rxjs';
 
 @Component({
-    selector: 'app-grid',
-    standalone: true,
-    imports: [AgGridModule],
-    template: `
+  selector: 'app-inventory-grid',
+  standalone: true,
+  imports: [AgGridModule],
+  template: `
     <ag-grid-angular
       style="width: 100%; height: 400px;"
-      class="ag-theme-alpine-dark"
+      class="ag-theme-alpine-dark custom-header"
       [rowData]="rowData"
       [columnDefs]="columnDefs"
       [defaultColDef]="defaultColDef"
@@ -20,11 +20,10 @@ import { interval, Subscription } from 'rxjs';
       (gridReady)="onGridReady($event)"
     ></ag-grid-angular>
   `,
-    styles: [`
+  styles: [`
     ::ng-deep .ag-theme-alpine-dark {
-        --ag-background-color: #ffffff;
-      --ag-header-background-color: #f0f8ff;
-      --ag-odd-row-background-color: #f8fbff;
+      --ag-background-color: #ffffff;
+      --ag-odd-row-background-color:#ffffff;
       --ag-header-foreground-color: #2c3e50;
       --ag-foreground-color: #34495e;
       --ag-border-color: #bdc3c7;
@@ -32,6 +31,13 @@ import { interval, Subscription } from 'rxjs';
       --ag-material-accent-color: #3498db;
       --ag-font-size: 14px;
       --ag-font-family: 'Roboto', sans-serif;
+    }
+    ::ng-deep .custom-header {
+      --ag-header-background-color: #F5F5F5;
+      --ag-header-foreground-color: #2c3e50;
+    }
+    ::ng-deep .ag-theme-alpine-dark .ag-header {
+      border-radius: 8px 8px 0 0;
     }
     ::ng-deep .ag-theme-alpine-dark .ag-header-cell {
       font-weight: bold;
@@ -43,133 +49,155 @@ import { interval, Subscription } from 'rxjs';
     ::ng-deep .ag-theme-alpine-dark .ag-cell-wrapper {
       width: 100%;
     }
-    ::ng-deep .status-active {
+    ::ng-deep .status-in-stock {
       color: #2ecc71;
+    }
+    ::ng-deep .status-low-stock {
+      color: #f39c12;
     }
     ::ng-deep .status-out-of-stock {
       color: #e74c3c;
     }
-    ::ng-deep .status-on-hold {
-      color: #f39c12;
-    }
   `]
 })
-export class GridComponent implements OnInit, OnDestroy {
-    private gridApi!: GridApi;
+export class InventoryGridComponent implements OnInit, OnDestroy {
+  private gridApi!: GridApi;
 
-    columnDefs: ColDef[] = [
-        {
-            field: 'albumName',
-            headerName: 'Album Name',
-            cellRenderer: this.albumRenderer
-        },
-        { field: 'artist', headerName: 'Supplier' },
-        { field: 'year', headerName: 'Year' },
-        {
-            field: 'status',
-            headerName: 'Status',
-            cellRenderer: this.statusRenderer
-        },
-        { field: 'inventory', headerName: 'Inventory' },
-        { field: 'incoming', headerName: 'Incoming' },
-        { field: 'price', headerName: 'Price' },
+  columnDefs: ColDef[] = [
+    {
+      field: 'productName',
+      headerName: 'Product Name',
+      cellRenderer: this.productRenderer
+    },
+    { field: 'sku', headerName: 'SKU' },
+    { field: 'category', headerName: 'Category' },
+    {
+      field: 'stockStatus',
+      headerName: 'Stock Status',
+      cellRenderer: this.statusRenderer
+    },
+    { field: 'quantityOnHand', headerName: 'Quantity On Hand' },
+    { field: 'reorderPoint', headerName: 'Reorder Point' },
+    { field: 'unitPrice', headerName: 'Unit Price' },
+  ];
+
+  defaultColDef: ColDef = {
+    sortable: true,
+    filter: true
+  };
+
+  rowData: any[] = [];
+  private updateSubscription: Subscription | undefined;
+
+  ngOnInit() {
+    this.generateInitialData();
+    this.updateSubscription = interval(150).subscribe(() => {
+      this.updateRandomValues();
+    });
+  }
+
+  ngOnDestroy() {
+    if (this.updateSubscription) {
+      this.updateSubscription.unsubscribe();
+    }
+  }
+
+  onGridReady(params: GridReadyEvent) {
+    this.gridApi = params.api;
+  }
+
+  generateInitialData() {
+    const products = [
+      { name: 'Laptop', sku: 'TECH001', category: 'Electronics' },
+      { name: 'Office Chair', sku: 'FURN002', category: 'Furniture' },
+      { name: 'Printer Paper', sku: 'STAT003', category: 'Stationery' },
+      { name: 'Wireless Mouse', sku: 'TECH004', category: 'Electronics' },
+      { name: 'Standing Desk', sku: 'FURN005', category: 'Furniture' },
+      { name: 'External Hard Drive', sku: 'TECH006', category: 'Electronics' },
+      { name: 'Whiteboard Markers', sku: 'STAT007', category: 'Stationery' },
+      { name: 'Ergonomic Keyboard', sku: 'TECH008', category: 'Electronics' },
+      { name: 'Filing Cabinet', sku: 'FURN009', category: 'Furniture' },
+      { name: 'Desk Lamp', sku: 'FURN010', category: 'Furniture' },
+      { name: 'Notebook Set', sku: 'STAT011', category: 'Stationery' },
+      { name: 'Wireless Headphones', sku: 'TECH012', category: 'Electronics' }
     ];
 
-    defaultColDef: ColDef = {
-        sortable: true,
-        filter: true
+    this.rowData = products.map(product => this.generateRowData(product));
+  }
+
+  updateRandomValues() {
+    if (!this.gridApi) return;
+
+    const randomIndex = Math.floor(Math.random() * this.rowData.length);
+    const updatedRow = { ...this.rowData[randomIndex], ...this.generateRandomValues() };
+
+    // Update the specific row in the rowData array
+    this.rowData[randomIndex] = updatedRow;
+
+    // Update the specific row in the grid
+    const rowNode = this.gridApi.getDisplayedRowAtIndex(randomIndex);
+    if (rowNode) {
+      rowNode.setData(updatedRow);
+    }
+
+    // Optionally, if you want to update multiple rows at once:
+    // this.gridApi.applyTransaction({ update: [updatedRow] });
+  }
+
+  generateRowData(product: any) {
+    return {
+      ...product,
+      productName: product.name,
+      ...this.generateRandomValues()
     };
+  }
 
-    rowData: any[] = [];
-    private updateSubscription: Subscription | undefined;
+  generateRandomValues() {
+    const quantityOnHand = this.getRandomNumber(0, 100);
+    const reorderPoint = this.getRandomNumber(10, 30);
+    return {
+      stockStatus: this.getStockStatus(quantityOnHand, reorderPoint),
+      quantityOnHand: quantityOnHand,
+      reorderPoint: reorderPoint,
+      unitPrice: `£${this.getRandomNumber(20, 500)}`,
+      lastRestocked: this.getRandomDate(),
+      supplier: this.getRandomSupplier()
+    };
+  }
 
-    ngOnInit() {
-        this.generateInitialData();
-        this.updateSubscription = interval(100).subscribe(() => {
-            this.updateRandomValues();
-        });
-    }
+  getStockStatus(quantity: number, reorderPoint: number) {
+    if (quantity === 0) return 'Out of Stock';
+    if (quantity <= reorderPoint) return 'Low Stock';
+    return 'In Stock';
+  }
 
-    ngOnDestroy() {
-        if (this.updateSubscription) {
-            this.updateSubscription.unsubscribe();
-        }
-    }
+  getRandomNumber(min: number, max: number) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
 
-    onGridReady(params: GridReadyEvent) {
-        this.gridApi = params.api;
-    }
+  getRandomDate() {
+    const start = new Date(2023, 0, 1);
+    const end = new Date();
+    return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime())).toISOString().split('T')[0];
+  }
 
-    generateInitialData() {
-        const albums = [
-            { name: 'Rumours', artist: 'Fleetwood Mac', year: 1977, genre: 'Soft Rock' },
-            { name: 'Future Nostalgia', artist: 'Dua Lipa', year: 2020, genre: 'Pop' },
-            { name: 'Actually', artist: 'Pet Shop Boys', year: 1987, genre: 'Synth-pop' },
-            { name: 'Back to Black', artist: 'Amy Winehouse', year: 2006, genre: 'Rhythm & Blues' }
-        ];
+  getRandomSupplier() {
+    const suppliers = ['TechSource Inc.', 'Office Supplies Co.', 'Furniture Depot', 'Electronics Warehouse'];
+    return suppliers[Math.floor(Math.random() * suppliers.length)];
+  }
 
-        this.rowData = albums.map(album => this.generateRowData(album));
-    }
-
-    updateRandomValues() {
-        const randomIndex = Math.floor(Math.random() * this.rowData.length);
-        const updatedRow = { ...this.rowData[randomIndex], ...this.generateRandomValues() };
-        this.rowData = [
-            ...this.rowData.slice(0, randomIndex),
-            updatedRow,
-            ...this.rowData.slice(randomIndex + 1)
-        ];
-        if (this.gridApi) {
-            // Update only the changed row
-            const rowNode = this.gridApi.getDisplayedRowAtIndex(randomIndex);
-            if (rowNode) {
-                rowNode.setData(updatedRow);
-            }
-        }
-    }
-
-    generateRowData(album: any) {
-        return {
-            ...album,
-            albumName: album.name,
-            ...this.generateRandomValues()
-        };
-    }
-
-    generateRandomValues() {
-        return {
-            status: this.getRandomStatus(),
-            inventory: `${this.getRandomNumber(0, 50)} Stock / ${this.getRandomNumber(1, 5)} Variant`,
-            incoming: this.getRandomNumber(0, 50),
-            price: `£${this.getRandomNumber(20, 50)}`,
-            sold: this.getRandomNumber(0, 100),
-            estProfit: `£${this.getRandomNumber(50, 200)}`
-        };
-    }
-
-    getRandomStatus() {
-        const statuses = ['Active', 'Out of Stock', 'On Hold'];
-        return statuses[Math.floor(Math.random() * statuses.length)];
-    }
-
-    getRandomNumber(min: number, max: number) {
-        return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
-
-    albumRenderer(params: any) {
-        return `
+  productRenderer(params: any) {
+    return `
       <div style="display: flex; align-items: center;">
-        <div style="width: 40px; height: 40px; background-color: #3498db; margin-right: 10px;"></div>
         <div>
           <div>${params.value}</div>
-          <div style="font-size: 0.8em; color: #95a5a6;">${params.data.genre}</div>
         </div>
       </div>
     `;
-    }
+  }
 
-    statusRenderer(params: any) {
-        const statusClass = params.value.toLowerCase().replace(' ', '-');
-        return `<span class="status-${statusClass}">● ${params.value}</span>`;
-    }
+  statusRenderer(params: any) {
+    const statusClass = params.value.toLowerCase().replace(' ', '-');
+    return `<span class="status-${statusClass}">● ${params.value}</span>`;
+  }
 }

@@ -6,7 +6,8 @@ import '@lottiefiles/lottie-player';
 import { CommonModule } from '@angular/common';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { iconRegistry } from './icon-registry';
-import { GridComponent } from './grid/grid';
+import { InventoryGridComponent } from './grid/grid';
+import { Router } from '@angular/router';
 interface Statistic {
 	icon: any;
 	value: string;
@@ -25,7 +26,7 @@ interface Image {
 		CommonModule,
 		MaterialModule,
 		NgIconComponent,
-		GridComponent
+		InventoryGridComponent
 	],
 	providers: [
 		provideIcons(iconRegistry)
@@ -35,21 +36,7 @@ interface Image {
 })
 
 export class LandingPageComponent implements OnInit, AfterViewInit, OnDestroy {
-	// statistics: Statistic[] = [
-	// 	{ icon: Globe, value: '15+', label: 'Countries Worldwide' },
-	// 	{ icon: Folders, value: '800+', label: 'Systems Implemented' },
-	// 	{ icon: TrendingUp, value: '30%', label: 'Consistent Growth' },
-	// 	{ icon: Users, value: '110+', label: 'Satisfied Customers' },
-	// 	{ icon: ThumbsUp, value: '87.3%', label: 'CX Rating' },
-	// 	{ icon: Star, value: '30+', label: 'Years in Project Delivery' }
-	// ];
 
-	images: Image[] = [
-		{ url: 'https://picsum.photos/id/1018/250/250', alt: 'Inventory item 1' },
-		{ url: 'https://picsum.photos/id/1015/250/250', alt: 'Inventory item 2' },
-		{ url: 'https://picsum.photos/id/1019/250/250', alt: 'Inventory item 3' },
-		{ url: 'https://picsum.photos/id/1016/250/250', alt: 'Inventory item 4' },
-	];
 
 	private shuffleAreaWidth = 700;  // Adjust this value as needed
 	private shuffleAreaHeight = 500; // Adjust this value as needed
@@ -57,12 +44,18 @@ export class LandingPageComponent implements OnInit, AfterViewInit, OnDestroy {
 	private hoverSubscription: Subscription | null = null;
 	private clickSubscription: Subscription | null = null;
 
+	constructor(private router: Router){
+		
+	}
+
+	go() {
+		this.router.navigate(['/dashboard']);
+	}
 	ngOnInit() {
 		// Initial positioning will be handled in ngAfterViewInit
 	}
 
 	ngAfterViewInit() {
-		// this.positionImages();
 		this.startShuffleInterval();
 		this.setupHoverListener();
 		this.setupClickListener();
@@ -93,23 +86,6 @@ export class LandingPageComponent implements OnInit, AfterViewInit, OnDestroy {
 		});
 	}
 
-	positionImages() {
-		const container = document.querySelector('.image-container');
-		if (container) {
-			const containerRect = container.getBoundingClientRect();
-
-			this.images.forEach((_, index) => {
-				const img = document.querySelectorAll('.floating-image')[index] as HTMLElement;
-				if (img) {
-					const x = Math.random() * (this.shuffleAreaWidth - 250) + (containerRect.width - this.shuffleAreaWidth) / 2;
-					const y = Math.random() * (this.shuffleAreaHeight - 250) + (containerRect.height - this.shuffleAreaHeight) / 2;
-					img.style.left = `${x}px`;
-					img.style.top = `${y}px`;
-					img.style.zIndex = `${index + 2}`;
-				}
-			});
-		}
-	}
 
 	shuffleImages() {
 		const container = document.querySelector('.image-container');

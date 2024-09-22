@@ -14,7 +14,7 @@ import { BarChartComponent } from 'app/components/charts/widgets/widgetBar';
 import { LineChartComponent } from 'app/components/charts/widgets/widgetLine';
 import { PieChartComponent } from 'app/components/charts/widgets/widgetPie';
 import { GridsterItem } from 'angular-gridster2';
-import { Subject } from 'rxjs';
+import { DashboardService } from '../../pages/dashboard/dashboard.service';
 
 interface ChartConfig {
     type: string;
@@ -53,17 +53,8 @@ interface DashboardItem extends GridsterItem {
     styleUrls: ['./add-widget-side-pane.component.css'],
 })
 export class AddWidgetSidePaneComponent {
-    [x: string]: any;
     @Input() isAddWidgetOpen: boolean = false;
     @Output() closed = new EventEmitter<void>();
-    dashboard!: Array<DashboardItem>;
-    private saveTrigger = new Subject<void>();
-
-    availableCharts: { name: string; component: string }[] = [
-        { name: 'Monthly Sales', component: 'BarChartComponent' },
-        { name: 'Quarterly Revenue', component: 'LineChartComponent' },
-        { name: 'Market Share', component: 'PieChartComponent' },
-    ];
 
     charts: { [key: string]: Type<any> } = {
         SaleschartComponent: SaleschartComponent,
@@ -83,9 +74,45 @@ export class AddWidgetSidePaneComponent {
             component: 'BarChartComponent',
         },
         {
+            type: 'bar',
+            data: { categories: ['Jan', 'Feb', 'Mar'], values: [5, 10, 15] },
+            title: 'Requests Per Category',
+            component: 'BarChartComponent',
+        },
+        {
+            type: 'bar',
+            data: { categories: ['Jan', 'Feb', 'Mar'], values: [5, 10, 15] },
+            title: 'Supplier ratings',
+            component: 'BarChartComponent',
+        },
+        {
+            type: 'pie',
+            data: [
+                { name: 'Item A', value: 30 },
+                { name: 'Item B', value: 70 },
+            ],
+            title: 'Top 5 Requested Items Requests Per Category',
+            component: 'PieChartComponent',
+        },
+        {
+            type: 'pie',
+            data: [
+                { name: 'Item A', value: 30 },
+                { name: 'Item B', value: 70 },
+            ],
+            title: 'Quantity Per Category',
+            component: 'PieChartComponent',
+        },
+        {
             type: 'line',
             data: { categories: ['Jan', 'Feb', 'Mar'], values: [3, 6, 9] },
             title: 'Quarterly Revenue',
+            component: 'LineChartComponent',
+        },
+        {
+            type: 'line',
+            data: { categories: ['Jan', 'Feb', 'Mar'], values: [3, 6, 9] },
+            title: 'Orders Over The year',
             component: 'LineChartComponent',
         },
         {
@@ -97,31 +124,26 @@ export class AddWidgetSidePaneComponent {
             title: 'Market Share',
             component: 'PieChartComponent',
         },
+        {
+            type: 'pie',
+            data: [
+                { name: 'Item A', value: 30 },
+                { name: 'Item B', value: 70 },
+            ],
+            title: 'Orders On Time, Late and Before Promised',
+            component: 'PieChartComponent',
+        },
     ];
 
     addWidget(chartConfig: any) {
-        const newItem: GridsterItem = {
-            cols: 6,
-            rows: 2,
-            y: 0,
-            x: 0,
-            cardId: chartConfig.title.toLowerCase().replace(' ', '-'),
-            name: chartConfig.title,
-            component: chartConfig.component,
-            chartConfig: chartConfig,
-        };
-        this.dashboard.push(newItem);
-        this.saveState();
+        this.dashService.addWidget(chartConfig);
         this.close();
-    }
-
-    saveState() {
-        this.saveTrigger.next();
     }
 
     constructor(
         private dialog: MatDialog,
         private snackBar: MatSnackBar,
+        private dashService: DashboardService,
     ) {}
 
     close() {

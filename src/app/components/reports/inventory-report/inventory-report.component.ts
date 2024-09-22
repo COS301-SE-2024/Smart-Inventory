@@ -140,6 +140,7 @@ export class InventoryReportComponent implements OnInit {
     async ngOnInit() {
         this.titleService.updateTitle('Inventory Report');
         this.isLoading = true;
+        this.setupColumnDefs();
         await this.loadInventoryData();
         await this.updateInventoryWithRequests();
         this.setupCharts();
@@ -178,8 +179,7 @@ export class InventoryReportComponent implements OnInit {
                     expirationDate: item.expirationDate,
                     lowStockThreshold: item.lowStockThreshold,
                     reorderFreq: item.reorderFreq,
-                    requests: 0,
-                    requestsQuantity: 0,
+                    requests: item.requests,
                 }));
                 this.setupColumnDefs();
             } else {

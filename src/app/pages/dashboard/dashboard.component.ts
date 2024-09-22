@@ -4,7 +4,6 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TitleService } from '../../components/header/title.service';
 import { MaterialModule } from '../../components/material/material.module';
 import { CommonModule } from '@angular/common';
-import { SidepanelComponent } from '../../components/sidepanel/sidepanel.component';
 import { CompactType, GridsterModule } from 'angular-gridster2';
 import { GridType, DisplayGrid } from 'angular-gridster2';
 import { GridsterConfig, GridsterItem } from 'angular-gridster2';
@@ -17,8 +16,7 @@ import { BarchartComponent } from '../../components/charts/barchart/barchart.com
 import { DonutchartComponent } from '../../components/charts/donutchart/donutchart.component';
 import { FilterService } from '../../services/filter.service';
 import { LoadingService } from '../../components/loader/loading.service';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { Subject } from 'rxjs';
+import { HttpClientModule } from '@angular/common/http';
 import { debounceTime } from 'rxjs/operators';
 import { RouterLink } from '@angular/router';
 import { Amplify } from 'aws-amplify';
@@ -35,6 +33,8 @@ import { LineChartComponent } from 'app/components/charts/widgets/widgetLine';
 import { PieChartComponent } from 'app/components/charts/widgets/widgetPie';
 import { DataServiceService } from './data-service.service';
 import { AddWidgetSidePaneComponent } from '../../components/add-widget-side-pane/add-widget-side-pane.component';
+import { DashboardService } from '../dashboard/dashboard.service';
+
 interface CardData {
     title: string;
     value: string | number;
@@ -48,25 +48,6 @@ interface DashboardItem extends GridsterItem {
     cardId?: string;
     name?: string;
     component?: string;
-}
-
-interface ChartConfig {
-    type: string;
-    data: any;
-    title: string;
-    component: string;
-}
-
-interface DashboardData {
-    avgFulfillmentTime: number;
-    inventoryLevels: number;
-    topSeller: string;
-    backorders: number;
-    baselineValues: {
-        fulfillmentDays: number;
-        backorders: number;
-        inventoryLevels: number;
-    };
 }
 
 interface MetricPerformance {
@@ -124,23 +105,12 @@ export class DashboardComponent implements OnInit {
 
     isDeleteMode: boolean = false;
     isSidepanelOpen: boolean = false;
-    availableCharts: { name: string; component: string }[] = [
-        { name: 'Monthly Sales', component: 'BarChartComponent' },
-        { name: 'Quarterly Revenue', component: 'LineChartComponent' },
-        { name: 'Market Share', component: 'PieChartComponent' },
-    ];
 
     Math: any;
 
     openSidePanel() {
         this.sidenav.open();
     }
-
-    closeSidePanel() {
-        this.sidenav.close();
-    }
-
-    private saveTrigger = new Subject<void>();
 
     charts: { [key: string]: Type<any> } = {
         SaleschartComponent: SaleschartComponent,
@@ -164,30 +134,6 @@ export class DashboardComponent implements OnInit {
     orders: any[] = [];
 
     cardData: CardData[] = [];
-
-    chartConfigs: ChartConfig[] = [
-        {
-            type: 'bar',
-            data: { categories: ['Jan', 'Feb', 'Mar'], values: [5, 10, 15] },
-            title: 'Monthly Sales',
-            component: 'BarChartComponent',
-        },
-        {
-            type: 'line',
-            data: { categories: ['Jan', 'Feb', 'Mar'], values: [3, 6, 9] },
-            title: 'Quarterly Revenue',
-            component: 'LineChartComponent',
-        },
-        {
-            type: 'pie',
-            data: [
-                { name: 'Item A', value: 30 },
-                { name: 'Item B', value: 70 },
-            ],
-            title: 'Market Share',
-            component: 'PieChartComponent',
-        },
-    ];
 
     RequestOrders = {
         requests: {
@@ -213,13 +159,12 @@ export class DashboardComponent implements OnInit {
     public chartOptions!: AgChartOptions;
 
     constructor(
-        private http: HttpClient,
         private loader: LoadingService,
         private titleService: TitleService,
-        private filterService: FilterService,
         private cdr: ChangeDetectorRef,
         private dialog: MatDialog,
         private service: DataServiceService,
+        private dashService: DashboardService,
     ) {
         Amplify.configure(outputs);
         this.options = {
@@ -252,15 +197,15 @@ export class DashboardComponent implements OnInit {
             emptyCellDragMaxCols: 50,
             emptyCellDragMaxRows: 50,
             ignoreMarginInRow: false,
-            itemChangeCallback: () => this.saveState(),
-            itemResizeCallback: () => this.saveState(),
+            itemChangeCallback: () => this.dashService.saveState(),
+            itemResizeCallback: () => this.dashService.saveState(),
             draggable: {
                 enabled: true,
-                stop: () => this.saveState(),
+                stop: () => this.dashService.saveState(),
             },
             resizable: {
                 enabled: true,
-                stop: () => this.saveState(),
+                stop: () => this.dashService.saveState(),
             },
             swap: true,
             pushItems: false,
@@ -272,7 +217,8 @@ export class DashboardComponent implements OnInit {
             disableWarnings: false,
             scrollToNewItems: false,
         };
-        this.saveTrigger
+        this.dashService
+            .getTrigger()
             .pipe(
                 debounceTime(500), // Debounce for 500ms
             )
@@ -669,6 +615,10 @@ export class DashboardComponent implements OnInit {
     }
 
     async ngOnInit() {
+        this.dashService.dashboard$.subscribe((dashboard) => {
+            this.dashboard = dashboard;
+            this.cdr.detectChanges();
+        });
         this.titleService.updateTitle('Dashboard');
 
         await this.loadInventoryData();
@@ -689,7 +639,7 @@ export class DashboardComponent implements OnInit {
 
     loadState() {
         try {
-            const savedState = localStorage.getItem('dashboardState');
+            const savedState = this.dashService.getState();
             if (savedState) {
                 const parsedState = JSON.parse(savedState);
                 if (Array.isArray(parsedState)) {
@@ -707,12 +657,8 @@ export class DashboardComponent implements OnInit {
         }
     }
 
-    saveState() {
-        this.saveTrigger.next();
-    }
-
     private persistState() {
-        localStorage.setItem('dashboardState', JSON.stringify(this.dashboard));
+        this.dashService.persistState(this.dashboard);
     }
 
     processDashboardData() {
@@ -877,8 +823,7 @@ export class DashboardComponent implements OnInit {
 
         dialogRef.afterClosed().subscribe((result) => {
             if (result) {
-                this.dashboard = this.dashboard.filter((dashboardItem) => dashboardItem !== item);
-                this.saveState();
+                this.dashboard = this.dashService.removeWidget(item);
                 this.isDeleteMode = false;
             }
         });
@@ -903,8 +848,7 @@ export class DashboardComponent implements OnInit {
             component: chartConfig.component,
             chartConfig: chartConfig,
         };
-        this.dashboard.push(newItem);
-        this.saveState();
+        this.dashService.addWidget(newItem);
         this.closeSidepanel();
     }
 

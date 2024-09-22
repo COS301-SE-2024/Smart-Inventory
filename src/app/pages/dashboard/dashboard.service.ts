@@ -9,13 +9,6 @@ export interface DashboardItem extends GridsterItem {
     chartConfig?: any;
 }
 
-export interface ChartConfig {
-    type: string;
-    data: any;
-    title: string;
-    component: string;
-}
-
 @Injectable({
     providedIn: 'root',
 })

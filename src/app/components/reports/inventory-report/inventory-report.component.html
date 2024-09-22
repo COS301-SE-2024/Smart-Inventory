@@ -4,7 +4,7 @@
 
 <div *ngIf="!isLoading" class="gridster-container">
     <gridster [options]="gridsterOptions">
-        <gridster-item *ngFor="let item of gridsterItems" [item]="item" [ngClass]="{'grid-card': item['isGrid']}">
+        <gridster-item *ngFor="let item of gridsterItems" [item]="item" [ngClass]="{ 'grid-card': item['isGrid'] }">
             <ng-container *ngIf="item['chartIndex'] !== undefined">
                 <mat-card class="chart-card">
                     <ag-charts-angular [options]="options[item['chartIndex']]"></ag-charts-angular>
@@ -18,14 +18,14 @@
             <ng-container *ngIf="item['isMetrics']">
                 <mat-card class="metrics-card">
                     <mat-card-header>
-                        <mat-card-title>{{InventoryReport.title}}</mat-card-title>
-                        <mat-card-subtitle>{{InventoryReport.subtitle}}</mat-card-subtitle>
+                        <mat-card-title>{{ InventoryReport.title }}</mat-card-title>
+                        <mat-card-subtitle>{{ InventoryReport.subtitle }}</mat-card-subtitle>
                     </mat-card-header>
                     <mat-card-content>
                         <mat-list>
                             <mat-list-item *ngFor="let metric of InventoryReport.metrics | keyvalue">
-                                <mat-icon matListItemIcon>{{metric.value.icon}}</mat-icon>
-                                <span matListItemTitle>{{metric.value.label}}: {{metric.value.value}}</span>
+                                <mat-icon matListItemIcon>{{ metric.value.icon }}</mat-icon>
+                                <span matListItemTitle>{{ metric.value.label }}: {{ metric.value.value }}</span>
                             </mat-list-item>
                         </mat-list>
                     </mat-card-content>
@@ -38,5 +38,4 @@
             </button>
         </mat-toolbar>
     </gridster>
-
 </div>

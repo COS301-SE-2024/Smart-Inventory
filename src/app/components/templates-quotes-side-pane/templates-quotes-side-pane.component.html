@@ -1,0 +1,43 @@
+<div class="side-pane" [class.open]="isOpen">
+    <div class="side-pane-header">
+        <div style="width: 100%; height: 50px; display: flex; padding: 5px; justify-content: space-between">
+            <div style="display: flex">
+                <h2 style="font-size: 25px; margin-right: 10px">Automation Templates</h2>
+                <button
+                    mat-fab
+                    style="height: 40px; width: 40px; border-radius: 50px; margin-right: 5px; background-color: white"
+                    color="primary"
+                    (click)="openTemplateQuoteModal()"
+                >
+                    <mat-icon>add</mat-icon>
+                </button>
+            </div>
+            <button mat-icon-button class="close-button" (click)="close()">
+                <mat-icon>close</mat-icon>
+            </button>
+        </div>
+    </div>
+    <div class="side-pane-content">
+        <div>
+            <div class="supplier-quotes">
+                <mat-card *ngFor="let template of templates | keyvalue" class="supplier-quote-card">
+                    <mat-card-header style="justify-content: space-between">
+                        <mat-card-title>Supplier Name: {{ template.value.title }}</mat-card-title>
+                        <mat-card-subtitle>{{ template.value.subtitle }}</mat-card-subtitle>
+                        <button
+                            mat-icon-button
+                            color="warn"
+                            class="delete-button"
+                            (click)="removeTemplate(template.key)"
+                        >
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <p>Next Delivery Date: {{ template.value.Delivery_Date }}</p>
+                    </mat-card-content>
+                </mat-card>
+            </div>
+        </div>
+    </div>
+</div>

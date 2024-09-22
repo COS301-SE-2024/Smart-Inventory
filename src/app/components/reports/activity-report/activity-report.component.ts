@@ -1,8 +1,5 @@
-import {
-    CognitoIdentityProviderClient,
-    GetUserCommand,
-} from '@aws-sdk/client-cognito-identity-provider';
-import { AttributeType } from "@aws-sdk/client-cognito-identity-provider";
+import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
+import { AttributeType } from '@aws-sdk/client-cognito-identity-provider';
 import { Component, OnInit, ViewChild, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { fetchAuthSession } from 'aws-amplify/auth';
 import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
@@ -65,7 +62,7 @@ interface CustomGridsterItem extends GridsterItem {
         MatCardModule,
         MatIconModule,
         GridsterModule,
-        MatTooltip
+        MatTooltip,
     ],
     templateUrl: './activity-report.component.html',
     styleUrls: ['./activity-report.component.css'],
@@ -80,12 +77,12 @@ export class ActivityReportComponent implements OnInit, AfterViewInit {
     optionsActivitiesByMember!: AgChartOptions;
 
     colDefs: ColDef[] = [
-        { field: 'memberID', headerName: 'Member ID' },
-        { field: 'name', headerName: 'Name' },
-        { field: 'role', headerName: 'Role' },
-        { field: 'action', headerName: 'Action' },
-        { field: 'timestamp', headerName: 'Timestamp' },
-        { field: 'details', headerName: 'Details' }
+        { field: 'memberID', headerName: 'Member ID', filter: 'agSetColumnFilter' },
+        { field: 'name', headerName: 'Name', filter: 'agSetColumnFilter' },
+        { field: 'role', headerName: 'Role', filter: 'agSetColumnFilter' },
+        { field: 'action', headerName: 'Action', filter: 'agSetColumnFilter' },
+        { field: 'timestamp', headerName: 'Timestamp', filter: 'agSetColumnFilter' },
+        { field: 'details', headerName: 'Details', filter: 'agSetColumnFilter' },
     ];
 
     ActivityReport: ActivityReportType = {
@@ -98,7 +95,7 @@ export class ActivityReportComponent implements OnInit, AfterViewInit {
                 value: '0',
                 percentage: 0,
                 trend: 'up',
-                tooltip: 'Total number of activities recorded.'
+                tooltip: 'Total number of activities recorded.',
             },
             {
                 name: 'Unique Members',
@@ -106,7 +103,7 @@ export class ActivityReportComponent implements OnInit, AfterViewInit {
                 value: '0',
                 percentage: 0,
                 trend: 'up',
-                tooltip: 'Number of unique members with activities.'
+                tooltip: 'Number of unique members with activities.',
             },
             {
                 name: 'Avg Activities/Member',
@@ -114,7 +111,7 @@ export class ActivityReportComponent implements OnInit, AfterViewInit {
                 value: '0',
                 percentage: 0,
                 trend: 'up',
-                tooltip: 'Average number of activities per member.'
+                tooltip: 'Average number of activities per member.',
             },
             {
                 name: 'Latest Activity',
@@ -122,8 +119,8 @@ export class ActivityReportComponent implements OnInit, AfterViewInit {
                 value: 'N/A',
                 percentage: 0,
                 trend: 'neutral',
-                tooltip: 'Most recent activity timestamp.'
-            }
+                tooltip: 'Most recent activity timestamp.',
+            },
         ],
     };
 
@@ -136,7 +133,7 @@ export class ActivityReportComponent implements OnInit, AfterViewInit {
         private dialog: MatDialog,
         private router: Router,
         private chartDataService: ChartDataService,
-        private changeDetectorRef: ChangeDetectorRef
+        private changeDetectorRef: ChangeDetectorRef,
     ) {
         console.log('ActivityReportComponent constructed');
         this.options = {
@@ -183,9 +180,8 @@ export class ActivityReportComponent implements OnInit, AfterViewInit {
             pushResizeItems: false,
             disableWindowResize: false,
             disableWarnings: false,
-            scrollToNewItems: false
+            scrollToNewItems: false,
         };
-
     }
 
     async ngOnInit() {
@@ -197,11 +193,10 @@ export class ActivityReportComponent implements OnInit, AfterViewInit {
                 { cols: 4, rows: 1, y: 0, x: 0, type: 'metric', data: this.ActivityReport.metrics[0] },
                 { cols: 4, rows: 1, y: 0, x: 3, type: 'metric', data: this.ActivityReport.metrics[1] },
                 { cols: 4, rows: 1, y: 0, x: 6, type: 'metric', data: this.ActivityReport.metrics[2] },
-                { cols: 12, rows: 5, y: 1, x: 0, type: 'grid' }
+                { cols: 12, rows: 5, y: 1, x: 0, type: 'grid' },
             ] as CustomGridsterItem[];
             this.changeDetectorRef.detectChanges();
         });
-
     }
 
     ngAfterViewInit() {
@@ -240,7 +235,7 @@ export class ActivityReportComponent implements OnInit, AfterViewInit {
             console.log('User response:', getUserResponse);
 
             const tenantId = getUserResponse.UserAttributes?.find(
-                (attr: AttributeType) => attr.Name === 'custom:tenentId'
+                (attr: AttributeType) => attr.Name === 'custom:tenentId',
             )?.Value;
             console.log('TenantId:', tenantId);
 
@@ -264,7 +259,7 @@ export class ActivityReportComponent implements OnInit, AfterViewInit {
                     role: activity.role,
                     action: activity.task,
                     timestamp: new Date(activity.createdAt).toLocaleString(),
-                    details: activity.details
+                    details: activity.details,
                 }));
 
                 console.log('Processed rowData:', this.rowData);
@@ -294,7 +289,7 @@ export class ActivityReportComponent implements OnInit, AfterViewInit {
     updateCharts() {
         console.log('Updating charts');
         const actionsByMember = new Map();
-        this.rowData.forEach(row => {
+        this.rowData.forEach((row) => {
             if (!actionsByMember.has(row.name)) {
                 actionsByMember.set(row.name, 0);
             }
@@ -303,7 +298,7 @@ export class ActivityReportComponent implements OnInit, AfterViewInit {
         this.options1 = this.chartDataService.setPieData(actionsByMember, 'Actions by Member');
 
         const actionTypes = new Map();
-        this.rowData.forEach(row => {
+        this.rowData.forEach((row) => {
             if (!actionTypes.has(row.action)) {
                 actionTypes.set(row.action, 0);
             }
@@ -318,9 +313,9 @@ export class ActivityReportComponent implements OnInit, AfterViewInit {
     updateMetrics() {
         console.log('Updating metrics');
         const totalActivities = this.rowData.length;
-        const uniqueMembers = new Set(this.rowData.map(row => row.memberID)).size;
+        const uniqueMembers = new Set(this.rowData.map((row) => row.memberID)).size;
         const avgActivities = totalActivities / uniqueMembers;
-        const latestActivity = new Date(Math.max(...this.rowData.map(row => new Date(row.timestamp).getTime())));
+        const latestActivity = new Date(Math.max(...this.rowData.map((row) => new Date(row.timestamp).getTime())));
 
         this.ActivityReport.metrics[0].value = totalActivities.toString();
         this.ActivityReport.metrics[1].value = uniqueMembers.toString();
@@ -329,7 +324,7 @@ export class ActivityReportComponent implements OnInit, AfterViewInit {
 
         // You can calculate percentage changes if you have previous data to compare
         // For now, we'll set them to 0
-        this.ActivityReport.metrics.forEach(metric => metric.percentage = 0);
+        this.ActivityReport.metrics.forEach((metric) => (metric.percentage = 0));
 
         console.log('Metrics updated:', this.ActivityReport.metrics);
     }

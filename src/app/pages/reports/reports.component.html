@@ -2,25 +2,21 @@
     <mat-grid-list cols="2" rowHeight="440px" gutterSize="10px">
         <mat-grid-tile *ngFor="let reportKey of reportOrder; let i = index">
             <div class="card-container">
-                <mat-card class="card">
-                    <mat-card-header class="card-header">
-                        <div mat-card-avatar class="header-image">
-                            <mat-icon style="font-size: 70px; width: 80px; height: 80px">{{
-                                reports[reportKey].icon
-                            }}</mat-icon>
-                        </div>
-                        <div class="header-content">
-                            <mat-card-title>{{ reports[reportKey].title }}</mat-card-title>
-                            <p class="subtitle">{{ reports[reportKey].subtitle }}</p>
-                        </div>
-                    </mat-card-header>
-                    <mat-card-actions>
-                        <button mat-button class="view-report-button" (click)="viewFullReport(reportKey)">
-                            <span>View Full Report</span>
-                            <mat-icon iconPositionEnd>arrow_forward</mat-icon>
-                        </button>
-                    </mat-card-actions>
-                </mat-card>
+                <a (click)="viewFullReport(reportKey)" matTooltip="Click to view {{ reports[reportKey].title }}!">
+                    <mat-card class="card">
+                        <mat-card-header class="card-header">
+                            <div mat-card-avatar class="header-image">
+                                <mat-icon style="font-size: 70px; width: 80px; height: 80px">{{
+                                    reports[reportKey].icon
+                                }}</mat-icon>
+                            </div>
+                            <div class="header-content">
+                                <mat-card-title>{{ reports[reportKey].title }}</mat-card-title>
+                                <p class="subtitle">{{ reports[reportKey].subtitle }}</p>
+                            </div>
+                        </mat-card-header>
+                    </mat-card></a
+                >
             </div>
         </mat-grid-tile>
     </mat-grid-list>

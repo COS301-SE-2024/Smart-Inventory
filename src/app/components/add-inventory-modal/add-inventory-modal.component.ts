@@ -71,6 +71,10 @@ export class AddInventoryModalComponent implements OnInit, OnDestroy {
             reorderAmount: [{value: 0, disabled: true}, [Validators.required, Validators.min(0)]],
             supplier: [{value: '', disabled: true}, Validators.required],
             expirationDate: [{value: '', disabled: true}, Validators.required],
+            unitCost: [{value: 0, disabled: true}, [Validators.required, Validators.min(0)]],
+            leadTime: [{value: 0, disabled: true}, [Validators.required, Validators.min(0)]],
+            deliveryCost: [{value: 0, disabled: true}, [Validators.required, Validators.min(0)]],
+            dailyDemand: [{value: 0, disabled: true}, [Validators.required, Validators.min(0)]],
         });
     }
 
@@ -160,13 +164,21 @@ export class AddInventoryModalComponent implements OnInit, OnDestroy {
             lowStockThreshold: item.lowStockThreshold,
             reorderAmount: item.reorderAmount,
             supplier: item.supplier,
-            upc: item.upc
+            upc: item.upc,
+            unitCost: item.unitCost,
+            leadTime: item.leadTime,
+            deliveryCost: item.deliveryCost,
+            dailyDemand: item.dailyDemand
         });
 
         // Enable only certain fields
         this.inventoryForm.get('quantity')?.enable();
         this.inventoryForm.get('supplier')?.enable();
         this.inventoryForm.get('expirationDate')?.enable();
+        this.inventoryForm.get('unitCost')?.enable();
+        this.inventoryForm.get('leadTime')?.enable();
+        this.inventoryForm.get('deliveryCost')?.enable();
+        this.inventoryForm.get('dailyDemand')?.enable();
     }
 
     enableAllControls() {
@@ -188,6 +200,10 @@ export class AddInventoryModalComponent implements OnInit, OnDestroy {
                     quantity: formData.quantity,
                     supplier: formData.supplier,
                     expirationDate: formData.expirationDate,
+                    unitCost: formData.unitCost,
+                    leadTime: formData.leadTime,
+                    deliveryCost: formData.deliveryCost,
+                    dailyDemand: formData.dailyDemand,
                     // Include other fields that should not be changed
                     upc: formData.upc,
                     description: formData.description,

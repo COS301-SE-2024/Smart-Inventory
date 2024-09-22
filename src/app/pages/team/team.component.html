@@ -1,5 +1,5 @@
-<div style="margin: 15px; width: 100%">
-        <app-grid
+<div class="teamHolder">
+    <app-grid
         [rowData]="rowData"
         [columnDefs]="colDefs"
         [addButton]="addButton"
@@ -15,7 +15,7 @@
 <div *ngIf="showPopup" class="popup-overlay">
     <div class="custom-dialog">
         <div class="popup-content">
-            <h2>Add Member</h2>
+            <h1 mat-dialog-title style="text-align: center; font-size: 30px">Add Member</h1>
             <form (ngSubmit)="onSubmit(userForm.value)" #userForm="ngForm">
                 <!-- Name Input -->
                 <mat-form-field appearance="outline">
@@ -59,14 +59,8 @@
                 </mat-form-field>
                 <!-- Buttons -->
                 <div class="button-group">
-                    <button mat-stroked-button (click)="closePopup()" class="btn">Cancel</button>
-                    <button
-                        mat-stroked-button
-                        color="primary"
-                        type="submit"
-                        class="btn"
-                        [disabled]="!userForm.form.valid"
-                    >
+                    <button mat-flat-button (click)="closePopup()" class="btn">Cancel</button>
+                    <button mat-flat-button color="primary" type="submit" class="btn" [disabled]="!userForm.form.valid">
                         Submit
                     </button>
                 </div>

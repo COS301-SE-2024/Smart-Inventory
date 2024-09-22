@@ -34,6 +34,7 @@ import { BarChartComponent } from 'app/components/charts/widgets/widgetBar';
 import { LineChartComponent } from 'app/components/charts/widgets/widgetLine';
 import { PieChartComponent } from 'app/components/charts/widgets/widgetPie';
 import { DataServiceService } from './data-service.service';
+import { AddWidgetSidePaneComponent } from '../../components/add-widget-side-pane/add-widget-side-pane.component';
 interface CardData {
     title: string;
     value: string | number;
@@ -48,7 +49,6 @@ interface DashboardItem extends GridsterItem {
     name?: string;
     component?: string;
 }
-
 
 interface ChartConfig {
     type: string;
@@ -68,7 +68,6 @@ interface DashboardData {
         inventoryLevels: number;
     };
 }
-
 
 interface MetricPerformance {
     value: number | string;
@@ -94,7 +93,6 @@ interface SkuCounts {
     [sku: string]: number;
 }
 
-
 @Component({
     selector: 'app-dashboard',
     templateUrl: './dashboard.component.html',
@@ -117,18 +115,19 @@ interface SkuCounts {
         LoadingSpinnerComponent,
         LineChartComponent,
         PieChartComponent,
-        BarChartComponent
-    ]
+        BarChartComponent,
+        AddWidgetSidePaneComponent,
+    ],
 })
 export class DashboardComponent implements OnInit {
     @ViewChild('sidenav') sidenav!: MatSidenav;
 
     isDeleteMode: boolean = false;
     isSidepanelOpen: boolean = false;
-    availableCharts: { name: string, component: string }[] = [
+    availableCharts: { name: string; component: string }[] = [
         { name: 'Monthly Sales', component: 'BarChartComponent' },
         { name: 'Quarterly Revenue', component: 'LineChartComponent' },
-        { name: 'Market Share', component: 'PieChartComponent' }
+        { name: 'Market Share', component: 'PieChartComponent' },
     ];
 
     Math: any;
@@ -143,17 +142,15 @@ export class DashboardComponent implements OnInit {
 
     private saveTrigger = new Subject<void>();
 
-
     charts: { [key: string]: Type<any> } = {
-        'SaleschartComponent': SaleschartComponent,
-        'BarchartComponent': BarchartComponent,
-        'BubblechartComponent': BubblechartComponent,
-        'DonutchartComponent': DonutchartComponent,
-        'BarChartComponent': BarChartComponent,
-        'LineChartComponent': LineChartComponent,
-        'PieChartComponent': PieChartComponent
+        SaleschartComponent: SaleschartComponent,
+        BarchartComponent: BarchartComponent,
+        BubblechartComponent: BubblechartComponent,
+        DonutchartComponent: DonutchartComponent,
+        BarChartComponent: BarChartComponent,
+        LineChartComponent: LineChartComponent,
+        PieChartComponent: PieChartComponent,
     };
-
 
     rowData: any[] = [];
     metricPerformance: Record<string, MetricPerformance> = {};
@@ -170,12 +167,13 @@ export class DashboardComponent implements OnInit {
 
     chartConfigs: ChartConfig[] = [];
 
+
     RequestOrders = {
         requests: {
             totalRequests: 0,
             mostRequested: {
-                name: "None found",
-                percentage: 0
+                name: 'None found',
+                percentage: 0,
             },
             highestRequest: 0,
         },
@@ -184,9 +182,9 @@ export class DashboardComponent implements OnInit {
             averageDelay: 0,
             longestBackorderItem: {
                 productName: 'None found',
-                delay: ''
-            }
-        }
+                delay: '',
+            },
+        },
     };
 
     dashboard!: Array<DashboardItem>;
@@ -200,7 +198,7 @@ export class DashboardComponent implements OnInit {
         private filterService: FilterService,
         private cdr: ChangeDetectorRef,
         private dialog: MatDialog,
-        private service: DataServiceService
+        private service: DataServiceService,
     ) {
         Amplify.configure(outputs);
         this.options = {
@@ -237,11 +235,11 @@ export class DashboardComponent implements OnInit {
             itemResizeCallback: () => this.saveState(),
             draggable: {
                 enabled: true,
-                stop: () => this.saveState()
+                stop: () => this.saveState(),
             },
             resizable: {
                 enabled: true,
-                stop: () => this.saveState()
+                stop: () => this.saveState(),
             },
             swap: true,
             pushItems: false,
@@ -251,13 +249,15 @@ export class DashboardComponent implements OnInit {
             pushResizeItems: false,
             disableWindowResize: false,
             disableWarnings: false,
-            scrollToNewItems: false
+            scrollToNewItems: false,
         };
-        this.saveTrigger.pipe(
-            debounceTime(500) // Debounce for 500ms
-        ).subscribe(() => {
-            this.persistState();
-        });
+        this.saveTrigger
+            .pipe(
+                debounceTime(500), // Debounce for 500ms
+            )
+            .subscribe(() => {
+                this.persistState();
+            });
 
         // this.dashboard = [
         //     { cols: 3, rows: 2, y: 0, x: 0, cardData: this.cardData[0] },
@@ -283,7 +283,7 @@ export class DashboardComponent implements OnInit {
 
         const tenantId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
         // Filter stock requests by tenantId
-        const filteredStockRequests = stockRequests.filter(request => request.tenentId === tenantId);
+        const filteredStockRequests = stockRequests.filter((request) => request.tenentId === tenantId);
 
         // Calculate requests data
         const skuCounts: SkuCounts = filteredStockRequests.reduce((counts, request) => {
@@ -293,25 +293,26 @@ export class DashboardComponent implements OnInit {
 
         const totalRequests: number = Object.values(skuCounts).reduce((sum, count) => sum + count, 0);
         const highestRequest: number = Math.max(...Object.values(skuCounts));
-        const mostRequestedEntry = Object.entries(skuCounts).reduce((a, b) => a[1] > b[1] ? a : b);
+        const mostRequestedEntry = Object.entries(skuCounts).reduce((a, b) => (a[1] > b[1] ? a : b));
         const mostRequestedSku = mostRequestedEntry[0];
         const mostRequestedPercentage = (skuCounts[mostRequestedSku] / totalRequests) * 100;
 
         // Calculate backorders data
-        const backorders = orders.filter(order =>
-            order.tenentId === tenantId &&
-            order.Order_Status === "Pending Approval" &&
-            order.Expected_Delivery_Date
+        const backorders = orders.filter(
+            (order) =>
+                order.tenentId === tenantId &&
+                order.Order_Status === 'Pending Approval' &&
+                order.Expected_Delivery_Date,
         );
         const currentBackorders = backorders.length;
 
-        const delays = backorders.map(order => this.calculateDelay(order.Order_Date, order.Expected_Delivery_Date!));
+        const delays = backorders.map((order) => this.calculateDelay(order.Order_Date, order.Expected_Delivery_Date!));
         const totalDelay = delays.reduce((sum, delay) => sum + delay, 0);
         const averageDelay = currentBackorders > 0 ? totalDelay / currentBackorders : 0;
 
         const longestDelay = Math.max(...delays);
-        const longestBackorderItem = backorders.find(order =>
-            this.calculateDelay(order.Order_Date, order.Expected_Delivery_Date!) === longestDelay
+        const longestBackorderItem = backorders.find(
+            (order) => this.calculateDelay(order.Order_Date, order.Expected_Delivery_Date!) === longestDelay,
         );
 
         // Populate RequestOrders
@@ -319,19 +320,19 @@ export class DashboardComponent implements OnInit {
             requests: {
                 totalRequests,
                 mostRequested: {
-                    name: mostRequestedSku || "None found",
-                    percentage: Number(mostRequestedPercentage.toFixed(2)) || 0
+                    name: mostRequestedSku || 'None found',
+                    percentage: Number(mostRequestedPercentage.toFixed(2)) || 0,
                 },
-                highestRequest
+                highestRequest,
             },
             backorders: {
                 currentBackorders,
                 averageDelay: Number(averageDelay.toFixed(2)),
                 longestBackorderItem: {
                     productName: longestBackorderItem?.Selected_Supplier || 'None found',
-                    delay: longestDelay > 0 ? this.formatDelay(longestDelay) : ''
-                }
-            }
+                    delay: longestDelay > 0 ? this.formatDelay(longestDelay) : '',
+                },
+            },
         };
 
         console.log('Populated RequestOrders:', this.RequestOrders);
@@ -344,11 +345,10 @@ export class DashboardComponent implements OnInit {
     }
 
     private formatDelay(delay: number): string {
-        return delay > 0 ? `${delay.toFixed(0)} days` : "";
+        return delay > 0 ? `${delay.toFixed(0)} days` : '';
     }
     // Integration
     inventoryLevel: number = 20;
-
 
     async loadInventoryData() {
         try {
@@ -378,14 +378,15 @@ export class DashboardComponent implements OnInit {
                 credentials: session.credentials,
             });
 
-
             const invokeCommand = new InvokeCommand({
                 FunctionName: 'Inventory-getItems',
-                Payload: new TextEncoder().encode(JSON.stringify({
-                    pathParameters: {
-                        tenentId: tenantId, // Spelling as expected by the Lambda function
-                    }
-                })),
+                Payload: new TextEncoder().encode(
+                    JSON.stringify({
+                        pathParameters: {
+                            tenentId: tenantId, // Spelling as expected by the Lambda function
+                        },
+                    }),
+                ),
             });
 
             const lambdaResponse = await lambdaClient.send(invokeCommand);
@@ -408,78 +409,6 @@ export class DashboardComponent implements OnInit {
         }
     }
 
-    // async dashData() {
-    //     try {
-    //         // Mocked baseline values (should be dynamically fetched or defined)
-    //         const baselineValues = {
-    //             inventoryLevels: 10, // Baseline inventory levels
-    //             backorders: 5,      // Baseline backorders
-    //             fulfillmentDays: 390 // Baseline average fulfillment days (for comparison)
-    //         };
-
-    //         const session = await fetchAuthSession();
-    //         this.loader.setLoading(false);
-
-    //         const cognitoClient = new CognitoIdentityProviderClient({
-    //             region: outputs.auth.aws_region,
-    //             credentials: session.credentials,
-    //         });
-
-    //         const getUserCommand = new GetUserCommand({
-    //             AccessToken: session.tokens?.accessToken.toString(),
-    //         });
-    //         const getUserResponse = await cognitoClient.send(getUserCommand);
-
-    //         const tenantId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
-
-    //         if (!tenantId) {
-    //             console.error('TenantId not found in user attributes');
-    //             this.rowData = [];
-    //             return;
-    //         }
-
-    //         const lambdaClient = new LambdaClient({
-    //             region: outputs.auth.aws_region,
-    //             credentials: session.credentials,
-    //         });
-
-
-    //         const invokeCommand = new InvokeCommand({
-    //             FunctionName: 'getDashboardData',
-    //             Payload: new TextEncoder().encode(JSON.stringify({
-    //                 pathParameters: {
-    //                     tenentId: tenantId, // Spelling as expected by the Lambda function
-    //                 }
-    //             })),
-    //         });
-
-    //         const lambdaResponse = await lambdaClient.send(invokeCommand);
-    //         const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-    //         console.log('Response from Lambda:', responseBody);
-
-
-    //         if (responseBody.statusCode === 200) {
-    //             const dashboardData = JSON.parse(responseBody.body);
-    //             // console.log('Dashboard Data:', dashboardData);
-    //             // console.log('I am a metric', parseFloat((((dashboardData.inventoryLevels - baselineValues.inventoryLevels) / baselineValues.inventoryLevels) * 100).toFixed(2)));
-    //             this.dashboardData.inventoryLevels = parseFloat((((dashboardData.inventoryLevels - baselineValues.inventoryLevels) / baselineValues.inventoryLevels) * 100).toFixed(2));
-    //             this.dashboardData.avgFulfillmentTime = dashboardData.avgFulfillmentTime;
-    //             this.dashboardData.topSeller = dashboardData.topSeller;
-    //             this.dashboardData.backorders = dashboardData.backorders;
-    //             // this.dashboardData.
-    //             console.log('Processed dashboard data:', dashboardData);
-    //         } else {
-    //             console.error('Error fetching dashboard data:', responseBody.body);
-
-    //         }
-    //     } catch (error) {
-    //         console.error('Error in dashboardData:', error);
-
-    //     }
-    //     finally {
-    //         // this..isLoading = false;
-    //     }
-    // }
 
     isLoading: boolean = true;
     async loadOrdersData() {
@@ -523,7 +452,6 @@ export class DashboardComponent implements OnInit {
                 const orders = JSON.parse(responseBody.body);
                 this.orders = orders;
                 console.log('Processed orders from orders:', orders);
-
             } else {
                 console.error('Error fetching orders data:', responseBody.body);
                 this.rowData = [];
@@ -611,7 +539,7 @@ export class DashboardComponent implements OnInit {
             const getUserResponse = await client.send(getUserCommand);
 
             const adminUniqueAttribute = getUserResponse.UserAttributes?.find(
-                (attr) => attr.Name === 'custom:tenentId'
+                (attr) => attr.Name === 'custom:tenentId',
             )?.Value;
 
             const payload = JSON.stringify({
@@ -646,8 +574,6 @@ export class DashboardComponent implements OnInit {
 
     async ngOnInit() {
         this.titleService.updateTitle('Dashboard');
-
-
 
         await this.loadInventoryData();
         await this.fetchUsers();
@@ -733,11 +659,7 @@ export class DashboardComponent implements OnInit {
     }
 
     processDashboardData() {
-        this.dashboardData = this.service.processDashboardData(
-            this.orders,
-            this.stockRequest,
-            this.inventory
-        );
+        this.dashboardData = this.service.processDashboardData(this.orders, this.stockRequest, this.inventory);
         this.calculateMetricPerformance();
     }
 
@@ -748,7 +670,7 @@ export class DashboardComponent implements OnInit {
         }
 
         const metrics = ['avgFulfillmentTime', 'backorders', 'inventoryLevels'];
-        metrics.forEach(metric => {
+        metrics.forEach((metric) => {
             const config = this.dashboardData.metricConfigs[metric];
             if (!config) {
                 console.warn(`Config for metric ${metric} is missing`);
@@ -765,9 +687,8 @@ export class DashboardComponent implements OnInit {
                 currentValue = this.parseTimeToHours(currentValue);
             }
 
-            let percentageChange = config.baseline !== 0
-                ? ((currentValue - config.baseline) / config.baseline) * 100
-                : 0;
+            let percentageChange =
+                config.baseline !== 0 ? ((currentValue - config.baseline) / config.baseline) * 100 : 0;
             if (config.isInverted) {
                 percentageChange = -percentageChange;
             }
@@ -784,7 +705,7 @@ export class DashboardComponent implements OnInit {
             this.metricPerformance[metric] = {
                 value: this.dashboardData[metric],
                 percentageChange: Number(percentageChange.toFixed(2)),
-                color
+                color,
             };
         });
 
@@ -793,7 +714,7 @@ export class DashboardComponent implements OnInit {
             this.metricPerformance['topSeller'] = {
                 value: `${this.dashboardData.topSeller} (${this.dashboardData.topSellerPercentage.toFixed(1)}%)`,
                 percentageChange: this.dashboardData.topSellerPercentage,
-                color: 'green' // You might want to implement a different logic for color here
+                color: 'green', // You might want to implement a different logic for color here
             };
         } else {
             console.warn('Top seller data is missing');
@@ -808,7 +729,7 @@ export class DashboardComponent implements OnInit {
                 icon: 'hourglass_full',
                 type: 'string',
                 change: this.metricPerformance['avgFulfillmentTime'].percentageChange,
-                color: this.metricPerformance['avgFulfillmentTime'].color
+                color: this.metricPerformance['avgFulfillmentTime'].color,
             },
             {
                 title: 'Backorders',
@@ -816,7 +737,7 @@ export class DashboardComponent implements OnInit {
                 icon: 'assignment_return',
                 type: 'number',
                 change: this.metricPerformance['backorders'].percentageChange,
-                color: this.metricPerformance['backorders'].color
+                color: this.metricPerformance['backorders'].color,
             },
             {
                 title: 'Inventory Levels',
@@ -824,7 +745,7 @@ export class DashboardComponent implements OnInit {
                 icon: 'storage',
                 type: 'number',
                 change: this.metricPerformance['inventoryLevels'].percentageChange,
-                color: this.metricPerformance['inventoryLevels'].color
+                color: this.metricPerformance['inventoryLevels'].color,
             },
             {
                 title: 'Most Requested',
@@ -832,7 +753,7 @@ export class DashboardComponent implements OnInit {
                 icon: 'star_rate',
                 type: 'string',
                 change: this.metricPerformance['topSeller'].percentageChange,
-                color: this.metricPerformance['topSeller'].color
+                color: this.metricPerformance['topSeller'].color,
             },
         ];
     }
@@ -894,12 +815,12 @@ export class DashboardComponent implements OnInit {
     deleteWidget(item: GridsterItem) {
         const dialogRef = this.dialog.open(DeleteConfirmationModalComponent, {
             width: '300px',
-            data: { itemName: item['name'] }
+            data: { itemName: item['name'] },
         });
 
-        dialogRef.afterClosed().subscribe(result => {
+        dialogRef.afterClosed().subscribe((result) => {
             if (result) {
-                this.dashboard = this.dashboard.filter(dashboardItem => dashboardItem !== item);
+                this.dashboard = this.dashboard.filter((dashboardItem) => dashboardItem !== item);
                 this.saveState();
                 this.isDeleteMode = false;
             }
@@ -914,7 +835,6 @@ export class DashboardComponent implements OnInit {
         this.isSidepanelOpen = false;
     }
 
-
     addWidget(chartConfig: any) {
         const newItem: GridsterItem = {
             cols: 6,
@@ -924,7 +844,7 @@ export class DashboardComponent implements OnInit {
             cardId: chartConfig.title.toLowerCase().replace(' ', '-'),
             name: chartConfig.title,
             component: chartConfig.component,
-            chartConfig: chartConfig
+            chartConfig: chartConfig,
         };
         this.dashboard.push(newItem);
         this.saveState();
@@ -940,7 +860,7 @@ export class DashboardComponent implements OnInit {
                     rows: 1,
                     y: 0,
                     x: index * 3,
-                    cardData: data
+                    cardData: data,
                 })),
                 // First full-width item
                 {
@@ -950,7 +870,7 @@ export class DashboardComponent implements OnInit {
                     x: 0,
                     cardId: 'sales-chart',
                     name: 'Sales Chart',
-                    component: 'SaleschartComponent'
+                    component: 'SaleschartComponent',
                 },
                 // Second full-width item(0)
                 {
@@ -960,7 +880,7 @@ export class DashboardComponent implements OnInit {
                     x: 0,
                     cardId: 'bar-chart',
                     name: 'Bar Chart',
-                    component: 'BarchartComponent'
+                    component: 'BarchartComponent',
                 },
                 // First half-width item
                 {
@@ -970,7 +890,7 @@ export class DashboardComponent implements OnInit {
                     x: 0,
                     cardId: 'bubble-chart',
                     name: 'Bubble Chart',
-                    component: 'BubblechartComponent'
+                    component: 'BubblechartComponent',
                 },
                 // Second half-width item
                 {
@@ -980,8 +900,8 @@ export class DashboardComponent implements OnInit {
                     x: 6,
                     cardId: 'donut-chart',
                     name: 'Donut Chart',
-                    component: 'DonutchartComponent'
-                }
+                    component: 'DonutchartComponent',
+                },
             ];
         }
 
@@ -990,10 +910,14 @@ export class DashboardComponent implements OnInit {
 
     getColor(color: string): string {
         switch (color) {
-            case 'green': return 'text-green-500';
-            case 'red': return 'text-red-500';
-            case 'yellow': return 'text-yellow-500';
-            default: return 'text-gray-500';
+            case 'green':
+                return 'text-green-500';
+            case 'red':
+                return 'text-red-500';
+            case 'yellow':
+                return 'text-yellow-500';
+            default:
+                return 'text-gray-500';
         }
     }
 
@@ -1027,13 +951,16 @@ export class DashboardComponent implements OnInit {
 
     getColorHex(color: string): string {
         switch (color) {
-            case 'green': return '#4CAF50';
-            case 'red': return '#F44336';
-            case 'yellow': return '#FFC107';
-            default: return '#9E9E9E';
+            case 'green':
+                return '#4CAF50';
+            case 'red':
+                return '#F44336';
+            case 'yellow':
+                return '#FFC107';
+            default:
+                return '#9E9E9E';
         }
     }
-
 
     getChangeColor(change: number): string {
         return change >= 0 ? 'positive-change' : 'negative-change';

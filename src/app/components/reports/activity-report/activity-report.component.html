@@ -1,12 +1,12 @@
 <gridster [options]="options">
-    <gridster-item [item]="item" *ngFor="let item of dashboard" [ngClass]="{'act-report': item.type === 'grid'}">
+    <gridster-item [item]="item" *ngFor="let item of dashboard" [ngClass]="{ 'act-report': item.type === 'grid' }">
         <ng-container [ngSwitch]="item.type">
             <ng-container *ngSwitchCase="'metric'">
                 <mat-card>
                     <mat-card-content>
                         <div class="metric-container">
                             <div class="icon-container">
-                                <mat-icon >{{ item['data']?.icon }}</mat-icon>
+                                <mat-icon>{{ item['data']?.icon }}</mat-icon>
                             </div>
                             <div class="text-container">
                                 <span class="metric-name">{{ item['data']?.name }}</span>
@@ -32,7 +32,17 @@
     </gridster-item>
 </gridster>
 <mat-toolbar
-    style="position: sticky; bottom: 0; left: 0; width: 300px; border-radius: 20px; height: 50px; background-color: transparent; z-index: 1;">
+    style="
+        position: sticky;
+        bottom: 0;
+        left: 0;
+        width: 300px;
+        border-radius: 20px;
+        height: 50px;
+        background-color: transparent;
+        z-index: 1;
+    "
+>
     <button mat-flat-button class="btn" (click)="back()">
         <mat-icon style="font-size: 24px; height: 24px; width: 24px">arrow_back</mat-icon> Back To Reports
     </button>

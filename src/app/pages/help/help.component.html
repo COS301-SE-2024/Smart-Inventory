@@ -2,14 +2,20 @@
     <mat-tab-group>
         <mat-tab label="FAQs">
             <ng-container>
-                <div class="faq-section" style="margin: 10px">
+                <div class="faq-section" style="margin-right: 20px; margin-left: 20px">
                     <div class="faq-row faq-row-one" style="padding: 10px">
                         <div class="filter-buttons">
                             <button
-                                class="test"
-                                mat-stroked-button
+                                mat-flat-button
+                                class="btn"
                                 *ngFor="let filter of faqFilters"
                                 (click)="onFilterClick(filter)"
+                                style="
+                                    border-radius: 5px;
+                                    background-color: white;
+                                    color: black;
+                                    box-shadow: 0px 1px 1px 0px grey;
+                                "
                             >
                                 {{ filter }}
                             </button>
@@ -32,7 +38,7 @@
         </mat-tab>
         <mat-tab label="Troubleshooting">
             <ng-container ()="renameTitle('Troubleshooting')">
-                <div class="troubleshooting-section" style="margin: 10px">
+                <div class="troubleshooting-section" style="margin-right: 20px; margin-left: 20px; margin-top: 10px">
                     <div class="troubleshooting-row-two">
                         <mat-accordion>
                             <mat-expansion-panel *ngFor="let issue of troubleshootingIssues">
@@ -69,12 +75,9 @@
         </mat-tab>
         <mat-tab label="Contact Support">
             <ng-container>
-
-
                 <div style="height: 85vh; width: 100%; overflow-y: scroll; align-content: center">
                     <app-contact-support></app-contact-support>
                 </div>
-
             </ng-container>
         </mat-tab>
     </mat-tab-group>

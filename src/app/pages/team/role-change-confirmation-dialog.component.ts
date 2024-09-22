@@ -9,7 +9,7 @@ import { CommonModule } from '@angular/common';
     standalone: true,
     imports: [MatDialogModule, MatButtonModule, CommonModule],
     template: `
-        <h2 mat-dialog-title>Confirm Role Change</h2>
+        <h1 mat-dialog-title style="text-align: center; --mdc-dialog-subhead-size: 30px">Confirm Role Change</h1>
         <div mat-dialog-content>
             <p>{{ data.given_name }} {{ data.family_name }}: {{ data.email }}</p>
             <p>
@@ -21,17 +21,29 @@ import { CommonModule } from '@angular/common';
         </div>
         <div mat-dialog-actions>
             <button
-                mat-stroked-button
+                mat-flat-button
                 (click)="onNoClick()"
-                style="border-radius: 20px;margin-right: 10px;--mdc-outlined-button-label-text-color: black;--mdc-outlined-button-outline-color: #74777f;border-radius: 5px; width: 20px;height: 40px;"
+                style="
+    margin-right: auto;
+    margin-left: auto;
+    border-radius: 5px;
+    width: 20px;
+    height: 40px;
+"
             >
                 Cancel
             </button>
             <button
-                mat-stroked-button
+                mat-flat-button
                 color="primary"
                 (click)="onYesClick()"
-                style="border-radius: 20px;margin-right: 10px;--mdc-outlined-button-label-text-color: black;--mdc-outlined-button-outline-color: #74777f;border-radius: 5px; width: 20px;height: 40px;"
+                style="
+    margin-right: auto;
+    margin-left: auto;
+    border-radius: 5px;
+    width: 20px;
+    height: 40px;
+"
             >
                 Confirm
             </button>

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MaterialModule } from '../material/material.module';
 import { signOut } from 'aws-amplify/auth';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { TitleService } from './title.service';
 import { CognitoService } from '../../_services/cognito.service';
 import { AuthenticatorService } from '@aws-amplify/ui-angular';
@@ -12,12 +12,7 @@ import { NotificationsSidePaneComponent } from '../notifications-side-pane/notif
 @Component({
     selector: 'app-header',
     standalone: true,
-    imports: [
-        CommonModule,
-        MaterialModule,
-        MatMenuModule,
-        NotificationsSidePaneComponent
-    ],
+    imports: [CommonModule, MaterialModule, MatMenuModule, NotificationsSidePaneComponent],
     templateUrl: './header.component.html',
     styleUrl: './header.component.css',
 })
@@ -32,8 +27,8 @@ export class HeaderComponent implements OnInit {
         private titleService: TitleService,
         private cognitoService: CognitoService,
         private auth: AuthenticatorService,
-        private router: Router
-    ) { }
+        private router: Router,
+    ) {}
 
     ngOnInit() {
         this.titleService.currentTitle.subscribe((title) => (this.pageTitle = title));
@@ -48,8 +43,12 @@ export class HeaderComponent implements OnInit {
             },
             (error) => {
                 console.error('Error loading user info:', error);
-            }
+            },
         );
+    }
+
+    clickSettings() {
+        this.router.navigate(['/settings']);
     }
 
     async logout() {

@@ -35,9 +35,11 @@ jobs:
         run:  |
           npm ci
 
-      - name: Set up environment
+      - name: Create environment files
         run: |
-          sed -i 's|\${API_KEY}|${{ secrets.API_KEY }}|g' src/environments/environment.prod.ts
+          mkdir -p src/environments
+          echo "export const environment = { production: false, apiKey: '${{ secrets.API_KEY }}' };" > src/environments/environment.ts
+          echo "export const environment = { production: true, apiKey: '${{ secrets.API_KEY }}' };" > src/environments/environment.prod.ts
 
       - name: Build Codebase
         run:  |

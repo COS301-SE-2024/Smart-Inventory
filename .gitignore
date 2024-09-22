@@ -49,4 +49,5 @@ amplifyconfiguration*
 # Script output
 component_contents.txt
 
+environment.prod.ts 
 environment.ts

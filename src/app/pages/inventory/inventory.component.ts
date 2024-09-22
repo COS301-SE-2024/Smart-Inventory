@@ -22,6 +22,7 @@ import { Router } from '@angular/router';
 import { UploadItemsModalComponent } from 'app/components/upload-items-modal/upload-items-modal.component';
 import { InventoryService } from '../../../../amplify/services/inventory.service';
 import { TeamsService } from '../../../../amplify/services/teams.service';
+import { SuppliersService } from '../../../../amplify/services/suppliers.service';
 
 import {
     MatSnackBar,
@@ -106,7 +107,8 @@ export class InventoryComponent implements OnInit {
         private snackBar: MatSnackBar,
         private router: Router,
         private inventoryService: InventoryService,
-        private teamService: TeamsService
+        private teamService: TeamsService,
+        private suppliersService: SuppliersService
   
     ) {
         Amplify.configure(outputs);
@@ -215,7 +217,7 @@ export class InventoryComponent implements OnInit {
 
     async loadSuppliers() {
         try {
-          this.suppliers = await this.inventoryService.getSuppliers(this.tenantId).toPromise();
+          this.suppliers = await this.suppliersService.getSuppliers(this.tenantId).toPromise();
           console.log('Suppliers loaded:', this.suppliers);
         } catch (error) {
           console.error('Error in loadSuppliers:', error);

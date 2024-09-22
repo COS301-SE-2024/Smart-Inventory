@@ -10,7 +10,6 @@ export class InventoryService {
   private getItemsUrl = 'https://tt5uju7o6j.execute-api.us-east-1.amazonaws.com/default/Inventory-getItems';
   private updateItemUrl = 'https://ss0lx1hku8.execute-api.us-east-1.amazonaws.com/default/Inventory-updateItem';
   private createItemUrl = 'https://17thrdnx8a.execute-api.us-east-1.amazonaws.com/default/Inventory-CreateItem';
-  private getSuppliersUrl = 'https://ckfitxu8sc.execute-api.us-east-1.amazonaws.com/default/getSuppliers';
   private removeItemUrl = 'https://320riyj8x3.execute-api.us-east-1.amazonaws.com/default/Inventory-removeItem';
   private getInventoryItemUrl = 'https://ay5r2tyq98.execute-api.us-east-1.amazonaws.com/default/getInventoryItem';
 
@@ -26,10 +25,6 @@ export class InventoryService {
 
   createInventoryItem(formData: any): Observable<any> {
     return this.http.post(this.createItemUrl, formData);
-  }
-
-  getSuppliers(tenantId: string): Observable<any> {
-    return this.http.get(`${this.getSuppliersUrl}?tenentId=${tenantId}`);
   }
 
   removeInventoryItem(inventoryID: string, tenentId: string): Observable<any> {

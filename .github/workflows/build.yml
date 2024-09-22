@@ -52,10 +52,11 @@ jobs:
         env:
           NX_SKIP_NX_CACHE: true
 
-      - name: Create environment file
-        run: |
-          cp src/environments/environment.template.ts src/environments/environment.ts
-          sed -i 's/REPLACE_WITH_API_KEY/${{ secrets.API_KEY }}/g' src/environments/environment.ts
+      - name: Generate environment file
+        run: node generate-env.js
+        env:
+          API_KEY: ${{ secrets.API_KEY }}
+          PRODUCTION: ${{ github.ref == 'refs/heads/main' }}
 
       - name: Build Codebase
         run: |

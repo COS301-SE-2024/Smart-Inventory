@@ -531,31 +531,19 @@ export class InventoryComponent implements OnInit {
         }
       }
 
-    async getInventoryItem(inventoryID: string, tenantId: string) {
+      async getInventoryItem(inventoryID: string, tenantId: string) {
         try {
-          const session = await fetchAuthSession();
-          const lambdaClient = new LambdaClient({
-            region: outputs.auth.aws_region,
-            credentials: session.credentials,
-          });
-    
-          const payload = JSON.stringify({ inventoryID, tenantId });
-          const invokeCommand = new InvokeCommand({
-            FunctionName: 'getInventoryItem',
-            Payload: new TextEncoder().encode(payload),
-          });
-    
-          const lambdaResponse = await lambdaClient.send(invokeCommand);
-          const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-    
-          if (responseBody.statusCode === 200) {
-            return JSON.parse(responseBody.body);
-          } else {
-            throw new Error(responseBody.body);
-          }
+          const item = await this.inventoryService.getInventoryItem(inventoryID, tenantId).toPromise();
+          return item;
         } catch (error) {
           console.error('Error fetching inventory item:', error);
+          this.snackBar.open('Error fetching inventory item', 'Close', {
+            duration: 5000,
+            horizontalPosition: 'center',
+            verticalPosition: 'top',
+          });
           return null;
         }
+        
       }
 }

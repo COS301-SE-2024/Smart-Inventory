@@ -54,17 +54,17 @@ jobs:
 
       - name: Create environment files
         run: |
+          mkdir -p src/environments
           echo "export const environment = {
-            production: false,
-            apiKey: '${{ secrets.API_KEY }}'
+          production: false,
+          apiKey: '${{ secrets.API_KEY }}'
           };" > src/environments/environment.ts
           
           echo "export const environment = {
-            production: true,
-            apiKey: '${{ secrets.API_KEY }}'
+          production: true,
+          apiKey: '${{ secrets.API_KEY }}'
           };" > src/environments/environment.prod.ts
-        env:
-          API_KEY: ${{ secrets.API_KEY }}
+        shell: /bin/bash
 
       - name: Build Codebase
         run: |

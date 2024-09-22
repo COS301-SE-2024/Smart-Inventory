@@ -40,7 +40,7 @@
     flex-shrink: 0;
 }
 
-mat-icon{
+mat-icon {
     height: 30px;
     width: 30px;
 }
@@ -113,16 +113,15 @@ mat-icon{
 }
 
 .positive-change {
-    color: #4CAF50;
+    color: #4caf50;
 }
 
 .negative-change {
-    color: #F44336;
+    color: #f44336;
 }
 
 /* Responsive adjustments for smaller screens and zoom levels */
-@media (max-width: 768px),
-(min-width: 769px) and (max-width: 1200px) and (min-resolution: 1.25dppx) {
+@media (max-width: 768px), (min-width: 769px) and (max-width: 1200px) and (min-resolution: 1.25dppx) {
     .dashboard-card {
         padding: 12px;
     }
@@ -253,9 +252,6 @@ app-saleschart {
     height: 100%;
     display: block;
 }
-
-
-
 
 .report-container {
     font-family: Arial, sans-serif;
@@ -408,14 +404,11 @@ app-saleschart {
     left: 50px;
 }
 
-
 .right-column {
     display: flex;
     align-content: center;
     flex-wrap: wrap;
 }
-
-
 
 gridster-item {
     box-shadow:
@@ -437,13 +430,11 @@ gridster {
     display: block;
 }
 
-
-
 .quick-actions {
     position: absolute;
     bottom: 10px;
     right: 10px;
-    z-index: 1000;
+    z-index: 1001;
 }
 
 .widget-container {
@@ -466,29 +457,29 @@ gridster {
 
 .sidepanel {
     position: fixed;
-    top: 0;
+    top: 65px;
     right: -300px;
     width: 500px;
-    height: 100vh;
+    height: 85vh;
     background-color: white;
     box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
     transition: right 0.3s ease-in-out;
-    z-index: 1001;
+    z-index: 1000;
 }
 
 .sidepanel.open {
     right: 0;
+    top: 65px;
 }
 
 .close-button {
     position: absolute;
-    top: 10px;
+    top: 15px;
     right: 10px;
     background: none;
     border: none;
     cursor: pointer;
 }
-
 
 .sidepanel mat-list-item {
     cursor: pointer;
@@ -498,23 +489,23 @@ gridster {
     background-color: #f0f0f0;
 }
 
-
 .sidepanel {
     position: fixed;
-    top: 0;
-    right: -400px;
-    width: 400px;
-    height: 100vh;
+    top: 65px;
+    right: -500px;
+    width: 500px;
+    height: 85vh;
     background-color: white;
     box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
     transition: right 0.3s ease-in-out;
-    z-index: 1001;
+    z-index: 1000;
     overflow-y: auto;
 }
 
 .sidepanel h2 {
-    margin: 20px;
-    text-align: center;
+    margin-left: 15px;
+    text-align: left;
+    margin-bottom: 0px;
 }
 
 .chart-previews {
@@ -526,7 +517,7 @@ gridster {
 
 .chart-preview {
     width: 100%;
-    height: 50vh;
+    height: 300px;
     margin-bottom: 20px;
     border: 1px solid #e0e0e0;
     border-radius: 8px;

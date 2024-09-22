@@ -29,6 +29,12 @@ jobs:
           npm install esbuild
         continue-on-error: true
 
+      - name: Create environment files
+        run: |
+          mkdir -p src/environments
+          echo "export const environment = { production: false, apiKey: '${{ secrets.API_KEY }}' };" > src/environments/environment.ts
+          echo "export const environment = { production: true, apiKey: '${{ secrets.API_KEY }}' };" > src/environments/environment.prod.ts
+
       - name: Run Amplify sandbox
         run: |
           npx ampx sandbox --outputs-format json --outputs-out-dir ./ --once

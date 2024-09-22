@@ -52,6 +52,11 @@ jobs:
         env:
           NX_SKIP_NX_CACHE: true
 
+      - name: Create environment file
+        run: |
+          cp src/environments/environment.template.ts src/environments/environment.ts
+          sed -i 's/REPLACE_WITH_API_KEY/${{ secrets.API_KEY }}/g' src/environments/environment.ts
+
       - name: Build Codebase
         run: |
           npm run build -- --configuration=production

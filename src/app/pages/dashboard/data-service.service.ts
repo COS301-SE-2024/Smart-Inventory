@@ -1,5 +1,10 @@
 import { Injectable } from '@angular/core';
 import { number } from 'echarts';
+import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
+import { fetchAuthSession } from 'aws-amplify/auth';
+import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
+import outputs from '../../../../amplify_outputs.json';
+import { Amplify } from 'aws-amplify';
 
 @Injectable({
   providedIn: 'root'
@@ -29,7 +34,61 @@ export class DataServiceService {
   };
 
 
-  constructor() { }
+  constructor() {
+    Amplify.configure(outputs);
+  }
+
+  async getMonthlyRequest() {
+    try {
+      const session = await fetchAuthSession();
+      const cognitoClient = new CognitoIdentityProviderClient({
+        region: outputs.auth.aws_region,
+        credentials: session.credentials,
+      });
+
+      const getUserCommand = new GetUserCommand({
+        AccessToken: session.tokens?.accessToken.toString(),
+      });
+
+      const getUserResponse = await cognitoClient.send(getUserCommand);
+      const tenentId = getUserResponse.UserAttributes?.find(attr => attr.Name === 'custom:tenentId')?.Value;
+
+      if (!tenentId) {
+        console.error('TenentId not found in user attributes');
+        return null;
+      }
+
+      const lambdaClient = new LambdaClient({
+        region: outputs.auth.aws_region,
+        credentials: session.credentials,
+      });
+
+      const invokeCommand = new InvokeCommand({
+        FunctionName: 'getMonthlyRequest',
+        Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: tenentId } })),
+      });
+
+      const lambdaResponse = await lambdaClient.send(invokeCommand);
+      const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+
+      console.log('Response from Lambda:', responseBody);
+
+      if (responseBody.statusCode === 200) {
+        const data = JSON.parse(responseBody.body);
+        return {
+          monthlySales: data.monthlySales,
+          quarterlyRevenue: data.quarterlyRevenue,
+          marketShare: data.marketShare
+        };
+      } else {
+        console.error('Error fetching monthly request data:', responseBody.body);
+        return null;
+      }
+    } catch (error) {
+      console.error('Error in getMonthlyRequest:', error);
+      return null;
+    }
+  }
 
   processDashboardData(orders: any[], stockRequests: any[], inventoryItems: any[]): any {
     console.log('the data I sent:', orders, stockRequests, inventoryItems);
@@ -78,20 +137,20 @@ export class DataServiceService {
       counts[request.sku] = (counts[request.sku] || 0) + request.quantityRequested;
       return counts;
     }, {} as Record<string, number>);
-  
+
     let topSku = '';
     let maxCount: any = 0;
     const totalCount: any = Object.values(skuCounts).reduce((sum, count) => (sum as number) + (count as number), 0);
-  
+
     for (const [sku, count] of Object.entries(skuCounts)) {
       if ((count as number) > maxCount) {
         maxCount = count;
         topSku = sku;
       }
     }
-  
+
     const percentage = totalCount > 0 ? (maxCount / totalCount) * 100 : 0;
-  
+
     return {
       sku: topSku,
       percentage: Number(percentage.toFixed(2))

@@ -19,6 +19,7 @@ import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
 import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
 import outputs from '../../../../amplify_outputs.json';
 import { LoadingSpinnerComponent } from '../loader/loading-spinner.component';
+import { InventoryService } from '../../../../amplify/services/inventory.service';
 
 interface QuoteItem {
     item: { sku: string; description: string; inventoryID: string };
@@ -78,6 +79,7 @@ export class templateQuoteModalComponent implements OnInit {
     constructor(
         public dialogRef: MatDialogRef<templateQuoteModalComponent>,
         @Inject(MAT_DIALOG_DATA) public data: any,
+        private inventoryService: InventoryService,
         private snackBar: MatSnackBar,
     ) {
         this.isEditing = data.isEditing || false;
@@ -253,42 +255,32 @@ export class templateQuoteModalComponent implements OnInit {
 
     async loadInventoryItems() {
         try {
-            const session = await fetchAuthSession();
-            const tenentId = await this.getTenentId(session);
-
-            const lambdaClient = new LambdaClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
-
-            const invokeCommand = new InvokeCommand({
-                FunctionName: 'Inventory-getItems',
-                Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: tenentId } })),
-            });
-
-            const lambdaResponse = await lambdaClient.send(invokeCommand);
-            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
-            if (responseBody.statusCode === 200) {
-                const inventoryItems = JSON.parse(responseBody.body);
-                this.inventoryItems = inventoryItems.map((item: any) => ({
-                    sku: item.SKU,
-                    description: item.description,
-                    inventoryID: item.inventoryID, // Add this line
-                }));
-                // Initialize filtered items for each quote item
-                this.quoteItems.forEach((quoteItem) => {
-                    quoteItem.filteredItems.next(this.inventoryItems.slice());
-                });
-            } else {
-                console.error('Error fetching inventory data:', responseBody.body);
-                this.inventoryItems = [];
+          const session = await fetchAuthSession();
+          const tenantId = await this.getTenentId(session);
+    
+          this.inventoryService.getInventoryItems(tenantId).subscribe(
+            (inventoryItems) => {
+              this.inventoryItems = inventoryItems.map((item: any) => ({
+                sku: item.SKU,
+                description: item.description,
+                inventoryID: item.inventoryID,
+              }));
+    
+              // Initialize filtered items for each quote item
+              this.quoteItems.forEach((quoteItem) => {
+                quoteItem.filteredItems.next(this.inventoryItems.slice());
+              });
+            },
+            (error) => {
+              console.error('Error fetching inventory data:', error);
+              this.inventoryItems = [];
             }
+          );
         } catch (error) {
-            console.error('Error in loadInventoryItems:', error);
-            this.inventoryItems = [];
+          console.error('Error in loadInventoryItems:', error);
+          this.inventoryItems = [];
         }
-    }
+      }
 
     async getTenentId(session: any): Promise<string> {
         const cognitoClient = new CognitoIdentityProviderClient({

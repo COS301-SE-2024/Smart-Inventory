@@ -35,6 +35,8 @@ import { LineChartComponent } from 'app/components/charts/widgets/widgetLine';
 import { PieChartComponent } from 'app/components/charts/widgets/widgetPie';
 import { DataServiceService } from './data-service.service';
 import { AddWidgetSidePaneComponent } from '../../components/add-widget-side-pane/add-widget-side-pane.component';
+import { InventoryService } from '../../../../amplify/services/inventory.service';
+
 interface CardData {
     title: string;
     value: string | number;
@@ -220,6 +222,7 @@ export class DashboardComponent implements OnInit {
         private cdr: ChangeDetectorRef,
         private dialog: MatDialog,
         private service: DataServiceService,
+        private inventoryService: InventoryService,
     ) {
         Amplify.configure(outputs);
         this.options = {
@@ -394,34 +397,16 @@ export class DashboardComponent implements OnInit {
                 return;
             }
 
-            const lambdaClient = new LambdaClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
-
-            const invokeCommand = new InvokeCommand({
-                FunctionName: 'Inventory-getItems',
-                Payload: new TextEncoder().encode(
-                    JSON.stringify({
-                        pathParameters: {
-                            tenentId: tenantId, // Spelling as expected by the Lambda function
-                        },
-                    }),
-                ),
-            });
-
-            const lambdaResponse = await lambdaClient.send(invokeCommand);
-            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-            console.log('Response from Lambda:', responseBody);
-
-            if (responseBody.statusCode === 200) {
-                const inventoryItems = JSON.parse(responseBody.body);
-                this.inventory = inventoryItems;
-                console.log('Processed inventory items:', this.rowData);
-            } else {
-                console.error('Error fetching inventory data:', responseBody.body);
-                this.rowData = [];
-            }
+            this.inventoryService.getInventoryItems(tenantId).subscribe(
+                (inventoryItems) => {
+                    this.inventory = inventoryItems;
+                    console.log('Processed inventory items:', this.inventory);
+                },
+                (error) => {
+                    console.error('Error fetching inventory data:', error);
+                    this.rowData = [];
+                }
+            );
         } catch (error) {
             console.error('Error in loadInventoryData:', error);
             this.rowData = [];

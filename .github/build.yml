@@ -35,6 +35,10 @@ jobs:
         run:  |
           npm ci
 
+      - name: Set up environment
+        run: |
+          sed -i 's|\${API_KEY}|${{ secrets.API_KEY }}|g' src/environments/environment.prod.ts
+
       - name: Build Codebase
         run:  |
           npm run build --configuration=production

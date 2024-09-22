@@ -1,0 +1,30 @@
+.side-pane {
+    position: fixed;
+    top: 64px;
+    right: -800px;
+    width: 600px;
+    height: calc(100% - 64px);
+    background-color: #f0f0f0;
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+    transition: right 0.3s ease-out;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+}
+
+.side-pane.open {
+    right: 0;
+}
+
+.side-pane-header {
+    padding: 10px 20px;
+    background-color: #f0f0f0;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.side-pane-content {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 20px;
+    background-color: white;
+}

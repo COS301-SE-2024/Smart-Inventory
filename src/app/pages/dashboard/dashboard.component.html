@@ -162,11 +162,11 @@
     </gridster>
 </div>
 
-<div class="sidepanel" [class.open]="isSidepanelOpen">
+<!-- <div class="sidepanel" [class.open]="isSidepanelOpen">
     <button class="close-button" (click)="closeSidepanel()">
         <mat-icon>close</mat-icon>
     </button>
-    <h2>Available Widgets</h2>
+    <h2 style="font-size: 25px; margin-right: 10px">Available Widgets</h2>
     <div class="chart-previews">
         <div class="chart-preview" *ngFor="let chart of chartConfigs" (click)="addWidget(chart)">
             <h3>{{ chart.title }}</h3>
@@ -192,4 +192,8 @@
             </div>
         </div>
     </div>
-</div>
+</div> -->
+<app-templates-side-pane
+    [isAddWidgetOpen]="isSidepanelOpen"
+    (closed)="isSidepanelOpen = false"
+></app-templates-side-pane>

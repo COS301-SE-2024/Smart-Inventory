@@ -145,6 +145,9 @@
 
         </gridster-item>
     </gridster>
+    <div class="divider">
+        
+    </div>
 </div>
 
 <div class="sidepanel" [class.open]="isSidepanelOpen">
@@ -168,4 +171,8 @@
             </div>
         </div>
     </div>
+</div>
+
+<div *ngIf="isLoading" class="loading-overlay">
+    <app-loading-spinner></app-loading-spinner>
 </div>

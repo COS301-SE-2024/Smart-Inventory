@@ -302,50 +302,31 @@ export class InventoryComponent implements OnInit {
 
     async deleteInventoryItem(inventoryID: string) {
         try {
-            const session = await fetchAuthSession();
-
-            const lambdaClient = new LambdaClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
-
-            const payload = JSON.stringify({
-                inventoryID: inventoryID,
-                tenentId: this.tenantId,
-            });
-
-            const invokeCommand = new InvokeCommand({
-                FunctionName: 'Inventory-removeItem',
-                Payload: new TextEncoder().encode(JSON.stringify({ body: payload })),
-            });
-
-            const lambdaResponse = await lambdaClient.send(invokeCommand);
-            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
-            if (responseBody.statusCode === 200) {
-                console.log('Inventory item deleted successfully');
-                await this.logActivity('Deleted inventory item', inventoryID + ' was deleted.');
-
-                // Show success message using snackbar
-                this.snackBar.open('Inventory item deleted successfully', 'Close', {
-                    duration: 3000, // Duration in milliseconds
-                    horizontalPosition: 'center',
-                    verticalPosition: 'top',
-                });
-            } else {
-                throw new Error(responseBody.body);
-            }
+          const response = await this.inventoryService.removeInventoryItem(inventoryID, this.tenantId).toPromise();
+      
+          console.log('Inventory item deleted successfully');
+          await this.logActivity('Deleted inventory item', inventoryID + ' was deleted.');
+      
+          // Show success message using snackbar
+          this.snackBar.open('Inventory item deleted successfully', 'Close', {
+            duration: 3000,
+            horizontalPosition: 'center',
+            verticalPosition: 'top',
+          });
+      
+          // Refresh the inventory data
+          await this.loadInventoryData();
         } catch (error) {
-            console.error('Error deleting inventory item:', error);
-
-            // Show error message using snackbar
-            this.snackBar.open('Error deleting inventory item: ' + (error as Error).message, 'Close', {
-                duration: 5000,
-                horizontalPosition: 'center',
-                verticalPosition: 'top',
-            });
+          console.error('Error deleting inventory item:', error);
+      
+          // Show error message using snackbar
+          this.snackBar.open('Error deleting inventory item: ' + (error as Error).message, 'Close', {
+            duration: 5000,
+            horizontalPosition: 'center',
+            verticalPosition: 'top',
+          });
         }
-    }
+      }
 
     async handleCellValueChanged(event: { data: any; field: string; newValue: any }) {
         try {

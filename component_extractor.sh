@@ -22,7 +22,7 @@ if [ "$1" == "-n" ]; then
     shift
 fi
 
-# Clear the output file if it exists
+# Clear the output file if it existss
 > "$output_file"
 
 # Function to find and process files or folders

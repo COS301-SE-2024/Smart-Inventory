@@ -5,13 +5,14 @@ import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
 import outputs from '../../../../amplify_outputs.json';
 import { Amplify } from 'aws-amplify';
 import { Observable, from } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
+import { InventoryService } from '../../../../amplify/services/inventory.service';
 
 @Injectable({
     providedIn: 'root',
 })
 export class DataCollectionService {
-    constructor() {
+    constructor(private inventoryService: InventoryService) {
         Amplify.configure(outputs);
     }
 
@@ -57,6 +58,27 @@ export class DataCollectionService {
         }
     }
 
+    getSupplierReportData(): Observable<any[]> {
+        return from(this.fetchSupplierReportData()).pipe(
+            map(suppliers => suppliers || []),
+            catchError(error => {
+                console.error('Error fetching supplier report data:', error);
+                return [];
+            })
+        );
+    }
+
+    getInventoryItems(): Observable<any[]> {
+        const session = fetchAuthSession();
+        const tenantId = this.getTenantId(session);
+        return this.inventoryService.getInventoryItems(tenantId.toString()).pipe(
+            catchError(error => {
+                console.error('Error fetching inventory items:', error);
+                return [];
+            })
+        );
+    }
+
     getInventoryData(tenantId: string): Observable<any[]> {
         // This method should be implemented to fetch inventory data
         // For now, it returns an empty array
@@ -79,6 +101,16 @@ export class DataCollectionService {
 
     getSupplierQuotePrices(): Observable<any[]> {
         return from(this.fetchSupplierQuotePrices());
+    }
+
+    getActivityData(): Observable<any[]> {
+        return from(this.fetchActivities()).pipe(
+            map(activities => activities || []),
+            catchError(error => {
+                console.error('Error fetching activities:', error);
+                return [];
+            })
+        );
     }
 
     private async fetchStockRequests(): Promise<any[]> {
@@ -111,6 +143,28 @@ export class DataCollectionService {
         } catch (error) {
             console.error('Error fetching supplier quote prices:', error);
             throw error;
+        }
+    }
+
+    private async fetchActivities(): Promise<any[]> {
+        try {
+            const session = await fetchAuthSession();
+            const tenantId = await this.getTenantId(session);
+            return this.invokeLambda('userActivity-getItems', { pathParameters: { tenentId: tenantId } });
+        } catch (error) {
+            console.error('Error fetching activities:', error);
+            throw error;
+        }
+    }
+
+    private async fetchSupplierReportData(): Promise<any[]> {
+        try {
+            const session = await fetchAuthSession();
+            const tenantId = await this.getTenantId(session);
+            return this.invokeLambda('getSupplierReportData', { pathParameters: { tenentId: tenantId } });
+        } catch (error) {
+            console.error('Error fetching supplier report data:', error);
+            return [];
         }
     }
 }

@@ -14,11 +14,12 @@
 }
 
 gridster {
-    background-color: white !important;
+    background-color: transparent !important;
 }
 
 gridster-item {
     overflow: visible;
+    background: transparent !important;
 }
 
 gridster-item:not(.supplier-report) {
@@ -26,7 +27,7 @@ gridster-item:not(.supplier-report) {
         0 4px 8px rgba(0, 0, 0, 0.1),
         0 6px 20px rgba(0, 0, 0, 0.15);
     margin-left: 2px;
-    background: transparent !important;
+    
     border-radius: 10px;
 }
 

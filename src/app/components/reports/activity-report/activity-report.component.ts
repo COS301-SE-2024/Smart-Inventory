@@ -24,6 +24,7 @@ import { Router } from '@angular/router';
 import { CompactType, DisplayGrid, GridsterConfig, GridsterItem, GridType } from 'angular-gridster2';
 import { GridsterModule } from 'angular-gridster2';
 import { MatTooltip } from '@angular/material/tooltip';
+import { DataCollectionService } from 'app/components/add-widget-side-pane/data-collection.service';
 
 interface Metric {
     name: string;
@@ -134,6 +135,7 @@ export class ActivityReportComponent implements OnInit, AfterViewInit {
         private router: Router,
         private chartDataService: ChartDataService,
         private changeDetectorRef: ChangeDetectorRef,
+        private dataCollectionService: DataCollectionService
     ) {
         console.log('ActivityReportComponent constructed');
         this.options = {
@@ -215,67 +217,28 @@ export class ActivityReportComponent implements OnInit, AfterViewInit {
         console.log('Fetching activities...');
         this.isLoading = true;
         try {
-            const session = await fetchAuthSession();
-            console.log('Session fetched:', session);
-
-            const lambdaClient = new LambdaClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
-
-            const cognitoClient = new CognitoIdentityProviderClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
-
-            const getUserCommand = new GetUserCommand({
-                AccessToken: session.tokens?.accessToken.toString(),
-            });
-            const getUserResponse = await cognitoClient.send(getUserCommand);
-            console.log('User response:', getUserResponse);
-
-            const tenantId = getUserResponse.UserAttributes?.find(
-                (attr: AttributeType) => attr.Name === 'custom:tenentId',
-            )?.Value;
-            console.log('TenantId:', tenantId);
-
-            const invokeCommand = new InvokeCommand({
-                FunctionName: 'userActivity-getItems',
-                Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: tenantId } })),
-            });
-
-            console.log('Invoking Lambda function...');
-            const lambdaResponse = await lambdaClient.send(invokeCommand);
-            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-            console.log('Lambda response:', responseBody);
-
-            if (responseBody.statusCode === 200) {
-                const activities = JSON.parse(responseBody.body);
-                console.log('Activities received from Lambda:', activities);
-
-                this.rowData = activities.map((activity: any) => ({
-                    memberID: activity.memberId,
-                    name: activity.name,
-                    role: activity.role,
-                    action: activity.task,
-                    timestamp: new Date(activity.createdAt).toLocaleString(),
-                    details: activity.details,
-                }));
-
-                console.log('Processed rowData:', this.rowData);
-
-                this.updateCharts();
-                this.updateMetrics();
-
-                if (this.gridComponent) {
-                    console.log('Refreshing grid with new data');
-                    this.gridComponent.refreshGrid(this.rowData);
-                } else {
-                    console.error('Grid component not found');
-                }
+            const activities = await this.dataCollectionService.getActivityData().toPromise() || [];
+            console.log('Activities received:', activities);
+    
+            this.rowData = activities.map((activity: any) => ({
+                memberID: activity.memberId,
+                name: activity.name,
+                role: activity.role,
+                action: activity.task,
+                timestamp: new Date(activity.createdAt).toLocaleString(),
+                details: activity.details,
+            }));
+    
+            console.log('Processed rowData:', this.rowData);
+    
+            this.updateCharts();
+            this.updateMetrics();
+    
+            if (this.gridComponent) {
+                console.log('Refreshing grid with new data');
+                this.gridComponent.refreshGrid(this.rowData);
             } else {
-                console.error('Error fetching activities:', responseBody.body);
-                this.rowData = [];
+                console.error('Grid component not found');
             }
         } catch (error) {
             console.error('Error fetching activities:', error);

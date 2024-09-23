@@ -14,6 +14,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { InventoryService } from '../../../../amplify/services/inventory.service';
 
 @Component({
     selector: 'app-stock-request-report',
@@ -49,6 +50,7 @@ export class StockRequestReportComponent implements OnInit {
     constructor(
         private titleService: TitleService,
         private changeDetectorRef: ChangeDetectorRef,
+        private inventoryService: InventoryService
     ) {}
 
     async ngOnInit() {
@@ -79,28 +81,20 @@ export class StockRequestReportComponent implements OnInit {
     }
 
     async getInventoryItems() {
-        const session = await fetchAuthSession();
-        const lambdaClient = new LambdaClient({
-            region: outputs.auth.aws_region,
-            credentials: session.credentials,
-        });
-
-        const command = new InvokeCommand({
-            FunctionName: 'inventorySummary-getItems',
-            Payload: JSON.stringify({ tenentId: this.tenentId }),
-        });
-
         try {
-            const { Payload } = await lambdaClient.send(command);
-            const result = JSON.parse(new TextDecoder().decode(Payload));
-            if (result.statusCode === 200) {
-                this.inventoryItems = JSON.parse(result.body);
+            const response = await this.inventoryService.inventorySummaryGetItems({ tenentId: this.tenentId }).toPromise();
+            
+            if (response) {
+                this.inventoryItems = response;
                 this.filteredItems = this.inventoryItems;
+            } else {
+                console.error('No data received from inventory summary API');
             }
         } catch (error) {
             console.error('Error fetching inventory items:', error);
         }
     }
+    
 
     filterItems() {
         this.filteredItems = this.inventoryItems.filter(

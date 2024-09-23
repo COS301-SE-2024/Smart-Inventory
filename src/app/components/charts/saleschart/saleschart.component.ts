@@ -257,7 +257,7 @@ export class SaleschartComponent implements OnInit, OnDestroy, AfterViewInit, On
 
         this.chartOptions = {
             title: {
-                text: this.chartTitle || 'Sales and Shipment Duration',
+                text: this.chartTitle || 'Requests and Shipment Duration',
             },
             data: Object.values(groupedData),
             series: [

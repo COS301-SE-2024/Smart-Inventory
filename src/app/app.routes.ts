@@ -20,7 +20,7 @@ import { InventorySummaryComponent } from './pages/inventory-summary/inventory-s
 import { LandingPageComponent } from './pages/landing-page/landing-page.component';
 
 export const routes: Routes = [
-    { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
+    { path: '', redirectTo: '/landing', pathMatch: 'full' },
     { path: 'dashboard', component: DashboardComponent },
     { path: 'inventory', component: InventoryComponent },
     { path: 'reports', component: ReportsComponent },

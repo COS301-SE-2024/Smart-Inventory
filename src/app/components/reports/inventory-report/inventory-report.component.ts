@@ -21,6 +21,7 @@ import { LoadingSpinnerComponent } from 'app/components/loader/loading-spinner.c
 import { MatIconModule } from '@angular/material/icon';
 import { CompactType, DisplayGrid, GridsterConfig, GridsterItem, GridsterModule, GridType } from 'angular-gridster2';
 import { MaterialModule } from 'app/components/material/material.module';
+import { InventoryService } from '../../../../../amplify/services/inventory.service';
 
 interface Metric {
     label: string;
@@ -73,6 +74,7 @@ export class InventoryReportComponent implements OnInit {
         private titleService: TitleService,
         private router: Router,
         public service: ChartDataService,
+        private inventoryService: InventoryService
     ) {
         Amplify.configure(outputs);
         this.gridsterOptions = {
@@ -152,40 +154,30 @@ export class InventoryReportComponent implements OnInit {
         try {
             const session = await fetchAuthSession();
             const tenantId = await this.getTenantId(session);
-
-            const lambdaClient = new LambdaClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
-
-            const invokeCommand = new InvokeCommand({
-                FunctionName: 'Inventory-getItems',
-                Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: tenantId } })),
-            });
-
-            const lambdaResponse = await lambdaClient.send(invokeCommand);
-            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
-            if (responseBody.statusCode === 200) {
-                const inventoryItems = JSON.parse(responseBody.body);
-                this.rowData = inventoryItems.map((item: any) => ({
-                    inventoryID: item.inventoryID,
-                    sku: item.SKU,
-                    category: item.category,
-                    productId: item.productID,
-                    description: item.description,
-                    quantity: item.quantity,
-                    supplier: item.supplier,
-                    expirationDate: item.expirationDate,
-                    lowStockThreshold: item.lowStockThreshold,
-                    reorderFreq: item.reorderFreq,
-                    requests: item.requests,
-                }));
-                this.setupColumnDefs();
-            } else {
-                console.error('Error fetching inventory data:', responseBody.body);
-                this.rowData = [];
-            }
+    
+            this.inventoryService.getInventoryItems(tenantId).subscribe(
+                (inventoryItems) => {
+                    this.rowData = inventoryItems.map((item: any) => ({
+                        inventoryID: item.inventoryID,
+                        sku: item.SKU,
+                        category: item.category,
+                        productId: item.productID,
+                        description: item.description,
+                        quantity: item.quantity,
+                        supplier: item.supplier,
+                        expirationDate: item.expirationDate,
+                        lowStockThreshold: item.lowStockThreshold,
+                        reorderFreq: item.reorderFreq,
+                        requests: 0,
+                        requestsQuantity: 0,
+                    }));
+                    this.setupColumnDefs();
+                },
+                (error) => {
+                    console.error('Error fetching inventory data:', error);
+                    this.rowData = [];
+                }
+            );
         } catch (error) {
             console.error('Error in loadInventoryData:', error);
             this.rowData = [];

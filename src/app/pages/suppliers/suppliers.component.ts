@@ -19,6 +19,8 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MaterialModule } from 'app/components/material/material.module';
 import { UploadSuppliersModalComponent } from 'app/components/upload-suppliers-modal/upload-suppliers-modal.component';
+import { TeamsService } from '../../../../amplify/services/teams.service';
+import { SuppliersService } from '../../../../amplify/services/suppliers.service';
 
 @Component({
     selector: 'app-suppliers',
@@ -93,7 +95,9 @@ export class SuppliersComponent implements OnInit {
     constructor(
         private titleService: TitleService,
         private dialog: MatDialog,
-        private snackBar: MatSnackBar
+        private snackBar: MatSnackBar,
+        private teamService: TeamsService,
+        private suppliersService: SuppliersService
     ) {
         Amplify.configure(outputs);
     }
@@ -159,107 +163,86 @@ export class SuppliersComponent implements OnInit {
     async getUserInfo() {
         try {
             const session = await fetchAuthSession();
-
+    
             const cognitoClient = new CognitoIdentityProviderClient({
                 region: outputs.auth.aws_region,
                 credentials: session.credentials,
             });
-
+    
             const getUserCommand = new GetUserCommand({
                 AccessToken: session.tokens?.accessToken.toString(),
             });
             const getUserResponse = await cognitoClient.send(getUserCommand);
-
+    
             const givenName = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'given_name')?.Value || '';
             const familyName = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'family_name')?.Value || '';
             this.userName = `${givenName} ${familyName}`.trim();
-
+    
             this.tenantId =
                 getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value || '';
-
-            const lambdaClient = new LambdaClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
-
-            const payload = JSON.stringify({
-                userPoolId: outputs.auth.user_pool_id,
-                username: session.tokens?.accessToken.payload['username'],
-            });
-
-            const invokeCommand = new InvokeCommand({
-                FunctionName: 'getUsersV2',
-                Payload: new TextEncoder().encode(payload),
-            });
-
-            const lambdaResponse = await lambdaClient.send(invokeCommand);
-            const users = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
+    
+            // Use the TeamsService to get users
+            const users = await this.teamService.getUsers(outputs.auth.user_pool_id, this.tenantId).toPromise();
+    
             const currentUser = users.find(
                 (user: any) =>
                     user.Attributes.find((attr: any) => attr.Name === 'email')?.Value ===
                     session.tokens?.accessToken.payload['username'],
             );
-
+    
             if (currentUser && currentUser.Groups.length > 0) {
                 this.userRole = this.getRoleDisplayName(currentUser.Groups[0].GroupName);
             }
         } catch (error) {
             console.error('Error fetching user info:', error);
+            // You might want to add some error handling here, such as showing an error message to the user
+            this.snackBar.open('Error fetching user info', 'Close', {
+                duration: 5000,
+                horizontalPosition: 'center',
+                verticalPosition: 'top',
+            });
         }
     }
 
     async loadSuppliersData() {
         try {
             const session = await fetchAuthSession();
-
+    
             const cognitoClient = new CognitoIdentityProviderClient({
                 region: outputs.auth.aws_region,
                 credentials: session.credentials,
             });
-
+    
             const getUserCommand = new GetUserCommand({
                 AccessToken: session.tokens?.accessToken.toString(),
             });
             const getUserResponse = await cognitoClient.send(getUserCommand);
-
+    
             const tenantId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
-
+    
             if (!tenantId) {
                 console.error('TenantId not found in user attributes');
                 this.rowData = [];
                 return;
             }
-
-            const lambdaClient = new LambdaClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
-
-            const invokeCommand = new InvokeCommand({
-                FunctionName: 'getSuppliers',
-                Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: tenantId } })),
-            });
-
-            const lambdaResponse = await lambdaClient.send(invokeCommand);
-            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-            console.log('Response from Lambda:', responseBody);
-
-            if (responseBody.statusCode === 200) {
-                const suppliers = JSON.parse(responseBody.body);
-                this.rowData = suppliers.map((supplier: any) => ({
-                    supplierID: supplier.supplierID,
-                    company_name: supplier.company_name,
-                    contact_name: supplier.contact_name,
-                    contact_email: supplier.contact_email,
-                    phone_number: supplier.phone_number,
-                    address: supplier.address,
-                }));
-                console.log('Processed suppliers:', this.rowData);
-            } else {
-                console.error('Error fetching suppliers data:', responseBody.body);
-                this.rowData = [];
-            }
+    
+            this.suppliersService.getSuppliers(tenantId).subscribe(
+                (suppliers) => {
+                    this.rowData = suppliers.map((supplier: any) => ({
+                        supplierID: supplier.supplierID,
+                        company_name: supplier.company_name,
+                        contact_name: supplier.contact_name,
+                        contact_email: supplier.contact_email,
+                        phone_number: supplier.phone_number,
+                        address: supplier.address,
+                    }));
+                    console.log('Processed suppliers:', this.rowData);
+                },
+                (error) => {
+                    console.error('Error fetching suppliers data:', error);
+                    this.rowData = [];
+                }
+            );
         } catch (error) {
             console.error('Error in loadSuppliersData:', error);
             this.rowData = [];

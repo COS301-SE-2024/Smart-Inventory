@@ -33,6 +33,7 @@ import { LineChartComponent } from 'app/components/charts/widgets/widgetLine';
 import { PieChartComponent } from 'app/components/charts/widgets/widgetPie';
 import { DataServiceService } from './data-service.service';
 import { AddWidgetSidePaneComponent } from '../../components/add-widget-side-pane/add-widget-side-pane.component';
+import { InventoryService } from '../../../../amplify/services/inventory.service';
 import { DashboardService } from '../dashboard/dashboard.service';
 
 interface CardData {
@@ -134,7 +135,7 @@ export class DashboardComponent implements OnInit {
     orders: any[] = [];
 
     cardData: CardData[] = [];
-
+    chartConfigs: ChartConfig[] = [];
     RequestOrders = {
         requests: {
             totalRequests: 0,
@@ -164,6 +165,7 @@ export class DashboardComponent implements OnInit {
         private cdr: ChangeDetectorRef,
         private dialog: MatDialog,
         private service: DataServiceService,
+        private inventoryService: InventoryService,
         private dashService: DashboardService,
     ) {
         Amplify.configure(outputs);
@@ -340,34 +342,16 @@ export class DashboardComponent implements OnInit {
                 return;
             }
 
-            const lambdaClient = new LambdaClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
-
-            const invokeCommand = new InvokeCommand({
-                FunctionName: 'Inventory-getItems',
-                Payload: new TextEncoder().encode(
-                    JSON.stringify({
-                        pathParameters: {
-                            tenentId: tenantId, // Spelling as expected by the Lambda function
-                        },
-                    }),
-                ),
-            });
-
-            const lambdaResponse = await lambdaClient.send(invokeCommand);
-            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-            console.log('Response from Lambda:', responseBody);
-
-            if (responseBody.statusCode === 200) {
-                const inventoryItems = JSON.parse(responseBody.body);
-                this.inventory = inventoryItems;
-                console.log('Processed inventory items:', this.rowData);
-            } else {
-                console.error('Error fetching inventory data:', responseBody.body);
-                this.rowData = [];
-            }
+            this.inventoryService.getInventoryItems(tenantId).subscribe(
+                (inventoryItems) => {
+                    this.inventory = inventoryItems;
+                    console.log('Processed inventory items:', this.inventory);
+                },
+                (error) => {
+                    console.error('Error fetching inventory data:', error);
+                    this.rowData = [];
+                }
+            );
         } catch (error) {
             console.error('Error in loadInventoryData:', error);
             this.rowData = [];
@@ -376,83 +360,8 @@ export class DashboardComponent implements OnInit {
         }
     }
 
-    async dashData() {
-        try {
-            // Mocked baseline values (should be dynamically fetched or defined)
-            const baselineValues = {
-                inventoryLevels: 10, // Baseline inventory levels
-                backorders: 5, // Baseline backorders
-                fulfillmentDays: 390, // Baseline average fulfillment days (for comparison)
-            };
+    isLoading: boolean = true;
 
-            const session = await fetchAuthSession();
-            this.loader.setLoading(false);
-
-            const cognitoClient = new CognitoIdentityProviderClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
-
-            const getUserCommand = new GetUserCommand({
-                AccessToken: session.tokens?.accessToken.toString(),
-            });
-            const getUserResponse = await cognitoClient.send(getUserCommand);
-
-            const tenantId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
-
-            if (!tenantId) {
-                console.error('TenantId not found in user attributes');
-                this.rowData = [];
-                return;
-            }
-
-            const lambdaClient = new LambdaClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
-
-            const invokeCommand = new InvokeCommand({
-                FunctionName: 'getDashboardData',
-                Payload: new TextEncoder().encode(
-                    JSON.stringify({
-                        pathParameters: {
-                            tenentId: tenantId, // Spelling as expected by the Lambda function
-                        },
-                    }),
-                ),
-            });
-
-            const lambdaResponse = await lambdaClient.send(invokeCommand);
-            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-            console.log('Response from Lambda:', responseBody);
-
-            if (responseBody.statusCode === 200) {
-                const dashboardData = JSON.parse(responseBody.body);
-                // console.log('Dashboard Data:', dashboardData);
-                // console.log('I am a metric', parseFloat((((dashboardData.inventoryLevels - baselineValues.inventoryLevels) / baselineValues.inventoryLevels) * 100).toFixed(2)));
-                this.dashboardData.inventoryLevels = parseFloat(
-                    (
-                        ((dashboardData.inventoryLevels - baselineValues.inventoryLevels) /
-                            baselineValues.inventoryLevels) *
-                        100
-                    ).toFixed(2),
-                );
-                this.dashboardData.avgFulfillmentTime = dashboardData.avgFulfillmentTime;
-                this.dashboardData.topSeller = dashboardData.topSeller;
-                this.dashboardData.backorders = dashboardData.backorders;
-                // this.dashboardData.
-                console.log('Processed dashboard data:', dashboardData);
-            } else {
-                console.error('Error fetching dashboard data:', responseBody.body);
-            }
-        } catch (error) {
-            console.error('Error in dashboardData:', error);
-        } finally {
-            // this..isLoading = false;
-        }
-    }
-
-    isLoading: boolean = false;
     async loadOrdersData() {
         // this.isLoading = true;
         try {
@@ -632,9 +541,48 @@ export class DashboardComponent implements OnInit {
 
         // Update cardData with the fetched information
         this.updateCardData();
-
+        this.updateChartConfigs();
         this.initializeDashboard();
         this.loadState();
+        this.isLoading = false;
+    }
+
+    async updateChartConfigs() {
+        try {
+            const data = await this.service.getMonthlyRequest();
+            if (data) {
+                this.chartConfigs = [
+                    {
+                        type: 'bar',
+                        data: {
+                            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                            values: data.monthlySales
+                        },
+                        title: 'Monthly Sales',
+                        component: 'BarChartComponent'
+                    },
+                    {
+                        type: 'line',
+                        data: {
+                            categories: ['Q1', 'Q2', 'Q3', 'Q4'],
+                            values: data.quarterlyRevenue
+                        },
+                        title: 'Quarterly Revenue',
+                        component: 'LineChartComponent'
+                    },
+                    {
+                        type: 'pie',
+                        data: Object.entries(data.marketShare).map(([name, value]) => ({ name, value })),
+                        title: 'Market Share',
+                        component: 'PieChartComponent'
+                    }
+                ];
+            } else {
+                console.error('Failed to fetch data from the service');
+            }
+        } catch (error) {
+            console.error('Error updating chart configs:', error);
+        }
     }
 
     loadState() {
@@ -751,7 +699,7 @@ export class DashboardComponent implements OnInit {
                 color: this.metricPerformance['inventoryLevels'].color,
             },
             {
-                title: 'Top Seller',
+                title: 'Most Requested',
                 value: `${this.dashboardData.topSeller}`,
                 icon: 'star_rate',
                 type: 'string',

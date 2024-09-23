@@ -243,30 +243,16 @@ export class OrdersComponent implements OnInit {
     }
 
     async fetchQuoteDetails(quoteId: string) {
-        const session = await fetchAuthSession();
-        const tenentId = await this.getTenentId(session);
-
-        const lambdaClient = new LambdaClient({
-            region: outputs.auth.aws_region,
-            credentials: session.credentials,
-        });
-
-        const invokeCommand = new InvokeCommand({
-            FunctionName: 'getQuoteDetails',
-            Payload: new TextEncoder().encode(
-                JSON.stringify({
-                    pathParameters: { tenentId: tenentId, quoteId: quoteId },
-                }),
-            ),
-        });
-
-        const lambdaResponse = await lambdaClient.send(invokeCommand);
-        const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
-        if (responseBody.statusCode === 200) {
-            return JSON.parse(responseBody.body);
-        } else {
-            throw new Error(responseBody.body);
+        try {
+            const session = await fetchAuthSession();
+            const tenentId = await this.getTenentId(session);
+    
+            const quoteDetails = await this.ordersService.getQuoteDetails(tenentId, quoteId).toPromise();
+    
+            return quoteDetails;
+        } catch (error) {
+            console.error('Error fetching quote details:', error);
+            throw error;
         }
     }
 

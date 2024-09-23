@@ -6,8 +6,10 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class SuppliersService {
-  private sampleUrl = 'https://7tn45k7d02.execute-api.us-east-1.amazonaws.com/default/myFunction';
   private getSuppliersUrl = 'https://ckfitxu8sc.execute-api.us-east-1.amazonaws.com/default/getSuppliers';
+  private editSupplierUrl = 'https://sv62goilj1.execute-api.us-east-1.amazonaws.com/default/editSupplier';
+  private addSupplierUrl = 'https://tkrmia0vb9.execute-api.us-east-1.amazonaws.com/default/addSupplier';
+  private deleteSupplierUrl = 'https://37xay8kw21.execute-api.us-east-1.amazonaws.com/default/deleteSupplier';
 
   constructor(private http: HttpClient) { }
 
@@ -15,5 +17,15 @@ export class SuppliersService {
     return this.http.get(`${this.getSuppliersUrl}?tenentId=${tenantId}`);
   }
 
+  editSupplier(supplierData: any): Observable<any> {
+    return this.http.put(this.editSupplierUrl, supplierData);
+  }
 
+  addSupplier(supplierData: any): Observable<any> {
+    return this.http.post(this.addSupplierUrl, supplierData);
+  }
+
+  deleteSupplier(supplierId: string): Observable<any> {
+    return this.http.delete(`${this.deleteSupplierUrl}?supplierId=${supplierId}`);
+  }
 }

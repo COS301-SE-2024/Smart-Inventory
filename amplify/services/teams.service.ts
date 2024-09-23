@@ -14,5 +14,4 @@ export class TeamsService {
     return this.http.post(this.getUsersUrl, { userPoolId, tenentId });
   }
 
-
 }

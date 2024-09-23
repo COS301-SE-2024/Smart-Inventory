@@ -4,8 +4,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { templateQuoteModalComponent } from '../template-quote-modal/template-quote-modal.component';
-import { MatDialog, MatDialogModule, MatDialogTitle, MatDialogContent } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { BubblechartComponent } from '../../components/charts/bubblechart/bubblechart.component';
 import { SaleschartComponent } from '../../components/charts/saleschart/saleschart.component';
 import { BarchartComponent } from '../../components/charts/barchart/barchart.component';
@@ -13,7 +11,6 @@ import { DonutchartComponent } from '../../components/charts/donutchart/donutcha
 import { BarChartComponent } from 'app/components/charts/widgets/widgetBar';
 import { LineChartComponent } from 'app/components/charts/widgets/widgetLine';
 import { PieChartComponent } from 'app/components/charts/widgets/widgetPie';
-import { GridsterItem } from 'angular-gridster2';
 import { DashboardService } from '../../pages/dashboard/dashboard.service';
 
 interface ChartConfig {
@@ -21,12 +18,6 @@ interface ChartConfig {
     data: any;
     title: string;
     component: string;
-}
-
-interface DashboardItem extends GridsterItem {
-    cardId?: string;
-    name?: string;
-    component?: string;
 }
 
 @Component({
@@ -37,9 +28,6 @@ interface DashboardItem extends GridsterItem {
         MatButtonModule,
         MatIconModule,
         MatCardModule,
-        MatDialogModule,
-        MatDialogTitle,
-        MatDialogContent,
         templateQuoteModalComponent,
         BarchartComponent,
         DonutchartComponent,
@@ -135,16 +123,12 @@ export class AddWidgetSidePaneComponent {
         },
     ];
 
+    constructor(private dashService: DashboardService) {}
+
     addWidget(chartConfig: any) {
         this.dashService.addWidget(chartConfig);
         this.close();
     }
-
-    constructor(
-        private dialog: MatDialog,
-        private snackBar: MatSnackBar,
-        private dashService: DashboardService,
-    ) {}
 
     close() {
         this.closed.emit();

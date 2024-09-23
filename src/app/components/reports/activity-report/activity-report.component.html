@@ -1,4 +1,4 @@
-<gridster [options]="options">
+<gridster [options]="options" style="background: transparent !important">
     <gridster-item [item]="item" *ngFor="let item of dashboard" [ngClass]="{ 'act-report': item.type === 'grid' }">
         <ng-container [ngSwitch]="item.type">
             <ng-container *ngSwitchCase="'metric'">

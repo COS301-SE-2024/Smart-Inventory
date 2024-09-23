@@ -14,6 +14,8 @@ import outputs from '../../../../amplify_outputs.json';
 import { ReplaySubject, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
+import { InventoryService } from '../../../../amplify/services/inventory.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
     selector: 'app-add-inventory-modal',
@@ -60,6 +62,7 @@ export class AddInventoryModalComponent implements OnInit, OnDestroy {
         public dialogRef: MatDialogRef<AddInventoryModalComponent>,
         @Inject(MAT_DIALOG_DATA) public data: { suppliers: any[], tenentId: string },
         private fb: FormBuilder,
+        private inventoryService: InventoryService
     ) {
         this.inventoryForm = this.fb.group({
             upc: [{value: '', disabled: true}, Validators.required],
@@ -128,33 +131,28 @@ export class AddInventoryModalComponent implements OnInit, OnDestroy {
 
     async checkExistingItem(sku: string) {
         try {
-            const session = await fetchAuthSession();
-            const lambdaClient = new LambdaClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
-
-            const payload = JSON.stringify({
-                tenentId: this.data.tenentId,
-                sku: sku
-            });
-
-            const invokeCommand = new InvokeCommand({
-                FunctionName: 'inventorySummary-getItem',
-                Payload: new TextEncoder().encode(JSON.stringify({ body: payload })),
-            });
-
-            const lambdaResponse = await lambdaClient.send(invokeCommand);
-            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
-            if (responseBody.statusCode === 200) {
-                return JSON.parse(responseBody.body);
+            const response = await this.inventoryService.inventorySummaryGetItem(this.data.tenentId, sku).toPromise();
+            console.log(response);
+            if (response) {
+                return response;
+                
             }
-        } catch (error) {
-            console.error('Error checking existing item:', error);
+        } catch (error: unknown) {
+            if (error instanceof HttpErrorResponse) {
+                if (error.status === 404) {
+                    // Item not found, which is okay in this context
+                    return null;
+                }
+                console.error('HTTP error checking existing item:', error.message);
+            } else if (error instanceof Error) {
+                console.error('Error checking existing item:', error.message);
+            } else {
+                console.error('Unknown error checking existing item:', error);
+            }
         }
         return null;
     }
+    
 
     populateForm(item: any) {
         this.inventoryForm.patchValue({
@@ -172,6 +170,7 @@ export class AddInventoryModalComponent implements OnInit, OnDestroy {
         });
 
         // Enable only certain fields
+        this.inventoryForm.get('category')?.disable();
         this.inventoryForm.get('quantity')?.enable();
         this.inventoryForm.get('supplier')?.enable();
         this.inventoryForm.get('expirationDate')?.enable();

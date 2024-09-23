@@ -5,7 +5,7 @@ import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
 import outputs from '../../../../amplify_outputs.json';
 import { Amplify } from 'aws-amplify';
 import { Observable, from } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { catchError, map, switchMap } from 'rxjs/operators';
 import { InventoryService } from '../../../../amplify/services/inventory.service';
 
 @Injectable({
@@ -68,10 +68,15 @@ export class DataCollectionService {
         );
     }
 
-    getInventoryItems(): Observable<any[]> {
-        const session = fetchAuthSession();
-        const tenantId = this.getTenantId(session);
-        return this.inventoryService.getInventoryItems(tenantId.toString()).pipe(
+    getInventoryItems(): Observable<any> {
+        return from(fetchAuthSession()).pipe(
+            switchMap(session => from(this.getTenantId(session))),
+            switchMap(tenantId => {
+                if (!tenantId) {
+                    throw new Error('TenantId not found in user attributes');
+                }
+                return this.inventoryService.getInventoryItems(tenantId);
+            }),
             catchError(error => {
                 console.error('Error fetching inventory items:', error);
                 return [];
@@ -79,10 +84,36 @@ export class DataCollectionService {
         );
     }
 
-    getInventoryData(tenantId: string): Observable<any[]> {
-        // This method should be implemented to fetch inventory data
-        // For now, it returns an empty array
-        return from(Promise.resolve([]));
+    updateInventoryItem(updatedData: any): Observable<any> {
+        return this.inventoryService.updateInventoryItem(updatedData);
+    }
+
+    createInventoryItem(formData: any): Observable<any> {
+        return this.inventoryService.createInventoryItem(formData);
+    }
+
+    removeInventoryItem(inventoryID: string): Observable<any> {
+        return from(fetchAuthSession()).pipe(
+            switchMap(session => from(this.getTenantId(session))),
+            switchMap(tenantId => {
+                if (!tenantId) {
+                    throw new Error('TenantId not found in user attributes');
+                }
+                return this.inventoryService.removeInventoryItem(inventoryID, tenantId);
+            })
+        );
+    }
+
+    getInventoryItem(inventoryID: string): Observable<any> {
+        return from(fetchAuthSession()).pipe(
+            switchMap(session => from(this.getTenantId(session))),
+            switchMap(tenantId => {
+                if (!tenantId) {
+                    throw new Error('TenantId not found in user attributes');
+                }
+                return this.inventoryService.getInventoryItem(inventoryID, tenantId);
+            })
+        );
     }
 
     getOrderData(): Observable<any[]> {

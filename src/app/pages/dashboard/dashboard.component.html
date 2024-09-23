@@ -165,44 +165,10 @@
     </div>
 </div>
 
-<!-- <div class="sidepanel" [class.open]="isSidepanelOpen">
-    <button class="close-button" (click)="closeSidepanel()">
-        <mat-icon>close</mat-icon>
-    </button>
-    <h2 style="font-size: 25px; margin-right: 10px">Available Widgets</h2>
-    <div class="chart-previews">
-        <div class="chart-preview" *ngFor="let chart of chartConfigs" (click)="addWidget(chart)">
-            <h3>{{ chart.title }}</h3>
-            <div class="preview-container" [ngSwitch]="chart.component">
-                <app-bar-chart
-                    *ngSwitchCase="'BarChartComponent'"
-                    [data]="chart.data"
-                    [title]="chart.title"
-                ></app-bar-chart>
-                <app-line-chart
-                    *ngSwitchCase="'LineChartComponent'"
-                    [data]="chart.data"
-                    [title]="chart.title"
-                ></app-line-chart>
-                <app-pie-chart
-                    *ngSwitchCase="'PieChartComponent'"
-                    [data]="chart.data"
-                    [title]="chart.title"
-                ></app-pie-chart>
-                <ng-container *ngSwitchDefault>
-                    <ng-container *ngComponentOutlet="charts[chart.component]"></ng-container>
-                </ng-container>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div *ngIf="isLoading" class="loading-overlay">
-    <app-loading-spinner></app-loading-spinner>
-</div>
-
-</div> -->
 <app-templates-side-pane
     [isAddWidgetOpen]="isSidepanelOpen"
     (closed)="isSidepanelOpen = false"
 ></app-templates-side-pane>
+<div *ngIf="isLoading" class="loading-overlay">
+    <app-loading-spinner></app-loading-spinner>
+</div>

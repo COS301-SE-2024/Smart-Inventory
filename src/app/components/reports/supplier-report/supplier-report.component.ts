@@ -4,7 +4,7 @@ import { MaterialModule } from '../../material/material.module';
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatGridListModule } from '@angular/material/grid-list';
-import { MatCardModule } from '@angular/material/card';
+// import { MatCardModule } from '@angular/material/card';
 import { GridComponent } from '../../grid/grid.component';
 import { ColDef } from 'ag-grid-community';
 import { SaleschartComponent } from '../../charts/saleschart/saleschart.component';
@@ -23,6 +23,7 @@ import { RadarComponent } from '../../charts/radar/radar.component';
 import { RowNode } from 'ag-grid-community';
 import { AgGridAngular } from 'ag-grid-angular';
 import { CompactType, DisplayGrid, GridsterConfig, GridsterItem, GridsterModule, GridType } from 'angular-gridster2';
+import { InventoryService } from '../../../../../amplify/services/inventory.service';
 
 type ChartMetric = 'On Time Delivery Rate' | 'Order Accuracy Rate' | 'Out Standing Payments' | 'TotalSpent';
 type ChartData = {
@@ -33,7 +34,7 @@ type ChartData = {
     standalone: true,
     imports: [
         GridComponent,
-        MatCardModule,
+        // MatCardModule,
         MatGridListModule,
         MaterialModule,
         CommonModule,
@@ -55,6 +56,7 @@ export class SupplierReportComponent implements OnInit {
         private titleService: TitleService,
         private router: Router,
         private route: ActivatedRoute,
+        private inventoryService: InventoryService
     ) {
         Amplify.configure(outputs);
     }
@@ -986,49 +988,40 @@ export class SupplierReportComponent implements OnInit {
     async loadSupplierMetrics() {
         try {
             const session = await fetchAuthSession();
-
+    
             const cognitoClient = new CognitoIdentityProviderClient({
                 region: outputs.auth.aws_region,
                 credentials: session.credentials,
             });
-
+    
             const getUserCommand = new GetUserCommand({
                 AccessToken: session.tokens?.accessToken.toString(),
             });
             const getUserResponse = await cognitoClient.send(getUserCommand);
-
+    
             const tenantId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
-
+    
             if (!tenantId) {
                 console.error('TenantId not found in user attributes');
                 this.rowData = [];
                 return;
             }
-
-            const lambdaClient = new LambdaClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
-
-            const invokeCommand = new InvokeCommand({
-                FunctionName: 'Inventory-getItems',
-                Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: tenantId } })),
-            });
-
-            const lambdaResponse = await lambdaClient.send(invokeCommand);
-            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-            console.log('Response from Lambda:', responseBody);
-
-            // if (responseBody.statusCode === 200) {
-            //     const inventoryItems = JSON.parse(responseBody.body);
-            //     // this.rowData = this.data;
-            //     console.log('Processed inventory items:', this.rowData);
-            // } else {
-            //     console.error('Error fetching inventory data:', responseBody.body);
-            //     this.rowData = [];
-            // }
+    
+            // Use the InventoryService to get inventory items
+            this.inventoryService.getInventoryItems(tenantId).subscribe(
+                (response) => {
+                    console.log('Response from InventoryService:', response);
+                    // Process the response here
+                    // this.rowData = response;
+                    console.log('Processed inventory items:', this.rowData);
+                },
+                (error) => {
+                    console.error('Error fetching inventory data:', error);
+                    this.rowData = [];
+                }
+            );
         } catch (error) {
-            console.error('Error in loadInventoryData:', error);
+            console.error('Error in loadSupplierMetrics:', error);
             this.rowData = [];
         } finally {
             // this.isLoading = false;

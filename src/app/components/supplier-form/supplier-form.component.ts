@@ -5,15 +5,15 @@ import { CustomCurrencyPipe } from './custom-currency.pipe';
 import { MatDialog } from '@angular/material/dialog';
 import { UpdateContactConfirmationComponent } from './update-contact-confirmation.component';
 import { ActivatedRoute } from '@angular/router';
-import { SupplierService } from '../../../../amplify/services/supplier.service';
-import { DeliveryService } from '../../../../amplify/services/delivery.service';
-import { QuoteService } from '../../../../amplify/services/quote-items.service';
-import { QuoteSubmissionService } from '../../../../amplify/services/quote-submission.service';
+import { SupplierService } from '../../../../amplify/services/supplier-form-services/supplier.service';
+import { DeliveryService } from '../../../../amplify/services/supplier-form-services/delivery.service';
+import { QuoteService } from '../../../../amplify/services/supplier-form-services/quote-items.service';
+import { QuoteSubmissionService } from '../../../../amplify/services/supplier-form-services/quote-submission.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { NotificationService } from '../../../../amplify/services/notification.service';
+import { NotificationService } from '../../../../amplify/services/supplier-form-services/notification.service';
 import { v4 as uuidv4 } from 'uuid';
 import { LoadingSpinnerComponent } from '../loader/loading-spinner.component';
-import { SubmissionDeadlineService } from '../../../../amplify/services/submission-deadline.service';
+import { SubmissionDeadlineService } from '../../../../amplify/services/supplier-form-services/submission-deadline.service';
 
 interface QuoteItem {
   upc: string;

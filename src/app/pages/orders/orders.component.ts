@@ -21,6 +21,7 @@ import { TemplatesQuotesSidePaneComponent } from 'app/components/templates-quote
 import { MatCardModule } from '@angular/material/card';
 import { ReceiveOrderModalComponent } from 'app/components/receive-order-modal/receive-order-modal.component';
 import { AutomationSettingsModalComponent } from 'app/components/automation-settings-modal/automation-settings-modal.component';
+import { OrdersService } from '../../../../amplify/services/orders.service';
 
 interface DeliveryAddress {
     company: string;
@@ -66,6 +67,7 @@ export class OrdersComponent implements OnInit {
         private titleService: TitleService,
         private dialog: MatDialog,
         private snackBar: MatSnackBar,
+        private ordersService: OrdersService
     ) {
         Amplify.configure(outputs);
     }
@@ -476,41 +478,28 @@ export class OrdersComponent implements OnInit {
         this.isLoading = true;
         try {
             const session = await fetchAuthSession();
-
+    
             const cognitoClient = new CognitoIdentityProviderClient({
                 region: outputs.auth.aws_region,
                 credentials: session.credentials,
             });
-
+    
             const getUserCommand = new GetUserCommand({
                 AccessToken: session.tokens?.accessToken.toString(),
             });
             const getUserResponse = await cognitoClient.send(getUserCommand);
-
+    
             const tenentId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
-
+    
             if (!tenentId) {
                 console.error('TenentId not found in user attributes');
                 this.rowData = [];
                 return;
             }
-
-            const lambdaClient = new LambdaClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
-
-            const invokeCommand = new InvokeCommand({
-                FunctionName: 'getOrders',
-                Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: tenentId } })),
-            });
-
-            const lambdaResponse = await lambdaClient.send(invokeCommand);
-            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-            console.log('Response from Lambda:', responseBody);
-
-            if (responseBody.statusCode === 200) {
-                const orders = JSON.parse(responseBody.body);
+    
+            const orders = await this.ordersService.getOrders(tenentId).toPromise();
+    
+            if (orders) {
                 this.rowData = orders.map((order: any) => ({
                     Order_ID: order.Order_ID,
                     Order_Date: order.Order_Date,
@@ -527,7 +516,7 @@ export class OrdersComponent implements OnInit {
                 }));
                 console.log('Processed orders:', this.rowData);
             } else {
-                console.error('Error fetching orders data:', responseBody.body);
+                console.error('Error fetching orders data');
                 this.rowData = [];
             }
         } catch (error) {

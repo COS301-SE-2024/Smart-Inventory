@@ -6,9 +6,11 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class OrdersService {
-  private sampleUrl = 'https://7tn45k7d02.execute-api.us-east-1.amazonaws.com/default/myFunction';
+  private getOrdersUrl = 'https://fuo5nfhks9.execute-api.us-east-1.amazonaws.com/default/getOrders';
 
   constructor(private http: HttpClient) { }
 
-
+  getOrders(tenentId: string): Observable<any> {
+    return this.http.get(`${this.getOrdersUrl}?tenentId=${tenentId}`);
+  }
 }

@@ -301,6 +301,7 @@ export class SuppliersComponent implements OnInit {
     }
 
     async onEditAddressSubmit(formData: any) {
+        this.isLoading = true;
         try {
             console.log('Updated address:', formData);
             const session = await fetchAuthSession();
@@ -319,13 +320,12 @@ export class SuppliersComponent implements OnInit {
             const updatedData = {
                 supplierID: this.selectedSupplier.supplierID,
                 tenentId: tenentId,
-                address: formData,
+                address: formData
             };
             console.log('Updated data:', updatedData);
-            console.log('Calling editSupplier API');
             const response = await this.suppliersService.editSupplier(updatedData).toPromise();
             console.log('API response:', response);
-            if (response.statusCode === 200) {
+            if (response && response.body) {
                 console.log('Supplier address updated successfully');
                 const updatedSupplier = response.body;
                 await this.logActivity(
@@ -333,22 +333,29 @@ export class SuppliersComponent implements OnInit {
                     `Updated address for supplier ${this.selectedSupplier.company_name}`,
                 );
                 this.closeEditAddressPopup();
-                this.loadSuppliersData();
+                await this.loadSuppliersData();
                 this.snackBar.open('Supplier address updated successfully', 'Close', {
                     duration: 6000,
                     horizontalPosition: 'center',
                     verticalPosition: 'top',
                 });
             } else {
-                throw new Error(response.body);
+                throw new Error('Invalid response from server');
             }
         } catch (error) {
             console.error('Error updating supplier address:', error);
-            alert(`Error updating supplier address: ${(error as Error).message}`);
+            this.snackBar.open(`Error updating supplier address: ${(error as Error).message}`, 'Close', {
+                duration: 6000,
+                horizontalPosition: 'center',
+                verticalPosition: 'top',
+            });
+        } finally {
+            this.isLoading = false;
         }
     }
     
     async onSubmit(formData: any) {
+        this.isLoading = true;
         try {
             const session = await fetchAuthSession();
             const cognitoClient = new CognitoIdentityProviderClient({
@@ -359,9 +366,9 @@ export class SuppliersComponent implements OnInit {
                 AccessToken: session.tokens?.accessToken.toString(),
             });
             const getUserResponse = await cognitoClient.send(getUserCommand);
-            const tenantId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
-            if (!tenantId) {
-                throw new Error('TenantId not found in user attributes');
+            const tenentId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
+            if (!tenentId) {
+                throw new Error('TenentId not found in user attributes');
             }
             const payload = {
                 company_name: formData.company_name,
@@ -375,11 +382,12 @@ export class SuppliersComponent implements OnInit {
                     postal_code: formData.postal_code,
                     country: formData.country,
                 },
-                tenentId: tenantId,
+                tenentId: tenentId,
             };
-            console.log(payload);
+            console.log('Sending payload:', payload);
             const response = await this.suppliersService.addSupplier(payload).toPromise();
-            if (response.statusCode === 201) {
+            console.log('Received response:', response);
+            if (response && response.supplierID) {
                 console.log('Supplier added successfully');
                 await this.loadSuppliersData();
                 this.closeAddPopup();
@@ -390,10 +398,17 @@ export class SuppliersComponent implements OnInit {
                 });
                 await this.logActivity('Added new supplier', `Added supplier ${formData.company_name}`);
             } else {
-                throw new Error(response.body);
+                throw new Error('Failed to add supplier');
             }
         } catch (error) {
-            console.error('Error:', error);
+            console.error('Error adding supplier:', error);
+            this.snackBar.open(`Error adding supplier: ${(error as Error).message}`, 'Close', {
+                duration: 6000,
+                horizontalPosition: 'center',
+                verticalPosition: 'top',
+            });
+        } finally {
+            this.isLoading = false;
         }
     }
     
@@ -444,49 +459,77 @@ export class SuppliersComponent implements OnInit {
         }
     }
     
+    private updateQueue: { [key: string]: any } = {};
+    private updateTimeout: any;
+    
     async handleCellValueChanged(event: { data: any; field: string; newValue: any }) {
-        try {
-            const session = await fetchAuthSession();
-            const cognitoClient = new CognitoIdentityProviderClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
-            const getUserCommand = new GetUserCommand({
-                AccessToken: session.tokens?.accessToken.toString(),
-            });
-            const getUserResponse = await cognitoClient.send(getUserCommand);
-            const tenentId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
-            if (!tenentId) {
-                throw new Error('TenentId not found in user attributes');
-            }
-            const updatedData = {
+        // Add the change to the queue
+        if (!this.updateQueue[event.data.supplierID]) {
+            this.updateQueue[event.data.supplierID] = {
                 supplierID: event.data.supplierID,
-                tenentId: tenentId,
-                [event.field]: event.newValue,
+                tenentId: this.tenantId,
             };
-            const response = await this.suppliersService.editSupplier(updatedData).toPromise();
-            if (response.statusCode === 200) {
-                console.log('Supplier updated successfully');
-                // Update the local data to reflect the change
-                const updatedSupplier = response.body;
-                const index = this.rowData.findIndex((supplier) => supplier.supplierID === updatedSupplier.supplierID);
-                if (index !== -1) {
-                    this.rowData[index] = { ...this.rowData[index], ...updatedSupplier };
+        }
+        this.updateQueue[event.data.supplierID][event.field] = event.newValue;
+    
+        // Clear any existing timeout
+        if (this.updateTimeout) {
+            clearTimeout(this.updateTimeout);
+        }
+    
+        // Set a new timeout
+        this.updateTimeout = setTimeout(async () => {
+            try {
+                for (const supplierID in this.updateQueue) {
+                    const updatedData = this.updateQueue[supplierID];
+                    console.log('Sending updated data:', updatedData);
+                    const response = await this.suppliersService.editSupplier(updatedData).toPromise();
+                    console.log('Received response:', response);
+                    
+                    if (response && response.body) {
+                        console.log('Supplier updated successfully');
+                        const updatedSupplier = response.body;
+                        const index = this.rowData.findIndex((supplier) => supplier.supplierID === updatedSupplier.supplierID);
+                        if (index !== -1) {
+                            this.rowData[index] = { ...this.rowData[index], ...updatedSupplier };
+                        }
+                        await this.logActivity(
+                            'Updated supplier',
+                            `Updated supplier ${updatedSupplier.company_name}`
+                        );
+                    } else {
+                        throw new Error('Invalid response from server');
+                    }
                 }
+    
+                // Show snackbar only once after all updates are complete
                 this.snackBar.open('Supplier updated successfully', 'Close', {
                     duration: 6000,
                     horizontalPosition: 'center',
                     verticalPosition: 'top',
                 });
-            } else {
-                throw new Error(response.body);
+    
+                // Clear the update queue
+                this.updateQueue = {};
+    
+            } catch (error) {
+                console.error('Error updating supplier(s):', error);
+                this.snackBar.open(`Error updating supplier(s): ${(error as Error).message}`, 'Close', {
+                    duration: 6000,
+                    horizontalPosition: 'center',
+                    verticalPosition: 'top',
+                });
+                // Revert all changes in the grid
+                for (const supplierID in this.updateQueue) {
+                    const originalData = this.rowData.find(supplier => supplier.supplierID === supplierID);
+                    if (originalData) {
+                        this.gridComponent.updateRow(originalData);
+                    }
+                }
+                // Clear the update queue
+                this.updateQueue = {};
             }
-        } catch (error) {
-            console.error('Error updating supplier:', error);
-            alert(`Error updating supplier: ${(error as Error).message}`);
-            // Revert the change in the grid
-            this.gridComponent.updateRow(event.data);
-        }
+        }, 500); // Wait for 500ms before sending updates
     }
 
 

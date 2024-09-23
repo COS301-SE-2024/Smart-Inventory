@@ -18,15 +18,15 @@ export class SuppliersService {
   }
 
   editSupplier(supplierData: any): Observable<any> {
-    return this.http.put(this.editSupplierUrl, supplierData);
+    return this.http.put(this.editSupplierUrl, supplierData, { observe: 'response' });
   }
 
   addSupplier(supplierData: any): Observable<any> {
-    return this.http.post(this.addSupplierUrl, supplierData);
-  }
+    return this.http.post(this.addSupplierUrl, supplierData, { observe: 'body' });
+}
 
   deleteSupplier(supplierID: string, tenentId: string): Observable<any> {
     return this.http.delete(this.deleteSupplierUrl, { body: { supplierID, tenentId } });
   }
-  
+
 }

@@ -11,15 +11,7 @@ import { DonutchartComponent } from '../../components/charts/donutchart/donutcha
 import { BarChartComponent } from 'app/components/charts/widgets/widgetBar';
 import { LineChartComponent } from 'app/components/charts/widgets/widgetLine';
 import { PieChartComponent } from 'app/components/charts/widgets/widgetPie';
-import { DashboardService } from '../../pages/dashboard/dashboard.service';
-
-interface ChartConfig {
-    type: string;
-    data: any;
-    title: string;
-    component: string;
-}
-
+import { ChartConfig, DashboardService } from '../../pages/dashboard/dashboard.service';
 @Component({
     selector: 'app-templates-side-pane',
     standalone: true,

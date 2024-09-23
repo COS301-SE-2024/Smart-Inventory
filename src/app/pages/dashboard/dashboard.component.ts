@@ -33,23 +33,8 @@ import { PieChartComponent } from 'app/components/charts/widgets/widgetPie';
 import { DataServiceService } from './data-service.service';
 import { AddWidgetSidePaneComponent } from '../../components/add-widget-side-pane/add-widget-side-pane.component';
 import { InventoryService } from '../../../../amplify/services/inventory.service';
-import { DashboardService } from '../dashboard/dashboard.service';
+import { CardData, ChartConfig, DashboardItem, DashboardService } from '../dashboard/dashboard.service';
 import { ChangeDetectionService } from './change-detection.service';
-
-interface CardData {
-    title: string;
-    value: string | number;
-    icon: string;
-    type: 'currency' | 'number' | 'percentage' | 'string';
-    change?: number;
-    color: string;
-}
-
-interface DashboardItem extends GridsterItem {
-    cardId?: string;
-    name?: string;
-    component?: string;
-}
 
 // interface StockRequest {
 //     tenentId: string;
@@ -111,12 +96,6 @@ export class DashboardComponent implements OnInit {
     inventoryCount: number = 0;
     userCount: number = 0;
     inventoryLevel: number = 20;
-
-    // private stockRequest: any[] = [];
-    // private inventory: any[] = [];
-    // private orders: any[] = [];
-    // private dashboardData: any;
-    // private metricPerformance: Record<string, any> = {};
 
     charts: { [key: string]: Type<any> } = {
         SaleschartComponent: SaleschartComponent,
@@ -180,7 +159,7 @@ export class DashboardComponent implements OnInit {
         this.dashService.dashboard$.pipe(debounceTime(500)).subscribe((dashboard) => {
             this.dashboard = dashboard;
             this.CDRService.detectChanges();
-            this.persistState();
+            this.dashService.persistState(this.dashboard);
         });
     }
 
@@ -241,7 +220,7 @@ export class DashboardComponent implements OnInit {
                 debounceTime(500), // Debounce for 500ms
             )
             .subscribe(() => {
-                this.persistState();
+                this.dashService.persistState(this.dashboard);
             });
     }
 
@@ -597,10 +576,6 @@ export class DashboardComponent implements OnInit {
         }
     }
 
-    private persistState() {
-        this.dashService.persistState(this.dashboard);
-    }
-
     // processDashboardData() {
     //     this.dashboardData = this.service.processDashboardData(this.orders, this.stockRequest, this.inventory);
     //     this.calculateMetricPerformance();
@@ -751,7 +726,7 @@ export class DashboardComponent implements OnInit {
         this.isSidepanelOpen = true;
     }
 
-    addWidget(chartConfig: any) {
+    addWidget(chartConfig: ChartConfig) {
         this.dashService.addWidget(chartConfig);
         this.isSidepanelOpen = false;
     }

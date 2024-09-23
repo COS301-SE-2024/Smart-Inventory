@@ -1,6 +1,22 @@
-import { Injectable, Type } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { GridsterItem } from 'angular-gridster2';
+
+export interface ChartConfig {
+    type: string;
+    data: any;
+    title: string;
+    component: string;
+}
+
+export interface CardData {
+    title: string;
+    value: string | number;
+    icon: string;
+    type: 'currency' | 'number' | 'percentage' | 'string';
+    change?: number;
+    color: string;
+}
 
 export interface DashboardItem extends GridsterItem {
     cardId?: string;
@@ -8,7 +24,6 @@ export interface DashboardItem extends GridsterItem {
     component?: string;
     chartConfig?: any;
 }
-
 @Injectable({
     providedIn: 'root',
 })
@@ -31,7 +46,7 @@ export class DashboardService {
         this.saveTrigger.next();
     }
 
-    addWidget(chartConfig: any): void {
+    addWidget(chartConfig: ChartConfig): void {
         const newItem: GridsterItem = {
             cols: 6,
             rows: 2,

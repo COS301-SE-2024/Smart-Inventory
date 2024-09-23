@@ -10,6 +10,7 @@ export class OrdersService {
   private getQuoteDetailsUrl = 'https://ir85e243m6.execute-api.us-east-1.amazonaws.com/default/getQuoteDetails';
   private updateQuoteDetailsUrl = 'https://w36e9kw5vj.execute-api.us-east-1.amazonaws.com/default/updateQuoteDetails';
   private createOrderUrl = 'https://nalaz32x49.execute-api.us-east-1.amazonaws.com/default/createOrder';
+  private deleteOrderUrl = 'https://z4wpc8urf5.execute-api.us-east-1.amazonaws.com/default/deleteOrder';
 
   constructor(private http: HttpClient) { }
 
@@ -29,4 +30,9 @@ export class OrdersService {
   createOrder(orderData: any): Observable<any> {
     return this.http.post(this.createOrderUrl, orderData);
   }
+
+  deleteOrder(tenentId: string, orderId: string, quoteId: string): Observable<any> {
+    return this.http.delete(`${this.deleteOrderUrl}?tenentId=${tenentId}&orderId=${orderId}&quoteId=${quoteId}`);
+  }
+
 }

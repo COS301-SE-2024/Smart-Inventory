@@ -502,64 +502,47 @@ export class OrdersComponent implements OnInit {
             alert('Please select an order to delete');
             return;
         }
-
+    
         if (this.selectedOrder.Quote_Status !== 'Draft') {
             this.snackBar.open('Only orders in draft status can be deleted', 'Close', {
-                duration: 6000, // Duration in milliseconds
+                duration: 6000,
                 horizontalPosition: 'center',
                 verticalPosition: 'top',
             });
             return;
         }
-
+    
         if (confirm('Are you sure you want to delete this order?')) {
             try {
                 const session = await fetchAuthSession();
                 const tenentId = await this.getTenentId(session);
-
-                const lambdaClient = new LambdaClient({
-                    region: outputs.auth.aws_region,
-                    credentials: session.credentials,
-                });
-
-                const invokeCommand = new InvokeCommand({
-                    FunctionName: 'deleteOrder',
-                    Payload: new TextEncoder().encode(
-                        JSON.stringify({
-                            pathParameters: {
-                                tenentId: tenentId,
-                                orderId: this.selectedOrder.Order_ID,
-                                quoteId: this.selectedOrder.Quote_ID,
-                            },
-                        }),
-                    ),
-                });
-
-                const lambdaResponse = await lambdaClient.send(invokeCommand);
-                const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
-                if (responseBody.statusCode === 200) {
+    
+                const response = await this.ordersService.deleteOrder(
+                    tenentId,
+                    this.selectedOrder.Order_ID,
+                    this.selectedOrder.Quote_ID
+                ).toPromise();
+    
+                if (response && response.message === 'Order and associated data deleted successfully') {
                     console.log('Order deleted successfully');
-
-                    // Show success snackbar
+    
                     this.snackBar.open('Order deleted successfully', 'Close', {
-                        duration: 6000, // Duration in milliseconds
+                        duration: 6000,
                         horizontalPosition: 'center',
                         verticalPosition: 'top',
                     });
-
+    
                     await this.loadOrdersData();
                     this.selectedOrder = null;
                     this.refreshGridSelection();
                 } else {
-                    throw new Error(responseBody.body || 'Unknown error occurred');
+                    throw new Error('Unknown error occurred');
                 }
             } catch (error) {
                 console.error('Error deleting order:', error);
-
-                // Show error snackbar
+    
                 this.snackBar.open(`Error deleting order: ${(error as Error).message}`, 'Close', {
-                    duration: 5000, // Longer duration for error messages
+                    duration: 5000,
                     horizontalPosition: 'center',
                     verticalPosition: 'top',
                 });

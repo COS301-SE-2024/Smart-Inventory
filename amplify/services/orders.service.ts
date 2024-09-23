@@ -11,6 +11,7 @@ export class OrdersService {
   private updateQuoteDetailsUrl = 'https://w36e9kw5vj.execute-api.us-east-1.amazonaws.com/default/updateQuoteDetails';
   private createOrderUrl = 'https://nalaz32x49.execute-api.us-east-1.amazonaws.com/default/createOrder';
   private deleteOrderUrl = 'https://z4wpc8urf5.execute-api.us-east-1.amazonaws.com/default/deleteOrder';
+  private receiveOrderUrl = 'https://pjxkk0m4ug.execute-api.us-east-1.amazonaws.com/default/receiveOrder';
 
   constructor(private http: HttpClient) { }
 
@@ -35,4 +36,7 @@ export class OrdersService {
     return this.http.delete(`${this.deleteOrderUrl}?tenentId=${tenentId}&orderId=${orderId}&quoteId=${quoteId}`);
   }
 
+  receiveOrder(orderID: string, orderDate: string): Observable<any> {
+    return this.http.post(this.receiveOrderUrl, { orderID, orderDate });
+  }
 }

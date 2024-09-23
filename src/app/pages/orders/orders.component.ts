@@ -688,52 +688,28 @@ export class OrdersComponent implements OnInit {
 
     async markOrderAsReceived(orderData: any) {
         try {
-            const session = await fetchAuthSession();
-            const lambdaClient = new LambdaClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
-
-            const payload = {
-                body: JSON.stringify({
-                    orderID: orderData.Order_ID,
-                    orderDate: orderData.Order_Date,
-                }),
-            };
-
-            const invokeCommand = new InvokeCommand({
-                FunctionName: 'receiveOrder',
-                Payload: new TextEncoder().encode(JSON.stringify(payload)),
-            });
-
-            const lambdaResponse = await lambdaClient.send(invokeCommand);
-            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
-            if (responseBody.statusCode === 200) {
-                const result = JSON.parse(responseBody.body);
-                console.log('Order marked as received:', result);
-
-                // Update local data
-                const index = this.rowData.findIndex((order) => order.Order_ID === orderData.Order_ID);
-                if (index !== -1) {
-                    this.rowData[index] = result.updatedOrder;
-                }
-
-                // Reload the orders data
-                await this.loadOrdersData();
-
-                // Refresh the grid
-                this.gridComponent.refreshGrid(this.rowData);
-
-                // Show success message
-                this.snackBar.open('Order marked as received successfully', 'Close', {
-                    duration: 3000,
-                    horizontalPosition: 'center',
-                    verticalPosition: 'top',
-                });
-            } else {
-                throw new Error(responseBody.body || 'Unknown error occurred');
+            const result = await this.ordersService.receiveOrder(orderData.Order_ID, orderData.Order_Date).toPromise();
+    
+            console.log('Order marked as received:', result);
+    
+            // Update local data
+            const index = this.rowData.findIndex((order) => order.Order_ID === orderData.Order_ID);
+            if (index !== -1) {
+                this.rowData[index] = result.updatedOrder;
             }
+    
+            // Reload the orders data
+            await this.loadOrdersData();
+    
+            // Refresh the grid
+            this.gridComponent.refreshGrid(this.rowData);
+    
+            // Show success message
+            this.snackBar.open('Order marked as received successfully', 'Close', {
+                duration: 3000,
+                horizontalPosition: 'center',
+                verticalPosition: 'top',
+            });
         } catch (error) {
             console.error('Error marking order as received:', error);
             this.snackBar.open(`Error marking order as received: ${(error as Error).message}`, 'Close', {

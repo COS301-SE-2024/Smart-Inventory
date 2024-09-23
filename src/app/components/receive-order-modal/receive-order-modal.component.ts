@@ -15,6 +15,7 @@ import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-c
 import outputs from '../../../../amplify_outputs.json';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { LoadingSpinnerComponent } from '../loader/loading-spinner.component';
+import { InventoryService } from '../../../../amplify/services/inventory.service';
 
 interface OrderItem {
   sku: string;
@@ -61,7 +62,8 @@ export class ReceiveOrderModalComponent implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<ReceiveOrderModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private inventoryService: InventoryService
   ) {}
 
   async ngOnInit() {
@@ -139,90 +141,83 @@ export class ReceiveOrderModalComponent implements OnInit {
 
     return tenentId;
   }
-  async markAsReceived() {
-    try {
-      const session = await fetchAuthSession();
-      const lambdaClient = new LambdaClient({
-        region: outputs.auth.aws_region,
-        credentials: session.credentials,
-      });
 
-      // First, add inventory items
-      for (const item of this.orderItems) {
-        const inventoryItem = {
-          category: item.category,
-          description: item.description,
-          expirationDate: item.expirationDate ? item.expirationDate.toISOString() : null,
-          lowStockThreshold: item.lowStockThreshold,
-          quantity: item.quantity,
-          reorderAmount: item.reorderAmount,
-          sku: item.sku,
-          supplier: this.data.Selected_Supplier,
-          tenentId: this.tenentId,
-          upc: item.upc,
-          unitCost: item.unitCost
-        };
-
-        console.log('Inventory item to be created:', inventoryItem);
-
-        const invokeCommand = new InvokeCommand({
-          FunctionName: 'Inventory-CreateItem',
-          Payload: new TextEncoder().encode(JSON.stringify({ body: inventoryItem })),
-        });
-
-        const lambdaResponse = await lambdaClient.send(invokeCommand);
-        const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
-        console.log('Inventory-CreateItem Lambda response:', responseBody);
-
-        if (responseBody.statusCode !== 201) {
-          throw new Error(`Failed to create inventory item: ${responseBody.body}`);
-        }
-      }
-
-      // Then, mark the order as received
-      const payload = {
-        body: JSON.stringify({
-          orderID: this.data.Order_ID,
-          orderDate: this.data.Order_Date
-        })
+async markAsReceived() {
+  try {
+    // First, add inventory items
+    for (const item of this.orderItems) {
+      const inventoryItem = {
+        category: item.category,
+        description: item.description,
+        expirationDate: item.expirationDate ? item.expirationDate.toISOString() : null,
+        lowStockThreshold: item.lowStockThreshold,
+        quantity: item.quantity,
+        reorderAmount: item.reorderAmount,
+        sku: item.sku,
+        supplier: this.data.Selected_Supplier,
+        tenentId: this.tenentId,
+        upc: item.upc,
+        unitCost: item.unitCost
       };
 
-      const invokeCommand = new InvokeCommand({
-        FunctionName: 'receiveOrder',
-        Payload: new TextEncoder().encode(JSON.stringify(payload)),
-      });
+      console.log('Inventory item to be created:', inventoryItem);
 
-      const lambdaResponse = await lambdaClient.send(invokeCommand);
-      const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+      const response = await this.inventoryService.createInventoryItem(inventoryItem).toPromise();
 
-      if (responseBody.statusCode === 200) {
-        const result = JSON.parse(responseBody.body);
-        console.log('Order marked as received:', result);
+      console.log('Inventory-CreateItem response:', response);
 
-        this.snackBar.open('Order marked as received and inventory items added successfully', 'Close', {
-          duration: 6000,
-          horizontalPosition: 'center',
-          verticalPosition: 'top',
-        });
-
-        this.dialogRef.close({ 
-          action: 'received', 
-          data: this.orderItems, 
-          updatedOrder: result.updatedOrder 
-        });
-      } else {
-        throw new Error(responseBody.body || 'Unknown error occurred');
+      if (response.statusCode !== 201) {
+        throw new Error(`Failed to create inventory item: ${response.body}`);
       }
-    } catch (error) {
-      console.error('Error in markAsReceived:', error);
-      this.snackBar.open(`Error marking order as received: ${(error as Error).message}`, 'Close', {
-        duration: 5000,
+    }
+
+    // Then, mark the order as received
+    const payload = {
+      orderID: this.data.Order_ID,
+      orderDate: this.data.Order_Date
+    };
+
+    const session = await fetchAuthSession();
+    const lambdaClient = new LambdaClient({
+      region: outputs.auth.aws_region,
+      credentials: session.credentials,
+    });
+
+    const invokeCommand = new InvokeCommand({
+      FunctionName: 'receiveOrder',
+      Payload: new TextEncoder().encode(JSON.stringify({ body: JSON.stringify(payload) })),
+    });
+
+    const lambdaResponse = await lambdaClient.send(invokeCommand);
+    const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+
+    if (responseBody.statusCode === 200) {
+      const result = JSON.parse(responseBody.body);
+      console.log('Order marked as received:', result);
+
+      this.snackBar.open('Order marked as received and inventory items added successfully', 'Close', {
+        duration: 6000,
         horizontalPosition: 'center',
         verticalPosition: 'top',
       });
+
+      this.dialogRef.close({ 
+        action: 'received', 
+        data: this.orderItems, 
+        updatedOrder: result.updatedOrder 
+      });
+    } else {
+      throw new Error(responseBody.body || 'Unknown error occurred');
     }
+  } catch (error) {
+    console.error('Error in markAsReceived:', error);
+    this.snackBar.open(`Error marking order as received: ${(error as Error).message}`, 'Close', {
+      duration: 5000,
+      horizontalPosition: 'center',
+      verticalPosition: 'top',
+    });
   }
+}
 
 
   close() {

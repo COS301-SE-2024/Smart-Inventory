@@ -21,6 +21,8 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { Router } from '@angular/router';
 import { UploadItemsModalComponent } from 'app/components/upload-items-modal/upload-items-modal.component';
 import { InventoryService } from '../../../../amplify/services/inventory.service';
+import { TeamsService } from '../../../../amplify/services/teams.service';
+import { SuppliersService } from '../../../../amplify/services/suppliers.service';
 
 import {
     MatSnackBar,
@@ -104,7 +106,10 @@ export class InventoryComponent implements OnInit {
         private dialog: MatDialog,
         private snackBar: MatSnackBar,
         private router: Router,
-        private inventoryService: InventoryService
+        private inventoryService: InventoryService,
+        private teamService: TeamsService,
+        private suppliersService: SuppliersService
+  
     ) {
         Amplify.configure(outputs);
     }
@@ -138,7 +143,7 @@ export class InventoryComponent implements OnInit {
             getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value || '';
       
           // Use the InventoryService to get users
-          const users = await this.inventoryService.getUsers(outputs.auth.user_pool_id, this.tenantId).toPromise();
+          const users = await this.teamService.getUsers(outputs.auth.user_pool_id, this.tenantId).toPromise();
       
           const currentUser = users.find(
             (user: any) =>
@@ -212,7 +217,7 @@ export class InventoryComponent implements OnInit {
 
     async loadSuppliers() {
         try {
-          this.suppliers = await this.inventoryService.getSuppliers(this.tenantId).toPromise();
+          this.suppliers = await this.suppliersService.getSuppliers(this.tenantId).toPromise();
           console.log('Suppliers loaded:', this.suppliers);
         } catch (error) {
           console.error('Error in loadSuppliers:', error);

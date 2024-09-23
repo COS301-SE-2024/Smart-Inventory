@@ -23,6 +23,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule, provideNativeDateAdapter } from '@angular/material/core';
 import { InventoryService } from '../../../../amplify/services/inventory.service';
 import { SuppliersService } from '../../../../amplify/services/suppliers.service';
+import { OrdersService } from '../../../../amplify/services/orders.service';
 
 interface QuoteItem {
   item: { sku: string; description: string; inventoryID: string };
@@ -91,7 +92,8 @@ export class CustomQuoteModalComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: any,
     private snackBar: MatSnackBar,
     private inventoryService: InventoryService,
-    private suppliersService: SuppliersService
+    private suppliersService: SuppliersService,
+    private ordersService: OrdersService
   ) {
     this.isEditing = data.isEditing || false;
     this.isNewQuote = data.isNewQuote || false;
@@ -344,32 +346,15 @@ export class CustomQuoteModalComponent implements OnInit {
       const session = await fetchAuthSession();
       const tenentId = await this.getTenentId(session);
   
-      const lambdaClient = new LambdaClient({
-        region: outputs.auth.aws_region,
-        credentials: session.credentials,
-      });
+      if (!updatedQuote.quoteId) {
+        throw new Error('Quote ID is missing');
+      }
   
-      const payload = {
-        pathParameters: {
-          tenentId: tenentId,
-          quoteId: updatedQuote.quoteId
-        },
-        body: JSON.stringify(updatedQuote)  // Send the entire updatedQuote object
-      };
+      const response = await this.ordersService.updateQuoteDetails(tenentId, updatedQuote.quoteId, updatedQuote).toPromise();
   
-      console.log('Updating quote with payload:', JSON.stringify(payload, null, 2));
+      console.log('API response:', JSON.stringify(response, null, 2));
   
-      const invokeCommand = new InvokeCommand({
-        FunctionName: 'updateQuoteDetails',
-        Payload: new TextEncoder().encode(JSON.stringify(payload)),
-      });
-  
-      const lambdaResponse = await lambdaClient.send(invokeCommand);
-      const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-  
-      console.log('Lambda response:', JSON.stringify(responseBody, null, 2));
-  
-      if (responseBody.statusCode === 200) {
+      if (response && response.message === 'Quote updated successfully') {
         console.log('Quote updated successfully');
         this.hasUnsavedChanges = false;
         this.snackBar.open('Changes saved successfully', 'Close', {
@@ -378,7 +363,7 @@ export class CustomQuoteModalComponent implements OnInit {
           verticalPosition: 'top',
         });
       } else {
-        throw new Error(responseBody.body || 'Failed to update quote');
+        throw new Error(response.error || 'Failed to update quote');
       }
     } catch (error) {
       console.error('Error updating quote:', error);
@@ -389,57 +374,6 @@ export class CustomQuoteModalComponent implements OnInit {
       });
     } finally {
       this.isSavingChanges = false;
-    }
-  }
-
-  private async updateQuote(updatedQuote: any) {
-    try {
-      const session = await fetchAuthSession();
-      const tenentId = await this.getTenentId(session);
-  
-      const lambdaClient = new LambdaClient({
-        region: outputs.auth.aws_region,
-        credentials: session.credentials,
-      });
-  
-      const payload = {
-        pathParameters: {
-          tenentId: tenentId,
-          quoteId: updatedQuote.quoteId
-        },
-        body: JSON.stringify({
-          items: updatedQuote.items.map((item: any) => ({
-            ItemSKU: item.ItemSKU,
-            Quantity: item.Quantity,
-            inventoryID: item.inventoryID
-          })),
-          suppliers: updatedQuote.suppliers.map((supplier: any) => ({
-            company_name: supplier.company_name,
-            supplierID: supplier.supplierID
-          }))
-        })
-      };
-  
-      console.log('Updating quote with payload:', JSON.stringify(payload, null, 2));
-  
-      const invokeCommand = new InvokeCommand({
-        FunctionName: 'updateQuoteDetails', // Make sure this Lambda function name is correct
-        Payload: new TextEncoder().encode(JSON.stringify(payload)),
-      });
-  
-      const lambdaResponse = await lambdaClient.send(invokeCommand);
-      const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-  
-      console.log('Lambda response:', JSON.stringify(responseBody, null, 2));
-  
-      if (responseBody.statusCode === 200) {
-        console.log('Quote updated successfully');
-      } else {
-        throw new Error(responseBody.body || 'Failed to update quote');
-      }
-    } catch (error) {
-      console.error('Error updating quote:', error);
-      throw error; // Re-throw the error to be caught in the saveChanges method
     }
   }
 

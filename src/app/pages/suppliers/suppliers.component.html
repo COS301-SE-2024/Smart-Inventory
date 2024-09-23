@@ -116,7 +116,7 @@
         </mat-dialog-content>
         <mat-dialog-actions align="end" style="display: flex; padding-bottom: 10px">
             <button class="btn" mat-flat-button type="button" (click)="closeAddPopup()">Cancel</button>
-            <button class="btn" mat-flat-button type="submit" [disabled]="!supplierForm.form.valid">Submit</button>
+            <button class="btn" mat-flat-button type="submit" [disabled]="!supplierForm.form.valid" (click)="onSubmit(supplierForm.value)">Submit</button>
         </mat-dialog-actions>
     </div>
 </div>
@@ -203,7 +203,7 @@
         ></mat-dialog-content>
         <mat-dialog-actions align="end" style="display: flex; padding-bottom: 10px">
             <button mat-flat-button class="btn" type="button" (click)="closeEditAddressPopup()">Cancel</button>
-            <button mat-flat-button class="btn" type="submit">Submit</button>
+            <button mat-flat-button class="btn" type="submit" (click)="onEditAddressSubmit(editAddressForm.value)">Submit</button>
         </mat-dialog-actions>
     </div>
 </div>

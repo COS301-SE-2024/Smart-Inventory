@@ -25,7 +25,8 @@ export class SuppliersService {
     return this.http.post(this.addSupplierUrl, supplierData);
   }
 
-  deleteSupplier(supplierId: string): Observable<any> {
-    return this.http.delete(`${this.deleteSupplierUrl}?supplierId=${supplierId}`);
+  deleteSupplier(supplierID: string, tenentId: string): Observable<any> {
+    return this.http.delete(this.deleteSupplierUrl, { body: { supplierID, tenentId } });
   }
+  
 }

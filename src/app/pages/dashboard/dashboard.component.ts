@@ -75,6 +75,13 @@ interface SkuCounts {
     [sku: string]: number;
 }
 
+interface ChartConfig {
+    type: string;
+    data: any;
+    title: string;
+    component: string;
+}
+
 @Component({
     selector: 'app-dashboard',
     templateUrl: './dashboard.component.html',
@@ -227,13 +234,6 @@ export class DashboardComponent implements OnInit {
             .subscribe(() => {
                 this.persistState();
             });
-
-        // this.dashboard = [
-        //     { cols: 3, rows: 2, y: 0, x: 0, cardData: this.cardData[0] },
-        //     { cols: 3, rows: 2, y: 0, x: 1, cardData: this.cardData[1] },
-        //     { cols: 3, rows: 2, y: 0, x: 2, cardData: this.cardData[2] },
-        //     { cols: 3, rows: 2, y: 0, x: 3, cardData: this.cardData[3] },
-        // ];
     }
 
     async populateRequestOrders(stockRequests: StockRequest[], orders: Order[]): Promise<any> {
@@ -350,7 +350,7 @@ export class DashboardComponent implements OnInit {
                 (error) => {
                     console.error('Error fetching inventory data:', error);
                     this.rowData = [];
-                }
+                },
             );
         } catch (error) {
             console.error('Error in loadInventoryData:', error);
@@ -524,12 +524,11 @@ export class DashboardComponent implements OnInit {
     }
 
     async ngOnInit() {
+        this.titleService.updateTitle('Dashboard');
         this.dashService.dashboard$.subscribe((dashboard) => {
             this.dashboard = dashboard;
             this.cdr.detectChanges();
         });
-        this.titleService.updateTitle('Dashboard');
-
         await this.loadInventoryData();
         await this.fetchUsers();
         // await this.dashData();
@@ -555,27 +554,40 @@ export class DashboardComponent implements OnInit {
                     {
                         type: 'bar',
                         data: {
-                            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-                            values: data.monthlySales
+                            categories: [
+                                'Jan',
+                                'Feb',
+                                'Mar',
+                                'Apr',
+                                'May',
+                                'Jun',
+                                'Jul',
+                                'Aug',
+                                'Sep',
+                                'Oct',
+                                'Nov',
+                                'Dec',
+                            ],
+                            values: data.monthlySales,
                         },
                         title: 'Monthly Sales',
-                        component: 'BarChartComponent'
+                        component: 'BarChartComponent',
                     },
                     {
                         type: 'line',
                         data: {
                             categories: ['Q1', 'Q2', 'Q3', 'Q4'],
-                            values: data.quarterlyRevenue
+                            values: data.quarterlyRevenue,
                         },
                         title: 'Quarterly Revenue',
-                        component: 'LineChartComponent'
+                        component: 'LineChartComponent',
                     },
                     {
                         type: 'pie',
                         data: Object.entries(data.marketShare).map(([name, value]) => ({ name, value })),
                         title: 'Market Share',
-                        component: 'PieChartComponent'
-                    }
+                        component: 'PieChartComponent',
+                    },
                 ];
             } else {
                 console.error('Failed to fetch data from the service');

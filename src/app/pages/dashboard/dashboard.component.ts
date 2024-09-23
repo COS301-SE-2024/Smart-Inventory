@@ -732,58 +732,90 @@ export class DashboardComponent implements OnInit {
     }
 
     initializeDashboard() {
-        // if (this.cardData && this.cardData.length > 0) {
-        //         this.dashboard = [
-        //             // Existing cards
-        //             ...this.cardData.map((data, index) => ({
-        //                 cols: 3,
-        //                 rows: 1,
-        //                 y: 0,
-        //                 x: index * 3,
-        //                 cardData: data,
-        //             })),
-        //             // First full-width item
-        //             {
-        //                 cols: 12,
-        //                 rows: 3,
-        //                 y: 2,
-        //                 x: 0,
-        //                 cardId: 'sales-chart',
-        //                 name: 'Sales Chart',
-        //                 component: 'SaleschartComponent',
-        //             },
-        //             // Second full-width item(0)
-        //             {
-        //                 cols: 12,
-        //                 rows: 3,
-        //                 y: 4,
-        //                 x: 0,
-        //                 cardId: 'bar-chart',
-        //                 name: 'Bar Chart',
-        //                 component: 'BarchartComponent',
-        //             },
-        //             // First half-width item
-        //             {
-        //                 cols: 6,
-        //                 rows: 3,
-        //                 y: 6,
-        //                 x: 0,
-        //                 cardId: 'bubble-chart',
-        //                 name: 'Bubble Chart',
-        //                 component: 'BubblechartComponent',
-        //             },
-        //             // Second half-width item
-        //             {
-        //                 cols: 6,
-        //                 rows: 4,
-        //                 y: 6,
-        //                 x: 6,
-        //                 cardId: 'donut-chart',
-        //                 name: 'Donut Chart',
-        //                 component: 'DonutchartComponent',
-        //             },
-        //         ];
-        // }
+        this.cardData = [
+            {
+                title: 'Total Revenue',
+                value: 1250000,
+                icon: 'attach_money',
+                type: 'currency',
+                change: 15.2,
+                color: 'green',
+            },
+            {
+                title: 'New Customers',
+                value: 847,
+                icon: 'person_add',
+                type: 'number',
+                change: 5.6,
+                color: 'green',
+            },
+            {
+                title: 'Customer Satisfaction',
+                value: 92,
+                icon: 'sentiment_satisfied',
+                type: 'percentage',
+                change: -2.1,
+                color: 'yellow',
+            },
+            {
+                title: 'Orders Processed',
+                value: 1532,
+                icon: 'shopping_cart',
+                type: 'number',
+                change: 8.3,
+                color: 'green',
+            },
+        ];
+        this.dashboard = [
+            // Existing cards
+            // ...this.cardData.map((data, index) => ({
+            //     cols: 3,
+            //     rows: 1,
+            //     y: 0,
+            //     x: index * 3,
+            //     cardData: data,
+            // })),
+            // First full-width item
+            // {
+            //     cols: 12,
+            //     rows: 3,
+            //     y: 2,
+            //     x: 0,
+            //     cardId: 'sales-chart',
+            //     name: 'Sales Chart',
+            //     component: 'SaleschartComponent',
+            // },
+            // // Second full-width item(0)
+            // {
+            //     cols: 12,
+            //     rows: 3,
+            //     y: 4,
+            //     x: 0,
+            //     cardId: 'bar-chart',
+            //     name: 'Bar Chart',
+            //     component: 'BarchartComponent',
+            // },
+            // // First half-width item
+            // {
+            //     cols: 6,
+            //     rows: 3,
+            //     y: 6,
+            //     x: 0,
+            //     cardId: 'bubble-chart',
+            //     name: 'Bubble Chart',
+            //     component: 'BubblechartComponent',
+            // },
+            // // Second half-width item
+            // {
+            //     cols: 6,
+            //     rows: 4,
+            //     y: 6,
+            //     x: 6,
+            //     cardId: 'donut-chart',
+            //     name: 'Donut Chart',
+            //     component: 'DonutchartComponent',
+            // },
+        ];
         this.CDRService.detectChanges();
         return this.dashboard;
     }

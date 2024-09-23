@@ -117,7 +117,7 @@ export class AddWidgetSidePaneComponent {
 
     constructor(private dashService: DashboardService) {}
 
-    addWidget(chartConfig: any) {
+    addWidget(chartConfig: ChartConfig) {
         this.dashService.addWidget(chartConfig);
         this.close();
     }

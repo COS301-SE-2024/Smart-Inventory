@@ -48,6 +48,8 @@ export class SuppliersComponent implements OnInit {
     showAddPopup = false;
     showDeletePopup = false;
     isLoading = true;
+    isAddingSupplier = false;
+    isEditingAddress = false;
     rowsToDelete: any[] = [];
     showEditAddressPopup = false;
     tenantId: string = '';
@@ -301,7 +303,7 @@ export class SuppliersComponent implements OnInit {
     }
 
     async onEditAddressSubmit(formData: any) {
-        this.isLoading = true;
+        this.isEditingAddress = true;
         try {
             console.log('Updated address:', formData);
             const session = await fetchAuthSession();
@@ -350,12 +352,12 @@ export class SuppliersComponent implements OnInit {
                 verticalPosition: 'top',
             });
         } finally {
-            this.isLoading = false;
+            this.isEditingAddress = false;
         }
     }
     
     async onSubmit(formData: any) {
-        this.isLoading = true;
+        this.isAddingSupplier = true;
         try {
             const session = await fetchAuthSession();
             const cognitoClient = new CognitoIdentityProviderClient({
@@ -408,7 +410,7 @@ export class SuppliersComponent implements OnInit {
                 verticalPosition: 'top',
             });
         } finally {
-            this.isLoading = false;
+            this.isAddingSupplier = false;
         }
     }
     

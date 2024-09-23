@@ -3,7 +3,7 @@
 </div>
 
 <div *ngIf="!isLoading" class="gridster-container">
-    <gridster [options]="gridsterOptions">
+    <gridster [options]="gridsterOptions" style="background: transparent !important">
         <gridster-item *ngFor="let item of gridsterItems" [item]="item" [ngClass]="{ 'grid-card': item['isGrid'] }">
             <ng-container *ngIf="item['chartIndex'] !== undefined">
                 <mat-card class="chart-card">

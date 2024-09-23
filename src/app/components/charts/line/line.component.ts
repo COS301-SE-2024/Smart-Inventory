@@ -64,14 +64,35 @@ export class LineComponent implements OnInit, OnChanges, AfterViewInit {
         left: 'center',
         top: '20px'
       },
-      tooltip: { trigger: 'axis' },
+      tooltip: { 
+        trigger: 'axis',
+        axisPointer: {
+          type: 'shadow'
+        }
+      },
       legend: {
+        type: 'scroll',
+        orient: 'horizontal',
+        bottom: 10,
         data: this.seriesData.map(series => series.name),
-        bottom: 0 // Set the legend at the bottom of the chart
+        textStyle: {
+          fontSize: 12
+        },
+        pageButtonItemGap: 5,
+        pageButtonGap: 5,
+        pageIconSize: 12,
+        pageTextStyle: {
+          fontSize: 12
+        }
       },
       xAxis: {
         type: 'category',
-        data: this.xAxisData
+        data: this.xAxisData,
+        axisLabel: {
+          rotate: 45,
+          interval: 0,
+          fontSize: 10
+        }
       },
       grid: {
         left: '3%',

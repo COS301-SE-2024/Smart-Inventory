@@ -409,9 +409,27 @@ export class SupplierReportComponent implements OnInit {
             yAxisName,
         };
     }
+    
     async fetchMetrics(data: any[]) {
         try {
-            console.log("processed data fetchmetrics:",data);
+            console.log("processed data fetchmetrics:", data);
+    
+            let totalSpent = 0;
+            let outstandingPayments = 0;
+    
+            data.forEach((supplier) => {
+                // Parse the string values to floats and add them
+                totalSpent += parseFloat(supplier['TotalSpent']) || 0;
+                outstandingPayments += parseFloat(supplier['Out Standing Payments']) || 0;
+            });
+    
+            console.log('Total spent:', totalSpent.toFixed(2), 'Outstanding payments:', outstandingPayments.toFixed(2));
+    
+            this.tiles.push(
+                this.createTile('attach_money', 'Total Spend', 'Total Spent', totalSpent.toFixed(2)),
+                this.createTile('money_off', 'Outstanding Payments', 'Outstanding Payments', outstandingPayments.toFixed(2))
+            );
+    
             data.forEach((supplier) => {
                 this.tiles.push(
                     this.createTile(
@@ -427,18 +445,11 @@ export class SupplierReportComponent implements OnInit {
                         supplier['Order Accuracy Rate'].toString(),
                     ),
                     this.createTile('repeat', 'Reorder Level', 'Reorder Level', supplier['Reorder Level']),
-                    this.createTile('attach_money', 'Total Spend', 'Total Spent', supplier['TotalSpent'].toString()),
-                    this.createTile(
-                        'money_off',
-                        'Outstanding Payments',
-                        'Outstanding Payments',
-                        supplier['Out Standing Payments'].toString(),
-                    ),
                     this.createTile('warning', 'Risk Score', 'Risk Score', supplier['RiskScore']),
                 );
             });
         } catch (error) {
-            console.log('Error fetching metrics');
+            console.log('Error fetching metrics:', error);
         }
     }
 
@@ -933,6 +944,7 @@ export class SupplierReportComponent implements OnInit {
                     console.error('Error fetching inventory data:', error);
                     this.rowData = [];
                 }
+                
             );
         } catch (error) {
             console.error('Error in loadSupplierMetrics:', error);

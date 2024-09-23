@@ -142,6 +142,7 @@ export class InventoryReportComponent implements OnInit {
     async ngOnInit() {
         this.titleService.updateTitle('Inventory Report');
         this.isLoading = true;
+        this.setupColumnDefs();
         await this.loadInventoryData();
         await this.updateInventoryWithRequests();
         this.setupCharts();

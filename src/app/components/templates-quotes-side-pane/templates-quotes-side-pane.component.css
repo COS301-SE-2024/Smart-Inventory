@@ -1,6 +1,6 @@
 .side-pane {
     position: fixed;
-    top: 64px;
+    top: 60px;
     right: -800px;
     width: 800px;
     height: calc(100% - 64px);

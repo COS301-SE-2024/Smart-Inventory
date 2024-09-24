@@ -2,16 +2,17 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { Router } from '@angular/router';
 import { TitleService } from '../../components/header/title.service';
 import { CognitoService } from '../../_services/cognito.service';
-import { AuthenticatorService } from '@aws-amplify/ui-angular';
-import { ThemeService } from '../../services/theme.service';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { DeliveryInformationModalComponent } from 'app/components/delivery-information-modal/delivery-information-modal.component';
+import { EmailTemplateModalComponent } from 'app/components/email-template-modal/email-template-modal.component';
+import { TemplatesQuotesSidePaneComponent } from 'app/components/templates-quotes-side-pane/templates-quotes-side-pane.component';
 
 @Component({
   selector: 'app-settings',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, MatSnackBarModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, MatSnackBarModule, TemplatesQuotesSidePaneComponent],
   templateUrl: './settings.component.html',
   styleUrls: ['./settings.component.css']
 })
@@ -27,13 +28,13 @@ export class SettingsComponent implements OnInit {
     new: ''
   };
 
+  isTemplateSidePaneOpen = false;
+
   constructor(
     private snackBar: MatSnackBar,
     private titleService: TitleService,
     private cognitoService: CognitoService,
-    private authenticator: AuthenticatorService,
-    private router: Router,
-    private themeService: ThemeService
+    private dialog: MatDialog
   ) {}
 
   ngOnInit() {
@@ -93,18 +94,37 @@ export class SettingsComponent implements OnInit {
   }
 
   editEmailTemplate() {
-    console.log('Editing email template');
-    // Implement the logic to edit email template
+    const dialogRef = this.dialog.open(EmailTemplateModalComponent, {
+      width: '600px',
+      data: {} // You can pass any necessary data here
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        // Handle the result if needed
+        console.log('Email template updated');
+      }
+    });
   }
 
   editAutomationTemplates() {
-    console.log('Editing automation templates');
-    // Implement the logic to edit automation templates
+    this.isTemplateSidePaneOpen = true;
   }
 
+
   editDeliveryInfo() {
-    console.log('Editing delivery information');
-    // Implement the logic to edit delivery information
+    console.log('Opening delivery information modal'); // Add this log
+    const dialogRef = this.dialog.open(DeliveryInformationModalComponent, {
+      width: '600px',
+      data: { deliveryAddress: {} } // Provide an empty object if you don't have initial data
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        console.log('Delivery information updated:', result);
+        // Handle the updated delivery information
+      }
+    });
   }
 
   changeTheme() {

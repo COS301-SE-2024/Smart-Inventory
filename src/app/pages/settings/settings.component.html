@@ -1,35 +1,80 @@
-<ng-container>
-    <!-- <mat-tab-group>
-        <mat-tab label="Profile"> -->
-    <div style="height: 85vh; width: 100%; overflow-y: scroll; align-content: center">
-        <app-profile></app-profile>
+<div class="settings-container">
+    <div class="intro-section">
+      <h2>Customize Your Experience</h2>
+      <p>Tailor the app to your needs by adjusting these key settings</p>
     </div>
-    <!-- </mat-tab>
-        <mat-tab label="Templates">
-            <div style="height: 85vh; width: 100%; overflow-y: scroll; align-content: center">
-                <app-qr-code-generator></app-qr-code-generator>
-            </div>
-        </mat-tab>
-    </mat-tab-group> -->
-</ng-container>
-
-<!-- <ng-container>
-            <div class="second-row" style="text-align: center">
-                <h4>Theme</h4>
-                <hr />
-                <div class="theme-selection-grid">
-                    <div
-                        class="theme-option"
-                        [ngClass]="{ 'selected-theme': currentTheme === 'light' }"
-                        (click)="selectTheme('light')"
-                    >
-                        <img src="assets/img/light-mode.png" alt="Light Mode" />
-                    </div>
-                    <div
-                        class="theme-option"
-                        [ngClass]="{ 'selected-theme': currentTheme === 'dark' }"
-                        (click)="selectTheme('dark')"
-                    >
-                        <img src="assets/img/dark-mode.png" alt="Dark Mode" />
-                    </div>
--->
+    <div class="tiles-grid">
+      <div class="tile" data-tooltip="Manage your personal information">
+        <div class="tile-content">
+          <div class="tile-icon">
+            <i class="fas fa-user"></i>
+          </div>
+          <h3>Personal Details</h3>
+          <div class="tile-inputs">
+            <input type="text" placeholder="Name" [(ngModel)]="personalDetails.name">
+            <input type="text" placeholder="Surname" [(ngModel)]="personalDetails.surname">
+            <input type="email" placeholder="Email" [(ngModel)]="personalDetails.email">
+          </div>
+          <button (click)="savePersonalDetails()">Save Changes</button>
+        </div>
+      </div>
+  
+      <div class="tile" data-tooltip="Update your account password">
+        <div class="tile-content">
+          <div class="tile-icon">
+            <i class="fas fa-lock"></i>
+          </div>
+          <h3>Password</h3>
+          <div class="tile-inputs">
+            <input type="password" placeholder="Current Password" [(ngModel)]="passwordChange.current">
+            <input type="password" placeholder="New Password" [(ngModel)]="passwordChange.new">
+          </div>
+          <button (click)="updatePassword()">Update Password</button>
+        </div>
+      </div>
+  
+      <div class="tile" data-tooltip="Customize your email templates">
+        <div class="tile-content">
+          <div class="tile-icon">
+            <i class="fas fa-envelope"></i>
+          </div>
+          <h3>Email Template</h3>
+          <p>Update and edit your template for emails sent.</p>
+          <button (click)="editEmailTemplate()">Edit Template</button>
+        </div>
+      </div>
+  
+      <div class="tile" data-tooltip="Manage your automation templates">
+        <div class="tile-content">
+          <div class="tile-icon">
+            <i class="fas fa-robot"></i>
+          </div>
+          <h3>Automation Templates</h3>
+          <p>Add, remove and edit your templates for order automation.</p>
+          <button (click)="editAutomationTemplates()">Edit Templates</button>
+        </div>
+      </div>
+  
+      <div class="tile" data-tooltip="Update your delivery preferences">
+        <div class="tile-content">
+          <div class="tile-icon">
+            <i class="fas fa-truck"></i>
+          </div>
+          <h3>Delivery Information</h3>
+          <p>Update and change your delivery information.</p>
+          <button (click)="editDeliveryInfo()">Edit Details</button>
+        </div>
+      </div>
+  
+      <div class="tile" data-tooltip="Customize your app experience">
+        <div class="tile-content">
+          <div class="tile-icon">
+            <i class="fas fa-palette"></i>
+          </div>
+          <h3>Theme</h3>
+          <p>Switch between light and dark theme.</p>
+          <button (click)="changeTheme()">Customize</button>
+        </div>
+      </div>
+    </div>
+  </div>

@@ -1,232 +1,114 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { MatExpansionModule } from '@angular/material/expansion';
-import { MatListModule } from '@angular/material/list';
-import { FormControl, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatSelectModule } from '@angular/material/select';
-import { MatTabsModule } from '@angular/material/tabs';
-import { MatCardModule } from '@angular/material/card';
-import { MatCheckboxModule } from '@angular/material/checkbox';
+import { Router } from '@angular/router';
 import { TitleService } from '../../components/header/title.service';
-import { MatGridListModule } from '@angular/material/grid-list';
 import { CognitoService } from '../../_services/cognito.service';
 import { AuthenticatorService } from '@aws-amplify/ui-angular';
-import { Router } from '@angular/router';
 import { ThemeService } from '../../services/theme.service';
-import { ProfileComponent } from '../../components/profile/profile.component';
 
 @Component({
-    selector: 'app-settings',
-    standalone: true,
-    imports: [
-        CommonModule,
-        MatFormFieldModule,
-        MatInputModule,
-        MatIconModule,
-        MatButtonModule,
-        MatSnackBarModule,
-        MatSlideToggleModule,
-        FormsModule,
-        ReactiveFormsModule,
-        MatExpansionModule,
-        MatListModule,
-        MatSelectModule,
-        MatTabsModule,
-        MatCardModule,
-        MatCheckboxModule,
-        MatGridListModule,
-        ProfileComponent,
-    ],
-    templateUrl: './settings.component.html',
-    styleUrl: './settings.component.css',
-    encapsulation: ViewEncapsulation.None,
+  selector: 'app-settings',
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, MatSnackBarModule],
+  templateUrl: './settings.component.html',
+  styleUrls: ['./settings.component.css']
 })
 export class SettingsComponent implements OnInit {
-    emailFormControl = new FormControl('', [Validators.required, Validators.email]);
+  personalDetails = {
+    name: '',
+    surname: '',
+    email: ''
+  };
 
-    profile = {
-        name: '',
-        surname: '',
-        email: '',
-        confirmEmailDelete: '',
+  passwordChange = {
+    current: '',
+    new: ''
+  };
+
+  constructor(
+    private snackBar: MatSnackBar,
+    private titleService: TitleService,
+    private cognitoService: CognitoService,
+    private authenticator: AuthenticatorService,
+    private router: Router,
+    private themeService: ThemeService
+  ) {}
+
+  ngOnInit() {
+    this.titleService.updateTitle('Settings');
+    this.loadUserProfile();
+  }
+
+  loadUserProfile() {
+    this.cognitoService.getCurrentUserAttributes().subscribe(
+      (attributes) => {
+        this.personalDetails.name = attributes['given_name'] || '';
+        this.personalDetails.surname = attributes['family_name'] || '';
+        this.personalDetails.email = attributes['email'] || '';
+      },
+      (error) => {
+        console.error('Error loading user profile:', error);
+        this.snackBar.open('Error loading user profile', 'Close', { duration: 3000 });
+      }
+    );
+  }
+
+  savePersonalDetails() {
+    const updatedAttributes: Record<string, string> = {
+      ['given_name']: this.personalDetails.name,
+      ['family_name']: this.personalDetails.surname,
+      ['email']: this.personalDetails.email,
     };
 
-    password = {
-        current: '',
-        new: '',
-        currentDelete: '',
-    };
-    isChangingPassword = false;
-    hidePassword = true;
-    isDeleteAccountVisible = false;
+    this.cognitoService.updateUserAttribute(updatedAttributes).subscribe(
+      () => {
+        this.snackBar.open('Personal details updated successfully', 'Close', { duration: 3000 });
+      },
+      (error) => {
+        console.error('Error updating personal details:', error);
+        this.snackBar.open('Error updating personal details. Please try again.', 'Close', { duration: 3000 });
+      }
+    );
+  }
 
-    constructor(
-        private snackBar: MatSnackBar,
-        private titleService: TitleService,
-        private cognitoService: CognitoService,
-        private authenticator: AuthenticatorService,
-        private router: Router,
-        private themeService: ThemeService,
-    ) {}
-
-    ngOnInit() {
-        this.titleService.updateTitle('Settings');
-        this.loadUserProfile();
+  updatePassword() {
+    if (!this.passwordChange.current || !this.passwordChange.new) {
+      this.snackBar.open('Please fill in both current and new password fields', 'Close', { duration: 3000 });
+      return;
     }
 
-    loadUserProfile() {
-        this.cognitoService.getCurrentUserAttributes().subscribe(
-            (attributes) => {
-                this.profile.name = attributes['given_name'] || '';
-                this.profile.surname = attributes['family_name'] || '';
-                this.profile.email = attributes['email'] || '';
-                this.emailFormControl.setValue(this.profile.email);
-            },
-            (error) => {
-                console.error('Error loading user profile:', error);
-                this.snackBar.open('Error loading user profile', 'Close', { duration: 3000 });
-            },
-        );
-    }
+    this.cognitoService.changePassword(this.passwordChange.current, this.passwordChange.new).subscribe(
+      () => {
+        this.snackBar.open('Password changed successfully', 'Close', { duration: 3000 });
+        this.passwordChange.current = '';
+        this.passwordChange.new = '';
+      },
+      (error) => {
+        console.error('Error changing password:', error);
+        this.snackBar.open('Error changing password. Please try again.', 'Close', { duration: 3000 });
+      }
+    );
+  }
 
-    saveProfileChanges() {
-        const updatedAttributes: Record<string, string> = {
-            ['given_name']: this.profile.name,
-            ['family_name']: this.profile.surname,
-            ['email']: this.profile.email,
-        };
+  editEmailTemplate() {
+    console.log('Editing email template');
+    // Implement the logic to edit email template
+  }
 
-        if (this.emailFormControl.value) {
-            updatedAttributes['email'] = this.emailFormControl.value;
-        }
+  editAutomationTemplates() {
+    console.log('Editing automation templates');
+    // Implement the logic to edit automation templates
+  }
 
-        this.cognitoService.updateUserAttribute(updatedAttributes).subscribe(
-            (result) => {
-                console.log('Update result:', result); // Log the result for debugging
-                this.snackBar.open('Profile updated successfully', 'Close', { duration: 3000 });
-            },
-            (error) => {
-                console.error('Error updating profile:', error);
-                this.snackBar.open('Error updating profile. Please try again.', 'Close', { duration: 3000 });
-            },
-        );
-    }
+  editDeliveryInfo() {
+    console.log('Editing delivery information');
+    // Implement the logic to edit delivery information
+  }
 
-    handleResetPassword() {
-        if (!this.password.current || !this.password.new) {
-            this.snackBar.open('Please fill in all password fields', 'Close', { duration: 3000 });
-            return;
-        }
-
-        this.cognitoService.changePassword(this.password.current, this.password.new).subscribe(
-            () => {
-                this.snackBar.open('Password changed successfully', 'Close', { duration: 3000 });
-                this.password.current = '';
-                this.password.new = '';
-            },
-            (error) => {
-                console.error('Error changing password:', error);
-                this.snackBar.open('Error changing password. Please try again.', 'Close', { duration: 3000 });
-            },
-        );
-    }
-
-    toggleDeleteAccount() {
-        this.isDeleteAccountVisible = !this.isDeleteAccountVisible;
-    }
-
-    handleDeleteAccount() {
-        if (!this.password.currentDelete || !this.profile.confirmEmailDelete) {
-            this.snackBar.open('Please fill in all fields', 'Close', { duration: 3000 });
-            return;
-        }
-
-        if (this.profile.confirmEmailDelete !== this.profile.email) {
-            this.snackBar.open('Confirmation email does not match your email', 'Close', { duration: 3000 });
-            return;
-        }
-
-        this.cognitoService.verifyCurrentPassword(this.profile.email, this.password.currentDelete).subscribe(
-            (isValid) => {
-                if (isValid) {
-                    this.cognitoService.deleteAccount().subscribe(
-                        () => {
-                            this.snackBar.open('Account deleted successfully', 'Close', { duration: 3000 });
-                            this.authenticator.signOut();
-                            this.router.navigate(['/login']);
-                        },
-                        (error) => {
-                            console.error('Error deleting account:', error);
-                            this.snackBar.open('Error deleting account. Please try again.', 'Close', {
-                                duration: 3000,
-                            });
-                        },
-                    );
-                } else {
-                    this.snackBar.open('Invalid password', 'Close', { duration: 3000 });
-                }
-            },
-            (error) => {
-                console.error('Error verifying password:', error);
-                this.snackBar.open('Error verifying password. Please try again.', 'Close', { duration: 3000 });
-            },
-        );
-    }
-
-    // selectTheme(theme: string): void {
-    //     this.currentTheme = theme;
-    //     this.themeService.setManualTheme(this.);
-    // }
-
-    // password update
-    initiatePasswordChange() {
-        this.isChangingPassword = true;
-        this.password.current = ''; // Clear the current password field
-        this.password.new = ''; // Clear the new password field
-    }
-
-    cancelPasswordChange() {
-        this.isChangingPassword = false;
-        this.password.current = '';
-        this.password.new = '';
-        this.snackBar.open('Password change cancelled', 'Close', { duration: 3000 });
-    }
-
-    updatePassword() {
-        if (!this.password.current || !this.password.new) {
-            this.snackBar.open('Please fill in both current and new password fields', 'Close', { duration: 3000 });
-            return;
-        }
-
-        this.cognitoService.changePassword(this.password.current, this.password.new).subscribe(
-            () => {
-                this.snackBar.open('Password changed successfully', 'Close', { duration: 3000 });
-                this.password.current = '';
-                this.password.new = '';
-                this.isChangingPassword = false;
-            },
-            (error) => {
-                console.error('Error changing password:', error);
-                this.snackBar.open('Error changing password. Please try again.', 'Close', { duration: 3000 });
-            },
-        );
-    }
-
-    togglePasswordVisibility() {
-        this.hidePassword = !this.hidePassword;
-    }
-
-    visitNotifications() {
-        this.router.navigate(['/notifications']);
-    }
-
-    visitProfile() {
-        this.router.navigate(['/profile']);
-    }
+  changeTheme() {
+    console.log('Customizing app appearance');
+    // Implement the logic to customize app appearance using ThemeService
+  }
 }

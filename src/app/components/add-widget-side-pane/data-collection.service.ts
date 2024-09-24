@@ -60,27 +60,27 @@ export class DataCollectionService {
 
     getSupplierReportData(): Observable<any[]> {
         return from(this.fetchSupplierReportData()).pipe(
-            map(suppliers => suppliers || []),
-            catchError(error => {
+            map((suppliers) => suppliers || []),
+            catchError((error) => {
                 console.error('Error fetching supplier report data:', error);
                 return [];
-            })
+            }),
         );
     }
 
     getInventoryItems(): Observable<any> {
         return from(fetchAuthSession()).pipe(
-            switchMap(session => from(this.getTenantId(session))),
-            switchMap(tenantId => {
+            switchMap((session) => from(this.getTenantId(session))),
+            switchMap((tenantId) => {
                 if (!tenantId) {
                     throw new Error('TenantId not found in user attributes');
                 }
                 return this.inventoryService.getInventoryItems(tenantId);
             }),
-            catchError(error => {
+            catchError((error) => {
                 console.error('Error fetching inventory items:', error);
                 return [];
-            })
+            }),
         );
     }
 
@@ -94,25 +94,25 @@ export class DataCollectionService {
 
     removeInventoryItem(inventoryID: string): Observable<any> {
         return from(fetchAuthSession()).pipe(
-            switchMap(session => from(this.getTenantId(session))),
-            switchMap(tenantId => {
+            switchMap((session) => from(this.getTenantId(session))),
+            switchMap((tenantId) => {
                 if (!tenantId) {
                     throw new Error('TenantId not found in user attributes');
                 }
                 return this.inventoryService.removeInventoryItem(inventoryID, tenantId);
-            })
+            }),
         );
     }
 
     getInventoryItem(inventoryID: string): Observable<any> {
         return from(fetchAuthSession()).pipe(
-            switchMap(session => from(this.getTenantId(session))),
-            switchMap(tenantId => {
+            switchMap((session) => from(this.getTenantId(session))),
+            switchMap((tenantId) => {
                 if (!tenantId) {
                     throw new Error('TenantId not found in user attributes');
                 }
                 return this.inventoryService.getInventoryItem(inventoryID, tenantId);
-            })
+            }),
         );
     }
 
@@ -136,11 +136,11 @@ export class DataCollectionService {
 
     getActivityData(): Observable<any[]> {
         return from(this.fetchActivities()).pipe(
-            map(activities => activities || []),
-            catchError(error => {
+            map((activities) => activities || []),
+            catchError((error) => {
                 console.error('Error fetching activities:', error);
                 return [];
-            })
+            }),
         );
     }
 

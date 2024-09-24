@@ -523,25 +523,16 @@ export class CustomQuoteModalComponent implements OnInit {
 
 
   async getSupplierDetails(tenentId: string, supplierID: string): Promise<any> {
-    const lambdaClient = new LambdaClient({
-      region: outputs.auth.aws_region,
-      credentials: (await fetchAuthSession()).credentials,
-    });
-
-    const invokeCommand = new InvokeCommand({
-      FunctionName: 'getSupplier',
-      Payload: new TextEncoder().encode(JSON.stringify({ 
-        pathParameters: { tenentId: tenentId, supplierID: supplierID } 
-      })),
-    });
-
-    const lambdaResponse = await lambdaClient.send(invokeCommand);
-    const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
-    if (responseBody.statusCode === 200) {
-      return JSON.parse(responseBody.body);
-    } else {
-      throw new Error(`Failed to get supplier details: ${responseBody.body}`);
+    try {
+      const supplierDetails = await this.suppliersService.getSupplierDetails(tenentId, supplierID).toPromise();
+      return supplierDetails;
+    } catch (error: unknown) {
+      console.error('Error getting supplier details:', error);
+      if (error instanceof Error) {
+        throw new Error(`Failed to get supplier details: ${error.message}`);
+      } else {
+        throw new Error('Failed to get supplier details: Unknown error');
+      }
     }
   }
 

@@ -18,6 +18,7 @@ import { ContactSupportComponent } from './components/contact-support/contact-su
 import { StockRequestReportComponent } from './components/stock-request-report/stock-request-report.component';
 import { InventorySummaryComponent } from './pages/inventory-summary/inventory-summary.component';
 import { LandingPageComponent } from './pages/landing-page/landing-page.component';
+import { SettingsOverhaulComponent } from './components/settings-overhaul/settings-overhaul.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: '/landing', pathMatch: 'full' },
@@ -43,4 +44,5 @@ export const routes: Routes = [
     { path: '', redirectTo: '/landing', pathMatch: 'full' },
     { path: 'landing', component: LandingPageComponent },
     { path: 'supplier-form/:supplierID/:quoteID/:deliveryID/:tenentId', component: SupplierFormComponent },
+    { path: 'settings-new', component: SettingsOverhaulComponent },
 ];

@@ -1,4 +1,8 @@
 <div class="settings-container">
+      <app-templates-quotes-side-pane 
+      [isOpen]="isTemplateSidePaneOpen" 
+      (closed)="isTemplateSidePaneOpen = false">
+      </app-templates-quotes-side-pane>
     <div class="intro-section">
       <h2>Customize Your Experience</h2>
       <p>Tailor the app to your needs by adjusting these key settings</p>

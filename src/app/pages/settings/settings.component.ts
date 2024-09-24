@@ -2,11 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { Router } from '@angular/router';
 import { TitleService } from '../../components/header/title.service';
 import { CognitoService } from '../../_services/cognito.service';
-import { AuthenticatorService } from '@aws-amplify/ui-angular';
-import { ThemeService } from '../../services/theme.service';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DeliveryInformationModalComponent } from 'app/components/delivery-information-modal/delivery-information-modal.component';
 import { EmailTemplateModalComponent } from 'app/components/email-template-modal/email-template-modal.component';
@@ -15,7 +12,7 @@ import { TemplatesQuotesSidePaneComponent } from 'app/components/templates-quote
 @Component({
   selector: 'app-settings',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, MatSnackBarModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, MatSnackBarModule, TemplatesQuotesSidePaneComponent],
   templateUrl: './settings.component.html',
   styleUrls: ['./settings.component.css']
 })
@@ -31,6 +28,8 @@ export class SettingsComponent implements OnInit {
     new: ''
   };
 
+  isTemplateSidePaneOpen = false;
+
   constructor(
     private snackBar: MatSnackBar,
     private titleService: TitleService,
@@ -42,8 +41,6 @@ export class SettingsComponent implements OnInit {
     this.titleService.updateTitle('Settings');
     this.loadUserProfile();
   }
-
-  private sidePane: MatDialogRef<TemplatesQuotesSidePaneComponent> | null = null;
 
   loadUserProfile() {
     this.cognitoService.getCurrentUserAttributes().subscribe(
@@ -111,20 +108,9 @@ export class SettingsComponent implements OnInit {
   }
 
   editAutomationTemplates() {
-    const dialogRef = this.dialog.open(TemplatesQuotesSidePaneComponent, {
-      width: '400px',
-      position: { right: '0' },
-      height: '100%',
-      panelClass: 'side-pane',
-      data: { isOpen: true }
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        console.log('Automation templates updated');
-      }
-    });
+    this.isTemplateSidePaneOpen = true;
   }
+
 
   editDeliveryInfo() {
     console.log('Opening delivery information modal'); // Add this log

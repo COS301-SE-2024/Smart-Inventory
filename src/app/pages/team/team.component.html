@@ -59,12 +59,17 @@
                 </mat-form-field>
                 <!-- Buttons -->
                 <div class="button-group">
-                    <button mat-flat-button (click)="closePopup()" class="btn">Cancel</button>
-                    <button mat-flat-button color="primary" type="submit" class="btn" [disabled]="!userForm.form.valid">
+                    <button mat-flat-button (click)="closePopup()" class="btn" [disabled]="isAddingMember">Cancel</button>
+                    <button mat-flat-button color="primary" type="submit" class="btn" [disabled]="!userForm.form.valid || isAddingMember">
                         Submit
                     </button>
                 </div>
             </form>
+        </div>
+        
+        <!-- Add Member Popup Loader -->
+        <div *ngIf="isAddingMember" class="popup-loader">
+            <app-loading-spinner></app-loading-spinner>
         </div>
     </div>
 </div>

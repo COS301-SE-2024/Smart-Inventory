@@ -1,107 +1,154 @@
-.item-card-container {
-    display: flex;
-    flex-direction: column;
-    background-color: #f1f1f1;
-    height: 100%;
-    width: 100%;
-    border-radius: 10px;
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+
+:host {
+  font-family: 'Poppins', sans-serif;
+  display: block;
+  height: 100vh;
+  overflow-y: auto;
+  background-color: #f5f7fa;
 }
 
-.header-image {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding-top: 30px;
-    text-align: center;
-    height: 100px;
-    width: 100px;
-    border-radius: 50%;
+.reports-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 3rem 2rem;
 }
 
-.mat-mdc-card-header {
-    display: contents;
+.intro-section {
+  text-align: center;
+  margin-bottom: 3rem;
 }
 
-.header-content {
-    display: flex;
-    flex-direction: column;
-    width: 500px;
-    height: 160px;
+.intro-section h2 {
+  font-size: 2.5rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
 }
 
-.view-report-button {
-    width: 100%;
-    background-color: #f1f1f1;
-    color: black;
-    border-radius: 10px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 8px 16px;
-    font-size: inherit;
+.intro-section p {
+  font-size: 1.1rem;
+  color: #7f8c8d;
 }
 
-.view-report-button span {
-    flex-grow: 1;
-    text-align: center;
+.reports-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
 }
 
-.view-report-button mat-icon {
-    font-size: 18px;
-    margin-left: 8px;
+.report-tile {
+  background-color: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  position: relative;
+  transition: all 0.3s ease;
+  cursor: pointer;
 }
 
-mat-card-actions {
-    margin-top: auto;
-    width: 90%;
-}
-.card-container {
-    height: 85%;
-    width: 85%;
-    padding: 10px;
+.report-tile:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
 }
 
-a:hover {
-    cursor: pointer;
-}
-.card {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 98%;
-    background-color: linear-gradient(white, #f1f1f1);
-    box-shadow:
-        0px 6px 6px -3px rgba(0, 0, 0, 0.2),
-        0px 10px 14px 1px rgba(0, 0, 0, 0.14),
-        0px 4px 18px 3px rgba(0, 0, 0, 0.12);
-    border-radius: 8px;
+.report-content {
+  padding: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
-.card-header {
-    text-align: center;
-    align-self: center;
+.report-icon-wrapper {
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  border-radius: 50%;
+  background-color: #e3f2fd;
+  transition: background-color 0.3s ease;
 }
 
-.subtitle {
-    display: -webkit-box;
-    -webkit-line-clamp: 4;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    margin-bottom: 8px;
+.report-icon {
+  font-size: 24px;
+  color: #1976d2;
+  transition: all 0.3s ease;
 }
 
-.subtitle:hover {
-    -webkit-line-clamp: unset;
+.report-tile:hover .report-icon-wrapper {
+  background-color: #bbdefb;
 }
 
-.subtitle:hover .header-content {
-    height: 180px;
+.report-tile:hover .report-icon {
+  transform: scale(1.1);
 }
 
-.card {
-    transition: transform 0.2s ease;
+.report-tile h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 1rem;
 }
 
-.card:hover {
-    transform: scale(1.05);
+.report-tile p {
+  color: #7f8c8d;
+  margin-bottom: 1.5rem;
+  flex-grow: 1;
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+.view-report {
+  display: flex;
+  align-items: center;
+  color: #1976d2;
+  font-weight: 500;
+  transition: color 0.3s ease;
+  font-size: 0.9rem;
+}
+
+.view-report span {
+  margin-right: 0.5rem;
+}
+
+.view-report mat-icon {
+  font-size: 18px;
+  transition: transform 0.3s ease;
+}
+
+.report-tile:hover .view-report {
+  color: #1565c0;
+}
+
+.report-tile:hover .view-report mat-icon {
+  transform: translateX(5px);
+}
+
+.scroll-spacer {
+  height: 100px;
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .reports-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .intro-section h2 {
+    font-size: 2rem;
+  }
+  
+  .intro-section p {
+    font-size: 1rem;
+  }
+  
+  .report-content {
+    padding: 2rem;
+  }
+  
+  .report-tile h3 {
+    font-size: 1.3rem;
+  }
 }

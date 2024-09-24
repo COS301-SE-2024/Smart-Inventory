@@ -1,17 +1,18 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
 
-:host {
-  font-family: 'Roboto', sans-serif;
-  display: block;
-  height: 100vh;
-  overflow-y: auto;
-}
 
-.settings-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2rem;
-}
+:host {
+    font-family: 'Roboto', sans-serif;
+    display: block;
+    height: 100vh;
+    overflow-y: auto;
+  }
+  
+  .settings-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
 
 .intro-section {
   text-align: center;

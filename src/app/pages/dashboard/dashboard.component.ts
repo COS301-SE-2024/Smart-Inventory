@@ -19,9 +19,6 @@ import { HttpClientModule } from '@angular/common/http';
 import { debounceTime } from 'rxjs/operators';
 import { RouterLink } from '@angular/router';
 import { Amplify } from 'aws-amplify';
-import { fetchAuthSession } from 'aws-amplify/auth';
-import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
-import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
 import outputs from '../../../../amplify_outputs.json';
 import { MatDialog } from '@angular/material/dialog';
 import { TemplatechartComponent } from 'app/components/charts/templatechart/templatechart.component';
@@ -30,29 +27,11 @@ import { DeleteConfirmationModalComponent } from './deleteWidget';
 import { BarChartComponent } from 'app/components/charts/widgets/widgetBar';
 import { LineChartComponent } from 'app/components/charts/widgets/widgetLine';
 import { PieChartComponent } from 'app/components/charts/widgets/widgetPie';
-import { DataServiceService } from './data-service.service';
+import { BubbleChartComponent } from 'app/components/charts/widgets/widgetBubble';
 import { AddWidgetSidePaneComponent } from '../../components/add-widget-side-pane/add-widget-side-pane.component';
-import { InventoryService } from '../../../../amplify/services/inventory.service';
 import { CardData, ChartConfig, DashboardItem, DashboardService } from '../dashboard/dashboard.service';
 import { ChangeDetectionService } from './change-detection.service';
-
-// interface StockRequest {
-//     tenentId: string;
-//     sku: string;
-//     quantityRequested: number;
-// }
-
-// interface Order {
-//     tenentId: string;
-//     Order_Status: string;
-//     Expected_Delivery_Date: string | null;
-//     Order_Date: string;
-//     Selected_Supplier?: string;
-// }
-
-// interface SkuCounts {
-//     [sku: string]: number;
-// }
+import { DataCollectionService } from '../../components/add-widget-side-pane/data-collection.service';
 
 @Component({
     selector: 'app-dashboard',
@@ -78,6 +57,7 @@ import { ChangeDetectionService } from './change-detection.service';
         PieChartComponent,
         BarChartComponent,
         AddWidgetSidePaneComponent,
+        BubbleChartComponent,
     ],
 })
 export class DashboardComponent implements OnInit {
@@ -93,9 +73,6 @@ export class DashboardComponent implements OnInit {
     dashboard: Array<DashboardItem> = [];
     options!: GridsterConfig;
     rowData: any[] = [];
-    inventoryCount: number = 0;
-    userCount: number = 0;
-    inventoryLevel: number = 20;
 
     charts: { [key: string]: Type<any> } = {
         SaleschartComponent: SaleschartComponent,
@@ -105,6 +82,7 @@ export class DashboardComponent implements OnInit {
         BarChartComponent: BarChartComponent,
         LineChartComponent: LineChartComponent,
         PieChartComponent: PieChartComponent,
+        BubbleChartComponent: BubbleChartComponent,
     };
 
     RequestOrders = {
@@ -133,10 +111,9 @@ export class DashboardComponent implements OnInit {
         private titleService: TitleService,
         private cdr: ChangeDetectorRef,
         private dialog: MatDialog,
-        private service: DataServiceService,
-        private inventoryService: InventoryService,
         private dashService: DashboardService,
         private CDRService: ChangeDetectionService,
+        private dataCollectionService: DataCollectionService,
     ) {
         Amplify.configure(outputs);
         this.initializeGridsterOptions();
@@ -146,13 +123,8 @@ export class DashboardComponent implements OnInit {
         this.titleService.updateTitle('Dashboard');
         this.CDRService.setChangeDetectorRef(this.cdr);
         this.setupDashboardSubscription();
-        // await this.fetchAllData();
-        // this.processDashboardData();
-        // this.updateCardData();
-        // this.updateChartConfigs();
-        // this.initializeDashboard();
-        this.loadState();
-        this.isLoading = false;
+        await this.loadState();
+        this.refreshDashboard();
     }
 
     private setupDashboardSubscription() {
@@ -860,5 +832,35 @@ export class DashboardComponent implements OnInit {
 
     getChangeColor(change: number): string {
         return change >= 0 ? 'positive-change' : 'negative-change';
+    }
+
+    refreshDashboard() {
+        this.isLoading = true;
+        this.dataCollectionService.generateChartConfigs().subscribe({
+            next: (chartConfigs) => {
+                this.updateDashboardWidgets(chartConfigs);
+                this.isLoading = false;
+            },
+            error: (error) => {
+                console.error('Error refreshing dashboard:', error);
+                this.isLoading = false;
+            },
+        });
+    }
+
+    updateDashboardWidgets(newChartConfigs: ChartConfig[]) {
+        this.dashboard = this.dashboard.map((item) => {
+            const updatedConfig = newChartConfigs.find((config) => config.title === item.name);
+            if (updatedConfig) {
+                return {
+                    ...item,
+                    chartConfig: updatedConfig,
+                };
+            }
+            return item;
+        });
+
+        this.dashService.updateDashboard(this.dashboard);
+        this.CDRService.detectChanges();
     }
 }

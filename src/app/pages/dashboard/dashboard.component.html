@@ -157,6 +157,12 @@
                             [title]="item['chartConfig'].title"
                         ></app-pie-chart>
                     </ng-container>
+                    <ng-container *ngSwitchCase="'BubbleChartComponent'">
+                        <app-bubble-chart
+                            [data]="item['chartConfig'].data"
+                            [title]="item['chartConfig'].title"
+                        ></app-bubble-chart>
+                    </ng-container>
                 </ng-container>
             </mat-card>
         </gridster-item>

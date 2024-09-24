@@ -77,14 +77,19 @@ export class DashboardService {
     //     categories: ['Jan', 'Feb', 'Mar'],
     //     values: [100, 10, 15],
     // });
-    updateWidget(updatedWidget: DashboardItem, newData: any): void {
+    updateWidget(updatedWidget: DashboardItem): void {
         const currentDashboard = this.getDashboard();
-        updatedWidget.chartConfig.data = newData;
         const updatedDashboard = currentDashboard.map((widget) =>
             widget.cardId === updatedWidget.cardId ? updatedWidget : widget,
         );
         this.dashboardSubject.next(updatedDashboard);
         this.persistState(updatedDashboard);
+    }
+
+    updateDashboard(dashboard: DashboardItem[]) {
+        this.dashboardSubject.next(dashboard);
+        this.persistState(dashboard);
+        this.saveState();
     }
 
     persistState(dashboard: DashboardItem[]): void {

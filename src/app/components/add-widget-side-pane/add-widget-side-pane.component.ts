@@ -21,6 +21,8 @@ interface InventoryItem {
     quantity: number;
     lowStockThreshold: number;
     reorderAmount: number;
+    unitCost: number;
+    lastRestockDate: string;
 }
 
 interface StockRequest {
@@ -107,6 +109,9 @@ export class AddWidgetSidePaneComponent implements OnInit {
             this.prepareInventoryStockLevelChartConfig('pie'),
             this.prepareInventoryStockLevelChartConfig('bar'),
             this.prepareIntakeOutakeCorrelationChartConfig(),
+            this.prepareAverageUnitCostByCategory(),
+            this.prepareUnitCostTrendOverTime(),
+            this.prepareUnitCostDistribution(),
         ];
 
         this.chartConfigs = chartConfigs;
@@ -214,6 +219,114 @@ export class AddWidgetSidePaneComponent implements OnInit {
             acc[category] = (acc[category] || 0) + 1;
             return acc;
         }, {});
+    }
+
+    prepareAverageUnitCostByCategory(): ChartConfig {
+        const categoryAverages = this.inventoryData.reduce(
+            (acc, item) => {
+                if (!acc[item.category]) {
+                    acc[item.category] = { total: 0, count: 0 };
+                }
+                acc[item.category].total += item.unitCost;
+                acc[item.category].count++;
+                return acc;
+            },
+            {} as { [key: string]: { total: number; count: number } },
+        );
+
+        const data = Object.entries(categoryAverages).map(([category, { total, count }]) => ({
+            category,
+            averageCost: total / count,
+        }));
+
+        return this.prepareChartConfig(
+            'bar',
+            { categories: data.map((d) => d.category), values: data.map((d) => d.averageCost) },
+            'Average Unit Cost by Category',
+            'BarChartComponent',
+        );
+    }
+
+    prepareUnitCostTrendOverTime(): ChartConfig {
+        // Helper function to extract date from timestamp
+        const extractDate = (timestamp: string | undefined): string => {
+            if (!timestamp) return '';
+            const match = timestamp.match(/^(\d{4}-\d{2}-\d{2})/);
+            return match ? match[1] : '';
+        };
+    
+        // Group items by date and calculate average unit cost
+        const dateGroups = this.inventoryData.reduce((acc, item) => {
+            if (item.lastRestockDate === undefined || item.unitCost === undefined) {
+                console.warn('Invalid item data:', item);
+                return acc;
+            }
+    
+            const date = extractDate(item.lastRestockDate);
+            if (!date) {
+                console.warn('Invalid date format:', item.lastRestockDate);
+                return acc;
+            }
+            
+            if (!acc[date]) {
+                acc[date] = { total: 0, count: 0 };
+            }
+            acc[date].total += item.unitCost;
+            acc[date].count++;
+            return acc;
+        }, {} as { [date: string]: { total: number; count: number } });
+    
+        // Calculate average and create data points
+        const dataPoints = Object.entries(dateGroups).map(([date, { total, count }]) => ({
+            date,
+            averageUnitCost: total / count
+        }));
+    
+        // Sort data points by date
+        const sortedDataPoints = dataPoints.sort((a, b) => a.date.localeCompare(b.date));
+    
+        if (sortedDataPoints.length === 0) {
+            console.warn('No valid data points for unit cost trend');
+            return this.prepareChartConfig(
+                'line',
+                { categories: [], values: [] },
+                'Average Unit Cost Trend Over Time (No Data)',
+                'LineChartComponent'
+            );
+        }
+    
+        return this.prepareChartConfig(
+            'line',
+            {
+                categories: sortedDataPoints.map(d => d.date),
+                values: sortedDataPoints.map(d => d.averageUnitCost)
+            },
+            'Average Unit Cost Trend Over Time',
+            'LineChartComponent'
+        );
+    }
+
+    prepareUnitCostDistribution(): ChartConfig {
+        const costRanges = [0, 10, 20, 50, 100, 200, Infinity];
+        const rangeLabels = costRanges
+            .slice(0, -1)
+            .map((min, index) => `$${min} - $${costRanges[index + 1] === Infinity ? '200+' : costRanges[index + 1]}`);
+
+        const distribution = this.inventoryData.reduce(
+            (acc, item) => {
+                const rangeIndex = costRanges.findIndex((max) => item.unitCost < max) - 1;
+                acc[rangeIndex] = (acc[rangeIndex] || 0) + 1;
+                return acc;
+            },
+            {} as { [key: number]: number },
+        );
+
+        const data = {
+            categories: rangeLabels,
+            values: rangeLabels.map((_, index) => distribution[index] || 0),
+        };
+
+        return this.prepareChartConfig('bar', data, 'Unit Cost Distribution', 'BarChartComponent');
     }
 
     private prepareChartConfig(type: string, data: any, title: string, component: string): ChartConfig {

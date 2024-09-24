@@ -82,6 +82,7 @@ export class TeamComponent implements OnInit {
     tenantId: string = '';
     userName: string = '';
     userRole: string = '';
+    isAddingMember = false;
 
     async ngOnInit() {
         this.titleService.updateTitle('Team');
@@ -241,6 +242,7 @@ export class TeamComponent implements OnInit {
     }
 
     async onSubmit(formData: any) {
+        this.isAddingMember = true;
         try {
             const session = await fetchAuthSession();
 
@@ -300,6 +302,8 @@ export class TeamComponent implements OnInit {
               });
         } catch (error) {
             console.error('Error creating user and adding to group:', error);
+        } finally {
+            this.isAddingMember = false;
         }
     }
 

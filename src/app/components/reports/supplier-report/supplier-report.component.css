@@ -3,6 +3,10 @@
     display: none !important;
 }
 
+#chart{
+    background-color: #fff !important;
+}
+
 .bottom-toolbar {
     position: fixed;
     bottom: 0;

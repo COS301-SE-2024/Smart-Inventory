@@ -198,7 +198,7 @@ export class SupplierReportComponent implements OnInit {
         //console.log(this.calculateAverageDeliveryRate());
         //console.log(this.calculateOnTimeOrderCompletionRate());
         this.updateVisibleMetrics();
-        this.SupplierReport.metrics[1].value = this.getMostAverageSupplier();
+        this.SupplierReport.metrics[0].value = this.getMostAverageSupplier();
         this.SupplierReport.metrics[1].value = this.calculateDefectRate(this.orderFulfillmentDetails);
         this.SupplierReport.metrics[2].value = this.getWorstPerformingSupplier()['Supplier ID'];
         this.SupplierReport.metrics[3].value = this.calculateAverageDeliveryRate();

@@ -25,6 +25,7 @@ import { MaterialModule } from 'app/components/material/material.module';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { DeleteConfirmationDialogComponent } from './delete-confirmation-dialog.component';
 import { TeamsService } from '../../../../amplify/services/teams.service';
+import { NotificationsService } from '../../../../amplify/services/notifications.service';
 
 @Component({
     selector: 'app-team',
@@ -48,7 +49,8 @@ export class TeamComponent implements OnInit {
         private titleService: TitleService,
         private teamService: TeamsService,
         private dialog: MatDialog,
-        private snackBar: MatSnackBar
+        private snackBar: MatSnackBar,
+        private notificationsService: NotificationsService
     ) {}
     showPopup = false;
     user = {
@@ -364,37 +366,25 @@ export class TeamComponent implements OnInit {
 
     async createNotification(message: string, type: string) {
         try {
-          const session = await fetchAuthSession();
-          const lambdaClient = new LambdaClient({
-            region: outputs.auth.aws_region,
-            credentials: session.credentials,
-          });
-      
           const notificationId = this.generateUUID();
           const timestamp = new Date().toISOString();
       
-          const payload = JSON.stringify({
+          const notificationData = {
             tenentId: this.tenantId,
             timestamp: timestamp,
             notificationId: notificationId,
             type: type,
             message: message,
             isRead: false
-          });
+          };
       
-          const invokeCommand = new InvokeCommand({
-            FunctionName: 'notification-createItem',
-            Payload: new TextEncoder().encode(JSON.stringify({ body: payload })),
-          });
+          const response = await this.notificationsService.createNotification(notificationData).toPromise();
       
-          const lambdaResponse = await lambdaClient.send(invokeCommand);
-          const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-      
-          if (responseBody.statusCode === 201) {
+          if (response && response.notificationId) {
             console.log('Notification created successfully');
-            
+            // You can add any additional logic here, such as updating the UI
           } else {
-            throw new Error(responseBody.body);
+            throw new Error('Failed to create notification');
           }
         } catch (error) {
           console.error('Error creating notification:', error);

@@ -56,29 +56,30 @@
                 </button>
                 <div class="split-container">
                     <div class="left-column req-back">
-                        <!-- <ng-container *ngIf="item.cardId === 'sales-chart'"> -->
-                        <div class="requests-section">
-                            <h3>Requests</h3>
-                            <p>Total Requests: {{ RequestOrders.requests.totalRequests }}</p>
-                            <p>
-                                Most Requested: {{ RequestOrders.requests.mostRequested.name }} ({{
-                                    RequestOrders.requests.mostRequested.percentage
-                                }}%)
-                            </p>
-                            <p>Highest Request: {{ RequestOrders.requests.highestRequest }}</p>
-                        </div>
-                        <div class="divider"></div>
-                        <div class="backorders-section">
-                            <h3>Backorders</h3>
-                            <p>Current Backorders: {{ RequestOrders.backorders.currentBackorders }}</p>
-                            <p>Average Delay: {{ RequestOrders.backorders.averageDelay }} days</p>
-                            <p>
-                                Longest Backorder: {{ RequestOrders.backorders.longestBackorderItem.productName }} ({{
-                                    RequestOrders.backorders.longestBackorderItem.delay
-                                }})
-                            </p>
-                        </div>
-                        <!-- </ng-container> -->
+                        <ng-container *ngIf="item.cardId === 'sales-chart'">
+                            <div class="requests-section">
+                                <h3>Requests</h3>
+                                <p>Total Requests: {{ RequestOrders.requests.totalRequests }}</p>
+                                <p>
+                                    Most Requested: {{ RequestOrders.requests.mostRequested.name }} ({{
+                                        RequestOrders.requests.mostRequested.percentage
+                                    }}%)
+                                </p>
+                                <p>Highest Request: {{ RequestOrders.requests.highestRequest }}</p>
+                            </div>
+                            <div class="divider"></div>
+                            <div class="backorders-section">
+                                <h3>Backorders</h3>
+                                <p>Current Backorders: {{ RequestOrders.backorders.currentBackorders }}</p>
+                                <p>Average Delay: {{ RequestOrders.backorders.averageDelay }} days</p>
+                                <p>
+                                    Longest Backorder:
+                                    {{ RequestOrders.backorders.longestBackorderItem.productName }} ({{
+                                        RequestOrders.backorders.longestBackorderItem.delay
+                                    }})
+                                </p>
+                            </div>
+                        </ng-container>
                     </div>
                     <div class="right-column">
                         <ng-container *ngIf="item.cardId === 'sales-chart'">
@@ -160,9 +161,7 @@
             </mat-card>
         </gridster-item>
     </gridster>
-    <div class="divider">
-        
-    </div>
+    <div class="divider"></div>
 </div>
 
 <app-templates-side-pane

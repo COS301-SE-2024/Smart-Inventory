@@ -264,7 +264,7 @@ export class DataCollectionService {
         return this.prepareChartConfig(
             'pie',
             this.mapToChartData(categorySums),
-            'Stock Requests by Category',
+            'Stock Requests by Category(Monthly)',
             'PieChartComponent',
         );
     }

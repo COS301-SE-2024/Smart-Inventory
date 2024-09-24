@@ -24,6 +24,7 @@ import { RowNode } from 'ag-grid-community';
 import { AgGridAngular } from 'ag-grid-angular';
 import { CompactType, DisplayGrid, GridsterConfig, GridsterItem, GridsterModule, GridType } from 'angular-gridster2';
 import { InventoryService } from '../../../../../amplify/services/inventory.service';
+import { DataCollectionService } from 'app/components/add-widget-side-pane/data-collection.service';
 
 type ChartMetric = 'On Time Delivery Rate' | 'Order Accuracy Rate' | 'Out Standing Payments' | 'TotalSpent';
 type ChartData = {
@@ -56,7 +57,7 @@ export class SupplierReportComponent implements OnInit {
         private titleService: TitleService,
         private router: Router,
         private route: ActivatedRoute,
-        private inventoryService: InventoryService
+        private dataCollectionService: DataCollectionService
     ) {
         Amplify.configure(outputs);
     }
@@ -190,14 +191,14 @@ export class SupplierReportComponent implements OnInit {
         this.titleService.updateTitle(this.getCurrentRoute());
         await this.loadSuppliersData();
 
-        this.loadSupplierMetrics();
-        await this.fetchMetrics(this.rowData);
+        // this.loadSupplierMetrics();
+        await this.fetchMetrics(this.originalData);
         //console.log(this.getMostAverageSupplier()['Supplier ID']);
         //console.log(this.getWorstPerformingSupplier()['Supplier ID']);
         //console.log(this.calculateAverageDeliveryRate());
         //console.log(this.calculateOnTimeOrderCompletionRate());
         this.updateVisibleMetrics();
-        this.SupplierReport.metrics[0].value = this.getMostAverageSupplier()['Supplier ID'];
+        this.SupplierReport.metrics[0].value = this.getMostAverageSupplier();
         this.SupplierReport.metrics[1].value = this.calculateDefectRate(this.orderFulfillmentDetails);
         this.SupplierReport.metrics[2].value = this.getWorstPerformingSupplier()['Supplier ID'];
         this.SupplierReport.metrics[3].value = this.calculateAverageDeliveryRate();
@@ -214,7 +215,7 @@ export class SupplierReportComponent implements OnInit {
         this.chartData = this.getChartData();
         console.log('chartdata:', this.chartData.seriesData);
         this.processData();
-        this.inventory = await this.loadInventoryData();
+        // this.inventory = await this.loadInventoryData();
         this.topSuppliersData = this.calculateTopSuppliers();
         console.log('supplier data:', this.topSuppliersData);
         // console.log('inventory ', this.inventory)
@@ -258,28 +259,6 @@ export class SupplierReportComponent implements OnInit {
         return this.originalData.filter((item) => item['Supplier ID'] === supplierId).map((item) => item['Date']);
     }
 
-    onDateChange(supplierId: string, newDate: string): void {
-        // const updatedData = this.originalData.find(item =>
-        //     item['Supplier ID'] === supplierId && item['Date'] === newDate
-        // );
-        // if (updatedData) {
-        //     const rowIndex = this.rowData.findIndex(row => row['Supplier ID'] === supplierId);
-        //     if (rowIndex !== -1) {
-        //         this.rowData[rowIndex] = { ...updatedData };
-        //         const rowNode = this.gridComponent.api.getRowNode(rowIndex.toString());
-        //         if (rowNode) {
-        //             this.gridComponent.api.refreshCells({
-        //                 rowNodes: [rowNode],
-        //                 force: true
-        //             });
-        //         } else {
-        //             console.warn(`Row node not found for index ${rowIndex}`);
-        //             // Optionally, refresh the entire grid if the specific row can't be found
-        //             this.gridComponent.api.refreshCells({ force: true });
-        //         }
-        //     }
-        // }
-    }
 
     // Function to fetch data based on date and supplier ID
     fetchDataForDate(supplierId: string, date: string): any {
@@ -430,9 +409,27 @@ export class SupplierReportComponent implements OnInit {
             yAxisName,
         };
     }
+    
     async fetchMetrics(data: any[]) {
         try {
-            console.log(data);
+            console.log("processed data fetchmetrics:", data);
+    
+            let totalSpent = 0;
+            let outstandingPayments = 0;
+    
+            data.forEach((supplier) => {
+                // Parse the string values to floats and add them
+                totalSpent += parseFloat(supplier['TotalSpent']) || 0;
+                outstandingPayments += parseFloat(supplier['Out Standing Payments']) || 0;
+            });
+    
+            console.log('Total spent:', totalSpent.toFixed(2), 'Outstanding payments:', outstandingPayments.toFixed(2));
+    
+            this.tiles.push(
+                this.createTile('attach_money', 'Total Spend', 'Total Spent', totalSpent.toFixed(2)),
+                this.createTile('money_off', 'Outstanding Payments', 'Outstanding Payments', outstandingPayments.toFixed(2))
+            );
+    
             data.forEach((supplier) => {
                 this.tiles.push(
                     this.createTile(
@@ -448,20 +445,11 @@ export class SupplierReportComponent implements OnInit {
                         supplier['Order Accuracy Rate'].toString(),
                     ),
                     this.createTile('repeat', 'Reorder Level', 'Reorder Level', supplier['Reorder Level']),
-                    this.createTile('attach_money', 'Total Spend', 'Total Spent', supplier['TotalSpent'].toString()),
-                    this.createTile(
-                        'money_off',
-                        'Outstanding Payments',
-                        'Outstanding Payments',
-                        supplier['Out Standing Payments'].toString(),
-                    ),
                     this.createTile('warning', 'Risk Score', 'Risk Score', supplier['RiskScore']),
                 );
             });
         } catch (error) {
-            console.log('Error fetching metrics');
-        } finally {
-            // // this.isLoading = false;
+            console.log('Error fetching metrics:', error);
         }
     }
 
@@ -550,10 +538,10 @@ export class SupplierReportComponent implements OnInit {
     // Determine average suppliers based on a threshold percentage
     getMostAverageSupplier(): any {
         const suppliers = this.originalData;
-        // console.log('The suppliers:', suppliers);
+        console.log('The suppliers:', suppliers);
 
         const averages = this.calculateAverages(suppliers);
-        // console.log("My averages:", averages);
+        console.log("My averages:", averages);
 
         let mostAverageSupplier = null;
         let smallestDifference = Infinity; // Start with a large number that any real difference will be smaller than
@@ -585,12 +573,12 @@ export class SupplierReportComponent implements OnInit {
                 mostAverageSupplier = supplier;
             }
         });
-
+    console.log("Most Average Supplier:", mostAverageSupplier);
         if (mostAverageSupplier) {
             return mostAverageSupplier['Supplier ID'];
         }
 
-        // console.log("Most Average Supplier:", mostAverageSupplier);
+        
         return mostAverageSupplier;
     }
 
@@ -663,6 +651,34 @@ export class SupplierReportComponent implements OnInit {
     }
 
     async loadInventoryData() {
+        try {
+            this.dataCollectionService.getInventoryItems().subscribe(
+                (inventoryItems) => {
+                    // this.rowData = inventoryItems.map((item: any) => ({
+                    //     inventoryID: item.inventoryID,
+                    //     sku: item.SKU,
+                    //     category: item.category,
+                    //     productId: item.productID,
+                    //     description: item.description,
+                    //     quantity: item.quantity,
+                    //     supplier: item.supplier,
+                    //     expirationDate: item.expirationDate,
+                    //     lowStockThreshold: item.lowStockThreshold,
+                    //     reorderFreq: item.reorderFreq,
+                    //     requests: 0,
+                    //     requestsQuantity: 0,
+                    // }));
+                    console.log('my inventory :', inventoryItems);
+                },
+                (error) => {
+                    console.error('Error fetching inventory data:', error);
+                    this.rowData = [];
+                }
+            );
+        } catch (error) {
+            console.error('Error in loadInventoryData:', error);
+            this.rowData = [];
+        }
         const inventoryData = [
             {
                 inventoryID: 'bc9040cb-3834-4391-9ab7-153968c1d13a',
@@ -801,58 +817,13 @@ export class SupplierReportComponent implements OnInit {
 
     async loadSuppliersData() {
         try {
-            const session = await fetchAuthSession();
-
-            const cognitoClient = new CognitoIdentityProviderClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
-
-            const getUserCommand = new GetUserCommand({
-                AccessToken: session.tokens?.accessToken.toString(),
-            });
-            const getUserResponse = await cognitoClient.send(getUserCommand);
-
-            const tenantId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
-
-            if (!tenantId) {
-                console.error('TenantId not found in user attributes');
-                this.rowData = [];
-                return;
-            }
-
-            const lambdaClient = new LambdaClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
-
-            const invokeCommand = new InvokeCommand({
-                FunctionName: 'getSupplierReportData',
-                Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: tenantId } })),
-            });
-
-            const lambdaResponse = await lambdaClient.send(invokeCommand);
-            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-            console.log('Response from Lambda:', responseBody);
-
-            if (responseBody.statusCode === 200) {
-                const suppliers = JSON.parse(responseBody.body);
-                // this.supplierIds = suppliers.map((supplier: any) => ({
-                //     supplierID: supplier.supplierID,
-                // }));
-                this.originalData = suppliers;
-                this.rowData = this.processRowData(this.originalData);
-
-                console.log('Processed suppliers:', this.rowData);
-            } else {
-                console.error('Error fetching suppliers data:', responseBody.body);
-                this.rowData = [];
-            }
+            const suppliers = await this.dataCollectionService.getSupplierReportData().toPromise() || [];
+            this.originalData = suppliers;
+            this.rowData = this.processRowData(this.originalData);
+            console.log('Processed suppliers:', this.rowData);
         } catch (error) {
             console.error('Error in loadSuppliersData:', error);
             this.rowData = [];
-        } finally {
-            // // this.isLoading = false;
         }
     }
 
@@ -945,86 +916,39 @@ export class SupplierReportComponent implements OnInit {
             let mostRecentRecord = { ...value[0], Dates: dates }; // Clone the most recent record and add all dates
             preparedData.push(mostRecentRecord);
         });
-
+        console.log("the preparedRowData", preparedData)
         return preparedData;
     }
 
-    stockRequests: any[] = [
-        {
-            stockRequestId: '001',
-            tenentId: '1001',
-            category: 'Electronics',
-            createdAt: '2024-01-01T10:00:00.000Z',
-            quantityRequested: 100,
-            quantityFulfilled: 95,
-            sku: 'ELEC-001',
-            supplier: 'SupplierA',
-            type: 'STOCK_REQUEST',
-        },
-        {
-            stockRequestId: '002',
-            tenentId: '1001',
-            category: 'Appliances',
-            createdAt: '2024-01-02T10:00:00.000Z',
-            quantityRequested: 50,
-            quantityFulfilled: 50,
-            sku: 'APPL-002',
-            supplier: 'SupplierB',
-            type: 'STOCK_REQUEST',
-        },
-        {
-            stockRequestId: '003',
-            tenentId: '1001',
-            category: 'Tools',
-            createdAt: '2024-01-03T10:00:00.000Z',
-            quantityRequested: 30,
-            quantityFulfilled: 30,
-            sku: 'TOOL-003',
-            supplier: 'SupplierC',
-            type: 'STOCK_REQUEST',
-        },
-    ];
+    async loadStockRequest(){
+        try {
+            const suppliers = await this.dataCollectionService.getStockRequests().toPromise() || [];
+            this.stockRequests = suppliers;
+        } catch (error) {
+            console.error('Error in loadSuppliersData:', error);
+            this.stockRequests = [];
+        }
+    }
+
+    stockRequests: any[] = [];
 
     async loadSupplierMetrics() {
         try {
-            const session = await fetchAuthSession();
-    
-            const cognitoClient = new CognitoIdentityProviderClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
-    
-            const getUserCommand = new GetUserCommand({
-                AccessToken: session.tokens?.accessToken.toString(),
-            });
-            const getUserResponse = await cognitoClient.send(getUserCommand);
-    
-            const tenantId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
-    
-            if (!tenantId) {
-                console.error('TenantId not found in user attributes');
-                this.rowData = [];
-                return;
-            }
-    
-            // Use the InventoryService to get inventory items
-            this.inventoryService.getInventoryItems(tenantId).subscribe(
+            this.dataCollectionService.getInventoryItems().subscribe(
                 (response) => {
                     console.log('Response from InventoryService:', response);
                     // Process the response here
-                    // this.rowData = response;
                     console.log('Processed inventory items:', this.rowData);
                 },
                 (error) => {
                     console.error('Error fetching inventory data:', error);
                     this.rowData = [];
                 }
+                
             );
         } catch (error) {
             console.error('Error in loadSupplierMetrics:', error);
             this.rowData = [];
-        } finally {
-            // this.isLoading = false;
         }
     }
 

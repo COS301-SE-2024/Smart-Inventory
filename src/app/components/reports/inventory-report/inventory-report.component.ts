@@ -22,6 +22,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { CompactType, DisplayGrid, GridsterConfig, GridsterItem, GridsterModule, GridType } from 'angular-gridster2';
 import { MaterialModule } from 'app/components/material/material.module';
 import { InventoryService } from '../../../../../amplify/services/inventory.service';
+import { DataCollectionService } from 'app/components/add-widget-side-pane/data-collection.service';
 
 interface Metric {
     label: string;
@@ -74,7 +75,7 @@ export class InventoryReportComponent implements OnInit {
         private titleService: TitleService,
         private router: Router,
         public service: ChartDataService,
-        private inventoryService: InventoryService
+        private dataCollectionService: DataCollectionService
     ) {
         Amplify.configure(outputs);
         this.gridsterOptions = {
@@ -152,10 +153,7 @@ export class InventoryReportComponent implements OnInit {
 
     async loadInventoryData() {
         try {
-            const session = await fetchAuthSession();
-            const tenantId = await this.getTenantId(session);
-    
-            this.inventoryService.getInventoryItems(tenantId).subscribe(
+            this.dataCollectionService.getInventoryItems().subscribe(
                 (inventoryItems) => {
                     this.rowData = inventoryItems.map((item: any) => ({
                         inventoryID: item.inventoryID,
@@ -199,10 +197,10 @@ export class InventoryReportComponent implements OnInit {
 
     async updateInventoryWithRequests() {
         try {
-            const stockRequests = await this.fetchStockRequests();
-
+            const stockRequests = await this.dataCollectionService.getStockRequests().toPromise() || [];
+    
             const skuMap = new Map<string, { requests: number; quantity: number }>();
-
+    
             stockRequests.forEach((request: any) => {
                 const { sku, quantityRequested } = request;
                 if (!skuMap.has(sku)) {
@@ -213,7 +211,7 @@ export class InventoryReportComponent implements OnInit {
                 currentData.quantity += Number(quantityRequested);
                 skuMap.set(sku, currentData);
             });
-
+    
             this.rowData = this.rowData.map((item) => {
                 const requestData = skuMap.get(item.sku);
                 if (requestData) {
@@ -225,7 +223,7 @@ export class InventoryReportComponent implements OnInit {
                 }
                 return item;
             });
-
+    
             if (this.gridComponent) {
                 this.gridComponent.refreshGrid(this.rowData);
             }

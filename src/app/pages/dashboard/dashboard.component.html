@@ -157,6 +157,30 @@
                             [title]="item['chartConfig'].title"
                         ></app-pie-chart>
                     </ng-container>
+                    <ng-container *ngSwitchCase="'LineBarComponent'">
+                        <app-line-bar
+                            [data]="item['chartConfig'].data"
+                            [title]="item['chartConfig'].title"
+                        ></app-line-bar>
+                    </ng-container>
+                    <ng-container *ngSwitchCase="'RadarComponent'">
+                        <app-radar
+                            [data]="item['chartConfig'].data"
+                            [title]="item['chartConfig'].title"
+                        ></app-radar>
+                    </ng-container>
+                    <ng-container *ngSwitchCase="'ScatterPlotComponent'">
+                        <app-scatterplot
+                            [data]="item['chartConfig'].data"
+                            [title]="item['chartConfig'].title"
+                        ></app-scatterplot>
+                    </ng-container>
+                    <ng-container *ngSwitchCase="'DonutChartComponent'">
+                        <app-donuttemplate
+                            [orderData]="item['chartConfig'].data"
+                            [title]="item['chartConfig'].title"
+                        ></app-donuttemplate>
+                    </ng-container>
                 </ng-container>
             </mat-card>
         </gridster-item>

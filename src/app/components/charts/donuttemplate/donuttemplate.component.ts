@@ -12,6 +12,7 @@ import * as echarts from 'echarts';
 
 export class DonutTemplateComponent implements OnChanges, AfterViewInit, OnInit, OnDestroy {
   @Input() orderData: any[] = [];
+  @Input() title: string = "";
   @ViewChild('chartContainer', { static: true }) chartContainer!: ElementRef;
   private resizeObserver!: ResizeObserver;
 
@@ -28,7 +29,7 @@ export class DonutTemplateComponent implements OnChanges, AfterViewInit, OnInit,
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['orderData']) {
+    if (changes['orderData'] || changes['title']) {
       this.processData(this.orderData);
       if (this.chart) {
         this.updateChart();
@@ -74,13 +75,13 @@ export class DonutTemplateComponent implements OnChanges, AfterViewInit, OnInit,
 
     const option: echarts.EChartsOption = {
       title: {
-        text: 'Order Costs by Supplier',
+        text: this.title || 'Order Costs by Supplier',
         left: 'center',
         top: '0px'
       },
       tooltip: {
         trigger: 'item',
-        formatter: '{a} <br/>{b}: ${c} ({d}%)'
+        formatter: '{a} <br/>{b}: R{c} ({d}%)'
       },
       legend: {
         orient: 'horizontal',

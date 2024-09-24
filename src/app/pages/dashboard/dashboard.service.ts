@@ -58,10 +58,6 @@ export class DashboardService {
             chartConfig: chartConfig,
         };
         const currentDashboard = this.getDashboard();
-        // this.updateWidget(newItem, {
-        //     categories: ['Jan', 'Feb', 'Mar'],
-        //     values: [100, 10, 15],
-        // });
         const updatedDashboard = [...currentDashboard, newItem];
         this.dashboardSubject.next(updatedDashboard);
         this.persistState(updatedDashboard);
@@ -77,6 +73,10 @@ export class DashboardService {
         return updatedDashboard;
     }
 
+    // this.updateWidget(newItem, {
+    //     categories: ['Jan', 'Feb', 'Mar'],
+    //     values: [100, 10, 15],
+    // });
     updateWidget(updatedWidget: DashboardItem, newData: any): void {
         const currentDashboard = this.getDashboard();
         updatedWidget.chartConfig.data = newData;

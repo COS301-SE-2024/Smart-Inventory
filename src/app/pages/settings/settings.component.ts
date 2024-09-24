@@ -20,7 +20,6 @@ import { AuthenticatorService } from '@aws-amplify/ui-angular';
 import { Router } from '@angular/router';
 import { ThemeService } from '../../services/theme.service';
 import { ProfileComponent } from '../../components/profile/profile.component';
-import { QrCodeGeneratorComponent } from './qr-code-generator.component';
 
 @Component({
     selector: 'app-settings',
@@ -43,7 +42,6 @@ import { QrCodeGeneratorComponent } from './qr-code-generator.component';
         MatCheckboxModule,
         MatGridListModule,
         ProfileComponent,
-        QrCodeGeneratorComponent,
     ],
     templateUrl: './settings.component.html',
     styleUrl: './settings.component.css',

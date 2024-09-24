@@ -78,28 +78,36 @@ export class UploadItemsModalComponent implements OnInit {
     }
   }
 
-  validateCsvFile(file: File): void {
-    const reader = new FileReader();
-    reader.onload = (e: ProgressEvent<FileReader>) => {
-      const contents = e.target?.result as string;
-      const lines = contents.split('\n');
-      if (lines.length > 0) {
-        const headers = lines[0].split(',').map((header: string) => header.trim());
-        const requiredColumns = ['SKU', 'upc', 'category', 'quantity', 'description', 'expirationDate', 'supplier', 'unitCost', 'deliveryCost', 'leadTime', 'lowStockThreshold', 'reorderAmount', 'annualDemand', 'dailyDemand', 'EOQ', 'holdingCost', 'safetyStock'];
-        const missingColumns = requiredColumns.filter(col => !headers.includes(col));
-        
-        if (missingColumns.length > 0) {
-          this.showSnackBar(`CSV file is missing the following required columns: ${missingColumns.join(', ')}. Please correct your file and try again.`);
-          this.selectedFile = null;
-        } else {
-          this.showSnackBar('File validated successfully. You can now upload the items.', 'success');
-        }
-      } else {
-        this.showSnackBar('The CSV file is empty. Please upload a file with inventory data.');
+// In the validateCsvFile method
+validateCsvFile(file: File): void {
+  const reader = new FileReader();
+  reader.onload = (e: ProgressEvent<FileReader>) => {
+    const contents = e.target?.result as string;
+    const lines = contents.split('\n');
+    if (lines.length > 0) {
+      const headers = lines[0].split(',').map((header: string) => header.trim());
+      const requiredColumns = ['SKU', 'upc', 'category', 'quantity', 'description', 'expirationDate', 'supplier', 'unitCost', 'deliveryCost', 'leadTime', 'lowStockThreshold', 'reorderAmount'];
+      const missingColumns = requiredColumns.filter(col => !headers.includes(col));
+      
+      if (missingColumns.length > 0) {
+        this.showSnackBar(`CSV file is missing the following required columns: ${missingColumns.join(', ')}. Please correct your file and try again.`);
         this.selectedFile = null;
+      } else {
+        this.showSnackBar('File validated successfully. You can now upload the items.', 'success');
       }
-    };
-    reader.readAsText(file);
+    } else {
+      this.showSnackBar('The CSV file is empty. Please upload a file with inventory data.');
+      this.selectedFile = null;
+    }
+  };
+  reader.readAsText(file);
+}
+
+  // Update the getSampleFileContent method
+  private getSampleFileContent(): string {
+    return `SKU,upc,category,quantity,description,expirationDate,supplier,unitCost,deliveryCost,leadTime,lowStockThreshold,reorderAmount
+  ITEM001,123456789012,Electronics,100,Widget A,2024-12-31,Foodcorp,10.99,2.50,5,20,50
+  ITEM002,234567890123,Home Appliances,75,Gadget B,2025-06-30,Foodcorp,15.99,3.00,7,15,30`;
   }
 
   async uploadFile(): Promise<void> {
@@ -200,12 +208,6 @@ export class UploadItemsModalComponent implements OnInit {
     link.href = window.URL.createObjectURL(blob);
     link.download = fileName;
     link.click();
-  }
-
-  private getSampleFileContent(): string {
-    return `SKU,upc,category,quantity,description,expirationDate,supplier,unitCost,deliveryCost,leadTime,lowStockThreshold,reorderAmount,annualDemand,dailyDemand,EOQ,holdingCost,safetyStock
-ITEM001,123456789012,Electronics,100,Widget A,2024-12-31,Supplier A,10.99,2.50,5,20,50,1000,2.74,200,1.5,30
-ITEM002,234567890123,Home Appliances,75,Gadget B,2025-06-30,Supplier B,15.99,3.00,7,15,30,800,2.19,150,2.0,25`;
   }
 
   private showSnackBar(message: string, type: 'error' | 'success' = 'error'): void {

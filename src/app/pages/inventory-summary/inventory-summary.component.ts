@@ -48,7 +48,13 @@ export class InventorySummaryComponent implements OnInit {
         { field: 'lowStockThreshold', headerName: 'Low Stock Threshold', filter: 'agSetColumnFilter', editable: true },
         { field: 'reorderAmount', headerName: 'Reorder Amount', filter: 'agSetColumnFilter', editable: true },
         { field: 'EOQ', headerName: 'EOQ', filter: 'agSetColumnFilter' },
+        { field: 'ROP', headerName: 'ROP', filter: 'agSetColumnFilter' },
         { field: 'safetyStock', headerName: 'Safety Stock', filter: 'agSetColumnFilter' },
+        { field: 'ABCCategory', headerName: 'ABC Category', filter: 'agSetColumnFilter' },
+        { field: 'annualConsumptionValue', headerName: 'Annual Consumption Value', filter: 'agSetColumnFilter' },
+        { field: 'holdingCost', headerName: 'Holding Cost', filter: 'agSetColumnFilter' },
+        { field: 'annualDemand', headerName: 'Annual Demand', filter: 'agSetColumnFilter' },
+        { field: 'dailyDemand', headerName: 'Daily Demand', filter: 'agSetColumnFilter' },
     ];
 
     constructor(

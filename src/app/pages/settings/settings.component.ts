@@ -7,6 +7,10 @@ import { TitleService } from '../../components/header/title.service';
 import { CognitoService } from '../../_services/cognito.service';
 import { AuthenticatorService } from '@aws-amplify/ui-angular';
 import { ThemeService } from '../../services/theme.service';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { DeliveryInformationModalComponent } from 'app/components/delivery-information-modal/delivery-information-modal.component';
+import { EmailTemplateModalComponent } from 'app/components/email-template-modal/email-template-modal.component';
+import { TemplatesQuotesSidePaneComponent } from 'app/components/templates-quotes-side-pane/templates-quotes-side-pane.component';
 
 @Component({
   selector: 'app-settings',
@@ -31,15 +35,15 @@ export class SettingsComponent implements OnInit {
     private snackBar: MatSnackBar,
     private titleService: TitleService,
     private cognitoService: CognitoService,
-    private authenticator: AuthenticatorService,
-    private router: Router,
-    private themeService: ThemeService
+    private dialog: MatDialog
   ) {}
 
   ngOnInit() {
     this.titleService.updateTitle('Settings');
     this.loadUserProfile();
   }
+
+  private sidePane: MatDialogRef<TemplatesQuotesSidePaneComponent> | null = null;
 
   loadUserProfile() {
     this.cognitoService.getCurrentUserAttributes().subscribe(
@@ -93,18 +97,48 @@ export class SettingsComponent implements OnInit {
   }
 
   editEmailTemplate() {
-    console.log('Editing email template');
-    // Implement the logic to edit email template
+    const dialogRef = this.dialog.open(EmailTemplateModalComponent, {
+      width: '600px',
+      data: {} // You can pass any necessary data here
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        // Handle the result if needed
+        console.log('Email template updated');
+      }
+    });
   }
 
   editAutomationTemplates() {
-    console.log('Editing automation templates');
-    // Implement the logic to edit automation templates
+    const dialogRef = this.dialog.open(TemplatesQuotesSidePaneComponent, {
+      width: '400px',
+      position: { right: '0' },
+      height: '100%',
+      panelClass: 'side-pane',
+      data: { isOpen: true }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        console.log('Automation templates updated');
+      }
+    });
   }
 
   editDeliveryInfo() {
-    console.log('Editing delivery information');
-    // Implement the logic to edit delivery information
+    console.log('Opening delivery information modal'); // Add this log
+    const dialogRef = this.dialog.open(DeliveryInformationModalComponent, {
+      width: '600px',
+      data: { deliveryAddress: {} } // Provide an empty object if you don't have initial data
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        console.log('Delivery information updated:', result);
+        // Handle the updated delivery information
+      }
+    });
   }
 
   changeTheme() {

@@ -16,6 +16,7 @@ import outputs from '../../../../amplify_outputs.json';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { LoadingSpinnerComponent } from '../loader/loading-spinner.component';
 import { InventoryService } from '../../../../amplify/services/inventory.service';
+import { OrdersService } from '../../../../amplify/services/orders.service';
 
 interface OrderItem {
   sku: string;
@@ -63,7 +64,8 @@ export class ReceiveOrderModalComponent implements OnInit {
     public dialogRef: MatDialogRef<ReceiveOrderModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private snackBar: MatSnackBar,
-    private inventoryService: InventoryService
+    private inventoryService: InventoryService,
+    private ordersService: OrdersService
   ) {}
 
   async ngOnInit() {
@@ -142,82 +144,65 @@ export class ReceiveOrderModalComponent implements OnInit {
     return tenentId;
   }
 
-async markAsReceived() {
-  try {
-    // First, add inventory items
-    for (const item of this.orderItems) {
-      const inventoryItem = {
-        category: item.category,
-        description: item.description,
-        expirationDate: item.expirationDate ? item.expirationDate.toISOString() : null,
-        lowStockThreshold: item.lowStockThreshold,
-        quantity: item.quantity,
-        reorderAmount: item.reorderAmount,
-        sku: item.sku,
-        supplier: this.data.Selected_Supplier,
-        tenentId: this.tenentId,
-        upc: item.upc,
-        unitCost: item.unitCost
-      };
-
-      console.log('Inventory item to be created:', inventoryItem);
-
-      const response = await this.inventoryService.createInventoryItem(inventoryItem).toPromise();
-
-      console.log('Inventory-CreateItem response:', response);
-
-      if (response.statusCode !== 201) {
-        throw new Error(`Failed to create inventory item: ${response.body}`);
+  async markAsReceived() {
+    try {
+      // First, add inventory items
+      for (const item of this.orderItems) {
+        const inventoryItem = {
+          category: item.category,
+          description: item.description,
+          expirationDate: item.expirationDate ? item.expirationDate.toISOString() : null,
+          lowStockThreshold: item.lowStockThreshold,
+          quantity: item.quantity,
+          reorderAmount: item.reorderAmount,
+          sku: item.sku,
+          supplier: this.data.Selected_Supplier,
+          tenentId: this.tenentId,
+          upc: item.upc,
+          unitCost: item.unitCost
+        };
+  
+        console.log('Inventory item to be created:', inventoryItem);
+  
+        const response = await this.inventoryService.createInventoryItem(inventoryItem).toPromise();
+  
+        console.log('Inventory-CreateItem response:', response);
+  
+        if (!response) {
+          throw new Error(`Failed to create inventory item`);
+        }
       }
-    }
-
-    // Then, mark the order as received
-    const payload = {
-      orderID: this.data.Order_ID,
-      orderDate: this.data.Order_Date
-    };
-
-    const session = await fetchAuthSession();
-    const lambdaClient = new LambdaClient({
-      region: outputs.auth.aws_region,
-      credentials: session.credentials,
-    });
-
-    const invokeCommand = new InvokeCommand({
-      FunctionName: 'receiveOrder',
-      Payload: new TextEncoder().encode(JSON.stringify({ body: JSON.stringify(payload) })),
-    });
-
-    const lambdaResponse = await lambdaClient.send(invokeCommand);
-    const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
-    if (responseBody.statusCode === 200) {
-      const result = JSON.parse(responseBody.body);
+  
+      // Then, mark the order as received
+      const result = await this.ordersService.receiveOrder(this.data.Order_ID, this.data.Order_Date).toPromise();
+  
       console.log('Order marked as received:', result);
-
+  
+      if (!result || !result.updatedOrder) {
+        throw new Error('Failed to update order status');
+      }
+  
       this.snackBar.open('Order marked as received and inventory items added successfully', 'Close', {
         duration: 6000,
         horizontalPosition: 'center',
         verticalPosition: 'top',
       });
-
+  
       this.dialogRef.close({ 
         action: 'received', 
         data: this.orderItems, 
         updatedOrder: result.updatedOrder 
       });
-    } else {
-      throw new Error(responseBody.body || 'Unknown error occurred');
+  
+    } catch (error) {
+      console.error('Error in markAsReceived:', error);
+      this.snackBar.open(`Error marking order as received: ${(error as Error).message}`, 'Close', {
+        duration: 5000,
+        horizontalPosition: 'center',
+        verticalPosition: 'top',
+      });
     }
-  } catch (error) {
-    console.error('Error in markAsReceived:', error);
-    this.snackBar.open(`Error marking order as received: ${(error as Error).message}`, 'Close', {
-      duration: 5000,
-      horizontalPosition: 'center',
-      verticalPosition: 'top',
-    });
   }
-}
 
 
   close() {

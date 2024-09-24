@@ -21,6 +21,7 @@ import { TemplatesQuotesSidePaneComponent } from 'app/components/templates-quote
 import { MatCardModule } from '@angular/material/card';
 import { ReceiveOrderModalComponent } from 'app/components/receive-order-modal/receive-order-modal.component';
 import { AutomationSettingsModalComponent } from 'app/components/automation-settings-modal/automation-settings-modal.component';
+import { OrdersService } from '../../../../amplify/services/orders.service';
 
 interface DeliveryAddress {
     company: string;
@@ -66,6 +67,7 @@ export class OrdersComponent implements OnInit {
         private titleService: TitleService,
         private dialog: MatDialog,
         private snackBar: MatSnackBar,
+        private ordersService: OrdersService
     ) {
         Amplify.configure(outputs);
     }
@@ -241,30 +243,16 @@ export class OrdersComponent implements OnInit {
     }
 
     async fetchQuoteDetails(quoteId: string) {
-        const session = await fetchAuthSession();
-        const tenentId = await this.getTenentId(session);
-
-        const lambdaClient = new LambdaClient({
-            region: outputs.auth.aws_region,
-            credentials: session.credentials,
-        });
-
-        const invokeCommand = new InvokeCommand({
-            FunctionName: 'getQuoteDetails',
-            Payload: new TextEncoder().encode(
-                JSON.stringify({
-                    pathParameters: { tenentId: tenentId, quoteId: quoteId },
-                }),
-            ),
-        });
-
-        const lambdaResponse = await lambdaClient.send(invokeCommand);
-        const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
-        if (responseBody.statusCode === 200) {
-            return JSON.parse(responseBody.body);
-        } else {
-            throw new Error(responseBody.body);
+        try {
+            const session = await fetchAuthSession();
+            const tenentId = await this.getTenentId(session);
+    
+            const quoteDetails = await this.ordersService.getQuoteDetails(tenentId, quoteId).toPromise();
+    
+            return quoteDetails;
+        } catch (error) {
+            console.error('Error fetching quote details:', error);
+            throw error;
         }
     }
 
@@ -272,59 +260,49 @@ export class OrdersComponent implements OnInit {
         try {
             const session = await fetchAuthSession();
             const tenentId = await this.getTenentId(session);
-
-            const lambdaClient = new LambdaClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
-
+    
+            if (!updatedQuote.quoteId) {
+                throw new Error('Quote ID is missing');
+            }
+    
             const payload = {
-                pathParameters: {
-                    tenentId: tenentId,
-                    quoteId: updatedQuote.quoteId,
-                },
-                body: JSON.stringify({
-                    items: updatedQuote.items.map((item: any) => ({
-                        ItemSKU: item.ItemSKU,
-                        Quantity: item.Quantity,
-                    })),
-                    suppliers: updatedQuote.suppliers.map((supplier: any) => ({
-                        company_name: supplier.company_name,
-                        supplierID: supplier.supplierID,
-                    })),
-                }),
+                items: updatedQuote.items.map((item: any) => ({
+                    ItemSKU: item.ItemSKU,
+                    Quantity: item.Quantity,
+                })),
+                suppliers: updatedQuote.suppliers.map((supplier: any) => ({
+                    company_name: supplier.company_name,
+                    supplierID: supplier.supplierID,
+                })),
+                orderId: updatedQuote.orderId,
+                orderDate: updatedQuote.orderDate,
+                Submission_Deadline: updatedQuote.Submission_Deadline
             };
-
+    
             console.log('Updating quote with payload:', JSON.stringify(payload, null, 2));
-
-            const invokeCommand = new InvokeCommand({
-                FunctionName: 'updateQuoteDetails',
-                Payload: new TextEncoder().encode(JSON.stringify(payload)),
-            });
-
-            const lambdaResponse = await lambdaClient.send(invokeCommand);
-            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
-            console.log('Lambda response:', JSON.stringify(responseBody, null, 2));
-
-            if (responseBody.statusCode === 200) {
+    
+            const response = await this.ordersService.updateQuoteDetails(tenentId, updatedQuote.quoteId, payload).toPromise();
+    
+            console.log('API response:', JSON.stringify(response, null, 2));
+    
+            if (response && response.message === 'Quote updated successfully') {
                 console.log('Quote updated successfully');
-
+    
                 // Show success snackbar
                 this.snackBar.open('Changes saved successfully', 'Close', {
                     duration: 6000,
                     horizontalPosition: 'center',
                     verticalPosition: 'top',
                 });
-
+    
                 // Refresh the orders data
                 await this.loadOrdersData();
             } else {
-                throw new Error(responseBody.body);
+                throw new Error(response.error || 'Failed to update quote');
             }
         } catch (error) {
             console.error('Error updating quote:', error);
-
+    
             // Show error snackbar
             this.snackBar.open(`Error saving changes: ${(error as Error).message}`, 'Close', {
                 duration: 5000,
@@ -338,14 +316,9 @@ export class OrdersComponent implements OnInit {
         try {
             const session = await fetchAuthSession();
             const tenentId = await this.getTenentId(session);
-
-            const lambdaClient = new LambdaClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
-
+    
             const orderDate = new Date().toISOString().split('T')[0];
-
+    
             const newOrder = {
                 Order_Date: orderDate,
                 Order_Status: 'Pending Approval',
@@ -366,60 +339,46 @@ export class OrdersComponent implements OnInit {
                     supplierID: supplier.supplierID,
                 })),
             };
-
+    
             console.log('New Quote Data:', quoteData);
             console.log('New Order Data:', newOrder);
-
-            const invokeCommand = new InvokeCommand({
-                FunctionName: 'createOrder',
-                Payload: new TextEncoder().encode(JSON.stringify({ body: JSON.stringify(newOrder) })),
-            });
-
-            const lambdaResponse = await lambdaClient.send(invokeCommand);
-            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
-            console.log('Lambda response:', responseBody);
-
-            if (responseBody.statusCode === 201) {
+    
+            const response = await this.ordersService.createOrder(newOrder).toPromise();
+    
+            console.log('API response:', response);
+    
+            if (response && response.orderId && response.quoteId) {
                 console.log('Order created successfully');
-
-                // Show success snackbar
+    
                 this.snackBar.open('Order created successfully', 'Close', {
                     duration: 3000,
                     horizontalPosition: 'center',
                     verticalPosition: 'top',
                 });
-
-                // Parse the response body to get the orderId and quoteId
-                const { orderId, quoteId } = JSON.parse(responseBody.body);
-
-                console.log('Created order ID:', orderId);
-                console.log('Created quote ID:', quoteId);
-
-                // Refresh the orders data
+    
+                console.log('Created order ID:', response.orderId);
+                console.log('Created quote ID:', response.quoteId);
+    
                 await this.loadOrdersData();
-
-                // Prepare the quote details for the modal
+    
                 const quoteDetails = {
-                    orderId: orderId,
-                    quoteId: quoteId,
+                    orderId: response.orderId,
+                    quoteId: response.quoteId,
                     items: quoteData.items,
                     suppliers: quoteData.suppliers,
                     Submission_Deadline: quoteData.Submission_Deadline,
-                    orderDate: orderDate, // Include the orderDate here
+                    orderDate: orderDate,
                 };
-
-                // Open the generated quote modal after a delay
+    
                 setTimeout(() => {
-                    this.openCustomQuoteModal(quoteDetails, orderId, quoteId, quoteData.Submission_Deadline, orderDate);
+                    this.openCustomQuoteModal(quoteDetails, response.orderId, response.quoteId, quoteData.Submission_Deadline, orderDate);
                 }, 3000);
             } else {
-                throw new Error(responseBody.body || 'Unknown error occurred');
+                throw new Error('Failed to create order');
             }
         } catch (error) {
             console.error('Error creating order:', error);
-
-            // Show error snackbar
+    
             this.snackBar.open(`Error creating order: ${(error as Error).message}`, 'Close', {
                 duration: 5000,
                 horizontalPosition: 'center',
@@ -476,41 +435,28 @@ export class OrdersComponent implements OnInit {
         this.isLoading = true;
         try {
             const session = await fetchAuthSession();
-
+    
             const cognitoClient = new CognitoIdentityProviderClient({
                 region: outputs.auth.aws_region,
                 credentials: session.credentials,
             });
-
+    
             const getUserCommand = new GetUserCommand({
                 AccessToken: session.tokens?.accessToken.toString(),
             });
             const getUserResponse = await cognitoClient.send(getUserCommand);
-
+    
             const tenentId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
-
+    
             if (!tenentId) {
                 console.error('TenentId not found in user attributes');
                 this.rowData = [];
                 return;
             }
-
-            const lambdaClient = new LambdaClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
-
-            const invokeCommand = new InvokeCommand({
-                FunctionName: 'getOrders',
-                Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: tenentId } })),
-            });
-
-            const lambdaResponse = await lambdaClient.send(invokeCommand);
-            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-            console.log('Response from Lambda:', responseBody);
-
-            if (responseBody.statusCode === 200) {
-                const orders = JSON.parse(responseBody.body);
+    
+            const orders = await this.ordersService.getOrders(tenentId).toPromise();
+    
+            if (orders) {
                 this.rowData = orders.map((order: any) => ({
                     Order_ID: order.Order_ID,
                     Order_Date: order.Order_Date,
@@ -527,7 +473,7 @@ export class OrdersComponent implements OnInit {
                 }));
                 console.log('Processed orders:', this.rowData);
             } else {
-                console.error('Error fetching orders data:', responseBody.body);
+                console.error('Error fetching orders data');
                 this.rowData = [];
             }
         } catch (error) {
@@ -556,64 +502,47 @@ export class OrdersComponent implements OnInit {
             alert('Please select an order to delete');
             return;
         }
-
+    
         if (this.selectedOrder.Quote_Status !== 'Draft') {
             this.snackBar.open('Only orders in draft status can be deleted', 'Close', {
-                duration: 6000, // Duration in milliseconds
+                duration: 6000,
                 horizontalPosition: 'center',
                 verticalPosition: 'top',
             });
             return;
         }
-
+    
         if (confirm('Are you sure you want to delete this order?')) {
             try {
                 const session = await fetchAuthSession();
                 const tenentId = await this.getTenentId(session);
-
-                const lambdaClient = new LambdaClient({
-                    region: outputs.auth.aws_region,
-                    credentials: session.credentials,
-                });
-
-                const invokeCommand = new InvokeCommand({
-                    FunctionName: 'deleteOrder',
-                    Payload: new TextEncoder().encode(
-                        JSON.stringify({
-                            pathParameters: {
-                                tenentId: tenentId,
-                                orderId: this.selectedOrder.Order_ID,
-                                quoteId: this.selectedOrder.Quote_ID,
-                            },
-                        }),
-                    ),
-                });
-
-                const lambdaResponse = await lambdaClient.send(invokeCommand);
-                const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
-                if (responseBody.statusCode === 200) {
+    
+                const response = await this.ordersService.deleteOrder(
+                    tenentId,
+                    this.selectedOrder.Order_ID,
+                    this.selectedOrder.Quote_ID
+                ).toPromise();
+    
+                if (response && response.message === 'Order and associated data deleted successfully') {
                     console.log('Order deleted successfully');
-
-                    // Show success snackbar
+    
                     this.snackBar.open('Order deleted successfully', 'Close', {
-                        duration: 6000, // Duration in milliseconds
+                        duration: 6000,
                         horizontalPosition: 'center',
                         verticalPosition: 'top',
                     });
-
+    
                     await this.loadOrdersData();
                     this.selectedOrder = null;
                     this.refreshGridSelection();
                 } else {
-                    throw new Error(responseBody.body || 'Unknown error occurred');
+                    throw new Error('Unknown error occurred');
                 }
             } catch (error) {
                 console.error('Error deleting order:', error);
-
-                // Show error snackbar
+    
                 this.snackBar.open(`Error deleting order: ${(error as Error).message}`, 'Close', {
-                    duration: 5000, // Longer duration for error messages
+                    duration: 5000,
                     horizontalPosition: 'center',
                     verticalPosition: 'top',
                 });
@@ -759,52 +688,28 @@ export class OrdersComponent implements OnInit {
 
     async markOrderAsReceived(orderData: any) {
         try {
-            const session = await fetchAuthSession();
-            const lambdaClient = new LambdaClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
-
-            const payload = {
-                body: JSON.stringify({
-                    orderID: orderData.Order_ID,
-                    orderDate: orderData.Order_Date,
-                }),
-            };
-
-            const invokeCommand = new InvokeCommand({
-                FunctionName: 'receiveOrder',
-                Payload: new TextEncoder().encode(JSON.stringify(payload)),
-            });
-
-            const lambdaResponse = await lambdaClient.send(invokeCommand);
-            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
-            if (responseBody.statusCode === 200) {
-                const result = JSON.parse(responseBody.body);
-                console.log('Order marked as received:', result);
-
-                // Update local data
-                const index = this.rowData.findIndex((order) => order.Order_ID === orderData.Order_ID);
-                if (index !== -1) {
-                    this.rowData[index] = result.updatedOrder;
-                }
-
-                // Reload the orders data
-                await this.loadOrdersData();
-
-                // Refresh the grid
-                this.gridComponent.refreshGrid(this.rowData);
-
-                // Show success message
-                this.snackBar.open('Order marked as received successfully', 'Close', {
-                    duration: 3000,
-                    horizontalPosition: 'center',
-                    verticalPosition: 'top',
-                });
-            } else {
-                throw new Error(responseBody.body || 'Unknown error occurred');
+            const result = await this.ordersService.receiveOrder(orderData.Order_ID, orderData.Order_Date).toPromise();
+    
+            console.log('Order marked as received:', result);
+    
+            // Update local data
+            const index = this.rowData.findIndex((order) => order.Order_ID === orderData.Order_ID);
+            if (index !== -1) {
+                this.rowData[index] = result.updatedOrder;
             }
+    
+            // Reload the orders data
+            await this.loadOrdersData();
+    
+            // Refresh the grid
+            this.gridComponent.refreshGrid(this.rowData);
+    
+            // Show success message
+            this.snackBar.open('Order marked as received successfully', 'Close', {
+                duration: 3000,
+                horizontalPosition: 'center',
+                verticalPosition: 'top',
+            });
         } catch (error) {
             console.error('Error marking order as received:', error);
             this.snackBar.open(`Error marking order as received: ${(error as Error).message}`, 'Close', {

@@ -16,9 +16,9 @@ export class OrdersService {
   private orderAutomationUrl = 'https://rb9wh1dnqh.execute-api.us-east-1.amazonaws.com/default/orderAutomation';
   private getAutomationSettingsUrl = 'https://vgv9dlglg6.execute-api.us-east-1.amazonaws.com/default/getAutomationSettings';
   private updateAutomationSettingsUrl = 'https://fox1dnu2d2.execute-api.us-east-1.amazonaws.com/default/updateAutomationSettings';
-  private getEmailTemplateUrl = 'https://ard5rjpzn0.execute-api.us-east-1.amazonaws.com/default/getEmailTemplate';
   private addEmailTemplateUrl = 'https://kntgbohhfa.execute-api.us-east-1.amazonaws.com/default/addEmailTemplate';
   private sendSupplierEmailsUrl = 'https://n6ipwus5x9.execute-api.us-east-1.amazonaws.com/default/sendSupplierEmails';
+  private getDeliveryIDUrl = 'https://jogw3ubi9k.execute-api.us-east-1.amazonaws.com/default/getDeliveryID';
 
   constructor(private http: HttpClient) { }
 
@@ -77,6 +77,10 @@ export class OrdersService {
 
   sendSupplierEmails(emailData: any[]): Observable<any> {
     return this.http.post(this.sendSupplierEmailsUrl, { emailData });
+  }
+
+  getDeliveryID(tenentId: string): Observable<any> {
+    return this.http.get(`${this.getDeliveryIDUrl}?tenentId=${tenentId}`);
   }
 
 }

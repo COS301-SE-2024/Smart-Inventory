@@ -515,23 +515,15 @@ export class CustomQuoteModalComponent implements OnInit {
   }
 
   async getDeliveryInfoID(tenentId: string): Promise<string> {
-    const lambdaClient = new LambdaClient({
-      region: outputs.auth.aws_region,
-      credentials: (await fetchAuthSession()).credentials,
-    });
-
-    const invokeCommand = new InvokeCommand({
-      FunctionName: 'getDeliveryID',
-      Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: tenentId } })),
-    });
-
-    const lambdaResponse = await lambdaClient.send(invokeCommand);
-    const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
-    if (responseBody.statusCode === 200) {
-      const { deliveryInfoID } = JSON.parse(responseBody.body);
-      return deliveryInfoID;
-    } else {
+    try {
+      const response = await this.ordersService.getDeliveryID(tenentId).toPromise();
+      if (response && response.deliveryInfoID) {
+        return response.deliveryInfoID;
+      } else {
+        throw new Error('DeliveryInfoID not found in response');
+      }
+    } catch (error) {
+      console.error('Error fetching deliveryInfoID:', error);
       throw new Error('Failed to get deliveryInfoID');
     }
   }

@@ -192,10 +192,12 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
         console.log('Refreshing grid with data:', newData);
         if (this.gridApi && newData && newData.length > 0) {
             // Remove all existing rows
-            const allRows = this.gridApi.getModel().getRowCount();
+            const allRows = this.gridApi.getDisplayedRowCount();
             if (allRows > 0) {
-                const rowsToRemove = this.gridApi.getModel().getRow(allRows - 1)!.data;
-                this.gridApi.applyTransaction({ remove: [rowsToRemove] });
+                const rowsToRemove = this.gridApi.getDisplayedRowAtIndex(allRows - 1)!;
+                if (rowsToRemove) {
+                    this.gridApi.applyTransaction({ remove: [rowsToRemove.data] });
+                }
             }
 
             // Add new rows
@@ -472,45 +474,44 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
     onViewQRCode() {
         const selectedRows = this.gridApi.getSelectedRows();
         if (selectedRows && selectedRows.length > 0) {
-          const selectedItem = selectedRows[0];
-          if (selectedItem.qrCode) {
-            this.dialog.open(ViewQrcodeModalComponent, {
-              width: '600px',
-              data: { 
-                qrCode: selectedItem.qrCode, 
-                sku: selectedItem.sku,
-                description: selectedItem.description
-              }
-            });
-          } else {
-            this.snackBar.open('No QR code available for this item', 'Close', {
-              duration: 3000,
-              horizontalPosition: 'center',
-              verticalPosition: 'top'
-            });
-          }
+            const selectedItem = selectedRows[0];
+            if (selectedItem.qrCode) {
+                this.dialog.open(ViewQrcodeModalComponent, {
+                    width: '600px',
+                    data: {
+                        qrCode: selectedItem.qrCode,
+                        sku: selectedItem.sku,
+                        description: selectedItem.description,
+                    },
+                });
+            } else {
+                this.snackBar.open('No QR code available for this item', 'Close', {
+                    duration: 3000,
+                    horizontalPosition: 'center',
+                    verticalPosition: 'top',
+                });
+            }
         } else {
-          this.snackBar.open('Please select an inventory item to view its QR code', 'Close', {
-            duration: 3000,
-            horizontalPosition: 'center',
-            verticalPosition: 'top'
-          });
+            this.snackBar.open('Please select an inventory item to view its QR code', 'Close', {
+                duration: 3000,
+                horizontalPosition: 'center',
+                verticalPosition: 'top',
+            });
         }
     }
 
     onScanQRCode() {
         const dialogRef = this.dialog.open(ScanQrcodeModalComponent, {
-          width: '90%',
-          maxWidth: '600px',
-          height: '90%',
-          maxHeight: '600px',
+            width: '90%',
+            maxWidth: '600px',
+            height: '90%',
+            maxHeight: '600px',
         });
-    
+
         dialogRef.afterClosed().subscribe((result: string | undefined) => {
-          if (result) {
-            this.scanQRCode.emit(result);
-          }
+            if (result) {
+                this.scanQRCode.emit(result);
+            }
         });
     }
-    
 }

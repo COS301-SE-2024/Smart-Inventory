@@ -23,6 +23,7 @@ export class OrdersService {
   private updateDeliveryInfoUrl = 'https://jbx7zo94aj.execute-api.us-east-1.amazonaws.com/default/updateDeliveryInfo';
   private getSupplierQuoteSummariesUrl = 'https://q3gigjwz01.execute-api.us-east-1.amazonaws.com/default/getSupplierQuoteSummaries';
   private getSupplierQuoteDetailsUrl = 'https://2ws3cl90j7.execute-api.us-east-1.amazonaws.com/default/getSupplierQuoteDetails';
+  private acceptQuoteUrl = 'https://u4eziwz5vc.execute-api.us-east-1.amazonaws.com/default/acceptQuote';
 
   constructor(private http: HttpClient) { }
 
@@ -101,6 +102,10 @@ export class OrdersService {
 
   getSupplierQuoteDetails(quoteID: string, supplierID: string, tenentId: string): Observable<any> {
     return this.http.get(`${this.getSupplierQuoteDetailsUrl}?quoteID=${quoteID}&supplierID=${supplierID}&tenentId=${tenentId}`);
+  }
+
+  acceptQuote(quoteData: any): Observable<any> {
+    return this.http.post(this.acceptQuoteUrl, quoteData);
   }
 
 

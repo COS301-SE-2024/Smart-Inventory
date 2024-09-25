@@ -7,6 +7,8 @@ import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-c
 import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
 import outputs from '../../../../amplify_outputs.json';
 import { fetchAuthSession } from 'aws-amplify/auth';
+import { NotificationsService } from '../../../../amplify/services/notifications.service';
+import { NotificationService } from '../../../../amplify/services/supplier-form-services/notification.service';
 
 interface Notification {
     notificationId: string;
@@ -57,7 +59,12 @@ export class NotificationsSidePaneComponent implements OnInit {
         { name: 'Quotes', enabled: true },
     ];
 
-    constructor(private dialog: MatDialog, private el: ElementRef, private renderer: Renderer2) {}
+    constructor(
+        private dialog: MatDialog, 
+        private el: ElementRef, 
+        private renderer: Renderer2,
+        private notificationsService: NotificationService
+    ) {}
 
     async ngOnInit() {
         try {
@@ -252,6 +259,8 @@ export class NotificationsSidePaneComponent implements OnInit {
             console.error('Error marking all notifications as read:', error);
         }
     }
+
+
     updateNotificationSettings(setting: NotificationSetting) {
         this.tabs = ['All'];
         this.notificationSettings.forEach(s => {

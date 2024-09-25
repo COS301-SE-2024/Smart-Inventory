@@ -1,21 +1,19 @@
-<mat-toolbar style="background-color: white">
+<mat-toolbar>
     <span class="pageTitle">{{ pageTitle }}</span>
     <span class="flex-spacer"></span>
     <button mat-icon-button (click)="toggleNotificationPanel()" class="toolbar-icon">
-        <mat-icon class="theme-svg" [matBadge]="unreadCount" [matBadgeHidden]="unreadCount === 0" matBadgeColor="warn"
-            >notifications</mat-icon
-        >
+        <mat-icon [matBadge]="unreadCount" [matBadgeHidden]="unreadCount === 0" matBadgeColor="warn">notifications</mat-icon>
     </button>
-    <button mat-icon-button class="toolbar-icon">
-        <mat-icon class="theme-svg" (click)="clickSettings()">settings</mat-icon>
+    <button mat-icon-button (click)="clickSettings()" class="toolbar-icon">
+        <mat-icon>settings</mat-icon>
     </button>
-    <!-- User profile -->
     <div class="user-profile" [matMenuTriggerFor]="menu">
         <div class="profile-box">
             <div class="user-info">
                 <span class="username">{{ userName }}</span>
                 <span class="role">{{ userEmail }}</span>
             </div>
+            <mat-icon>arrow_drop_down</mat-icon>
         </div>
     </div>
     <mat-menu #menu="matMenu">

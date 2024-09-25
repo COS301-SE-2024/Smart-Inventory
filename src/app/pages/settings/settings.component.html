@@ -40,7 +40,7 @@
           </div>
           <h3>Email Template</h3>
           <p>Update and edit your template for emails sent.</p>
-          <button (click)="editEmailTemplate()">Edit Template</button>
+          <button (click)="editEmailTemplate()" [disabled]="notEndUser()">Edit Template</button>
         </div>
       </div>
   
@@ -51,7 +51,7 @@
           </div>
           <h3>Automation Templates</h3>
           <p>Add, remove and edit your templates for order automation.</p>
-          <button (click)="editAutomationTemplates()">Edit Templates</button>
+          <button (click)="editAutomationTemplates()" [disabled]="notEndUser()">Edit Templates</button>
         </div>
       </div>
   
@@ -62,7 +62,7 @@
           </div>
           <h3>Delivery Information</h3>
           <p>Update and change your delivery information.</p>
-          <button (click)="editDeliveryInfo()">Edit Details</button>
+          <button (click)="editDeliveryInfo()" [disabled]="notEndUser()">Edit Details</button>
         </div>
       </div>
   
@@ -78,3 +78,6 @@
       </div>
     </div>
   </div>
+
+  <app-templates-quotes-side-pane [isOpen]="isTemplateSidePaneOpen" (closed)="isTemplateSidePaneOpen = false">
+  </app-templates-quotes-side-pane>

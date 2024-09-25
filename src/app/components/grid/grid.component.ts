@@ -65,13 +65,11 @@ import { ScanQrcodeModalComponent } from '../scan-qrcode-modal/scan-qrcode-modal
 })
 export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
     @Input() set rowData(value: any[] | null | undefined) {
-        console.log('Setting rowData:', value);
         if (value) {
             this._rowData = value;
             this.setGridHeight();
             this.refreshGrid(value);
         } else {
-            console.warn('Received null or undefined rowData');
             this._rowData = [];
         }
     }
@@ -189,21 +187,22 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     refreshGrid(newData: any[]) {
-        console.log('Refreshing grid with data:', newData);
         if (this.gridApi && newData && newData.length > 0) {
             // Remove all existing rows
             const allRows = this.gridApi.getDisplayedRowCount();
             if (allRows > 0) {
-                const rowsToRemove = this.gridApi.getDisplayedRowAtIndex(allRows - 1)!;
-                if (rowsToRemove) {
-                    this.gridApi.applyTransaction({ remove: [rowsToRemove.data] });
+                const rowsToRemove = [];
+                for (let i = 0; i < allRows; i++) {
+                    const row = this.gridApi.getDisplayedRowAtIndex(i);
+                    if (row) {
+                        rowsToRemove.push(row.data);
+                    }
                 }
+                this.gridApi.applyTransaction({ remove: rowsToRemove });
             }
 
             // Add new rows
             this.gridApi.applyTransaction({ add: newData });
-        } else {
-            console.warn('Unable to refresh grid: gridApi not initialized or newData is empty');
         }
     }
 

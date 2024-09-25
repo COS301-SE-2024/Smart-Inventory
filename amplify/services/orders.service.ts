@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -13,6 +14,8 @@ export class OrdersService {
   private deleteOrderUrl = 'https://z4wpc8urf5.execute-api.us-east-1.amazonaws.com/default/deleteOrder';
   private receiveOrderUrl = 'https://pjxkk0m4ug.execute-api.us-east-1.amazonaws.com/default/receiveOrder';
   private getQuoteItemsUrl = 'https://gfrc699s45.execute-api.us-east-1.amazonaws.com/prod/quotes';
+  private orderAutomationUrl = 'https://rb9wh1dnqh.execute-api.us-east-1.amazonaws.com/default/orderAutomation';
+  private getAutomationSettingsUrl = 'https://vgv9dlglg6.execute-api.us-east-1.amazonaws.com/default/getAutomationSettings';
 
   constructor(private http: HttpClient) { }
 
@@ -44,5 +47,22 @@ export class OrdersService {
   getQuoteItems(tenentId: string, quoteID: string): Observable<any> {
     return this.http.get(`${this.getQuoteItemsUrl}/${tenentId}/${quoteID}`);
   }
+
+  orderAutomation(tenentId: string): Observable<any> {
+    return this.http.post(this.orderAutomationUrl, { tenentId }).pipe(
+        map((response: any) => {
+            if (response && (response.statusCode === 200 || response.message)) {
+                return response;
+            } else {
+                throw new Error(JSON.stringify(response));
+            }
+        })
+    );
+  }
+
+  getAutomationSettings(tenentId: string): Observable<any> {
+    return this.http.get(`${this.getAutomationSettingsUrl}?tenentId=${tenentId}`);
+  }
+
 
 }

@@ -22,6 +22,7 @@ export class OrdersService {
   private getDeliveryDetailsUrl = 'https://83protl4jl.execute-api.us-east-1.amazonaws.com/default/getDeliveryDetails';
   private updateDeliveryInfoUrl = 'https://jbx7zo94aj.execute-api.us-east-1.amazonaws.com/default/updateDeliveryInfo';
   private getSupplierQuoteSummariesUrl = 'https://q3gigjwz01.execute-api.us-east-1.amazonaws.com/default/getSupplierQuoteSummaries';
+  private getSupplierQuoteDetailsUrl = 'https://2ws3cl90j7.execute-api.us-east-1.amazonaws.com/default/getSupplierQuoteDetails';
 
   constructor(private http: HttpClient) { }
 
@@ -96,6 +97,10 @@ export class OrdersService {
 
   getSupplierQuoteSummaries(quoteId: string, tenentId: string): Observable<any> {
     return this.http.get(`${this.getSupplierQuoteSummariesUrl}?quoteId=${quoteId}&tenentId=${tenentId}`);
+  }
+
+  getSupplierQuoteDetails(quoteID: string, supplierID: string, tenentId: string): Observable<any> {
+    return this.http.get(`${this.getSupplierQuoteDetailsUrl}?quoteID=${quoteID}&supplierID=${supplierID}&tenentId=${tenentId}`);
   }
 
 

@@ -1,5 +1,5 @@
 <div style="margin: 15px; width: 100%">
-    <app-grid [rowData]="rowData" [columnDefs]="colDefs" (itemToUpdate)="handleCellValueChanged($event)" #gridComponent>
+    <app-grid [rowData]="rowData" [columnDefs]="colDefs" (itemToUpdate)="handleCellValueChanged($event)" (runEoqRopCalculation)="runEoqRopCalculation()" #gridComponent>
     </app-grid>
     <mat-toolbar
         style="
@@ -19,10 +19,11 @@
     </mat-toolbar>
 </div>
 
-<div class="calculation-status" *ngIf="isCalculating">
-    EOQ/ROP calculation in progress...
-</div>
-
-<div class="loading-overlay" *ngIf="isLoading">
-    <app-loading-spinner></app-loading-spinner>
+<div class="loading-overlay" *ngIf="isLoading || isCalculating">
+    <div class="loading-content">
+        <app-loading-spinner></app-loading-spinner>
+        <div class="calculation-status" *ngIf="isCalculating">
+            EOQ/ROP calculation in progress...
+        </div>
+    </div>
 </div>

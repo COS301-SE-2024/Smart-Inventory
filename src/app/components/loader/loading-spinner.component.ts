@@ -19,7 +19,7 @@ import { Component } from '@angular/core';
             .spinner > div {
                 width: 18px;
                 height: 18px;
-                background-color: grey;
+                background-color: #005cbb;
 
                 border-radius: 100%;
                 display: inline-block;

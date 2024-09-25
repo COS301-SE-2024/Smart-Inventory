@@ -238,6 +238,7 @@
                     mat-menu-item
                     *ngIf="getCurrentRoute('inventory-summary') && !isEndUser()"
                     color="primary"
+                    (click)="runEoqRopCalculation.emit()"
                 >
                     <mat-icon>query_stats</mat-icon><span>Run EOQ/ROP/ABC Calculation</span>
                 </button>

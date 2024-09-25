@@ -10,57 +10,17 @@ import { EmailTemplateModalComponent } from 'app/components/email-template-modal
 import { TemplatesQuotesSidePaneComponent } from 'app/components/templates-quotes-side-pane/templates-quotes-side-pane.component';
 
 @Component({
-  selector: 'app-settings',
-  standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, MatSnackBarModule, TemplatesQuotesSidePaneComponent],
-  templateUrl: './settings.component.html',
-  styleUrls: ['./settings.component.css']
+    selector: 'app-settings',
+    standalone: true,
+    imports: [CommonModule, FormsModule, ReactiveFormsModule, MatSnackBarModule, TemplatesQuotesSidePaneComponent],
+    templateUrl: './settings.component.html',
+    styleUrls: ['./settings.component.css'],
 })
 export class SettingsComponent implements OnInit {
-  personalDetails = {
-    name: '',
-    surname: '',
-    email: ''
-  };
-
-  passwordChange = {
-    current: '',
-    new: ''
-  };
-
-  isTemplateSidePaneOpen = false;
-
-  constructor(
-    private snackBar: MatSnackBar,
-    private titleService: TitleService,
-    private cognitoService: CognitoService,
-    private dialog: MatDialog
-  ) {}
-
-  ngOnInit() {
-    this.titleService.updateTitle('Settings');
-    this.loadUserProfile();
-  }
-
-  loadUserProfile() {
-    this.cognitoService.getCurrentUserAttributes().subscribe(
-      (attributes) => {
-        this.personalDetails.name = attributes['given_name'] || '';
-        this.personalDetails.surname = attributes['family_name'] || '';
-        this.personalDetails.email = attributes['email'] || '';
-      },
-      (error) => {
-        console.error('Error loading user profile:', error);
-        this.snackBar.open('Error loading user profile', 'Close', { duration: 3000 });
-      }
-    );
-  }
-
-  savePersonalDetails() {
-    const updatedAttributes: Record<string, string> = {
-      ['given_name']: this.personalDetails.name,
-      ['family_name']: this.personalDetails.surname,
-      ['email']: this.personalDetails.email,
+    personalDetails = {
+        name: '',
+        surname: '',
+        email: '',
     };
 
     passwordChange = {
@@ -68,20 +28,18 @@ export class SettingsComponent implements OnInit {
         new: '',
     };
 
+    isTemplateSidePaneOpen = false;
+
     constructor(
         private snackBar: MatSnackBar,
         private titleService: TitleService,
         private cognitoService: CognitoService,
-        private authenticator: AuthenticatorService,
-        private router: Router,
-        private themeService: ThemeService,
         private dialog: MatDialog,
     ) {}
 
     ngOnInit() {
         this.titleService.updateTitle('Settings');
         this.loadUserProfile();
-        this.logAuthSession();
     }
 
     loadUserProfile() {
@@ -96,19 +54,6 @@ export class SettingsComponent implements OnInit {
                 this.snackBar.open('Error loading user profile', 'Close', { duration: 3000 });
             },
         );
-    }
-
-    async logAuthSession() {
-        try {
-            const session = await fetchAuthSession();
-            this.role = '' + session.tokens?.idToken?.payload?.['cognito:groups']?.toString();
-        } catch (error) {
-            console.error('Error fetching auth session:', error);
-        }
-    }
-
-    notEndUser() {
-        return this.role == 'enduser';
     }
 
     savePersonalDetails() {
@@ -149,7 +94,17 @@ export class SettingsComponent implements OnInit {
     }
 
     editEmailTemplate() {
-        this.dialog.open(EmailTemplateModalComponent);
+        const dialogRef = this.dialog.open(EmailTemplateModalComponent, {
+            width: '600px',
+            data: {}, // You can pass any necessary data here
+        });
+
+        dialogRef.afterClosed().subscribe((result) => {
+            if (result) {
+                // Handle the result if needed
+                console.log('Email template updated');
+            }
+        });
     }
 
     editAutomationTemplates() {
@@ -157,67 +112,22 @@ export class SettingsComponent implements OnInit {
     }
 
     editDeliveryInfo() {
+        console.log('Opening delivery information modal'); // Add this log
         const dialogRef = this.dialog.open(DeliveryInformationModalComponent, {
             width: '600px',
-            data: { deliveryAddress: this.deliveryAddress },
+            data: { deliveryAddress: {} }, // Provide an empty object if you don't have initial data
         });
 
         dialogRef.afterClosed().subscribe((result) => {
             if (result) {
-                this.deliveryAddress = result;
-                this.saveDeliveryInfo(result);
+                console.log('Delivery information updated:', result);
+                // Handle the updated delivery information
             }
         });
     }
-    this.cognitoService.changePassword(this.passwordChange.current, this.passwordChange.new).subscribe(
-      () => {
-        this.snackBar.open('Password changed successfully', 'Close', { duration: 3000 });
-        this.passwordChange.current = '';
-        this.passwordChange.new = '';
-      },
-      (error) => {
-        console.error('Error changing password:', error);
-        this.snackBar.open('Error changing password. Please try again.', 'Close', { duration: 3000 });
-      }
-    );
-  }
 
-  editEmailTemplate() {
-    const dialogRef = this.dialog.open(EmailTemplateModalComponent, {
-      width: '600px',
-      data: {} // You can pass any necessary data here
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        // Handle the result if needed
-        console.log('Email template updated');
-      }
-    });
-  }
-
-  editAutomationTemplates() {
-    this.isTemplateSidePaneOpen = true;
-  }
-
-
-  editDeliveryInfo() {
-    console.log('Opening delivery information modal'); // Add this log
-    const dialogRef = this.dialog.open(DeliveryInformationModalComponent, {
-      width: '600px',
-      data: { deliveryAddress: {} } // Provide an empty object if you don't have initial data
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        console.log('Delivery information updated:', result);
-        // Handle the updated delivery information
-      }
-    });
-  }
-
-  changeTheme() {
-    console.log('Customizing app appearance');
-    // Implement the logic to customize app appearance using ThemeService
-  }
+    changeTheme() {
+        console.log('Customizing app appearance');
+        // Implement the logic to customize app appearance using ThemeService
+    }
 }

@@ -55,6 +55,14 @@
                     class="QAButtons"
                     mat-menu-item
                     color="primary"
+                    *ngIf="getCurrentRoute('inventoryReport') && !isEndUser()"
+                >
+                    <mat-icon>query_stats</mat-icon><span>Forecast Item</span>
+                </button>
+                <button
+                    class="QAButtons"
+                    mat-menu-item
+                    color="primary"
                     (click)="addRow()"
                     *ngIf="getCurrentRoute('inventory') && !isEndUser()"
                 >

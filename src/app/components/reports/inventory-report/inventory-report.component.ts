@@ -300,6 +300,10 @@ export class InventoryReportComponent implements OnInit {
         ];
     }
 
+    onViewInventorySummary() {
+        this.router.navigate(['/inventory-summary']);
+    }
+
     setYearlyCorrelationData(): any {
         const currentYear = new Date().getFullYear();
         const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];

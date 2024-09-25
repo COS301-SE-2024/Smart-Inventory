@@ -78,45 +78,33 @@ export class ReceiveOrderModalComponent implements OnInit {
     try {
       const session = await fetchAuthSession();
       this.tenentId = await this.getTenentId(session);
-
-      const lambdaClient = new LambdaClient({
-        region: outputs.auth.aws_region,
-        credentials: session.credentials,
-      });
-
-      const invokeCommand = new InvokeCommand({
-        FunctionName: 'getQuoteItems',
-        Payload: new TextEncoder().encode(JSON.stringify({
-          pathParameters: {
-            tenentId: this.tenentId,
-            quoteID: this.data.Quote_ID
-          }
-        })),
-      });
-
-      const lambdaResponse = await lambdaClient.send(invokeCommand);
-      const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
-      console.log('Lambda response:', responseBody);
-
-      if (responseBody.statusCode === 200) {
-        const items = JSON.parse(responseBody.body);
-        this.orderItems = items.map((item: any) => ({
-          sku: item.ItemSKU,
-          description: item.Description,
-          quantity: item.Quantity,
-          expirationDate: null,
-          upc: item.UPC,
-          category: item.Category,
-          lowStockThreshold: item.LowStockThreshold,
-          reorderAmount: item.ReorderAmount,
-          inventoryID: item.inventoryID,
-          quoteID: item.QuoteID,
-          unitCost: item.UnitCost,
-        }));
-      } else {
-        console.error('Error fetching quote items:', responseBody.body);
+  
+      if (!this.tenentId) {
+        console.error('TenentId not found');
+        return;
       }
+  
+      this.ordersService.getQuoteItems(this.tenentId, this.data.Quote_ID)
+        .subscribe(
+          (items: any[]) => {
+            this.orderItems = items.map((item: any) => ({
+              sku: item.ItemSKU,
+              description: item.Description,
+              quantity: item.Quantity,
+              expirationDate: null,
+              upc: item.UPC,
+              category: item.Category,
+              lowStockThreshold: item.LowStockThreshold,
+              reorderAmount: item.ReorderAmount,
+              inventoryID: item.inventoryID,
+              quoteID: item.QuoteID,
+              unitCost: item.UnitCost,
+            }));
+          },
+          (error) => {
+            console.error('Error fetching quote items:', error);
+          }
+        );
     } catch (error) {
       console.error('Error in loadQuoteItems:', error);
     }

@@ -175,7 +175,7 @@ export class AutomationSettingsModalComponent implements OnInit {
     
                         // If you want to display more detailed information, you can do so here
                         // For example, you could open a dialog with the details of the orders created
-    
+                        this.dialogRef.close();
                         await this.data.ordersComponent.loadOrdersData();
                     } else {
                         throw new Error('Unexpected response format');
@@ -249,45 +249,31 @@ export class AutomationSettingsModalComponent implements OnInit {
         } else {
             scheduleConfig = { scheduleType: 'weekly', weeklySchedule: this.weeklySchedule };
         }
-
+    
         try {
             const session = await fetchAuthSession();
             const tenentId = await this.getTenentId(session);
-
-            const lambdaClient = new LambdaClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
+    
+            const response = await this.ordersService.updateAutomationSettings(tenentId, scheduleConfig).toPromise();
+    
+            console.log('Automation settings updated successfully');
+            this.snackBar.open('Automation settings updated successfully', 'Close', {
+                duration: 3000,
+                horizontalPosition: 'center',
+                verticalPosition: 'top',
             });
-
-            const invokeCommand = new InvokeCommand({
-                FunctionName: 'updateAutomationSettings',
-                Payload: new TextEncoder().encode(
-                    JSON.stringify({
-                        body: JSON.stringify({
-                            tenentId: tenentId,
-                            settings: scheduleConfig,
-                        }),
-                    }),
-                ),
-            });
-
-            const lambdaResponse = await lambdaClient.send(invokeCommand);
-            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
-            if (responseBody.statusCode === 200) {
-                console.log('Automation settings updated successfully');
-                this.snackBar.open('Automation settings updated successfully', 'Close', {
-                    duration: 3000,
-                    horizontalPosition: 'center',
-                    verticalPosition: 'top',
-                });
-                this.dialogRef.close(scheduleConfig);
-            } else {
-                throw new Error(responseBody.body || 'Failed to update automation settings');
-            }
-        } catch (error) {
+            this.dialogRef.close(scheduleConfig);
+        } catch (error: unknown) {
             console.error('Error saving automation settings:', error);
-            this.snackBar.open(`Error saving settings: ${(error as Error).message}`, 'Close', {
+            let errorMessage = 'Unknown error';
+            if (error instanceof Error) {
+                errorMessage = error.message;
+            } else if (typeof error === 'string') {
+                errorMessage = error;
+            } else if (typeof error === 'object' && error !== null && 'message' in error) {
+                errorMessage = String(error.message);
+            }
+            this.snackBar.open(`Error saving settings: ${errorMessage}`, 'Close', {
                 duration: 5000,
                 horizontalPosition: 'center',
                 verticalPosition: 'top',

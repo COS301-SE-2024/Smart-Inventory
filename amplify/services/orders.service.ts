@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -16,6 +15,7 @@ export class OrdersService {
   private getQuoteItemsUrl = 'https://gfrc699s45.execute-api.us-east-1.amazonaws.com/prod/quotes';
   private orderAutomationUrl = 'https://rb9wh1dnqh.execute-api.us-east-1.amazonaws.com/default/orderAutomation';
   private getAutomationSettingsUrl = 'https://vgv9dlglg6.execute-api.us-east-1.amazonaws.com/default/getAutomationSettings';
+  private updateAutomationSettingsUrl = 'https://fox1dnu2d2.execute-api.us-east-1.amazonaws.com/default/updateAutomationSettings';
 
   constructor(private http: HttpClient) { }
 
@@ -49,20 +49,15 @@ export class OrdersService {
   }
 
   orderAutomation(tenentId: string): Observable<any> {
-    return this.http.post(this.orderAutomationUrl, { tenentId }).pipe(
-        map((response: any) => {
-            if (response && (response.statusCode === 200 || response.message)) {
-                return response;
-            } else {
-                throw new Error(JSON.stringify(response));
-            }
-        })
-    );
+    return this.http.post(this.orderAutomationUrl, { tenentId });
   }
 
   getAutomationSettings(tenentId: string): Observable<any> {
     return this.http.get(`${this.getAutomationSettingsUrl}?tenentId=${tenentId}`);
   }
 
+  updateAutomationSettings(tenentId: string, settings: any): Observable<any> {
+    return this.http.post(this.updateAutomationSettingsUrl, { tenentId, settings });
+  }
 
 }

@@ -17,7 +17,7 @@ import { BubbleChartComponent } from 'app/components/charts/widgets/widgetBubble
 import { RadarComponent } from '../charts/radar/radar.component';
 import { LineBarComponent } from '../charts/line-bar/line-bar.component';
 import { ChartConfig, DashboardService } from '../../pages/dashboard/dashboard.service';
-import { DataCollectionService } from './data-collection.service';
+import { DataCollectionService, InventorySummaryItem } from './data-collection.service';
 
 @Component({
     selector: 'app-templates-side-pane',
@@ -73,6 +73,7 @@ export class AddWidgetSidePaneComponent implements OnInit {
 
     ngOnInit() {
         this.fetchAndProcessData();
+        this.testGetInventorySummary();
     }
 
     fetchAndProcessData() {
@@ -88,6 +89,23 @@ export class AddWidgetSidePaneComponent implements OnInit {
                 this.isLoading = false;
             },
         });
+    }
+
+    // heres a test to see if the inventory summary data is coming through
+    testGetInventorySummary() {
+        console.log('Testing getInventorySummary...');
+        this.dataCollectionService.getInventorySummary().subscribe(
+            (summaryItems: InventorySummaryItem[]) => {
+                console.log('Inventory Summary Items:', summaryItems);
+                console.log('Number of items:', summaryItems.length);
+                if (summaryItems.length > 0) {
+                    console.log('First item:', summaryItems[0]);
+                }
+            },
+            (error) => {
+                console.error('Error fetching inventory summary:', error);
+            }
+        );
     }
 
     addWidget(chartConfig: ChartConfig) {

@@ -50,7 +50,7 @@
             </mat-card>
 
             <!-- Full-width items -->
-            <mat-card class="dashboard-card full-width-card" *ngIf="item.name === 'Sales Chart'">
+            <!-- <mat-card class="dashboard-card full-width-card" *ngIf="item.name === 'Sales Chart'">
                 <button *ngIf="isDeleteMode" class="delete-button" (click)="deleteWidget(item)">
                     <mat-icon>delete</mat-icon>
                 </button>
@@ -87,7 +87,7 @@
                         </ng-container>
                     </div>
                 </div>
-            </mat-card>
+            </mat-card> -->
 
             <mat-card class="dashboard-card full-width-card" *ngIf="item.name === 'Bar Chart'">
                 <button *ngIf="isDeleteMode" class="delete-button" (click)="deleteWidget(item)">
@@ -157,6 +157,11 @@
                             [title]="item['chartConfig'].title"
                         ></app-pie-chart>
                     </ng-container>
+                    <ng-container *ngSwitchCase="'BubbleChartComponent'">
+                        <app-bubble-chart
+                            [data]="item['chartConfig'].data"
+                            [title]="item['chartConfig'].title"
+                        ></app-bubble-chart>
                     <ng-container *ngSwitchCase="'LineBarComponent'">
                         <app-line-bar
                             [data]="item['chartConfig'].data"

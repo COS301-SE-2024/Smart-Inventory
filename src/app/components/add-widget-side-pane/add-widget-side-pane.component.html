@@ -28,6 +28,11 @@
                         [data]="chart.data"
                         [title]="chart.title"
                     ></app-pie-chart>
+                    <app-bubble-chart
+                        *ngSwitchCase="'BubbleChartComponent'"
+                        [data]="chart.data"
+                        [title]="chart.title"
+                    ></app-bubble-chart>
                     <app-line-bar
                         *ngSwitchCase="'LineBarComponent'"
                         [data]="chart.data"

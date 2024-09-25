@@ -75,7 +75,7 @@ export class InventoryReportComponent implements OnInit {
         private titleService: TitleService,
         private router: Router,
         public service: ChartDataService,
-        private dataCollectionService: DataCollectionService
+        private dataCollectionService: DataCollectionService,
     ) {
         Amplify.configure(outputs);
         this.gridsterOptions = {
@@ -128,7 +128,7 @@ export class InventoryReportComponent implements OnInit {
             { cols: 4, rows: 3, y: 0, x: 0, chartIndex: 0 }, //0
             { cols: 4, rows: 3, y: 0, x: 2, chartIndex: 1 }, //1
             { cols: 4, rows: 3, y: 0, x: 4, chartIndex: 2 }, //2
-            { cols: 12, rows: 3, y: 1, x: 0, isGrid: true }, //3
+            { cols: 12, rows: 5, y: 1, x: 0, isGrid: true }, //3
             { cols: 8, rows: 5, y: 3, x: 0, chartIndex: 3 }, //4
             { cols: 4, rows: 5, y: 1, x: 3, isMetrics: true }, //5
             { cols: 12, rows: 5, y: 4, x: 0, chartIndex: 4 }, //6
@@ -166,7 +166,7 @@ export class InventoryReportComponent implements OnInit {
                         expirationDate: item.expirationDate,
                         lowStockThreshold: item.lowStockThreshold,
                         reorderFreq: item.reorderFreq,
-                        requests: 0,
+                        requests: item.requests,
                         requestsQuantity: 0,
                     }));
                     this.setupColumnDefs();
@@ -174,7 +174,7 @@ export class InventoryReportComponent implements OnInit {
                 (error) => {
                     console.error('Error fetching inventory data:', error);
                     this.rowData = [];
-                }
+                },
             );
         } catch (error) {
             console.error('Error in loadInventoryData:', error);
@@ -197,10 +197,10 @@ export class InventoryReportComponent implements OnInit {
 
     async updateInventoryWithRequests() {
         try {
-            const stockRequests = await this.dataCollectionService.getStockRequests().toPromise() || [];
-    
+            const stockRequests = (await this.dataCollectionService.getStockRequests().toPromise()) || [];
+
             const skuMap = new Map<string, { requests: number; quantity: number }>();
-    
+
             stockRequests.forEach((request: any) => {
                 const { sku, quantityRequested } = request;
                 if (!skuMap.has(sku)) {
@@ -211,7 +211,7 @@ export class InventoryReportComponent implements OnInit {
                 currentData.quantity += Number(quantityRequested);
                 skuMap.set(sku, currentData);
             });
-    
+
             this.rowData = this.rowData.map((item) => {
                 const requestData = skuMap.get(item.sku);
                 if (requestData) {
@@ -223,7 +223,7 @@ export class InventoryReportComponent implements OnInit {
                 }
                 return item;
             });
-    
+
             if (this.gridComponent) {
                 this.gridComponent.refreshGrid(this.rowData);
             }

@@ -11,14 +11,14 @@ import {
 import * as echarts from 'echarts';
 
 @Component({
-    selector: 'app-line-chart',
+    selector: 'app-bubble-chart',
     standalone: true,
     imports: [],
     template: '<div #chartContainer style="width: 100%; height: 100%;"></div>',
     styles: [':host { display: block; width: 100%; height: 300px; }'],
 })
-export class LineChartComponent implements OnInit, AfterViewInit, OnDestroy {
-    @Input() data: { categories: string[]; values: number[] } = { categories: [], values: [] };
+export class BubbleChartComponent implements OnInit, AfterViewInit, OnDestroy {
+    @Input() data: { name: string; value: [number, number, number, number] }[] = [];
     @Input() title: string = '';
     @ViewChild('chartContainer') chartContainer!: ElementRef;
 
@@ -74,20 +74,40 @@ export class LineChartComponent implements OnInit, AfterViewInit, OnDestroy {
                 left: 'center',
             },
             tooltip: {
-                trigger: 'axis',
+                formatter: (params: any) => {
+                    const { name, value } = params.data;
+                    return `Category: ${name}<br/>
+                            Inventory Quantity: ${value[0]}<br/>
+                            Avg Unit Cost: R${value[1].toFixed(2)}<br/>
+                            Stock Requests: ${value[2]}<br/>
+                            Unique Items: ${value[3]}`;
+                },
             },
             xAxis: {
-                type: 'category',
-                data: this.data.categories,
+                type: 'value',
+                name: 'Inventory Quantity',
+                nameLocation: 'middle',
+                nameGap: 30,
             },
             yAxis: {
                 type: 'value',
+                name: 'Average Unit Cost (R)',
+                nameLocation: 'middle',
+                nameGap: 30,
             },
             series: [
                 {
-                    data: this.data.values,
-                    type: 'line',
-                    smooth: true,
+                    type: 'scatter',
+                    symbolSize: (data: number[]) => Math.sqrt(data[2]) * 2, // Adjust size scaling as needed
+                    data: this.data,
+                    label: {
+                        show: true,
+                        formatter: (params: any) => params.data.name,
+                        position: 'top',
+                    },
+                    itemStyle: {
+                        opacity: 0.8,
+                    },
                 },
             ],
         };

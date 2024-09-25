@@ -57,7 +57,7 @@ export class SupplierReportComponent implements OnInit {
         private titleService: TitleService,
         private router: Router,
         private route: ActivatedRoute,
-        private dataCollectionService: DataCollectionService
+        private dataCollectionService: DataCollectionService,
     ) {
         Amplify.configure(outputs);
     }
@@ -124,11 +124,11 @@ export class SupplierReportComponent implements OnInit {
     };
 
     items: Array<GridsterItem> = [
-        { cols: 8, rows: 6, y: 0, x: 0 },
+        { cols: 12, rows: 4, y: 0, x: 0 },
         { cols: 4, rows: 5, y: 2, x: 0 },
-        { cols: 12, rows: 4, y: 2, x: 2 },
-        { cols: 6, rows: 4, y: 4, x: 0 },
-        { cols: 6, rows: 4, y: 4, x: 4 },
+        { cols: 12, rows: 4, y: 4, x: 0 },
+        { cols: 8, rows: 4, y: 2, x: 2 },
+        { cols: 8, rows: 4, y: 4, x: 4 },
         { cols: 12, rows: 2, y: 0, x: 0 },
     ];
     startIndex = 0;
@@ -258,7 +258,6 @@ export class SupplierReportComponent implements OnInit {
     getAvailableDates(supplierId: string): string[] {
         return this.originalData.filter((item) => item['Supplier ID'] === supplierId).map((item) => item['Date']);
     }
-
 
     // Function to fetch data based on date and supplier ID
     fetchDataForDate(supplierId: string, date: string): any {
@@ -409,27 +408,32 @@ export class SupplierReportComponent implements OnInit {
             yAxisName,
         };
     }
-    
+
     async fetchMetrics(data: any[]) {
         try {
-            console.log("processed data fetchmetrics:", data);
-    
+            console.log('processed data fetchmetrics:', data);
+
             let totalSpent = 0;
             let outstandingPayments = 0;
-    
+
             data.forEach((supplier) => {
                 // Parse the string values to floats and add them
                 totalSpent += parseFloat(supplier['TotalSpent']) || 0;
                 outstandingPayments += parseFloat(supplier['Out Standing Payments']) || 0;
             });
-    
+
             console.log('Total spent:', totalSpent.toFixed(2), 'Outstanding payments:', outstandingPayments.toFixed(2));
-    
+
             this.tiles.push(
                 this.createTile('attach_money', 'Total Spend', 'Total Spent', totalSpent.toFixed(2)),
-                this.createTile('money_off', 'Outstanding Payments', 'Outstanding Payments', outstandingPayments.toFixed(2))
+                this.createTile(
+                    'money_off',
+                    'Outstanding Payments',
+                    'Outstanding Payments',
+                    outstandingPayments.toFixed(2),
+                ),
             );
-    
+
             data.forEach((supplier) => {
                 this.tiles.push(
                     this.createTile(
@@ -541,7 +545,7 @@ export class SupplierReportComponent implements OnInit {
         console.log('The suppliers:', suppliers);
 
         const averages = this.calculateAverages(suppliers);
-        console.log("My averages:", averages);
+        console.log('My averages:', averages);
 
         let mostAverageSupplier = null;
         let smallestDifference = Infinity; // Start with a large number that any real difference will be smaller than
@@ -573,12 +577,11 @@ export class SupplierReportComponent implements OnInit {
                 mostAverageSupplier = supplier;
             }
         });
-    console.log("Most Average Supplier:", mostAverageSupplier);
+        console.log('Most Average Supplier:', mostAverageSupplier);
         if (mostAverageSupplier) {
             return mostAverageSupplier['Supplier ID'];
         }
 
-        
         return mostAverageSupplier;
     }
 
@@ -673,7 +676,7 @@ export class SupplierReportComponent implements OnInit {
                 (error) => {
                     console.error('Error fetching inventory data:', error);
                     this.rowData = [];
-                }
+                },
             );
         } catch (error) {
             console.error('Error in loadInventoryData:', error);
@@ -817,7 +820,7 @@ export class SupplierReportComponent implements OnInit {
 
     async loadSuppliersData() {
         try {
-            const suppliers = await this.dataCollectionService.getSupplierReportData().toPromise() || [];
+            const suppliers = (await this.dataCollectionService.getSupplierReportData().toPromise()) || [];
             this.originalData = suppliers;
             this.rowData = this.processRowData(this.originalData);
             console.log('Processed suppliers:', this.originalData);
@@ -916,13 +919,13 @@ export class SupplierReportComponent implements OnInit {
             let mostRecentRecord = { ...value[0], Dates: dates }; // Clone the most recent record and add all dates
             preparedData.push(mostRecentRecord);
         });
-        console.log("the preparedRowData", preparedData)
+        console.log('the preparedRowData', preparedData);
         return preparedData;
     }
 
-    async loadStockRequest(){
+    async loadStockRequest() {
         try {
-            const suppliers = await this.dataCollectionService.getStockRequests().toPromise() || [];
+            const suppliers = (await this.dataCollectionService.getStockRequests().toPromise()) || [];
             this.stockRequests = suppliers;
         } catch (error) {
             console.error('Error in loadSuppliersData:', error);
@@ -943,8 +946,7 @@ export class SupplierReportComponent implements OnInit {
                 (error) => {
                     console.error('Error fetching inventory data:', error);
                     this.rowData = [];
-                }
-                
+                },
             );
         } catch (error) {
             console.error('Error in loadSupplierMetrics:', error);

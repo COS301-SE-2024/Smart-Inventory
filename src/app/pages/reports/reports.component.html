@@ -1,23 +1,22 @@
-<div style="height: 100%; display: block; overflow-y: scroll">
-    <mat-grid-list cols="2" rowHeight="440px" gutterSize="10px">
-        <mat-grid-tile *ngFor="let reportKey of reportOrder; let i = index">
-            <div class="card-container">
-                <a (click)="viewFullReport(reportKey)" matTooltip="Click to view {{ reports[reportKey].title }}!">
-                    <mat-card class="card">
-                        <mat-card-header class="card-header">
-                            <div mat-card-avatar class="header-image">
-                                <mat-icon style="font-size: 70px; width: 80px; height: 80px">{{
-                                    reports[reportKey].icon
-                                }}</mat-icon>
-                            </div>
-                            <div class="header-content">
-                                <mat-card-title>{{ reports[reportKey].title }}</mat-card-title>
-                                <p class="subtitle">{{ reports[reportKey].subtitle }}</p>
-                            </div>
-                        </mat-card-header>
-                    </mat-card></a
-                >
-            </div>
-        </mat-grid-tile>
-    </mat-grid-list>
-</div>
+<div class="reports-container">
+    <div class="intro-section">
+      <h2>Your Reports Dashboard</h2>
+      <p>Access and analyze key data with our comprehensive reports</p>
+    </div>
+    <div class="reports-grid">
+      <div class="report-tile" *ngFor="let reportKey of reportOrder" (click)="viewFullReport(reportKey)">
+        <div class="report-content">
+          <div class="report-icon-wrapper">
+            <mat-icon class="report-icon">{{ reports[reportKey].icon }}</mat-icon>
+          </div>
+          <h3>{{ reports[reportKey].title }}</h3>
+          <p>{{ reports[reportKey].subtitle }}</p>
+          <div class="view-report">
+            <span>View Report</span>
+            <mat-icon>arrow_forward</mat-icon>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="scroll-spacer"></div>
+  </div>

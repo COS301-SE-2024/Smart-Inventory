@@ -215,29 +215,13 @@ export class AutomationSettingsModalComponent implements OnInit {
         try {
             const session = await fetchAuthSession();
             const tenentId = await this.getTenentId(session);
-
-            const lambdaClient = new LambdaClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
-
-            const invokeCommand = new InvokeCommand({
-                FunctionName: 'getAutomationSettings',
-                Payload: new TextEncoder().encode(
-                    JSON.stringify({
-                        pathParameters: { tenentId: tenentId },
-                    }),
-                ),
-            });
-
-            const lambdaResponse = await lambdaClient.send(invokeCommand);
-            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
-            if (responseBody.statusCode === 200) {
-                const settings = JSON.parse(responseBody.body);
+    
+            const settings = await this.ordersService.getAutomationSettings(tenentId).toPromise();
+    
+            if (settings) {
                 this.applySettings(settings);
             } else {
-                console.error('Error fetching automation settings:', responseBody.body);
+                console.error('Error fetching automation settings: Settings not found');
             }
         } catch (error) {
             console.error('Error fetching automation settings:', error);

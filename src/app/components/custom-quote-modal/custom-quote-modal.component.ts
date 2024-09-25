@@ -488,23 +488,13 @@ export class CustomQuoteModalComponent implements OnInit {
 
 
   async sendEmails(emailData: any[]) {
-    const lambdaClient = new LambdaClient({
-      region: outputs.auth.aws_region,
-      credentials: (await fetchAuthSession()).credentials,
-    });
-
-    const invokeCommand = new InvokeCommand({
-      FunctionName: 'sendSupplierEmails',
-      Payload: new TextEncoder().encode(JSON.stringify({ emailData: emailData })),
-    });
-
-    const lambdaResponse = await lambdaClient.send(invokeCommand);
-    const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
-    if (responseBody.statusCode === 200) {
-      console.log('Emails sent successfully:', responseBody.body);
-    } else {
-      throw new Error(`Failed to send emails: ${responseBody.body}`);
+    try {
+      const response = await this.ordersService.sendSupplierEmails(emailData).toPromise();
+      console.log('Emails sent successfully:', response);
+      // Handle success (e.g., show a success message)
+    } catch (error) {
+      console.error('Failed to send emails:', error);
+      // Handle error (e.g., show an error message)
     }
   }
 

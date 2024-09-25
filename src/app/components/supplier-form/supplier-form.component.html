@@ -150,7 +150,7 @@
             placeholder="Enter any additional information or notes here"
         ></textarea>
     </div>
-    <div class="attachments">
+    <!-- <div class="attachments">
         <h3>Attachments</h3>
         <input type="file" id="attachments" (change)="onFileSelected($event)" multiple />
         <p class="file-info">Accepted file types: PDF, DOC, DOCX, XLS, XLSX (Max size: 10MB per file)</p>
@@ -160,7 +160,7 @@
                 <button class="remove-file" (click)="removeFile(file)">Remove</button>
             </li>
         </ul>
-    </div>
+    </div> -->
 
     <button class="submit-btn" (click)="submitQuote()" [disabled]="isSubmitting || isDeadlinePassed">
         <span *ngIf="!isSubmitting">Submit Quote</span>

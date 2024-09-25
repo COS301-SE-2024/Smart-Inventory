@@ -8,7 +8,6 @@ import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
 import outputs from '../../../../amplify_outputs.json';
 import { fetchAuthSession } from 'aws-amplify/auth';
 import { NotificationsService } from '../../../../amplify/services/notifications.service';
-import { NotificationService } from '../../../../amplify/services/supplier-form-services/notification.service';
 
 interface Notification {
     notificationId: string;
@@ -63,7 +62,7 @@ export class NotificationsSidePaneComponent implements OnInit {
         private dialog: MatDialog, 
         private el: ElementRef, 
         private renderer: Renderer2,
-        private notificationsService: NotificationService
+        private notificationsService: NotificationsService
     ) {}
 
     async ngOnInit() {
@@ -78,29 +77,10 @@ export class NotificationsSidePaneComponent implements OnInit {
 
     async fetchNotifications() {
         try {
-            const session = await fetchAuthSession();
-            const lambdaClient = new LambdaClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
-
-            const params = {
-                FunctionName: 'getNotifications', // Replace with your actual Lambda function name if different
-                Payload: new TextEncoder().encode(JSON.stringify({
-                    tenentId: this.tenentId,
-                    limit: 200, // Adjust as needed
-                    lastEvaluatedKey: null // For initial fetch
-                })),
-            };
-
-            const command = new InvokeCommand(params);
-            const response = await lambdaClient.send(command);
-            const payload = JSON.parse(new TextDecoder().decode(response.Payload));
+            const response = await this.notificationsService.getNotifications(this.tenentId, 200).toPromise();
             
-            if (payload.statusCode === 200) {
-                const body = JSON.parse(payload.body);
-                
-                this.notifications = body.notifications.map((n: any) => ({
+            if (response && response.notifications) {
+                this.notifications = response.notifications.map((n: any) => ({
                     ...n,
                     isRead: n.isRead === true,
                     date: new Date(n.timestamp)
@@ -108,7 +88,7 @@ export class NotificationsSidePaneComponent implements OnInit {
                 
                 this.updateFilteredNotifications();
             } else {
-                throw new Error(payload.body || 'Unknown error occurred');
+                throw new Error('No notifications received');
             }
         } catch (error) {
             console.error('Error fetching notifications:', error);
@@ -194,71 +174,35 @@ export class NotificationsSidePaneComponent implements OnInit {
     async markAsRead(event: Event, notification: Notification) {
         event.stopPropagation();
         try {
-            const session = await fetchAuthSession();
-            const lambdaClient = new LambdaClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
-    
-            const params = {
-                FunctionName: 'readNotification',
-                Payload: new TextEncoder().encode(JSON.stringify({
-                    body: JSON.stringify({
-                        tenentId: this.tenentId,
-                        notificationId: notification.notificationId
-                    })
-                })),
-            };
-    
-            const command = new InvokeCommand(params);
-            const response = await lambdaClient.send(command);
-            const payload = JSON.parse(new TextDecoder().decode(response.Payload));
-    
-            if (payload.statusCode === 200) {
-                notification.isRead = true;
-                this.updateFilteredNotifications();
-            } else {
-                throw new Error(payload.body || 'Unknown error occurred');
-            }
+          const response = await this.notificationsService.markNotificationAsRead(this.tenentId, notification.notificationId).toPromise();
+          
+          if (response && response.message === 'Notification(s) marked as read successfully') {
+            notification.isRead = true;
+            this.updateFilteredNotifications();
+          } else {
+            throw new Error('Failed to mark notification as read');
+          }
         } catch (error) {
-            console.error('Error marking notification as read:', error);
+          console.error('Error marking notification as read:', error);
         }
-    }
+      }
 
-    async markAllAsRead() {
+      async markAllAsRead() {
         try {
-            const session = await fetchAuthSession();
-            const lambdaClient = new LambdaClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
+          const response = await this.notificationsService.markAllNotificationsAsRead(this.tenentId).toPromise();
+          
+          if (response && response.message === 'Notification(s) marked as read successfully') {
+            this.notifications.forEach(notification => {
+              notification.isRead = true;
             });
-    
-            const params = {
-                FunctionName: 'readNotification',
-                Payload: new TextEncoder().encode(JSON.stringify({
-                    body: JSON.stringify({
-                        tenentId: this.tenentId,
-                        markAllAsRead: true
-                    })
-                })),
-            };
-    
-            const command = new InvokeCommand(params);
-            const response = await lambdaClient.send(command);
-            const payload = JSON.parse(new TextDecoder().decode(response.Payload));
-    
-            if (payload.statusCode === 200) {
-                this.notifications.forEach(notification => {
-                    notification.isRead = true;
-                });
-                this.updateFilteredNotifications();
-            } else {
-                throw new Error(payload.body || 'Unknown error occurred');
-            }
+            this.updateFilteredNotifications();
+          } else {
+            throw new Error('Failed to mark all notifications as read');
+          }
         } catch (error) {
-            console.error('Error marking all notifications as read:', error);
+          console.error('Error marking all notifications as read:', error);
         }
-    }
+      }
 
 
     updateNotificationSettings(setting: NotificationSetting) {

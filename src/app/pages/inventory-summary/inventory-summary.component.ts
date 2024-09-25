@@ -14,8 +14,6 @@ import { TitleService } from 'app/components/header/title.service';
 import { MaterialModule } from '../../components/material/material.module';
 import { Router } from '@angular/router';
 import { InventoryService } from '../../../../amplify/services/inventory.service';
-import { interval, Subscription } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
 
 @Component({
     selector: 'app-inventory-summary',
@@ -31,7 +29,6 @@ export class InventorySummaryComponent implements OnInit {
     isLoading = true;
     tenentId: string = '';
     isCalculating = false;
-    private calculationSubscription: Subscription | null = null;
 
     colDefs: ColDef[] = [
         { field: 'SKU', headerName: 'SKU', filter: 'agSetColumnFilter' },
@@ -69,50 +66,6 @@ export class InventorySummaryComponent implements OnInit {
         Amplify.configure(outputs);
     }
 
-    // EOQ, ROP, ABC
-    runEoqRopCalculation() {
-        if (this.isCalculating) {
-            this.snackBar.open('Calculation is already in progress', 'Close', {
-                duration: 3000,
-                horizontalPosition: 'center',
-                verticalPosition: 'top',
-            });
-            return;
-        }
-
-        this.isCalculating = true;
-        this.snackBar.open('EOQ/ROP calculation started', 'Close', {
-            duration: 3000,
-            horizontalPosition: 'center',
-            verticalPosition: 'top',
-        });
-
-        this.calculationSubscription = this.inventoryService.runEoqRopCalculation(this.tenentId)
-            .subscribe({
-                next: (response) => {
-                    console.log('EOQ/ROP calculation response:', response);
-                    this.snackBar.open('EOQ/ROP calculation completed successfully', 'Close', {
-                        duration: 3000,
-                        horizontalPosition: 'center',
-                        verticalPosition: 'top',
-                    });
-                    this.loadInventorySummaryData();
-                },
-                error: (error) => {
-                    console.error('Error running EOQ/ROP calculation:', error);
-                    this.snackBar.open('Error running EOQ/ROP calculation', 'Close', {
-                        duration: 3000,
-                        horizontalPosition: 'center',
-                        verticalPosition: 'top',
-                    });
-                },
-                complete: () => {
-                    this.isCalculating = false;
-                    this.calculationSubscription = null;
-                }
-            });
-    }
-
     async ngOnInit(): Promise<void> {
         this.titleService.updateTitle('Inventory Summary');
         try {
@@ -129,11 +82,7 @@ export class InventorySummaryComponent implements OnInit {
         }
     }
 
-    ngOnDestroy(): void {
-        if (this.calculationSubscription) {
-            this.calculationSubscription.unsubscribe();
-        }
-    }
+   
 
     async getTenentId(session: any): Promise<string> {
         const cognitoClient = new CognitoIdentityProviderClient({

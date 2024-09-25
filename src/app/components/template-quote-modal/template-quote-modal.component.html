@@ -1,12 +1,6 @@
 <ng-container>
     <h2 mat-dialog-title>Template Quote</h2>
 </ng-container>
-<ng-container *ngIf="!isNewQuote">
-    <!-- <div class="quote-header">
-        <div>Order ID: {{ orderId }}</div>
-        <div>Quote ID: {{ quoteId }}</div>
-    </div> -->
-</ng-container>
 <mat-dialog-content class="quote-content">
     <div *ngIf="isLoading" class="loading-overlay">
         <app-loading-spinner></app-loading-spinner>
@@ -124,7 +118,7 @@
 </mat-dialog-content>
 <mat-dialog-actions align="end">
     <button mat-button (click)="cancel()">Cancel</button>
-    <button mat-raised-button color="primary" *ngIf="isNewQuote" (click)="createOrder()">Create Order</button>
+    <button mat-raised-button color="primary" *ngIf="isNewQuote">Create Order</button>
     <button
         mat-raised-button
         color="primary"
@@ -134,7 +128,4 @@
     >
         Save Changes
     </button>
-    <!-- <button mat-raised-button color="primary" *ngIf="!isNewQuote" (click)="sendQuote()" [disabled]="hasUnsavedChanges">
-        Send Quote
-    </button> -->
 </mat-dialog-actions>

@@ -1,10 +1,13 @@
 import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { templateQuoteModalComponent } from '../template-quote-modal/template-quote-modal.component';
 
 interface TemplateQuote {
@@ -21,9 +24,12 @@ interface TemplateQuote {
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
     MatButtonModule,
     MatIconModule,
     MatCardModule,
+    MatAutocompleteModule,
+    MatTooltipModule
   ],
   templateUrl: './templates-quotes-side-pane.component.html',
   styleUrls: ['./templates-quotes-side-pane.component.css']
@@ -32,11 +38,11 @@ export class TemplatesQuotesSidePaneComponent implements OnChanges {
   @Input() isOpen: boolean = false;
   @Output() closed = new EventEmitter<void>();
 
-  sortCriteria: string = 'nextOrderDate';
-  sortOrder: 'asc' | 'desc' = 'asc';
   sortedTemplates: TemplateQuote[] = [];
   paneWidth = 800;
   private resizing = false;
+  searchQuery: string = '';
+  filteredOptions: string[] = [];
 
   templates: TemplateQuote[] = [
     {
@@ -64,7 +70,7 @@ export class TemplatesQuotesSidePaneComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['isOpen'] && this.isOpen) {
-      this.applySorting();
+      this.sortedTemplates = [...this.templates];
     }
   }
 
@@ -72,46 +78,20 @@ export class TemplatesQuotesSidePaneComponent implements OnChanges {
     this.closed.emit();
   }
 
-  applySorting() {
-    this.sortedTemplates = [...this.templates].sort((a, b) => {
-      let valueA, valueB;
-      switch (this.sortCriteria) {
-        case 'nextOrderDate':
-          valueA = new Date(a.nextOrderDate).getTime();
-          valueB = new Date(b.nextOrderDate).getTime();
-          break;
-        case 'items':
-          valueA = a.items;
-          valueB = b.items;
-          break;
-        case 'supplier':
-          valueA = a.supplier.toLowerCase();
-          valueB = b.supplier.toLowerCase();
-          return this.sortOrder === 'asc' 
-            ? valueA.localeCompare(valueB) 
-            : valueB.localeCompare(valueA);
-        default:
-          return 0;
-      }
-      return this.sortOrder === 'asc' ? valueA - valueB : valueB - valueA;
-    });
+  onSearch() {
+    this.sortedTemplates = this.templates.filter(template =>
+      template.title.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+      template.supplier.toLowerCase().includes(this.searchQuery.toLowerCase())
+    );
+    this.updateFilteredOptions();
   }
 
-  setSortCriteria(criteria: string) {
-    if (this.sortCriteria === criteria) {
-      this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
-    } else {
-      this.sortCriteria = criteria;
-      this.sortOrder = 'asc';
-    }
-    this.applySorting();
-  }
-
-  getSortIcon(criteria: string): string {
-    if (this.sortCriteria !== criteria) {
-      return 'unfold_more';
-    }
-    return this.sortOrder === 'asc' ? 'arrow_upward' : 'arrow_downward';
+  private updateFilteredOptions() {
+    const allValues = this.templates.flatMap(template => [template.title, template.supplier]);
+    const uniqueValues = Array.from(new Set(allValues));
+    this.filteredOptions = uniqueValues.filter(value =>
+      value.toLowerCase().includes(this.searchQuery.toLowerCase())
+    );
   }
 
   openTemplateQuoteModal() {
@@ -138,7 +118,7 @@ export class TemplatesQuotesSidePaneComponent implements OnChanges {
     };
 
     this.templates.push(newTemplate);
-    this.applySorting();
+    this.sortedTemplates = [...this.templates];
     this.snackBar.open('New template added successfully', 'Close', { duration: 3000 });
   }
 
@@ -146,7 +126,7 @@ export class TemplatesQuotesSidePaneComponent implements OnChanges {
     const index = this.templates.findIndex(t => t.id === templateId);
     if (index !== -1) {
       this.templates.splice(index, 1);
-      this.applySorting();
+      this.sortedTemplates = [...this.templates];
       this.snackBar.open('Template removed successfully', 'Close', { duration: 3000 });
     }
   }

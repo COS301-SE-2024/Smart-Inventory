@@ -8,25 +8,36 @@
     </div>
     <div class="side-pane-content">
         <div class="templates-container">
-            <div class="filter-section">
-                <button mat-raised-button color="primary" (click)="openTemplateQuoteModal()">
+            <div class="top-controls">
+                <div class="search-container">
+                    <div class="input-container">
+                        <mat-icon>search</mat-icon>
+                        <input
+                            class="input-box"
+                            type="text"
+                            [(ngModel)]="searchQuery"
+                            (input)="onSearch()"
+                            placeholder="Search..."
+                            [matAutocomplete]="auto"
+                        />
+                        <mat-autocomplete #auto="matAutocomplete">
+                            <mat-option *ngFor="let option of filteredOptions" [value]="option">
+                                {{ option }}
+                            </mat-option>
+                        </mat-autocomplete>
+                    </div>
+                    <div class="icon-container">
+                        <mat-icon
+                            class="icon"
+                            matTooltip="Search for templates by template name. Searches are case-insensitive."
+                            matTooltipPosition="right"
+                        >info</mat-icon>
+                    </div>
+                </div>
+                <button mat-flat-button class="btn-add" (click)="openTemplateQuoteModal()">
                     <mat-icon>add</mat-icon>
                     Add New Template
                 </button>
-                <div class="sort-buttons">
-                    <button mat-button [class.active]="sortCriteria === 'nextOrderDate'" (click)="setSortCriteria('nextOrderDate')">
-                        Next Order Date
-                        <mat-icon>{{ getSortIcon('nextOrderDate') }}</mat-icon>
-                    </button>
-                    <button mat-button [class.active]="sortCriteria === 'items'" (click)="setSortCriteria('items')">
-                        Items
-                        <mat-icon>{{ getSortIcon('items') }}</mat-icon>
-                    </button>
-                    <button mat-button [class.active]="sortCriteria === 'supplier'" (click)="setSortCriteria('supplier')">
-                        Supplier
-                        <mat-icon>{{ getSortIcon('supplier') }}</mat-icon>
-                    </button>
-                </div>
             </div>
             <div class="template-quotes">
                 <mat-card *ngFor="let template of sortedTemplates" class="template-quote-card">

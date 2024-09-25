@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, Type } from '@angular/core';
+import { Component, Input, Output, EventEmitter, Type, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -9,9 +9,16 @@ import { SaleschartComponent } from '../../components/charts/saleschart/salescha
 import { BarchartComponent } from '../../components/charts/barchart/barchart.component';
 import { DonutchartComponent } from '../../components/charts/donutchart/donutchart.component';
 import { BarChartComponent } from 'app/components/charts/widgets/widgetBar';
+import { ScatterplotComponent } from '../charts/scatterplot/scatterplot.component';
+import { DonutTemplateComponent } from '../charts/donuttemplate/donuttemplate.component';
 import { LineChartComponent } from 'app/components/charts/widgets/widgetLine';
 import { PieChartComponent } from 'app/components/charts/widgets/widgetPie';
+import { BubbleChartComponent } from 'app/components/charts/widgets/widgetBubble';
+import { RadarComponent } from '../charts/radar/radar.component';
+import { LineBarComponent } from '../charts/line-bar/line-bar.component';
 import { ChartConfig, DashboardService } from '../../pages/dashboard/dashboard.service';
+import { DataCollectionService, InventorySummaryItem } from './data-collection.service';
+
 @Component({
     selector: 'app-templates-side-pane',
     standalone: true,
@@ -28,94 +35,78 @@ import { ChartConfig, DashboardService } from '../../pages/dashboard/dashboard.s
         LineChartComponent,
         PieChartComponent,
         BarChartComponent,
+        BubbleChartComponent,
+        LineBarComponent,
+        RadarComponent,
+        ScatterplotComponent,
+        DonutTemplateComponent,
     ],
     templateUrl: './add-widget-side-pane.component.html',
     styleUrls: ['./add-widget-side-pane.component.css'],
 })
-export class AddWidgetSidePaneComponent {
-    @Input() isAddWidgetOpen: boolean = false;
+export class AddWidgetSidePaneComponent implements OnInit {
+    @Input() isAddWidgetOpen = false;
     @Output() closed = new EventEmitter<void>();
 
     charts: { [key: string]: Type<any> } = {
-        SaleschartComponent: SaleschartComponent,
-        BarchartComponent: BarchartComponent,
-        BubblechartComponent: BubblechartComponent,
-        DonutchartComponent: DonutchartComponent,
-        BarChartComponent: BarChartComponent,
-        LineChartComponent: LineChartComponent,
-        PieChartComponent: PieChartComponent,
+        SaleschartComponent,
+        BarchartComponent,
+        BubblechartComponent,
+        DonutchartComponent,
+        BarChartComponent,
+        LineChartComponent,
+        PieChartComponent,
+        BubbleChartComponent,
+        LineBarComponent,
+        RadarComponent,
+        ScatterplotComponent,
+        DonutTemplateComponent,
     };
 
-    chartConfigs: ChartConfig[] = [
-        {
-            type: 'bar',
-            data: { categories: ['Jan', 'Feb', 'Mar'], values: [5, 10, 15] },
-            title: 'Monthly Sales',
-            component: 'BarChartComponent',
-        },
-        {
-            type: 'bar',
-            data: { categories: ['Jan', 'Feb', 'Mar'], values: [5, 10, 15] },
-            title: 'Requests Per Category',
-            component: 'BarChartComponent',
-        },
-        {
-            type: 'bar',
-            data: { categories: ['Jan', 'Feb', 'Mar'], values: [5, 10, 15] },
-            title: 'Supplier ratings',
-            component: 'BarChartComponent',
-        },
-        {
-            type: 'pie',
-            data: [
-                { name: 'Item A', value: 30 },
-                { name: 'Item B', value: 70 },
-            ],
-            title: 'Top 5 Requested Items Requests Per Category',
-            component: 'PieChartComponent',
-        },
-        {
-            type: 'pie',
-            data: [
-                { name: 'Item A', value: 30 },
-                { name: 'Item B', value: 70 },
-            ],
-            title: 'Quantity Per Category',
-            component: 'PieChartComponent',
-        },
-        {
-            type: 'line',
-            data: { categories: ['Jan', 'Feb', 'Mar'], values: [3, 6, 9] },
-            title: 'Quarterly Revenue',
-            component: 'LineChartComponent',
-        },
-        {
-            type: 'line',
-            data: { categories: ['Jan', 'Feb', 'Mar'], values: [3, 6, 9] },
-            title: 'Orders Over The year',
-            component: 'LineChartComponent',
-        },
-        {
-            type: 'pie',
-            data: [
-                { name: 'Item A', value: 30 },
-                { name: 'Item B', value: 70 },
-            ],
-            title: 'Market Share',
-            component: 'PieChartComponent',
-        },
-        {
-            type: 'pie',
-            data: [
-                { name: 'Item A', value: 30 },
-                { name: 'Item B', value: 70 },
-            ],
-            title: 'Orders On Time, Late and Before Promised',
-            component: 'PieChartComponent',
-        },
-    ];
+    chartConfigs: ChartConfig[] = [];
+    isLoading = true;
 
-    constructor(private dashService: DashboardService) {}
+    constructor(
+        private dashService: DashboardService,
+        private dataCollectionService: DataCollectionService,
+    ) {}
+
+    ngOnInit() {
+        this.fetchAndProcessData();
+        this.testGetInventorySummary();
+    }
+
+    fetchAndProcessData() {
+        this.isLoading = true;
+        this.dataCollectionService.generateChartConfigs().subscribe({
+            next: (chartConfigs: ChartConfig[]) => {
+                this.chartConfigs = chartConfigs;
+                this.chartConfigs.forEach((chart) => console.log(`${chart.title} configuration:`, chart));
+                this.isLoading = false;
+            },
+            error: (error: any) => {
+                console.error('Error generating chart configs:', error);
+                this.isLoading = false;
+            },
+        });
+    }
+
+    // heres a test to see if the inventory summary data is coming through
+    testGetInventorySummary() {
+        console.log('Testing getInventorySummary...');
+        this.dataCollectionService.getInventorySummary().subscribe(
+            (summaryItems: InventorySummaryItem[]) => {
+                console.log('Inventory Summary Items:', summaryItems);
+                console.log('Number of items:', summaryItems.length);
+                if (summaryItems.length > 0) {
+                    console.log('First item:', summaryItems[0]);
+                }
+            },
+            (error) => {
+                console.error('Error fetching inventory summary:', error);
+            }
+        );
+    }
 
     addWidget(chartConfig: ChartConfig) {
         this.dashService.addWidget(chartConfig);

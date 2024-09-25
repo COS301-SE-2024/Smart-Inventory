@@ -1,4 +1,13 @@
-import { AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import {
+    AfterViewInit,
+    Component,
+    ElementRef,
+    Input,
+    OnDestroy,
+    OnInit,
+    SimpleChanges,
+    ViewChild,
+} from '@angular/core';
 import * as echarts from 'echarts';
 
 @Component({
@@ -6,17 +15,17 @@ import * as echarts from 'echarts';
     standalone: true,
     imports: [],
     template: '<div #chartContainer style="width: 100%; height: 100%;"></div>',
-    styles: [':host { display: block; width: 100%; height: 300px; }']
+    styles: [':host { display: block; width: 100%; height: 300px; }'],
 })
 export class PieChartComponent implements OnInit, AfterViewInit, OnDestroy {
-    @Input() data: { name: string, value: number }[] = [];
+    @Input() data: { name: string; value: number }[] = [];
     @Input() title: string = '';
     @ViewChild('chartContainer') chartContainer!: ElementRef;
 
     private chart: echarts.ECharts | null = null;
     private resizeObserver!: ResizeObserver;
 
-    ngOnInit(): void { }
+    ngOnInit(): void {}
 
     ngAfterViewInit(): void {
         this.initChart();
@@ -62,11 +71,16 @@ export class PieChartComponent implements OnInit, AfterViewInit, OnDestroy {
         const options: echarts.EChartsOption = {
             title: {
                 text: this.title,
-                left: 'center'
+                left: 'center',
             },
             tooltip: {
                 trigger: 'item',
-                formatter: '{a} <br/>{b}: {c} ({d}%)'
+                formatter: '{a} <br/>{b}: {c} ({d}%)',
+            },
+            legend: {
+                orient: 'horizontal',
+                bottom: 'bottom',
+                type: 'scroll',
             },
             series: [
                 {
@@ -78,11 +92,11 @@ export class PieChartComponent implements OnInit, AfterViewInit, OnDestroy {
                         itemStyle: {
                             shadowBlur: 10,
                             shadowOffsetX: 0,
-                            shadowColor: 'rgba(0, 0, 0, 0.5)'
-                        }
-                    }
-                }
-            ]
+                            shadowColor: 'rgba(0, 0, 0, 0.5)',
+                        },
+                    },
+                },
+            ],
         };
 
         this.chart.setOption(options);

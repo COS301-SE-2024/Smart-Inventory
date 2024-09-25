@@ -10,22 +10,15 @@ import {
 } from '@angular/core';
 import * as echarts from 'echarts';
 
-interface SeriesData {
-    name: string;
-    data: number[];
-}
-
-type ChartData = { categories: string[]; values: number[] } | { categories: string[]; series: SeriesData[] };
-
 @Component({
-    selector: 'app-bar-chart',
+    selector: 'app-bubble-chart',
     standalone: true,
     imports: [],
     template: '<div #chartContainer style="width: 100%; height: 100%;"></div>',
     styles: [':host { display: block; width: 100%; height: 300px; }'],
 })
-export class BarChartComponent implements OnInit, AfterViewInit, OnDestroy {
-    @Input() data: ChartData = { categories: [], values: [] };
+export class BubbleChartComponent implements OnInit, AfterViewInit, OnDestroy {
+    @Input() data: { name: string; value: [number, number, number, number] }[] = [];
     @Input() title: string = '';
     @ViewChild('chartContainer') chartContainer!: ElementRef;
 
@@ -81,48 +74,44 @@ export class BarChartComponent implements OnInit, AfterViewInit, OnDestroy {
                 left: 'center',
             },
             tooltip: {
-                trigger: 'axis',
-                axisPointer: {
-                    type: 'shadow',
+                formatter: (params: any) => {
+                    const { name, value } = params.data;
+                    return `Category: ${name}<br/>
+                            Inventory Quantity: ${value[0]}<br/>
+                            Avg Unit Cost: R${value[1].toFixed(2)}<br/>
+                            Stock Requests: ${value[2]}<br/>
+                            Unique Items: ${value[3]}`;
                 },
             },
             xAxis: {
-                type: 'category',
-                data: this.data.categories,
+                type: 'value',
+                name: 'Inventory Quantity',
+                nameLocation: 'middle',
+                nameGap: 30,
             },
             yAxis: {
                 type: 'value',
+                name: 'Average Unit Cost (R)',
+                nameLocation: 'middle',
+                nameGap: 30,
             },
-            series: this.getSeries(),
+            series: [
+                {
+                    type: 'scatter',
+                    symbolSize: (data: number[]) => Math.sqrt(data[2]) * 2, // Adjust size scaling as needed
+                    data: this.data,
+                    label: {
+                        show: true,
+                        formatter: (params: any) => params.data.name,
+                        position: 'top',
+                    },
+                    itemStyle: {
+                        opacity: 0.8,
+                    },
+                },
+            ],
         };
 
-        if ('series' in this.data) {
-            options.legend = {
-                data: this.data.series.map((s) => s.name),
-                top: 'bottom',
-            };
-        }
-
         this.chart.setOption(options);
-    }
-
-    private getSeries(): echarts.SeriesOption[] {
-        if ('values' in this.data) {
-            // Single series data
-            return [
-                {
-                    data: this.data.values,
-                    type: 'bar',
-                },
-            ];
-        } else if ('series' in this.data) {
-            // Multi-series data
-            return this.data.series.map((s) => ({
-                name: s.name,
-                data: s.data,
-                type: 'bar',
-            }));
-        }
-        return [];
     }
 }

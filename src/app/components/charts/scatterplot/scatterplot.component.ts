@@ -10,6 +10,7 @@ import * as echarts from 'echarts';
 })
 export class ScatterplotComponent implements OnChanges, AfterViewInit, OnDestroy  {
   @Input() data: any[] = [];
+  @Input() title: string = "";
   private chart!: echarts.ECharts;
   private resizeObserver!: ResizeObserver;
 
@@ -21,7 +22,7 @@ export class ScatterplotComponent implements OnChanges, AfterViewInit, OnDestroy
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['data']) {
+    if (changes['data'] || changes['title']) {
       console.log('New data received for scatter plot:', this.data);
       this.updateChartOptions();
     }
@@ -57,7 +58,7 @@ export class ScatterplotComponent implements OnChanges, AfterViewInit, OnDestroy
 
     const option: echarts.EChartsOption = {
       title: {
-        text: 'Product Discount Versus Price Analysis',
+        text: this.title || 'Product Discount Versus Price Analysis',
         left: 'center',
         top: '5%'
       },

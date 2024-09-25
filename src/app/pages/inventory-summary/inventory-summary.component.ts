@@ -9,6 +9,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Amplify } from 'aws-amplify';
 import { fetchAuthSession } from 'aws-amplify/auth';
 import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
+import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
 import outputs from '../../../../amplify_outputs.json';
 import { TitleService } from 'app/components/header/title.service';
 import { MaterialModule } from '../../components/material/material.module';
@@ -71,11 +72,14 @@ export class InventorySummaryComponent implements OnInit {
         try {
             const session = await fetchAuthSession();
             this.tenentId = await this.getTenentId(session);
+            if (!this.tenentId) {
+                throw new Error('Unable to retrieve tenentId');
+            }
             await this.loadInventorySummaryData();
         } catch (error) {
             console.error('Error initializing component:', error);
-            this.snackBar.open('Error initializing component', 'Close', {
-                duration: 3000,
+            this.snackBar.open('Error initializing component: ' + (error instanceof Error ? error.message : String(error)), 'Close', {
+                duration: 5000,
                 horizontalPosition: 'center',
                 verticalPosition: 'top',
             });
@@ -180,5 +184,58 @@ export class InventorySummaryComponent implements OnInit {
 
     back() {
         this.router.navigate(['/inventory']);
+    }
+
+    async runEoqRopCalculation() {
+        if (!this.tenentId) {
+            this.snackBar.open('User information not loaded. Please try again.', 'Close', {
+                duration: 3000,
+                horizontalPosition: 'center',
+                verticalPosition: 'top',
+            });
+            return;
+        }
+    
+        this.isCalculating = true;
+        try {
+            const session = await fetchAuthSession();
+            const lambdaClient = new LambdaClient({
+                region: outputs.auth.aws_region,
+                credentials: session.credentials,
+            });
+    
+            const payload = {
+                tenentId: this.tenentId
+            };
+    
+            const invokeCommand = new InvokeCommand({
+                FunctionName: 'EOQ_ROP_Calculations',
+                Payload: new TextEncoder().encode(JSON.stringify(payload)),
+            });
+    
+            const lambdaResponse = await lambdaClient.send(invokeCommand);
+            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+    
+            if (responseBody && responseBody.statusCode === 200) {
+                this.snackBar.open('EOQ/ROP/ABC Calculation completed successfully.', 'Close', {
+                    duration: 3000,
+                    horizontalPosition: 'center',
+                    verticalPosition: 'top',
+                });
+                // Refresh the data after calculation
+                await this.loadInventorySummaryData();
+            } else {
+                throw new Error(responseBody?.body || 'Unknown error occurred');
+            }
+        } catch (error) {
+            console.error('Error running EOQ/ROP/ABC Calculation:', error);
+            this.snackBar.open(`Error running calculation: ${error instanceof Error ? error.message : String(error)}`, 'Close', {
+                duration: 5000,
+                horizontalPosition: 'center',
+                verticalPosition: 'top',
+            });
+        } finally {
+            this.isCalculating = false;
+        }
     }
 }

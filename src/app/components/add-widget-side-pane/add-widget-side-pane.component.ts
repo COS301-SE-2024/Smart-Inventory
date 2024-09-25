@@ -9,11 +9,16 @@ import { SaleschartComponent } from '../../components/charts/saleschart/salescha
 import { BarchartComponent } from '../../components/charts/barchart/barchart.component';
 import { DonutchartComponent } from '../../components/charts/donutchart/donutchart.component';
 import { BarChartComponent } from 'app/components/charts/widgets/widgetBar';
+import { ScatterplotComponent } from '../charts/scatterplot/scatterplot.component';
+import { DonutTemplateComponent } from '../charts/donuttemplate/donuttemplate.component';
 import { LineChartComponent } from 'app/components/charts/widgets/widgetLine';
 import { PieChartComponent } from 'app/components/charts/widgets/widgetPie';
 import { BubbleChartComponent } from 'app/components/charts/widgets/widgetBubble';
+import { RadarComponent } from '../charts/radar/radar.component';
+import { LineBarComponent } from '../charts/line-bar/line-bar.component';
 import { ChartConfig, DashboardService } from '../../pages/dashboard/dashboard.service';
 import { DataCollectionService } from './data-collection.service';
+import { forkJoin, from } from 'rxjs';
 
 @Component({
     selector: 'app-templates-side-pane',
@@ -32,6 +37,10 @@ import { DataCollectionService } from './data-collection.service';
         PieChartComponent,
         BarChartComponent,
         BubbleChartComponent,
+        LineBarComponent,
+        RadarComponent,
+        ScatterplotComponent,
+        DonutTemplateComponent,
     ],
     templateUrl: './add-widget-side-pane.component.html',
     styleUrls: ['./add-widget-side-pane.component.css'],
@@ -49,15 +58,24 @@ export class AddWidgetSidePaneComponent implements OnInit {
         LineChartComponent,
         PieChartComponent,
         BubbleChartComponent,
+        LineBarComponent,
+        RadarComponent,
+        ScatterplotComponent,
+        DonutTemplateComponent,
     };
 
     chartConfigs: ChartConfig[] = [];
     isLoading = true;
+    inventoryData: InventoryItem[] = [];
+    stockRequestData: StockRequest[] = [];
+    originalData: any[] = [];
+    orderData: any[] = [];
+    scatterPlotChartData: any[] = [];
 
     constructor(
         private dashService: DashboardService,
         private dataCollectionService: DataCollectionService,
-    ) {}
+    ) { }
 
     ngOnInit() {
         this.fetchAndProcessData();

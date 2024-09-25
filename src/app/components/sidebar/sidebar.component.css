@@ -1,198 +1,211 @@
+:host {
+    --sidebar-bg: #ffffff;
+    --sidebar-hover-bg: #f5f5f5;
+    --text-color: #333333;
+    --icon-color: #757575;
+    --active-color: #1976d2;
+    --hover-text-color: #000000;
+    --transition-speed: 0.3s;
+}
+
+.dark-mode {
+    --sidebar-bg: #2c2c2c;
+    --sidebar-hover-bg: #3a3a3a;
+    --text-color: #ffffff;
+    --icon-color: #b0b0b0;
+    --active-color: #64b5f6;
+    --hover-text-color: #ffffff;
+}
+
 .sidenav-container {
     height: 100vh;
-    width: 100%; /* Ensures the sidenav container takes full available space */
-    background-color: white;
+    width: 100%;
+    background-color: var(--sidebar-bg);
+    transition: background-color var(--transition-speed) ease;
+}
+
+.sidenav {
+    height: 100vh;
+    width: 70px;
+    background-color: var(--sidebar-bg);
+    transition: width var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1), 
+                background-color var(--transition-speed) ease;
+    overflow: hidden;
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidenav:hover, .sidenav.expanded {
+    width: 170px;
+}
+
+.sidenav-header {
+    height: 60px;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+}
+
+.app-title {
+    font-size: 20px;
+    font-weight: 500;
+    margin-left: 16px;
+    color: var(--text-color);
+    opacity: 0;
+    transition: opacity var(--transition-speed) ease;
+}
+
+.sidenav:hover .app-title, .sidenav.expanded .app-title {
+    opacity: 1;
+}
+
+.menu-button {
+    transition: transform var(--transition-speed) ease;
+}
+
+.sidenav:hover .menu-button, .sidenav.expanded .menu-button {
+    transform: rotate(180deg);
+}
+
+.nav-item {
+    margin: 0;
+}
+
+:host ::ng-deep .mat-mdc-list-item {
+    height: 50px !important; /* Adjust this value as needed */
+    min-height: 50px !important;
+    max-height: 50px !important;
+}
+
+.mat-mdc-list-item:hover, .mat-mdc-list-item.active {
+    background-color: var(--sidebar-hover-bg);
+}
+
+.mat-mdc-list-item.active {
+    color: var(--active-color);
+}
+
+.nav-icon {
+    margin-right: 16px;
+    transition: transform var(--transition-speed) ease, color var(--transition-speed) ease;
+    color: var(--icon-color);
+}
+
+.sidenav:not(:hover):not(.expanded) .nav-icon {
+    transform: translateX(8px);
+}
+
+.mat-mdc-list-item:hover .nav-icon,
+.mat-mdc-list-item.active .nav-icon {
+    color: var(--active-color);
+}
+
+
+.sidenav .mat-mdc-list-item .nav-label {
+    position: absolute;
+    top: 50%;
+    transform: translateY(calc(-50% - 2px));
+    left: 56px; /* Adjust based on your icon width and desired spacing */
+}
+
+.nav-label {
+    opacity: 0;
+    transition: opacity var(--transition-speed) ease, color var(--transition-speed) ease;
+    color: var(--text-color);
+}
+
+.sidenav:hover .nav-label, .sidenav.expanded .nav-label {
+    opacity: 1;
+}
+
+.mat-mdc-list-item:hover .nav-label {
+    color: var(--hover-text-color);
 }
 
 .grad {
-    color: black;
-    font-weight: 500;
-    font-size: x-large;
-    font-variation-settings:
-        'GRAD' 200,
-        'wght' 500;
-}
-.material-symbols-outlined {
-    font-variation-settings:
-        'FILL' 0,
-        'wght' 400,
-        'GRAD' 200,
-        'opsz' 24;
-}
-.sidenav {
-    height: 100vh;
-    width: 50px; /* Standard width for sidenav */
-    /* background-color: var(--sidebar-bg-color); */ /* Light grey background */
-    background-color: white;
-    transition: width 0.4s;
-    transition-delay: 0s;
-    height: 100vh;
-    width: 50px; /* Standard width for sidenav */
-    color: var(--sidebar-text-color); /* Changes default text/icon color to black for visibility */
-    transition: width 0.4s ease;
-    transition-delay: 0s;
-    overflow: hidden;
+    font-variation-settings: 'GRAD' 200, 'wght' 500;
 }
 
-p {
-    width: 0px;
-    overflow: hidden;
-    transition: width 0.4s;
-    transition-delay: 0s;
+@keyframes ripple {
+    0% {
+        transform: scale(0);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1.5);
+        opacity: 0;
+    }
 }
 
-.expanded {
-    width: 100px;
-    transition-delay: 0s;
+.mat-mdc-list-item::after {
+    content: '';
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 50%;
+    pointer-events: none;
+    opacity: 0;
 }
 
-.expanded p {
-    width: 100px;
-    transition-delay: 0s;
-    color: var(--sidebar-text-color);
+.mat-mdc-list-item:active::after {
+    animation: ripple 0.6s ease-out;
 }
 
-.sidenav:hover {
-    width: 100px;
-    transition-delay: 0.4s;
-}
-
-.expanded #menu {
-    transform: rotate(90deg);
-}
-.sidenav:hover p {
-    width: 100px;
-    transition-delay: 0.4s;
-    color: var(--sidebar-text-color);
-}
-
-mat-toolbar {
+.sidenav-footer {
+    margin-top: auto;
+    padding: 16px;
     display: flex;
     align-items: center;
-    justify-content: center;
-    height: 60px; /* Standard toolbar height */
-    background-color: var(--sidebar-bg-color); /* Slightly darker shade for the toolbar */
-}
-.mdc-list {
-    margin: 0;
-    padding: 0;
-    list-style-type: none;
-}
-mat-icon:not(#menu) {
-    display: block; /* Block display for icons */
-    margin: auto;
-    font-size: 24px; /* Standard Material icon size */
-    color: var(--sidebar-text-color);
-    height: 30px;
-    width: 30px;
+    justify-content: space-between;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-a {
+.theme-toggle {
+    transition: transform var(--transition-speed) ease;
+}
+
+.theme-toggle:hover {
+    transform: rotate(30deg);
+}
+
+.user-info {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    padding: 10px;
-    text-align: center;
-    text-decoration: none;
-    color: var(--sidebar-text-color); /* Ensures text is black */
-    transition: background-color 0.3s; /* Smooth transition for hover effect */
+    opacity: 0;
+    transition: opacity var(--transition-speed) ease;
 }
 
-a:hover {
-    height: 70px;
-    background-color: #f0f0f0;
-    /* Adds a hover effect  */
-    border-radius: 0px;
+.sidenav:hover .user-info, .sidenav.expanded .user-info {
+    opacity: 1;
 }
 
-a div {
-    margin-top: 5px;
-}
-a.mat-mdc-list-item.mdc-list-item.mat-mdc-list-item-interactive.mat-mdc-list-item-single-line.mdc-list-item--with-one-line {
-    height: 70px;
-    border-radius: 0px;
-}
-.sidenav:hover:not(.expanded) #menu {
-    transition: 0.4 ease;
-    transform: rotate(90deg);
-}
-.sidenav:not(:hover):not(.expanded) #dashboard {
-    transition: 0.2s ease;
-    transform: translateY(12px); /* Move icon to center when not expanded */
+.user-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    margin-right: 8px;
 }
 
-.sidenav:not(:hover):not(.expanded) #inventory_2 {
-    transition: 0.2s ease;
-    transform: translateY(12px); /* Move icon to center when not expanded */
+.user-name {
+    font-size: 14px;
+    color: var(--text-color);
 }
 
-.sidenav:not(:hover):not(.expanded) #assessment {
-    transition: 0.2s ease;
-    transform: translateY(12px); /* Move icon to center when not expanded */
+.mat-mdc-list-item {
+    height: 48px !important;
+    /* Remove this line:
+    border-radius: 0 24px 24px 0;
+    */
+    margin-right: 8px;
+    transition: background-color var(--transition-speed) ease;
 }
 
-.sidenav:not(:hover):not(.expanded) #people {
-    transition: 0.2s ease;
-    transform: translateY(12px); /* Move icon to center when not expanded */
+.mat-mdc-list-item:hover, .mat-mdc-list-item.active {
+    background-color: var(--sidebar-hover-bg);
+    border-radius: 0; /* Ensure rectangular shape */
 }
 
-.sidenav:not(:hover):not(.expanded) #local_shipping {
-    transition: 0.2s ease;
-    transform: translateY(12px); /* Move icon to center when not expanded */
-}
-
-.sidenav:not(:hover):not(.expanded) #assignment {
-    transition: 0.2s ease;
-    transform: translateY(12px); /* Move icon to center when not expanded */
-}
-
-.sidenav:not(:hover):not(.expanded) #help {
-    transition: 0.2s ease;
-    transform: translateY(12px); /* Move icon to center when not expanded */
-}
-
-.sidenav:not(:hover):not(.expanded) #settings {
-    transition: 0.2s ease;
-    transform: translateY(12px); /* Move icon to center when not expanded */
-}
-
-.sidenav:not(:hover):not(.expanded) #exit_to_app {
-    transition: 0.2s ease;
-    transform: translateY(12px); /* Move icon to center when not expanded */
-}
-
-.sidenav:hover #dashboard {
-    transition: 0.2s ease;
-}
-
-.sidenav:hover #inventory_2 {
-    transition: 0.2s ease;
-}
-
-.sidenav:hover #assessment {
-    transition: 0.2s ease;
-}
-
-.sidenav:hover #people {
-    transition: 0.2s ease;
-}
-
-.sidenav:hover #local_shipping {
-    transition: 0.2s ease;
-}
-
-.sidenav:hover #assignment {
-    transition: 0.2s ease;
-}
-
-.sidenav:hover #help {
-    transition: 0.2s ease;
-}
-
-.sidenav:hover #settings {
-    transition: 0.2s ease;
-}
-
-.sidenav:hover #exit_to_app {
-    transition: 0.2s ease;
+.mat-mdc-list-item.active {
+    color: var(--active-color);
 }

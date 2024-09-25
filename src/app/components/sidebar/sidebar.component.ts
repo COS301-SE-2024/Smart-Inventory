@@ -1,9 +1,8 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, HostListener, Renderer2 } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { signOut } from 'aws-amplify/auth';
 import { MaterialModule } from '../material/material.module';
 import { CommonModule } from '@angular/common';
-import { MatSidenav } from '@angular/material/sidenav';
 import { FormsModule } from '@angular/forms';
 import { fetchAuthSession } from 'aws-amplify/auth';
 
@@ -15,38 +14,42 @@ import { fetchAuthSession } from 'aws-amplify/auth';
     styleUrls: ['./sidebar.component.css'],
 })
 export class SidebarComponent implements OnInit {
-    @ViewChild('sidenav') sidenav!: MatSidenav;
+    @ViewChild('sidenav', { static: true }) sidenav!: ElementRef;
     isExpanded = false;
-    sidebarWidth = 300; // Default sidebar width
+    isHovered = false;
+    isDarkMode = false;
+    userName = 'John Doe';
+    userAvatar = 'assets/default-avatar.png';
     menuItems = [
         { label: 'Dashboard', icon: 'dashboard', routerLink: '/dashboard', roles: ['admin', 'inventorycontroller'] },
-        {
-            label: 'Inventory',
-            icon: 'inventory_2',
-            routerLink: '/inventory',
-            roles: ['admin', 'inventorycontroller', 'enduser'],
-        },
+        { label: 'Inventory', icon: 'inventory_2', routerLink: '/inventory', roles: ['admin', 'inventorycontroller', 'enduser'] },
         { label: 'Reports', icon: 'assessment', routerLink: '/reports', roles: ['admin', 'inventorycontroller'] },
         { label: 'Team', icon: 'people', routerLink: '/team', roles: ['admin'] },
-        {
-            label: 'Suppliers',
-            icon: 'local_shipping',
-            routerLink: '/suppliers',
-            roles: ['admin', 'inventorycontroller'],
-        },
+        { label: 'Suppliers', icon: 'local_shipping', routerLink: '/suppliers', roles: ['admin', 'inventorycontroller'] },
         { label: 'Orders', icon: 'assignment', routerLink: '/orders', roles: ['admin', 'inventorycontroller'] },
         { label: 'Help', icon: 'help', routerLink: '/help', roles: ['admin', 'inventorycontroller', 'enduser'] },
         { label: 'Log Out', icon: 'exit_to_app', click: true, roles: ['admin', 'inventorycontroller', 'enduser'] },
     ];
 
-    constructor(private router: Router) {}
+    filteredMenuItems: any[] = [];
+    role: string = '';
+
+    constructor(public router: Router, private renderer: Renderer2) {}
 
     ngOnInit() {
         this.logAuthSession();
+        this.loadUserPreferences();
     }
 
-    filteredMenuItems: any[] = [];
-    role: string = '';
+    @HostListener('mouseenter')
+    onMouseEnter() {
+        this.isHovered = true;
+    }
+
+    @HostListener('mouseleave')
+    onMouseLeave() {
+        this.isHovered = false;
+    }
 
     async logAuthSession() {
         try {
@@ -70,19 +73,32 @@ export class SidebarComponent implements OnInit {
         });
     }
 
-    toggle(item: any): void {
-        if (item.submenu) {
-            item.expanded = !item.expanded;
+    toggleSidenav() {
+        this.isExpanded = !this.isExpanded;
+    }
+
+    toggleDarkMode() {
+        this.isDarkMode = !this.isDarkMode;
+        this.saveUserPreferences();
+        if (this.isDarkMode) {
+            this.renderer.addClass(document.body, 'dark-mode');
+        } else {
+            this.renderer.removeClass(document.body, 'dark-mode');
         }
     }
 
-    originalWidth: string = '200px'; // Original width of the sidenav
-    expandedWidth: string = '300px'; // Expanded width of the sidenav
+    loadUserPreferences() {
+        const darkMode = localStorage.getItem('darkMode');
+        if (darkMode) {
+            this.isDarkMode = JSON.parse(darkMode);
+            if (this.isDarkMode) {
+                this.renderer.addClass(document.body, 'dark-mode');
+            }
+        }
+    }
 
-    // This method toggles the sidenav and changes its width
-    toggleSidenav() {
-        this.isExpanded = !this.isExpanded; // Toggle the expansion state
-        // this.sidenav.toggle();  // Toggle the visibility of the sidenav
+    saveUserPreferences() {
+        localStorage.setItem('darkMode', JSON.stringify(this.isDarkMode));
     }
 
     async signOut() {

@@ -823,7 +823,7 @@ export class SupplierReportComponent implements OnInit {
             const suppliers = (await this.dataCollectionService.getSupplierReportData().toPromise()) || [];
             this.originalData = suppliers;
             this.rowData = this.processRowData(this.originalData);
-            console.log('Processed suppliers:', this.rowData);
+            console.log('Processed suppliers:', this.originalData);
         } catch (error) {
             console.error('Error in loadSuppliersData:', error);
             this.rowData = [];

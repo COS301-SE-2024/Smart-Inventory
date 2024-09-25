@@ -33,6 +33,28 @@
                         [data]="chart.data"
                         [title]="chart.title"
                     ></app-bubble-chart>
+                    <app-line-bar
+                        *ngSwitchCase="'LineBarComponent'"
+                        [data]="chart.data"
+                        [title]="chart.title"
+                    ></app-line-bar>
+                    <app-radar
+                        *ngSwitchCase="'RadarComponent'"
+                        [data]="chart.data"
+                        [title]="chart.title"
+                    ></app-radar>
+                    <app-scatterplot
+                        *ngSwitchCase="'ScatterPlotComponent'"
+                        [data]="chart.data"
+                        [title]="chart.title"
+                        style="height: 20rem;"
+                    ></app-scatterplot>
+                    <app-donuttemplate
+                        *ngSwitchCase="'DonutChartComponent'"
+                        [orderData]="chart.data"
+                        [title]="chart.title"
+                        style="height: 20rem;"
+                    ></app-donuttemplate>
                     <ng-container *ngSwitchDefault>
                         <ng-container *ngComponentOutlet="charts[chart.component]"></ng-container>
                     </ng-container>

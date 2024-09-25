@@ -15,9 +15,14 @@ export class InventoryService {
   private inventorySummaryUpdateItemUrl = 'https://ite07edpdc.execute-api.us-east-1.amazonaws.com/default/inventorySummary-updateItem';
   private inventorySummaryGetItemsUrl = 'https://d53ot717bg.execute-api.us-east-1.amazonaws.com/default/inventorySummary-getItems';
   private inventorySummaryGetItemUrl = 'https://dqpvi3r6m9.execute-api.us-east-1.amazonaws.com/default/inventorySummary-getItem';
-
+  private runEoqRopCalculationUrl = 'https://your-api-gateway-url.amazonaws.com/default/EOQ_ROP_Calculations';
 
   constructor(private http: HttpClient) { }
+
+  // EOQ ROP ABC analysis
+  runEoqRopCalculation(tenentId: string): Observable<any> {
+    return this.http.post(this.runEoqRopCalculationUrl, { tenentId });
+  }
 
   getInventoryItems(tenentId: string): Observable<any> {
     return this.http.get(`${this.getItemsUrl}?tenentId=${tenentId}`);

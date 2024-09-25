@@ -1,13 +1,20 @@
-<ng-container>
-    <h2 mat-dialog-title>Template Quote</h2>
+<ng-container *ngIf="isNewTemplate">
+    <h1 mat-dialog-title style="text-align: center; --mdc-dialog-subhead-size: 30px">Create Template Quote</h1>
 </ng-container>
+<ng-container *ngIf="!isNewTemplate">
+    <h1 mat-dialog-title style="text-align: center; --mdc-dialog-subhead-size: 30px">Saved Template</h1>
+</ng-container>
+
 <mat-dialog-content class="quote-content">
     <div *ngIf="isLoading" class="loading-overlay">
         <app-loading-spinner></app-loading-spinner>
     </div>
+    <div *ngIf="isSavingTemplate" class="loading-overlay">
+        <app-loading-spinner></app-loading-spinner>
+    </div>
     <ng-container *ngIf="!isLoading">
         <div class="items-section">
-            <h3>Quote Items</h3>
+            <h2 style="font-size: 24px">Quote Items</h2>
             <mat-form-field appearance="outline" class="full-width search-field">
                 <mat-label>Search Quote Items</mat-label>
                 <input matInput type="text" [(ngModel)]="quoteItemSearchTerm" (input)="filterQuoteItems()" />
@@ -64,13 +71,11 @@
                     </button>
                 </div>
             </div>
-            <button mat-raised-button (click)="addItem()" class="add-item-button">
-                <mat-icon>add</mat-icon> Add Item
-            </button>
+            <button mat-flat-button (click)="addItem()" class="btn2"><mat-icon>add</mat-icon> Add Item</button>
         </div>
 
         <div class="suppliers-section">
-            <h3>Suppliers</h3>
+            <h2 style="font-size: 24px">Suppliers</h2>
             <mat-form-field appearance="outline" class="full-width">
                 <mat-label>Select Suppliers</mat-label>
                 <mat-select
@@ -101,31 +106,17 @@
                     </mat-chip>
                 </mat-chip-listbox>
             </div>
-            <div class="frequency-section">
-                <h3>Frequency</h3>
-                <mat-form-field appearance="outline" class="full-width">
-                    <mat-label>Select Frequency</mat-label>
-                    <mat-select [(ngModel)]="selectedFrequency" (ngModelChange)="onQuoteChanged()">
-                        <mat-option value="Monthly">Monthly</mat-option>
-                        <mat-option value="Weekly">Weekly</mat-option>
-                        <mat-option value="Quarterly">Quarterly</mat-option>
-                        <mat-option value="Yearly">Yearly</mat-option>
-                    </mat-select>
-                </mat-form-field>
-            </div>
         </div>
     </ng-container>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
-    <button mat-button (click)="cancel()">Cancel</button>
-    <button mat-raised-button color="primary" *ngIf="isNewQuote">Create Order</button>
+    <button mat-flat-button (click)="cancel()" class="btn">Cancel</button>
     <button
-        mat-raised-button
-        color="primary"
-        *ngIf="!isNewQuote"
-        (click)="saveChanges()"
-        [disabled]="!hasUnsavedChanges"
+        mat-flat-button
+        (click)="saveTemplate()"
+        [disabled]="!hasUnsavedChanges || isSavingTemplate"
+        class="btn"
     >
-        Save Changes
+        {{ isSavingTemplate ? 'Saving...' : (isNewTemplate ? 'Save Template' : 'Update Template') }}
     </button>
 </mat-dialog-actions>

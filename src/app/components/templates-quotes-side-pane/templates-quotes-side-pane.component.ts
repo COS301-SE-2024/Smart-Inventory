@@ -8,7 +8,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { templateQuoteModalComponent } from '../template-quote-modal/template-quote-modal.component';
+import { TemplateQuoteModalComponent } from '../template-quote-modal/template-quote-modal.component';
 
 interface TemplateQuote {
   id: string;
@@ -95,8 +95,9 @@ export class TemplatesQuotesSidePaneComponent implements OnChanges {
   }
 
   openTemplateQuoteModal() {
-    const dialogRef = this.dialog.open(templateQuoteModalComponent, {
-      width: '500px',
+    const dialogRef = this.dialog.open(TemplateQuoteModalComponent, {
+      width: '600px',
+      maxWidth: '600px',
       data: {}
     });
 

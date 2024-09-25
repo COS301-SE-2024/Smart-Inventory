@@ -187,7 +187,7 @@ export class AddWidgetSidePaneComponent implements OnInit {
         return this.prepareChartConfig(
             'donut',
             this.orderData,
-            'Order Status Distribution',
+            'Order Cost Distribution',
             'DonutChartComponent'
         );
     }

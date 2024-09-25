@@ -147,10 +147,7 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
         this.setupThemeObserver();
     }
 
-    // RUN EOQ/ROP/ABC
-    onRunEoqRopCalculation() {
-        this.runEoqRopCalculation.emit();
-    }
+
 
     onFilterTextBoxChanged() {
         this.gridApi.setGridOption(

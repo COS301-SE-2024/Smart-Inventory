@@ -52,8 +52,6 @@ export class DataCollectionService {
     inventoryData: InventoryItem[] = [];
     stockRequestData: StockRequest[] = [];
 
-    
-
     constructor(private inventoryService: InventoryService) {
         Amplify.configure(outputs);
     }
@@ -113,14 +111,14 @@ export class DataCollectionService {
             catchError((error) => {
                 console.error('Error fetching inventory summary:', error);
                 return [];
-            })
+            }),
         );
     }
 
     private async fetchInventorySummary(tenantId: string): Promise<InventorySummaryItem[]> {
         try {
-            const result = await this.invokeLambda('inventorySummary-getItems', { 
-                queryStringParameters: { tenentId: tenantId } 
+            const result = await this.invokeLambda('inventorySummary-getItems', {
+                queryStringParameters: { tenentId: tenantId },
             });
             return JSON.parse(result);
         } catch (error) {

@@ -216,7 +216,7 @@
                 <button
                     class="QAButtons"
                     mat-menu-item
-                    *ngIf="getCurrentRoute('inventory') && !isEndUser()"
+                    *ngIf="(getCurrentRoute('inventoryReport') || getCurrentRoute('inventory')) && !isEndUser()"
                     color="primary"
                     (click)="onViewInventorySummary()"
                 >

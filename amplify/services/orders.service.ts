@@ -95,7 +95,7 @@ export class OrdersService {
   }
 
   getSupplierQuoteSummaries(quoteId: string, tenentId: string): Observable<any> {
-    return this.http.get(`${this.getSupplierQuoteSummariesUrl}/${quoteId}/${tenentId}`);
+    return this.http.get(`${this.getSupplierQuoteSummariesUrl}?quoteId=${quoteId}&tenentId=${tenentId}`);
   }
 
 

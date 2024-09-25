@@ -162,6 +162,7 @@
                             [data]="item['chartConfig'].data"
                             [title]="item['chartConfig'].title"
                         ></app-bubble-chart>
+                    </ng-container>
                     <ng-container *ngSwitchCase="'LineBarComponent'">
                         <app-line-bar
                             [data]="item['chartConfig'].data"
@@ -169,10 +170,7 @@
                         ></app-line-bar>
                     </ng-container>
                     <ng-container *ngSwitchCase="'RadarComponent'">
-                        <app-radar
-                            [data]="item['chartConfig'].data"
-                            [title]="item['chartConfig'].title"
-                        ></app-radar>
+                        <app-radar [data]="item['chartConfig'].data" [title]="item['chartConfig'].title"></app-radar>
                     </ng-container>
                     <ng-container *ngSwitchCase="'ScatterPlotComponent'">
                         <app-scatterplot

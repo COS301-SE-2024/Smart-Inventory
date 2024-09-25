@@ -18,7 +18,6 @@ import { RadarComponent } from '../charts/radar/radar.component';
 import { LineBarComponent } from '../charts/line-bar/line-bar.component';
 import { ChartConfig, DashboardService } from '../../pages/dashboard/dashboard.service';
 import { DataCollectionService } from './data-collection.service';
-import { forkJoin, from } from 'rxjs';
 
 @Component({
     selector: 'app-templates-side-pane',
@@ -66,16 +65,11 @@ export class AddWidgetSidePaneComponent implements OnInit {
 
     chartConfigs: ChartConfig[] = [];
     isLoading = true;
-    inventoryData: InventoryItem[] = [];
-    stockRequestData: StockRequest[] = [];
-    originalData: any[] = [];
-    orderData: any[] = [];
-    scatterPlotChartData: any[] = [];
 
     constructor(
         private dashService: DashboardService,
         private dataCollectionService: DataCollectionService,
-    ) { }
+    ) {}
 
     ngOnInit() {
         this.fetchAndProcessData();

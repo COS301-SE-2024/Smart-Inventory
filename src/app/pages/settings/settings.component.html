@@ -1,4 +1,8 @@
 <div class="settings-container">
+      <app-templates-quotes-side-pane 
+      [isOpen]="isTemplateSidePaneOpen" 
+      (closed)="isTemplateSidePaneOpen = false">
+      </app-templates-quotes-side-pane>
     <div class="intro-section">
       <h2>Customize Your Experience</h2>
       <p>Tailor the app to your needs by adjusting these key settings</p>
@@ -15,6 +19,8 @@
             <input type="text" placeholder="Surname" [(ngModel)]="personalDetails.surname">
             <input type="email" placeholder="Email" [(ngModel)]="personalDetails.email">
           </div>
+        </div>
+        <div class="tile-button">
           <button (click)="savePersonalDetails()">Save Changes</button>
         </div>
       </div>
@@ -29,6 +35,8 @@
             <input type="password" placeholder="Current Password" [(ngModel)]="passwordChange.current">
             <input type="password" placeholder="New Password" [(ngModel)]="passwordChange.new">
           </div>
+        </div>
+        <div class="tile-button">
           <button (click)="updatePassword()">Update Password</button>
         </div>
       </div>
@@ -40,7 +48,9 @@
           </div>
           <h3>Email Template</h3>
           <p>Update and edit your template for emails sent.</p>
-          <button (click)="editEmailTemplate()" [disabled]="notEndUser()">Edit Template</button>
+        </div>
+        <div class="tile-button">
+          <button (click)="editEmailTemplate()">Edit Template</button>
         </div>
       </div>
   
@@ -51,7 +61,9 @@
           </div>
           <h3>Automation Templates</h3>
           <p>Add, remove and edit your templates for order automation.</p>
-          <button (click)="editAutomationTemplates()" [disabled]="notEndUser()">Edit Templates</button>
+        </div>
+        <div class="tile-button">
+          <button (click)="editAutomationTemplates()">Edit Templates</button>
         </div>
       </div>
   
@@ -62,7 +74,9 @@
           </div>
           <h3>Delivery Information</h3>
           <p>Update and change your delivery information.</p>
-          <button (click)="editDeliveryInfo()" [disabled]="notEndUser()">Edit Details</button>
+        </div>
+        <div class="tile-button">
+          <button (click)="editDeliveryInfo()">Edit Details</button>
         </div>
       </div>
   
@@ -73,11 +87,11 @@
           </div>
           <h3>Theme</h3>
           <p>Switch between light and dark theme.</p>
+        </div>
+        <div class="tile-button">
           <button (click)="changeTheme()">Customize</button>
         </div>
       </div>
     </div>
+    <div class="scroll-spacer"></div>
   </div>
-
-  <app-templates-quotes-side-pane [isOpen]="isTemplateSidePaneOpen" (closed)="isTemplateSidePaneOpen = false">
-  </app-templates-quotes-side-pane>

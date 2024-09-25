@@ -12,6 +12,7 @@ import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
 import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
 import outputs from '../../../../amplify_outputs.json';
 import { LoadingSpinnerComponent } from '../loader/loading-spinner.component';
+import { OrdersService } from '../../../../amplify/services/orders.service';
 
 @Component({
   selector: 'app-supplier-renegotiation-modal',
@@ -41,7 +42,8 @@ export class SupplierRenegotiationModalComponent implements OnInit {
     public dialogRef: MatDialogRef<SupplierRenegotiationModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private fb: FormBuilder,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private ordersService: OrdersService
   ) {
     this.renegotiationForm = this.fb.group({
       subject: ['', Validators.required],
@@ -119,33 +121,16 @@ Best regards,
     }
   }
 
-  async sendRenegotiationEmail(emailData: any) {
-    try {
-      const session = await fetchAuthSession();
-      const lambdaClient = new LambdaClient({
-        region: outputs.auth.aws_region,
-        credentials: session.credentials,
-      });
-  
-      const invokeCommand = new InvokeCommand({
-        FunctionName: 'sendRenegotiationEmail',
-        Payload: new TextEncoder().encode(JSON.stringify(emailData)),
-      });
-  
-      const lambdaResponse = await lambdaClient.send(invokeCommand);
-      const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-  
-      if (responseBody.statusCode === 200) {
-        console.log('Renegotiation email sent successfully:', responseBody.body);
-        return true;
-      } else {
-        throw new Error(`Failed to send renegotiation email: ${responseBody.body}`);
-      }
-    } catch (error) {
-      console.error('Error sending renegotiation email:', error);
-      throw error;
-    }
+async sendRenegotiationEmail(emailData: any) {
+  try {
+    const response = await this.ordersService.sendRenegotiationEmail(emailData).toPromise();
+    console.log('Renegotiation email sent successfully:', response);
+    return true;
+  } catch (error) {
+    console.error('Error sending renegotiation email:', error);
+    throw error;
   }
+}
 
   onCancel() {
     this.dialogRef.close('cancelled');

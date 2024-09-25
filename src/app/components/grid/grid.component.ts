@@ -64,10 +64,16 @@ import { ScanQrcodeModalComponent } from '../scan-qrcode-modal/scan-qrcode-modal
     encapsulation: ViewEncapsulation.Emulated,
 })
 export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
-    @Input() set rowData(value: any[]) {
-        this._rowData = value;
-        this.setGridHeight();
-        this.refreshGrid(value);
+    @Input() set rowData(value: any[] | null | undefined) {
+        console.log('Setting rowData:', value);
+        if (value) {
+            this._rowData = value;
+            this.setGridHeight();
+            this.refreshGrid(value);
+        } else {
+            console.warn('Received null or undefined rowData');
+            this._rowData = [];
+        }
     }
     get rowData(): any[] {
         return this._rowData;
@@ -97,6 +103,8 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
     @Output() importExcelClicked = new EventEmitter<void>();
     @Output() viewAutomationTemplatesClicked = new EventEmitter<void>();
     @Output() scanQRCode = new EventEmitter<string>();
+
+    @Output() runEoqRopCalculation = new EventEmitter<void>();
 
     @ViewChild(AgGridAngular) agGrid!: AgGridAngular;
     gridApi!: GridApi<any>;
@@ -141,6 +149,11 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
         this.setupThemeObserver();
     }
 
+    // RUN EOQ/ROP/ABC
+    onRunEoqRopCalculation() {
+        this.runEoqRopCalculation.emit();
+    }
+
     onFilterTextBoxChanged() {
         this.gridApi.setGridOption(
             'quickFilterText',
@@ -176,16 +189,19 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     refreshGrid(newData: any[]) {
-        if (this.gridApi) {
+        console.log('Refreshing grid with data:', newData);
+        if (this.gridApi && newData && newData.length > 0) {
             // Remove all existing rows
             const allRows = this.gridApi.getModel().getRowCount();
             if (allRows > 0) {
-                const rowsToRemove = this.gridApi.getModel().getRow(allRows)!.data;
+                const rowsToRemove = this.gridApi.getModel().getRow(allRows - 1)!.data;
                 this.gridApi.applyTransaction({ remove: [rowsToRemove] });
             }
 
             // Add new rows
             this.gridApi.applyTransaction({ add: newData });
+        } else {
+            console.warn('Unable to refresh grid: gridApi not initialized or newData is empty');
         }
     }
 

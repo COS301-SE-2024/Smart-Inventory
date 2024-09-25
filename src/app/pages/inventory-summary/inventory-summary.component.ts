@@ -8,13 +8,14 @@ import { LoadingSpinnerComponent } from '../../components/loader/loading-spinner
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Amplify } from 'aws-amplify';
 import { fetchAuthSession } from 'aws-amplify/auth';
-import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
 import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
 import outputs from '../../../../amplify_outputs.json';
 import { TitleService } from 'app/components/header/title.service';
 import { MaterialModule } from '../../components/material/material.module';
 import { Router } from '@angular/router';
 import { InventoryService } from '../../../../amplify/services/inventory.service';
+import { interval, Subscription } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
     selector: 'app-inventory-summary',
@@ -29,6 +30,8 @@ export class InventorySummaryComponent implements OnInit {
     rowData: any[] = [];
     isLoading = true;
     tenentId: string = '';
+    isCalculating = false;
+    private calculationSubscription: Subscription | null = null;
 
     colDefs: ColDef[] = [
         { field: 'SKU', headerName: 'SKU', filter: 'agSetColumnFilter' },
@@ -66,6 +69,50 @@ export class InventorySummaryComponent implements OnInit {
         Amplify.configure(outputs);
     }
 
+    // EOQ, ROP, ABC
+    runEoqRopCalculation() {
+        if (this.isCalculating) {
+            this.snackBar.open('Calculation is already in progress', 'Close', {
+                duration: 3000,
+                horizontalPosition: 'center',
+                verticalPosition: 'top',
+            });
+            return;
+        }
+
+        this.isCalculating = true;
+        this.snackBar.open('EOQ/ROP calculation started', 'Close', {
+            duration: 3000,
+            horizontalPosition: 'center',
+            verticalPosition: 'top',
+        });
+
+        this.calculationSubscription = this.inventoryService.runEoqRopCalculation(this.tenentId)
+            .subscribe({
+                next: (response) => {
+                    console.log('EOQ/ROP calculation response:', response);
+                    this.snackBar.open('EOQ/ROP calculation completed successfully', 'Close', {
+                        duration: 3000,
+                        horizontalPosition: 'center',
+                        verticalPosition: 'top',
+                    });
+                    this.loadInventorySummaryData();
+                },
+                error: (error) => {
+                    console.error('Error running EOQ/ROP calculation:', error);
+                    this.snackBar.open('Error running EOQ/ROP calculation', 'Close', {
+                        duration: 3000,
+                        horizontalPosition: 'center',
+                        verticalPosition: 'top',
+                    });
+                },
+                complete: () => {
+                    this.isCalculating = false;
+                    this.calculationSubscription = null;
+                }
+            });
+    }
+
     async ngOnInit(): Promise<void> {
         this.titleService.updateTitle('Inventory Summary');
         try {
@@ -79,6 +126,12 @@ export class InventorySummaryComponent implements OnInit {
                 horizontalPosition: 'center',
                 verticalPosition: 'top',
             });
+        }
+    }
+
+    ngOnDestroy(): void {
+        if (this.calculationSubscription) {
+            this.calculationSubscription.unsubscribe();
         }
     }
 
@@ -111,24 +164,24 @@ export class InventorySummaryComponent implements OnInit {
                 tenentId: this.tenentId,
                 [event.field]: event.newValue,
             };
-    
+
             // Convert to numbers if necessary
             if (event.field === 'lowStockThreshold' || event.field === 'reorderAmount') {
                 updatedData[event.field] = Number(event.newValue);
             }
-    
+
             const response = await this.inventoryService.inventorySummaryUpdateItem(updatedData).toPromise();
-    
+
             if (response) {
                 console.log('Item updated successfully');
                 const updatedItem = response;
-    
+
                 // Update the local data to reflect the change
                 const index = this.rowData.findIndex((item) => item.SKU === updatedItem.SKU);
                 if (index !== -1) {
                     this.rowData[index] = { ...this.rowData[index], ...updatedItem };
                 }
-    
+
                 this.snackBar.open('Item updated successfully', 'Close', {
                     duration: 3000,
                     horizontalPosition: 'center',
@@ -139,10 +192,10 @@ export class InventorySummaryComponent implements OnInit {
             }
         } catch (error) {
             console.error('Error updating inventory Item:', error);
-    
+
             // Revert the change in the grid
             this.gridComponent.updateRow(event.data);
-    
+
             this.snackBar.open('Error updating inventory summary item: ' + (error as Error).message, 'Close', {
                 duration: 5000,
                 horizontalPosition: 'center',
@@ -150,15 +203,17 @@ export class InventorySummaryComponent implements OnInit {
             });
         }
     }
-    
+
     async loadInventorySummaryData() {
         try {
             this.isLoading = true;
             const response = await this.inventoryService.inventorySummaryGetItems({ tenentId: this.tenentId }).toPromise();
     
             if (response) {
+                console.log('Received inventory summary data:', response);
                 this.rowData = response;
             } else {
+                console.error('Received null or undefined response from inventorySummaryGetItems');
                 throw new Error('Failed to load inventory summary data');
             }
         } catch (error) {
@@ -172,6 +227,7 @@ export class InventorySummaryComponent implements OnInit {
             this.isLoading = false;
         }
     }
+
 
     back() {
         this.router.navigate(['/inventory']);

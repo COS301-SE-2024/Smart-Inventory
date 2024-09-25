@@ -20,6 +20,9 @@ import outputs from '../../../../amplify_outputs.json';
 import { LoadingSpinnerComponent } from '../loader/loading-spinner.component';
 import { InventoryService } from '../../../../amplify/services/inventory.service';
 import { SuppliersService } from '../../../../amplify/services/suppliers.service';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatSlideToggle } from '@angular/material/slide-toggle';
+import { LambdaClient, InvokeCommand } from "@aws-sdk/client-lambda";
 
 interface QuoteItem {
   item: { sku: string; description: string; inventoryID: string };
@@ -51,6 +54,8 @@ interface InventoryItem {
     NgxMatSelectSearchModule,
     LoadingSpinnerComponent,
     MatTooltipModule,
+    MatCheckboxModule,
+    MatSlideToggle
   ],
   templateUrl: './template-quote-modal.component.html',
   styleUrls: ['./template-quote-modal.component.css']
@@ -63,6 +68,8 @@ export class TemplateQuoteModalComponent implements OnInit {
   selectedSuppliers: { company_name: string; supplierID: string }[] = [];
   suppliers: { company_name: string; supplierID: string }[] = [];
   inventoryItems: { sku: string; description: string }[] = [];
+  autoSubmitOrder: boolean = false;
+  submissionDeadlineDays: number = 3;
 
   supplierControl = new FormControl();
   filteredSuppliers: ReplaySubject<{ company_name: string; supplierID: string }[]> = new ReplaySubject<{ company_name: string; supplierID: string }[]>(1);
@@ -72,6 +79,8 @@ export class TemplateQuoteModalComponent implements OnInit {
   isSavingTemplate: boolean = false;
 
   templateId: string | null = null;
+  templateName: string = '';
+  orderFrequency: string = '';
 
   protected _onDestroy = new Subject<void>();
 
@@ -114,6 +123,13 @@ export class TemplateQuoteModalComponent implements OnInit {
     console.log('Initializing template data:', templateDetails);
   
     this.templateId = templateDetails.templateId || null;
+    this.templateName = templateDetails.templateName || '';
+    this.orderFrequency = templateDetails.orderFrequency || '';
+    this.orderFrequency = templateDetails.orderFrequency || 'monthly';
+    this.autoSubmitOrder = templateDetails.autoSubmitOrder || false;
+    this.submissionDeadlineDays = templateDetails.submissionDeadlineDays || 3;
+  
+
   
     if (templateDetails.items && Array.isArray(templateDetails.items)) {
       this.quoteItems = templateDetails.items.map((item: any) => {
@@ -293,7 +309,59 @@ export class TemplateQuoteModalComponent implements OnInit {
     return item1 && item2 ? item1.sku === item2.sku : item1 === item2;
   }
 
-  async saveTemplate() {}
+  async saveTemplate() {
+    this.isSavingTemplate = true;
+
+    try {
+      const session = await fetchAuthSession();
+      const tenentId = await this.getTenentId(session);
+
+      const templateData = {
+        tenentId,
+        templateName: this.templateName,
+        items: this.quoteItems.map(item => ({
+          item: {
+            inventoryID: item.item.inventoryID,
+            sku: item.item.sku
+          },
+          quantity: item.quantity
+        })),
+        suppliers: this.selectedSuppliers,
+        orderFrequency: this.orderFrequency,
+        autoSubmitOrder: this.autoSubmitOrder,
+        submissionDeadlineDays: this.submissionDeadlineDays
+      };
+
+      const lambdaClient = new LambdaClient({
+        region: outputs.auth.aws_region,
+        credentials: session.credentials,
+      });
+
+      const invokeCommand = new InvokeCommand({
+        FunctionName: 'createOrderTemplate',
+        Payload: new TextEncoder().encode(JSON.stringify({ body: JSON.stringify(templateData) })),
+      });
+
+      const lambdaResponse = await lambdaClient.send(invokeCommand);
+      const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+
+      if (responseBody.statusCode === 200) {
+        const result = JSON.parse(responseBody.body);
+        console.log('Order template created successfully:', result);
+        this.snackBar.open('Order template saved successfully', 'Close', { duration: 3000 });
+        this.dialogRef.close({ action: 'save', templateId: result.orderTemplateID });
+      } else {
+        console.error('Error creating order template:', responseBody.body);
+        this.snackBar.open('Error saving order template', 'Close', { duration: 3000 });
+      }
+    } catch (error) {
+      console.error('Error in saveTemplate:', error);
+      this.snackBar.open('Error saving order template', 'Close', { duration: 3000 });
+    } finally {
+      this.isSavingTemplate = false;
+    }
+  }
+
   
   onQuoteChanged() {
     this.hasUnsavedChanges = true;

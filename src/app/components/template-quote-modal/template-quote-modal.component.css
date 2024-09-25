@@ -7,19 +7,22 @@
 .quote-content {
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 25px;
     height: 80vh;
     overflow-y: auto;
 }
 
+.template-name-section,
 .items-section,
-.suppliers-section {
+.suppliers-section,
+.order-settings-section {
     display: flex;
     flex-direction: column;
+
 }
 
-h3 {
-    margin-bottom: 30px;
+h2 {
+    font-size: 24px;
     color: #333;
 }
 
@@ -27,6 +30,7 @@ h3 {
     display: flex;
     flex-direction: column;
     gap: 16px;
+
 }
 
 .item-row {
@@ -54,7 +58,6 @@ button[mat-raised-button] {
 mat-chip-listbox {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
 }
 
 .mat-select-search-input {
@@ -133,17 +136,6 @@ mat-chip-listbox {
     z-index: 1000;
 }
 
-.quote-header {
-    border-bottom: 1px solid #e0e0e0;
-}
-
-.quote-header div {
-    font-size: 14px;
-    line-height: 1.4;
-    color: #333;
-    margin-bottom: 4px;
-}
-
 .btn {
     margin-right: auto;
     margin-left: auto;
@@ -158,4 +150,25 @@ mat-chip-listbox {
     border-radius: 5px;
     width: 100%;
     height: 40px;
+}
+
+.custom-frequency {
+    display: flex;
+    margin-bottom: 50px;
+}
+
+.custom-frequency mat-form-field {
+    flex: 1;
+}
+
+.auto-submit-toggle {
+    margin-bottom: 50px;
+}
+
+::ng-deep .mat-slide-toggle.mat-checked .mat-slide-toggle-bar {
+    background-color: #e3f2fd;
+}
+
+::ng-deep .mat-slide-toggle.mat-checked .mat-slide-toggle-thumb {
+    background-color: #1976d2;
 }

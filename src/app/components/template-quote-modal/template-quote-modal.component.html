@@ -13,19 +13,22 @@
         <app-loading-spinner></app-loading-spinner>
     </div>
     <ng-container *ngIf="!isLoading">
+        <!-- Template Name Section -->
+        <div class="template-name-section">
+            <h2>Template Name</h2>
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Template Name</mat-label>
+                <input matInput [(ngModel)]="templateName" (ngModelChange)="onQuoteChanged()">
+            </mat-form-field>
+        </div>
+
+        <!-- Quote Items Section -->
         <div class="items-section">
-            <h2 style="font-size: 24px">Quote Items</h2>
+            <h2>Quote Items</h2>
             <mat-form-field appearance="outline" class="full-width search-field">
                 <mat-label>Search Quote Items</mat-label>
                 <input matInput type="text" [(ngModel)]="quoteItemSearchTerm" (input)="filterQuoteItems()" />
-                <button
-                    *ngIf="quoteItemSearchTerm"
-                    matSuffix
-                    mat-icon-button
-                    aria-label="Clear"
-                    (click)="quoteItemSearchTerm = ''; filterQuoteItems()"
-                    class="clear-button"
-                >
+                <button *ngIf="quoteItemSearchTerm" matSuffix mat-icon-button aria-label="Clear" (click)="quoteItemSearchTerm = ''; filterQuoteItems()" class="clear-button">
                     <mat-icon>close</mat-icon>
                 </button>
                 <mat-icon matSuffix class="search-icon">search</mat-icon>
@@ -34,18 +37,9 @@
                 <div *ngFor="let item of filteredQuoteItems; let i = index" class="item-row">
                     <mat-form-field appearance="outline">
                         <mat-label>Item</mat-label>
-                        <mat-select
-                            [(ngModel)]="item.item"
-                            [compareWith]="compareItems"
-                            (ngModelChange)="onQuoteChanged()"
-                        >
+                        <mat-select [(ngModel)]="item.item" [compareWith]="compareItems" (ngModelChange)="onQuoteChanged()">
                             <mat-option>
-                                <ngx-mat-select-search
-                                    [formControl]="item.searchControl"
-                                    placeholderLabel="Search items..."
-                                    noEntriesFoundLabel="No matching items found"
-                                    (input)="filterItems($any($event).target.value, i)"
-                                >
+                                <ngx-mat-select-search [formControl]="item.searchControl" placeholderLabel="Search items..." noEntriesFoundLabel="No matching items found" (input)="filterItems($any($event).target.value, i)">
                                 </ngx-mat-select-search>
                             </mat-option>
                             <mat-option *ngFor="let invItem of item.filteredItems | async" [value]="invItem">
@@ -58,13 +52,7 @@
                     </mat-form-field>
                     <mat-form-field appearance="outline">
                         <mat-label>Quantity</mat-label>
-                        <input
-                            matInput
-                            type="number"
-                            [(ngModel)]="item.quantity"
-                            min="1"
-                            (ngModelChange)="onQuoteChanged()"
-                        />
+                        <input matInput type="number" [(ngModel)]="item.quantity" min="1" (ngModelChange)="onQuoteChanged()" />
                     </mat-form-field>
                     <button mat-icon-button (click)="removeItem(i)" aria-label="Remove item" class="remove-item-button">
                         <mat-icon>remove_circle</mat-icon>
@@ -74,22 +62,15 @@
             <button mat-flat-button (click)="addItem()" class="btn2"><mat-icon>add</mat-icon> Add Item</button>
         </div>
 
+        <!-- Suppliers Section -->
         <div class="suppliers-section">
-            <h2 style="font-size: 24px">Suppliers</h2>
+            <h2>Suppliers</h2>
             <mat-form-field appearance="outline" class="full-width">
                 <mat-label>Select Suppliers</mat-label>
-                <mat-select
-                    [(ngModel)]="selectedSuppliers"
-                    multiple
-                    (ngModelChange)="onQuoteChanged()"
-                    data-cy="supplierSelect"
-                >
+                <mat-select [(ngModel)]="selectedSuppliers" multiple (ngModelChange)="onQuoteChanged()" data-cy="supplierSelect">
                     <mat-option>
-                        <ngx-mat-select-search
-                            [formControl]="supplierControl"
-                            placeholderLabel="Search suppliers..."
-                            noEntriesFoundLabel="No matching suppliers found"
-                        ></ngx-mat-select-search>
+                        <ngx-mat-select-search [formControl]="supplierControl" placeholderLabel="Search suppliers..." noEntriesFoundLabel="No matching suppliers found">
+                        </ngx-mat-select-search>
                     </mat-option>
                     <mat-option *ngFor="let supplier of filteredSuppliers | async" [value]="supplier">
                         {{ supplier.company_name }}
@@ -107,16 +88,41 @@
                 </mat-chip-listbox>
             </div>
         </div>
+
+        <!-- Order Settings Section -->
+        <div class="order-settings-section">
+            <h2>Order Settings</h2>
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Order Frequency</mat-label>
+                <mat-select [(ngModel)]="orderFrequency" (ngModelChange)="onQuoteChanged()">
+                    <mat-option value="daily">Daily</mat-option>
+                    <mat-option value="weekly">Weekly</mat-option>
+                    <mat-option value="biweekly">Bi-weekly</mat-option>
+                    <mat-option value="monthly">Monthly</mat-option>
+                    <mat-option value="custom">Custom</mat-option>
+                </mat-select>
+            </mat-form-field>
+        
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Submission Deadline (days after order creation)</mat-label>
+                <input matInput type="number" [(ngModel)]="submissionDeadlineDays" min="0" (ngModelChange)="onQuoteChanged()">
+            </mat-form-field>
+
+            <mat-slide-toggle
+            [(ngModel)]="autoSubmitOrder"
+            (change)="onQuoteChanged()"
+            color="primary"
+            class="auto-submit-toggle"
+        >
+            Automatically send order to suppliers
+        </mat-slide-toggle>
+
+        </div>
     </ng-container>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
     <button mat-flat-button (click)="cancel()" class="btn">Cancel</button>
-    <button
-        mat-flat-button
-        (click)="saveTemplate()"
-        [disabled]="!hasUnsavedChanges || isSavingTemplate"
-        class="btn"
-    >
+    <button mat-flat-button (click)="saveTemplate()" [disabled]="!hasUnsavedChanges || isSavingTemplate" class="btn">
         {{ isSavingTemplate ? 'Saving...' : (isNewTemplate ? 'Save Template' : 'Update Template') }}
     </button>
 </mat-dialog-actions>

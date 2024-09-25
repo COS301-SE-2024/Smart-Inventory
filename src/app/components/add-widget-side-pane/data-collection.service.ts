@@ -243,6 +243,8 @@ export class DataCollectionService {
                 this.prepareAverageUnitCostByCategory(),
                 this.prepareUnitCostDistribution(),
                 this.prepareInventoryRequestBubbleChart(),
+                this.prepareMonthlyCategoryRequestCountChartConfig(),
+                this.prepareAvailableStockPerCategoryChartConfig(),
             ];
             observer.next(configs);
             observer.complete();
@@ -257,6 +259,59 @@ export class DataCollectionService {
             const requestDate = new Date(request.createdAt);
             return requestDate.getMonth() === currentMonth && requestDate.getFullYear() === currentYear;
         });
+    }
+
+    prepareMonthlyCategoryRequestCountChartConfig(): ChartConfig {
+        const currentDate = new Date();
+        const currentMonth = currentDate.getMonth();
+        const currentYear = currentDate.getFullYear();
+
+        // Filter requests for the current month
+        const currentMonthRequests = this.stockRequestData.filter((request) => {
+            const requestDate = new Date(request.createdAt);
+            return requestDate.getMonth() === currentMonth && requestDate.getFullYear() === currentYear;
+        });
+
+        // Calculate total number of requests for each category
+        const categoryRequestCounts = currentMonthRequests.reduce(
+            (acc, request) => {
+                acc[request.category] = (acc[request.category] || 0) + 1;
+                return acc;
+            },
+            {} as { [key: string]: number },
+        );
+
+        // Prepare data for the pie chart
+        const chartData = Object.entries(categoryRequestCounts).map(([category, count]) => ({
+            name: category,
+            value: count,
+        }));
+
+        return this.prepareChartConfig(
+            'pie',
+            chartData,
+            'Number of Requests by Category (Current Month)',
+            'PieChartComponent',
+        );
+    }
+
+    prepareAvailableStockPerCategoryChartConfig(): ChartConfig {
+        // Calculate total quantity for each category
+        const categoryQuantities = this.inventoryData.reduce(
+            (acc, item) => {
+                acc[item.category] = (acc[item.category] || 0) + item.quantity;
+                return acc;
+            },
+            {} as { [key: string]: number },
+        );
+
+        // Prepare data for the pie chart
+        const chartData = Object.entries(categoryQuantities).map(([category, quantity]) => ({
+            name: category,
+            value: quantity,
+        }));
+
+        return this.prepareChartConfig('pie', chartData, 'Available Stock by Category', 'PieChartComponent');
     }
 
     prepareStockRequestChartConfig(): ChartConfig {
@@ -293,7 +348,7 @@ export class DataCollectionService {
         return this.prepareChartConfig(
             chartType,
             data,
-            'Inventory Stock Level Distribution ' + chartType + ' chart',
+            'Inventory Stock Level Distribution ' + chartType,
             `${chartType.charAt(0).toUpperCase() + chartType.slice(1)}ChartComponent`,
         );
     }

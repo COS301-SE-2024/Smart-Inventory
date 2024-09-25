@@ -32,7 +32,7 @@ import { AddWidgetSidePaneComponent } from '../../components/add-widget-side-pan
 import { CardData, ChartConfig, DashboardItem, DashboardService } from '../dashboard/dashboard.service';
 import { ChangeDetectionService } from './change-detection.service';
 import { DataCollectionService } from '../../components/add-widget-side-pane/data-collection.service';
-
+import { MetricCardComponent } from '../../components/charts/widgets/metric-card.component';
 @Component({
     selector: 'app-dashboard',
     templateUrl: './dashboard.component.html',
@@ -58,6 +58,7 @@ import { DataCollectionService } from '../../components/add-widget-side-pane/dat
         BarChartComponent,
         AddWidgetSidePaneComponent,
         BubbleChartComponent,
+        MetricCardComponent,
     ],
 })
 export class DashboardComponent implements OnInit {
@@ -83,25 +84,7 @@ export class DashboardComponent implements OnInit {
         LineChartComponent: LineChartComponent,
         PieChartComponent: PieChartComponent,
         BubbleChartComponent: BubbleChartComponent,
-    };
-
-    RequestOrders = {
-        requests: {
-            totalRequests: 0,
-            mostRequested: {
-                name: 'None found',
-                percentage: 0,
-            },
-            highestRequest: 0,
-        },
-        backorders: {
-            currentBackorders: 0,
-            averageDelay: 0,
-            longestBackorderItem: {
-                productName: 'None found',
-                delay: '',
-            },
-        },
+        MetricCardComponent: MetricCardComponent,
     };
 
     public chartOptions!: AgChartOptions;

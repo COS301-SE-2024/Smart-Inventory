@@ -471,29 +471,17 @@ export class CustomQuoteModalComponent implements OnInit {
   }
 
   async getEmailTemplate(tenentId: string): Promise<string | null> {
-    const lambdaClient = new LambdaClient({
-      region: outputs.auth.aws_region,
-      credentials: (await fetchAuthSession()).credentials,
-    });
-
-    const invokeCommand = new InvokeCommand({
-      FunctionName: 'getEmailTemplate',
-      Payload: new TextEncoder().encode(JSON.stringify({ 
-        pathParameters: { tenentId: tenentId } 
-      })),
-    });
-
-    const lambdaResponse = await lambdaClient.send(invokeCommand);
-    const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
-    if (responseBody.statusCode === 200) {
-      const { emailBody } = JSON.parse(responseBody.body);
-      return emailBody;
-    } else if (responseBody.statusCode === 404) {
-      console.log('No custom email template found for this tenant. Using default template.');
-      return null;
-    } else {
-      console.error('Error fetching email template:', responseBody.body);
+    try {
+      const response = await this.ordersService.getEmailTemplate(tenentId).toPromise();
+      
+      if (response && response.emailBody) {
+        return response.emailBody;
+      } else {
+        console.log('No custom email template found for this tenant. Using default template.');
+        return null;
+      }
+    } catch (error) {
+      console.error('Error fetching email template:', error);
       return null;
     }
   }

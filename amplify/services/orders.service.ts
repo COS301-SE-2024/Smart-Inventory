@@ -16,6 +16,7 @@ export class OrdersService {
   private orderAutomationUrl = 'https://rb9wh1dnqh.execute-api.us-east-1.amazonaws.com/default/orderAutomation';
   private getAutomationSettingsUrl = 'https://vgv9dlglg6.execute-api.us-east-1.amazonaws.com/default/getAutomationSettings';
   private updateAutomationSettingsUrl = 'https://fox1dnu2d2.execute-api.us-east-1.amazonaws.com/default/updateAutomationSettings';
+  private getEmailTemplateUrl = 'https://ard5rjpzn0.execute-api.us-east-1.amazonaws.com/default/getEmailTemplate';
 
   constructor(private http: HttpClient) { }
 
@@ -58,6 +59,10 @@ export class OrdersService {
 
   updateAutomationSettings(tenentId: string, settings: any): Observable<any> {
     return this.http.post(this.updateAutomationSettingsUrl, { tenentId, settings });
+  }
+
+  getEmailTemplate(tenentId: string): Observable<any> {
+    return this.http.get(`${this.getEmailTemplateUrl}?tenentId=${tenentId}`);
   }
 
 }

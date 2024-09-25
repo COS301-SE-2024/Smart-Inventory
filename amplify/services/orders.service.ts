@@ -19,6 +19,9 @@ export class OrdersService {
   private addEmailTemplateUrl = 'https://kntgbohhfa.execute-api.us-east-1.amazonaws.com/default/addEmailTemplate';
   private sendSupplierEmailsUrl = 'https://n6ipwus5x9.execute-api.us-east-1.amazonaws.com/default/sendSupplierEmails';
   private getDeliveryIDUrl = 'https://jogw3ubi9k.execute-api.us-east-1.amazonaws.com/default/getDeliveryID';
+  private getDeliveryDetailsUrl = 'https://83protl4jl.execute-api.us-east-1.amazonaws.com/default/getDeliveryDetails';
+  private updateDeliveryInfoUrl = 'https://jbx7zo94aj.execute-api.us-east-1.amazonaws.com/default/updateDeliveryInfo';
+  private getSupplierQuoteSummariesUrl = 'https://q3gigjwz01.execute-api.us-east-1.amazonaws.com/default/getSupplierQuoteSummaries';
 
   constructor(private http: HttpClient) { }
 
@@ -82,5 +85,18 @@ export class OrdersService {
   getDeliveryID(tenentId: string): Observable<any> {
     return this.http.get(`${this.getDeliveryIDUrl}?tenentId=${tenentId}`);
   }
+
+  getDeliveryDetails(tenentId: string): Observable<any> {
+    return this.http.get(`${this.getDeliveryDetailsUrl}?tenentId=${tenentId}`);
+  }
+
+  updateDeliveryInfo(deliveryInfo: any): Observable<any> {
+    return this.http.post(this.updateDeliveryInfoUrl, deliveryInfo);
+  }
+
+  getSupplierQuoteSummaries(quoteId: string, tenentId: string): Observable<any> {
+    return this.http.get(`${this.getSupplierQuoteSummariesUrl}/${quoteId}/${tenentId}`);
+  }
+
 
 }

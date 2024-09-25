@@ -13,6 +13,7 @@ import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-c
 import outputs from '../../../../amplify_outputs.json';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { LoadingSpinnerComponent } from '../loader/loading-spinner.component';
+import { OrdersService } from '../../../../amplify/services/orders.service';
 
 interface DeliveryAddress {
   company: string;
@@ -52,7 +53,8 @@ export class DeliveryInformationModalComponent implements OnInit {
     public dialogRef: MatDialogRef<DeliveryInformationModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { deliveryAddress: DeliveryAddress },
     private fb: FormBuilder,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private ordersService: OrdersService
   ) {
     this.deliveryForm = this.fb.group({
       company: [data.deliveryAddress.company, Validators.required],
@@ -75,57 +77,43 @@ export class DeliveryInformationModalComponent implements OnInit {
   }
 
   async loadDeliveryInfo() {
+    this.isLoading = true;
     try {
       const session = await fetchAuthSession();
-
+  
       const cognitoClient = new CognitoIdentityProviderClient({
         region: outputs.auth.aws_region,
         credentials: session.credentials,
       });
-
+  
       const getUserCommand = new GetUserCommand({
         AccessToken: session.tokens?.accessToken.toString(),
       });
       const getUserResponse = await cognitoClient.send(getUserCommand);
-
+  
       const tenentId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
-
+  
       if (!tenentId) {
         throw new Error('TenantId not found in user attributes');
       }
-
-      const lambdaClient = new LambdaClient({
-        region: outputs.auth.aws_region,
-        credentials: session.credentials,
-      });
-
-      const invokeCommand = new InvokeCommand({
-        FunctionName: 'getDeliveryDetails',
-        Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: tenentId } })),
-      });
-
-      const lambdaResponse = await lambdaClient.send(invokeCommand);
-      const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
-      if (responseBody.statusCode === 200) {
-        const deliveryInfo = JSON.parse(responseBody.body)[0]; // Assuming we're using the first entry
-        if (deliveryInfo) {
-          this.existingDeliveryInfoID = deliveryInfo.deliveryInfoID;
-          this.deliveryForm.patchValue({
-            company: deliveryInfo.companyName,
-            street: deliveryInfo.street,
-            city: deliveryInfo.city,
-            state: deliveryInfo.state,
-            postalCode: deliveryInfo.postalCode,
-            country: deliveryInfo.country,
-            instructions: deliveryInfo.deliveryInstructions,
-            contactName: deliveryInfo.contactName,
-            email: deliveryInfo.email,
-            phone: deliveryInfo.phone
-          });
-        }
-      } else if (responseBody.statusCode !== 404) {
-        throw new Error(responseBody.body);
+  
+      const deliveryInfo = await this.ordersService.getDeliveryDetails(tenentId).toPromise();
+  
+      if (deliveryInfo && deliveryInfo.length > 0) {
+        const firstDeliveryInfo = deliveryInfo[0]; // Assuming we're using the first entry
+        this.existingDeliveryInfoID = firstDeliveryInfo.deliveryInfoID;
+        this.deliveryForm.patchValue({
+          company: firstDeliveryInfo.companyName,
+          street: firstDeliveryInfo.street,
+          city: firstDeliveryInfo.city,
+          state: firstDeliveryInfo.state,
+          postalCode: firstDeliveryInfo.postalCode,
+          country: firstDeliveryInfo.country,
+          instructions: firstDeliveryInfo.deliveryInstructions,
+          contactName: firstDeliveryInfo.contactName,
+          email: firstDeliveryInfo.email,
+          phone: firstDeliveryInfo.phone
+        });
       }
     } catch (error) {
       console.error('Error loading delivery information:', error);
@@ -157,26 +145,15 @@ export class DeliveryInformationModalComponent implements OnInit {
           throw new Error('TenantId not found in user attributes');
         }
   
-        const lambdaClient = new LambdaClient({
-          region: outputs.auth.aws_region,
-          credentials: session.credentials,
-        });
-  
         const deliveryInfo = {
           ...this.deliveryForm.value,
           deliveryInfoID: this.existingDeliveryInfoID || uuidv4(),
           tenentId: tenentId,
         };
   
-        const invokeCommand = new InvokeCommand({
-          FunctionName: 'updateDeliveryInfo',
-          Payload: new TextEncoder().encode(JSON.stringify(deliveryInfo)),
-        });
+        const response = await this.ordersService.updateDeliveryInfo(deliveryInfo).toPromise();
   
-        const lambdaResponse = await lambdaClient.send(invokeCommand);
-        const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-  
-        if (responseBody.statusCode === 200) {
+        if (response && response.message === 'Delivery information updated successfully') {
           console.log('Delivery information updated successfully');
           this.snackBar.open('Delivery information updated successfully', 'Close', {
             duration: 6000,
@@ -185,7 +162,7 @@ export class DeliveryInformationModalComponent implements OnInit {
           });
           this.dialogRef.close(deliveryInfo);
         } else {
-          throw new Error(responseBody.body);
+          throw new Error('Failed to update delivery information');
         }
       } catch (error) {
         console.error('Error updating delivery information:', error);
@@ -200,8 +177,6 @@ export class DeliveryInformationModalComponent implements OnInit {
       }
     }
   }
-
-
 
   onCancel() {
     this.dialogRef.close();

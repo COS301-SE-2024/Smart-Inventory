@@ -306,7 +306,7 @@ export class TemplateQuoteModalComponent implements OnInit {
     return item1 && item2 ? item1.sku === item2.sku : item1 === item2;
   }
 
-  async saveTemplate() {
+  async saveTemoe() {
     this.isSavingTemplate = true;
 
     try {
@@ -354,6 +354,119 @@ export class TemplateQuoteModalComponent implements OnInit {
     } catch (error) {
       console.error('Error in saveTemplate:', error);
       this.snackBar.open('Error saving order template', 'Close', { duration: 3000 });
+    } finally {
+      this.isSavingTemplate = false;
+    }
+  }
+
+  saveTemplate() {
+    if (this.isNewTemplate) {
+      this.createTemplate();
+    } else {
+      this.updateTemplate();
+    }
+  }
+
+  async createTemplate() {
+    this.isSavingTemplate = true;
+  
+    try {
+      const session = await fetchAuthSession();
+      const tenentId = await this.getTenentId(session);
+  
+      const templateData = {
+        tenentId,
+        templateName: this.templateName,
+        items: this.quoteItems.map(item => ({
+          item: {
+            inventoryID: item.item.inventoryID,
+            sku: item.item.sku
+          },
+          quantity: item.quantity
+        })),
+        suppliers: this.selectedSuppliers,
+        orderFrequency: this.orderFrequency,
+        autoSubmitOrder: this.autoSubmitOrder,
+        submissionDeadlineDays: this.submissionDeadlineDays
+      };
+  
+      const lambdaClient = new LambdaClient({
+        region: outputs.auth.aws_region,
+        credentials: session.credentials,
+      });
+  
+      const invokeCommand = new InvokeCommand({
+        FunctionName: 'createOrderTemplate',
+        Payload: new TextEncoder().encode(JSON.stringify({ body: JSON.stringify(templateData) })),
+      });
+  
+      const lambdaResponse = await lambdaClient.send(invokeCommand);
+      const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+  
+      if (responseBody.statusCode === 200) {
+        const result = JSON.parse(responseBody.body);
+        console.log('Order template created successfully:', result);
+        this.snackBar.open('Order template created successfully', 'Close', { duration: 3000 });
+        this.dialogRef.close({ action: 'save', templateId: result.orderTemplateID });
+      } else {
+        console.error('Error creating order template:', responseBody.body);
+        this.snackBar.open('Error creating order template', 'Close', { duration: 3000 });
+      }
+    } catch (error) {
+      console.error('Error in createTemplate:', error);
+      this.snackBar.open('Error creating order template', 'Close', { duration: 3000 });
+    } finally {
+      this.isSavingTemplate = false;
+    }
+  }
+  
+  async updateTemplate() {
+    this.isSavingTemplate = true;
+  
+    try {
+      const session = await fetchAuthSession();
+      const tenentId = await this.getTenentId(session);
+  
+      const templateData = {
+        tenentId,
+        orderTemplateID: this.templateId,
+        templateName: this.templateName,
+        items: this.quoteItems.map(item => ({
+          inventoryID: item.item.inventoryID,
+          ItemSKU: item.item.sku,
+          quantity: item.quantity
+        })),
+        suppliers: this.selectedSuppliers,
+        orderFrequency: this.orderFrequency,
+        autoSubmitOrder: this.autoSubmitOrder,
+        submissionDeadlineDays: this.submissionDeadlineDays
+      };
+  
+      const lambdaClient = new LambdaClient({
+        region: outputs.auth.aws_region,
+        credentials: session.credentials,
+      });
+  
+      const invokeCommand = new InvokeCommand({
+        FunctionName: 'updateOrderTemplate',
+        Payload: new TextEncoder().encode(JSON.stringify({ body: JSON.stringify(templateData) })),
+      });
+  
+      const lambdaResponse = await lambdaClient.send(invokeCommand);
+      const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+  
+      if (responseBody.statusCode === 200) {
+        const result = JSON.parse(responseBody.body);
+        console.log('Order template updated successfully:', result);
+        this.snackBar.open('Order template updated successfully', 'Close', { duration: 3000 });
+        this.dialogRef.close({ action: 'save', templateId: this.templateId });
+      } else {
+        console.error('Error updating order template:', responseBody.body);
+        this.snackBar.open('Error updating order template', 'Close', { duration: 3000 });
+      }
+    } catch (error) {
+      console.error('Error in updateTemplate:', error);
+      this.snackBar.open('Error updating order template', 'Close', { duration: 3000 });
     } finally {
       this.isSavingTemplate = false;
     }

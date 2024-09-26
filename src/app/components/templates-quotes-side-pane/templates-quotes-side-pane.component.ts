@@ -13,6 +13,7 @@ import { LambdaClient, InvokeCommand } from "@aws-sdk/client-lambda";
 import { fetchAuthSession } from 'aws-amplify/auth';
 import outputs from '../../../../amplify_outputs.json';
 import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
+import { confirmDialogComponent } from './confirm-dialog.component';
 
 interface TemplateQuote {
   orderTemplateID: string;
@@ -154,9 +155,60 @@ export class TemplatesQuotesSidePaneComponent implements OnChanges {
 
   }
 
-  removeTemplate(templateId: string) {
 
+  removeTemplate(templateId: string) {
+    const dialogRef = this.dialog.open(confirmDialogComponent, {
+      width: '250px',
+      data: { message: 'Are you sure you want to delete this template?' }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.deleteTemplate(templateId);
+      }
+    });
   }
+
+  async deleteTemplate(templateId: string) {
+    try {
+      const session = await fetchAuthSession();
+      const tenentId = await this.getTenentId(session);
+
+      const lambdaClient = new LambdaClient({
+        region: outputs.auth.aws_region,
+        credentials: session.credentials,
+      });
+
+      const invokeCommand = new InvokeCommand({
+        FunctionName: 'deleteOrderTemplate',
+        Payload: new TextEncoder().encode(JSON.stringify({ 
+          queryStringParameters: { 
+            tenentId: tenentId, 
+            orderTemplateID: templateId 
+          } 
+        })),
+      });
+
+      const lambdaResponse = await lambdaClient.send(invokeCommand);
+      const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+
+      if (responseBody.statusCode === 200) {
+        this.snackBar.open('Template deleted successfully', 'Close', { 
+          duration: 6000, // 6 seconds
+          verticalPosition: 'top', // Position at the top
+          horizontalPosition: 'center' // Position in the center
+        });
+        this.fetchTemplates(); 
+      } else {
+        console.error('Error deleting template:', responseBody.body);
+        this.snackBar.open('Error deleting template', 'Close', { duration: 3000 });
+      }
+    } catch (error) {
+      console.error('Error in deleteTemplate:', error);
+      this.snackBar.open('Error deleting template', 'Close', { duration: 3000 });
+    }
+  }
+
 
   startResize(event: MouseEvent) {
     this.resizing = true;

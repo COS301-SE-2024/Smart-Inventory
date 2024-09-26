@@ -147,3 +147,9 @@ mat-card-actions {
     display: flex;
     justify-content: flex-end;
 }
+
+.btn {
+    border-radius: 5px;
+    width: 200px;
+    height: 40px;
+}

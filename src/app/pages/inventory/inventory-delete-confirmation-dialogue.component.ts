@@ -22,7 +22,7 @@ import { CommonModule } from '@angular/common';
     margin-right: auto;
     margin-left: auto;
     border-radius: 5px;
-    width: 20px;
+    width: 100px;
     height: 40px;"
             >
                 No
@@ -34,7 +34,7 @@ import { CommonModule } from '@angular/common';
     margin-right: auto;
     margin-left: auto;
     border-radius: 5px;
-    width: 20px;
+    width: 100px;
     height: 40px;"
             >
                 Yes

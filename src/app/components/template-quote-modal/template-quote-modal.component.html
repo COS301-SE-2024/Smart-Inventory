@@ -70,7 +70,7 @@
                     </button>
                 </div>
             </div>
-            <button mat-raised-button (click)="addItem()" class="add-item-button">
+            <button mat-flat-button (click)="addItem()" class="add-item-button">
                 <mat-icon>add</mat-icon> Add Item
             </button>
         </div>
@@ -123,14 +123,15 @@
     </ng-container>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
-    <button mat-button (click)="cancel()">Cancel</button>
-    <button mat-raised-button color="primary" *ngIf="isNewQuote" (click)="createOrder()">Create Order</button>
+    <button mat-flat-button (click)="cancel()" class="btn">Cancel</button>
+    <button mat-flat-button color="primary" *ngIf="isNewQuote" (click)="createOrder()">Create Order</button>
     <button
-        mat-raised-button
+        mat-flat-button
         color="primary"
         *ngIf="!isNewQuote"
         (click)="saveChanges()"
         [disabled]="!hasUnsavedChanges"
+        class="btn"
     >
         Save Changes
     </button>

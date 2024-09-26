@@ -99,8 +99,11 @@ mat-chip-listbox {
 }
 
 .add-item-button {
-    color: darkgreen;
-    background-color: #f2f2f2;
+    margin-right: auto;
+    margin-left: auto;
+    border-radius: 5px;
+    width: 100%;
+    height: 40px;
 }
 
 .remove-item-button {
@@ -144,4 +147,12 @@ mat-chip-listbox {
     line-height: 1.4;
     color: #333;
     margin-bottom: 4px;
+}
+
+.btn {
+    margin-right: auto;
+    margin-left: auto;
+    border-radius: 5px;
+    width: 200px;
+    height: 40px;
 }

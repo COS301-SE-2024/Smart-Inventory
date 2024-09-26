@@ -101,11 +101,8 @@ mat-chip-listbox {
 }
 
 .add-item-button {
-    margin-right: auto;
-    margin-left: auto;
-    border-radius: 5px;
-    width: 100%;
-    height: 40px;
+    color: darkgreen;
+    background-color: #f2f2f2;
 }
 
 .remove-item-button {
@@ -174,11 +171,4 @@ mat-chip-listbox {
 
 ::ng-deep .mat-slide-toggle.mat-checked .mat-slide-toggle-thumb {
     background-color: #1976d2;
-}
-.btn {
-    margin-right: auto;
-    margin-left: auto;
-    border-radius: 5px;
-    width: 200px;
-    height: 40px;
 }

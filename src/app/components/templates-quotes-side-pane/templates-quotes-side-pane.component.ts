@@ -52,9 +52,10 @@ export class TemplatesQuotesSidePaneComponent implements OnChanges {
 
   templates: TemplateQuote[] = [];
 
-    close() {
-        this.closed.emit();
-    }
+  constructor(
+    private dialog: MatDialog,
+    private snackBar: MatSnackBar
+  ) {}
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['isOpen'] && this.isOpen) {
@@ -223,4 +224,15 @@ export class TemplatesQuotesSidePaneComponent implements OnChanges {
         this.paneWidth = newWidth;
       }
     }
+  }
+
+  private stopResize = () => {
+    this.resizing = false;
+    document.removeEventListener('mousemove', this.resize);
+    document.removeEventListener('mouseup', this.stopResize);
+  }
+
+  ngOnDestroy() {
+    this.stopResize();
+  }
 }

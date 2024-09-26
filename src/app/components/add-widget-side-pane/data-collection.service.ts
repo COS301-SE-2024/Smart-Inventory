@@ -76,29 +76,67 @@ export class DataCollectionService {
         return tenantId;
     }
 
+    // private async invokeLambda(functionName: string, payload: any): Promise<any> {
+    //     const session = await fetchAuthSession();
+    //     const lambdaClient = new LambdaClient({
+    //         region: outputs.auth.aws_region,
+    //         credentials: session.credentials,
+    //     });
+
+    //     const invokeCommand = new InvokeCommand({
+    //         FunctionName: functionName,
+    //         Payload: new TextEncoder().encode(JSON.stringify(payload)),
+    //     });
+
+    //     const lambdaResponse = await lambdaClient.send(invokeCommand);
+    //     const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+
+    //     if (responseBody.statusCode === 200) {
+    //         return JSON.parse(responseBody.body);
+    //     } else {
+    //         throw new Error(responseBody.body);
+    //     }
+    // }
+
     private async invokeLambda(functionName: string, payload: any): Promise<any> {
         const session = await fetchAuthSession();
         const lambdaClient = new LambdaClient({
             region: outputs.auth.aws_region,
             credentials: session.credentials,
         });
-
+    
         const invokeCommand = new InvokeCommand({
             FunctionName: functionName,
             Payload: new TextEncoder().encode(JSON.stringify(payload)),
         });
-
+    
         const lambdaResponse = await lambdaClient.send(invokeCommand);
         const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
+    
         if (responseBody.statusCode === 200) {
-            return JSON.parse(responseBody.body);
+            // Check if body is a string and needs parsing
+            return typeof responseBody.body === 'string' ? JSON.parse(responseBody.body) : responseBody.body;
         } else {
             throw new Error(responseBody.body);
         }
     }
 
     // get inventory summary data for predictive analytics reporting
+    // getInventorySummary(): Observable<InventorySummaryItem[]> {
+    //     return from(fetchAuthSession()).pipe(
+    //         switchMap((session) => from(this.getTenantId(session))),
+    //         switchMap((tenantId) => {
+    //             if (!tenantId) {
+    //                 throw new Error('TenantId not found in user attributes');
+    //             }
+    //             return from(this.fetchInventorySummary(tenantId));
+    //         }),
+    //         catchError((error) => {
+    //             console.error('Error fetching inventory summary:', error);
+    //             return of([]);
+    //         }),
+    //     );
+    // }
     getInventorySummary(): Observable<InventorySummaryItem[]> {
         return from(fetchAuthSession()).pipe(
             switchMap((session) => from(this.getTenantId(session))),
@@ -108,11 +146,21 @@ export class DataCollectionService {
                 }
                 return from(this.fetchInventorySummary(tenantId));
             }),
+            map((data) => {
+                this.inventorySummary = data; // Store the fetched data
+                console.log('Inventory summary data stored:', this.inventorySummary);
+                return data;
+            }),
             catchError((error) => {
                 console.error('Error fetching inventory summary:', error);
+                this.inventorySummary = []; // Clear the data on error
                 return of([]);
             }),
         );
+    }
+
+    getStoredInventorySummary(): InventorySummaryItem[] {
+        return this.inventorySummary;
     }
 
     private async fetchInventorySummary(tenantId: string): Promise<InventorySummaryItem[]> {
@@ -120,7 +168,16 @@ export class DataCollectionService {
             const result = await this.invokeLambda('inventorySummary-getItems', {
                 queryStringParameters: { tenentId: tenantId },
             });
-            return JSON.parse(result);
+            
+            // Check if result is already an object
+            if (typeof result === 'object' && result !== null) {
+                return result as InventorySummaryItem[];
+            } else if (typeof result === 'string') {
+                // If it's a string, try to parse it
+                return JSON.parse(result);
+            } else {
+                throw new Error('Unexpected response format');
+            }
         } catch (error) {
             console.error('Error fetching inventory summary:', error);
             throw error;

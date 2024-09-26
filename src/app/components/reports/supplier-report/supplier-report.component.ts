@@ -124,7 +124,7 @@ export class SupplierReportComponent implements OnInit {
     };
 
     items: Array<GridsterItem> = [
-        { cols: 12, rows: 5.5, y: 0, x: 0 },
+        { cols: 12, rows: 4, y: 0, x: 0 },
         { cols: 4, rows: 5, y: 2, x: 0 },
         { cols: 12, rows: 4, y: 4, x: 0 },
         { cols: 8, rows: 4, y: 2, x: 2 },

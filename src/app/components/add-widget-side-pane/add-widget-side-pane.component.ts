@@ -41,7 +41,6 @@ import { DataCollectionService, InventorySummaryItem } from './data-collection.s
         ScatterplotComponent,
         DonutTemplateComponent,
     ],
-    
     templateUrl: './add-widget-side-pane.component.html',
     styleUrls: ['./add-widget-side-pane.component.css'],
 })

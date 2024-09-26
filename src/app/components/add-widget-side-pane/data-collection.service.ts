@@ -334,7 +334,6 @@ export class DataCollectionService {
     private createChartConfigs(): Observable<ChartConfig[]> {
         return new Observable<ChartConfig[]>((observer) => {
             const configs = [
-                this.prepareStockRequestChartConfig(),
                 this.prepareStockRequestLineChartConfig(),
                 this.prepareInventoryStockLevelChartConfig('pie'),
                 this.prepareInventoryStockLevelChartConfig('bar'),

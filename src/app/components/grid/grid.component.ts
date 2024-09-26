@@ -77,6 +77,7 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
     @Input() columnDefs: ColDef[] = [];
     @Input() addButton: { text: string } = { text: 'Add' };
     @Input() context: any;
+    @Input() maxGridHeight: number = 75; // Default max height in vh
     @Output() rowsToDelete = new EventEmitter<any[]>();
     @Output() addNewClicked = new EventEmitter<void>();
     @Output() itemToUpdate = new EventEmitter<{ data: any; field: string; newValue: any }>();
@@ -201,14 +202,14 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
     setGridHeight(): void {
         const baseHeight = 35; // Base height in vh
         const rowHeight = 3; // Height per row in vh
-        const maxHeight = 75; // Maximum height in vh
+        // const maxHeight = 70; // Maximum height in vh
 
         let calculatedHeight = baseHeight + this._rowData.length * rowHeight;
-        let gridHeight = Math.min(calculatedHeight, maxHeight);
+        let gridHeight = Math.min(calculatedHeight,this.maxGridHeight);
 
         this.gridStyle = {
             height: `${gridHeight}vh`,
-            maxHeight: `${maxHeight}vh`,
+            maxHeight: `${this.maxGridHeight}vh`,
         };
 
         // Force change detection

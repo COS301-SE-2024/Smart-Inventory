@@ -78,7 +78,7 @@ export class OrderReportComponent implements OnInit {
         disablePushOnDrag: false,
         disablePushOnResize: false,
         pushDirections: { north: true, east: true, south: true, west: true },
-        pushResizeItems: false,
+        pushResizeItems: true,
         disableWindowResize: false,
         disableWarnings: false,
         scrollToNewItems: false,
@@ -86,7 +86,7 @@ export class OrderReportComponent implements OnInit {
 
     layout: any[] = [
         { cols: 12, rows: 1.02, y: 0, x: 0 }, // Metrics Container
-        { cols: 12, rows: 3, y: 1, x: 0 }, // Inventory Grid
+        { cols: 12, rows: 4, y: 1, x: 0 }, // Inventory Grid
         { cols: 4, rows: 3, y: 1, x: 8 }, // Order Report
         { cols: 8, rows: 3, y: 3, x: 0 }, // Stacked Bar Chart
         { cols: 8, rows: 3, y: 3, x: 6 }, // Scatter Plot
@@ -387,6 +387,7 @@ export class OrderReportComponent implements OnInit {
     async fetchOrders() {
         try {
             this.rowData = (await this.dataCollectionService.fetchOrdersReport()) || [];
+            
             console.log('Processed orders:', this.rowData);
         } catch (error) {
             console.error('Error in loadOrdersData:', error);

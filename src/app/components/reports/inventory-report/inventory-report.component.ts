@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
@@ -58,7 +58,7 @@ interface InventoryReportType {
         MaterialModule,
     ],
 })
-export class InventoryReportComponent implements OnInit {
+export class InventoryReportComponent implements OnInit, AfterViewInit {
     @ViewChild('gridComponent') gridComponent!: GridComponent;
 
     rowData: any[] = [];
@@ -76,6 +76,7 @@ export class InventoryReportComponent implements OnInit {
         private router: Router,
         public service: ChartDataService,
         private dataCollectionService: DataCollectionService,
+        private changeDetectorRef: ChangeDetectorRef
     ) {
         Amplify.configure(outputs);
         this.gridsterOptions = {
@@ -88,7 +89,8 @@ export class InventoryReportComponent implements OnInit {
             resizable: {
                 enabled: false,
             },
-            pushItems: false,
+            pushItems: true,
+            pushResizeItems: true,
             margin: 10,
             outerMargin: true,
             outerMarginTop: null,
@@ -140,6 +142,59 @@ export class InventoryReportComponent implements OnInit {
     options3!: AgChartOptions;
     options4!: AgChartOptions;
 
+    ngAfterViewInit(): void {
+        this.initDynamicResize();
+    }
+
+    initDynamicResize() {
+        if (this.gridComponent && this.gridComponent.gridApi) {
+            this.gridComponent.gridApi.addEventListener('modelUpdated', () => {
+                this.updateGridSize();
+            });
+        }
+    }
+
+    updateGridSize() {
+        if (this.gridComponent && this.gridComponent.gridApi) {
+            const rowCount = this.gridComponent.gridApi.getDisplayedRowCount();
+            
+            // Calculate the required height based on row count
+            const baseHeight = 35; // Base height in vh
+            const rowHeight = 3; // Height per row in vh
+            const maxHeight = 75; // Maximum height in vh
+
+            let calculatedHeight = baseHeight + rowCount * rowHeight;
+            let gridHeight = Math.min(calculatedHeight, maxHeight);
+
+            // Find the grid item
+            const gridItem = this.gridsterItems.find(item => item['isGrid']);
+            if (gridItem) {
+                // Update the gridster item size
+                gridItem.rows = Math.max(Math.ceil(gridHeight / 5), 5); // Minimum 5 rows
+
+                // Update the grid style
+                this.gridComponent.gridStyle = {
+                    height: `${gridHeight}vh`,
+                    maxHeight: `${maxHeight}vh`,
+                };
+
+                // Trigger change detection
+                this.changeDetectorRef.detectChanges();
+
+                // Update gridster
+                if (this.gridsterOptions.api && this.gridsterOptions.api.optionsChanged) {
+                    this.gridsterOptions.api.optionsChanged();
+                }
+
+                // Resize the grid
+                setTimeout(() => {
+                    this.gridComponent.gridApi.sizeColumnsToFit();
+                    this.gridComponent.gridApi.resetRowHeights();
+                });
+            }
+        }
+    }
+
     async ngOnInit() {
         this.titleService.updateTitle('Inventory Report');
         this.isLoading = true;
@@ -167,7 +222,7 @@ export class InventoryReportComponent implements OnInit {
                         lowStockThreshold: item.lowStockThreshold,
                         reorderFreq: item.reorderFreq,
                         requests: item.requests,
-                        requestsQuantity: 0,
+                        requestsQuantity: item.requestQuantity,
                     }));
                     this.setupColumnDefs();
                 },
@@ -226,6 +281,7 @@ export class InventoryReportComponent implements OnInit {
 
             if (this.gridComponent) {
                 this.gridComponent.refreshGrid(this.rowData);
+                this.updateGridSize();
             }
         } catch (error) {
             console.error('Error updating inventory with requests:', error);

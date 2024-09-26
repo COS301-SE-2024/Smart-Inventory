@@ -2,6 +2,10 @@
     width: 50%;
 }
 
+.myOrderCharts{
+    background-color: #ffff !important;
+}
+
 gridster {
     background-color: transparent !important;
 }
@@ -178,7 +182,7 @@ gridster-item:not(.order-report-item) {
         0 4px 8px rgba(0, 0, 0, 0.1),
         0 6px 20px rgba(0, 0, 0, 0.15);
     margin-left: 2px;
-    background: transparent !important;
+    background: #ffff !important;
     border-radius: 10px;
 }
 

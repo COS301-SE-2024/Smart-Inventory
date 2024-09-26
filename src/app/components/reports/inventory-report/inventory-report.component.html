@@ -12,7 +12,7 @@
             </ng-container>
             <ng-container *ngIf="item['isGrid']">
                 <mat-card class="grid-card">
-                    <app-grid [rowData]="rowData" [columnDefs]="colDefs" #gridComponent></app-grid>
+                    <app-grid [rowData]="rowData" [columnDefs]="colDefs" #gridComponent [maxGridHeight]="68"></app-grid>
                 </mat-card>
             </ng-container>
             <ng-container *ngIf="item['isMetrics']">

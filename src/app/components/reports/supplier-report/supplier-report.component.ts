@@ -124,7 +124,7 @@ export class SupplierReportComponent implements OnInit {
     };
 
     items: Array<GridsterItem> = [
-        { cols: 12, rows: 4, y: 0, x: 0 },
+        { cols: 12, rows: 5.5, y: 0, x: 0 },
         { cols: 4, rows: 5, y: 2, x: 0 },
         { cols: 12, rows: 4, y: 4, x: 0 },
         { cols: 8, rows: 4, y: 2, x: 2 },
@@ -653,120 +653,6 @@ export class SupplierReportComponent implements OnInit {
         return (totalRate / suppliers.length).toFixed(2);
     }
 
-    async loadInventoryData() {
-        try {
-            this.dataCollectionService.getInventoryItems().subscribe(
-                (inventoryItems) => {
-                    // this.rowData = inventoryItems.map((item: any) => ({
-                    //     inventoryID: item.inventoryID,
-                    //     sku: item.SKU,
-                    //     category: item.category,
-                    //     productId: item.productID,
-                    //     description: item.description,
-                    //     quantity: item.quantity,
-                    //     supplier: item.supplier,
-                    //     expirationDate: item.expirationDate,
-                    //     lowStockThreshold: item.lowStockThreshold,
-                    //     reorderFreq: item.reorderFreq,
-                    //     requests: 0,
-                    //     requestsQuantity: 0,
-                    // }));
-                    console.log('my inventory :', inventoryItems);
-                },
-                (error) => {
-                    console.error('Error fetching inventory data:', error);
-                    this.rowData = [];
-                },
-            );
-        } catch (error) {
-            console.error('Error in loadInventoryData:', error);
-            this.rowData = [];
-        }
-        const inventoryData = [
-            {
-                inventoryID: 'bc9040cb-3834-4391-9ab7-153968c1d13a',
-                tenentId: '1717667019559-j85syk',
-                category: 'Food: Perishable',
-                createdAt: '2024-08-05T13:14:26.211Z',
-                description: 'Maize Meal - Super Fine, 5kg',
-                expirationDate: '2024-09-24T22:00:00.000Z',
-                lowStockThreshold: 20,
-                quantity: 72,
-                reorderFreq: 30,
-                SKU: 'MS-301',
-                supplier: 'Foodcorp',
-                upc: '6001070000000',
-                updatedAt: '2024-08-05T13:14:26.211Z',
-                condition: 'good',
-            },
-            {
-                inventoryID: '7860ac1c-9b39-4c9b-bf2f-1efbb87cbdf3',
-                tenentId: '1717667019559-j85syk',
-                category: 'Beverages: Non-Alcoholic',
-                createdAt: '2024-08-05T13:17:16.112Z',
-                description: 'Amarula Cream Liqueur, 750ml',
-                expirationDate: '2024-08-07T22:00:00.000Z',
-                lowStockThreshold: 15,
-                quantity: 48,
-                reorderFreq: 15,
-                SKU: 'AM-405',
-                supplier: 'Eskort',
-                upc: '6009880000000',
-                updatedAt: '2024-08-05T13:17:16.112Z',
-                condition: 'moderate',
-            },
-            {
-                inventoryID: '1525c187-b594-4992-96a7-6acd0e1c1901',
-                tenentId: '1717667019559-j85syk',
-                category: 'Food: Perishable',
-                createdAt: '2024-08-05T13:11:38.253Z',
-                description: 'Rooibos Tea - Organic, 40 Bags',
-                expirationDate: '2024-08-30T22:00:00.000Z',
-                lowStockThreshold: 10,
-                quantity: 52,
-                reorderFreq: 7,
-                SKU: 'RO-102',
-                supplier: 'BOS Brands',
-                upc: '6009180000000',
-                updatedAt: '2024-08-05T13:11:38.253Z',
-                condition: 'good',
-            },
-            {
-                inventoryID: '97053b80-40f0-416e-8844-5a65bce1c577',
-                tenentId: '1',
-                category: 'Sample Category',
-                createdAt: '2024-08-05T11:50:03.967Z',
-                description: 'Sample Product',
-                expirationDate: '2024-07-02T00:00:00.000Z',
-                lowStockThreshold: 10,
-                quantity: 100,
-                reorderFreq: 30,
-                SKU: 'SAMPLE_SKU',
-                supplier: 'Sample Supplier',
-                upc: '6a9c12a1-22fc-4f6d-92ad-bc1c86c3466f',
-                updatedAt: '2024-08-05T11:50:03.967Z',
-                condition: 'bad',
-            },
-            {
-                inventoryID: '6b51adf0-0716-467d-b566-84db02c9e7f4',
-                tenentId: '1717667019559-j85syk',
-                category: 'Food: Perishable',
-                createdAt: '2024-08-05T13:05:53.445Z',
-                description: 'Biltong Snapstix - Original Beef',
-                expirationDate: '2024-08-30T22:00:00.000Z',
-                lowStockThreshold: 10,
-                quantity: 54,
-                reorderFreq: 7,
-                SKU: 'BF-001',
-                supplier: 'Fredy Hirsch Brands',
-                upc: '6001010000000',
-                updatedAt: '2024-08-05T13:05:53.445Z',
-                condition: 'moderate',
-            },
-        ];
-
-        return inventoryData;
-    }
 
     topSuppliersData: any[] = [];
 

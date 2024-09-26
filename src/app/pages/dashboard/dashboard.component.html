@@ -50,44 +50,7 @@
             </mat-card>
 
             <!-- Full-width items -->
-            <!-- <mat-card class="dashboard-card full-width-card" *ngIf="item.name === 'Sales Chart'">
-                <button *ngIf="isDeleteMode" class="delete-button" (click)="deleteWidget(item)">
-                    <mat-icon>delete</mat-icon>
-                </button>
-                <div class="split-container">
-                    <div class="left-column req-back">
-                        <ng-container *ngIf="item.cardId === 'sales-chart'">
-                            <div class="requests-section">
-                                <h3>Requests</h3>
-                                <p>Total Requests: {{ RequestOrders.requests.totalRequests }}</p>
-                                <p>
-                                    Most Requested: {{ RequestOrders.requests.mostRequested.name }} ({{
-                                        RequestOrders.requests.mostRequested.percentage
-                                    }}%)
-                                </p>
-                                <p>Highest Request: {{ RequestOrders.requests.highestRequest }}</p>
-                            </div>
-                            <div class="divider"></div>
-                            <div class="backorders-section">
-                                <h3>Backorders</h3>
-                                <p>Current Backorders: {{ RequestOrders.backorders.currentBackorders }}</p>
-                                <p>Average Delay: {{ RequestOrders.backorders.averageDelay }} days</p>
-                                <p>
-                                    Longest Backorder:
-                                    {{ RequestOrders.backorders.longestBackorderItem.productName }} ({{
-                                        RequestOrders.backorders.longestBackorderItem.delay
-                                    }})
-                                </p>
-                            </div>
-                        </ng-container>
-                    </div>
-                    <div class="right-column">
-                        <ng-container *ngIf="item.cardId === 'sales-chart'">
-                            <app-saleschart></app-saleschart>
-                        </ng-container>
-                    </div>
-                </div>
-            </mat-card> -->
+            
 
             <mat-card class="dashboard-card full-width-card" *ngIf="item.name === 'Bar Chart'">
                 <button *ngIf="isDeleteMode" class="delete-button" (click)="deleteWidget(item)">
@@ -162,6 +125,7 @@
                             [data]="item['chartConfig'].data"
                             [title]="item['chartConfig'].title"
                         ></app-bubble-chart>
+                    </ng-container>
                     <ng-container *ngSwitchCase="'LineBarComponent'">
                         <app-line-bar
                             [data]="item['chartConfig'].data"
@@ -185,6 +149,12 @@
                             [orderData]="item['chartConfig'].data"
                             [title]="item['chartConfig'].title"
                         ></app-donuttemplate>
+                    </ng-container>
+                    <ng-container *ngSwitchCase="'BubblechartComponent'">
+                        <app-bubblechart
+                            [data]="item['chartConfig'].data"
+                            [chartTitle]="item['chartConfig'].title"
+                        ></app-bubblechart>
                     </ng-container>
                 </ng-container>
             </mat-card>

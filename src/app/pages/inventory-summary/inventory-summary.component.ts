@@ -8,12 +8,13 @@ import { LoadingSpinnerComponent } from '../../components/loader/loading-spinner
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Amplify } from 'aws-amplify';
 import { fetchAuthSession } from 'aws-amplify/auth';
-import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
 import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
+import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
 import outputs from '../../../../amplify_outputs.json';
 import { TitleService } from 'app/components/header/title.service';
 import { MaterialModule } from '../../components/material/material.module';
 import { Router } from '@angular/router';
+import { InventoryService } from '../../../../amplify/services/inventory.service';
 
 @Component({
     selector: 'app-inventory-summary',
@@ -28,6 +29,7 @@ export class InventorySummaryComponent implements OnInit {
     rowData: any[] = [];
     isLoading = true;
     tenentId: string = '';
+    isCalculating = false;
 
     colDefs: ColDef[] = [
         { field: 'SKU', headerName: 'SKU', filter: 'agSetColumnFilter' },
@@ -47,13 +49,20 @@ export class InventorySummaryComponent implements OnInit {
         { field: 'lowStockThreshold', headerName: 'Low Stock Threshold', filter: 'agSetColumnFilter', editable: true },
         { field: 'reorderAmount', headerName: 'Reorder Amount', filter: 'agSetColumnFilter', editable: true },
         { field: 'EOQ', headerName: 'EOQ', filter: 'agSetColumnFilter' },
+        { field: 'ROP', headerName: 'ROP', filter: 'agSetColumnFilter' },
         { field: 'safetyStock', headerName: 'Safety Stock', filter: 'agSetColumnFilter' },
+        { field: 'ABCCategory', headerName: 'ABC Category', filter: 'agSetColumnFilter' },
+        { field: 'annualConsumptionValue', headerName: 'Annual Consumption Value', filter: 'agSetColumnFilter' },
+        { field: 'holdingCost', headerName: 'Holding Cost', filter: 'agSetColumnFilter' },
+        { field: 'annualDemand', headerName: 'Annual Demand', filter: 'agSetColumnFilter' },
+        { field: 'dailyDemand', headerName: 'Daily Demand', filter: 'agSetColumnFilter' },
     ];
 
     constructor(
         private snackBar: MatSnackBar,
         private titleService: TitleService,
         private router: Router,
+        private inventoryService: InventoryService
     ) {
         Amplify.configure(outputs);
     }
@@ -63,16 +72,21 @@ export class InventorySummaryComponent implements OnInit {
         try {
             const session = await fetchAuthSession();
             this.tenentId = await this.getTenentId(session);
+            if (!this.tenentId) {
+                throw new Error('Unable to retrieve tenentId');
+            }
             await this.loadInventorySummaryData();
         } catch (error) {
             console.error('Error initializing component:', error);
-            this.snackBar.open('Error initializing component', 'Close', {
-                duration: 3000,
+            this.snackBar.open('Error initializing component: ' + (error instanceof Error ? error.message : String(error)), 'Close', {
+                duration: 5000,
                 horizontalPosition: 'center',
                 verticalPosition: 'top',
             });
         }
     }
+
+   
 
     async getTenentId(session: any): Promise<string> {
         const cognitoClient = new CognitoIdentityProviderClient({
@@ -96,49 +110,8 @@ export class InventorySummaryComponent implements OnInit {
         return tenentId;
     }
 
-    async loadInventorySummaryData() {
-        try {
-            const session = await fetchAuthSession();
-
-            const lambdaClient = new LambdaClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
-
-            const invokeCommand = new InvokeCommand({
-                FunctionName: 'inventorySummary-getItems',
-                Payload: new TextEncoder().encode(JSON.stringify({ tenentId: this.tenentId })),
-            });
-
-            const lambdaResponse = await lambdaClient.send(invokeCommand);
-            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
-            if (responseBody.statusCode === 200) {
-                this.rowData = JSON.parse(responseBody.body);
-            } else {
-                throw new Error(responseBody.body);
-            }
-        } catch (error) {
-            console.error('Error loading inventory summary data:', error);
-            this.snackBar.open('Error loading inventory summary data', 'Close', {
-                duration: 3000,
-                horizontalPosition: 'center',
-                verticalPosition: 'top',
-            });
-        } finally {
-            this.isLoading = false;
-        }
-    }
-
     async handleCellValueChanged(event: { data: any; field: string; newValue: any }) {
         try {
-            const session = await fetchAuthSession();
-
-            const lambdaClient = new LambdaClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
-
             const updatedData: any = {
                 SKU: event.data.SKU,
                 tenentId: this.tenentId,
@@ -150,17 +123,11 @@ export class InventorySummaryComponent implements OnInit {
                 updatedData[event.field] = Number(event.newValue);
             }
 
-            const invokeCommand = new InvokeCommand({
-                FunctionName: 'inventorySummary-updateItem',
-                Payload: new TextEncoder().encode(JSON.stringify({ body: JSON.stringify(updatedData) })),
-            });
+            const response = await this.inventoryService.inventorySummaryUpdateItem(updatedData).toPromise();
 
-            const lambdaResponse = await lambdaClient.send(invokeCommand);
-            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
-            if (responseBody.statusCode === 200) {
+            if (response) {
                 console.log('Item updated successfully');
-                const updatedItem = JSON.parse(responseBody.body);
+                const updatedItem = response;
 
                 // Update the local data to reflect the change
                 const index = this.rowData.findIndex((item) => item.SKU === updatedItem.SKU);
@@ -174,7 +141,7 @@ export class InventorySummaryComponent implements OnInit {
                     verticalPosition: 'top',
                 });
             } else {
-                throw new Error(responseBody.body);
+                throw new Error('Failed to update item');
             }
         } catch (error) {
             console.error('Error updating inventory Item:', error);
@@ -190,7 +157,85 @@ export class InventorySummaryComponent implements OnInit {
         }
     }
 
+    async loadInventorySummaryData() {
+        try {
+            this.isLoading = true;
+            const response = await this.inventoryService.inventorySummaryGetItems({ tenentId: this.tenentId }).toPromise();
+    
+            if (response) {
+                console.log('Received inventory summary data:', response);
+                this.rowData = response;
+            } else {
+                console.error('Received null or undefined response from inventorySummaryGetItems');
+                throw new Error('Failed to load inventory summary data');
+            }
+        } catch (error) {
+            console.error('Error loading inventory summary data:', error);
+            this.snackBar.open('Error loading inventory summary data', 'Close', {
+                duration: 3000,
+                horizontalPosition: 'center',
+                verticalPosition: 'top',
+            });
+        } finally {
+            this.isLoading = false;
+        }
+    }
+
+
     back() {
         this.router.navigate(['/inventory']);
+    }
+
+    async runEoqRopCalculation() {
+        if (!this.tenentId) {
+            this.snackBar.open('User information not loaded. Please try again.', 'Close', {
+                duration: 3000,
+                horizontalPosition: 'center',
+                verticalPosition: 'top',
+            });
+            return;
+        }
+    
+        this.isCalculating = true;
+        try {
+            const session = await fetchAuthSession();
+            const lambdaClient = new LambdaClient({
+                region: outputs.auth.aws_region,
+                credentials: session.credentials,
+            });
+    
+            const payload = {
+                tenentId: this.tenentId
+            };
+    
+            const invokeCommand = new InvokeCommand({
+                FunctionName: 'EOQ_ROP_Calculations',
+                Payload: new TextEncoder().encode(JSON.stringify(payload)),
+            });
+    
+            const lambdaResponse = await lambdaClient.send(invokeCommand);
+            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+    
+            if (responseBody && responseBody.statusCode === 200) {
+                this.snackBar.open('EOQ/ROP/ABC Calculation completed successfully.', 'Close', {
+                    duration: 3000,
+                    horizontalPosition: 'center',
+                    verticalPosition: 'top',
+                });
+                // Refresh the data after calculation
+                await this.loadInventorySummaryData();
+            } else {
+                throw new Error(responseBody?.body || 'Unknown error occurred');
+            }
+        } catch (error) {
+            console.error('Error running EOQ/ROP/ABC Calculation:', error);
+            this.snackBar.open(`Error running calculation: ${error instanceof Error ? error.message : String(error)}`, 'Close', {
+                duration: 5000,
+                horizontalPosition: 'center',
+                verticalPosition: 'top',
+            });
+        } finally {
+            this.isCalculating = false;
+        }
     }
 }

@@ -9,6 +9,7 @@ import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-c
 import { fetchAuthSession } from 'aws-amplify/auth';
 
 import outputs from '../../../../../amplify_outputs.json';
+import { InventoryService } from '../../../../../amplify/services/inventory.service';
 
 @Component({
     selector: 'app-donutchart',
@@ -57,7 +58,7 @@ export class DonutchartComponent implements AfterViewInit, OnInit, OnDestroy {
         }
     };    
 
-    constructor() {
+    constructor(private inventoryService: InventoryService) {
         Amplify.configure(outputs);
         // Initialize chartOptions with default values
         this.chartOptions = this.getDefaultChartOptions();
@@ -97,38 +98,27 @@ export class DonutchartComponent implements AfterViewInit, OnInit, OnDestroy {
                 region: outputs.auth.aws_region,
                 credentials: session.credentials,
             });
-
+    
             const getUserCommand = new GetUserCommand({
                 AccessToken: session.tokens?.accessToken.toString(),
             });
             const getUserResponse = await cognitoClient.send(getUserCommand);
-
+    
             const tenantId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
-
+    
             if (!tenantId) {
                 console.error('TenantId not found in user attributes');
                 return;
             }
-
-            const lambdaClient = new LambdaClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
-
-            const invokeCommand = new InvokeCommand({
-                FunctionName: 'Inventory-getItems',
-                Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: tenantId } })),
-            });
-
-            const lambdaResponse = await lambdaClient.send(invokeCommand);
-            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
-            if (responseBody.statusCode === 200) {
-                const inventoryItems = JSON.parse(responseBody.body);
-                this.updateChartDataFromInventory(inventoryItems);
-            } else {
-                console.error('Error fetching inventory data:', responseBody.body);
-            }
+    
+            this.inventoryService.getInventoryItems(tenantId).subscribe(
+                (inventoryItems) => {
+                    this.updateChartDataFromInventory(inventoryItems);
+                },
+                (error) => {
+                    console.error('Error fetching inventory data:', error);
+                }
+            );
         } catch (error) {
             console.error('Error in loadInventoryData:', error);
         }

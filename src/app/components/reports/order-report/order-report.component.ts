@@ -18,6 +18,7 @@ import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-c
 import outputs from '../../../../../amplify_outputs.json';
 import { LoadingSpinnerComponent } from 'app/components/loader/loading-spinner.component';
 import { GridsterConfig, GridType, DisplayGrid, GridsterModule, CompactType } from 'angular-gridster2';
+import { DataCollectionService } from 'app/components/add-widget-side-pane/data-collection.service';
 
 @Component({
     selector: 'app-order-report',
@@ -46,6 +47,7 @@ export class OrderReportComponent implements OnInit {
         private titleService: TitleService,
         private router: Router,
         private route: ActivatedRoute,
+        private dataCollectionService: DataCollectionService,
     ) {
         Amplify.configure(outputs);
     }
@@ -83,12 +85,12 @@ export class OrderReportComponent implements OnInit {
     };
 
     layout: any[] = [
-        { cols: 12, rows: 1.1, y: 0, x: 0 }, // Metrics Container
-        { cols: 8, rows: 4, y: 1, x: 0 }, // Inventory Grid
+        { cols: 12, rows: 1.02, y: 0, x: 0 }, // Metrics Container
+        { cols: 12, rows: 3, y: 1, x: 0 }, // Inventory Grid
         { cols: 4, rows: 3, y: 1, x: 8 }, // Order Report
-        { cols: 6, rows: 4, y: 3, x: 0 }, // Stacked Bar Chart
-        { cols: 12, rows: 3, y: 3, x: 6 }, // Scatter Plot
-        { cols: 6, rows: 4, y: 5, x: 4 }, // Donut Chart
+        { cols: 8, rows: 3, y: 3, x: 0 }, // Stacked Bar Chart
+        { cols: 8, rows: 3, y: 3, x: 6 }, // Scatter Plot
+        { cols: 4, rows: 3, y: 5, x: 4 }, // Donut Chart
     ];
 
     selectedItem: any = null;
@@ -132,7 +134,7 @@ export class OrderReportComponent implements OnInit {
         const data = this.calculateOrderMetrics();
         this.OrderReport.metrics.metric_8.text += data.orderPlacementFrequency;
         this.OrderReport.metrics.metric_11.text += data.perfectOrderRate;
-        this.supplierQuote = await this.supplierQuotePrices();
+        this.supplierQuote = (await this.supplierQuotePrices()) || [];
         this.updateOrderStatuses(this.rowData, this.supplierQuote);
         this.prepareChartData();
         this.scatterPlotChartData = this.prepareScatterPlotData();
@@ -240,54 +242,10 @@ export class OrderReportComponent implements OnInit {
 
     async supplierQuotePrices() {
         try {
-            const session = await fetchAuthSession();
-
-            const cognitoClient = new CognitoIdentityProviderClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
-
-            const getUserCommand = new GetUserCommand({
-                AccessToken: session.tokens?.accessToken.toString(),
-            });
-            const getUserResponse = await cognitoClient.send(getUserCommand);
-
-            const tenantId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
-            // const tenantId = "1717667019559-j85syk";
-            console.log('my id', tenantId);
-
-            if (!tenantId) {
-                console.error('TenantId not found in user attributes');
-                // this.rowData = [];
-                return;
-            }
-
-            const lambdaClient = new LambdaClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
-
-            const invokeCommand = new InvokeCommand({
-                FunctionName: 'getSupplierQuotePrices',
-                Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: tenantId } })),
-            });
-
-            const lambdaResponse = await lambdaClient.send(invokeCommand);
-            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-            console.log('Response from Lambda:', responseBody);
-
-            if (responseBody.statusCode === 200) {
-                const supplierData = JSON.parse(responseBody.body);
-                return supplierData;
-            } else {
-                console.error('Error fetching inventory data:', responseBody.body);
-                // this.rowData = [];
-            }
+            return await this.dataCollectionService.getSupplierQuotePrices().toPromise();
         } catch (error) {
-            console.error('Error in loadInventoryData:', error);
-            // this.rowData = [];
-        } finally {
-            // this.isLoading = false;
+            console.error('Error fetching supplier quote prices:', error);
+            return [];
         }
     }
 
@@ -427,55 +385,12 @@ export class OrderReportComponent implements OnInit {
     }
 
     async fetchOrders() {
-        // this.isLoading = true;
         try {
-            const session = await fetchAuthSession();
-
-            const cognitoClient = new CognitoIdentityProviderClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
-
-            const getUserCommand = new GetUserCommand({
-                AccessToken: session.tokens?.accessToken.toString(),
-            });
-            const getUserResponse = await cognitoClient.send(getUserCommand);
-
-            const tenentId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
-
-            if (!tenentId) {
-                console.error('TenentId not found in user attributes');
-                this.rowData = [];
-                return;
-            }
-
-            const lambdaClient = new LambdaClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
-
-            const invokeCommand = new InvokeCommand({
-                FunctionName: 'getOrdersReport',
-                Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: tenentId } })),
-            });
-
-            const lambdaResponse = await lambdaClient.send(invokeCommand);
-            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-            console.log('Response from Lambda:', responseBody);
-
-            if (responseBody.statusCode === 200) {
-                const orders = JSON.parse(responseBody.body);
-                this.rowData = orders;
-                console.log('Processed orders:', this.rowData);
-            } else {
-                console.error('Error fetching orders data:', responseBody.body);
-                this.rowData = [];
-            }
+            this.rowData = (await this.dataCollectionService.fetchOrdersReport()) || [];
+            console.log('Processed orders:', this.rowData);
         } catch (error) {
             console.error('Error in loadOrdersData:', error);
             this.rowData = [];
-        } finally {
-            // this.isLoading = false;
         }
     }
 

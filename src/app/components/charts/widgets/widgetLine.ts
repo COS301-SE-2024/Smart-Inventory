@@ -1,4 +1,13 @@
-import { AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import {
+    AfterViewInit,
+    Component,
+    ElementRef,
+    Input,
+    OnDestroy,
+    OnInit,
+    SimpleChanges,
+    ViewChild,
+} from '@angular/core';
 import * as echarts from 'echarts';
 
 @Component({
@@ -6,17 +15,17 @@ import * as echarts from 'echarts';
     standalone: true,
     imports: [],
     template: '<div #chartContainer style="width: 100%; height: 100%;"></div>',
-    styles: [':host { display: block; width: 100%; height: 300px; }']
+    styles: [':host { display: block; width: 100%; height: 300px; }'],
 })
 export class LineChartComponent implements OnInit, AfterViewInit, OnDestroy {
-    @Input() data: { categories: string[], values: number[] } = { categories: [], values: [] };
+    @Input() data: { categories: string[]; values: number[] } = { categories: [], values: [] };
     @Input() title: string = '';
     @ViewChild('chartContainer') chartContainer!: ElementRef;
 
     private chart: echarts.ECharts | null = null;
     private resizeObserver!: ResizeObserver;
 
-    ngOnInit(): void { }
+    ngOnInit(): void {}
 
     ngAfterViewInit(): void {
         this.initChart();
@@ -62,23 +71,25 @@ export class LineChartComponent implements OnInit, AfterViewInit, OnDestroy {
         const options: echarts.EChartsOption = {
             title: {
                 text: this.title,
-                left: 'center'
+                left: 'center',
             },
             tooltip: {
-                trigger: 'axis'
+                trigger: 'axis',
             },
             xAxis: {
                 type: 'category',
-                data: this.data.categories
+                data: this.data.categories,
             },
             yAxis: {
-                type: 'value'
+                type: 'value',
             },
-            series: [{
-                data: this.data.values,
-                type: 'line',
-                smooth: true
-            }]
+            series: [
+                {
+                    data: this.data.values,
+                    type: 'line',
+                    smooth: true,
+                },
+            ],
         };
 
         this.chart.setOption(options);

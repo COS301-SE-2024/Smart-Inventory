@@ -1,9 +1,16 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  background-color: #f5f7fa;
+  padding: 20px;
+}
+
 .supplier-quote-container {
   max-width: 1350px;
   margin: 40px auto;
   padding: 20px;
   font-family: 'Arial', sans-serif;
-  background-color: #f5f5f5;
+  background-color: #fff;
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0,0,0,0.2);
 }
@@ -144,20 +151,22 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 .submit-btn {
   display: block;
-  width: 200px;
-  margin: 20px auto 0;
-  padding: 12px;
-  background-color: #6d6d6d;
+  background-color: #005cbb;
   color: white;
   border: none;
-  border-radius: 4px;
-  font-size: 16px;
+  padding: 0.75rem 1.5rem;
+  border-radius: 5px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s ease;
+  font-size: 1rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 30px auto 15px;
 }
 
 .submit-btn:hover {
-  background-color: #333;
+  background-color: #004499;
 }
 
 /* Responsive design */
@@ -285,7 +294,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   padding-top: 10px;
   font-weight: bold;
   color: #333;
-  font-size: 18px;
+  font-size: 20px;
 }
 
 .delivery-address .contact-information {
@@ -305,19 +314,22 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 .update-contact-btn {
-  margin-top: 10px;
-  padding: 8px 16px;
-  background-color: #6d6d6d;
+  background-color: #005cbb;
   color: white;
   border: none;
-  border-radius: 4px;
-  font-size: 14px;
+  padding: 0.75rem 1.5rem;
+  border-radius: 5px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s ease;
+  font-size: 1rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 15px;
 }
 
 .update-contact-btn:hover {
-  background-color: #333;
+  background-color: #004499;
 }
 
 .loading-overlay {

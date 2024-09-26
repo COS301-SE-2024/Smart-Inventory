@@ -15,7 +15,7 @@
 <!-- Add Supplier Popup -->
 <div *ngIf="showAddPopup" class="popup-overlay">
     <div class="content">
-        <h1 mat-dialog-title style="text-align: center; font-size: 30px">Add Supplier</h1>
+        <h1 mat-dialog-title style="text-align: center; font-size: 30px; padding: 10px">Add Supplier</h1>
         <mat-dialog-content>
             <ng-container>
                 <form
@@ -114,10 +114,15 @@
                 </form>
             </ng-container>
         </mat-dialog-content>
-        <mat-dialog-actions align="end" style="display: flex; padding-bottom: 10px">
+        <mat-dialog-actions align="end" style="display: flex; padding: 25px">
             <button class="btn" mat-flat-button type="button" (click)="closeAddPopup()">Cancel</button>
-            <button class="btn" mat-flat-button type="submit" [disabled]="!supplierForm.form.valid">Submit</button>
+            <button class="btn" mat-flat-button type="submit" [disabled]="!supplierForm.form.valid" (click)="onSubmit(supplierForm.value)">Submit</button>
         </mat-dialog-actions>
+        
+        <!-- Add Supplier Popup Loader -->
+        <div *ngIf="isAddingSupplier" class="popup-loader">
+            <app-loading-spinner></app-loading-spinner>
+        </div>
     </div>
 </div>
 
@@ -136,7 +141,7 @@
 <!-- Edit Address Popup -->
 <div *ngIf="showEditAddressPopup" class="popup-overlay">
     <div class="content">
-        <h1 mat-dialog-title style="text-align: center; font-size: 30px">Edit Supplier Address</h1>
+        <h1 mat-dialog-title style="text-align: center; font-size: 30px; padding: 10px;">Edit Supplier Address</h1>
         <mat-dialog-content>
             <ng-container>
                 <form
@@ -199,15 +204,22 @@
                             required
                         />
                     </mat-form-field>
-                </form> </ng-container
-        ></mat-dialog-content>
-        <mat-dialog-actions align="end" style="display: flex; padding-bottom: 10px">
+                </form>
+            </ng-container>
+        </mat-dialog-content>
+        <mat-dialog-actions align="end" style="display: flex; padding: 25px">
             <button mat-flat-button class="btn" type="button" (click)="closeEditAddressPopup()">Cancel</button>
-            <button mat-flat-button class="btn" type="submit">Submit</button>
+            <button mat-flat-button class="btn" type="submit" (click)="onEditAddressSubmit(editAddressForm.value)">Submit</button>
         </mat-dialog-actions>
+        
+        <!-- Edit Address Popup Loader -->
+        <div *ngIf="isEditingAddress" class="popup-loader">
+            <app-loading-spinner></app-loading-spinner>
+        </div>
     </div>
 </div>
 
+<!-- Main Page Loader -->
 <div *ngIf="isLoading" class="loading-overlay">
     <app-loading-spinner></app-loading-spinner>
 </div>

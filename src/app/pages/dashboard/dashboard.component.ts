@@ -4,7 +4,6 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TitleService } from '../../components/header/title.service';
 import { MaterialModule } from '../../components/material/material.module';
 import { CommonModule } from '@angular/common';
-import { SidepanelComponent } from '../../components/sidepanel/sidepanel.component';
 import { CompactType, GridsterModule } from 'angular-gridster2';
 import { GridType, DisplayGrid } from 'angular-gridster2';
 import { GridsterConfig, GridsterItem } from 'angular-gridster2';
@@ -15,16 +14,11 @@ import { BubblechartComponent } from '../../components/charts/bubblechart/bubble
 import { SaleschartComponent } from '../../components/charts/saleschart/saleschart.component';
 import { BarchartComponent } from '../../components/charts/barchart/barchart.component';
 import { DonutchartComponent } from '../../components/charts/donutchart/donutchart.component';
-import { FilterService } from '../../services/filter.service';
 import { LoadingService } from '../../components/loader/loading.service';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { Subject } from 'rxjs';
+import { HttpClientModule } from '@angular/common/http';
 import { debounceTime } from 'rxjs/operators';
 import { RouterLink } from '@angular/router';
 import { Amplify } from 'aws-amplify';
-import { fetchAuthSession } from 'aws-amplify/auth';
-import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
-import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
 import outputs from '../../../../amplify_outputs.json';
 import { MatDialog } from '@angular/material/dialog';
 import { TemplatechartComponent } from 'app/components/charts/templatechart/templatechart.component';
@@ -33,66 +27,16 @@ import { DeleteConfirmationModalComponent } from './deleteWidget';
 import { BarChartComponent } from 'app/components/charts/widgets/widgetBar';
 import { LineChartComponent } from 'app/components/charts/widgets/widgetLine';
 import { PieChartComponent } from 'app/components/charts/widgets/widgetPie';
-import { DataServiceService } from './data-service.service';
+import { BubbleChartComponent } from 'app/components/charts/widgets/widgetBubble';
+import { LineBarComponent } from 'app/components/charts/line-bar/line-bar.component';
+import { RadarComponent } from 'app/components/charts/radar/radar.component';
+import { ScatterplotComponent } from 'app/components/charts/scatterplot/scatterplot.component';
+import { DonutTemplateComponent } from 'app/components/charts/donuttemplate/donuttemplate.component';
 import { AddWidgetSidePaneComponent } from '../../components/add-widget-side-pane/add-widget-side-pane.component';
-interface CardData {
-    title: string;
-    value: string | number;
-    icon: string;
-    type: 'currency' | 'number' | 'percentage' | 'string';
-    change?: number;
-    color: string;
-}
-
-interface DashboardItem extends GridsterItem {
-    cardId?: string;
-    name?: string;
-    component?: string;
-}
-
-interface ChartConfig {
-    type: string;
-    data: any;
-    title: string;
-    component: string;
-}
-
-interface DashboardData {
-    avgFulfillmentTime: number;
-    inventoryLevels: number;
-    topSeller: string;
-    backorders: number;
-    baselineValues: {
-        fulfillmentDays: number;
-        backorders: number;
-        inventoryLevels: number;
-    };
-}
-
-interface MetricPerformance {
-    value: number | string;
-    percentageChange: number;
-    color: 'green' | 'yellow' | 'red';
-}
-
-interface StockRequest {
-    tenentId: string;
-    sku: string;
-    quantityRequested: number;
-}
-
-interface Order {
-    tenentId: string;
-    Order_Status: string;
-    Expected_Delivery_Date: string | null;
-    Order_Date: string;
-    Selected_Supplier?: string;
-}
-
-interface SkuCounts {
-    [sku: string]: number;
-}
-
+import { CardData, ChartConfig, DashboardItem, DashboardService } from '../dashboard/dashboard.service';
+import { ChangeDetectionService } from './change-detection.service';
+import { DataCollectionService } from '../../components/add-widget-side-pane/data-collection.service';
+import { MetricCardComponent } from '../../components/charts/widgets/metric-card.component';
 @Component({
     selector: 'app-dashboard',
     templateUrl: './dashboard.component.html',
@@ -117,30 +61,27 @@ interface SkuCounts {
         PieChartComponent,
         BarChartComponent,
         AddWidgetSidePaneComponent,
+        BubbleChartComponent,
+        MetricCardComponent,
+        LineBarComponent,
+        RadarComponent,
+        DonutTemplateComponent,
+        ScatterplotComponent,
     ],
 })
 export class DashboardComponent implements OnInit {
     @ViewChild('sidenav') sidenav!: MatSidenav;
 
-    isDeleteMode: boolean = false;
-    isSidepanelOpen: boolean = false;
-    availableCharts: { name: string; component: string }[] = [
-        { name: 'Monthly Sales', component: 'BarChartComponent' },
-        { name: 'Quarterly Revenue', component: 'LineChartComponent' },
-        { name: 'Market Share', component: 'PieChartComponent' },
-    ];
-
+    isDeleteMode = false;
+    isSidepanelOpen = false;
+    isLoading = true;
     Math: any;
 
-    openSidePanel() {
-        this.sidenav.open();
-    }
-
-    closeSidePanel() {
-        this.sidenav.close();
-    }
-
-    private saveTrigger = new Subject<void>();
+    cardData: CardData[] = [];
+    chartConfigs: any[] = [];
+    dashboard: Array<DashboardItem> = [];
+    options!: GridsterConfig;
+    rowData: any[] = [];
 
     charts: { [key: string]: Type<any> } = {
         SaleschartComponent: SaleschartComponent,
@@ -150,62 +91,52 @@ export class DashboardComponent implements OnInit {
         BarChartComponent: BarChartComponent,
         LineChartComponent: LineChartComponent,
         PieChartComponent: PieChartComponent,
+        BubbleChartComponent: BubbleChartComponent,
+        MetricCardComponent: MetricCardComponent,
     };
-
-    rowData: any[] = [];
-    metricPerformance: Record<string, MetricPerformance> = {};
-    dashboardData: any;
-    inventoryCount: number = 0;
-    userCount: number = 0;
-
-    options: GridsterConfig;
-    stockRequest: any[] = [];
-    inventory: any[] = [];
-    orders: any[] = [];
-
-    cardData: CardData[] = [];
-
-    chartConfigs: ChartConfig[] = [];
-
-
-    RequestOrders = {
-        requests: {
-            totalRequests: 0,
-            mostRequested: {
-                name: 'None found',
-                percentage: 0,
-            },
-            highestRequest: 0,
-        },
-        backorders: {
-            currentBackorders: 0,
-            averageDelay: 0,
-            longestBackorderItem: {
-                productName: 'None found',
-                delay: '',
-            },
-        },
-    };
-
-    dashboard!: Array<DashboardItem>;
 
     public chartOptions!: AgChartOptions;
 
     constructor(
-        private http: HttpClient,
         private loader: LoadingService,
         private titleService: TitleService,
-        private filterService: FilterService,
         private cdr: ChangeDetectorRef,
         private dialog: MatDialog,
-        private service: DataServiceService,
+        private dashService: DashboardService,
+        private CDRService: ChangeDetectionService,
+        private dataCollectionService: DataCollectionService,
     ) {
         Amplify.configure(outputs);
+        this.initializeGridsterOptions();
+    }
+
+    async ngOnInit() {
+        this.titleService.updateTitle('Dashboard');
+        this.CDRService.setChangeDetectorRef(this.cdr);
+        this.setupDashboardSubscription();
+        await this.loadState();
+        this.refreshDashboard();
+    }
+
+    private setupDashboardSubscription() {
+        this.dashService.dashboard$.pipe(debounceTime(500)).subscribe((dashboard) => {
+            this.dashboard = dashboard;
+            this.CDRService.detectChanges();
+            this.dashService.persistState(this.dashboard);
+        });
+    }
+
+    private initializeGridsterOptions() {
         this.options = {
             gridType: GridType.VerticalFixed,
-            displayGrid: DisplayGrid.None,
-            compactType: CompactType.CompactUp,
-            margin: 30,
+            displayGrid: DisplayGrid.OnDragAndResize,
+            compactType: CompactType.None,
+            margin: 20, // Reduced margin for tighter layout
+            outerMargin: true,
+            outerMarginTop: null,
+            outerMarginRight: null,
+            outerMarginBottom: null,
+            outerMarginLeft: null,
             minCols: 12,
             maxCols: 12,
             minRows: 100,
@@ -231,18 +162,18 @@ export class DashboardComponent implements OnInit {
             emptyCellDragMaxCols: 50,
             emptyCellDragMaxRows: 50,
             ignoreMarginInRow: false,
-            itemChangeCallback: () => this.saveState(),
-            itemResizeCallback: () => this.saveState(),
+            itemChangeCallback: () => this.dashService.saveState(),
+            itemResizeCallback: () => this.dashService.saveState(),
             draggable: {
                 enabled: true,
-                stop: () => this.saveState(),
+                stop: () => this.dashService.saveState(),
             },
             resizable: {
                 enabled: true,
-                stop: () => this.saveState(),
+                stop: () => this.dashService.saveState(),
             },
             swap: true,
-            pushItems: false,
+            pushItems: true,
             disablePushOnDrag: false,
             disablePushOnResize: false,
             pushDirections: { north: true, east: true, south: true, west: true },
@@ -251,398 +182,361 @@ export class DashboardComponent implements OnInit {
             disableWarnings: false,
             scrollToNewItems: false,
         };
-        this.saveTrigger
+        this.dashService
+            .getTrigger()
             .pipe(
                 debounceTime(500), // Debounce for 500ms
             )
             .subscribe(() => {
-                this.persistState();
+                this.dashService.persistState(this.dashboard);
             });
-
-        // this.dashboard = [
-        //     { cols: 3, rows: 2, y: 0, x: 0, cardData: this.cardData[0] },
-        //     { cols: 3, rows: 2, y: 0, x: 1, cardData: this.cardData[1] },
-        //     { cols: 3, rows: 2, y: 0, x: 2, cardData: this.cardData[2] },
-        //     { cols: 3, rows: 2, y: 0, x: 3, cardData: this.cardData[3] },
-        // ];
     }
 
-    async populateRequestOrders(stockRequests: StockRequest[], orders: Order[]): Promise<any> {
-        const session = await fetchAuthSession();
-        this.loader.setLoading(false);
+    // async populateRequestOrders(stockRequests: StockRequest[], orders: Order[]): Promise<any> {
+    //     const session = await fetchAuthSession();
+    //     this.loader.setLoading(false);
 
-        const cognitoClient = new CognitoIdentityProviderClient({
-            region: outputs.auth.aws_region,
-            credentials: session.credentials,
-        });
+    //     const cognitoClient = new CognitoIdentityProviderClient({
+    //         region: outputs.auth.aws_region,
+    //         credentials: session.credentials,
+    //     });
 
-        const getUserCommand = new GetUserCommand({
-            AccessToken: session.tokens?.accessToken.toString(),
-        });
-        const getUserResponse = await cognitoClient.send(getUserCommand);
+    //     const getUserCommand = new GetUserCommand({
+    //         AccessToken: session.tokens?.accessToken.toString(),
+    //     });
+    //     const getUserResponse = await cognitoClient.send(getUserCommand);
 
-        const tenantId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
-        // Filter stock requests by tenantId
-        const filteredStockRequests = stockRequests.filter((request) => request.tenentId === tenantId);
+    //     const tenantId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
+    //     // Filter stock requests by tenantId
+    //     const filteredStockRequests = stockRequests.filter((request) => request.tenentId === tenantId);
 
-        // Calculate requests data
-        const skuCounts: SkuCounts = filteredStockRequests.reduce((counts, request) => {
-            counts[request.sku] = (counts[request.sku] || 0) + request.quantityRequested;
-            return counts;
-        }, {} as SkuCounts);
+    //     // Calculate requests data
+    //     const skuCounts: SkuCounts = filteredStockRequests.reduce((counts, request) => {
+    //         counts[request.sku] = (counts[request.sku] || 0) + request.quantityRequested;
+    //         return counts;
+    //     }, {} as SkuCounts);
 
-        const totalRequests: number = Object.values(skuCounts).reduce((sum, count) => sum + count, 0);
-        const highestRequest: number = Math.max(...Object.values(skuCounts));
-        const mostRequestedEntry = Object.entries(skuCounts).reduce((a, b) => (a[1] > b[1] ? a : b));
-        const mostRequestedSku = mostRequestedEntry[0];
-        const mostRequestedPercentage = (skuCounts[mostRequestedSku] / totalRequests) * 100;
+    //     const totalRequests: number = Object.values(skuCounts).reduce((sum, count) => sum + count, 0);
+    //     const highestRequest: number = Math.max(...Object.values(skuCounts));
+    //     const mostRequestedEntry = Object.entries(skuCounts).reduce((a, b) => (a[1] > b[1] ? a : b));
+    //     const mostRequestedSku = mostRequestedEntry[0];
+    //     const mostRequestedPercentage = (skuCounts[mostRequestedSku] / totalRequests) * 100;
 
-        // Calculate backorders data
-        const backorders = orders.filter(
-            (order) =>
-                order.tenentId === tenantId &&
-                order.Order_Status === 'Pending Approval' &&
-                order.Expected_Delivery_Date,
-        );
-        const currentBackorders = backorders.length;
+    //     // Calculate backorders data
+    //     const backorders = orders.filter(
+    //         (order) =>
+    //             order.tenentId === tenantId &&
+    //             order.Order_Status === 'Pending Approval' &&
+    //             order.Expected_Delivery_Date,
+    //     );
+    //     const currentBackorders = backorders.length;
 
-        const delays = backorders.map((order) => this.calculateDelay(order.Order_Date, order.Expected_Delivery_Date!));
-        const totalDelay = delays.reduce((sum, delay) => sum + delay, 0);
-        const averageDelay = currentBackorders > 0 ? totalDelay / currentBackorders : 0;
+    //     const delays = backorders.map((order) => this.calculateDelay(order.Order_Date, order.Expected_Delivery_Date!));
+    //     const totalDelay = delays.reduce((sum, delay) => sum + delay, 0);
+    //     const averageDelay = currentBackorders > 0 ? totalDelay / currentBackorders : 0;
 
-        const longestDelay = Math.max(...delays);
-        const longestBackorderItem = backorders.find(
-            (order) => this.calculateDelay(order.Order_Date, order.Expected_Delivery_Date!) === longestDelay,
-        );
+    //     const longestDelay = Math.max(...delays);
+    //     const longestBackorderItem = backorders.find(
+    //         (order) => this.calculateDelay(order.Order_Date, order.Expected_Delivery_Date!) === longestDelay,
+    //     );
 
-        // Populate RequestOrders
-        this.RequestOrders = {
-            requests: {
-                totalRequests,
-                mostRequested: {
-                    name: mostRequestedSku || 'None found',
-                    percentage: Number(mostRequestedPercentage.toFixed(2)) || 0,
-                },
-                highestRequest,
-            },
-            backorders: {
-                currentBackorders,
-                averageDelay: Number(averageDelay.toFixed(2)),
-                longestBackorderItem: {
-                    productName: longestBackorderItem?.Selected_Supplier || 'None found',
-                    delay: longestDelay > 0 ? this.formatDelay(longestDelay) : '',
-                },
-            },
-        };
+    //     // Populate RequestOrders
+    //     this.RequestOrders = {
+    //         requests: {
+    //             totalRequests,
+    //             mostRequested: {
+    //                 name: mostRequestedSku || 'None found',
+    //                 percentage: Number(mostRequestedPercentage.toFixed(2)) || 0,
+    //             },
+    //             highestRequest,
+    //         },
+    //         backorders: {
+    //             currentBackorders,
+    //             averageDelay: Number(averageDelay.toFixed(2)),
+    //             longestBackorderItem: {
+    //                 productName: longestBackorderItem?.Selected_Supplier || 'None found',
+    //                 delay: longestDelay > 0 ? this.formatDelay(longestDelay) : '',
+    //             },
+    //         },
+    //     };
 
-        console.log('Populated RequestOrders:', this.RequestOrders);
-    }
-    // Helper methods (make sure these are part of your component)
-    private calculateDelay(orderDate: string, expectedDate: string): number {
-        const order = new Date(orderDate);
-        const expected = new Date(expectedDate);
-        return Math.max(0, (expected.getTime() - order.getTime()) / (1000 * 60 * 60 * 24));
-    }
+    //     console.log('Populated RequestOrders:', this.RequestOrders);
+    // }
 
-    private formatDelay(delay: number): string {
-        return delay > 0 ? `${delay.toFixed(0)} days` : '';
-    }
-    // Integration
-    inventoryLevel: number = 20;
+    // private calculateDelay(orderDate: string, expectedDate: string): number {
+    //     const order = new Date(orderDate);
+    //     const expected = new Date(expectedDate);
+    //     return Math.max(0, (expected.getTime() - order.getTime()) / (1000 * 60 * 60 * 24));
+    // }
 
-    async loadInventoryData() {
-        try {
-            const session = await fetchAuthSession();
-            this.loader.setLoading(false);
+    // private formatDelay(delay: number): string {
+    //     return delay > 0 ? `${delay.toFixed(0)} days` : '';
+    // }
 
-            const cognitoClient = new CognitoIdentityProviderClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
+    // async loadInventoryData() {
+    //     try {
+    //         const session = await fetchAuthSession();
+    //         this.loader.setLoading(false);
 
-            const getUserCommand = new GetUserCommand({
-                AccessToken: session.tokens?.accessToken.toString(),
-            });
-            const getUserResponse = await cognitoClient.send(getUserCommand);
+    //         const cognitoClient = new CognitoIdentityProviderClient({
+    //             region: outputs.auth.aws_region,
+    //             credentials: session.credentials,
+    //         });
 
-            const tenantId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
+    //         const getUserCommand = new GetUserCommand({
+    //             AccessToken: session.tokens?.accessToken.toString(),
+    //         });
+    //         const getUserResponse = await cognitoClient.send(getUserCommand);
 
-            if (!tenantId) {
-                console.error('TenantId not found in user attributes');
-                this.rowData = [];
-                return;
-            }
+    //         const tenantId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
 
-            const lambdaClient = new LambdaClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
+    //         if (!tenantId) {
+    //             console.error('TenantId not found in user attributes');
+    //             this.rowData = [];
+    //             return;
+    //         }
 
-            const invokeCommand = new InvokeCommand({
-                FunctionName: 'Inventory-getItems',
-                Payload: new TextEncoder().encode(
-                    JSON.stringify({
-                        pathParameters: {
-                            tenentId: tenantId, // Spelling as expected by the Lambda function
-                        },
-                    }),
-                ),
-            });
+    //         this.inventoryService.getInventoryItems(tenantId).subscribe(
+    //             (inventoryItems) => {
+    //                 this.inventory = inventoryItems;
+    //                 console.log('Processed inventory items:', this.inventory);
+    //             },
+    //             (error) => {
+    //                 console.error('Error fetching inventory data:', error);
+    //                 this.rowData = [];
+    //             },
+    //         );
+    //     } catch (error) {
+    //         console.error('Error in loadInventoryData:', error);
+    //         this.rowData = [];
+    //     } finally {
+    //         this.isLoading = false;
+    //     }
+    // }
 
-            const lambdaResponse = await lambdaClient.send(invokeCommand);
-            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-            console.log('Response from Lambda:', responseBody);
+    // async loadOrdersData() {
+    //     // this.isLoading = true;
+    //     try {
+    //         const session = await fetchAuthSession();
 
-            if (responseBody.statusCode === 200) {
-                const inventoryItems = JSON.parse(responseBody.body);
-                this.inventory = inventoryItems;
-                console.log('Processed inventory items:', this.rowData);
-            } else {
-                console.error('Error fetching inventory data:', responseBody.body);
-                this.rowData = [];
-            }
-        } catch (error) {
-            console.error('Error in loadInventoryData:', error);
-            this.rowData = [];
-        } finally {
-            // this.isLoading = false;
-        }
-    }
+    //         const cognitoClient = new CognitoIdentityProviderClient({
+    //             region: outputs.auth.aws_region,
+    //             credentials: session.credentials,
+    //         });
 
+    //         const getUserCommand = new GetUserCommand({
+    //             AccessToken: session.tokens?.accessToken.toString(),
+    //         });
+    //         const getUserResponse = await cognitoClient.send(getUserCommand);
 
-    isLoading: boolean = true;
-    async loadOrdersData() {
-        // this.isLoading = true;
-        try {
-            const session = await fetchAuthSession();
+    //         const tenentId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
 
-            const cognitoClient = new CognitoIdentityProviderClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
+    //         if (!tenentId) {
+    //             console.error('TenentId not found in user attributes');
+    //             this.rowData = [];
+    //             return;
+    //         }
 
-            const getUserCommand = new GetUserCommand({
-                AccessToken: session.tokens?.accessToken.toString(),
-            });
-            const getUserResponse = await cognitoClient.send(getUserCommand);
+    //         const lambdaClient = new LambdaClient({
+    //             region: outputs.auth.aws_region,
+    //             credentials: session.credentials,
+    //         });
 
-            const tenentId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
+    //         const invokeCommand = new InvokeCommand({
+    //             FunctionName: 'getOrders',
+    //             Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: tenentId } })),
+    //         });
 
-            if (!tenentId) {
-                console.error('TenentId not found in user attributes');
-                this.rowData = [];
-                return;
-            }
+    //         const lambdaResponse = await lambdaClient.send(invokeCommand);
+    //         const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+    //         console.log('Response from Lambda:', responseBody);
 
-            const lambdaClient = new LambdaClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
+    //         if (responseBody.statusCode === 200) {
+    //             const orders = JSON.parse(responseBody.body);
+    //             this.orders = orders;
+    //             console.log('Processed orders from orders:', orders);
+    //         } else {
+    //             console.error('Error fetching orders data:', responseBody.body);
+    //             this.rowData = [];
+    //         }
+    //     } catch (error) {
+    //         console.error('Error in loadOrdersData:', error);
+    //         this.rowData = [];
+    //     } finally {
+    //         // this..isLoading = false;
+    //     }
+    // }
 
-            const invokeCommand = new InvokeCommand({
-                FunctionName: 'getOrders',
-                Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: tenentId } })),
-            });
+    // async loadStockData() {
+    //     // this.isLoading = true;
+    //     try {
+    //         const session = await fetchAuthSession();
 
-            const lambdaResponse = await lambdaClient.send(invokeCommand);
-            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-            console.log('Response from Lambda:', responseBody);
+    //         const cognitoClient = new CognitoIdentityProviderClient({
+    //             region: outputs.auth.aws_region,
+    //             credentials: session.credentials,
+    //         });
 
-            if (responseBody.statusCode === 200) {
-                const orders = JSON.parse(responseBody.body);
-                this.orders = orders;
-                console.log('Processed orders from orders:', orders);
-            } else {
-                console.error('Error fetching orders data:', responseBody.body);
-                this.rowData = [];
-            }
-        } catch (error) {
-            console.error('Error in loadOrdersData:', error);
-            this.rowData = [];
-        } finally {
-            // this..isLoading = false;
-        }
-    }
+    //         const getUserCommand = new GetUserCommand({
+    //             AccessToken: session.tokens?.accessToken.toString(),
+    //         });
+    //         const getUserResponse = await cognitoClient.send(getUserCommand);
 
-    async loadStockData() {
-        // this.isLoading = true;
-        try {
-            const session = await fetchAuthSession();
+    //         const tenentId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
+    //         // const tenentId = '1718890159961-q85m9';
 
-            const cognitoClient = new CognitoIdentityProviderClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
+    //         if (!tenentId) {
+    //             console.error('TenentId not found in user attributes');
+    //             // this.rowData = [];
+    //             return;
+    //         }
 
-            const getUserCommand = new GetUserCommand({
-                AccessToken: session.tokens?.accessToken.toString(),
-            });
-            const getUserResponse = await cognitoClient.send(getUserCommand);
+    //         const lambdaClient = new LambdaClient({
+    //             region: outputs.auth.aws_region,
+    //             credentials: session.credentials,
+    //         });
 
-            const tenentId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
-            // const tenentId = '1718890159961-q85m9';
+    //         const invokeCommand = new InvokeCommand({
+    //             FunctionName: 'getStockRequests',
+    //             Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: tenentId } })),
+    //         });
 
-            if (!tenentId) {
-                console.error('TenentId not found in user attributes');
-                // this.rowData = [];
-                return;
-            }
+    //         const lambdaResponse = await lambdaClient.send(invokeCommand);
+    //         const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+    //         console.log('Response from Lambda:', responseBody);
 
-            const lambdaClient = new LambdaClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
+    //         if (responseBody.statusCode === 200) {
+    //             const stock = JSON.parse(responseBody.body);
+    //             this.stockRequest = stock;
+    //             console.log('Processed stock requests:', stock);
+    //         } else {
+    //             console.error('Error fetching orders data:', responseBody.body);
+    //             // this.rowData = [];
+    //         }
+    //     } catch (error) {
+    //         console.error('Error in loadOrdersData:', error);
+    //         // this.rowData = [];
+    //     } finally {
+    //         // this..isLoading = false;
+    //     }
+    // }
 
-            const invokeCommand = new InvokeCommand({
-                FunctionName: 'getStockRequests',
-                Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: tenentId } })),
-            });
+    // async fetchUsers() {
+    //     try {
+    //         const session = await fetchAuthSession();
 
-            const lambdaResponse = await lambdaClient.send(invokeCommand);
-            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-            console.log('Response from Lambda:', responseBody);
+    //         const lambdaClient = new LambdaClient({
+    //             region: outputs.auth.aws_region,
+    //             credentials: session.credentials,
+    //         });
 
-            if (responseBody.statusCode === 200) {
-                const stock = JSON.parse(responseBody.body);
-                this.stockRequest = stock;
-                console.log('Processed stock requests:', stock);
-            } else {
-                console.error('Error fetching orders data:', responseBody.body);
-                // this.rowData = [];
-            }
-        } catch (error) {
-            console.error('Error in loadOrdersData:', error);
-            // this.rowData = [];
-        } finally {
-            // this..isLoading = false;
-        }
-    }
+    //         // Retrieve the custom attribute using GetUserCommand
+    //         const client = new CognitoIdentityProviderClient({
+    //             region: outputs.auth.aws_region,
+    //             credentials: session.credentials,
+    //         });
 
-    async fetchUsers() {
-        try {
-            const session = await fetchAuthSession();
+    //         const getUserCommand = new GetUserCommand({
+    //             AccessToken: session.tokens?.accessToken.toString(),
+    //         });
+    //         const getUserResponse = await client.send(getUserCommand);
 
-            const lambdaClient = new LambdaClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
+    //         const adminUniqueAttribute = getUserResponse.UserAttributes?.find(
+    //             (attr) => attr.Name === 'custom:tenentId',
+    //         )?.Value;
 
-            // Retrieve the custom attribute using GetUserCommand
-            const client = new CognitoIdentityProviderClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
+    //         const payload = JSON.stringify({
+    //             userPoolId: outputs.auth.user_pool_id,
+    //             tenentId: adminUniqueAttribute,
+    //         });
 
-            const getUserCommand = new GetUserCommand({
-                AccessToken: session.tokens?.accessToken.toString(),
-            });
-            const getUserResponse = await client.send(getUserCommand);
+    //         const invokeCommand = new InvokeCommand({
+    //             FunctionName: 'getUsers',
+    //             Payload: new TextEncoder().encode(payload),
+    //         });
 
-            const adminUniqueAttribute = getUserResponse.UserAttributes?.find(
-                (attr) => attr.Name === 'custom:tenentId',
-            )?.Value;
+    //         const lambdaResponse = await lambdaClient.send(invokeCommand);
+    //         const users = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+    //         // console.log('Users received from Lambda:', users);
 
-            const payload = JSON.stringify({
-                userPoolId: outputs.auth.user_pool_id,
-                tenentId: adminUniqueAttribute,
-            });
+    //         this.userCount = Array.isArray(users) ? users.length : 0;
+    //         console.log('Number of users received:', this.userCount);
+    //     } catch (error) {
+    //         console.error('Error fetching users:', error);
+    //         this.userCount = 0; // Ensure user count is set to 0 in case of errors
+    //     } finally {
+    //         // this..isLoading = false;
+    //     }
+    // }
 
-            const invokeCommand = new InvokeCommand({
-                FunctionName: 'getUsers',
-                Payload: new TextEncoder().encode(payload),
-            });
+    // private async fetchAllData() {
+    //     await Promise.all([this.loadInventoryData(), this.fetchUsers(), this.loadOrdersData(), this.loadStockData()]);
+    // }
 
-            const lambdaResponse = await lambdaClient.send(invokeCommand);
-            const users = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-            // console.log('Users received from Lambda:', users);
-
-            this.userCount = Array.isArray(users) ? users.length : 0;
-            console.log('Number of users received:', this.userCount);
-        } catch (error) {
-            console.error('Error fetching users:', error);
-            this.userCount = 0; // Ensure user count is set to 0 in case of errors
-        } finally {
-            // this..isLoading = false;
-        }
-    }
-
-    sidebarOpen: boolean = false;
-
-    toggleSidebar() {
-        this.sidebarOpen = !this.sidebarOpen;
-    }
-
-    async ngOnInit() {
-        this.titleService.updateTitle('Dashboard');
-
-        await this.loadInventoryData();
-        await this.fetchUsers();
-        // await this.dashData();
-        await this.loadOrdersData();
-        await this.loadStockData();
-        this.processDashboardData();
-        this.populateRequestOrders(this.stockRequest, this.orders);
-        // this.RequestOrders = await this.populateRequestOrders(this.stockRequest, this.orders);
-
-        // Update cardData with the fetched information
-        this.updateCardData();
-        this.updateChartConfigs();
-        this.initializeDashboard();
-        this.loadState();
-        this.isLoading = false;
-    }
-
-    async updateChartConfigs() {
-        try {
-            const data = await this.service.getMonthlyRequest();
-            if (data) {
-                this.chartConfigs = [
-                    {
-                        type: 'bar',
-                        data: {
-                            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-                            values: data.monthlySales
-                        },
-                        title: 'Monthly Sales',
-                        component: 'BarChartComponent'
-                    },
-                    {
-                        type: 'line',
-                        data: {
-                            categories: ['Q1', 'Q2', 'Q3', 'Q4'],
-                            values: data.quarterlyRevenue
-                        },
-                        title: 'Quarterly Revenue',
-                        component: 'LineChartComponent'
-                    },
-                    {
-                        type: 'pie',
-                        data: Object.entries(data.marketShare).map(([name, value]) => ({ name, value })),
-                        title: 'Market Share',
-                        component: 'PieChartComponent'
-                    }
-                ];
-            } else {
-                console.error('Failed to fetch data from the service');
-            }
-        } catch (error) {
-            console.error('Error updating chart configs:', error);
-        }
-    }
+    // async updateChartConfigs() {
+    //     try {
+    //         const data = await this.service.getMonthlyRequest();
+    //         if (data) {
+    //             this.chartConfigs = [
+    //                 {
+    //                     type: 'bar',
+    //                     data: {
+    //                         categories: [
+    //                             'Jan',
+    //                             'Feb',
+    //                             'Mar',
+    //                             'Apr',
+    //                             'May',
+    //                             'Jun',
+    //                             'Jul',
+    //                             'Aug',
+    //                             'Sep',
+    //                             'Oct',
+    //                             'Nov',
+    //                             'Dec',
+    //                         ],
+    //                         values: data.monthlySales,
+    //                     },
+    //                     title: 'Monthly Sales',
+    //                     component: 'BarChartComponent',
+    //                 },
+    //                 {
+    //                     type: 'line',
+    //                     data: {
+    //                         categories: ['Q1', 'Q2', 'Q3', 'Q4'],
+    //                         values: data.quarterlyRevenue,
+    //                     },
+    //                     title: 'Quarterly Revenue',
+    //                     component: 'LineChartComponent',
+    //                 },
+    //                 {
+    //                     type: 'pie',
+    //                     data: Object.entries(data.marketShare).map(([name, value]) => ({ name, value })),
+    //                     title: 'Market Share',
+    //                     component: 'PieChartComponent',
+    //                 },
+    //             ];
+    //         } else {
+    //             console.error('Failed to fetch data from the service');
+    //         }
+    //     } catch (error) {
+    //         console.error('Error updating chart configs:', error);
+    //     }
+    // }
 
     loadState() {
         try {
-            const savedState = localStorage.getItem('dashboardState');
+            const savedState = this.dashService.getState();
             if (savedState) {
                 const parsedState = JSON.parse(savedState);
                 if (Array.isArray(parsedState)) {
                     this.dashboard = parsedState;
                 } else {
                     console.error('Saved state is not an array, initializing default dashboard');
-                    this.initializeDashboard();
+                    this.dashboard = this.initializeDashboard();
                 }
             } else {
-                this.initializeDashboard();
+                this.dashboard = this.initializeDashboard();
             }
         } catch (error) {
             console.error('Error loading dashboard state:', error);
@@ -650,163 +544,133 @@ export class DashboardComponent implements OnInit {
         }
     }
 
-    saveState() {
-        this.saveTrigger.next();
-    }
+    // processDashboardData() {
+    //     this.dashboardData = this.service.processDashboardData(this.orders, this.stockRequest, this.inventory);
+    //     this.calculateMetricPerformance();
+    // }
 
-    private persistState() {
-        localStorage.setItem('dashboardState', JSON.stringify(this.dashboard));
-    }
+    // calculateMetricPerformance() {
+    //     if (!this.dashboardData || !this.dashboardData.metricConfigs) {
+    //         console.error('Dashboard data or metric configs are missing');
+    //         return;
+    //     }
 
-    processDashboardData() {
-        this.dashboardData = this.service.processDashboardData(this.orders, this.stockRequest, this.inventory);
-        this.calculateMetricPerformance();
-    }
+    //     const metrics = ['avgFulfillmentTime', 'backorders', 'inventoryLevels'];
+    //     metrics.forEach((metric) => {
+    //         const config = this.dashboardData.metricConfigs[metric];
+    //         if (!config) {
+    //             console.warn(`Config for metric ${metric} is missing`);
+    //             return;
+    //         }
 
-    calculateMetricPerformance() {
-        if (!this.dashboardData || !this.dashboardData.metricConfigs) {
-            console.error('Dashboard data or metric configs are missing');
-            return;
-        }
+    //         let currentValue = this.dashboardData[metric];
+    //         if (currentValue === undefined) {
+    //             console.warn(`Value for metric ${metric} is missing`);
+    //             return;
+    //         }
 
-        const metrics = ['avgFulfillmentTime', 'backorders', 'inventoryLevels'];
-        metrics.forEach((metric) => {
-            const config = this.dashboardData.metricConfigs[metric];
-            if (!config) {
-                console.warn(`Config for metric ${metric} is missing`);
-                return;
-            }
+    //         if (metric === 'avgFulfillmentTime') {
+    //             currentValue = this.parseTimeToHours(currentValue);
+    //         }
 
-            let currentValue = this.dashboardData[metric];
-            if (currentValue === undefined) {
-                console.warn(`Value for metric ${metric} is missing`);
-                return;
-            }
+    //         let percentageChange =
+    //             config.baseline !== 0 ? ((currentValue - config.baseline) / config.baseline) * 100 : 0;
+    //         if (config.isInverted) {
+    //             percentageChange = -percentageChange;
+    //         }
 
-            if (metric === 'avgFulfillmentTime') {
-                currentValue = this.parseTimeToHours(currentValue);
-            }
+    //         let color: 'green' | 'yellow' | 'red';
+    //         if (percentageChange >= config.goodThreshold) {
+    //             color = 'green';
+    //         } else if (percentageChange <= config.badThreshold) {
+    //             color = 'red';
+    //         } else {
+    //             color = 'yellow';
+    //         }
 
-            let percentageChange =
-                config.baseline !== 0 ? ((currentValue - config.baseline) / config.baseline) * 100 : 0;
-            if (config.isInverted) {
-                percentageChange = -percentageChange;
-            }
+    //         this.metricPerformance[metric] = {
+    //             value: this.dashboardData[metric],
+    //             percentageChange: Number(percentageChange.toFixed(2)),
+    //             color,
+    //         };
+    //     });
 
-            let color: 'green' | 'yellow' | 'red';
-            if (percentageChange >= config.goodThreshold) {
-                color = 'green';
-            } else if (percentageChange <= config.badThreshold) {
-                color = 'red';
-            } else {
-                color = 'yellow';
-            }
+    //     // Handle topSeller separately
+    //     if (this.dashboardData.topSeller && this.dashboardData.topSellerPercentage !== undefined) {
+    //         this.metricPerformance['topSeller'] = {
+    //             value: `${this.dashboardData.topSeller} (${this.dashboardData.topSellerPercentage.toFixed(1)}%)`,
+    //             percentageChange: this.dashboardData.topSellerPercentage,
+    //             color: 'green', // You might want to implement a different logic for color here
+    //         };
+    //     } else {
+    //         console.warn('Top seller data is missing');
+    //     }
+    // }
 
-            this.metricPerformance[metric] = {
-                value: this.dashboardData[metric],
-                percentageChange: Number(percentageChange.toFixed(2)),
-                color,
-            };
-        });
+    // updateCardData() {
+    //     this.cardData = [
+    //         {
+    //             title: 'Avg Fulfillment Time',
+    //             value: this.dashboardData.avgFulfillmentTime,
+    //             icon: 'hourglass_full',
+    //             type: 'string',
+    //             change: this.metricPerformance['avgFulfillmentTime'].percentageChange,
+    //             color: this.metricPerformance['avgFulfillmentTime'].color,
+    //         },
+    //         {
+    //             title: 'Backorders',
+    //             value: this.dashboardData.backorders,
+    //             icon: 'assignment_return',
+    //             type: 'number',
+    //             change: this.metricPerformance['backorders'].percentageChange,
+    //             color: this.metricPerformance['backorders'].color,
+    //         },
+    //         {
+    //             title: 'Inventory Levels',
+    //             value: this.dashboardData.inventoryLevels,
+    //             icon: 'storage',
+    //             type: 'number',
+    //             change: this.metricPerformance['inventoryLevels'].percentageChange,
+    //             color: this.metricPerformance['inventoryLevels'].color,
+    //         },
+    //         {
+    //             title: 'Most Requested',
+    //             value: `${this.dashboardData.topSeller}`,
+    //             icon: 'star_rate',
+    //             type: 'string',
+    //             change: this.metricPerformance['topSeller'].percentageChange,
+    //             color: this.metricPerformance['topSeller'].color,
+    //         },
+    //     ];
+    // }
 
-        // Handle topSeller separately
-        if (this.dashboardData.topSeller && this.dashboardData.topSellerPercentage !== undefined) {
-            this.metricPerformance['topSeller'] = {
-                value: `${this.dashboardData.topSeller} (${this.dashboardData.topSellerPercentage.toFixed(1)}%)`,
-                percentageChange: this.dashboardData.topSellerPercentage,
-                color: 'green', // You might want to implement a different logic for color here
-            };
-        } else {
-            console.warn('Top seller data is missing');
-        }
-    }
+    // calculateTimeChange(currentValue: string, baselineValue: string): number {
+    //     const current = this.parseTimeToHours(currentValue);
+    //     const baseline = this.parseTimeToHours(baselineValue);
 
-    updateCardData() {
-        this.cardData = [
-            {
-                title: 'Avg Fulfillment Time',
-                value: this.dashboardData.avgFulfillmentTime,
-                icon: 'hourglass_full',
-                type: 'string',
-                change: this.metricPerformance['avgFulfillmentTime'].percentageChange,
-                color: this.metricPerformance['avgFulfillmentTime'].color,
-            },
-            {
-                title: 'Backorders',
-                value: this.dashboardData.backorders,
-                icon: 'assignment_return',
-                type: 'number',
-                change: this.metricPerformance['backorders'].percentageChange,
-                color: this.metricPerformance['backorders'].color,
-            },
-            {
-                title: 'Inventory Levels',
-                value: this.dashboardData.inventoryLevels,
-                icon: 'storage',
-                type: 'number',
-                change: this.metricPerformance['inventoryLevels'].percentageChange,
-                color: this.metricPerformance['inventoryLevels'].color,
-            },
-            {
-                title: 'Most Requested',
-                value: `${this.dashboardData.topSeller}`,
-                icon: 'star_rate',
-                type: 'string',
-                change: this.metricPerformance['topSeller'].percentageChange,
-                color: this.metricPerformance['topSeller'].color,
-            },
-        ];
-    }
+    //     if (baseline === 0) return 0;
+    //     return parseFloat((((current - baseline) / baseline) * 100).toFixed(2));
+    // }
 
-    calculateTimeChange(currentValue: string, baselineValue: string): number {
-        const current = this.parseTimeToHours(currentValue);
-        const baseline = this.parseTimeToHours(baselineValue);
+    // parseTimeToHours(value: string): number {
+    //     const parts = value.split(' ');
+    //     let hours = 0;
+    //     for (let i = 0; i < parts.length; i += 2) {
+    //         const amount = parseInt(parts[i], 10);
+    //         const unit = parts[i + 1].toLowerCase();
+    //         if (unit.startsWith('day')) {
+    //             hours += amount * 24;
+    //         } else if (unit.startsWith('hr')) {
+    //             hours += amount;
+    //         }
+    //     }
+    //     return hours;
+    // }
 
-        if (baseline === 0) return 0;
-        return parseFloat((((current - baseline) / baseline) * 100).toFixed(2));
-    }
-
-    parseTimeToHours(value: string): number {
-        const parts = value.split(' ');
-        let hours = 0;
-        for (let i = 0; i < parts.length; i += 2) {
-            const amount = parseInt(parts[i], 10);
-            const unit = parts[i + 1].toLowerCase();
-            if (unit.startsWith('day')) {
-                hours += amount * 24;
-            } else if (unit.startsWith('hr')) {
-                hours += amount;
-            }
-        }
-        return hours;
-    }
-
-    calculateChange(currentValue: number, baselineValue: number): number {
-        if (baselineValue === 0) return currentValue > 0 ? 100 : 0;
-        return parseFloat((((currentValue - baselineValue) / baselineValue) * 100).toFixed(2));
-    }
-
-    private parseTimeValue(value: number | string): number {
-        if (typeof value === 'number') return value;
-
-        const timeRegex = /(\d+)\s*(hrs?|hours?|days?)/i;
-        const match = value.match(timeRegex);
-
-        if (match) {
-            const amount = parseInt(match[1], 10);
-            const unit = match[2].toLowerCase();
-
-            if (unit.startsWith('hr') || unit.startsWith('hour')) {
-                return amount;
-            } else if (unit.startsWith('day')) {
-                return amount * 24; // Convert days to hours
-            }
-        }
-
-        // If the string doesn't match the expected format, try parsing it as a number
-        const numericValue = parseFloat(value);
-        return isNaN(numericValue) ? 0 : numericValue;
-    }
+    // calculateChange(currentValue: number, baselineValue: number): number {
+    //     if (baselineValue === 0) return currentValue > 0 ? 100 : 0;
+    //     return parseFloat((((currentValue - baselineValue) / baselineValue) * 100).toFixed(2));
+    // }
 
     toggleDeleteMode() {
         this.isDeleteMode = !this.isDeleteMode;
@@ -820,8 +684,7 @@ export class DashboardComponent implements OnInit {
 
         dialogRef.afterClosed().subscribe((result) => {
             if (result) {
-                this.dashboard = this.dashboard.filter((dashboardItem) => dashboardItem !== item);
-                this.saveState();
+                this.dashboard = this.dashService.removeWidget(item);
                 this.isDeleteMode = false;
             }
         });
@@ -831,114 +694,119 @@ export class DashboardComponent implements OnInit {
         this.isSidepanelOpen = true;
     }
 
-    closeSidepanel() {
+    addWidget(chartConfig: ChartConfig) {
+        this.dashService.addWidget(chartConfig);
         this.isSidepanelOpen = false;
     }
 
-    addWidget(chartConfig: any) {
-        const newItem: GridsterItem = {
-            cols: 6,
-            rows: 2,
-            y: 0,
-            x: 0,
-            cardId: chartConfig.title.toLowerCase().replace(' ', '-'),
-            name: chartConfig.title,
-            component: chartConfig.component,
-            chartConfig: chartConfig,
-        };
-        this.dashboard.push(newItem);
-        this.saveState();
-        this.closeSidepanel();
-    }
-
     initializeDashboard() {
-        if (this.cardData && this.cardData.length > 0) {
-            this.dashboard = [
-                // Existing cards
-                ...this.cardData.map((data, index) => ({
-                    cols: 3,
-                    rows: 1,
-                    y: 0,
-                    x: index * 3,
-                    cardData: data,
-                })),
-                // First full-width item
-                {
-                    cols: 12,
-                    rows: 3,
-                    y: 2,
-                    x: 0,
-                    cardId: 'sales-chart',
-                    name: 'Sales Chart',
-                    component: 'SaleschartComponent',
-                },
-                // Second full-width item(0)
-                {
-                    cols: 12,
-                    rows: 3,
-                    y: 4,
-                    x: 0,
-                    cardId: 'bar-chart',
-                    name: 'Bar Chart',
-                    component: 'BarchartComponent',
-                },
-                // First half-width item
-                {
-                    cols: 6,
-                    rows: 3,
-                    y: 6,
-                    x: 0,
-                    cardId: 'bubble-chart',
-                    name: 'Bubble Chart',
-                    component: 'BubblechartComponent',
-                },
-                // Second half-width item
-                {
-                    cols: 6,
-                    rows: 4,
-                    y: 6,
-                    x: 6,
-                    cardId: 'donut-chart',
-                    name: 'Donut Chart',
-                    component: 'DonutchartComponent',
-                },
-            ];
-        }
-
-        this.cdr.detectChanges();
+        this.cardData = [
+            {
+                title: 'Total Revenue',
+                value: 1250000,
+                icon: 'attach_money',
+                type: 'currency',
+                change: 15.2,
+                color: 'green',
+            },
+            {
+                title: 'New Customers',
+                value: 847,
+                icon: 'person_add',
+                type: 'number',
+                change: 5.6,
+                color: 'green',
+            },
+            {
+                title: 'Customer Satisfaction',
+                value: 92,
+                icon: 'sentiment_satisfied',
+                type: 'percentage',
+                change: -2.1,
+                color: 'yellow',
+            },
+            {
+                title: 'Orders Processed',
+                value: 1532,
+                icon: 'shopping_cart',
+                type: 'number',
+                change: 8.3,
+                color: 'green',
+            },
+        ];
+        this.dashboard = [
+            // Existing cards
+            // ...this.cardData.map((data, index) => ({
+            //     cols: 3,
+            //     rows: 1,
+            //     y: 0,
+            //     x: index * 3,
+            //     cardData: data,
+            // })),
+            // First full-width item
+            // {
+            //     cols: 12,
+            //     rows: 3,
+            //     y: 2,
+            //     x: 0,
+            //     cardId: 'sales-chart',
+            //     name: 'Sales Chart',
+            //     component: 'SaleschartComponent',
+            // },
+            // // Second full-width item(0)
+            // {
+            //     cols: 12,
+            //     rows: 3,
+            //     y: 4,
+            //     x: 0,
+            //     cardId: 'bar-chart',
+            //     name: 'Bar Chart',
+            //     component: 'BarchartComponent',
+            // },
+            // // First half-width item
+            // {
+            //     cols: 6,
+            //     rows: 3,
+            //     y: 6,
+            //     x: 0,
+            //     cardId: 'bubble-chart',
+            //     name: 'Bubble Chart',
+            //     component: 'BubblechartComponent',
+            // },
+            // // Second half-width item
+            // {
+            //     cols: 6,
+            //     rows: 4,
+            //     y: 6,
+            //     x: 6,
+            //     cardId: 'donut-chart',
+            //     name: 'Donut Chart',
+            //     component: 'DonutchartComponent',
+            // },
+        ];
+        this.CDRService.detectChanges();
+        return this.dashboard;
     }
 
     getColor(color: string): string {
-        switch (color) {
-            case 'green':
-                return 'text-green-500';
-            case 'red':
-                return 'text-red-500';
-            case 'yellow':
-                return 'text-yellow-500';
-            default:
-                return 'text-gray-500';
-        }
+        const colorMap: { [key: string]: string } = {
+            green: 'text-green-500',
+            red: 'text-red-500',
+            yellow: 'text-yellow-500',
+        };
+        return colorMap[color] || 'text-gray-500';
     }
 
     getIcon(change: number | undefined): string {
-        if (change === undefined) return 'remove';
-        return change >= 0 ? 'arrow_upward' : 'arrow_downward';
+        return change === undefined ? 'remove' : change >= 0 ? 'arrow_upward' : 'arrow_downward';
     }
 
     formatValue(value: number | string, type: string): string {
         if (typeof value === 'number') {
-            switch (type) {
-                case 'currency':
-                    return new Intl.NumberFormat('af', {
-                        style: 'currency',
-                        currency: 'ZAR',
-                    }).format(value);
-                case 'number':
-                    return value.toString();
-                default:
-                    return value.toString();
+            if (type === 'currency') {
+                return new Intl.NumberFormat('af', { style: 'currency', currency: 'ZAR' }).format(value);
             }
+            return value.toString();
         }
         return value;
     }
@@ -950,19 +818,45 @@ export class DashboardComponent implements OnInit {
     }
 
     getColorHex(color: string): string {
-        switch (color) {
-            case 'green':
-                return '#4CAF50';
-            case 'red':
-                return '#F44336';
-            case 'yellow':
-                return '#FFC107';
-            default:
-                return '#9E9E9E';
-        }
+        const colorMap: { [key: string]: string } = {
+            green: '#4CAF50',
+            red: '#F44336',
+            yellow: '#FFC107',
+        };
+        return colorMap[color] || '#9E9E9E';
     }
 
     getChangeColor(change: number): string {
         return change >= 0 ? 'positive-change' : 'negative-change';
+    }
+
+    refreshDashboard() {
+        this.isLoading = true;
+        this.dataCollectionService.generateChartConfigs().subscribe({
+            next: (chartConfigs) => {
+                this.updateDashboardWidgets(chartConfigs);
+                this.isLoading = false;
+            },
+            error: (error) => {
+                console.error('Error refreshing dashboard:', error);
+                this.isLoading = false;
+            },
+        });
+    }
+
+    updateDashboardWidgets(newChartConfigs: ChartConfig[]) {
+        this.dashboard = this.dashboard.map((item) => {
+            const updatedConfig = newChartConfigs.find((config) => config.title === item.name);
+            if (updatedConfig) {
+                return {
+                    ...item,
+                    chartConfig: updatedConfig,
+                };
+            }
+            return item;
+        });
+
+        this.dashService.updateDashboard(this.dashboard);
+        this.CDRService.detectChanges();
     }
 }

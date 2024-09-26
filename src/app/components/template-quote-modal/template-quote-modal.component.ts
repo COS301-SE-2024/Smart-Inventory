@@ -19,6 +19,8 @@ import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
 import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
 import outputs from '../../../../amplify_outputs.json';
 import { LoadingSpinnerComponent } from '../loader/loading-spinner.component';
+import { InventoryService } from '../../../../amplify/services/inventory.service';
+import { SuppliersService } from '../../../../amplify/services/suppliers.service';
 
 interface QuoteItem {
     item: { sku: string; description: string; inventoryID: string };
@@ -78,7 +80,9 @@ export class templateQuoteModalComponent implements OnInit {
     constructor(
         public dialogRef: MatDialogRef<templateQuoteModalComponent>,
         @Inject(MAT_DIALOG_DATA) public data: any,
+        private inventoryService: InventoryService,
         private snackBar: MatSnackBar,
+        private suppliersService: SuppliersService
     ) {
         this.isEditing = data.isEditing || false;
         this.isNewQuote = data.isNewQuote || false;
@@ -218,77 +222,61 @@ export class templateQuoteModalComponent implements OnInit {
 
     async loadSuppliers() {
         try {
-            const session = await fetchAuthSession();
-            const tenentId = await this.getTenentId(session);
-
-            const lambdaClient = new LambdaClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
-
-            const invokeCommand = new InvokeCommand({
-                FunctionName: 'getSuppliers',
-                Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: tenentId } })),
-            });
-
-            const lambdaResponse = await lambdaClient.send(invokeCommand);
-            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
-            if (responseBody.statusCode === 200) {
-                const suppliers = JSON.parse(responseBody.body);
-                this.suppliers = suppliers.map((supplier: any) => ({
-                    company_name: supplier.company_name,
-                    supplierID: supplier.supplierID,
+          const session = await fetchAuthSession();
+          const tenantId = await this.getTenentId(session);
+    
+          this.suppliersService.getSuppliers(tenantId).subscribe(
+            (response: any) => {
+              if (response && Array.isArray(response)) {
+                this.suppliers = response.map((supplier: any) => ({
+                  company_name: supplier.company_name,
+                  supplierID: supplier.supplierID,
                 }));
                 console.log('Suppliers:', this.suppliers);
-            } else {
-                console.error('Error fetching suppliers data:', responseBody.body);
+              } else {
+                console.error('Invalid response format for suppliers');
                 this.suppliers = [];
+              }
+            },
+            (error) => {
+              console.error('Error fetching suppliers data:', error);
+              this.suppliers = [];
             }
+          );
         } catch (error) {
-            console.error('Error in loadSuppliers:', error);
-            this.suppliers = [];
+          console.error('Error in loadSuppliers:', error);
+          this.suppliers = [];
         }
-    }
+      }
 
     async loadInventoryItems() {
         try {
-            const session = await fetchAuthSession();
-            const tenentId = await this.getTenentId(session);
-
-            const lambdaClient = new LambdaClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
-
-            const invokeCommand = new InvokeCommand({
-                FunctionName: 'Inventory-getItems',
-                Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: tenentId } })),
-            });
-
-            const lambdaResponse = await lambdaClient.send(invokeCommand);
-            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
-            if (responseBody.statusCode === 200) {
-                const inventoryItems = JSON.parse(responseBody.body);
-                this.inventoryItems = inventoryItems.map((item: any) => ({
-                    sku: item.SKU,
-                    description: item.description,
-                    inventoryID: item.inventoryID, // Add this line
-                }));
-                // Initialize filtered items for each quote item
-                this.quoteItems.forEach((quoteItem) => {
-                    quoteItem.filteredItems.next(this.inventoryItems.slice());
-                });
-            } else {
-                console.error('Error fetching inventory data:', responseBody.body);
-                this.inventoryItems = [];
+          const session = await fetchAuthSession();
+          const tenantId = await this.getTenentId(session);
+    
+          this.inventoryService.getInventoryItems(tenantId).subscribe(
+            (inventoryItems) => {
+              this.inventoryItems = inventoryItems.map((item: any) => ({
+                sku: item.SKU,
+                description: item.description,
+                inventoryID: item.inventoryID,
+              }));
+    
+              // Initialize filtered items for each quote item
+              this.quoteItems.forEach((quoteItem) => {
+                quoteItem.filteredItems.next(this.inventoryItems.slice());
+              });
+            },
+            (error) => {
+              console.error('Error fetching inventory data:', error);
+              this.inventoryItems = [];
             }
+          );
         } catch (error) {
-            console.error('Error in loadInventoryItems:', error);
-            this.inventoryItems = [];
+          console.error('Error in loadInventoryItems:', error);
+          this.inventoryItems = [];
         }
-    }
+      }
 
     async getTenentId(session: any): Promise<string> {
         const cognitoClient = new CognitoIdentityProviderClient({
@@ -349,57 +337,6 @@ export class templateQuoteModalComponent implements OnInit {
     //     }
     // }
     saveChanges() {}
-
-    private async updateQuote(updatedQuote: any) {
-        try {
-            const session = await fetchAuthSession();
-            const tenentId = await this.getTenentId(session);
-
-            const lambdaClient = new LambdaClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
-
-            const payload = {
-                pathParameters: {
-                    tenentId: tenentId,
-                    quoteId: updatedQuote.quoteId,
-                },
-                body: JSON.stringify({
-                    items: updatedQuote.items.map((item: any) => ({
-                        ItemSKU: item.ItemSKU,
-                        Quantity: item.Quantity,
-                        inventoryID: item.inventoryID,
-                    })),
-                    suppliers: updatedQuote.suppliers.map((supplier: any) => ({
-                        company_name: supplier.company_name,
-                        supplierID: supplier.supplierID,
-                    })),
-                }),
-            };
-
-            console.log('Updating quote with payload:', JSON.stringify(payload, null, 2));
-
-            const invokeCommand = new InvokeCommand({
-                FunctionName: 'updateQuoteDetails', // Make sure this Lambda function name is correct
-                Payload: new TextEncoder().encode(JSON.stringify(payload)),
-            });
-
-            const lambdaResponse = await lambdaClient.send(invokeCommand);
-            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
-            console.log('Lambda response:', JSON.stringify(responseBody, null, 2));
-
-            if (responseBody.statusCode === 200) {
-                console.log('Quote updated successfully');
-            } else {
-                throw new Error(responseBody.body || 'Failed to update quote');
-            }
-        } catch (error) {
-            console.error('Error updating quote:', error);
-            throw error; // Re-throw the error to be caught in the saveChanges method
-        }
-    }
 
     onQuoteChanged() {
         this.hasUnsavedChanges = true;

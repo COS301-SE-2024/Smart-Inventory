@@ -21,6 +21,8 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { Router } from '@angular/router';
 import { UploadItemsModalComponent } from 'app/components/upload-items-modal/upload-items-modal.component';
 import { InventoryService } from '../../../../amplify/services/inventory.service';
+import { TeamsService } from '../../../../amplify/services/teams.service';
+import { SuppliersService } from '../../../../amplify/services/suppliers.service';
 
 import {
     MatSnackBar,
@@ -104,7 +106,10 @@ export class InventoryComponent implements OnInit {
         private dialog: MatDialog,
         private snackBar: MatSnackBar,
         private router: Router,
-        private inventoryService: InventoryService
+        private inventoryService: InventoryService,
+        private teamService: TeamsService,
+        private suppliersService: SuppliersService
+  
     ) {
         Amplify.configure(outputs);
     }
@@ -138,7 +143,7 @@ export class InventoryComponent implements OnInit {
             getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value || '';
       
           // Use the InventoryService to get users
-          const users = await this.inventoryService.getUsers(outputs.auth.user_pool_id, this.tenantId).toPromise();
+          const users = await this.teamService.getUsers(outputs.auth.user_pool_id, this.tenantId).toPromise();
       
           const currentUser = users.find(
             (user: any) =>
@@ -212,7 +217,7 @@ export class InventoryComponent implements OnInit {
 
     async loadSuppliers() {
         try {
-          this.suppliers = await this.inventoryService.getSuppliers(this.tenantId).toPromise();
+          this.suppliers = await this.suppliersService.getSuppliers(this.tenantId).toPromise();
           console.log('Suppliers loaded:', this.suppliers);
         } catch (error) {
           console.error('Error in loadSuppliers:', error);
@@ -391,70 +396,57 @@ export class InventoryComponent implements OnInit {
     }
 
     async requestStock(item: any, quantity: number) {
-        try {
-            if (quantity > item.quantity) {
-                throw new Error('Requested quantity exceeds available stock');
-            }
-
-            const session = await fetchAuthSession();
-
-            const lambdaClient = new LambdaClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
-
-            // Update the inventory
-            const updatedQuantity = item.quantity - quantity;
-            const updateEvent = {
-                data: item,
-                field: 'quantity',
-                newValue: updatedQuantity,
-            };
-            await this.handleCellValueChanged(updateEvent);
-
-            // Create the stock request report
-            const reportPayload = {
-                tenentId: this.tenantId,
-                sku: item.sku || item.SKU,
-                category: item.category,
-                supplier: item.supplier,
-                quantityRequested: quantity.toString(),
-            };
-
-            console.log('Report Payload:', reportPayload);
-
-            const createReportCommand = new InvokeCommand({
-                FunctionName: 'Report-createItem',
-                Payload: new TextEncoder().encode(JSON.stringify({ body: JSON.stringify(reportPayload) })),
-            });
-
-            const lambdaResponse = await lambdaClient.send(createReportCommand);
-            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
-            console.log('Lambda Response:', responseBody);
-
-            if (responseBody.statusCode === 201) {
-                console.log('Stock request report created successfully');
-                await this.logActivity('Requested stock', quantity.toString() + ' of ' + item.sku);
-                await this.loadInventoryData();
-
-                this.snackBar.open('Stock requested successfully', 'Close', {
-                    duration: 3000,
-                    horizontalPosition: 'center',
-                    verticalPosition: 'top',
-                });
-            } else {
-                throw new Error(JSON.stringify(responseBody.body));
-            }
-        } catch (error) {
-            console.error('Error requesting stock:', error);
-
-            this.snackBar.open('Error requesting stock: ' + (error as Error).message, 'Close', {
-                duration: 5000,
-                horizontalPosition: 'center',
-                verticalPosition: 'top',
-            });
-        }
+      try {
+          if (quantity > item.quantity) {
+              throw new Error('Requested quantity exceeds available stock');
+          }
+  
+          // Update the inventory
+          const updatedQuantity = item.quantity - quantity;
+          const updateEvent = {
+              data: item,
+              field: 'quantity',
+              newValue: updatedQuantity,
+          };
+          await this.handleCellValueChanged(updateEvent);
+  
+          // Create the stock request report
+          const reportPayload = {
+              tenentId: this.tenantId,
+              sku: item.sku || item.SKU,
+              category: item.category,
+              supplier: item.supplier,
+              quantityRequested: quantity.toString(),
+          };
+  
+          console.log('Report Payload:', reportPayload);
+  
+          const response = await this.inventoryService.createStockRequest(reportPayload).toPromise();
+  
+          console.log('API Response:', response);
+  
+          if (response && response.stockRequestId) {
+              console.log('Stock request report created successfully');
+              await this.logActivity('Requested stock', quantity.toString() + ' of ' + item.sku);
+              await this.loadInventoryData();
+  
+              this.snackBar.open('Stock requested successfully', 'Close', {
+                  duration: 3000,
+                  horizontalPosition: 'center',
+                  verticalPosition: 'top',
+              });
+          } else {
+              throw new Error('Failed to create stock request report');
+          }
+      } catch (error) {
+          console.error('Error requesting stock:', error);
+  
+          this.snackBar.open('Error requesting stock: ' + (error as Error).message, 'Close', {
+              duration: 5000,
+              horizontalPosition: 'center',
+              verticalPosition: 'top',
+          });
+      }
     }
 
     async logActivity(task: string, details: string) {

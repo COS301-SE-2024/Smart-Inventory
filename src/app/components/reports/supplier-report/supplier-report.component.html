@@ -6,7 +6,7 @@
     <!-- <mat-grid-list cols="3" rowHeight="210px"> -->
 
     <!-- </div> -->
-    <gridster [options]="options">
+    <gridster [options]="options" style="background: transparent !important">
         <gridster-item [item]="items[5]" class="supplier-report">
             <div class="metrics-container">
                 <button style="z-index: 1" mat-icon-button (click)="scrollTiles('left')">
@@ -64,7 +64,7 @@
             <!-- </div> -->
         </gridster-item>
 
-        <gridster-item [item]="items[3]">
+        <gridster-item [item]="items[3]" id="chart">
             <div class="grid-item-content">
                 <app-line
                     *ngIf="chartData"
@@ -75,12 +75,12 @@
             </div>
         </gridster-item>
 
-        <gridster-item [item]="items[4]">
+        <gridster-item [item]="items[4]" id="chart">
             <div class="grid-item-content">
                 <app-radar [data]="topSuppliersData"></app-radar>
             </div>
         </gridster-item>
-        <gridster-item [item]="items[2]">
+        <gridster-item [item]="items[2]" id="chart">
             <div class="grid-item-content">
                 <app-line-bar [data]="lineBarData"></app-line-bar>
             </div>

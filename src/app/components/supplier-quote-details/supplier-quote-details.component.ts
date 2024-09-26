@@ -11,6 +11,7 @@ import { QuoteAcceptConfirmationDialogComponent } from './quote-accept-confirmat
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { LoadingSpinnerComponent } from '../loader/loading-spinner.component';
 import { SupplierRenegotiationModalComponent } from '../supplier-renegotiation-modal/supplier-renegotiation-modal.component';
+import { OrdersService } from '../../../../amplify/services/orders.service';
 
 interface QuoteItem {
   description: string;
@@ -57,7 +58,8 @@ export class SupplierQuoteDetailsComponent implements OnInit {
     orderID: string; 
     orderDate: string;},
     private dialog: MatDialog,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private ordersService: OrdersService
   ) {
     console.log(data);
   }
@@ -70,37 +72,23 @@ export class SupplierQuoteDetailsComponent implements OnInit {
     try {
       const session = await fetchAuthSession();
       const tenentId = await this.getTenentId(session);
-
-      const lambdaClient = new LambdaClient({
-        region: outputs.auth.aws_region,
-        credentials: session.credentials,
-      });
-
-      const invokeCommand = new InvokeCommand({
-        FunctionName: 'getSupplierQuoteDetails',
-        Payload: new TextEncoder().encode(JSON.stringify({
-          pathParameters: {
-            quoteID: this.data.quoteID,
-            supplierID: this.data.supplierID,
-            tenentId: tenentId
+  
+      this.ordersService.getSupplierQuoteDetails(this.data.quoteID, this.data.supplierID, tenentId)
+        .subscribe(
+          (quoteDetails) => {
+            this.supplierInfo = quoteDetails.supplierInfo;
+            this.quoteItems = quoteDetails.quoteItems;
+            this.quoteSummary = quoteDetails.quoteSummary;
+            this.isLoading = false;
+          },
+          (error) => {
+            console.error('Error fetching quote details:', error);
+            this.error = 'Failed to load quote details. Please try again.';
+            this.isLoading = false;
           }
-        })),
-      });
-
-      const lambdaResponse = await lambdaClient.send(invokeCommand);
-      const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
-      if (responseBody.statusCode === 200) {
-        const quoteDetails = JSON.parse(responseBody.body);
-        this.supplierInfo = quoteDetails.supplierInfo;
-        this.quoteItems = quoteDetails.quoteItems;
-        this.quoteSummary = quoteDetails.quoteSummary;
-        this.isLoading = false;
-      } else {
-        throw new Error(responseBody.body || 'Failed to fetch quote details');
-      }
+        );
     } catch (error) {
-      console.error('Error fetching quote details:', error);
+      console.error('Error in loadQuoteDetails:', error);
       this.error = 'Failed to load quote details. Please try again.';
       this.isLoading = false;
     }
@@ -146,13 +134,9 @@ export class SupplierQuoteDetailsComponent implements OnInit {
 
   async acceptQuote(): Promise<void> {
     try {
+      this.isLoading = true;
       const session = await fetchAuthSession();
       const tenentId = await this.getTenentId(session);
-  
-      const lambdaClient = new LambdaClient({
-        region: outputs.auth.aws_region,
-        credentials: session.credentials,
-      });
   
       const payloadBody = {
         orderID: this.data.orderID,
@@ -163,28 +147,20 @@ export class SupplierQuoteDetailsComponent implements OnInit {
         tenentId: tenentId
       };
   
-      // Console log the payload
-      console.log('Payload being sent to acceptQuote Lambda:', payloadBody);
+      console.log('Payload being sent to acceptQuote:', payloadBody);
   
-      const invokeCommand = new InvokeCommand({
-        FunctionName: 'acceptQuote',
-        Payload: new TextEncoder().encode(JSON.stringify({ body: payloadBody })),
-      });
+      const response = await this.ordersService.acceptQuote(payloadBody).toPromise();
   
-      const lambdaResponse = await lambdaClient.send(invokeCommand);
-      const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+      console.log('Response from acceptQuote:', response);
   
-      // Console log the Lambda response
-      console.log('Response from acceptQuote Lambda:', responseBody);
-  
-      if (responseBody.statusCode === 200) {
+      if (response && response.message) {
         this.snackBar.open('Quote accepted successfully', 'Close', {
           duration: 6000,
           verticalPosition: 'top'
         });
-        this.dialogRef.close({ action: 'quoteAccepted' }); // Close the dialog and indicate success
+        this.dialogRef.close({ action: 'quoteAccepted' });
       } else {
-        throw new Error(responseBody.body || 'Failed to accept quote');
+        throw new Error('Failed to accept quote');
       }
     } catch (error) {
       console.error('Error accepting quote:', error);
@@ -193,7 +169,7 @@ export class SupplierQuoteDetailsComponent implements OnInit {
         verticalPosition: 'top'
       });
     } finally {
-      this.isLoading = false; // Set back to false after the process completes
+      this.isLoading = false;
     }
   }
 

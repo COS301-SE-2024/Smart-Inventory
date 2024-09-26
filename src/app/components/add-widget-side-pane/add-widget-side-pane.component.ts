@@ -1,33 +1,23 @@
-import { Component, Input, Output, EventEmitter, Type } from '@angular/core';
+import { Component, Input, Output, EventEmitter, Type, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { templateQuoteModalComponent } from '../template-quote-modal/template-quote-modal.component';
-import { MatDialog, MatDialogModule, MatDialogTitle, MatDialogContent } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { BubblechartComponent } from '../../components/charts/bubblechart/bubblechart.component';
 import { SaleschartComponent } from '../../components/charts/saleschart/saleschart.component';
 import { BarchartComponent } from '../../components/charts/barchart/barchart.component';
 import { DonutchartComponent } from '../../components/charts/donutchart/donutchart.component';
 import { BarChartComponent } from 'app/components/charts/widgets/widgetBar';
+import { ScatterplotComponent } from '../charts/scatterplot/scatterplot.component';
+import { DonutTemplateComponent } from '../charts/donuttemplate/donuttemplate.component';
 import { LineChartComponent } from 'app/components/charts/widgets/widgetLine';
 import { PieChartComponent } from 'app/components/charts/widgets/widgetPie';
-import { GridsterItem } from 'angular-gridster2';
-import { Subject } from 'rxjs';
-
-interface ChartConfig {
-    type: string;
-    data: any;
-    title: string;
-    component: string;
-}
-
-interface DashboardItem extends GridsterItem {
-    cardId?: string;
-    name?: string;
-    component?: string;
-}
+import { BubbleChartComponent } from 'app/components/charts/widgets/widgetBubble';
+import { RadarComponent } from '../charts/radar/radar.component';
+import { LineBarComponent } from '../charts/line-bar/line-bar.component';
+import { ChartConfig, DashboardService } from '../../pages/dashboard/dashboard.service';
+import { DataCollectionService, InventorySummaryItem } from './data-collection.service';
 
 @Component({
     selector: 'app-templates-side-pane',
@@ -37,9 +27,6 @@ interface DashboardItem extends GridsterItem {
         MatButtonModule,
         MatIconModule,
         MatCardModule,
-        MatDialogModule,
-        MatDialogTitle,
-        MatDialogContent,
         templateQuoteModalComponent,
         BarchartComponent,
         DonutchartComponent,
@@ -48,81 +35,83 @@ interface DashboardItem extends GridsterItem {
         LineChartComponent,
         PieChartComponent,
         BarChartComponent,
+        BubbleChartComponent,
+        LineBarComponent,
+        RadarComponent,
+        ScatterplotComponent,
+        DonutTemplateComponent,
     ],
     templateUrl: './add-widget-side-pane.component.html',
     styleUrls: ['./add-widget-side-pane.component.css'],
 })
-export class AddWidgetSidePaneComponent {
-    [x: string]: any;
-    @Input() isAddWidgetOpen: boolean = false;
+export class AddWidgetSidePaneComponent implements OnInit {
+    @Input() isAddWidgetOpen = false;
     @Output() closed = new EventEmitter<void>();
-    dashboard!: Array<DashboardItem>;
-    private saveTrigger = new Subject<void>();
-
-    availableCharts: { name: string; component: string }[] = [
-        { name: 'Monthly Sales', component: 'BarChartComponent' },
-        { name: 'Quarterly Revenue', component: 'LineChartComponent' },
-        { name: 'Market Share', component: 'PieChartComponent' },
-    ];
 
     charts: { [key: string]: Type<any> } = {
-        SaleschartComponent: SaleschartComponent,
-        BarchartComponent: BarchartComponent,
-        BubblechartComponent: BubblechartComponent,
-        DonutchartComponent: DonutchartComponent,
-        BarChartComponent: BarChartComponent,
-        LineChartComponent: LineChartComponent,
-        PieChartComponent: PieChartComponent,
+        SaleschartComponent,
+        BarchartComponent,
+        BubblechartComponent,
+        DonutchartComponent,
+        BarChartComponent,
+        LineChartComponent,
+        PieChartComponent,
+        BubbleChartComponent,
+        LineBarComponent,
+        RadarComponent,
+        ScatterplotComponent,
+        DonutTemplateComponent,
     };
 
-    chartConfigs: ChartConfig[] = [
-        {
-            type: 'bar',
-            data: { categories: ['Jan', 'Feb', 'Mar'], values: [5, 10, 15] },
-            title: 'Monthly Sales',
-            component: 'BarChartComponent',
-        },
-        {
-            type: 'line',
-            data: { categories: ['Jan', 'Feb', 'Mar'], values: [3, 6, 9] },
-            title: 'Quarterly Revenue',
-            component: 'LineChartComponent',
-        },
-        {
-            type: 'pie',
-            data: [
-                { name: 'Item A', value: 30 },
-                { name: 'Item B', value: 70 },
-            ],
-            title: 'Market Share',
-            component: 'PieChartComponent',
-        },
-    ];
-
-    addWidget(chartConfig: any) {
-        const newItem: GridsterItem = {
-            cols: 6,
-            rows: 2,
-            y: 0,
-            x: 0,
-            cardId: chartConfig.title.toLowerCase().replace(' ', '-'),
-            name: chartConfig.title,
-            component: chartConfig.component,
-            chartConfig: chartConfig,
-        };
-        this.dashboard.push(newItem);
-        this.saveState();
-        this.close();
-    }
-
-    saveState() {
-        this.saveTrigger.next();
-    }
+    chartConfigs: ChartConfig[] = [];
+    isLoading = true;
 
     constructor(
-        private dialog: MatDialog,
-        private snackBar: MatSnackBar,
+        private dashService: DashboardService,
+        private dataCollectionService: DataCollectionService,
     ) {}
+
+    ngOnInit() {
+        this.fetchAndProcessData();
+        this.testGetInventorySummary();
+    }
+
+    fetchAndProcessData() {
+        this.isLoading = true;
+        this.dataCollectionService.generateChartConfigs().subscribe({
+            next: (chartConfigs: ChartConfig[]) => {
+                this.chartConfigs = chartConfigs;
+                this.chartConfigs.forEach((chart) => console.log(`${chart.title} configuration:`, chart));
+                this.isLoading = false;
+            },
+            error: (error: any) => {
+                console.error('Error generating chart configs:', error);
+                this.isLoading = false;
+            },
+        });
+    }
+
+    // heres a test to see if the inventory summary data is coming through
+    testGetInventorySummary() {
+        console.log('Testing getInventorySummary...');
+        this.dataCollectionService.getInventorySummary().subscribe(
+            (summaryItems: InventorySummaryItem[]) => {
+                console.log('Inventory Summary Items:', summaryItems);
+                console.log('Number of items:', summaryItems.length);
+                if (summaryItems.length > 0) {
+                    console.log('First item:', summaryItems[0]);
+                }
+            },
+            (error) => {
+                console.error('Error fetching inventory summary:', error);
+            }
+        );
+    }
+
+    addWidget(chartConfig: ChartConfig) {
+        this.dashService.addWidget(chartConfig);
+        this.close();
+    }
 
     close() {
         this.closed.emit();

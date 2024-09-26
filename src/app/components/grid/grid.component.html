@@ -55,6 +55,14 @@
                     class="QAButtons"
                     mat-menu-item
                     color="primary"
+                    *ngIf="getCurrentRoute('inventoryReport') && !isEndUser()"
+                >
+                    <mat-icon>query_stats</mat-icon><span>Forecast Item</span>
+                </button>
+                <button
+                    class="QAButtons"
+                    mat-menu-item
+                    color="primary"
                     (click)="addRow()"
                     *ngIf="getCurrentRoute('inventory') && !isEndUser()"
                 >
@@ -208,7 +216,7 @@
                 <button
                     class="QAButtons"
                     mat-menu-item
-                    *ngIf="getCurrentRoute('inventory') && !isEndUser()"
+                    *ngIf="(getCurrentRoute('inventoryReport') || getCurrentRoute('inventory')) && !isEndUser()"
                     color="primary"
                     (click)="onViewInventorySummary()"
                 >
@@ -224,6 +232,17 @@
                 >
                     <mat-icon>sell</mat-icon><span>Request Stock</span>
                 </button>
+
+                <button
+                    class="QAButtons"
+                    mat-menu-item
+                    *ngIf="getCurrentRoute('inventory-summary') && !isEndUser()"
+                    color="primary"
+                    (click)="runEoqRopCalculation.emit()"
+                >
+                    <mat-icon>query_stats</mat-icon><span>Run EOQ/ROP/ABC Calculation</span>
+                </button>
+
             </mat-menu>
         </div>
     </div>

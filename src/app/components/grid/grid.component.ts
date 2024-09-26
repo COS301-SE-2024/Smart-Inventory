@@ -64,10 +64,14 @@ import { ScanQrcodeModalComponent } from '../scan-qrcode-modal/scan-qrcode-modal
     encapsulation: ViewEncapsulation.Emulated,
 })
 export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
-    @Input() set rowData(value: any[]) {
-        this._rowData = value;
-        this.setGridHeight();
-        this.refreshGrid(value);
+    @Input() set rowData(value: any[] | null | undefined) {
+        if (value) {
+            this._rowData = value;
+            this.setGridHeight();
+            this.refreshGrid(value);
+        } else {
+            this._rowData = [];
+        }
     }
     get rowData(): any[] {
         return this._rowData;
@@ -97,6 +101,8 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
     @Output() importExcelClicked = new EventEmitter<void>();
     @Output() viewAutomationTemplatesClicked = new EventEmitter<void>();
     @Output() scanQRCode = new EventEmitter<string>();
+
+    @Output() runEoqRopCalculation = new EventEmitter<void>();
 
     @ViewChild(AgGridAngular) agGrid!: AgGridAngular;
     gridApi!: GridApi<any>;
@@ -141,6 +147,8 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
         this.setupThemeObserver();
     }
 
+
+
     onFilterTextBoxChanged() {
         this.gridApi.setGridOption(
             'quickFilterText',
@@ -176,12 +184,18 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     refreshGrid(newData: any[]) {
-        if (this.gridApi) {
+        if (this.gridApi && newData && newData.length > 0) {
             // Remove all existing rows
-            const allRows = this.gridApi.getModel().getRowCount();
+            const allRows = this.gridApi.getDisplayedRowCount();
             if (allRows > 0) {
-                const rowsToRemove = this.gridApi.getModel().getRow(allRows)!.data;
-                this.gridApi.applyTransaction({ remove: [rowsToRemove] });
+                const rowsToRemove = [];
+                for (let i = 0; i < allRows; i++) {
+                    const row = this.gridApi.getDisplayedRowAtIndex(i);
+                    if (row) {
+                        rowsToRemove.push(row.data);
+                    }
+                }
+                this.gridApi.applyTransaction({ remove: rowsToRemove });
             }
 
             // Add new rows
@@ -456,45 +470,44 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
     onViewQRCode() {
         const selectedRows = this.gridApi.getSelectedRows();
         if (selectedRows && selectedRows.length > 0) {
-          const selectedItem = selectedRows[0];
-          if (selectedItem.qrCode) {
-            this.dialog.open(ViewQrcodeModalComponent, {
-              width: '600px',
-              data: { 
-                qrCode: selectedItem.qrCode, 
-                sku: selectedItem.sku,
-                description: selectedItem.description
-              }
-            });
-          } else {
-            this.snackBar.open('No QR code available for this item', 'Close', {
-              duration: 3000,
-              horizontalPosition: 'center',
-              verticalPosition: 'top'
-            });
-          }
+            const selectedItem = selectedRows[0];
+            if (selectedItem.qrCode) {
+                this.dialog.open(ViewQrcodeModalComponent, {
+                    width: '600px',
+                    data: {
+                        qrCode: selectedItem.qrCode,
+                        sku: selectedItem.sku,
+                        description: selectedItem.description,
+                    },
+                });
+            } else {
+                this.snackBar.open('No QR code available for this item', 'Close', {
+                    duration: 3000,
+                    horizontalPosition: 'center',
+                    verticalPosition: 'top',
+                });
+            }
         } else {
-          this.snackBar.open('Please select an inventory item to view its QR code', 'Close', {
-            duration: 3000,
-            horizontalPosition: 'center',
-            verticalPosition: 'top'
-          });
+            this.snackBar.open('Please select an inventory item to view its QR code', 'Close', {
+                duration: 3000,
+                horizontalPosition: 'center',
+                verticalPosition: 'top',
+            });
         }
     }
 
     onScanQRCode() {
         const dialogRef = this.dialog.open(ScanQrcodeModalComponent, {
-          width: '90%',
-          maxWidth: '600px',
-          height: '90%',
-          maxHeight: '600px',
+            width: '90%',
+            maxWidth: '600px',
+            height: '90%',
+            maxHeight: '600px',
         });
-    
+
         dialogRef.afterClosed().subscribe((result: string | undefined) => {
-          if (result) {
-            this.scanQRCode.emit(result);
-          }
+            if (result) {
+                this.scanQRCode.emit(result);
+            }
         });
     }
-    
 }

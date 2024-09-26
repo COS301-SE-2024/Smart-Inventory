@@ -18,6 +18,7 @@ import { ScanConfirmationDialogComponent } from './scan-confirmation-dialog.comp
 import { MatTabsModule } from '@angular/material/tabs';
 import { OrdersComponent } from 'app/pages/orders/orders.component';
 import { LoadingSpinnerComponent } from '../loader/loading-spinner.component';
+import { OrdersService } from '../../../../amplify/services/orders.service';
 
 @Component({
     selector: 'app-automation-settings-modal',
@@ -59,6 +60,7 @@ export class AutomationSettingsModalComponent implements OnInit {
         public dialogRef: MatDialogRef<AutomationSettingsModalComponent>,
         private snackBar: MatSnackBar,
         private dialog: MatDialog,
+        private ordersService: OrdersService,
         @Inject(MAT_DIALOG_DATA) public data: { ordersComponent: any }, // Change OrdersComponent to any to avoid circular dependency
     ) {}
 
@@ -146,54 +148,50 @@ export class AutomationSettingsModalComponent implements OnInit {
         }, 1000);
     }
 
-    scanNow() {
+    async scanNow() {
         this.isLoading = true;
-        // Close the current dialog
-
-        // Open the confirmation dialog
+    
         const confirmDialogRef = this.dialog.open(ScanConfirmationDialogComponent, {
             width: '300px',
         });
-
+    
         confirmDialogRef.afterClosed().subscribe(async (result) => {
-            // Make this callback async
             if (result === true) {
                 try {
                     const session = await fetchAuthSession();
                     const tenentId = await this.getTenentId(session);
-
-                    const lambdaClient = new LambdaClient({
-                        region: outputs.auth.aws_region,
-                        credentials: session.credentials,
-                    });
-
-                    const invokeCommand = new InvokeCommand({
-                        FunctionName: 'orderAutomation',
-                        Payload: new TextEncoder().encode(
-                            JSON.stringify({
-                                tenentId: tenentId,
-                            }),
-                        ),
-                    });
-
-                    const lambdaResponse = await lambdaClient.send(invokeCommand);
-                    const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
-                    if (responseBody.statusCode === 200) {
-                        this.snackBar.open('Inventory scan completed successfully', 'Close', {
-                            duration: 3000,
+    
+                    const response = await this.ordersService.orderAutomation(tenentId).toPromise();
+    
+                    if (response && response.message) {
+                        const successMessage = `Inventory scan completed. ${response.message}`;
+                        this.snackBar.open(successMessage, 'Close', {
+                            duration: 5000,
                             horizontalPosition: 'center',
                             verticalPosition: 'top',
                         });
-                        // Refresh the orders page
+    
+                        console.log('Order automation response:', response);
+    
+                        // If you want to display more detailed information, you can do so here
+                        // For example, you could open a dialog with the details of the orders created
+                        this.dialogRef.close();
                         await this.data.ordersComponent.loadOrdersData();
                     } else {
-                        throw new Error(responseBody.body || 'Unknown error occurred');
+                        throw new Error('Unexpected response format');
                     }
                 } catch (error) {
                     console.error('Error during inventory scan:', error);
-                    this.snackBar.open(`Error during inventory scan: ${(error as Error).message}`, 'Close', {
-                        duration: 5000,
+                    let errorMessage = 'Unknown error occurred';
+                    if (error instanceof Error) {
+                        errorMessage = error.message;
+                    } else if (typeof error === 'string') {
+                        errorMessage = error;
+                    } else if (typeof error === 'object' && error !== null) {
+                        errorMessage = JSON.stringify(error);
+                    }
+                    this.snackBar.open(`Error during inventory scan: ${errorMessage}`, 'Close', {
+                        duration: 10000,
                         horizontalPosition: 'center',
                         verticalPosition: 'top',
                     });
@@ -201,7 +199,6 @@ export class AutomationSettingsModalComponent implements OnInit {
                     this.isLoading = false;
                 }
             } else {
-                // If cancelled, reopen the Automation Settings modal
                 this.dialog.open(AutomationSettingsModalComponent, {
                     width: '600px',
                     data: { ordersComponent: this.data.ordersComponent },
@@ -218,29 +215,13 @@ export class AutomationSettingsModalComponent implements OnInit {
         try {
             const session = await fetchAuthSession();
             const tenentId = await this.getTenentId(session);
-
-            const lambdaClient = new LambdaClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
-
-            const invokeCommand = new InvokeCommand({
-                FunctionName: 'getAutomationSettings',
-                Payload: new TextEncoder().encode(
-                    JSON.stringify({
-                        pathParameters: { tenentId: tenentId },
-                    }),
-                ),
-            });
-
-            const lambdaResponse = await lambdaClient.send(invokeCommand);
-            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
-            if (responseBody.statusCode === 200) {
-                const settings = JSON.parse(responseBody.body);
+    
+            const settings = await this.ordersService.getAutomationSettings(tenentId).toPromise();
+    
+            if (settings) {
                 this.applySettings(settings);
             } else {
-                console.error('Error fetching automation settings:', responseBody.body);
+                console.error('Error fetching automation settings: Settings not found');
             }
         } catch (error) {
             console.error('Error fetching automation settings:', error);
@@ -268,45 +249,31 @@ export class AutomationSettingsModalComponent implements OnInit {
         } else {
             scheduleConfig = { scheduleType: 'weekly', weeklySchedule: this.weeklySchedule };
         }
-
+    
         try {
             const session = await fetchAuthSession();
             const tenentId = await this.getTenentId(session);
-
-            const lambdaClient = new LambdaClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
+    
+            const response = await this.ordersService.updateAutomationSettings(tenentId, scheduleConfig).toPromise();
+    
+            console.log('Automation settings updated successfully');
+            this.snackBar.open('Automation settings updated successfully', 'Close', {
+                duration: 3000,
+                horizontalPosition: 'center',
+                verticalPosition: 'top',
             });
-
-            const invokeCommand = new InvokeCommand({
-                FunctionName: 'updateAutomationSettings',
-                Payload: new TextEncoder().encode(
-                    JSON.stringify({
-                        body: JSON.stringify({
-                            tenentId: tenentId,
-                            settings: scheduleConfig,
-                        }),
-                    }),
-                ),
-            });
-
-            const lambdaResponse = await lambdaClient.send(invokeCommand);
-            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
-            if (responseBody.statusCode === 200) {
-                console.log('Automation settings updated successfully');
-                this.snackBar.open('Automation settings updated successfully', 'Close', {
-                    duration: 3000,
-                    horizontalPosition: 'center',
-                    verticalPosition: 'top',
-                });
-                this.dialogRef.close(scheduleConfig);
-            } else {
-                throw new Error(responseBody.body || 'Failed to update automation settings');
-            }
-        } catch (error) {
+            this.dialogRef.close(scheduleConfig);
+        } catch (error: unknown) {
             console.error('Error saving automation settings:', error);
-            this.snackBar.open(`Error saving settings: ${(error as Error).message}`, 'Close', {
+            let errorMessage = 'Unknown error';
+            if (error instanceof Error) {
+                errorMessage = error.message;
+            } else if (typeof error === 'string') {
+                errorMessage = error;
+            } else if (typeof error === 'object' && error !== null && 'message' in error) {
+                errorMessage = String(error.message);
+            }
+            this.snackBar.open(`Error saving settings: ${errorMessage}`, 'Close', {
                 duration: 5000,
                 horizontalPosition: 'center',
                 verticalPosition: 'top',

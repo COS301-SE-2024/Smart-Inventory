@@ -24,6 +24,8 @@ import { LoadingSpinnerComponent } from '../../components/loader/loading-spinner
 import { MaterialModule } from 'app/components/material/material.module';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { DeleteConfirmationDialogComponent } from './delete-confirmation-dialog.component';
+import { TeamsService } from '../../../../amplify/services/teams.service';
+import { NotificationsService } from '../../../../amplify/services/notifications.service';
 
 @Component({
     selector: 'app-team',
@@ -45,8 +47,10 @@ import { DeleteConfirmationDialogComponent } from './delete-confirmation-dialog.
 export class TeamComponent implements OnInit {
     constructor(
         private titleService: TitleService,
+        private teamService: TeamsService,
         private dialog: MatDialog,
-        private snackBar: MatSnackBar
+        private snackBar: MatSnackBar,
+        private notificationsService: NotificationsService
     ) {}
     showPopup = false;
     user = {
@@ -80,6 +84,7 @@ export class TeamComponent implements OnInit {
     tenantId: string = '';
     userName: string = '';
     userRole: string = '';
+    isAddingMember = false;
 
     async ngOnInit() {
         this.titleService.updateTitle('Team');
@@ -91,53 +96,44 @@ export class TeamComponent implements OnInit {
     async getUserInfo() {
         try {
             const session = await fetchAuthSession();
-
+        
             const cognitoClient = new CognitoIdentityProviderClient({
                 region: outputs.auth.aws_region,
                 credentials: session.credentials,
             });
-
+        
             const getUserCommand = new GetUserCommand({
                 AccessToken: session.tokens?.accessToken.toString(),
             });
             const getUserResponse = await cognitoClient.send(getUserCommand);
-
+        
             const givenName = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'given_name')?.Value || '';
             const familyName = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'family_name')?.Value || '';
             this.userName = `${givenName} ${familyName}`.trim();
-
+        
             this.tenantId =
                 getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value || '';
-
-            const lambdaClient = new LambdaClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
-
-            const payload = JSON.stringify({
-                userPoolId: outputs.auth.user_pool_id,
-                username: session.tokens?.accessToken.payload['username'],
-            });
-
-            const invokeCommand = new InvokeCommand({
-                FunctionName: 'getUsersV2',
-                Payload: new TextEncoder().encode(payload),
-            });
-
-            const lambdaResponse = await lambdaClient.send(invokeCommand);
-            const users = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
+        
+            // Use the TeamsService to get users
+            const users = await this.teamService.getUsers(outputs.auth.user_pool_id, this.tenantId).toPromise();
+        
             const currentUser = users.find(
                 (user: any) =>
                     user.Attributes.find((attr: any) => attr.Name === 'email')?.Value ===
                     session.tokens?.accessToken.payload['username'],
             );
-
+        
             if (currentUser && currentUser.Groups.length > 0) {
                 this.userRole = this.getRoleDisplayName(currentUser.Groups[0].GroupName);
             }
         } catch (error) {
             console.error('Error fetching user info:', error);
+            // You might want to add some error handling here, such as showing an error message to the user
+            this.snackBar.open('Error fetching user info', 'Close', {
+                duration: 5000,
+                horizontalPosition: 'center',
+                verticalPosition: 'top',
+            });
         }
     }
 
@@ -248,6 +244,7 @@ export class TeamComponent implements OnInit {
     }
 
     async onSubmit(formData: any) {
+        this.isAddingMember = true;
         try {
             const session = await fetchAuthSession();
 
@@ -307,47 +304,34 @@ export class TeamComponent implements OnInit {
               });
         } catch (error) {
             console.error('Error creating user and adding to group:', error);
+        } finally {
+            this.isAddingMember = false;
         }
     }
 
     async fetchUsers() {
-        console.log('hello');
+        console.log('Fetching users');
         try {
             const session = await fetchAuthSession();
-
-            const lambdaClient = new LambdaClient({
+    
+            const cognitoClient = new CognitoIdentityProviderClient({
                 region: outputs.auth.aws_region,
                 credentials: session.credentials,
             });
-
-            const client = new CognitoIdentityProviderClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
-
+    
             const getUserCommand = new GetUserCommand({
                 AccessToken: session.tokens?.accessToken.toString(),
             });
-            const getUserResponse = await client.send(getUserCommand);
-
-            const adminUniqueAttribute = getUserResponse.UserAttributes?.find(
-                (attr) => attr.Name === 'custom:tenentId',
-            )?.Value;
-
-            const payload = JSON.stringify({
-                userPoolId: outputs.auth.user_pool_id,
-                tenentId: adminUniqueAttribute,
-            });
-
-            const invokeCommand = new InvokeCommand({
-                FunctionName: 'getUsersV2',
-                Payload: new TextEncoder().encode(payload),
-            });
-
-            const lambdaResponse = await lambdaClient.send(invokeCommand);
-            const users = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-            console.log('Users received from Lambda:', users);
-
+            const getUserResponse = await cognitoClient.send(getUserCommand);
+    
+            const tenantId = getUserResponse.UserAttributes?.find(
+                (attr) => attr.Name === 'custom:tenentId'
+            )?.Value || '';
+    
+            // Use the TeamsService to get users
+            const users = await this.teamService.getUsers(outputs.auth.user_pool_id, tenantId).toPromise();
+            console.log('Users received from TeamsService:', users);
+            console.log('Raw response from API:', JSON.stringify(users, null, 2));
             this.rowData = users.map((user: any) => ({
                 given_name: user.Attributes.find((attr: any) => attr.Name === 'given_name')?.Value,
                 family_name: user.Attributes.find((attr: any) => attr.Name === 'family_name')?.Value,
@@ -356,6 +340,12 @@ export class TeamComponent implements OnInit {
             }));
         } catch (error) {
             console.error('Error fetching users:', error);
+            // You might want to add some error handling here, such as showing an error message to the user
+            this.snackBar.open('Error fetching users', 'Close', {
+                duration: 5000,
+                horizontalPosition: 'center',
+                verticalPosition: 'top',
+            });
         } finally {
             this.isLoading = false;
         }
@@ -376,37 +366,25 @@ export class TeamComponent implements OnInit {
 
     async createNotification(message: string, type: string) {
         try {
-          const session = await fetchAuthSession();
-          const lambdaClient = new LambdaClient({
-            region: outputs.auth.aws_region,
-            credentials: session.credentials,
-          });
-      
           const notificationId = this.generateUUID();
           const timestamp = new Date().toISOString();
       
-          const payload = JSON.stringify({
+          const notificationData = {
             tenentId: this.tenantId,
             timestamp: timestamp,
             notificationId: notificationId,
             type: type,
             message: message,
             isRead: false
-          });
+          };
       
-          const invokeCommand = new InvokeCommand({
-            FunctionName: 'notification-createItem',
-            Payload: new TextEncoder().encode(JSON.stringify({ body: payload })),
-          });
+          const response = await this.notificationsService.createNotification(notificationData).toPromise();
       
-          const lambdaResponse = await lambdaClient.send(invokeCommand);
-          const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-      
-          if (responseBody.statusCode === 201) {
+          if (response && response.notificationId) {
             console.log('Notification created successfully');
-            
+            // You can add any additional logic here, such as updating the UI
           } else {
-            throw new Error(responseBody.body);
+            throw new Error('Failed to create notification');
           }
         } catch (error) {
           console.error('Error creating notification:', error);

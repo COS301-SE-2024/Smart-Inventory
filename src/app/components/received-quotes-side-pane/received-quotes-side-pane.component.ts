@@ -12,6 +12,7 @@ import outputs from '../../../../amplify_outputs.json';
 import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
 import { SupplierQuoteDetailsComponent } from '../supplier-quote-details/supplier-quote-details.component';
 import { LoadingSpinnerComponent } from '../loader/loading-spinner.component';
+import { OrdersService } from '../../../../amplify/services/orders.service';
 
 interface SupplierQuote {
   SupplierID: string;
@@ -99,7 +100,12 @@ export class ReceivedQuotesSidePaneComponent implements OnChanges {
   isLoading: boolean = false;
   noQuotesReceived: boolean = false;
 
-  constructor(private dialog: MatDialog) {}
+  constructor(
+    private dialog: MatDialog,
+    private ordersService: OrdersService
+  ) {}
+
+  
 
   close() {
     this.closed.emit();
@@ -127,34 +133,20 @@ export class ReceivedQuotesSidePaneComponent implements OnChanges {
     try {
       const session = await fetchAuthSession();
       const tenentId = await this.getTenentId(session);
-
-      const lambdaClient = new LambdaClient({
-        region: outputs.auth.aws_region,
-        credentials: session.credentials,
-      });
-
-      const invokeCommand = new InvokeCommand({
-        FunctionName: 'getSupplierQuoteSummaries',
-        Payload: new TextEncoder().encode(JSON.stringify({
-          pathParameters: {
-            quoteId: this.selectedOrder.Quote_ID,
-            tenentId: tenentId
+  
+      this.ordersService.getSupplierQuoteSummaries(this.selectedOrder.Quote_ID, tenentId)
+        .subscribe(
+          (response) => {
+            this.supplierQuotes = response;
+            this.noQuotesReceived = this.supplierQuotes.length === 0;
+            this.applySorting();
+            console.log('Supplier quotes:', this.supplierQuotes);
+          },
+          (error) => {
+            console.error('Error fetching supplier quotes:', error);
+            this.noQuotesReceived = true;
           }
-        })),
-      });
-
-      const lambdaResponse = await lambdaClient.send(invokeCommand);
-      const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
-      if (responseBody.statusCode === 200) {
-        this.supplierQuotes = JSON.parse(responseBody.body);
-        this.noQuotesReceived = this.supplierQuotes.length === 0;
-        this.applySorting();
-        console.log('Supplier quotes:', this.supplierQuotes);
-      } else {
-        console.error('Error fetching supplier quotes:', responseBody.body);
-        this.noQuotesReceived = true;
-      }
+        );
     } catch (error) {
       console.error('Error in fetchSupplierQuotes:', error);
       this.noQuotesReceived = true;

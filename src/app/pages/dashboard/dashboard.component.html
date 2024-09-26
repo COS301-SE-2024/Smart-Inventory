@@ -50,35 +50,36 @@
             </mat-card>
 
             <!-- Full-width items -->
-            <mat-card class="dashboard-card full-width-card" *ngIf="item.name === 'Sales Chart'">
+            <!-- <mat-card class="dashboard-card full-width-card" *ngIf="item.name === 'Sales Chart'">
                 <button *ngIf="isDeleteMode" class="delete-button" (click)="deleteWidget(item)">
                     <mat-icon>delete</mat-icon>
                 </button>
                 <div class="split-container">
                     <div class="left-column req-back">
-                        <!-- <ng-container *ngIf="item.cardId === 'sales-chart'"> -->
-                        <div class="requests-section">
-                            <h3>Requests</h3>
-                            <p>Total Requests: {{ RequestOrders.requests.totalRequests }}</p>
-                            <p>
-                                Most Requested: {{ RequestOrders.requests.mostRequested.name }} ({{
-                                    RequestOrders.requests.mostRequested.percentage
-                                }}%)
-                            </p>
-                            <p>Highest Request: {{ RequestOrders.requests.highestRequest }}</p>
-                        </div>
-                        <div class="divider"></div>
-                        <div class="backorders-section">
-                            <h3>Backorders</h3>
-                            <p>Current Backorders: {{ RequestOrders.backorders.currentBackorders }}</p>
-                            <p>Average Delay: {{ RequestOrders.backorders.averageDelay }} days</p>
-                            <p>
-                                Longest Backorder: {{ RequestOrders.backorders.longestBackorderItem.productName }} ({{
-                                    RequestOrders.backorders.longestBackorderItem.delay
-                                }})
-                            </p>
-                        </div>
-                        <!-- </ng-container> -->
+                        <ng-container *ngIf="item.cardId === 'sales-chart'">
+                            <div class="requests-section">
+                                <h3>Requests</h3>
+                                <p>Total Requests: {{ RequestOrders.requests.totalRequests }}</p>
+                                <p>
+                                    Most Requested: {{ RequestOrders.requests.mostRequested.name }} ({{
+                                        RequestOrders.requests.mostRequested.percentage
+                                    }}%)
+                                </p>
+                                <p>Highest Request: {{ RequestOrders.requests.highestRequest }}</p>
+                            </div>
+                            <div class="divider"></div>
+                            <div class="backorders-section">
+                                <h3>Backorders</h3>
+                                <p>Current Backorders: {{ RequestOrders.backorders.currentBackorders }}</p>
+                                <p>Average Delay: {{ RequestOrders.backorders.averageDelay }} days</p>
+                                <p>
+                                    Longest Backorder:
+                                    {{ RequestOrders.backorders.longestBackorderItem.productName }} ({{
+                                        RequestOrders.backorders.longestBackorderItem.delay
+                                    }})
+                                </p>
+                            </div>
+                        </ng-container>
                     </div>
                     <div class="right-column">
                         <ng-container *ngIf="item.cardId === 'sales-chart'">
@@ -86,7 +87,7 @@
                         </ng-container>
                     </div>
                 </div>
-            </mat-card>
+            </mat-card> -->
 
             <mat-card class="dashboard-card full-width-card" *ngIf="item.name === 'Bar Chart'">
                 <button *ngIf="isDeleteMode" class="delete-button" (click)="deleteWidget(item)">
@@ -156,52 +157,44 @@
                             [title]="item['chartConfig'].title"
                         ></app-pie-chart>
                     </ng-container>
+                    <ng-container *ngSwitchCase="'BubbleChartComponent'">
+                        <app-bubble-chart
+                            [data]="item['chartConfig'].data"
+                            [title]="item['chartConfig'].title"
+                        ></app-bubble-chart>
+                    </ng-container>
+                    <ng-container *ngSwitchCase="'LineBarComponent'">
+                        <app-line-bar
+                            [data]="item['chartConfig'].data"
+                            [title]="item['chartConfig'].title"
+                        ></app-line-bar>
+                    </ng-container>
+                    <ng-container *ngSwitchCase="'RadarComponent'">
+                        <app-radar [data]="item['chartConfig'].data" [title]="item['chartConfig'].title"></app-radar>
+                    </ng-container>
+                    <ng-container *ngSwitchCase="'ScatterPlotComponent'">
+                        <app-scatterplot
+                            [data]="item['chartConfig'].data"
+                            [title]="item['chartConfig'].title"
+                        ></app-scatterplot>
+                    </ng-container>
+                    <ng-container *ngSwitchCase="'DonutChartComponent'">
+                        <app-donuttemplate
+                            [orderData]="item['chartConfig'].data"
+                            [title]="item['chartConfig'].title"
+                        ></app-donuttemplate>
+                    </ng-container>
                 </ng-container>
             </mat-card>
         </gridster-item>
     </gridster>
-    <div class="divider">
-        
-    </div>
+    <div class="divider"></div>
 </div>
 
-<!-- <div class="sidepanel" [class.open]="isSidepanelOpen">
-    <button class="close-button" (click)="closeSidepanel()">
-        <mat-icon>close</mat-icon>
-    </button>
-    <h2 style="font-size: 25px; margin-right: 10px">Available Widgets</h2>
-    <div class="chart-previews">
-        <div class="chart-preview" *ngFor="let chart of chartConfigs" (click)="addWidget(chart)">
-            <h3>{{ chart.title }}</h3>
-            <div class="preview-container" [ngSwitch]="chart.component">
-                <app-bar-chart
-                    *ngSwitchCase="'BarChartComponent'"
-                    [data]="chart.data"
-                    [title]="chart.title"
-                ></app-bar-chart>
-                <app-line-chart
-                    *ngSwitchCase="'LineChartComponent'"
-                    [data]="chart.data"
-                    [title]="chart.title"
-                ></app-line-chart>
-                <app-pie-chart
-                    *ngSwitchCase="'PieChartComponent'"
-                    [data]="chart.data"
-                    [title]="chart.title"
-                ></app-pie-chart>
-                <ng-container *ngSwitchDefault>
-                    <ng-container *ngComponentOutlet="charts[chart.component]"></ng-container>
-                </ng-container>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div *ngIf="isLoading" class="loading-overlay">
-    <app-loading-spinner></app-loading-spinner>
-</div>
-</div> -->
 <app-templates-side-pane
     [isAddWidgetOpen]="isSidepanelOpen"
     (closed)="isSidepanelOpen = false"
 ></app-templates-side-pane>
+<div *ngIf="isLoading" class="loading-overlay">
+    <app-loading-spinner></app-loading-spinner>
+</div>

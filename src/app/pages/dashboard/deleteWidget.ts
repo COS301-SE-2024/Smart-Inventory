@@ -17,7 +17,7 @@ import { MaterialModule } from 'app/components/material/material.module';
     margin-right: auto;
     margin-left: auto;
     border-radius: 5px;
-    width: 20px;
+    width: 100px;
     height: 40px;"
             >
                 Cancel
@@ -29,7 +29,7 @@ import { MaterialModule } from 'app/components/material/material.module';
     margin-right: auto;
     margin-left: auto;
     border-radius: 5px;
-    width: 20px;
+    width: 100px;
     height: 40px;"
             >
                 Confirm

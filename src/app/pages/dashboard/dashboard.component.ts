@@ -129,9 +129,14 @@ export class DashboardComponent implements OnInit {
     private initializeGridsterOptions() {
         this.options = {
             gridType: GridType.VerticalFixed,
-            displayGrid: DisplayGrid.None,
-            compactType: CompactType.CompactUp,
-            margin: 30,
+            displayGrid: DisplayGrid.OnDragAndResize,
+            compactType: CompactType.None,
+            margin: 20, // Reduced margin for tighter layout
+            outerMargin: true,
+            outerMarginTop: null,
+            outerMarginRight: null,
+            outerMarginBottom: null,
+            outerMarginLeft: null,
             minCols: 12,
             maxCols: 12,
             minRows: 100,
@@ -168,7 +173,7 @@ export class DashboardComponent implements OnInit {
                 stop: () => this.dashService.saveState(),
             },
             swap: true,
-            pushItems: false,
+            pushItems: true,
             disablePushOnDrag: false,
             disablePushOnResize: false,
             pushDirections: { north: true, east: true, south: true, west: true },

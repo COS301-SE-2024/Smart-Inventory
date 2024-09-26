@@ -9,7 +9,10 @@ import { catchError, map, switchMap } from 'rxjs/operators';
 import { InventoryService } from '../../../../amplify/services/inventory.service';
 import { ChartConfig } from '../../pages/dashboard/dashboard.service';
 import { forkJoin } from 'rxjs';
-
+interface CachedData<T> {
+    data: T;
+    timestamp: number;
+}
 // Inventory summary items for predictive analytics
 export interface InventorySummaryItem {
     SKU: string;
@@ -52,8 +55,19 @@ export class DataCollectionService {
     stockRequestData: StockRequest[] = [];
     inventorySummary: InventorySummaryItem[] = [];
 
+    private cacheExpirationTime = 5 * 60 * 1000; // 5 minutes in milliseconds
+    private cachedInventorySummary: CachedData<InventorySummaryItem[]> | null = null;
+    private cachedInventoryItems: CachedData<InventoryItem[]> | null = null;
+    private cachedStockRequests: CachedData<StockRequest[]> | null = null;
+
     constructor(private inventoryService: InventoryService) {
         Amplify.configure(outputs);
+    }
+
+    private isCacheValid<T>(cachedData: CachedData<T> | null): boolean {
+        if (!cachedData) return false;
+        const now = Date.now();
+        return now - cachedData.timestamp < this.cacheExpirationTime;
     }
 
     private async getTenantId(session: any): Promise<string> {
@@ -76,43 +90,21 @@ export class DataCollectionService {
         return tenantId;
     }
 
-    // private async invokeLambda(functionName: string, payload: any): Promise<any> {
-    //     const session = await fetchAuthSession();
-    //     const lambdaClient = new LambdaClient({
-    //         region: outputs.auth.aws_region,
-    //         credentials: session.credentials,
-    //     });
-
-    //     const invokeCommand = new InvokeCommand({
-    //         FunctionName: functionName,
-    //         Payload: new TextEncoder().encode(JSON.stringify(payload)),
-    //     });
-
-    //     const lambdaResponse = await lambdaClient.send(invokeCommand);
-    //     const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
-    //     if (responseBody.statusCode === 200) {
-    //         return JSON.parse(responseBody.body);
-    //     } else {
-    //         throw new Error(responseBody.body);
-    //     }
-    // }
-
     private async invokeLambda(functionName: string, payload: any): Promise<any> {
         const session = await fetchAuthSession();
         const lambdaClient = new LambdaClient({
             region: outputs.auth.aws_region,
             credentials: session.credentials,
         });
-    
+
         const invokeCommand = new InvokeCommand({
             FunctionName: functionName,
             Payload: new TextEncoder().encode(JSON.stringify(payload)),
         });
-    
+
         const lambdaResponse = await lambdaClient.send(invokeCommand);
         const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-    
+
         if (responseBody.statusCode === 200) {
             // Check if body is a string and needs parsing
             return typeof responseBody.body === 'string' ? JSON.parse(responseBody.body) : responseBody.body;
@@ -121,23 +113,11 @@ export class DataCollectionService {
         }
     }
 
-    // get inventory summary data for predictive analytics reporting
-    // getInventorySummary(): Observable<InventorySummaryItem[]> {
-    //     return from(fetchAuthSession()).pipe(
-    //         switchMap((session) => from(this.getTenantId(session))),
-    //         switchMap((tenantId) => {
-    //             if (!tenantId) {
-    //                 throw new Error('TenantId not found in user attributes');
-    //             }
-    //             return from(this.fetchInventorySummary(tenantId));
-    //         }),
-    //         catchError((error) => {
-    //             console.error('Error fetching inventory summary:', error);
-    //             return of([]);
-    //         }),
-    //     );
-    // }
     getInventorySummary(): Observable<InventorySummaryItem[]> {
+        if (this.isCacheValid(this.cachedInventorySummary)) {
+            return of(this.cachedInventorySummary!.data);
+        }
+
         return from(fetchAuthSession()).pipe(
             switchMap((session) => from(this.getTenantId(session))),
             switchMap((tenantId) => {
@@ -147,20 +127,14 @@ export class DataCollectionService {
                 return from(this.fetchInventorySummary(tenantId));
             }),
             map((data) => {
-                this.inventorySummary = data; // Store the fetched data
-                console.log('Inventory summary data stored:', this.inventorySummary);
+                this.cachedInventorySummary = { data, timestamp: Date.now() };
                 return data;
             }),
             catchError((error) => {
                 console.error('Error fetching inventory summary:', error);
-                this.inventorySummary = []; // Clear the data on error
                 return of([]);
             }),
         );
-    }
-
-    getStoredInventorySummary(): InventorySummaryItem[] {
-        return this.inventorySummary;
     }
 
     private async fetchInventorySummary(tenantId: string): Promise<InventorySummaryItem[]> {
@@ -168,7 +142,7 @@ export class DataCollectionService {
             const result = await this.invokeLambda('inventorySummary-getItems', {
                 queryStringParameters: { tenentId: tenantId },
             });
-            
+
             // Check if result is already an object
             if (typeof result === 'object' && result !== null) {
                 return result as InventorySummaryItem[];
@@ -184,6 +158,30 @@ export class DataCollectionService {
         }
     }
 
+    getInventoryItems(): Observable<InventoryItem[]> {
+        if (this.isCacheValid(this.cachedInventoryItems)) {
+            return of(this.cachedInventoryItems!.data);
+        }
+
+        return from(fetchAuthSession()).pipe(
+            switchMap((session) => from(this.getTenantId(session))),
+            switchMap((tenantId) => {
+                if (!tenantId) {
+                    throw new Error('TenantId not found in user attributes');
+                }
+                return this.inventoryService.getInventoryItems(tenantId);
+            }),
+            map((data) => {
+                this.cachedInventoryItems = { data, timestamp: Date.now() };
+                return data;
+            }),
+            catchError((error) => {
+                console.error('Error fetching inventory items:', error);
+                return of([]);
+            }),
+        );
+    }
+
     getSupplierReportData(): Observable<any[]> {
         return from(this.fetchSupplierReportData()).pipe(
             map((suppliers) => suppliers || []),
@@ -194,20 +192,32 @@ export class DataCollectionService {
         );
     }
 
-    getInventoryItems(): Observable<any> {
-        return from(fetchAuthSession()).pipe(
-            switchMap((session) => from(this.getTenantId(session))),
-            switchMap((tenantId) => {
-                if (!tenantId) {
-                    throw new Error('TenantId not found in user attributes');
-                }
-                return this.inventoryService.getInventoryItems(tenantId);
+    getStockRequests(): Observable<StockRequest[]> {
+        if (this.isCacheValid(this.cachedStockRequests)) {
+            return of(this.cachedStockRequests!.data);
+        }
+
+        return from(this.fetchStockRequests()).pipe(
+            map((data) => {
+                this.cachedStockRequests = { data, timestamp: Date.now() };
+                return data;
             }),
             catchError((error) => {
-                console.error('Error fetching inventory items:', error);
-                return [];
+                console.error('Error fetching stock requests:', error);
+                return of([]);
             }),
         );
+    }
+
+    private async fetchStockRequests(): Promise<any[]> {
+        try {
+            const session = await fetchAuthSession();
+            const tenantId = await this.getTenantId(session);
+            return this.invokeLambda('Report-getItems', { pathParameters: { tenentId: tenantId } });
+        } catch (error) {
+            console.error('Error fetching stock requests:', error);
+            throw error;
+        }
     }
 
     updateInventoryItem(updatedData: any): Observable<any> {
@@ -230,18 +240,6 @@ export class DataCollectionService {
         );
     }
 
-    getInventoryItem(inventoryID: string): Observable<any> {
-        return from(fetchAuthSession()).pipe(
-            switchMap((session) => from(this.getTenantId(session))),
-            switchMap((tenantId) => {
-                if (!tenantId) {
-                    throw new Error('TenantId not found in user attributes');
-                }
-                return this.inventoryService.getInventoryItem(inventoryID, tenantId);
-            }),
-        );
-    }
-
     getOrderData(): Observable<any[]> {
         return from(Promise.resolve([]));
     }
@@ -252,9 +250,9 @@ export class DataCollectionService {
         return from(Promise.resolve([]));
     }
 
-    getStockRequests(): Observable<any[]> {
-        return from(this.fetchStockRequests());
-    }
+    // getStockRequests(): Observable<any[]> {
+    //     return from(this.fetchStockRequests());
+    // }
 
     getSupplierQuotePrices(): Observable<any[]> {
         return from(this.fetchSupplierQuotePrices());
@@ -268,17 +266,6 @@ export class DataCollectionService {
                 return [];
             }),
         );
-    }
-
-    private async fetchStockRequests(): Promise<any[]> {
-        try {
-            const session = await fetchAuthSession();
-            const tenantId = await this.getTenantId(session);
-            return this.invokeLambda('Report-getItems', { pathParameters: { tenentId: tenantId } });
-        } catch (error) {
-            console.error('Error fetching stock requests:', error);
-            throw error;
-        }
     }
 
     async fetchOrdersReport() {
@@ -358,6 +345,8 @@ export class DataCollectionService {
                 this.prepareMonthlyCategoryRequestCountChartConfig(),
                 this.prepareAvailableStockPerCategoryChartConfig(),
                 this.prepareABCAnalysisChartConfig(),
+                this.prepareEOQChartConfig(),
+                this.prepareROPChartConfig(),
             ];
             observer.next(configs);
             observer.complete();
@@ -657,6 +646,78 @@ export class DataCollectionService {
             bubbleData,
             'Inventory, Cost, and Demand by Category',
             'BubbleChartComponent',
+        );
+    }
+
+    prepareEOQChartConfig(): ChartConfig {
+        if (!this.inventorySummary || this.inventorySummary.length === 0) {
+            console.error('Inventory summary data is not available');
+            return this.prepareChartConfig(
+                'bar',
+                { categories: [], values: [] },
+                'Economic Order Quantity (EOQ)',
+                'BarChartComponent',
+            );
+        }
+
+        const chartData = this.inventorySummary
+            .filter((item) => item.EOQ !== undefined && item.EOQ > 0)
+            .sort((a, b) => b.EOQ - a.EOQ)
+            .slice(0, 10) // Top 10 items by EOQ
+            .map((item) => ({
+                name: item.SKU,
+                value: item.EOQ,
+            }));
+
+        return this.prepareChartConfig(
+            'bar',
+            {
+                categories: chartData.map((item) => item.name),
+                values: chartData.map((item) => item.value),
+            },
+            'Top 10 Items by Economic Order Quantity (EOQ)',
+            'BarChartComponent',
+        );
+    }
+
+    prepareROPChartConfig(): ChartConfig {
+        if (!this.inventorySummary || this.inventorySummary.length === 0) {
+            console.error('Inventory summary data is not available');
+            return this.prepareChartConfig(
+                'bar',
+                { categories: [], values: [] },
+                'Reorder Point (ROP)',
+                'BarChartComponent',
+            );
+        }
+
+        const chartData = this.inventorySummary
+            .filter((item) => item.ROP !== undefined && item.ROP > 0)
+            .sort((a, b) => b.ROP - a.ROP)
+            .slice(0, 10) // Top 10 items by ROP
+            .map((item) => ({
+                name: item.SKU,
+                value: item.ROP,
+                quantity: item.quantity,
+            }));
+
+        return this.prepareChartConfig(
+            'bar',
+            {
+                categories: chartData.map((item) => item.name),
+                series: [
+                    {
+                        name: 'Current Quantity',
+                        data: chartData.map((item) => item.quantity),
+                    },
+                    {
+                        name: 'Reorder Point',
+                        data: chartData.map((item) => item.value),
+                    },
+                ],
+            },
+            'Top 10 Items by Reorder Point (ROP)',
+            'BarChartComponent',
         );
     }
 

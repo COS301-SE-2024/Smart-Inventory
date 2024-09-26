@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
-import { templateQuoteModalComponent } from '../template-quote-modal/template-quote-modal.component';
+import { TemplateQuoteModalComponent } from '../template-quote-modal/template-quote-modal.component';
 import { BubblechartComponent } from '../../components/charts/bubblechart/bubblechart.component';
 import { SaleschartComponent } from '../../components/charts/saleschart/saleschart.component';
 import { BarchartComponent } from '../../components/charts/barchart/barchart.component';
@@ -27,7 +27,7 @@ import { DataCollectionService, InventorySummaryItem } from './data-collection.s
         MatButtonModule,
         MatIconModule,
         MatCardModule,
-        templateQuoteModalComponent,
+        TemplateQuoteModalComponent,
         BarchartComponent,
         DonutchartComponent,
         SaleschartComponent,

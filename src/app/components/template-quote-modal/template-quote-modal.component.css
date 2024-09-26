@@ -1,25 +1,28 @@
 :host {
     display: block;
     width: 100%;
-    max-width: 800px;
+    max-width: 100%;
 }
 
 .quote-content {
     display: flex;
     flex-direction: column;
-    gap: 24px;
-    min-height: 500px;
+    gap: 25px;
+    height: 80vh;
+    overflow-y: auto;
 }
 
+.template-name-section,
 .items-section,
 .suppliers-section,
-.frequency-section {
+.order-settings-section {
     display: flex;
     flex-direction: column;
+
 }
 
-h3 {
-    margin-bottom: 30px;
+h2 {
+    font-size: 24px;
     color: #333;
 }
 
@@ -27,6 +30,7 @@ h3 {
     display: flex;
     flex-direction: column;
     gap: 16px;
+
 }
 
 .item-row {
@@ -54,7 +58,6 @@ button[mat-raised-button] {
 mat-chip-listbox {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
 }
 
 .mat-select-search-input {
@@ -70,7 +73,7 @@ mat-chip-listbox {
 }
 
 .search-field .mat-mdc-text-field-wrapper {
-    padding-right: 80px; /* Adjust based on the combined width of icons */
+    padding-right: 80px;
 }
 
 .search-field .mat-mdc-form-field-icon-suffix {
@@ -80,7 +83,7 @@ mat-chip-listbox {
 
 .search-field .search-icon {
     position: absolute;
-    right: 5px; /* Adjust as needed */
+    right: 5px;
     top: 50%;
     transform: translateY(-50%);
     pointer-events: none;
@@ -88,14 +91,13 @@ mat-chip-listbox {
 
 .search-field .clear-button {
     position: absolute;
-    right: 40px; /* Position to the left of the search icon */
+    right: 40px;
     top: 50%;
     transform: translateY(-50%);
 }
 
-/* When clear button is not visible */
 .search-field:not(:has(.clear-button)) .search-icon {
-    right: 5px; /* Keep the search icon in the same position */
+    right: 5px;
 }
 
 .add-item-button {
@@ -137,18 +139,42 @@ mat-chip-listbox {
     z-index: 1000;
 }
 
-.quote-header {
-    padding: 16px 24px 15px;
-    border-bottom: 1px solid #e0e0e0;
+.btn {
+    margin-right: auto;
+    margin-left: auto;
+    border-radius: 5px;
+    width: 200px;
+    height: 40px;
 }
 
-.quote-header div {
-    font-size: 14px;
-    line-height: 1.4;
-    color: #333;
-    margin-bottom: 4px;
+.btn2 {
+    margin-right: auto;
+    margin-left: auto;
+    border-radius: 5px;
+    width: 100%;
+    height: 40px;
 }
 
+.custom-frequency {
+    display: flex;
+    margin-bottom: 50px;
+}
+
+.custom-frequency mat-form-field {
+    flex: 1;
+}
+
+.auto-submit-toggle {
+    margin-bottom: 50px;
+}
+
+::ng-deep .mat-slide-toggle.mat-checked .mat-slide-toggle-bar {
+    background-color: #e3f2fd;
+}
+
+::ng-deep .mat-slide-toggle.mat-checked .mat-slide-toggle-thumb {
+    background-color: #1976d2;
+}
 .btn {
     margin-right: auto;
     margin-left: auto;

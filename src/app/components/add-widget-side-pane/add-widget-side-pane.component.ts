@@ -17,7 +17,7 @@ import { BubbleChartComponent } from 'app/components/charts/widgets/widgetBubble
 import { RadarComponent } from '../charts/radar/radar.component';
 import { LineBarComponent } from '../charts/line-bar/line-bar.component';
 import { ChartConfig, DashboardService } from '../../pages/dashboard/dashboard.service';
-import { DataCollectionService, InventoryItem, StockRequest } from './data-collection.service';
+import { DataCollectionService, InventoryItem, InventorySummaryItem, StockRequest } from './data-collection.service';
 import { forkJoin, from } from 'rxjs';
 
 

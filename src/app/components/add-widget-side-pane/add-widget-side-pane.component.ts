@@ -20,6 +20,7 @@ import { ChartConfig, DashboardService } from '../../pages/dashboard/dashboard.s
 import { DataCollectionService, InventoryItem, StockRequest } from './data-collection.service';
 import { forkJoin, from } from 'rxjs';
 
+
 @Component({
     selector: 'app-templates-side-pane',
     standalone: true,
@@ -66,19 +67,15 @@ export class AddWidgetSidePaneComponent implements OnInit {
 
     chartConfigs: ChartConfig[] = [];
     isLoading = true;
-    inventoryData: InventoryItem[] = [];
-    stockRequestData: StockRequest[] = [];
-    originalData: any[] = [];
-    orderData: any[] = [];
-    scatterPlotChartData: any[] = [];
 
     constructor(
         private dashService: DashboardService,
         private dataCollectionService: DataCollectionService,
-    ) { }
+    ) {}
 
     ngOnInit() {
         this.fetchAndProcessData();
+        this.testGetInventorySummary();
     }
 
     fetchAndProcessData() {
@@ -94,6 +91,23 @@ export class AddWidgetSidePaneComponent implements OnInit {
                 this.isLoading = false;
             },
         });
+    }
+
+    // heres a test to see if the inventory summary data is coming through
+    testGetInventorySummary() {
+        console.log('Testing getInventorySummary...');
+        this.dataCollectionService.getInventorySummary().subscribe(
+            (summaryItems: InventorySummaryItem[]) => {
+                console.log('Inventory Summary Items:', summaryItems);
+                console.log('Number of items:', summaryItems.length);
+                if (summaryItems.length > 0) {
+                    console.log('First item:', summaryItems[0]);
+                }
+            },
+            (error) => {
+                console.error('Error fetching inventory summary:', error);
+            }
+        );
     }
 
     addWidget(chartConfig: ChartConfig) {

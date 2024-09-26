@@ -32,7 +32,6 @@ import { LineBarComponent } from 'app/components/charts/line-bar/line-bar.compon
 import { RadarComponent } from 'app/components/charts/radar/radar.component';
 import { ScatterplotComponent } from 'app/components/charts/scatterplot/scatterplot.component';
 import { DonutTemplateComponent } from 'app/components/charts/donuttemplate/donuttemplate.component';
-import { DataServiceService } from './data-service.service';
 import { AddWidgetSidePaneComponent } from '../../components/add-widget-side-pane/add-widget-side-pane.component';
 import { CardData, ChartConfig, DashboardItem, DashboardService } from '../dashboard/dashboard.service';
 import { ChangeDetectionService } from './change-detection.service';

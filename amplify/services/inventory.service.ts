@@ -15,9 +15,10 @@ export class InventoryService {
   private inventorySummaryUpdateItemUrl = 'https://ite07edpdc.execute-api.us-east-1.amazonaws.com/default/inventorySummary-updateItem';
   private inventorySummaryGetItemsUrl = 'https://d53ot717bg.execute-api.us-east-1.amazonaws.com/default/inventorySummary-getItems';
   private inventorySummaryGetItemUrl = 'https://dqpvi3r6m9.execute-api.us-east-1.amazonaws.com/default/inventorySummary-getItem';
-
+  private createStockRequestUrl = 'https://pb9r6g083a.execute-api.us-east-1.amazonaws.com/default/Report-createItem';
 
   constructor(private http: HttpClient) { }
+
 
   getInventoryItems(tenentId: string): Observable<any> {
     return this.http.get(`${this.getItemsUrl}?tenentId=${tenentId}`);
@@ -49,6 +50,10 @@ export class InventoryService {
 
   inventorySummaryGetItem(tenentId: string, sku: string): Observable<any> {
     return this.http.post(this.inventorySummaryGetItemUrl, { tenentId, sku });
+  }
+
+  createStockRequest(reportPayload: any): Observable<any> {
+    return this.http.post(this.createStockRequestUrl, reportPayload);
   }
 
 }

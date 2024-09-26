@@ -1,98 +1,149 @@
 .side-pane {
     position: fixed;
-    top: 64px;
+    top: 60px;
     right: -800px;
     width: 800px;
-    height: calc(100% - 64px);
-    background-color: #f0f0f0;
-    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+    height: 100%;
+    background-color: #ffffff;
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
     transition: right 0.3s ease-out;
     z-index: 1000;
     display: flex;
     flex-direction: column;
+    resize: horizontal;
+    overflow: auto;
 }
 
 .side-pane.open {
     right: 0;
 }
 
-.side-pane-header {
-    padding: 10px 20px;
-    background-color: #f0f0f0;
-    border-bottom: 1px solid #e0e0e0;
+.resize-handle {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 5px;
+    background-color: #e0e0e0;
+    cursor: ew-resize;
 }
 
-.side-pane-header h3 {
-    margin: 0;
-    font-size: 18px;
-}
-.btnAdd {
-    border-radius: 20px;
-    margin-right: 10px;
-    border-radius: 5px;
-    width: 200px;
+.side-pane-header {
+    padding: 16px;
+    background-color: #f5f7fa;
+    border-bottom: 1px solid #e9ecef;
     display: flex;
-    background-color: white;
-    color: #000000;
-    height: 40px;
-    box-shadow: 1px 3px 6px 0px #74777f;
-    align-content: center;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
+}
+
+.side-pane-header h2 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 500;
+    color: #343a40;
+}
+
+.close-button {
+    color: #6c757d;
 }
 
 .side-pane-content {
     flex-grow: 1;
     overflow-y: auto;
-    padding: 20px;
+    padding: 30px;
 }
 
-.supplier-quotes {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 20px;
-}
-
-.supplier-quote-card {
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
-    cursor: pointer;
-}
-
-.supplier-quote-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-.supplier-quote-card mat-card-title {
-    font-size: 16px;
-    font-weight: bold;
-}
-
-.supplier-quote-card mat-card-subtitle {
-    font-size: 14px;
-    color: #4caf50;
-}
-
-.supplier-quote-card mat-card-content {
-    margin-top: 10px;
-    font-size: 14px;
-}
-
-.no-order-selected {
+.templates-container {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    color: #757575;
 }
 
-.no-order-selected mat-icon {
-    font-size: 48px;
-    width: 48px;
-    height: 48px;
-    margin-bottom: 10px;
+.filter-section {
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.sort-buttons {
+    display: flex;
+    justify-content: space-between;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 8px;
+}
+
+.sort-buttons button {
+    flex: 1;
+    margin: 0 8px;
+    border-radius: 4px;
+    font-size: 14px;
+    color: #495057;
+    padding: 8px 12px;
+}
+
+.sort-buttons button.active {
+    background-color: #e9ecef;
+    color: #212529;
+}
+
+.sort-buttons mat-icon {
+    font-size: 18px;
+    height: 18px;
+    width: 18px;
+    margin-left: 5px;
+}
+
+.template-quotes {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-gap: 24px;
+}
+
+.template-quote-card {
+    transition: all 0.3s ease;
+}
+
+.template-quote-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+mat-card-title {
+    font-size: 20px;
+    font-weight: 500;
+    color: #343a40;
+}
+
+mat-card-subtitle {
+    font-size: 16px;
+    font-weight: 400;
+    color: #6c757d;
+}
+
+.template-details {
+    margin-top: 20px;
+}
+
+.detail-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.detail-item mat-icon {
+    margin-right: 12px;
+    color: #6c757d;
+    font-size: 20px;
+}
+
+.detail-item span {
+    font-size: 16px;
+    color: #495057;
+}
+
+mat-card-actions {
+    display: flex;
+    justify-content: flex-end;
 }

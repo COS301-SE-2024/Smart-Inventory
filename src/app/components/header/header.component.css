@@ -1,10 +1,25 @@
+:host {
+    --header-bg-color: #ffffff;
+    --header-text-color: #333333;
+    --icon-color: #373737;
+    --active-color: #1976d2;
+    --hover-bg-color: #f5f5f5;
+    --transition-speed: 0.3s;
+}
+
 mat-toolbar {
     display: flex;
     align-items: center;
     background-color: var(--header-bg-color);
+    color: var(--header-text-color);
     font-weight: 450;
     font-size: 25px;
-    height: 60px;
+    height: 60px !important;
+    padding: 0 16px;
+}
+
+.pageTitle {
+    font-weight: 500;
 }
 
 .flex-spacer {
@@ -12,58 +27,74 @@ mat-toolbar {
 }
 
 .toolbar-icon {
-    margin-right: 24px;
+    margin-right: 16px;
+    color: var(--icon-color);
+    transition: color var(--transition-speed) ease;
+}
+
+.toolbar-icon:hover {
+    color: var(--active-color);
 }
 
 .user-profile {
     display: flex;
     align-items: center;
+    cursor: pointer;
 }
 
 .profile-box {
     display: flex;
     align-items: center;
-    border-left: 1px solid #c4c6d0;
-    padding: 10px;
-    height: 50px;
+    padding: 0 16px;
+    height: 60px;
+    transition: background-color var(--transition-speed) ease;
 }
 
-.theme-svg circle,
-.theme-svg path {
-    stroke: var(--svg-stroke-color);
-}
-
-.dark-mode .theme-svg circle,
-.dark-mode .theme-svg path {
-    stroke: var(--svg-stroke-color); /* Lighter stroke for dark mode */
-}
-
-svg.theme-svg {
-    margin-right: 12px;
+.profile-box:hover {
+    background-color: var(--hover-bg-color);
 }
 
 .user-info {
     display: flex;
     flex-direction: column;
-}
-
-.pageTitle {
-    color: var(--header-profile-text);
+    margin-right: 12px;
 }
 
 .username {
-    font-weight: bold;
+    font-weight: 500;
     font-size: 16px;
-    color: var(--header-profile-text);
+    color: var(--header-text-color);
+    line-height: 1.2;
 }
 
 .role {
     font-size: 14px;
-    color: var(--header-profile-text);
+    color: var(--icon-color);
+    line-height: 1.2;
+    margin-top: 4px;
+}
+
+.profile-box mat-icon {
+    font-size: 20px;
+    color: var(--icon-color);
+}
+
+mat-icon {
+    transition: transform var(--transition-speed) ease;
+}
+
+button:hover mat-icon {
+    transform: scale(1.1);
+}
+
+.mat-mdc-menu-item {
+    font-size: 14px;
+    height: 48px;
+    line-height: 48px;
 }
 
 .main-content {
-    transition: width 0.3s ease-in-out;
+    transition: width var(--transition-speed) ease-in-out;
     width: 100%;
 }
 
@@ -71,70 +102,26 @@ svg.theme-svg {
     width: 75%;
 }
 
-@media (max-width: 800px) and (max-height: 857px) {
+@media (max-width: 800px) {
     .main-content.with-notification-panel {
         width: 65%;
     }
 }
 
-.mat-list-item {
-    margin-bottom: 16px;
-}
-
-mat-list-item {
-    margin-bottom: 8px;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    padding: 12px;
-    box-shadow:
-        0 1px 3px rgba(0, 0, 0, 0.12),
-        0 1px 2px rgba(0, 0, 0, 0.24);
-}
-
-mat-list-item h3[matListItemTitle] {
-    font-size: 20px;
-    font-weight: 500;
-    margin-bottom: 4px;
-}
-
-mat-icon {
-    --mdc-icon-button-icon-color: black;
-    font-size: 24px;
-    height: 24px;
-    width: 24px;
-}
-
 .mat-mdc-icon-button {
-    color: Black;
+    color: var(--icon-color);
 }
 
-mat-list-item:hover {
-    transform: scale(1.02);
-    box-shadow:
-        0 14px 28px rgba(0, 0, 0, 0.25),
-        0 10px 10px rgba(0, 0, 0, 0.22);
-    z-index: 1;
+.theme-svg circle,
+.theme-svg path {
+    stroke: var(--icon-color);
 }
 
-mat-icon[matListIcon] {
-    margin-right: 16px;
+.dark-mode .theme-svg circle,
+.dark-mode .theme-svg path {
+    stroke: var(--icon-color);
 }
 
-mat-icon:last-child {
-    margin-left: auto;
-}
-
-[matListItemTitle] mat-icon {
-    font-size: 18px;
-    width: 18px;
-    height: 18px;
-    vertical-align: text-bottom;
-    margin-right: 8px;
-}
-
-.mat-mdc-button .mat-mdc-button-touch-target {
-    background-color: none;
+svg.theme-svg {
+    margin-right: 12px;
 }

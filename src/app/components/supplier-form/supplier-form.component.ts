@@ -7,13 +7,13 @@ import { UpdateContactConfirmationComponent } from './update-contact-confirmatio
 import { ActivatedRoute } from '@angular/router';
 import { SupplierService } from '../../../../amplify/services/supplier-form-services/supplier.service';
 import { DeliveryService } from '../../../../amplify/services/supplier-form-services/delivery.service';
-import { QuoteService } from '../../../../amplify/services/supplier-form-services/quote-items.service';
 import { QuoteSubmissionService } from '../../../../amplify/services/supplier-form-services/quote-submission.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { NotificationService } from '../../../../amplify/services/supplier-form-services/notification.service';
 import { v4 as uuidv4 } from 'uuid';
 import { LoadingSpinnerComponent } from '../loader/loading-spinner.component';
 import { SubmissionDeadlineService } from '../../../../amplify/services/supplier-form-services/submission-deadline.service';
+import { OrdersService } from '../../../../amplify/services/orders.service';
 
 interface QuoteItem {
   upc: string;
@@ -106,11 +106,11 @@ export class SupplierFormComponent implements OnInit {
     private route: ActivatedRoute, 
     private supplierService: SupplierService, 
     private deliveryService: DeliveryService, 
-    private quoteService: QuoteService, 
     private quoteSubmissionService: QuoteSubmissionService,
     private snackBar: MatSnackBar,
     private notificationService: NotificationService,
-    private submissionDeadlineService: SubmissionDeadlineService
+    private submissionDeadlineService: SubmissionDeadlineService,
+    private ordersService: OrdersService
   ) {}
 
   ngOnInit() {
@@ -199,24 +199,32 @@ export class SupplierFormComponent implements OnInit {
     });
   }
 
-  loadQuoteItems(): Promise<void> {
-    return new Promise((resolve, reject) => {
-      if (this.quoteID && this.tenentId) {
-        this.quoteService.getQuoteItems(this.quoteID, this.tenentId).subscribe(
-          (items) => {
-            this.quoteItems = items;
-            this.updateAllTotals();
-            resolve();
+  async loadQuoteItems() {
+    try {
+  
+      this.ordersService.getQuoteItems(this.tenentId, this.quoteID)
+        .subscribe(
+          (items: any[]) => {
+            this.quoteItems = items.map((item: any) => ({
+              upc: item.UPC,
+              description: item.Description,
+              sku: item.ItemSKU,
+              requestedQuantity: item.Quantity,
+              isAvailable: true,
+              availableQuantity: item.Quantity,
+              unitCost: 0,
+              totalCost: 0,
+              discount: 0,
+              totalPrice: 0
+            }));
           },
           (error) => {
             console.error('Error fetching quote items:', error);
-            reject(error);
           }
         );
-      } else {
-        resolve();
-      }
-    });
+    } catch (error) {
+      console.error('Error in loadQuoteItems:', error);
+    }
   }
 
   loadSubmissionDeadline(): Promise<void> {

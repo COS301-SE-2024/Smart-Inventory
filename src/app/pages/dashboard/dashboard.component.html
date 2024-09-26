@@ -133,10 +133,7 @@
                         ></app-line-bar>
                     </ng-container>
                     <ng-container *ngSwitchCase="'RadarComponent'">
-                        <app-radar
-                            [data]="item['chartConfig'].data"
-                            [title]="item['chartConfig'].title"
-                        ></app-radar>
+                        <app-radar [data]="item['chartConfig'].data" [title]="item['chartConfig'].title"></app-radar>
                     </ng-container>
                     <ng-container *ngSwitchCase="'ScatterPlotComponent'">
                         <app-scatterplot

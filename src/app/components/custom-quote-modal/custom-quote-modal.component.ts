@@ -471,98 +471,59 @@ export class CustomQuoteModalComponent implements OnInit {
   }
 
   async getEmailTemplate(tenentId: string): Promise<string | null> {
-    const lambdaClient = new LambdaClient({
-      region: outputs.auth.aws_region,
-      credentials: (await fetchAuthSession()).credentials,
-    });
-
-    const invokeCommand = new InvokeCommand({
-      FunctionName: 'getEmailTemplate',
-      Payload: new TextEncoder().encode(JSON.stringify({ 
-        pathParameters: { tenentId: tenentId } 
-      })),
-    });
-
-    const lambdaResponse = await lambdaClient.send(invokeCommand);
-    const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
-    if (responseBody.statusCode === 200) {
-      const { emailBody } = JSON.parse(responseBody.body);
-      return emailBody;
-    } else if (responseBody.statusCode === 404) {
-      console.log('No custom email template found for this tenant. Using default template.');
-      return null;
-    } else {
-      console.error('Error fetching email template:', responseBody.body);
+    try {
+      const response = await this.ordersService.getEmailTemplate(tenentId).toPromise();
+      
+      if (response && response.emailBody) {
+        return response.emailBody;
+      } else {
+        console.log('No custom email template found for this tenant. Using default template.');
+        return null;
+      }
+    } catch (error) {
+      console.error('Error fetching email template:', error);
       return null;
     }
   }
 
 
   async sendEmails(emailData: any[]) {
-    const lambdaClient = new LambdaClient({
-      region: outputs.auth.aws_region,
-      credentials: (await fetchAuthSession()).credentials,
-    });
-
-    const invokeCommand = new InvokeCommand({
-      FunctionName: 'sendSupplierEmails',
-      Payload: new TextEncoder().encode(JSON.stringify({ emailData: emailData })),
-    });
-
-    const lambdaResponse = await lambdaClient.send(invokeCommand);
-    const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
-    if (responseBody.statusCode === 200) {
-      console.log('Emails sent successfully:', responseBody.body);
-    } else {
-      throw new Error(`Failed to send emails: ${responseBody.body}`);
+    try {
+      const response = await this.ordersService.sendSupplierEmails(emailData).toPromise();
+      console.log('Emails sent successfully:', response);
+      // Handle success (e.g., show a success message)
+    } catch (error) {
+      console.error('Failed to send emails:', error);
+      // Handle error (e.g., show an error message)
     }
   }
 
 
 
   async getSupplierDetails(tenentId: string, supplierID: string): Promise<any> {
-    const lambdaClient = new LambdaClient({
-      region: outputs.auth.aws_region,
-      credentials: (await fetchAuthSession()).credentials,
-    });
-
-    const invokeCommand = new InvokeCommand({
-      FunctionName: 'getSupplier',
-      Payload: new TextEncoder().encode(JSON.stringify({ 
-        pathParameters: { tenentId: tenentId, supplierID: supplierID } 
-      })),
-    });
-
-    const lambdaResponse = await lambdaClient.send(invokeCommand);
-    const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
-    if (responseBody.statusCode === 200) {
-      return JSON.parse(responseBody.body);
-    } else {
-      throw new Error(`Failed to get supplier details: ${responseBody.body}`);
+    try {
+      const supplierDetails = await this.suppliersService.getSupplierDetails(tenentId, supplierID).toPromise();
+      return supplierDetails;
+    } catch (error: unknown) {
+      console.error('Error getting supplier details:', error);
+      if (error instanceof Error) {
+        throw new Error(`Failed to get supplier details: ${error.message}`);
+      } else {
+        throw new Error('Failed to get supplier details: Unknown error');
+      }
     }
   }
 
   async getDeliveryInfoID(tenentId: string): Promise<string> {
-    const lambdaClient = new LambdaClient({
-      region: outputs.auth.aws_region,
-      credentials: (await fetchAuthSession()).credentials,
-    });
-
-    const invokeCommand = new InvokeCommand({
-      FunctionName: 'getDeliveryID',
-      Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: tenentId } })),
-    });
-
-    const lambdaResponse = await lambdaClient.send(invokeCommand);
-    const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
-    if (responseBody.statusCode === 200) {
-      const { deliveryInfoID } = JSON.parse(responseBody.body);
-      return deliveryInfoID;
-    } else {
+    try {
+      const response = await this.ordersService.getDeliveryID(tenentId).toPromise();
+      if (response && response.deliveryInfoID) {
+        return response.deliveryInfoID;
+      } else {
+        throw new Error('DeliveryInfoID not found in response');
+      }
+    } catch (error) {
+      console.error('Error fetching deliveryInfoID:', error);
       throw new Error('Failed to get deliveryInfoID');
     }
   }

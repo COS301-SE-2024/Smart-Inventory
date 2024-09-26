@@ -1,31 +1,30 @@
-<div class="sidenav-container">
-    <div #sidenav mode="side" opened="true" class="sidenav" [ngClass]="{ expanded: isExpanded }">
-        <div
-            style="
-                height: 60px;
-                display: flex;
-                width: 100%;
-                align-content: center;
-                align-items: center;
-                justify-content: center;
-            "
-        >
-            <!-- Adds a toolbar at the top of the sidenav --><button mat-icon-button (click)="toggleSidenav()">
+<div class="sidenav-container" [ngClass]="{'dark-mode': isDarkMode}">
+    <div #sidenav class="sidenav" [ngClass]="{ expanded: isExpanded || isHovered }">
+        <div class="sidenav-header">
+            <button mat-icon-button (click)="toggleSidenav()" class="menu-button" matTooltip="Toggle Sidebar">
                 <mat-icon class="grad" id="menu">menu</mat-icon>
-                <!-- This is the menu icon -->
             </button>
+            <span class="app-title" *ngIf="isExpanded || isHovered"></span>
         </div>
         <mat-nav-list>
-            <div *ngFor="let item of filteredMenuItems">
-                <a mat-list-item *ngIf="!item.click" [routerLink]="item.routerLink"
-                    ><mat-icon id="{{ item.icon }}">{{ item.icon }}</mat-icon>
-                    <p>{{ item.label }}</p></a
-                >
+            <div *ngFor="let item of filteredMenuItems" class="nav-item">
+                <a mat-list-item *ngIf="!item.click" [routerLink]="item.routerLink" 
+                   [ngClass]="{ active: router.url === item.routerLink }"
+                   [matTooltip]="item.label" [matTooltipDisabled]="isExpanded || isHovered">
+                    <mat-icon class="nav-icon" [id]="item.icon">{{ item.icon }}</mat-icon>
+                    <span class="nav-label">{{ item.label }}</span>
+                </a>
                 <a mat-list-item *ngIf="item.click" (click)="signOut()"
-                    ><mat-icon>{{ item.icon }}</mat-icon>
-                    <p>{{ item.label }}</p></a
-                >
+                   [matTooltip]="item.label" [matTooltipDisabled]="isExpanded || isHovered">
+                    <mat-icon class="nav-icon">{{ item.icon }}</mat-icon>
+                    <span class="nav-label">{{ item.label }}</span>
+                </a>
             </div>
         </mat-nav-list>
+        <div class="sidenav-footer">
+            <button mat-icon-button (click)="toggleDarkMode()" class="theme-toggle" matTooltip="Toggle Dark Mode">
+                <mat-icon>{{ isDarkMode ? 'light_mode' : 'dark_mode' }}</mat-icon>
+            </button>
+        </div>
     </div>
 </div>

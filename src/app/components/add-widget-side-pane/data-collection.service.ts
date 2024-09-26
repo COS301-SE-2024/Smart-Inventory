@@ -9,6 +9,26 @@ import { catchError, map, switchMap } from 'rxjs/operators';
 import { InventoryService } from '../../../../amplify/services/inventory.service';
 import { ChartConfig } from '../../pages/dashboard/dashboard.service';
 import { forkJoin } from 'rxjs';
+
+// Inventory summary items for predictive analytics
+export interface InventorySummaryItem {
+    SKU: string;
+    tenentId: string;
+    quantity: number;
+    description: string;
+    lowStockThreshold: number;
+    reorderAmount: number;
+    safetyStock: number;
+    EOQ: number;
+    ROP: number;
+    upc: string;
+    category: string;
+    annualConsumptionValue: number;
+    ABCCategory: string;
+    createdAt: string;
+    updatedAt: string;
+}
+
 export interface InventoryItem {
     SKU: string;
     category: string;
@@ -79,6 +99,35 @@ export class DataCollectionService {
             return JSON.parse(responseBody.body);
         } else {
             throw new Error(responseBody.body);
+        }
+    }
+
+    // get inventory summary data for predictive analytics reporting
+    getInventorySummary(): Observable<InventorySummaryItem[]> {
+        return from(fetchAuthSession()).pipe(
+            switchMap((session) => from(this.getTenantId(session))),
+            switchMap((tenantId) => {
+                if (!tenantId) {
+                    throw new Error('TenantId not found in user attributes');
+                }
+                return from(this.fetchInventorySummary(tenantId));
+            }),
+            catchError((error) => {
+                console.error('Error fetching inventory summary:', error);
+                return [];
+            }),
+        );
+    }
+
+    private async fetchInventorySummary(tenantId: string): Promise<InventorySummaryItem[]> {
+        try {
+            const result = await this.invokeLambda('inventorySummary-getItems', {
+                queryStringParameters: { tenentId: tenantId },
+            });
+            return JSON.parse(result);
+        } catch (error) {
+            console.error('Error fetching inventory summary:', error);
+            throw error;
         }
     }
 

@@ -122,21 +122,18 @@ export class TemplateQuoteModalComponent implements OnInit {
   initializeTemplateData(templateDetails: any) {
     console.log('Initializing template data:', templateDetails);
   
-    this.templateId = templateDetails.templateId || null;
+    this.templateId = templateDetails.orderTemplateID || null;
     this.templateName = templateDetails.templateName || '';
-    this.orderFrequency = templateDetails.orderFrequency || '';
     this.orderFrequency = templateDetails.orderFrequency || 'monthly';
     this.autoSubmitOrder = templateDetails.autoSubmitOrder || false;
     this.submissionDeadlineDays = templateDetails.submissionDeadlineDays || 3;
-  
-
   
     if (templateDetails.items && Array.isArray(templateDetails.items)) {
       this.quoteItems = templateDetails.items.map((item: any) => {
         const inventoryItem = this.inventoryItems.find(invItem => invItem.sku === item.ItemSKU);
         return {
-          item: inventoryItem || { sku: item.ItemSKU, description: 'Unknown Item', inventoryID: '' },
-          quantity: item.Quantity,
+          item: inventoryItem || { sku: item.ItemSKU, description: 'Unknown Item', inventoryID: item.inventoryID },
+          quantity: item.quantity, // Use the quantity from the template
           filteredItems: new ReplaySubject<{ sku: string; description: string }[]>(1),
           searchControl: new FormControl()
         };

@@ -4,12 +4,15 @@ import { fetchAuthSession } from 'aws-amplify/auth';
 import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
 import outputs from '../../../../amplify_outputs.json';
 import { Amplify } from 'aws-amplify';
-import { Observable, from } from 'rxjs';
+import { Observable, from, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { InventoryService } from '../../../../amplify/services/inventory.service';
 import { ChartConfig } from '../../pages/dashboard/dashboard.service';
 import { forkJoin } from 'rxjs';
-
+interface CachedData<T> {
+    data: T;
+    timestamp: number;
+}
 // Inventory summary items for predictive analytics
 export interface InventorySummaryItem {
     SKU: string;
@@ -23,12 +26,11 @@ export interface InventorySummaryItem {
     ROP: number;
     upc: string;
     category: string;
-    annualConsumptionValue: number;
+    annualConsumptionValue?: number;
     ABCCategory: string;
     createdAt: string;
     updatedAt: string;
 }
-
 export interface InventoryItem {
     SKU: string;
     category: string;
@@ -51,9 +53,21 @@ export class DataCollectionService {
     chartConfigs: ChartConfig[] = [];
     inventoryData: InventoryItem[] = [];
     stockRequestData: StockRequest[] = [];
+    inventorySummary: InventorySummaryItem[] = [];
+
+    private cacheExpirationTime = 5 * 60 * 1000; // 5 minutes in milliseconds
+    private cachedInventorySummary: CachedData<InventorySummaryItem[]> | null = null;
+    private cachedInventoryItems: CachedData<InventoryItem[]> | null = null;
+    private cachedStockRequests: CachedData<StockRequest[]> | null = null;
 
     constructor(private inventoryService: InventoryService) {
         Amplify.configure(outputs);
+    }
+
+    private isCacheValid<T>(cachedData: CachedData<T> | null): boolean {
+        if (!cachedData) return false;
+        const now = Date.now();
+        return now - cachedData.timestamp < this.cacheExpirationTime;
     }
 
     private async getTenantId(session: any): Promise<string> {
@@ -92,14 +106,18 @@ export class DataCollectionService {
         const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
 
         if (responseBody.statusCode === 200) {
-            return JSON.parse(responseBody.body);
+            // Check if body is a string and needs parsing
+            return typeof responseBody.body === 'string' ? JSON.parse(responseBody.body) : responseBody.body;
         } else {
             throw new Error(responseBody.body);
         }
     }
 
-    // get inventory summary data for predictive analytics reporting
     getInventorySummary(): Observable<InventorySummaryItem[]> {
+        if (this.isCacheValid(this.cachedInventorySummary)) {
+            return of(this.cachedInventorySummary!.data);
+        }
+
         return from(fetchAuthSession()).pipe(
             switchMap((session) => from(this.getTenantId(session))),
             switchMap((tenantId) => {
@@ -108,9 +126,13 @@ export class DataCollectionService {
                 }
                 return from(this.fetchInventorySummary(tenantId));
             }),
+            map((data) => {
+                this.cachedInventorySummary = { data, timestamp: Date.now() };
+                return data;
+            }),
             catchError((error) => {
                 console.error('Error fetching inventory summary:', error);
-                return [];
+                return of([]);
             }),
         );
     }
@@ -120,11 +142,44 @@ export class DataCollectionService {
             const result = await this.invokeLambda('inventorySummary-getItems', {
                 queryStringParameters: { tenentId: tenantId },
             });
-            return JSON.parse(result);
+
+            // Check if result is already an object
+            if (typeof result === 'object' && result !== null) {
+                return result as InventorySummaryItem[];
+            } else if (typeof result === 'string') {
+                // If it's a string, try to parse it
+                return JSON.parse(result);
+            } else {
+                throw new Error('Unexpected response format');
+            }
         } catch (error) {
             console.error('Error fetching inventory summary:', error);
             throw error;
         }
+    }
+
+    getInventoryItems(): Observable<InventoryItem[]> {
+        if (this.isCacheValid(this.cachedInventoryItems)) {
+            return of(this.cachedInventoryItems!.data);
+        }
+
+        return from(fetchAuthSession()).pipe(
+            switchMap((session) => from(this.getTenantId(session))),
+            switchMap((tenantId) => {
+                if (!tenantId) {
+                    throw new Error('TenantId not found in user attributes');
+                }
+                return this.inventoryService.getInventoryItems(tenantId);
+            }),
+            map((data) => {
+                this.cachedInventoryItems = { data, timestamp: Date.now() };
+                return data;
+            }),
+            catchError((error) => {
+                console.error('Error fetching inventory items:', error);
+                return of([]);
+            }),
+        );
     }
 
     getSupplierReportData(): Observable<any[]> {
@@ -137,20 +192,32 @@ export class DataCollectionService {
         );
     }
 
-    getInventoryItems(): Observable<any> {
-        return from(fetchAuthSession()).pipe(
-            switchMap((session) => from(this.getTenantId(session))),
-            switchMap((tenantId) => {
-                if (!tenantId) {
-                    throw new Error('TenantId not found in user attributes');
-                }
-                return this.inventoryService.getInventoryItems(tenantId);
+    getStockRequests(): Observable<StockRequest[]> {
+        if (this.isCacheValid(this.cachedStockRequests)) {
+            return of(this.cachedStockRequests!.data);
+        }
+
+        return from(this.fetchStockRequests()).pipe(
+            map((data) => {
+                this.cachedStockRequests = { data, timestamp: Date.now() };
+                return data;
             }),
             catchError((error) => {
-                console.error('Error fetching inventory items:', error);
-                return [];
+                console.error('Error fetching stock requests:', error);
+                return of([]);
             }),
         );
+    }
+
+    private async fetchStockRequests(): Promise<any[]> {
+        try {
+            const session = await fetchAuthSession();
+            const tenantId = await this.getTenantId(session);
+            return this.invokeLambda('Report-getItems', { pathParameters: { tenentId: tenantId } });
+        } catch (error) {
+            console.error('Error fetching stock requests:', error);
+            throw error;
+        }
     }
 
     updateInventoryItem(updatedData: any): Observable<any> {
@@ -173,18 +240,6 @@ export class DataCollectionService {
         );
     }
 
-    getInventoryItem(inventoryID: string): Observable<any> {
-        return from(fetchAuthSession()).pipe(
-            switchMap((session) => from(this.getTenantId(session))),
-            switchMap((tenantId) => {
-                if (!tenantId) {
-                    throw new Error('TenantId not found in user attributes');
-                }
-                return this.inventoryService.getInventoryItem(inventoryID, tenantId);
-            }),
-        );
-    }
-
     getOrderData(): Observable<any[]> {
         return from(Promise.resolve([]));
     }
@@ -195,9 +250,9 @@ export class DataCollectionService {
         return from(Promise.resolve([]));
     }
 
-    getStockRequests(): Observable<any[]> {
-        return from(this.fetchStockRequests());
-    }
+    // getStockRequests(): Observable<any[]> {
+    //     return from(this.fetchStockRequests());
+    // }
 
     getSupplierQuotePrices(): Observable<any[]> {
         return from(this.fetchSupplierQuotePrices());
@@ -211,17 +266,6 @@ export class DataCollectionService {
                 return [];
             }),
         );
-    }
-
-    private async fetchStockRequests(): Promise<any[]> {
-        try {
-            const session = await fetchAuthSession();
-            const tenantId = await this.getTenantId(session);
-            return this.invokeLambda('Report-getItems', { pathParameters: { tenentId: tenantId } });
-        } catch (error) {
-            console.error('Error fetching stock requests:', error);
-            throw error;
-        }
     }
 
     async fetchOrdersReport() {
@@ -271,12 +315,18 @@ export class DataCollectionService {
     generateChartConfigs(): Observable<ChartConfig[]> {
         return forkJoin({
             inventory: this.getInventoryItems(),
+            inventorySummary: this.getInventorySummary(),
             requests: this.getStockRequests(),
         }).pipe(
-            switchMap(({ inventory, requests }) => {
+            switchMap(({ inventory, inventorySummary, requests }) => {
                 this.inventoryData = inventory;
+                this.inventorySummary = inventorySummary;
                 this.stockRequestData = this.filterCurrentMonthRequests(requests);
                 return this.createChartConfigs();
+            }),
+            catchError((error) => {
+                console.error('Error generating chart configs:', error);
+                return of([]); // Return an empty array in case of error
             }),
         );
     }
@@ -284,7 +334,6 @@ export class DataCollectionService {
     private createChartConfigs(): Observable<ChartConfig[]> {
         return new Observable<ChartConfig[]>((observer) => {
             const configs = [
-                this.prepareStockRequestChartConfig(),
                 this.prepareStockRequestLineChartConfig(),
                 this.prepareInventoryStockLevelChartConfig('pie'),
                 this.prepareInventoryStockLevelChartConfig('bar'),
@@ -294,6 +343,9 @@ export class DataCollectionService {
                 this.prepareInventoryRequestBubbleChart(),
                 this.prepareMonthlyCategoryRequestCountChartConfig(),
                 this.prepareAvailableStockPerCategoryChartConfig(),
+                this.prepareABCAnalysisChartConfig(),
+                this.prepareEOQChartConfig(),
+                this.prepareROPChartConfig(),
             ];
             observer.next(configs);
             observer.complete();
@@ -515,6 +567,44 @@ export class DataCollectionService {
         return this.prepareChartConfig('bar', data, 'Unit Cost Distribution', 'BarChartComponent');
     }
 
+    prepareABCAnalysisChartConfig(): ChartConfig {
+        if (!this.inventorySummary || this.inventorySummary.length === 0) {
+            console.error('Inventory summary data is not available');
+            return this.prepareChartConfig('line-bar', { source: [] }, 'ABC Analysis', 'LineBarComponent');
+        }
+
+        // Sort items by annual consumption value in descending order
+        const sortedItems = [...this.inventorySummary]
+            .filter((item) => item.annualConsumptionValue !== undefined && item.annualConsumptionValue !== null)
+            .sort((a, b) => (b.annualConsumptionValue || 0) - (a.annualConsumptionValue || 0));
+        if (sortedItems.length === 0) {
+            console.error('No valid items with annual consumption value');
+            return this.prepareChartConfig('line-bar', { source: [] }, 'ABC Analysis', 'LineBarComponent');
+        }
+
+        const totalValue = sortedItems.reduce((sum, item) => sum + (item.annualConsumptionValue || 0), 0);
+
+        let cumulativeValue = 0;
+        const chartData = sortedItems.map((item) => {
+            const value = item.annualConsumptionValue || 0;
+            cumulativeValue += value;
+            const cumulativePercentage = (cumulativeValue / totalValue) * 100;
+
+            let category;
+            if (cumulativePercentage <= 80) category = 'A';
+            else if (cumulativePercentage <= 95) category = 'B';
+            else category = 'C';
+
+            return [item.SKU, value, cumulativePercentage.toFixed(2), category];
+        });
+
+        const data = {
+            source: [['SKU', 'Annual Consumption Value', 'Cumulative Percentage', 'ABC Category'], ...chartData],
+        };
+
+        return this.prepareChartConfig('line-bar', data, 'ABC Analysis', 'LineBarComponent');
+    }
+
     prepareInventoryRequestBubbleChart(): ChartConfig {
         const categoryData = new Map<
             string,
@@ -555,6 +645,78 @@ export class DataCollectionService {
             bubbleData,
             'Inventory, Cost, and Demand by Category',
             'BubbleChartComponent',
+        );
+    }
+
+    prepareEOQChartConfig(): ChartConfig {
+        if (!this.inventorySummary || this.inventorySummary.length === 0) {
+            console.error('Inventory summary data is not available');
+            return this.prepareChartConfig(
+                'bar',
+                { categories: [], values: [] },
+                'Economic Order Quantity (EOQ)',
+                'BarChartComponent',
+            );
+        }
+
+        const chartData = this.inventorySummary
+            .filter((item) => item.EOQ !== undefined && item.EOQ > 0)
+            .sort((a, b) => b.EOQ - a.EOQ)
+            .slice(0, 10) // Top 10 items by EOQ
+            .map((item) => ({
+                name: item.SKU,
+                value: item.EOQ,
+            }));
+
+        return this.prepareChartConfig(
+            'bar',
+            {
+                categories: chartData.map((item) => item.name),
+                values: chartData.map((item) => item.value),
+            },
+            'Top 10 Items by Economic Order Quantity (EOQ)',
+            'BarChartComponent',
+        );
+    }
+
+    prepareROPChartConfig(): ChartConfig {
+        if (!this.inventorySummary || this.inventorySummary.length === 0) {
+            console.error('Inventory summary data is not available');
+            return this.prepareChartConfig(
+                'bar',
+                { categories: [], values: [] },
+                'Reorder Point (ROP)',
+                'BarChartComponent',
+            );
+        }
+
+        const chartData = this.inventorySummary
+            .filter((item) => item.ROP !== undefined && item.ROP > 0)
+            .sort((a, b) => b.ROP - a.ROP)
+            .slice(0, 10) // Top 10 items by ROP
+            .map((item) => ({
+                name: item.SKU,
+                value: item.ROP,
+                quantity: item.quantity,
+            }));
+
+        return this.prepareChartConfig(
+            'bar',
+            {
+                categories: chartData.map((item) => item.name),
+                series: [
+                    {
+                        name: 'Current Quantity',
+                        data: chartData.map((item) => item.quantity),
+                    },
+                    {
+                        name: 'Reorder Point',
+                        data: chartData.map((item) => item.value),
+                    },
+                ],
+            },
+            'Top 10 Items by Reorder Point (ROP)',
+            'BarChartComponent',
         );
     }
 

@@ -13,15 +13,37 @@ import { CommonModule } from '@angular/common';
             <p>Are you sure you want to Accept this quote from {{ data.supplierName }}? This action can't be undone.</p>
         </div>
         <div mat-dialog-actions>
-            <button mat-button (click)="onNoClick()">Cancel</button>
-            <button mat-button color="primary" (click)="onYesClick()">Accept Quote</button>
+            <button
+                mat-flat-button
+                (click)="onNoClick()"
+                style="
+    margin-right: auto;
+    margin-left: auto;
+    border-radius: 5px;
+    width: 100px;
+    height: 40px;"
+            >
+                Cancel
+            </button>
+            <button
+                mat-flat-button
+                (click)="onYesClick()"
+                style="
+    margin-right: auto;
+    margin-left: auto;
+    border-radius: 5px;
+    width: 100px;
+    height: 40px;"
+            >
+                Accept Quote
+            </button>
         </div>
     `,
 })
 export class QuoteAcceptConfirmationDialogComponent {
     constructor(
         public dialogRef: MatDialogRef<QuoteAcceptConfirmationDialogComponent>,
-        @Inject(MAT_DIALOG_DATA) public data: { supplierName: string }
+        @Inject(MAT_DIALOG_DATA) public data: { supplierName: string },
     ) {}
 
     onNoClick(): void {

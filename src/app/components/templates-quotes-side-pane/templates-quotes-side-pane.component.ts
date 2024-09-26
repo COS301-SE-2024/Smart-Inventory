@@ -9,14 +9,19 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TemplateQuoteModalComponent } from '../template-quote-modal/template-quote-modal.component';
+import { LambdaClient, InvokeCommand } from "@aws-sdk/client-lambda";
+import { fetchAuthSession } from 'aws-amplify/auth';
+import outputs from '../../../../amplify_outputs.json';
+import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
 
 interface TemplateQuote {
-  id: string;
-  title: string;
-  items: number;
-  supplier: string;
-  nextOrderDate: string;
-  frequency: string;
+  orderTemplateID: string;
+  templateName: string;
+  orderFrequency: string;
+  autoSubmitOrder: boolean;
+  submissionDeadlineDays: number;
+  items: { ItemSKU: string; quantity: number }[];
+  suppliers: { company_name: string; supplierID: string }[];
 }
 
 @Component({
@@ -44,24 +49,7 @@ export class TemplatesQuotesSidePaneComponent implements OnChanges {
   searchQuery: string = '';
   filteredOptions: string[] = [];
 
-  templates: TemplateQuote[] = [
-    {
-      id: '1',
-      title: 'Monthly Office Supplies',
-      items: 10,
-      supplier: 'Office Depot',
-      nextOrderDate: '2024-04-01',
-      frequency: 'Monthly'
-    },
-    {
-      id: '2',
-      title: 'Quarterly IT Equipment',
-      items: 5,
-      supplier: 'TechSupplies Inc.',
-      nextOrderDate: '2024-06-15',
-      frequency: 'Quarterly'
-    }
-  ];
+  templates: TemplateQuote[] = [];
 
   constructor(
     private dialog: MatDialog,
@@ -74,81 +62,100 @@ export class TemplatesQuotesSidePaneComponent implements OnChanges {
     }
   }
 
+  async ngOnInit() {
+    await this.fetchTemplates();
+  }
+
+  async fetchTemplates() {
+    try {
+      const session = await fetchAuthSession();
+      const tenentId = await this.getTenentId(session);
+
+      const lambdaClient = new LambdaClient({
+        region: outputs.auth.aws_region,
+        credentials: session.credentials,
+      });
+
+      const invokeCommand = new InvokeCommand({
+        FunctionName: 'getOrderTemplates',
+        Payload: new TextEncoder().encode(JSON.stringify({ body: JSON.stringify({ tenentId }) })),
+      });
+
+      const lambdaResponse = await lambdaClient.send(invokeCommand);
+      const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+
+      if (responseBody.statusCode === 200) {
+        this.templates = JSON.parse(responseBody.body);
+        this.sortedTemplates = [...this.templates];
+      } else {
+        console.error('Error fetching order templates:', responseBody.body);
+        this.snackBar.open('Error fetching order templates', 'Close', { duration: 3000 });
+      }
+    } catch (error) {
+      console.error('Error in fetchTemplates:', error);
+      this.snackBar.open('Error fetching order templates', 'Close', { duration: 3000 });
+    }
+  }
+
+  async getTenentId(session: any): Promise<string> {
+    const cognitoClient = new CognitoIdentityProviderClient({
+      region: outputs.auth.aws_region,
+      credentials: session.credentials,
+    });
+
+    const getUserCommand = new GetUserCommand({
+      AccessToken: session.tokens?.accessToken.toString(),
+    });
+    const getUserResponse = await cognitoClient.send(getUserCommand);
+
+    const tenentId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
+
+    if (!tenentId) {
+      throw new Error('TenentId not found in user attributes');
+    }
+
+    return tenentId;
+  }
+
   close() {
     this.closed.emit();
   }
 
   onSearch() {
     this.sortedTemplates = this.templates.filter(template =>
-      template.title.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-      template.supplier.toLowerCase().includes(this.searchQuery.toLowerCase())
+      template.templateName.toLowerCase().includes(this.searchQuery.toLowerCase())
     );
     this.updateFilteredOptions();
   }
 
   private updateFilteredOptions() {
-    const allValues = this.templates.flatMap(template => [template.title, template.supplier]);
+    const allValues = this.templates.flatMap(template => [template.templateName]);
     const uniqueValues = Array.from(new Set(allValues));
     this.filteredOptions = uniqueValues.filter(value =>
       value.toLowerCase().includes(this.searchQuery.toLowerCase())
     );
   }
 
-  openTemplateQuoteModal() {
+  openTemplateQuoteModal(template?: TemplateQuote) {
     const dialogRef = this.dialog.open(TemplateQuoteModalComponent, {
       width: '600px',
       maxWidth: '600px',
-      data: {}
+      data: { templateDetails: template }
     });
-
+  
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.addNewTemplate(result);
+        this.fetchTemplates(); // Refresh the templates list
       }
     });
   }
 
   addNewTemplate(templateData: any) {
-    const newTemplate: TemplateQuote = {
-      id: (this.templates.length + 1).toString(),
-      title: templateData.title,
-      items: templateData.items.length,
-      supplier: templateData.supplier,
-      nextOrderDate: this.calculateNextOrderDate(templateData.frequency),
-      frequency: templateData.frequency
-    };
 
-    this.templates.push(newTemplate);
-    this.sortedTemplates = [...this.templates];
-    this.snackBar.open('New template added successfully', 'Close', { duration: 3000 });
   }
 
   removeTemplate(templateId: string) {
-    const index = this.templates.findIndex(t => t.id === templateId);
-    if (index !== -1) {
-      this.templates.splice(index, 1);
-      this.sortedTemplates = [...this.templates];
-      this.snackBar.open('Template removed successfully', 'Close', { duration: 3000 });
-    }
-  }
 
-  calculateNextOrderDate(frequency: string): string {
-    const today = new Date();
-    switch (frequency) {
-      case 'Weekly':
-        today.setDate(today.getDate() + 7);
-        break;
-      case 'Monthly':
-        today.setMonth(today.getMonth() + 1);
-        break;
-      case 'Quarterly':
-        today.setMonth(today.getMonth() + 3);
-        break;
-      case 'Yearly':
-        today.setFullYear(today.getFullYear() + 1);
-        break;
-    }
-    return today.toISOString().split('T')[0];
   }
 
   startResize(event: MouseEvent) {

@@ -78,6 +78,7 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     private _rowData: any[] = [];
     private role: string = '';
+    @Input() maxGridHeight: number = 75;
     @Input() columnDefs: ColDef[] = [];
     @Input() addButton: { text: string } = { text: 'Add' };
     @Input() context: any;
@@ -213,16 +214,16 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     setGridHeight(): void {
-        const baseHeight = 35; // Base height in vh
+        const baseHeight = 60; // Base height in vh
         const rowHeight = 3; // Height per row in vh
-        const maxHeight = 75; // Maximum height in vh
+        // const maxHeight = 70; // Maximum height in vh
 
         let calculatedHeight = baseHeight + this._rowData.length * rowHeight;
-        let gridHeight = Math.min(calculatedHeight, maxHeight);
+        let gridHeight = Math.min(calculatedHeight,this.maxGridHeight);
 
         this.gridStyle = {
             height: `${gridHeight}vh`,
-            maxHeight: `${maxHeight}vh`,
+            maxHeight: `${this.maxGridHeight}vh`,
         };
 
         // Force change detection

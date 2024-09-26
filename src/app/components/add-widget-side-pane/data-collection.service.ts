@@ -42,6 +42,8 @@ export interface InventoryItem {
 }
 
 export interface StockRequest {
+    tenentId: string | undefined;
+    sku: any;
     category: string;
     quantityRequested: number;
     createdAt: string;
@@ -54,11 +56,20 @@ export class DataCollectionService {
     inventoryData: InventoryItem[] = [];
     stockRequestData: StockRequest[] = [];
     inventorySummary: InventorySummaryItem[] = [];
+    originalData: any[] = [];
+    orderData: any[] = [];
+    scatterPlotChartData: any[] = [];
+    supplierQuotes: any[] = [];
 
     private cacheExpirationTime = 5 * 60 * 1000; // 5 minutes in milliseconds
     private cachedInventorySummary: CachedData<InventorySummaryItem[]> | null = null;
     private cachedInventoryItems: CachedData<InventoryItem[]> | null = null;
     private cachedStockRequests: CachedData<StockRequest[]> | null = null;
+    private cachedSupplierQuotes: CachedData<any[]> | null = null;
+    private cachedSupplierReportData: CachedData<any[]> | null = null;
+    private cachedOrderData: CachedData<any[]> | null = null;
+    private cachedScatterPlotData: CachedData<any[]> | null = null;
+    private cachedActivityData: CachedData<any[]> | null = null;
 
     constructor(private inventoryService: InventoryService) {
         Amplify.configure(outputs);
@@ -183,8 +194,15 @@ export class DataCollectionService {
     }
 
     getSupplierReportData(): Observable<any[]> {
+        if (this.isCacheValid(this.cachedSupplierQuotes)) {
+            return of(this.cachedSupplierQuotes!.data);
+        }
+
         return from(this.fetchSupplierReportData()).pipe(
-            map((suppliers) => suppliers || []),
+            map((data) => {
+                this.cachedSupplierQuotes = { data, timestamp: Date.now() };
+                return data;
+            }),
             catchError((error) => {
                 console.error('Error fetching supplier report data:', error);
                 return [];
@@ -241,7 +259,20 @@ export class DataCollectionService {
     }
 
     getOrderData(): Observable<any[]> {
-        return from(Promise.resolve([]));
+        if (this.isCacheValid(this.cachedOrderData)) {
+            return of(this.cachedOrderData!.data);
+        }
+    
+        return from(this.fetchOrdersReport()).pipe(
+            map((data) => {
+                this.cachedOrderData = { data, timestamp: Date.now() };
+                return data;
+            }),
+            catchError((error) => {
+                console.error('Error fetching order data:', error);
+                return of([]);
+            })
+        );
     }
 
     getSupplierData(): Observable<any[]> {
@@ -258,9 +289,34 @@ export class DataCollectionService {
         return from(this.fetchSupplierQuotePrices());
     }
 
+    getScatterPlotData(): Observable<any[]> {
+        if (this.isCacheValid(this.cachedScatterPlotData)) {
+            return of(this.cachedScatterPlotData!.data);
+        }
+    
+        return from(this.fetchScatterPlotData()).pipe(
+            map((data) => {
+                this.cachedScatterPlotData = { data, timestamp: Date.now() };
+                return data;
+            }),
+            catchError((error) => {
+                console.error('Error fetching scatter plot data:', error);
+                return of([]);
+            })
+        );
+    }
+
     getActivityData(): Observable<any[]> {
+        if (this.isCacheValid(this.cachedActivityData)) {
+            return of(this.cachedActivityData!.data);
+        }
+
+        
         return from(this.fetchActivities()).pipe(
-            map((activities) => activities || []),
+            map((data) => {
+                this.cachedActivityData = { data, timestamp: Date.now() };
+                return data;
+            }),
             catchError((error) => {
                 console.error('Error fetching activities:', error);
                 return [];
@@ -279,7 +335,7 @@ export class DataCollectionService {
         }
     }
 
-    private async fetchSupplierQuotePrices(): Promise<any[]> {
+    public async fetchSupplierQuotePrices(): Promise<any[]> {
         try {
             const session = await fetchAuthSession();
             const tenantId = await this.getTenantId(session);
@@ -312,21 +368,54 @@ export class DataCollectionService {
         }
     }
 
+    async fetchScatterPlotData(): Promise<any[]> {
+        try {
+            const supplierQuotes = await this.getSupplierQuotePrices().toPromise() || [];
+            this.scatterPlotChartData = this.prepareScatterPlotData(supplierQuotes);
+            return this.scatterPlotChartData;
+        } catch (error) {
+            console.error('Error fetching supplier quote prices:', error);
+            this.scatterPlotChartData = [];
+            return []; // Add this line to return an empty array in case of an error
+        }
+    }
+
+    private prepareScatterPlotData(supplierQuotes: any[]): any[] {
+        return supplierQuotes.map((item) => ({
+            unitPrice: item.UnitPrice,
+            discount: item.Discount,
+            availableQuantity: item.AvailableQuantity,
+            itemSKU: item.ItemSKU,
+        }));
+    }
+
+    async fetchOrderData() {
+        try {
+            this.orderData = await this.fetchOrdersReport() || [];
+            console.log('Processed orders:', this.orderData);
+        } catch (error) {
+            console.error('Error in fetchOrderData:', error);
+            this.orderData = [];
+        }
+    }
+
     generateChartConfigs(): Observable<ChartConfig[]> {
         return forkJoin({
             inventory: this.getInventoryItems(),
-            inventorySummary: this.getInventorySummary(),
             requests: this.getStockRequests(),
+            suppliers: this.getSupplierReportData(),
+            scatterPlot: this.getScatterPlotData(),
+            orders: this.getOrderData(),
+            supplierQuotes: this.getSupplierQuotePrices(),
+            activities: this.getActivityData()
         }).pipe(
-            switchMap(({ inventory, inventorySummary, requests }) => {
+            switchMap(({ inventory, requests, suppliers, orders, supplierQuotes, activities }) => {
                 this.inventoryData = inventory;
-                this.inventorySummary = inventorySummary;
                 this.stockRequestData = this.filterCurrentMonthRequests(requests);
+                this.originalData = suppliers;
+                this.supplierQuotes = supplierQuotes;   //Used by the scatter plot
+                this.orderData = orders;
                 return this.createChartConfigs();
-            }),
-            catchError((error) => {
-                console.error('Error generating chart configs:', error);
-                return of([]); // Return an empty array in case of error
             }),
         );
     }
@@ -343,14 +432,196 @@ export class DataCollectionService {
                 this.prepareInventoryRequestBubbleChart(),
                 this.prepareMonthlyCategoryRequestCountChartConfig(),
                 this.prepareAvailableStockPerCategoryChartConfig(),
-                this.prepareABCAnalysisChartConfig(),
-                this.prepareEOQChartConfig(),
-                this.prepareROPChartConfig(),
+                this.prepareLineBarChartConfig(),
+                this.prepareRadarChartConfig(),
+                this.prepareScatterPlotChartConfig(),
+                this.prepareDonutChartConfig(),
+                this.prepareHorizontalBarChartConfig(),
+
             ];
             observer.next(configs);
             observer.complete();
         });
     }
+
+    private generateChartData(rawData: any[]): any[] {
+        const aggregatedData = rawData.reduce((acc, item) => {
+            const existingItem = acc.find((i: { ItemSKU: any; }) => i.ItemSKU === item.ItemSKU);
+            if (existingItem) {
+                existingItem.AvailableQuantity += Number(item.AvailableQuantity) || 0;
+                existingItem.TotalPrice += Number(item.TotalPrice) || 0;
+            } else {
+                acc.push({
+                    ItemSKU: item.ItemSKU,
+                    AvailableQuantity: Number(item.AvailableQuantity) || 0,
+                    TotalPrice: Number(item.TotalPrice) || 0
+                });
+            }
+            return acc;
+        }, []);
+
+        const processedData = aggregatedData.filter((item: { AvailableQuantity: number; TotalPrice: number; }) => item.AvailableQuantity > 0 && item.TotalPrice > 0);
+
+        console.log('Processed data:', processedData);
+        return processedData;
+    }
+
+
+    prepareHorizontalBarChartConfig(): ChartConfig{
+        return this.prepareChartConfig(
+            'barHorizontal',
+            this.generateChartData(this.supplierQuotes),
+            'Supplier Price and Availability Comparison',
+            'BubblechartComponent'
+        );
+    }
+
+    prepareScatterPlotChartConfig(): ChartConfig {
+        return this.prepareChartConfig(
+            'scatter',
+            this.scatterPlotChartData,
+            'Supplier Quote Prices',
+            'ScatterPlotComponent'
+        );
+    }
+    
+    prepareDonutChartConfig(): ChartConfig {
+        // Assuming you want to show order status distribution
+        // const statusCounts = this.orderData.reduce((acc, order) => {
+        //     acc[order.status] = (acc[order.status] || 0) + 1;
+        //     return acc;
+        // }, {});
+    
+        // const donutData = Object.entries(statusCounts).map(([name, value]) => ({ name, value }));
+    
+        return this.prepareChartConfig(
+            'donut',
+            this.orderData,
+            'Order Cost Distribution',
+            'DonutChartComponent'
+        );
+    }
+
+
+    prepareLineBarChartConfig(): ChartConfig {
+        const groupedData = this.groupDataByTopSupplier();
+        const formattedData = this.formatDataForChart(groupedData);
+        return this.prepareChartConfig(
+            'linebar',
+            { source: formattedData.source },
+            'Top Suppliers Spending Over Time',
+            'LineBarComponent'
+        );
+    }
+
+    prepareRadarChartConfig(): ChartConfig {
+        const topSuppliers = this.calculateTopSuppliers();
+        return this.prepareChartConfig(
+            'radar',
+            topSuppliers,
+            'Top Suppliers Performance Overview',
+            'RadarComponent'
+        );
+    }
+
+    private groupDataByTopSupplier(): any {
+        // Implementation as provided in your code
+        const grouped = this.originalData.reduce((acc, data) => {
+            const id = data['Supplier ID'];
+            if (!acc[id]) {
+                acc[id] = { ...data, count: 1 }; // Initial creation of the group
+            } else {
+                acc[id].TotalSpent += data.TotalSpent; // Summing up TotalSpent
+                acc[id].count += 1; // Counting occurrences
+            }
+            return acc;
+        }, {});
+
+        return Object.values(grouped)
+            .sort((a: any, b: any) => b.TotalSpent - a.TotalSpent)
+            .slice(0, 5);
+    }
+
+    private formatDataForChart(data: any[]): any {
+        // Implementation as provided in your code
+        const years = [
+            ...new Set(
+                data.flatMap((supplier: any) =>
+                    this.originalData
+                        .filter((item) => item['Supplier ID'] === supplier['Supplier ID'])
+                        .map((item) => item.Date.slice(0, 4)),
+                ),
+            ),
+        ].sort();
+        const header = ['Supplier ID', ...years];
+
+        // Map each supplier to a row in the chart data
+        const chartData = data.map((supplier: any) => {
+            const row = [supplier['Supplier ID'], ...Array(years.length).fill(0)];
+            this.originalData
+                .filter((item) => item['Supplier ID'] === supplier['Supplier ID'])
+                .forEach((item) => {
+                    const yearIndex = years.indexOf(item.Date.slice(0, 4)) + 1; // Find correct index for the year
+                    row[yearIndex] += item.TotalSpent; // Accumulate total spent for the year
+                });
+            return row;
+        });
+
+        return {
+            source: [header, ...chartData],
+        };
+    }
+
+    private calculateTopSuppliers(): any[] {
+        // Implementation as provided in your code
+
+        const supplierAggregates = this.originalData.reduce((acc, data) => {
+            const id = data['Supplier ID'];
+            if (!acc[id]) {
+                acc[id] = {
+                    supplierId: id,
+                    totalSpent: 0,
+                    averageOnTimeDelivery: 0,
+                    averageOrderAccuracy: 0,
+                    averageOutstandingPayments: 0,
+                    count: 0,
+                };
+            }
+            acc[id].totalSpent += data.TotalSpent;
+            acc[id].averageOnTimeDelivery += data['On Time Delivery Rate'];
+            acc[id].averageOrderAccuracy += data['Order Accuracy Rate'];
+            acc[id].averageOutstandingPayments += data['Out Standing Payments'];
+            acc[id].count += 1;
+            return acc;
+        }, {});
+
+        // Step 2: Calculate averages and score
+        const scoredSuppliers = Object.values(supplierAggregates).map((supplier: any) => {
+            supplier.averageOnTimeDelivery /= supplier.count;
+            supplier.averageOrderAccuracy /= supplier.count;
+            supplier.averageOutstandingPayments /= supplier.count;
+            supplier.score =
+                supplier.averageOnTimeDelivery +
+                supplier.averageOrderAccuracy -
+                supplier.averageOutstandingPayments / 1000 +
+                supplier.totalSpent / 100000;
+            return supplier;
+        });
+
+        // Step 3: Sort by score and select the top 5
+        return scoredSuppliers
+            .sort((a, b) => b.score - a.score)
+            .slice(0, 3)
+            .map((supplier) => ({
+                'Supplier ID': supplier.supplierId,
+                'Total Spent': supplier.totalSpent,
+                'On Time Delivery Rate': supplier.averageOnTimeDelivery,
+                'Order Accuracy Rate': supplier.averageOrderAccuracy,
+                'Out Standing Payments': supplier.averageOutstandingPayments,
+            }));
+    }
+
+
 
     filterCurrentMonthRequests(requests: StockRequest[]): StockRequest[] {
         const now = new Date();

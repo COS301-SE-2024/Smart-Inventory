@@ -35,8 +35,40 @@ import { DonutTemplateComponent } from 'app/components/charts/donuttemplate/donu
 import { AddWidgetSidePaneComponent } from '../../components/add-widget-side-pane/add-widget-side-pane.component';
 import { CardData, ChartConfig, DashboardItem, DashboardService } from '../dashboard/dashboard.service';
 import { ChangeDetectionService } from './change-detection.service';
-import { DataCollectionService } from '../../components/add-widget-side-pane/data-collection.service';
+import { DataCollectionService, StockRequest } from '../../components/add-widget-side-pane/data-collection.service';
 import { MetricCardComponent } from '../../components/charts/widgets/metric-card.component';
+import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
+import { fetchAuthSession } from 'aws-amplify/auth';
+interface Order {
+    tenentId: string;
+    Order_Status: string;
+    Expected_Delivery_Date?: string;
+    Order_Date: string;
+    Selected_Supplier?: string;
+}
+
+interface SkuCounts {
+    [key: string]: number;
+}
+
+interface RequestOrders {
+    requests: {
+        totalRequests: number;
+        mostRequested: {
+            name: string;
+            percentage: number;
+        };
+        highestRequest: number;
+    };
+    backorders: {
+        currentBackorders: number;
+        averageDelay: number;
+        longestBackorderItem: {
+            productName: string;
+            delay: string;
+        };
+    };
+}
 @Component({
     selector: 'app-dashboard',
     templateUrl: './dashboard.component.html',
@@ -93,6 +125,25 @@ export class DashboardComponent implements OnInit {
         PieChartComponent: PieChartComponent,
         BubbleChartComponent: BubbleChartComponent,
         MetricCardComponent: MetricCardComponent,
+    };
+
+    RequestOrders: RequestOrders = {
+        requests: {
+            totalRequests: 0,
+            mostRequested: {
+                name: '',
+                percentage: 0
+            },
+            highestRequest: 0
+        },
+        backorders: {
+            currentBackorders: 0,
+            averageDelay: 0,
+            longestBackorderItem: {
+                productName: '',
+                delay: ''
+            }
+        }
     };
 
     public chartOptions!: AgChartOptions;
@@ -192,76 +243,88 @@ export class DashboardComponent implements OnInit {
             });
     }
 
-    // async populateRequestOrders(stockRequests: StockRequest[], orders: Order[]): Promise<any> {
-    //     const session = await fetchAuthSession();
-    //     this.loader.setLoading(false);
+    async populateRequestOrders(stockRequests: StockRequest[], orders: Order[]): Promise<void> {
+        const session = await fetchAuthSession();
+        this.loader.setLoading(false);
 
-    //     const cognitoClient = new CognitoIdentityProviderClient({
-    //         region: outputs.auth.aws_region,
-    //         credentials: session.credentials,
-    //     });
+        const cognitoClient = new CognitoIdentityProviderClient({
+            region: outputs.auth.aws_region,
+            credentials: session.credentials,
+        });
 
-    //     const getUserCommand = new GetUserCommand({
-    //         AccessToken: session.tokens?.accessToken.toString(),
-    //     });
-    //     const getUserResponse = await cognitoClient.send(getUserCommand);
+        const getUserCommand = new GetUserCommand({
+            AccessToken: session.tokens?.accessToken.toString(),
+        });
+        const getUserResponse = await cognitoClient.send(getUserCommand);
 
-    //     const tenantId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
-    //     // Filter stock requests by tenantId
-    //     const filteredStockRequests = stockRequests.filter((request) => request.tenentId === tenantId);
+        const tenantId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
 
-    //     // Calculate requests data
-    //     const skuCounts: SkuCounts = filteredStockRequests.reduce((counts, request) => {
-    //         counts[request.sku] = (counts[request.sku] || 0) + request.quantityRequested;
-    //         return counts;
-    //     }, {} as SkuCounts);
+        if (!tenantId) {
+            console.error('TenantId not found');
+            return;
+        }
 
-    //     const totalRequests: number = Object.values(skuCounts).reduce((sum, count) => sum + count, 0);
-    //     const highestRequest: number = Math.max(...Object.values(skuCounts));
-    //     const mostRequestedEntry = Object.entries(skuCounts).reduce((a, b) => (a[1] > b[1] ? a : b));
-    //     const mostRequestedSku = mostRequestedEntry[0];
-    //     const mostRequestedPercentage = (skuCounts[mostRequestedSku] / totalRequests) * 100;
+        // Filter stock requests by tenantId
+        const filteredStockRequests = stockRequests.filter(request => request.tenentId === tenantId);
 
-    //     // Calculate backorders data
-    //     const backorders = orders.filter(
-    //         (order) =>
-    //             order.tenentId === tenantId &&
-    //             order.Order_Status === 'Pending Approval' &&
-    //             order.Expected_Delivery_Date,
-    //     );
-    //     const currentBackorders = backorders.length;
+        // Calculate requests data
+        const skuCounts: SkuCounts = filteredStockRequests.reduce((counts, request) => {
+            counts[request.sku] = (counts[request.sku] || 0) + request.quantityRequested;
+            return counts;
+        }, {} as SkuCounts);
 
-    //     const delays = backorders.map((order) => this.calculateDelay(order.Order_Date, order.Expected_Delivery_Date!));
-    //     const totalDelay = delays.reduce((sum, delay) => sum + delay, 0);
-    //     const averageDelay = currentBackorders > 0 ? totalDelay / currentBackorders : 0;
+        const totalRequests: number = Object.values(skuCounts).reduce((sum, count) => sum + count, 0);
+        const highestRequest: number = Math.max(...Object.values(skuCounts));
+        const mostRequestedEntry = Object.entries(skuCounts).reduce((a, b) => a[1] > b[1] ? a : b);
+        const mostRequestedSku = mostRequestedEntry[0];
+        const mostRequestedPercentage = (skuCounts[mostRequestedSku] / totalRequests) * 100;
 
-    //     const longestDelay = Math.max(...delays);
-    //     const longestBackorderItem = backorders.find(
-    //         (order) => this.calculateDelay(order.Order_Date, order.Expected_Delivery_Date!) === longestDelay,
-    //     );
+        // Calculate backorders data
+        const backorders = orders.filter(order =>
+            order.tenentId === tenantId &&
+            order.Order_Status === "Pending Approval" &&
+            order.Expected_Delivery_Date
+        );
+        const currentBackorders = backorders.length;
 
-    //     // Populate RequestOrders
-    //     this.RequestOrders = {
-    //         requests: {
-    //             totalRequests,
-    //             mostRequested: {
-    //                 name: mostRequestedSku || 'None found',
-    //                 percentage: Number(mostRequestedPercentage.toFixed(2)) || 0,
-    //             },
-    //             highestRequest,
-    //         },
-    //         backorders: {
-    //             currentBackorders,
-    //             averageDelay: Number(averageDelay.toFixed(2)),
-    //             longestBackorderItem: {
-    //                 productName: longestBackorderItem?.Selected_Supplier || 'None found',
-    //                 delay: longestDelay > 0 ? this.formatDelay(longestDelay) : '',
-    //             },
-    //         },
-    //     };
+        const delays = backorders.map(order => this.calculateDelay(order.Order_Date, order.Expected_Delivery_Date!));
+        const totalDelay = delays.reduce((sum, delay) => sum + delay, 0);
+        const averageDelay = currentBackorders > 0 ? totalDelay / currentBackorders : 0;
 
-    //     console.log('Populated RequestOrders:', this.RequestOrders);
-    // }
+        const longestDelay = Math.max(...delays);
+        const longestBackorderItem = backorders.find(order =>
+            this.calculateDelay(order.Order_Date, order.Expected_Delivery_Date!) === longestDelay
+        );
+
+        // Populate RequestOrders
+        this.RequestOrders = {
+            requests: {
+                totalRequests,
+                mostRequested: {
+                    name: mostRequestedSku || "None found",
+                    percentage: Number(mostRequestedPercentage.toFixed(2)) || 0
+                },
+                highestRequest
+            },
+            backorders: {
+                currentBackorders,
+                averageDelay: Number(averageDelay.toFixed(2)),
+                longestBackorderItem: {
+                    productName: longestBackorderItem?.Selected_Supplier || 'None found',
+                    delay: longestDelay > 0 ? this.formatDelay(longestDelay) : ''
+                }
+            }
+        };
+
+        console.log('Populated RequestOrders:', this.RequestOrders);
+    }
+
+    calculateDelay(Order_Date: any, arg1: any): any {
+        throw new Error('Method not implemented.');
+    }
+    private formatDelay(delay: number): string {
+        return delay > 0 ? `${delay.toFixed(0)} days` : "";
+    }
 
     // private calculateDelay(orderDate: string, expectedDate: string): number {
     //     const order = new Date(orderDate);

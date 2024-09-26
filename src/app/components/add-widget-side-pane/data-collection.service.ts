@@ -4,7 +4,7 @@ import { fetchAuthSession } from 'aws-amplify/auth';
 import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
 import outputs from '../../../../amplify_outputs.json';
 import { Amplify } from 'aws-amplify';
-import { Observable, from } from 'rxjs';
+import { Observable, from, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { InventoryService } from '../../../../amplify/services/inventory.service';
 import { ChartConfig } from '../../pages/dashboard/dashboard.service';
@@ -23,12 +23,11 @@ export interface InventorySummaryItem {
     ROP: number;
     upc: string;
     category: string;
-    annualConsumptionValue: number;
+    annualConsumptionValue?: number;
     ABCCategory: string;
     createdAt: string;
     updatedAt: string;
 }
-
 export interface InventoryItem {
     SKU: string;
     category: string;
@@ -51,6 +50,7 @@ export class DataCollectionService {
     chartConfigs: ChartConfig[] = [];
     inventoryData: InventoryItem[] = [];
     stockRequestData: StockRequest[] = [];
+    inventorySummary: InventorySummaryItem[] = [];
 
     constructor(private inventoryService: InventoryService) {
         Amplify.configure(outputs);
@@ -110,7 +110,7 @@ export class DataCollectionService {
             }),
             catchError((error) => {
                 console.error('Error fetching inventory summary:', error);
-                return [];
+                return of([]);
             }),
         );
     }
@@ -271,12 +271,18 @@ export class DataCollectionService {
     generateChartConfigs(): Observable<ChartConfig[]> {
         return forkJoin({
             inventory: this.getInventoryItems(),
+            inventorySummary: this.getInventorySummary(),
             requests: this.getStockRequests(),
         }).pipe(
-            switchMap(({ inventory, requests }) => {
+            switchMap(({ inventory, inventorySummary, requests }) => {
                 this.inventoryData = inventory;
+                this.inventorySummary = inventorySummary;
                 this.stockRequestData = this.filterCurrentMonthRequests(requests);
                 return this.createChartConfigs();
+            }),
+            catchError((error) => {
+                console.error('Error generating chart configs:', error);
+                return of([]); // Return an empty array in case of error
             }),
         );
     }
@@ -294,6 +300,7 @@ export class DataCollectionService {
                 this.prepareInventoryRequestBubbleChart(),
                 this.prepareMonthlyCategoryRequestCountChartConfig(),
                 this.prepareAvailableStockPerCategoryChartConfig(),
+                this.prepareABCAnalysisChartConfig(),
             ];
             observer.next(configs);
             observer.complete();
@@ -513,6 +520,44 @@ export class DataCollectionService {
         };
 
         return this.prepareChartConfig('bar', data, 'Unit Cost Distribution', 'BarChartComponent');
+    }
+
+    prepareABCAnalysisChartConfig(): ChartConfig {
+        if (!this.inventorySummary || this.inventorySummary.length === 0) {
+            console.error('Inventory summary data is not available');
+            return this.prepareChartConfig('line-bar', { source: [] }, 'ABC Analysis', 'LineBarComponent');
+        }
+
+        // Sort items by annual consumption value in descending order
+        const sortedItems = [...this.inventorySummary]
+            .filter((item) => item.annualConsumptionValue !== undefined && item.annualConsumptionValue !== null)
+            .sort((a, b) => (b.annualConsumptionValue || 0) - (a.annualConsumptionValue || 0));
+        if (sortedItems.length === 0) {
+            console.error('No valid items with annual consumption value');
+            return this.prepareChartConfig('line-bar', { source: [] }, 'ABC Analysis', 'LineBarComponent');
+        }
+
+        const totalValue = sortedItems.reduce((sum, item) => sum + (item.annualConsumptionValue || 0), 0);
+
+        let cumulativeValue = 0;
+        const chartData = sortedItems.map((item) => {
+            const value = item.annualConsumptionValue || 0;
+            cumulativeValue += value;
+            const cumulativePercentage = (cumulativeValue / totalValue) * 100;
+
+            let category;
+            if (cumulativePercentage <= 80) category = 'A';
+            else if (cumulativePercentage <= 95) category = 'B';
+            else category = 'C';
+
+            return [item.SKU, value, cumulativePercentage.toFixed(2), category];
+        });
+
+        const data = {
+            source: [['SKU', 'Annual Consumption Value', 'Cumulative Percentage', 'ABC Category'], ...chartData],
+        };
+
+        return this.prepareChartConfig('line-bar', data, 'ABC Analysis', 'LineBarComponent');
     }
 
     prepareInventoryRequestBubbleChart(): ChartConfig {

@@ -42,6 +42,8 @@ export interface InventoryItem {
 }
 
 export interface StockRequest {
+    tenentId: string | undefined;
+    sku: any;
     category: string;
     quantityRequested: number;
     createdAt: string;
@@ -63,6 +65,11 @@ export class DataCollectionService {
     private cachedInventorySummary: CachedData<InventorySummaryItem[]> | null = null;
     private cachedInventoryItems: CachedData<InventoryItem[]> | null = null;
     private cachedStockRequests: CachedData<StockRequest[]> | null = null;
+    private cachedSupplierQuotes: CachedData<any[]> | null = null;
+    private cachedSupplierReportData: CachedData<any[]> | null = null;
+    private cachedOrderData: CachedData<any[]> | null = null;
+    private cachedScatterPlotData: CachedData<any[]> | null = null;
+    private cachedActivityData: CachedData<any[]> | null = null;
 
     constructor(private inventoryService: InventoryService) {
         Amplify.configure(outputs);
@@ -187,8 +194,15 @@ export class DataCollectionService {
     }
 
     getSupplierReportData(): Observable<any[]> {
+        if (this.isCacheValid(this.cachedSupplierQuotes)) {
+            return of(this.cachedSupplierQuotes!.data);
+        }
+
         return from(this.fetchSupplierReportData()).pipe(
-            map((suppliers) => suppliers || []),
+            map((data) => {
+                this.cachedSupplierQuotes = { data, timestamp: Date.now() };
+                return data;
+            }),
             catchError((error) => {
                 console.error('Error fetching supplier report data:', error);
                 return [];
@@ -245,7 +259,20 @@ export class DataCollectionService {
     }
 
     getOrderData(): Observable<any[]> {
-        return from(Promise.resolve([]));
+        if (this.isCacheValid(this.cachedOrderData)) {
+            return of(this.cachedOrderData!.data);
+        }
+    
+        return from(this.fetchOrdersReport()).pipe(
+            map((data) => {
+                this.cachedOrderData = { data, timestamp: Date.now() };
+                return data;
+            }),
+            catchError((error) => {
+                console.error('Error fetching order data:', error);
+                return of([]);
+            })
+        );
     }
 
     getSupplierData(): Observable<any[]> {
@@ -262,9 +289,34 @@ export class DataCollectionService {
         return from(this.fetchSupplierQuotePrices());
     }
 
+    getScatterPlotData(): Observable<any[]> {
+        if (this.isCacheValid(this.cachedScatterPlotData)) {
+            return of(this.cachedScatterPlotData!.data);
+        }
+    
+        return from(this.fetchScatterPlotData()).pipe(
+            map((data) => {
+                this.cachedScatterPlotData = { data, timestamp: Date.now() };
+                return data;
+            }),
+            catchError((error) => {
+                console.error('Error fetching scatter plot data:', error);
+                return of([]);
+            })
+        );
+    }
+
     getActivityData(): Observable<any[]> {
+        if (this.isCacheValid(this.cachedActivityData)) {
+            return of(this.cachedActivityData!.data);
+        }
+
+        
         return from(this.fetchActivities()).pipe(
-            map((activities) => activities || []),
+            map((data) => {
+                this.cachedActivityData = { data, timestamp: Date.now() };
+                return data;
+            }),
             catchError((error) => {
                 console.error('Error fetching activities:', error);
                 return [];
@@ -283,7 +335,7 @@ export class DataCollectionService {
         }
     }
 
-    private async fetchSupplierQuotePrices(): Promise<any[]> {
+    public async fetchSupplierQuotePrices(): Promise<any[]> {
         try {
             const session = await fetchAuthSession();
             const tenantId = await this.getTenantId(session);
@@ -316,13 +368,15 @@ export class DataCollectionService {
         }
     }
 
-    async fetchScatterPlotData() {
+    async fetchScatterPlotData(): Promise<any[]> {
         try {
             const supplierQuotes = await this.getSupplierQuotePrices().toPromise() || [];
             this.scatterPlotChartData = this.prepareScatterPlotData(supplierQuotes);
+            return this.scatterPlotChartData;
         } catch (error) {
             console.error('Error fetching supplier quote prices:', error);
             this.scatterPlotChartData = [];
+            return []; // Add this line to return an empty array in case of an error
         }
     }
 
@@ -350,15 +404,17 @@ export class DataCollectionService {
             inventory: this.getInventoryItems(),
             requests: this.getStockRequests(),
             suppliers: this.getSupplierReportData(),
-            scatterPlot: from(this.fetchScatterPlotData()),
-            orders: from(this.fetchOrderData()),
-            supplierQuotes: this.fetchSupplierQuotePrices()
+            scatterPlot: this.getScatterPlotData(),
+            orders: this.getOrderData(),
+            supplierQuotes: this.getSupplierQuotePrices(),
+            activities: this.getActivityData()
         }).pipe(
-            switchMap(({ inventory, requests, suppliers, supplierQuotes }) => {
+            switchMap(({ inventory, requests, suppliers, orders, supplierQuotes, activities }) => {
                 this.inventoryData = inventory;
                 this.stockRequestData = this.filterCurrentMonthRequests(requests);
                 this.originalData = suppliers;
-                this.supplierQuotes = supplierQuotes;
+                this.supplierQuotes = supplierQuotes;   //Used by the scatter plot
+                this.orderData = orders;
                 return this.createChartConfigs();
             }),
         );

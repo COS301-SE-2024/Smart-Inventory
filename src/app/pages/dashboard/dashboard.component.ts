@@ -134,18 +134,18 @@ export class DashboardComponent implements OnInit {
             totalRequests: 0,
             mostRequested: {
                 name: '',
-                percentage: 0
+                percentage: 0,
             },
-            highestRequest: 0
+            highestRequest: 0,
         },
         backorders: {
             currentBackorders: 0,
             averageDelay: 0,
             longestBackorderItem: {
                 productName: '',
-                delay: ''
-            }
-        }
+                delay: '',
+            },
+        },
     };
 
     public chartOptions!: AgChartOptions;
@@ -170,7 +170,7 @@ export class DashboardComponent implements OnInit {
         // Use Promise.all to wait for both operations to complete
         const [stockRequests, orders] = await Promise.all([
             this.dataCollectionService.getAllStockRequests().toPromise(),
-            this.dataCollectionService.fetchAllOrders()
+            this.dataCollectionService.fetchAllOrders(),
         ]);
 
         this.stockRequest = stockRequests || [];
@@ -178,7 +178,9 @@ export class DashboardComponent implements OnInit {
 
         await this.populateRequestOrders(this.stockRequest, this.orders);
         await this.loadState();
-        this.refreshDashboard();
+        if (!this.dataCollectionService.isCacheValidOverall()) {
+            this.refreshDashboard();
+        }
     }
 
     private setupDashboardSubscription() {
@@ -253,85 +255,86 @@ export class DashboardComponent implements OnInit {
     async populateRequestOrders(stockRequests: any[], orders: any[]): Promise<void> {
         const session = await fetchAuthSession();
         this.loader.setLoading(false);
-    
+
         const cognitoClient = new CognitoIdentityProviderClient({
             region: outputs.auth.aws_region,
             credentials: session.credentials,
         });
-    
+
         const getUserCommand = new GetUserCommand({
             AccessToken: session.tokens?.accessToken.toString(),
         });
         const getUserResponse = await cognitoClient.send(getUserCommand);
-    
+
         const tenantId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
-    
+
         if (!tenantId) {
             console.error('TenantId not found');
             return;
         }
-    
+
         // Filter stock requests by tenantId
-        const filteredStockRequests = stockRequests.filter(request => request.tenentId === tenantId);
-    
+        const filteredStockRequests = stockRequests.filter((request) => request.tenentId === tenantId);
+
         // Calculate requests data
         const skuCounts: SkuCounts = filteredStockRequests.reduce((counts, request) => {
             counts[request.sku] = (counts[request.sku] || 0) + request.quantityRequested;
             return counts;
         }, {} as SkuCounts);
-    
+
         const totalRequests: number = Object.values(skuCounts).reduce((sum, count) => sum + count, 0);
         const highestRequest: number = Math.max(...Object.values(skuCounts));
-        const mostRequestedEntry = Object.entries(skuCounts).reduce((a, b) => a[1] > b[1] ? a : b);
+        const mostRequestedEntry = Object.entries(skuCounts).reduce((a, b) => (a[1] > b[1] ? a : b));
         const mostRequestedSku = mostRequestedEntry[0];
         const mostRequestedPercentage = (skuCounts[mostRequestedSku] / totalRequests) * 100;
-    
+
         // Calculate backorders data
-        const backorders = orders.filter(order =>
-            order.tenentId === tenantId &&
-            order.Order_Status === "Pending Approval" &&
-            order.Expected_Delivery_Date
+        const backorders = orders.filter(
+            (order) =>
+                order.tenentId === tenantId &&
+                order.Order_Status === 'Pending Approval' &&
+                order.Expected_Delivery_Date,
         );
         const currentBackorders = backorders.length;
-    
-        const delays = backorders.map(order => this.calculateDelay(order.Order_Date, order.Expected_Delivery_Date!));
+
+        const delays = backorders.map((order) => this.calculateDelay(order.Order_Date, order.Expected_Delivery_Date!));
         const totalDelay = delays.reduce((sum, delay) => sum + delay, 0);
         const averageDelay = currentBackorders > 0 ? totalDelay / currentBackorders : 0;
-    
+
         const longestDelay = Math.max(...delays);
-        const longestBackorderItem = backorders.find(order =>
-            this.calculateDelay(order.Order_Date, order.Expected_Delivery_Date!) === longestDelay
+        const longestBackorderItem = backorders.find(
+            (order) => this.calculateDelay(order.Order_Date, order.Expected_Delivery_Date!) === longestDelay,
         );
-    
+
         // Populate RequestOrders
         this.RequestOrders = {
             requests: {
                 totalRequests,
                 mostRequested: {
-                    name: mostRequestedSku || "None found",
-                    percentage: Number(mostRequestedPercentage.toFixed(2)) || 0
+                    name: mostRequestedSku || 'None found',
+                    percentage: Number(mostRequestedPercentage.toFixed(2)) || 0,
                 },
-                highestRequest
+                highestRequest,
             },
             backorders: {
                 currentBackorders,
                 averageDelay: Math.round(averageDelay),
                 longestBackorderItem: {
                     productName: longestBackorderItem?.Selected_Supplier || 'None found',
-                    delay: longestDelay > 0 ? this.formatDelay(longestDelay) : ''
-                }
-            }
+                    delay: longestDelay > 0 ? this.formatDelay(longestDelay) : '',
+                },
+            },
         };
-    
+
         console.log('Populated RequestOrders:', this.RequestOrders);
     }
-    
+
     private calculateDelay(orderDate: string, expectedDate: string): number {
         const order = new Date(orderDate);
         const expected = new Date(expectedDate);
         return Math.max(0, Math.round((expected.getTime() - order.getTime()) / (1000 * 60 * 60 * 24)));
     }
-    
+
     private formatDelay(delay: number): string {
         return `${delay} days`;
     }

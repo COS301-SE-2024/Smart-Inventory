@@ -105,6 +105,24 @@ export class DataCollectionService {
         return now - cachedData.timestamp < this.cacheExpirationTime;
     }
 
+    isCacheValidOverall(): boolean {
+        const now = Date.now();
+        const cacheItems = [
+            this.cachedInventorySummary,
+            this.cachedInventoryItems,
+            this.cachedStockRequests,
+            this.cachedAllStockRequests,
+            this.cachedSupplierQuotes,
+            this.cachedSupplierReportData,
+            this.cachedOrderData,
+            this.cachedAllOrderData,
+            this.cachedScatterPlotData,
+            this.cachedActivityData,
+        ];
+
+        return cacheItems.every((item) => item !== null && now - item.timestamp < this.cacheExpirationTime);
+    }
+
     private async getTenantId(session: any): Promise<string> {
         const cognitoClient = new CognitoIdentityProviderClient({
             region: outputs.auth.aws_region,
@@ -131,7 +149,6 @@ export class DataCollectionService {
 
     private async invokeLambdaWithRetry(functionName: string, payload: any): Promise<any> {
         const maxRetries = 1;
-        const retryDelay = 1000; // 1 second
 
         for (let attempt = 0; attempt < maxRetries; attempt++) {
             try {
@@ -152,8 +169,7 @@ export class DataCollectionService {
                 if (responseBody.statusCode === 200) {
                     return typeof responseBody.body === 'string' ? JSON.parse(responseBody.body) : responseBody.body;
                 } else if (responseBody.statusCode === 429) {
-                    console.warn(`Rate limit exceeded for ${functionName}, retrying in ${retryDelay}ms...`);
-                    await new Promise((resolve) => setTimeout(resolve, retryDelay));
+                    console.warn(`Rate limit exceeded for ${functionName}`);
                 } else {
                     throw new Error(responseBody.body);
                 }
@@ -161,8 +177,7 @@ export class DataCollectionService {
                 if (attempt === maxRetries - 1) {
                     throw error;
                 }
-                console.warn(`Error invoking ${functionName}, retrying in ${retryDelay}ms...`);
-                await new Promise((resolve) => setTimeout(resolve, retryDelay));
+                console.warn(`Error invoking ${functionName}`);
             }
         }
         throw new Error(`Failed to invoke ${functionName} after ${maxRetries} attempts`);

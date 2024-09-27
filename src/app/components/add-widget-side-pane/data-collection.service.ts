@@ -563,7 +563,7 @@ export class DataCollectionService {
                 this.prepareInventoryRequestBubbleChart(),
                 this.prepareMonthlyCategoryRequestCountChartConfig(),
                 this.prepareAvailableStockPerCategoryChartConfig(),
-                this.prepareLineBarChartConfig(),
+                // this.prepareLineBarChartConfig(),
                 this.prepareRadarChartConfig(),
                 this.prepareScatterPlotChartConfig(),
                 this.prepareDonutChartConfig(),
@@ -629,16 +629,16 @@ export class DataCollectionService {
         return this.prepareChartConfig('donut', this.orderData, 'Order Cost Distribution', 'DonutChartComponent');
     }
 
-    prepareLineBarChartConfig(): ChartConfig {
-        const groupedData = this.groupDataByTopSupplier();
-        const formattedData = this.formatDataForChart(groupedData);
-        return this.prepareChartConfig(
-            'linebar',
-            { source: formattedData.source },
-            'Top Suppliers Spending Over Time',
-            'LineBarComponent',
-        );
-    }
+    // prepareLineBarChartConfig(): ChartConfig {
+    //     const groupedData = this.groupDataByTopSupplier();
+    //     const formattedData = this.formatDataForChart(groupedData);
+    //     return this.prepareChartConfig(
+    //         'linebar',
+    //         { source: formattedData.source },
+    //         'Top Suppliers Spending Over Time',
+    //         'LineBarComponent',
+    //     );
+    // }
 
     prepareRadarChartConfig(): ChartConfig {
         const topSuppliers = this.calculateTopSuppliers();

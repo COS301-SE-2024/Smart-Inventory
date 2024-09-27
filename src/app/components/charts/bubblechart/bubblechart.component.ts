@@ -18,14 +18,12 @@ import outputs from '../../../../../amplify_outputs.json';
 export class BubblechartComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges {
     public chartOptions!: AgChartOptions;
     private themeObserver!: MutationObserver;
-    @Input() data: any[] = [];
-    @Input() chartTitle: string = "";
+    private data: any[] = [];
+    @Input() chartTitle: string = "Supplier Price and Availability Comparison";
 
     ngOnChanges(changes: SimpleChanges) {
-        if (changes['chartTitle'] || changes['data']) {
-            // const data = this.generateChartData(this.data);
-            // this.data = data;
-            this.updateChart();
+        if (changes['chartTitle'] && this.chartOptions.title) {
+            this.chartOptions.title.text = this.chartTitle;
             this.cdr.detectChanges();
         }
     }
@@ -54,6 +52,7 @@ export class BubblechartComponent implements OnInit, OnDestroy, AfterViewInit, O
     };
 
     constructor(private cdr: ChangeDetectorRef) {
+
         Amplify.configure(outputs);
         this.initializeChartOptions();
     }
@@ -103,9 +102,8 @@ export class BubblechartComponent implements OnInit, OnDestroy, AfterViewInit, O
 
     }
 
-    ngOnInit() {
-        this.updateChart();
-        console.log(this.data);
+    async ngOnInit() {
+        await this.loadSupplierQuotes();
     }
 
     ngAfterViewInit() {
@@ -162,6 +160,17 @@ export class BubblechartComponent implements OnInit, OnDestroy, AfterViewInit, O
         console.log('Processed data:', processedData);
         return processedData;
     }
+
+
+    // private generateChartData() {
+    //     // Sample Data Processing, replace this with actual data fetching and processing logic
+    //     const formattedData = this.data.map(item => ({
+    //         ItemSKU: item.ItemSKU,
+    //         AvailableQuantity: item.AvailableQuantity,
+    //         TotalPrice: item.TotalPrice
+    //     }));
+    //     return formattedData;
+    // }
 
     async loadSupplierQuotes() {
         try {

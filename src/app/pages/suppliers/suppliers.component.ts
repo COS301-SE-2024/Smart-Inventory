@@ -78,15 +78,44 @@ export class SuppliersComponent implements OnInit {
     };
 
     colDefs: ColDef[] = [
-        { field: 'supplierID', headerName: 'Supplier ID', hide: true },
-        { field: 'company_name', headerName: 'Company Name', filter: 'agSetColumnFilter' },
-        { field: 'contact_name', headerName: 'Contact Name', filter: 'agSetColumnFilter', editable: true },
-        { field: 'contact_email', headerName: 'Contact Email', filter: 'agSetColumnFilter', editable: true },
-        { field: 'phone_number', headerName: 'Phone Number', filter: 'agSetColumnFilter', editable: true },
+        {
+            field: 'supplierID',
+            headerName: 'Supplier ID',
+            hide: true,
+            headerTooltip: 'Unique identifier for each supplier',
+        },
+        {
+            field: 'company_name',
+            headerName: 'Company Name',
+            filter: 'agSetColumnFilter',
+            headerTooltip: 'Name of the supplier company',
+        },
+        {
+            field: 'contact_name',
+            headerName: 'Contact Name',
+            filter: 'agSetColumnFilter',
+            editable: true,
+            headerTooltip: 'Name of the primary contact person at the supplier',
+        },
+        {
+            field: 'contact_email',
+            headerName: 'Contact Email',
+            filter: 'agSetColumnFilter',
+            editable: true,
+            headerTooltip: 'Email address of the primary contact person',
+        },
+        {
+            field: 'phone_number',
+            headerName: 'Phone Number',
+            filter: 'agSetColumnFilter',
+            editable: true,
+            headerTooltip: 'Phone number of the supplier or primary contact',
+        },
         {
             field: 'address',
             headerName: 'Address',
             filter: 'agSetColumnFilter',
+            headerTooltip: 'Physical address of the supplier',
             valueGetter: (params: any) => this.getAddressString(params.data.address),
             onCellClicked: (params: any) => this.onAddressCellClicked(params.data),
         },
@@ -99,7 +128,7 @@ export class SuppliersComponent implements OnInit {
         private dialog: MatDialog,
         private snackBar: MatSnackBar,
         private teamService: TeamsService,
-        private suppliersService: SuppliersService
+        private suppliersService: SuppliersService,
     ) {
         Amplify.configure(outputs);
     }
@@ -165,33 +194,33 @@ export class SuppliersComponent implements OnInit {
     async getUserInfo() {
         try {
             const session = await fetchAuthSession();
-    
+
             const cognitoClient = new CognitoIdentityProviderClient({
                 region: outputs.auth.aws_region,
                 credentials: session.credentials,
             });
-    
+
             const getUserCommand = new GetUserCommand({
                 AccessToken: session.tokens?.accessToken.toString(),
             });
             const getUserResponse = await cognitoClient.send(getUserCommand);
-    
+
             const givenName = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'given_name')?.Value || '';
             const familyName = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'family_name')?.Value || '';
             this.userName = `${givenName} ${familyName}`.trim();
-    
+
             this.tenantId =
                 getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value || '';
-    
+
             // Use the TeamsService to get users
             const users = await this.teamService.getUsers(outputs.auth.user_pool_id, this.tenantId).toPromise();
-    
+
             const currentUser = users.find(
                 (user: any) =>
                     user.Attributes.find((attr: any) => attr.Name === 'email')?.Value ===
                     session.tokens?.accessToken.payload['username'],
             );
-    
+
             if (currentUser && currentUser.Groups.length > 0) {
                 this.userRole = this.getRoleDisplayName(currentUser.Groups[0].GroupName);
             }
@@ -209,25 +238,25 @@ export class SuppliersComponent implements OnInit {
     async loadSuppliersData() {
         try {
             const session = await fetchAuthSession();
-    
+
             const cognitoClient = new CognitoIdentityProviderClient({
                 region: outputs.auth.aws_region,
                 credentials: session.credentials,
             });
-    
+
             const getUserCommand = new GetUserCommand({
                 AccessToken: session.tokens?.accessToken.toString(),
             });
             const getUserResponse = await cognitoClient.send(getUserCommand);
-    
+
             const tenantId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
-    
+
             if (!tenantId) {
                 console.error('TenantId not found in user attributes');
                 this.rowData = [];
                 return;
             }
-    
+
             this.suppliersService.getSuppliers(tenantId).subscribe(
                 (suppliers) => {
                     this.rowData = suppliers.map((supplier: any) => ({
@@ -243,7 +272,7 @@ export class SuppliersComponent implements OnInit {
                 (error) => {
                     console.error('Error fetching suppliers data:', error);
                     this.rowData = [];
-                }
+                },
             );
         } catch (error) {
             console.error('Error in loadSuppliersData:', error);
@@ -322,7 +351,7 @@ export class SuppliersComponent implements OnInit {
             const updatedData = {
                 supplierID: this.selectedSupplier.supplierID,
                 tenentId: tenentId,
-                address: formData
+                address: formData,
             };
             console.log('Updated data:', updatedData);
             const response = await this.suppliersService.editSupplier(updatedData).toPromise();
@@ -355,7 +384,7 @@ export class SuppliersComponent implements OnInit {
             this.isEditingAddress = false;
         }
     }
-    
+
     async onSubmit(formData: any) {
         this.isAddingSupplier = true;
         try {
@@ -413,7 +442,7 @@ export class SuppliersComponent implements OnInit {
             this.isAddingSupplier = false;
         }
     }
-    
+
     async deleteSupplier(supplierID: string) {
         try {
             const session = await fetchAuthSession();
@@ -429,10 +458,10 @@ export class SuppliersComponent implements OnInit {
             if (!tenentId) {
                 throw new Error('TenentId not found in user attributes');
             }
-    
+
             const response = await this.suppliersService.deleteSupplier(supplierID, tenentId).toPromise();
             console.log('Delete response:', response);
-    
+
             if (response.message === 'Supplier deleted successfully and notification created') {
                 console.log('Supplier deleted successfully');
                 this.snackBar.open('Supplier deleted successfully', 'Close', {
@@ -442,28 +471,38 @@ export class SuppliersComponent implements OnInit {
                 });
                 await this.logActivity('Deleted supplier', supplierID + ' was deleted.');
                 await this.loadSuppliersData(); // Refresh the supplier list
-            } else if (response.error === 'Supplier cannot be deleted because they are already being used in the system') {
-                this.snackBar.open('Supplier cannot be deleted because they are already being used in the system', 'Close', {
-                    duration: 6000,
-                    horizontalPosition: 'center',
-                    verticalPosition: 'top',
-                });
+            } else if (
+                response.error === 'Supplier cannot be deleted because they are already being used in the system'
+            ) {
+                this.snackBar.open(
+                    'Supplier cannot be deleted because they are already being used in the system',
+                    'Close',
+                    {
+                        duration: 6000,
+                        horizontalPosition: 'center',
+                        verticalPosition: 'top',
+                    },
+                );
             } else {
                 throw new Error(response.error || 'Unknown error occurred');
             }
         } catch (error) {
             console.error('Error deleting supplier:', error);
-            this.snackBar.open(`Supplier cannot be deleted because they are already being used in the system`, 'Close', {
-                duration: 5000,
-                horizontalPosition: 'center',
-                verticalPosition: 'top',
-            });
+            this.snackBar.open(
+                `Supplier cannot be deleted because they are already being used in the system`,
+                'Close',
+                {
+                    duration: 5000,
+                    horizontalPosition: 'center',
+                    verticalPosition: 'top',
+                },
+            );
         }
     }
-    
+
     private updateQueue: { [key: string]: any } = {};
     private updateTimeout: any;
-    
+
     async handleCellValueChanged(event: { data: any; field: string; newValue: any }) {
         // Add the change to the queue
         if (!this.updateQueue[event.data.supplierID]) {
@@ -473,12 +512,12 @@ export class SuppliersComponent implements OnInit {
             };
         }
         this.updateQueue[event.data.supplierID][event.field] = event.newValue;
-    
+
         // Clear any existing timeout
         if (this.updateTimeout) {
             clearTimeout(this.updateTimeout);
         }
-    
+
         // Set a new timeout
         this.updateTimeout = setTimeout(async () => {
             try {
@@ -487,33 +526,31 @@ export class SuppliersComponent implements OnInit {
                     console.log('Sending updated data:', updatedData);
                     const response = await this.suppliersService.editSupplier(updatedData).toPromise();
                     console.log('Received response:', response);
-                    
+
                     if (response && response.body) {
                         console.log('Supplier updated successfully');
                         const updatedSupplier = response.body;
-                        const index = this.rowData.findIndex((supplier) => supplier.supplierID === updatedSupplier.supplierID);
+                        const index = this.rowData.findIndex(
+                            (supplier) => supplier.supplierID === updatedSupplier.supplierID,
+                        );
                         if (index !== -1) {
                             this.rowData[index] = { ...this.rowData[index], ...updatedSupplier };
                         }
-                        await this.logActivity(
-                            'Updated supplier',
-                            `Updated supplier ${updatedSupplier.company_name}`
-                        );
+                        await this.logActivity('Updated supplier', `Updated supplier ${updatedSupplier.company_name}`);
                     } else {
                         throw new Error('Invalid response from server');
                     }
                 }
-    
+
                 // Show snackbar only once after all updates are complete
                 this.snackBar.open('Supplier updated successfully', 'Close', {
                     duration: 6000,
                     horizontalPosition: 'center',
                     verticalPosition: 'top',
                 });
-    
+
                 // Clear the update queue
                 this.updateQueue = {};
-    
             } catch (error) {
                 console.error('Error updating supplier(s):', error);
                 this.snackBar.open(`Error updating supplier(s): ${(error as Error).message}`, 'Close', {
@@ -523,7 +560,7 @@ export class SuppliersComponent implements OnInit {
                 });
                 // Revert all changes in the grid
                 for (const supplierID in this.updateQueue) {
-                    const originalData = this.rowData.find(supplier => supplier.supplierID === supplierID);
+                    const originalData = this.rowData.find((supplier) => supplier.supplierID === supplierID);
                     if (originalData) {
                         this.gridComponent.updateRow(originalData);
                     }
@@ -533,7 +570,6 @@ export class SuppliersComponent implements OnInit {
             }
         }, 500); // Wait for 500ms before sending updates
     }
-
 
     handleRowsToDelete(rows: any[]) {
         this.rowsToDelete = rows;
@@ -568,24 +604,19 @@ export class SuppliersComponent implements OnInit {
         }
     }
 
-
-
     cancelDelete() {
         this.showDeletePopup = false;
         this.rowsToDelete = [];
     }
 
-
-
     openImportSuppliersModal() {
         console.log('Opening import suppliers modal');
-        const dialogRef = this.dialog.open(UploadSuppliersModalComponent, {
+        const dialogRef = this.dialog.open(UploadSuppliersModalComponent, {});
+
+        dialogRef.afterClosed().subscribe((result) => {
+            if (result) {
+                this.loadSuppliersData(); // Refresh the suppliers list
+            }
         });
-    
-        dialogRef.afterClosed().subscribe(result => {
-          if (result) {
-            this.loadSuppliersData(); // Refresh the suppliers list
-          }
-        });
-      }
+    }
 }

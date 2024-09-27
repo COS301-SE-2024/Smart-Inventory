@@ -2,7 +2,9 @@
     <span class="pageTitle">{{ pageTitle }}</span>
     <span class="flex-spacer"></span>
     <button mat-icon-button (click)="toggleNotificationPanel()" class="toolbar-icon">
-        <mat-icon [matBadge]="unreadCount" [matBadgeHidden]="unreadCount === 0" matBadgeColor="warn">notifications</mat-icon>
+        <mat-icon [matBadge]="unreadCount" [matBadgeHidden]="unreadCount === 0" matBadgeColor="warn"
+            >notifications</mat-icon
+        >
     </button>
     <button mat-icon-button (click)="clickSettings()" class="toolbar-icon">
         <mat-icon>settings</mat-icon>
@@ -17,7 +19,6 @@
         </div>
     </div>
     <mat-menu #menu="matMenu">
-        <button mat-menu-item>Profile</button>
         <button mat-menu-item (click)="logout()">Logout</button>
     </mat-menu>
 </mat-toolbar>

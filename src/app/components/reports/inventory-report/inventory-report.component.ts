@@ -81,78 +81,71 @@ export class InventoryReportComponent implements OnInit {
         this.gridsterOptions = {
             gridType: GridType.VerticalFixed,
             displayGrid: DisplayGrid.None,
-            compactType: CompactType.CompactUpAndLeft,
+            compactType: CompactType.None,
+            margin: 10,
+            outerMargin: true,
+            mobileBreakpoint: 640,
+            minCols: 12,
+            maxCols: 12,
+            maxItemCols: 12,
+            minItemCols: 1,
+            maxItemRows: 100,
+            minItemRows: 1,
+            defaultItemCols: 1,
+            defaultItemRows: 1,
+            fixedColWidth: 100,
+            fixedRowHeight: 100,
+            minRows: 18, // Adjust based on your total layout height
+            maxRows: 18, // Adjust based on your total layout height
+            enableEmptyCellClick: false,
+            enableEmptyCellContextMenu: false,
+            enableEmptyCellDrop: false,
+            enableEmptyCellDrag: false,
+            enableOccupiedCellDrop: false,
             draggable: {
                 enabled: false,
             },
             resizable: {
                 enabled: false,
             },
+            swap: false,
             pushItems: false,
-            margin: 10,
-            outerMargin: true,
-            outerMarginTop: null,
-            outerMarginRight: null,
-            outerMarginBottom: null,
-            outerMarginLeft: null,
-            useTransformPositioning: true,
-            mobileBreakpoint: 640,
-            minCols: 12,
-            maxCols: 12,
-            minRows: 20,
-            maxRows: 100,
-            maxItemCols: 100,
-            minItemCols: 1,
-            maxItemRows: 100,
-            minItemRows: 1,
-            maxItemArea: 2500,
-            minItemArea: 1,
-            defaultItemCols: 1,
-            defaultItemRows: 1,
-            fixedColWidth: 105,
-            fixedRowHeight: 105,
-            keepFixedHeightInMobile: false,
-            keepFixedWidthInMobile: false,
-            scrollSensitivity: 10,
-            scrollSpeed: 20,
-            enableEmptyCellClick: false,
-            enableEmptyCellContextMenu: false,
-            enableEmptyCellDrop: false,
-            enableEmptyCellDrag: false,
-            enableOccupiedCellDrop: false,
-            emptyCellDragMaxCols: 50,
-            emptyCellDragMaxRows: 50,
-            ignoreMarginInRow: false,
+            disablePushOnDrag: true,
+            disablePushOnResize: true,
+            pushDirections: { north: false, east: false, south: false, west: false },
+            pushResizeItems: false,
         };
         this.gridsterItems = [
-            { cols: 4, rows: 3, y: 0, x: 0, chartIndex: 0 }, //0
-            { cols: 4, rows: 3, y: 0, x: 2, chartIndex: 1 }, //1
-            { cols: 4, rows: 3, y: 0, x: 4, chartIndex: 2 }, //2
-            { cols: 12, rows: 5, y: 1, x: 0, isGrid: true }, //3
-            { cols: 8, rows: 5, y: 3, x: 0, chartIndex: 3 }, //4
-            { cols: 4, rows: 5, y: 1, x: 3, isMetrics: true }, //5
-            { cols: 12, rows: 5, y: 4, x: 0, chartIndex: 4 }, //6
+            { cols: 12, rows: 5, y: 0, x: 0, isGrid: true },
+            { cols: 8, rows: 5, y: 5, x: 0, chartIndex: 3 },
+            { cols: 4, rows: 5, y: 5, x: 8, isMetrics: true },
+            { cols: 12, rows: 5, y: 10, x: 0, chartIndex: 4 },
         ];
     }
-
-    options1!: AgChartOptions;
-    options2!: AgChartOptions;
-    options3!: AgChartOptions;
-    options4!: AgChartOptions;
 
     async ngOnInit() {
         this.titleService.updateTitle('Inventory Report');
         this.isLoading = true;
         this.setupColumnDefs();
-        await this.loadInventoryData();
-        await this.updateInventoryWithRequests();
-        this.setupCharts();
-        this.setupMetrics();
-        this.isLoading = false;
+
+        try {
+            await this.loadInventoryData();
+            await this.updateInventoryWithRequests();
+            this.setupCharts();
+            this.setupMetrics();
+
+            if (this.gridComponent) {
+                this.gridComponent.refreshGrid(this.rowData);
+            }
+        } catch (error) {
+            console.error('Error loading data:', error);
+        } finally {
+            this.isLoading = false;
+        }
     }
 
     async loadInventoryData() {
-        try {
+        return new Promise<void>((resolve, reject) => {
             this.dataCollectionService.getInventoryItems().subscribe(
                 (inventoryItems) => {
                     this.rowData = inventoryItems.map((item: any) => ({
@@ -166,32 +159,59 @@ export class InventoryReportComponent implements OnInit {
                         expirationDate: item.expirationDate,
                         lowStockThreshold: item.lowStockThreshold,
                         reorderFreq: item.reorderFreq,
-                        requests: item.requests,
+                        requests: 0,
                         requestsQuantity: 0,
                     }));
                     this.setupColumnDefs();
+                    resolve();
                 },
                 (error) => {
                     console.error('Error fetching inventory data:', error);
                     this.rowData = [];
+                    reject(error);
                 },
             );
-        } catch (error) {
-            console.error('Error in loadInventoryData:', error);
-            this.rowData = [];
-        }
+        });
     }
 
     setupColumnDefs() {
         this.colDefs = [
-            { field: 'sku', headerName: 'SKU', filter: 'agSetColumnFilter' },
-            { field: 'category', headerName: 'Category', filter: 'agSetColumnFilter' },
-            { field: 'description', headerName: 'Description', filter: 'agSetColumnFilter' },
-            { field: 'quantity', headerName: 'Quantity', filter: 'agSetColumnFilter' },
-            { field: 'lowStockThreshold', headerName: 'Low stock Threshold', filter: 'agSetColumnFilter' },
-            { field: 'supplier', headerName: 'Supplier', filter: 'agSetColumnFilter' },
-            { field: 'requests', headerName: 'Requests', filter: 'agSetColumnFilter' },
-            { field: 'requestsQuantity', headerName: 'Requests Quantity', filter: 'agSetColumnFilter' },
+            {
+                field: 'sku',
+                headerName: 'SKU',
+                filter: 'agSetColumnFilter',
+                headerTooltip: 'Stock Keeping Unit - Unique identifier for each product',
+            },
+            {
+                field: 'category',
+                headerName: 'Category',
+                filter: 'agSetColumnFilter',
+                headerTooltip: 'Product category or classification',
+            },
+            {
+                field: 'description',
+                headerName: 'Description',
+                filter: 'agSetColumnFilter',
+                headerTooltip: 'Detailed description of the product',
+            },
+            {
+                field: 'quantity',
+                headerName: 'Quantity',
+                filter: 'agSetColumnFilter',
+                headerTooltip: 'Current available stock quantity',
+            },
+            {
+                field: 'requests',
+                headerName: 'Requests',
+                filter: 'agSetColumnFilter',
+                headerTooltip: 'Number of requests for this product',
+            },
+            {
+                field: 'requestsQuantity',
+                headerName: 'Requests Quantity',
+                filter: 'agSetColumnFilter',
+                headerTooltip: 'Total quantity of product requested',
+            },
         ];
     }
 

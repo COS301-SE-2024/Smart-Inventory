@@ -1,40 +1,8 @@
-.chart {
-    width: 50%;
-}
-
-gridster {
-    background-color: white !important;
-}
-
-gridster-item {
-    border-radius: 10px;
-    background-color: transparent;
-}
-
-gridster-item:not(.grid-card) {
-    box-shadow:
-        0 4px 8px rgba(0, 0, 0, 0.1),
-        0 6px 20px rgba(0, 0, 0, 0.15);
-    margin-left: 2px;
-    background: transparent !important;
-    
-}
-
-.loading-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
+/* Layout */
+.gridster-container {
+    height: calc(100vh - 64px);
     width: 100%;
-    height: 100%;
-    background-color: rgba(255, 255, 255, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-}
-
-mat-card.mat-mdc-card.mdc-card {
-    background-color: transparent;
+    overflow: auto;
 }
 
 .grid-container {
@@ -42,18 +10,29 @@ mat-card.mat-mdc-card.mdc-card {
     grid-template-columns: repeat(9, 1fr);
     gap: 10px;
     padding: 10px;
+    background-color: transparent;
 }
 
-.btn {
-    border-radius: 20px;
-    margin-right: 10px;
-    --mdc-outlined-button-label-text-color: black;
-    --mdc-outlined-button-outline-color: #74777f;
-    border-radius: 5px;
-    width: 200px;
-    height: 40px;
+/* Gridster styles */
+gridster {
+    background-color: transparent !important;
 }
 
+gridster-item {
+    overflow: visible !important;
+    border-radius: 10px !important;
+    background-color: transparent !important;
+}
+
+gridster-item:not(.grid-card):not(.order-report-item) {
+    box-shadow:
+        0 4px 8px rgba(0, 0, 0, 0.1),
+        0 6px 20px rgba(0, 0, 0, 0.15);
+    margin-left: 2px;
+    background: white !important;
+}
+
+/* Chart styles */
 .chart-tile {
     background-color: #fff;
     border-radius: 4px;
@@ -73,25 +52,15 @@ mat-card.mat-mdc-card.mdc-card {
     grid-column: span 7;
 }
 
-.chart {
-    width: 100%;
-    height: 300px;
-    /* Adjust as needed */
-}
-
+.chart,
 .inventory-holder {
     width: 100%;
     height: 300px;
-    /* Adjust as needed */
 }
 
-.gridster-container {
-    height: calc(100vh - 64px); /* Adjust based on your layout */
-    width: 100%;
-    overflow: auto;
-}
-
-.chart-card, .metrics-card {
+/* Card styles */
+.chart-card,
+.metrics-card {
     height: 100%;
     width: 100%;
     box-sizing: border-box;
@@ -116,6 +85,55 @@ mat-card.mat-mdc-card.mdc-card {
     border-bottom: 1px solid lightgrey;
 }
 
+/* App Grid Container */
+.app-grid-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+}
+
+.app-grid-container .grid-item-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.app-grid-container .inventoryHolder {
+    flex-grow: 1;
+    overflow: hidden;
+}
+
+/* Button styles */
+.btn {
+    border-radius: 5px;
+    width: 200px;
+    height: 40px;
+    --mdc-outlined-button-label-text-color: black;
+    --mdc-outlined-button-outline-color: #74777f;
+    display: flex;
+    align-items: center;
+}
+
+.btn mat-icon {
+    margin-right: 8px;
+}
+
+/* Loading overlay */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+/* Back toolbar */
 .back-toolbar {
     position: sticky;
     top: 94%;
@@ -125,13 +143,4 @@ mat-card.mat-mdc-card.mdc-card {
     height: 50px;
     background-color: transparent;
     z-index: 1;
-}
-
-.btn {
-    display: flex;
-    align-items: center;
-}
-
-.btn mat-icon {
-    margin-right: 8px;
 }

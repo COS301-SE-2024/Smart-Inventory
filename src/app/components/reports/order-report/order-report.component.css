@@ -7,10 +7,11 @@ gridster {
 }
 
 mat-card.mat-mdc-card.mdc-card {
-    background-color: #ffff;
+    background-color: white;
     box-shadow:
         0 4px 8px rgba(0, 0, 0, 0.1),
         0 6px 20px rgba(0, 0, 0, 0.15);
+    height: 100%;
 }
 
 .btn {
@@ -52,7 +53,6 @@ mat-card.mat-mdc-card.mdc-card {
     border-bottom: 1px solid lightgrey;
 }
 
-
 .metrics-wrapper {
     display: flex;
     gap: 29px;
@@ -87,7 +87,6 @@ mat-card.mat-mdc-card.mdc-card {
     font-size: 24px;
     color: #666;
 }
-
 
 .metric-name {
     font-size: 18px;
@@ -165,8 +164,6 @@ mat-card.mat-mdc-card.mdc-card {
 }
 
 .inventoryHolder {
-    padding-left: 17px;
-    padding-right: 17px;
 }
 
 .report {
@@ -178,7 +175,7 @@ gridster-item:not(.order-report-item) {
         0 4px 8px rgba(0, 0, 0, 0.1),
         0 6px 20px rgba(0, 0, 0, 0.15);
     margin-left: 2px;
-    background: transparent !important;
+    background: white !important;
     border-radius: 10px;
 }
 
@@ -223,7 +220,6 @@ mat-card-title {
     font-size: 17px;
     margin-bottom: 8px;
 }
-
 
 .card-layout {
     display: flex;

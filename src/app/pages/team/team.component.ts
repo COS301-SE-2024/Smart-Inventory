@@ -6,7 +6,7 @@ import {
     AdminAddUserToGroupCommand,
     GetUserCommand,
     AdminUpdateUserAttributesCommand,
-    AdminDeleteUserCommand
+    AdminDeleteUserCommand,
 } from '@aws-sdk/client-cognito-identity-provider';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -50,7 +50,7 @@ export class TeamComponent implements OnInit {
         private teamService: TeamsService,
         private dialog: MatDialog,
         private snackBar: MatSnackBar,
-        private notificationsService: NotificationsService
+        private notificationsService: NotificationsService,
     ) {}
     showPopup = false;
     user = {
@@ -66,21 +66,36 @@ export class TeamComponent implements OnInit {
     isLoading = true;
     rowData: any[] = [];
     colDefs: ColDef[] = [
-        { field: 'given_name', headerName: 'Name', filter: 'agSetColumnFilter' },
-        { field: 'family_name', headerName: 'Surname', filter: 'agSetColumnFilter' },
-        { field: 'email', headerName: 'Email', filter: 'agSetColumnFilter' },
+        {
+            field: 'given_name',
+            headerName: 'Name',
+            filter: 'agSetColumnFilter',
+            headerTooltip: "User's first name or given name",
+        },
+        {
+            field: 'family_name',
+            headerName: 'Surname',
+            filter: 'agSetColumnFilter',
+            headerTooltip: "User's last name or family name",
+        },
+        {
+            field: 'email',
+            headerName: 'Email',
+            filter: 'agSetColumnFilter',
+            headerTooltip: "User's email address",
+        },
         {
             field: 'role',
             headerName: 'Role',
             filter: 'agSetColumnFilter',
+            headerTooltip: "User's role or position in the system",
             cellRenderer: RoleSelectCellEditorComponent,
             cellRendererParams: {
-                context: this.getContext()
+                context: this.getContext(),
             },
             width: 100,
-        }
+        },
     ];
-
     tenantId: string = '';
     userName: string = '';
     userRole: string = '';
@@ -96,33 +111,33 @@ export class TeamComponent implements OnInit {
     async getUserInfo() {
         try {
             const session = await fetchAuthSession();
-        
+
             const cognitoClient = new CognitoIdentityProviderClient({
                 region: outputs.auth.aws_region,
                 credentials: session.credentials,
             });
-        
+
             const getUserCommand = new GetUserCommand({
                 AccessToken: session.tokens?.accessToken.toString(),
             });
             const getUserResponse = await cognitoClient.send(getUserCommand);
-        
+
             const givenName = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'given_name')?.Value || '';
             const familyName = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'family_name')?.Value || '';
             this.userName = `${givenName} ${familyName}`.trim();
-        
+
             this.tenantId =
                 getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value || '';
-        
+
             // Use the TeamsService to get users
             const users = await this.teamService.getUsers(outputs.auth.user_pool_id, this.tenantId).toPromise();
-        
+
             const currentUser = users.find(
                 (user: any) =>
                     user.Attributes.find((attr: any) => attr.Name === 'email')?.Value ===
                     session.tokens?.accessToken.payload['username'],
             );
-        
+
             if (currentUser && currentUser.Groups.length > 0) {
                 this.userRole = this.getRoleDisplayName(currentUser.Groups[0].GroupName);
             }
@@ -293,7 +308,10 @@ export class TeamComponent implements OnInit {
 
             console.log('User created and added to the group successfully');
             await this.logActivity('Added new team member', `Added ${formData.email} as ${formData.role}`);
-            await this.createNotification(`New user ${formData.name} ${formData.surname} added as ${formData.role}`, 'USER_ADDED');
+            await this.createNotification(
+                `New user ${formData.name} ${formData.surname} added as ${formData.role}`,
+                'USER_ADDED',
+            );
 
             this.fetchUsers();
             this.closePopup();
@@ -301,7 +319,7 @@ export class TeamComponent implements OnInit {
                 duration: 3000,
                 horizontalPosition: 'center',
                 verticalPosition: 'top',
-              });
+            });
         } catch (error) {
             console.error('Error creating user and adding to group:', error);
         } finally {
@@ -313,21 +331,20 @@ export class TeamComponent implements OnInit {
         console.log('Fetching users');
         try {
             const session = await fetchAuthSession();
-    
+
             const cognitoClient = new CognitoIdentityProviderClient({
                 region: outputs.auth.aws_region,
                 credentials: session.credentials,
             });
-    
+
             const getUserCommand = new GetUserCommand({
                 AccessToken: session.tokens?.accessToken.toString(),
             });
             const getUserResponse = await cognitoClient.send(getUserCommand);
-    
-            const tenantId = getUserResponse.UserAttributes?.find(
-                (attr) => attr.Name === 'custom:tenentId'
-            )?.Value || '';
-    
+
+            const tenantId =
+                getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value || '';
+
             // Use the TeamsService to get users
             const users = await this.teamService.getUsers(outputs.auth.user_pool_id, tenantId).toPromise();
             console.log('Users received from TeamsService:', users);
@@ -366,119 +383,113 @@ export class TeamComponent implements OnInit {
 
     async createNotification(message: string, type: string) {
         try {
-          const notificationId = this.generateUUID();
-          const timestamp = new Date().toISOString();
-      
-          const notificationData = {
-            tenentId: this.tenantId,
-            timestamp: timestamp,
-            notificationId: notificationId,
-            type: type,
-            message: message,
-            isRead: false
-          };
-      
-          const response = await this.notificationsService.createNotification(notificationData).toPromise();
-      
-          if (response && response.notificationId) {
-            console.log('Notification created successfully');
-            // You can add any additional logic here, such as updating the UI
-          } else {
-            throw new Error('Failed to create notification');
-          }
+            const notificationId = this.generateUUID();
+            const timestamp = new Date().toISOString();
+
+            const notificationData = {
+                tenentId: this.tenantId,
+                timestamp: timestamp,
+                notificationId: notificationId,
+                type: type,
+                message: message,
+                isRead: false,
+            };
+
+            const response = await this.notificationsService.createNotification(notificationData).toPromise();
+
+            if (response && response.notificationId) {
+                console.log('Notification created successfully');
+                // You can add any additional logic here, such as updating the UI
+            } else {
+                throw new Error('Failed to create notification');
+            }
         } catch (error) {
-          console.error('Error creating notification:', error);
-        }
-      }
-      
-      generateUUID() {
-        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-          var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-          return v.toString(16);
-        });
-      }
-
-      getContext() {
-        return { componentParent: this };
-      }
-
-      async deleteMember() {
-        const selectedRows = this.gridComponent.gridApi.getSelectedRows();
-        if (selectedRows.length === 0) {
-          this.snackBar.open('Please select a member to delete', 'Close', {
-            duration: 3000,
-            horizontalPosition: 'center',
-            verticalPosition: 'top',
-          });
-          return;
-        }
-    
-        const selectedMember = selectedRows[0];
-        if (selectedMember.role === 'Admin') {
-          this.snackBar.open('Admin users cannot be deleted', 'Close', {
-            duration: 3000,
-            horizontalPosition: 'center',
-            verticalPosition: 'top',
-          });
-          return;
-        }
-    
-        const dialogRef = this.dialog.open(DeleteConfirmationDialogComponent, {
-          width: '350px',
-          data: {
-            given_name: selectedMember.given_name,
-            family_name: selectedMember.family_name,
-            email: selectedMember.email,
-          },
-        });
-    
-        dialogRef.componentInstance.deleteConfirmed.subscribe(async () => {
-          await this.deleteUser(selectedMember.email);
-          dialogRef.close();
-          this.fetchUsers();
-        });
-      }
-
-    async deleteUser(email: string) {
-        try {
-        const session = await fetchAuthSession();
-
-        const client = new CognitoIdentityProviderClient({
-            region: outputs.auth.aws_region,
-            credentials: session.credentials,
-        });
-
-        const input = {
-            UserPoolId: outputs.auth.user_pool_id,
-            Username: email,
-        };
-
-        const command = new AdminDeleteUserCommand(input);
-        await client.send(command);
-        console.log('User deleted successfully:', email);
-    
-
-        // Create notification
-        await this.createNotification(
-            `User ${email} has been deleted`,
-            'USER_DELETED'
-        );
-
-        this.snackBar.open('User deleted successfully', 'Close', {
-            duration: 3000,
-            horizontalPosition: 'center',
-            verticalPosition: 'top',
-        });
-
-        } catch (error) {
-        console.error('Error deleting user:', error);
-        this.snackBar.open('Error deleting user', 'Close', {
-            duration: 3000,
-            horizontalPosition: 'center',
-            verticalPosition: 'top',
-        });
+            console.error('Error creating notification:', error);
         }
     }
 
+    generateUUID() {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+            var r = (Math.random() * 16) | 0,
+                v = c == 'x' ? r : (r & 0x3) | 0x8;
+            return v.toString(16);
+        });
+    }
 
+    getContext() {
+        return { componentParent: this };
+    }
+
+    async deleteMember() {
+        const selectedRows = this.gridComponent.gridApi.getSelectedRows();
+        if (selectedRows.length === 0) {
+            this.snackBar.open('Please select a member to delete', 'Close', {
+                duration: 3000,
+                horizontalPosition: 'center',
+                verticalPosition: 'top',
+            });
+            return;
+        }
+
+        const selectedMember = selectedRows[0];
+        if (selectedMember.role === 'Admin') {
+            this.snackBar.open('Admin users cannot be deleted', 'Close', {
+                duration: 3000,
+                horizontalPosition: 'center',
+                verticalPosition: 'top',
+            });
+            return;
+        }
+
+        const dialogRef = this.dialog.open(DeleteConfirmationDialogComponent, {
+            width: '350px',
+            data: {
+                given_name: selectedMember.given_name,
+                family_name: selectedMember.family_name,
+                email: selectedMember.email,
+            },
+        });
+
+        dialogRef.componentInstance.deleteConfirmed.subscribe(async () => {
+            await this.deleteUser(selectedMember.email);
+            dialogRef.close();
+            this.fetchUsers();
+        });
+    }
+
+    async deleteUser(email: string) {
+        try {
+            const session = await fetchAuthSession();
+
+            const client = new CognitoIdentityProviderClient({
+                region: outputs.auth.aws_region,
+                credentials: session.credentials,
+            });
+
+            const input = {
+                UserPoolId: outputs.auth.user_pool_id,
+                Username: email,
+            };
+
+            const command = new AdminDeleteUserCommand(input);
+            await client.send(command);
+            console.log('User deleted successfully:', email);
+
+            // Create notification
+            await this.createNotification(`User ${email} has been deleted`, 'USER_DELETED');
+
+            this.snackBar.open('User deleted successfully', 'Close', {
+                duration: 3000,
+                horizontalPosition: 'center',
+                verticalPosition: 'top',
+            });
+        } catch (error) {
+            console.error('Error deleting user:', error);
+            this.snackBar.open('Error deleting user', 'Close', {
+                duration: 3000,
+                horizontalPosition: 'center',
+                verticalPosition: 'top',
+            });
+        }
+    }
 }

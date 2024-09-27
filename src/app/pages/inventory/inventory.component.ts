@@ -65,18 +65,55 @@ export class InventoryComponent implements OnInit {
     tenantId: string = '';
 
     colDefs: ColDef[] = [
-        { field: 'inventoryID', headerName: 'Inventory ID', hide: true },
-        { field: 'sku', headerName: 'SKU', filter: 'agSetColumnFilter' },
-        { field: 'upc', headerName: 'Universal Product Code', filter: 'agSetColumnFilter' },
-        { field: 'description', headerName: 'Description', filter: 'agSetColumnFilter' },
-        { field: 'category', headerName: 'Category', filter: 'agSetColumnFilter' },
-        { field: 'quantity', headerName: 'Quantity', filter: 'agSetColumnFilter', editable: true },
-        { field: 'supplier', headerName: 'Supplier', filter: 'agSetColumnFilter' },
+        {
+            field: 'inventoryID',
+            headerName: 'Inventory ID',
+            hide: true,
+            headerTooltip: 'Unique identifier for inventory item',
+        },
+        {
+            field: 'sku',
+            headerName: 'SKU',
+            filter: 'agSetColumnFilter',
+            headerTooltip: 'Stock Keeping Unit',
+        },
+        {
+            field: 'upc',
+            headerName: 'Universal Product Code',
+            filter: 'agSetColumnFilter',
+            headerTooltip: 'Barcode symbology used for tracking trade items',
+        },
+        {
+            field: 'description',
+            headerName: 'Description',
+            filter: 'agSetColumnFilter',
+            headerTooltip: 'Detailed description of the product',
+        },
+        {
+            field: 'category',
+            headerName: 'Category',
+            filter: 'agSetColumnFilter',
+            headerTooltip: 'Product category or classification',
+        },
+        {
+            field: 'quantity',
+            headerName: 'Quantity',
+            filter: 'agSetColumnFilter',
+            editable: true,
+            headerTooltip: 'Current stock quantity',
+        },
+        {
+            field: 'supplier',
+            headerName: 'Supplier',
+            filter: 'agSetColumnFilter',
+            headerTooltip: 'Name of the product supplier',
+        },
         {
             field: 'expirationDate',
             headerName: 'Expiration Date',
             editable: true,
             cellEditor: 'agDateStringCellEditor',
+            headerTooltip: 'Date when the product expires',
             valueFormatter: (params) => {
                 if (params.value) {
                     const date = new Date(params.value);
@@ -92,13 +129,37 @@ export class InventoryComponent implements OnInit {
                 return null;
             },
         },
-        { field: 'unitCost', headerName: 'Unit Cost', filter: 'agSetColumnFilter' },
-        { field: 'leadTime', headerName: 'Lead Time', filter: 'agSetColumnFilter' },
-        { field: 'deliveryCost', headerName: 'Delivery Cost', filter: 'agSetColumnFilter' },
-        { field: 'lowStockThreshold', headerName: 'Low Stock Threshold', filter: 'agSetColumnFilter' },
-        { field: 'reorderAmount', headerName: 'Reorder Amount', filter: 'agSetColumnFilter' },
+        {
+            field: 'unitCost',
+            headerName: 'Unit Cost',
+            filter: 'agSetColumnFilter',
+            headerTooltip: 'Cost per unit of the product',
+        },
+        {
+            field: 'leadTime',
+            headerName: 'Lead Time',
+            filter: 'agSetColumnFilter',
+            headerTooltip: 'Time between order placement and delivery',
+        },
+        {
+            field: 'deliveryCost',
+            headerName: 'Delivery Cost',
+            filter: 'agSetColumnFilter',
+            headerTooltip: 'Cost of delivering the product',
+        },
+        {
+            field: 'lowStockThreshold',
+            headerName: 'Low Stock Threshold',
+            filter: 'agSetColumnFilter',
+            headerTooltip: 'Minimum quantity before reordering',
+        },
+        {
+            field: 'reorderAmount',
+            headerName: 'Reorder Amount',
+            filter: 'agSetColumnFilter',
+            headerTooltip: 'Quantity to order when restocking',
+        },
     ];
-
     addButton = { text: 'Add New Item' };
 
     constructor(
@@ -108,8 +169,7 @@ export class InventoryComponent implements OnInit {
         private router: Router,
         private inventoryService: InventoryService,
         private teamService: TeamsService,
-        private suppliersService: SuppliersService
-  
+        private suppliersService: SuppliersService,
     ) {
         Amplify.configure(outputs);
     }
@@ -123,47 +183,47 @@ export class InventoryComponent implements OnInit {
 
     async getUserInfo() {
         try {
-          const session = await fetchAuthSession();
-      
-          const cognitoClient = new CognitoIdentityProviderClient({
-            region: outputs.auth.aws_region,
-            credentials: session.credentials,
-          });
-      
-          const getUserCommand = new GetUserCommand({
-            AccessToken: session.tokens?.accessToken.toString(),
-          });
-          const getUserResponse = await cognitoClient.send(getUserCommand);
-      
-          const givenName = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'given_name')?.Value || '';
-          const familyName = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'family_name')?.Value || '';
-          this.userName = `${givenName} ${familyName}`.trim();
-      
-          this.tenantId =
-            getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value || '';
-      
-          // Use the InventoryService to get users
-          const users = await this.teamService.getUsers(outputs.auth.user_pool_id, this.tenantId).toPromise();
-      
-          const currentUser = users.find(
-            (user: any) =>
-              user.Attributes.find((attr: any) => attr.Name === 'email')?.Value ===
-              session.tokens?.accessToken.payload['username'],
-          );
-      
-          if (currentUser && currentUser.Groups.length > 0) {
-            this.userRole = this.getRoleDisplayName(currentUser.Groups[0].GroupName);
-          }
+            const session = await fetchAuthSession();
+
+            const cognitoClient = new CognitoIdentityProviderClient({
+                region: outputs.auth.aws_region,
+                credentials: session.credentials,
+            });
+
+            const getUserCommand = new GetUserCommand({
+                AccessToken: session.tokens?.accessToken.toString(),
+            });
+            const getUserResponse = await cognitoClient.send(getUserCommand);
+
+            const givenName = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'given_name')?.Value || '';
+            const familyName = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'family_name')?.Value || '';
+            this.userName = `${givenName} ${familyName}`.trim();
+
+            this.tenantId =
+                getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value || '';
+
+            // Use the InventoryService to get users
+            const users = await this.teamService.getUsers(outputs.auth.user_pool_id, this.tenantId).toPromise();
+
+            const currentUser = users.find(
+                (user: any) =>
+                    user.Attributes.find((attr: any) => attr.Name === 'email')?.Value ===
+                    session.tokens?.accessToken.payload['username'],
+            );
+
+            if (currentUser && currentUser.Groups.length > 0) {
+                this.userRole = this.getRoleDisplayName(currentUser.Groups[0].GroupName);
+            }
         } catch (error) {
-          console.error('Error fetching user info:', error);
-          // You might want to add some error handling here, such as showing an error message to the user
-          this.snackBar.open('Error fetching user info', 'Close', {
-            duration: 5000,
-            horizontalPosition: 'center',
-            verticalPosition: 'top',
-          });
+            console.error('Error fetching user info:', error);
+            // You might want to add some error handling here, such as showing an error message to the user
+            this.snackBar.open('Error fetching user info', 'Close', {
+                duration: 5000,
+                horizontalPosition: 'center',
+                verticalPosition: 'top',
+            });
         }
-      }
+    }
 
     private getRoleDisplayName(roleName: string): string {
         switch (roleName) {
@@ -181,54 +241,54 @@ export class InventoryComponent implements OnInit {
     async loadInventoryData() {
         this.isLoading = true;
         try {
-          const inventoryItems = await this.inventoryService.getInventoryItems(this.tenantId).toPromise();
-          this.rowData = inventoryItems.map((item: any) => ({
-            inventoryID: item.inventoryID,
-            sku: item.SKU,
-            category: item.category,
-            upc: item.upc,
-            description: item.description,
-            quantity: item.quantity,
-            supplier: item.supplier,
-            expirationDate: item.expirationDate,
-            lowStockThreshold: item.lowStockThreshold,
-            reorderAmount: item.reorderAmount,
-            unitCost: item.unitCost,
-            leadTime: item.leadTime,
-            deliveryCost: item.deliveryCost,
-            dailyDemand: item.dailyDemand,    	
-            qrCode: item.qrCode
-          }));
-          console.log('Processed inventory items:', this.rowData);
-    
-          await this.logActivity('Viewed inventory', 'Inventory navigated');
+            const inventoryItems = await this.inventoryService.getInventoryItems(this.tenantId).toPromise();
+            this.rowData = inventoryItems.map((item: any) => ({
+                inventoryID: item.inventoryID,
+                sku: item.SKU,
+                category: item.category,
+                upc: item.upc,
+                description: item.description,
+                quantity: item.quantity,
+                supplier: item.supplier,
+                expirationDate: item.expirationDate,
+                lowStockThreshold: item.lowStockThreshold,
+                reorderAmount: item.reorderAmount,
+                unitCost: item.unitCost,
+                leadTime: item.leadTime,
+                deliveryCost: item.deliveryCost,
+                dailyDemand: item.dailyDemand,
+                qrCode: item.qrCode,
+            }));
+            console.log('Processed inventory items:', this.rowData);
+
+            await this.logActivity('Viewed inventory', 'Inventory navigated');
         } catch (error) {
-          console.error('Error in loadInventoryData:', error);
-          this.rowData = [];
-          this.snackBar.open('Error loading inventory data', 'Close', {
-            duration: 5000,
-            horizontalPosition: 'center',
-            verticalPosition: 'top',
-          });
+            console.error('Error in loadInventoryData:', error);
+            this.rowData = [];
+            this.snackBar.open('Error loading inventory data', 'Close', {
+                duration: 5000,
+                horizontalPosition: 'center',
+                verticalPosition: 'top',
+            });
         } finally {
-          this.isLoading = false;
+            this.isLoading = false;
         }
     }
 
     async loadSuppliers() {
         try {
-          this.suppliers = await this.suppliersService.getSuppliers(this.tenantId).toPromise();
-          console.log('Suppliers loaded:', this.suppliers);
+            this.suppliers = await this.suppliersService.getSuppliers(this.tenantId).toPromise();
+            console.log('Suppliers loaded:', this.suppliers);
         } catch (error) {
-          console.error('Error in loadSuppliers:', error);
-          this.suppliers = [];
-          this.snackBar.open('Error loading suppliers', 'Close', {
-            duration: 5000,
-            horizontalPosition: 'center',
-            verticalPosition: 'top',
-          });
+            console.error('Error in loadSuppliers:', error);
+            this.suppliers = [];
+            this.snackBar.open('Error loading suppliers', 'Close', {
+                duration: 5000,
+                horizontalPosition: 'center',
+                verticalPosition: 'top',
+            });
         }
-      }
+    }
 
     openAddItemPopup() {
         const dialogRef = this.dialog.open(AddInventoryModalComponent, {
@@ -245,48 +305,48 @@ export class InventoryComponent implements OnInit {
 
     async onSubmit(formData: any) {
         try {
-          const payload = {
-            upc: formData.upc,
-            description: formData.description,
-            category: formData.category,
-            quantity: formData.quantity,
-            sku: formData.sku,
-            supplier: formData.supplier,
-            lowStockThreshold: formData.lowStockThreshold,
-            reorderAmount: formData.reorderAmount,
-            tenentId: this.tenantId,
-            expirationDate: formData.expirationDate,
-            unitCost: formData.unitCost,
-            dailyDemand: formData.dailyDemand,
-            leadTime: formData.leadTime,
-            deliveryCost: formData.deliveryCost,
-          };
-      
-          console.log('Payload:', payload);
-      
-          const response = await this.inventoryService.createInventoryItem(payload).toPromise();
-      
-          if (response && response.inventoryID) {
-            console.log('Inventory item added successfully');
-            await this.logActivity('Added new inventory item', formData.upc + ' was added.');
-            await this.loadInventoryData();
-            this.snackBar.open('Inventory item added successfully', 'Close', {
-              duration: 3000,
-              horizontalPosition: 'center',
-              verticalPosition: 'top',
-            });
-          } else {
-            throw new Error('Failed to add inventory item');
-          }
+            const payload = {
+                upc: formData.upc,
+                description: formData.description,
+                category: formData.category,
+                quantity: formData.quantity,
+                sku: formData.sku,
+                supplier: formData.supplier,
+                lowStockThreshold: formData.lowStockThreshold,
+                reorderAmount: formData.reorderAmount,
+                tenentId: this.tenantId,
+                expirationDate: formData.expirationDate,
+                unitCost: formData.unitCost,
+                dailyDemand: formData.dailyDemand,
+                leadTime: formData.leadTime,
+                deliveryCost: formData.deliveryCost,
+            };
+
+            console.log('Payload:', payload);
+
+            const response = await this.inventoryService.createInventoryItem(payload).toPromise();
+
+            if (response && response.inventoryID) {
+                console.log('Inventory item added successfully');
+                await this.logActivity('Added new inventory item', formData.upc + ' was added.');
+                await this.loadInventoryData();
+                this.snackBar.open('Inventory item added successfully', 'Close', {
+                    duration: 3000,
+                    horizontalPosition: 'center',
+                    verticalPosition: 'top',
+                });
+            } else {
+                throw new Error('Failed to add inventory item');
+            }
         } catch (error) {
-          console.error('Error:', (error as Error).message);
-          this.snackBar.open(`Error: ${(error as Error).message}`, 'Close', {
-            duration: 5000,
-            horizontalPosition: 'center',
-            verticalPosition: 'top',
-          });
+            console.error('Error:', (error as Error).message);
+            this.snackBar.open(`Error: ${(error as Error).message}`, 'Close', {
+                duration: 5000,
+                horizontalPosition: 'center',
+                verticalPosition: 'top',
+            });
         }
-      }
+    }
 
     handleRowsToDelete(rows: any[]) {
         if (rows.length > 0) {
@@ -307,80 +367,80 @@ export class InventoryComponent implements OnInit {
 
     async deleteInventoryItem(inventoryID: string) {
         try {
-          const response = await this.inventoryService.removeInventoryItem(inventoryID, this.tenantId).toPromise();
-      
-          console.log('Inventory item deleted successfully');
-          await this.logActivity('Deleted inventory item', inventoryID + ' was deleted.');
-      
-          // Show success message using snackbar
-          this.snackBar.open('Inventory item deleted successfully', 'Close', {
-            duration: 3000,
-            horizontalPosition: 'center',
-            verticalPosition: 'top',
-          });
-      
-          // Refresh the inventory data
-          await this.loadInventoryData();
+            const response = await this.inventoryService.removeInventoryItem(inventoryID, this.tenantId).toPromise();
+
+            console.log('Inventory item deleted successfully');
+            await this.logActivity('Deleted inventory item', inventoryID + ' was deleted.');
+
+            // Show success message using snackbar
+            this.snackBar.open('Inventory item deleted successfully', 'Close', {
+                duration: 3000,
+                horizontalPosition: 'center',
+                verticalPosition: 'top',
+            });
+
+            // Refresh the inventory data
+            await this.loadInventoryData();
         } catch (error) {
-          console.error('Error deleting inventory item:', error);
-      
-          // Show error message using snackbar
-          this.snackBar.open('Error deleting inventory item: ' + (error as Error).message, 'Close', {
-            duration: 5000,
-            horizontalPosition: 'center',
-            verticalPosition: 'top',
-          });
+            console.error('Error deleting inventory item:', error);
+
+            // Show error message using snackbar
+            this.snackBar.open('Error deleting inventory item: ' + (error as Error).message, 'Close', {
+                duration: 5000,
+                horizontalPosition: 'center',
+                verticalPosition: 'top',
+            });
         }
-      }
+    }
 
     async handleCellValueChanged(event: { data: any; field: string; newValue: any }) {
         try {
-          const updatedData = {
-            inventoryID: event.data.inventoryID,
-            tenentId: this.tenantId,
-            [event.field]: event.newValue,
-          };
-      
-          const response = await this.inventoryService.updateInventoryItem(updatedData).toPromise();
-      
-          console.log('Inventory item updated successfully');
-          await this.logActivity('Updated inventory item', event.data.upc + ' was updated.');
-          
-          // Update the local data to reflect the change
-          const updatedItem = response;
-          const index = this.rowData.findIndex((item) => item.inventoryID === updatedItem.inventoryID);
-          if (index !== -1) {
-            this.rowData[index] = { ...this.rowData[index], ...updatedItem };
-          }
-      
-          // Show success message using snackbar
-          this.snackBar.open('Inventory item updated successfully', 'Close', {
-            duration: 3000,
-            horizontalPosition: 'center',
-            verticalPosition: 'top',
-          });
+            const updatedData = {
+                inventoryID: event.data.inventoryID,
+                tenentId: this.tenantId,
+                [event.field]: event.newValue,
+            };
+
+            const response = await this.inventoryService.updateInventoryItem(updatedData).toPromise();
+
+            console.log('Inventory item updated successfully');
+            await this.logActivity('Updated inventory item', event.data.upc + ' was updated.');
+
+            // Update the local data to reflect the change
+            const updatedItem = response;
+            const index = this.rowData.findIndex((item) => item.inventoryID === updatedItem.inventoryID);
+            if (index !== -1) {
+                this.rowData[index] = { ...this.rowData[index], ...updatedItem };
+            }
+
+            // Show success message using snackbar
+            this.snackBar.open('Inventory item updated successfully', 'Close', {
+                duration: 3000,
+                horizontalPosition: 'center',
+                verticalPosition: 'top',
+            });
         } catch (error) {
-          console.error('Error updating inventory item:', error);
-      
-          // Revert the change in the grid
-          this.gridComponent.updateRow(event.data);
-      
-          // Show error message using snackbar
-          this.snackBar.open('Error updating inventory item: ' + (error as any).message, 'Close', {
-            duration: 5000,
-            horizontalPosition: 'center',
-            verticalPosition: 'top',
-          });
+            console.error('Error updating inventory item:', error);
+
+            // Revert the change in the grid
+            this.gridComponent.updateRow(event.data);
+
+            // Show error message using snackbar
+            this.snackBar.open('Error updating inventory item: ' + (error as any).message, 'Close', {
+                duration: 5000,
+                horizontalPosition: 'center',
+                verticalPosition: 'top',
+            });
         }
-      }
+    }
 
     openRequestStockPopup(item: any) {
         const dialogRef = this.dialog.open(RequestStockModalComponent, {
             width: '400px',
-            data: { 
-                sku: item.sku || item.SKU, 
-                supplier: item.supplier, 
-                availableQuantity: item.quantity 
+            data: {
+                sku: item.sku || item.SKU,
+                supplier: item.supplier,
+                availableQuantity: item.quantity,
             },
         });
 
@@ -396,57 +456,57 @@ export class InventoryComponent implements OnInit {
     }
 
     async requestStock(item: any, quantity: number) {
-      try {
-          if (quantity > item.quantity) {
-              throw new Error('Requested quantity exceeds available stock');
-          }
-  
-          // Update the inventory
-          const updatedQuantity = item.quantity - quantity;
-          const updateEvent = {
-              data: item,
-              field: 'quantity',
-              newValue: updatedQuantity,
-          };
-          await this.handleCellValueChanged(updateEvent);
-  
-          // Create the stock request report
-          const reportPayload = {
-              tenentId: this.tenantId,
-              sku: item.sku || item.SKU,
-              category: item.category,
-              supplier: item.supplier,
-              quantityRequested: quantity.toString(),
-          };
-  
-          console.log('Report Payload:', reportPayload);
-  
-          const response = await this.inventoryService.createStockRequest(reportPayload).toPromise();
-  
-          console.log('API Response:', response);
-  
-          if (response && response.stockRequestId) {
-              console.log('Stock request report created successfully');
-              await this.logActivity('Requested stock', quantity.toString() + ' of ' + item.sku);
-              await this.loadInventoryData();
-  
-              this.snackBar.open('Stock requested successfully', 'Close', {
-                  duration: 3000,
-                  horizontalPosition: 'center',
-                  verticalPosition: 'top',
-              });
-          } else {
-              throw new Error('Failed to create stock request report');
-          }
-      } catch (error) {
-          console.error('Error requesting stock:', error);
-  
-          this.snackBar.open('Error requesting stock: ' + (error as Error).message, 'Close', {
-              duration: 5000,
-              horizontalPosition: 'center',
-              verticalPosition: 'top',
-          });
-      }
+        try {
+            if (quantity > item.quantity) {
+                throw new Error('Requested quantity exceeds available stock');
+            }
+
+            // Update the inventory
+            const updatedQuantity = item.quantity - quantity;
+            const updateEvent = {
+                data: item,
+                field: 'quantity',
+                newValue: updatedQuantity,
+            };
+            await this.handleCellValueChanged(updateEvent);
+
+            // Create the stock request report
+            const reportPayload = {
+                tenentId: this.tenantId,
+                sku: item.sku || item.SKU,
+                category: item.category,
+                supplier: item.supplier,
+                quantityRequested: quantity.toString(),
+            };
+
+            console.log('Report Payload:', reportPayload);
+
+            const response = await this.inventoryService.createStockRequest(reportPayload).toPromise();
+
+            console.log('API Response:', response);
+
+            if (response && response.stockRequestId) {
+                console.log('Stock request report created successfully');
+                await this.logActivity('Requested stock', quantity.toString() + ' of ' + item.sku);
+                await this.loadInventoryData();
+
+                this.snackBar.open('Stock requested successfully', 'Close', {
+                    duration: 3000,
+                    horizontalPosition: 'center',
+                    verticalPosition: 'top',
+                });
+            } else {
+                throw new Error('Failed to create stock request report');
+            }
+        } catch (error) {
+            console.error('Error requesting stock:', error);
+
+            this.snackBar.open('Error requesting stock: ' + (error as Error).message, 'Close', {
+                duration: 5000,
+                horizontalPosition: 'center',
+                verticalPosition: 'top',
+            });
+        }
     }
 
     async logActivity(task: string, details: string) {
@@ -500,42 +560,41 @@ export class InventoryComponent implements OnInit {
 
     handleQRCodeScan(qrCodeData: string | null) {
         if (!qrCodeData) {
-          console.log('QR code scan cancelled or failed');
-          return;
+            console.log('QR code scan cancelled or failed');
+            return;
         }
-      
-        try {
-          const { inventoryID, tenentId } = JSON.parse(qrCodeData);
-          if (inventoryID && tenentId) {
-            this.getInventoryItem(inventoryID, tenentId).then(item => {
-              if (item) {
-                this.openRequestStockPopup(item);
-              } else {
-                this.snackBar.open('Item not found', 'Close', { duration: 3000 });
-              }
-            });
-          } else {
-            throw new Error('Invalid QR code data');
-          }
-        } catch (error) {
-          console.error('Error processing QR code:', error);
-          this.snackBar.open('Error processing QR code', 'Close', { duration: 3000 });
-        }
-      }
 
-      async getInventoryItem(inventoryID: string, tenantId: string) {
         try {
-          const item = await this.inventoryService.getInventoryItem(inventoryID, tenantId).toPromise();
-          return item;
+            const { inventoryID, tenentId } = JSON.parse(qrCodeData);
+            if (inventoryID && tenentId) {
+                this.getInventoryItem(inventoryID, tenentId).then((item) => {
+                    if (item) {
+                        this.openRequestStockPopup(item);
+                    } else {
+                        this.snackBar.open('Item not found', 'Close', { duration: 3000 });
+                    }
+                });
+            } else {
+                throw new Error('Invalid QR code data');
+            }
         } catch (error) {
-          console.error('Error fetching inventory item:', error);
-          this.snackBar.open('Error fetching inventory item', 'Close', {
-            duration: 5000,
-            horizontalPosition: 'center',
-            verticalPosition: 'top',
-          });
-          return null;
+            console.error('Error processing QR code:', error);
+            this.snackBar.open('Error processing QR code', 'Close', { duration: 3000 });
         }
-        
-      }
+    }
+
+    async getInventoryItem(inventoryID: string, tenantId: string) {
+        try {
+            const item = await this.inventoryService.getInventoryItem(inventoryID, tenantId).toPromise();
+            return item;
+        } catch (error) {
+            console.error('Error fetching inventory item:', error);
+            this.snackBar.open('Error fetching inventory item', 'Close', {
+                duration: 5000,
+                horizontalPosition: 'center',
+                verticalPosition: 'top',
+            });
+            return null;
+        }
+    }
 }

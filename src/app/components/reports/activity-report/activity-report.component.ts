@@ -135,39 +135,33 @@ export class ActivityReportComponent implements OnInit, AfterViewInit {
         private router: Router,
         private chartDataService: ChartDataService,
         private changeDetectorRef: ChangeDetectorRef,
-        private dataCollectionService: DataCollectionService
+        private dataCollectionService: DataCollectionService,
     ) {
         console.log('ActivityReportComponent constructed');
         this.options = {
             gridType: GridType.VerticalFixed,
             displayGrid: DisplayGrid.None,
-            compactType: CompactType.CompactUpAndLeft,
+            compactType: CompactType.None,
             margin: 10,
+            outerMargin: true,
+            mobileBreakpoint: 640,
             minCols: 12,
             maxCols: 12,
-            minRows: 100,
-            maxRows: 100,
-            minItemWidth: 100,
-            minItemHeight: 50,
-            maxItemCols: 100,
+            maxItemCols: 12,
             minItemCols: 1,
             maxItemRows: 100,
             minItemRows: 1,
-            maxItemArea: 2500,
-            minItemArea: 1,
             defaultItemCols: 1,
             defaultItemRows: 1,
-            fixedColWidth: 105,
-            fixedRowHeight: 142,
-            keepFixedHeightInMobile: false,
-            keepFixedWidthInMobile: false,
-            scrollSensitivity: 10,
-            scrollSpeed: 20,
+            fixedColWidth: 100,
+            fixedRowHeight: 100,
+            minRows: 18, // Adjust based on your total layout height
+            maxRows: 18, // Adjust based on your total layout height
+            enableEmptyCellClick: false,
+            enableEmptyCellContextMenu: false,
             enableEmptyCellDrop: false,
             enableEmptyCellDrag: false,
-            emptyCellDragMaxCols: 50,
-            emptyCellDragMaxRows: 50,
-            ignoreMarginInRow: false,
+            enableOccupiedCellDrop: false,
             draggable: {
                 enabled: false,
             },
@@ -175,14 +169,11 @@ export class ActivityReportComponent implements OnInit, AfterViewInit {
                 enabled: false,
             },
             swap: false,
-            pushItems: true,
-            disablePushOnDrag: false,
-            disablePushOnResize: false,
-            pushDirections: { north: true, east: true, south: true, west: true },
+            pushItems: false,
+            disablePushOnDrag: true,
+            disablePushOnResize: true,
+            pushDirections: { north: false, east: false, south: false, west: false },
             pushResizeItems: false,
-            disableWindowResize: false,
-            disableWarnings: false,
-            scrollToNewItems: false,
         };
     }
 
@@ -192,10 +183,10 @@ export class ActivityReportComponent implements OnInit, AfterViewInit {
         await this.fetchActivities();
         setTimeout(() => {
             this.dashboard = [
-                { cols: 4, rows: 1, y: 0, x: 0, type: 'metric', data: this.ActivityReport.metrics[0] },
-                { cols: 4, rows: 1, y: 0, x: 3, type: 'metric', data: this.ActivityReport.metrics[1] },
-                { cols: 4, rows: 1, y: 0, x: 6, type: 'metric', data: this.ActivityReport.metrics[2] },
-                { cols: 12, rows: 5, y: 1, x: 0, type: 'grid' },
+                { cols: 4, rows: 1.4, y: 0, x: 0, type: 'metric', data: this.ActivityReport.metrics[0] },
+                { cols: 4, rows: 1.4, y: 0, x: 3, type: 'metric', data: this.ActivityReport.metrics[1] },
+                { cols: 4, rows: 1.4, y: 0, x: 6, type: 'metric', data: this.ActivityReport.metrics[2] },
+                { cols: 12, rows: 5, y: 1.4, x: 0, type: 'grid' },
             ] as CustomGridsterItem[];
             this.changeDetectorRef.detectChanges();
         });
@@ -217,9 +208,9 @@ export class ActivityReportComponent implements OnInit, AfterViewInit {
         console.log('Fetching activities...');
         this.isLoading = true;
         try {
-            const activities = await this.dataCollectionService.getActivityData().toPromise() || [];
+            const activities = (await this.dataCollectionService.getActivityData().toPromise()) || [];
             console.log('Activities received:', activities);
-    
+
             this.rowData = activities.map((activity: any) => ({
                 memberID: activity.memberId,
                 name: activity.name,
@@ -228,12 +219,12 @@ export class ActivityReportComponent implements OnInit, AfterViewInit {
                 timestamp: new Date(activity.createdAt).toLocaleString(),
                 details: activity.details,
             }));
-    
+
             console.log('Processed rowData:', this.rowData);
-    
+
             this.updateCharts();
             this.updateMetrics();
-    
+
             if (this.gridComponent) {
                 console.log('Refreshing grid with new data');
                 this.gridComponent.refreshGrid(this.rowData);

@@ -9,10 +9,10 @@ import {
     ChangeDetectorRef,
     ViewChild,
 } from '@angular/core';
+
 import { Renderer2, ElementRef, AfterViewInit, ViewEncapsulation } from '@angular/core';
 import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
-import { AgGridAngular } from 'ag-grid-angular';
-import { AgGridModule } from 'ag-grid-angular';
+import { AgGridAngular, AgGridModule } from 'ag-grid-angular';
 import { ForecastModalComponent } from '../forecast-modal/forecast-modal.component';
 import { ColDef, GridReadyEvent, CellValueChangedEvent, RowValueChangedEvent, GridApi } from 'ag-grid-community';
 import { MatButtonModule } from '@angular/material/button';
@@ -245,7 +245,7 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     setGridHeight(): void {
-        const baseHeight = 35; // Base height in vh
+        const baseHeight = 75; // Base height in vh
         const rowHeight = 3; // Height per row in vh
         const maxHeight = 75; // Maximum height in vh
 

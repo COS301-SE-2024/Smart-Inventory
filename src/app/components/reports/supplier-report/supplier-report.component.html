@@ -7,7 +7,7 @@
 
     <!-- </div> -->
     <gridster [options]="options" style="background: transparent !important">
-        <gridster-item [item]="items[5]" class="supplier-report">
+        <!-- <gridster-item [item]="items[5]" class="supplier-report">
             <div class="metrics-container">
                 <button style="z-index: 1" mat-icon-button (click)="scrollTiles('left')">
                     <mat-icon>chevron_left</mat-icon>
@@ -36,7 +36,7 @@
                     <mat-icon>chevron_right</mat-icon>
                 </button>
             </div>
-        </gridster-item>
+        </gridster-item> -->
         <gridster-item [item]="items[0]" class="supplier-report app-grid-container">
             <div class="grid-item-content">
                 <div class="inventoryHolder">
@@ -64,7 +64,7 @@
             <!-- </div> -->
         </gridster-item>
 
-        <gridster-item [item]="items[3]" id="chart">
+        <gridster-item [item]="items[2]" id="chart">
             <div class="grid-item-content">
                 <app-line
                     *ngIf="chartData"
@@ -75,14 +75,9 @@
             </div>
         </gridster-item>
 
-        <gridster-item [item]="items[4]" id="chart">
+        <gridster-item [item]="items[3]" id="chart">
             <div class="grid-item-content">
                 <app-radar [data]="topSuppliersData"></app-radar>
-            </div>
-        </gridster-item>
-        <gridster-item [item]="items[2]" id="chart">
-            <div class="grid-item-content">
-                <app-line-bar [data]="lineBarData"></app-line-bar>
             </div>
         </gridster-item>
         <mat-toolbar

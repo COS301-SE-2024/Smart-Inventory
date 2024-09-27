@@ -32,12 +32,24 @@ export class InventorySummaryComponent implements OnInit {
     isCalculating = false;
 
     colDefs: ColDef[] = [
-        { field: 'SKU', headerName: 'SKU', filter: 'agSetColumnFilter' },
-        { field: 'description', headerName: 'Description', filter: 'agSetColumnFilter', editable: true },
+        {
+            field: 'SKU',
+            headerName: 'SKU',
+            filter: 'agSetColumnFilter',
+            headerTooltip: 'Stock Keeping Unit - Unique identifier for each product',
+        },
+        {
+            field: 'description',
+            headerName: 'Description',
+            filter: 'agSetColumnFilter',
+            editable: true,
+            headerTooltip: 'Brief description of the product',
+        },
         {
             field: 'quantity',
             headerName: 'Quantity',
             filter: 'agSetColumnFilter',
+            headerTooltip: 'Current stock quantity of the item',
             cellStyle: (params) => {
                 if (params.value <= params.data.lowStockThreshold) {
                     return { backgroundColor: '#FFCDD2' }; // Light red for low stock
@@ -46,23 +58,75 @@ export class InventorySummaryComponent implements OnInit {
                 }
             },
         },
-        { field: 'lowStockThreshold', headerName: 'Low Stock Threshold', filter: 'agSetColumnFilter', editable: true },
-        { field: 'reorderAmount', headerName: 'Reorder Amount', filter: 'agSetColumnFilter', editable: true },
-        { field: 'EOQ', headerName: 'EOQ', filter: 'agSetColumnFilter' },
-        { field: 'ROP', headerName: 'ROP', filter: 'agSetColumnFilter' },
-        { field: 'safetyStock', headerName: 'Safety Stock', filter: 'agSetColumnFilter' },
-        { field: 'ABCCategory', headerName: 'ABC Category', filter: 'agSetColumnFilter' },
-        { field: 'annualConsumptionValue', headerName: 'Annual Consumption Value', filter: 'agSetColumnFilter' },
-        { field: 'holdingCost', headerName: 'Holding Cost', filter: 'agSetColumnFilter' },
-        { field: 'annualDemand', headerName: 'Annual Demand', filter: 'agSetColumnFilter' },
-        { field: 'dailyDemand', headerName: 'Daily Demand', filter: 'agSetColumnFilter' },
+        {
+            field: 'lowStockThreshold',
+            headerName: 'Low Stock Threshold',
+            filter: 'agSetColumnFilter',
+            editable: true,
+            headerTooltip: 'Quantity at which stock is considered low and needs reordering',
+        },
+        {
+            field: 'reorderAmount',
+            headerName: 'Reorder Amount',
+            filter: 'agSetColumnFilter',
+            editable: true,
+            headerTooltip: 'Quantity to reorder when stock reaches low threshold',
+        },
+        {
+            field: 'EOQ',
+            headerName: 'EOQ',
+            filter: 'agSetColumnFilter',
+            headerTooltip: 'Economic Order Quantity - Optimal order quantity to minimize total costs',
+        },
+        {
+            field: 'ROP',
+            headerName: 'ROP',
+            filter: 'agSetColumnFilter',
+            headerTooltip: 'Reorder Point - Stock level at which a new order should be placed',
+        },
+        {
+            field: 'safetyStock',
+            headerName: 'Safety Stock',
+            filter: 'agSetColumnFilter',
+            headerTooltip: 'Extra stock kept to mitigate risk of stockouts',
+        },
+        {
+            field: 'ABCCategory',
+            headerName: 'ABC Category',
+            filter: 'agSetColumnFilter',
+            headerTooltip: 'Product classification based on importance (A: High, B: Medium, C: Low)',
+        },
+        {
+            field: 'annualConsumptionValue',
+            headerName: 'Annual Consumption Value',
+            filter: 'agSetColumnFilter',
+            headerTooltip: 'Total value of product consumed in a year',
+        },
+        {
+            field: 'holdingCost',
+            headerName: 'Holding Cost',
+            filter: 'agSetColumnFilter',
+            headerTooltip: 'Cost of holding one unit of inventory for a year',
+        },
+        {
+            field: 'annualDemand',
+            headerName: 'Annual Demand',
+            filter: 'agSetColumnFilter',
+            headerTooltip: 'Total quantity demanded in a year',
+        },
+        {
+            field: 'dailyDemand',
+            headerName: 'Daily Demand',
+            filter: 'agSetColumnFilter',
+            headerTooltip: 'Average quantity demanded per day',
+        },
     ];
 
     constructor(
         private snackBar: MatSnackBar,
         private titleService: TitleService,
         private router: Router,
-        private inventoryService: InventoryService
+        private inventoryService: InventoryService,
     ) {
         Amplify.configure(outputs);
     }
@@ -78,15 +142,17 @@ export class InventorySummaryComponent implements OnInit {
             await this.loadInventorySummaryData();
         } catch (error) {
             console.error('Error initializing component:', error);
-            this.snackBar.open('Error initializing component: ' + (error instanceof Error ? error.message : String(error)), 'Close', {
-                duration: 5000,
-                horizontalPosition: 'center',
-                verticalPosition: 'top',
-            });
+            this.snackBar.open(
+                'Error initializing component: ' + (error instanceof Error ? error.message : String(error)),
+                'Close',
+                {
+                    duration: 5000,
+                    horizontalPosition: 'center',
+                    verticalPosition: 'top',
+                },
+            );
         }
     }
-
-   
 
     async getTenentId(session: any): Promise<string> {
         const cognitoClient = new CognitoIdentityProviderClient({
@@ -160,8 +226,10 @@ export class InventorySummaryComponent implements OnInit {
     async loadInventorySummaryData() {
         try {
             this.isLoading = true;
-            const response = await this.inventoryService.inventorySummaryGetItems({ tenentId: this.tenentId }).toPromise();
-    
+            const response = await this.inventoryService
+                .inventorySummaryGetItems({ tenentId: this.tenentId })
+                .toPromise();
+
             if (response) {
                 console.log('Received inventory summary data:', response);
                 this.rowData = response;
@@ -181,7 +249,6 @@ export class InventorySummaryComponent implements OnInit {
         }
     }
 
-
     back() {
         this.router.navigate(['/inventory']);
     }
@@ -195,7 +262,7 @@ export class InventorySummaryComponent implements OnInit {
             });
             return;
         }
-    
+
         this.isCalculating = true;
         try {
             const session = await fetchAuthSession();
@@ -203,19 +270,19 @@ export class InventorySummaryComponent implements OnInit {
                 region: outputs.auth.aws_region,
                 credentials: session.credentials,
             });
-    
+
             const payload = {
-                tenentId: this.tenentId
+                tenentId: this.tenentId,
             };
-    
+
             const invokeCommand = new InvokeCommand({
                 FunctionName: 'EOQ_ROP_Calculations',
                 Payload: new TextEncoder().encode(JSON.stringify(payload)),
             });
-    
+
             const lambdaResponse = await lambdaClient.send(invokeCommand);
             const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-    
+
             if (responseBody && responseBody.statusCode === 200) {
                 this.snackBar.open('EOQ/ROP/ABC Calculation completed successfully.', 'Close', {
                     duration: 3000,
@@ -229,11 +296,15 @@ export class InventorySummaryComponent implements OnInit {
             }
         } catch (error) {
             console.error('Error running EOQ/ROP/ABC Calculation:', error);
-            this.snackBar.open(`Error running calculation: ${error instanceof Error ? error.message : String(error)}`, 'Close', {
-                duration: 5000,
-                horizontalPosition: 'center',
-                verticalPosition: 'top',
-            });
+            this.snackBar.open(
+                `Error running calculation: ${error instanceof Error ? error.message : String(error)}`,
+                'Close',
+                {
+                    duration: 5000,
+                    horizontalPosition: 'center',
+                    verticalPosition: 'top',
+                },
+            );
         } finally {
             this.isCalculating = false;
         }

@@ -56,41 +56,47 @@ export class OrderReportComponent implements OnInit {
     options: GridsterConfig = {
         gridType: GridType.VerticalFixed,
         displayGrid: DisplayGrid.None,
-        compactType: CompactType.CompactUpAndLeft,
+        compactType: CompactType.None,
+        margin: 10,
+        outerMargin: true,
+        mobileBreakpoint: 640,
+        minCols: 12,
+        maxCols: 12,
+        maxItemCols: 12,
+        minItemCols: 1,
+        maxItemRows: 100,
+        minItemRows: 1,
+        defaultItemCols: 1,
+        defaultItemRows: 1,
+        fixedColWidth: 100,
+        fixedRowHeight: 100,
+        minRows: 18, // Adjust based on your total layout height
+        maxRows: 18, // Adjust based on your total layout height
+        enableEmptyCellClick: false,
+        enableEmptyCellContextMenu: false,
+        enableEmptyCellDrop: false,
+        enableEmptyCellDrag: false,
+        enableOccupiedCellDrop: false,
         draggable: {
             enabled: false,
         },
         resizable: {
             enabled: false,
         },
-        pushItems: true,
-        margin: 10,
-        minCols: 12,
-        maxCols: 12,
-        minRows: 100, // Increased minimum rows for better initial height
-        maxRows: 100,
-        minItemWidth: 100, // Minimum width each item can shrink to
-        minItemHeight: 50, // Minimum height each item can shrink to
-        minItemCols: 1, // Maximum columns an item can expand to
-        minItemRows: 1, // Maximum rows an item can expand to
-        fixedRowHeight: 150,
-        addEmptyRowsCount: 10,
-        disablePushOnDrag: false,
-        disablePushOnResize: false,
-        pushDirections: { north: true, east: true, south: true, west: true },
+        swap: false,
+        pushItems: false,
+        disablePushOnDrag: true,
+        disablePushOnResize: true,
+        pushDirections: { north: false, east: false, south: false, west: false },
         pushResizeItems: false,
-        disableWindowResize: false,
-        disableWarnings: false,
-        scrollToNewItems: false,
     };
 
     layout: any[] = [
-        { cols: 12, rows: 1.02, y: 0, x: 0 }, // Metrics Container
-        { cols: 12, rows: 3, y: 1, x: 0 }, // Inventory Grid
-        { cols: 4, rows: 3, y: 1, x: 8 }, // Order Report
-        { cols: 8, rows: 3, y: 3, x: 0 }, // Stacked Bar Chart
-        { cols: 8, rows: 3, y: 3, x: 6 }, // Scatter Plot
-        { cols: 4, rows: 3, y: 5, x: 4 }, // Donut Chart
+        { cols: 12, rows: 5, y: 0, x: 0 }, // Inventory Grid
+        { cols: 4, rows: 4, y: 5, x: 8 }, // Order Report
+        { cols: 8, rows: 4, y: 5, x: 0 }, // Stacked Bar Chart
+        { cols: 8, rows: 4, y: 9, x: 6 }, // Scatter Plot
+        { cols: 4, rows: 4, y: 9, x: 4 }, // Donut Chart
     ];
 
     selectedItem: any = null;
@@ -227,15 +233,60 @@ export class OrderReportComponent implements OnInit {
 
     getCurrentRoute() {
         this.colDefs = [
-            { field: 'orderID', headerName: 'Order ID', filter: 'agSetColumnFilter' },
-            { field: 'orderIssuedDate', headerName: 'Issued Date', filter: 'agSetColumnFilter' },
-            { field: 'expectedOrderDate', headerName: 'Expected Date', filter: 'agSetColumnFilter' },
-            { field: 'supplier', headerName: 'Supplier', filter: 'agSetColumnFilter' },
-            { field: 'address', headerName: 'Address', filter: 'agSetColumnFilter' },
-            { field: 'orderCost', headerName: 'Order Cost', filter: 'agSetColumnFilter' },
-            { field: 'orderReceivedDate', headerName: 'Received Date', filter: 'agSetColumnFilter' },
-            { field: 'status', headerName: 'Status', filter: 'agSetColumnFilter' },
-            { field: 'quoteStatus', headerName: 'Quote Status', filter: 'agSetColumnFilter' },
+            {
+                field: 'orderID',
+                headerName: 'Order ID',
+                filter: 'agSetColumnFilter',
+                headerTooltip: 'Unique identifier for each order',
+            },
+            {
+                field: 'orderIssuedDate',
+                headerName: 'Issued Date',
+                filter: 'agSetColumnFilter',
+                headerTooltip: 'Date when the order was issued',
+            },
+            {
+                field: 'expectedOrderDate',
+                headerName: 'Expected Date',
+                filter: 'agSetColumnFilter',
+                headerTooltip: 'Anticipated date for order delivery',
+            },
+            {
+                field: 'supplier',
+                headerName: 'Supplier',
+                filter: 'agSetColumnFilter',
+                headerTooltip: 'Name of the supplier for this order',
+            },
+            {
+                field: 'address',
+                headerName: 'Address',
+                filter: 'agSetColumnFilter',
+                headerTooltip: 'Delivery address for the order',
+            },
+            {
+                field: 'orderCost',
+                headerName: 'Order Cost',
+                filter: 'agSetColumnFilter',
+                headerTooltip: 'Total cost of the order',
+            },
+            {
+                field: 'orderReceivedDate',
+                headerName: 'Received Date',
+                filter: 'agSetColumnFilter',
+                headerTooltip: 'Date when the order was actually received',
+            },
+            {
+                field: 'status',
+                headerName: 'Status',
+                filter: 'agSetColumnFilter',
+                headerTooltip: 'Current status of the order',
+            },
+            {
+                field: 'quoteStatus',
+                headerName: 'Quote Status',
+                filter: 'agSetColumnFilter',
+                headerTooltip: 'Status of the quote for this order',
+            },
         ];
         return 'Order Report';
     }

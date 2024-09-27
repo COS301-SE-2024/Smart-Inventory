@@ -114,6 +114,8 @@ export class DashboardComponent implements OnInit {
     dashboard: Array<DashboardItem> = [];
     options!: GridsterConfig;
     rowData: any[] = [];
+    stockRequest: any[] = [];
+    orders: any[] = [];
 
     charts: { [key: string]: Type<any> } = {
         SaleschartComponent: SaleschartComponent,
@@ -165,6 +167,16 @@ export class DashboardComponent implements OnInit {
         this.titleService.updateTitle('Dashboard');
         this.CDRService.setChangeDetectorRef(this.cdr);
         this.setupDashboardSubscription();
+        // Use Promise.all to wait for both operations to complete
+        const [stockRequests, orders] = await Promise.all([
+            this.dataCollectionService.getAllStockRequests().toPromise(),
+            this.dataCollectionService.fetchAllOrders()
+        ]);
+
+        this.stockRequest = stockRequests || [];
+        this.orders = orders || [];
+
+        await this.populateRequestOrders(this.stockRequest, this.orders);
         await this.loadState();
         this.refreshDashboard();
     }
@@ -238,42 +250,42 @@ export class DashboardComponent implements OnInit {
             });
     }
 
-    async populateRequestOrders(stockRequests: StockRequest[], orders: Order[]): Promise<void> {
+    async populateRequestOrders(stockRequests: any[], orders: any[]): Promise<void> {
         const session = await fetchAuthSession();
         this.loader.setLoading(false);
-
+    
         const cognitoClient = new CognitoIdentityProviderClient({
             region: outputs.auth.aws_region,
             credentials: session.credentials,
         });
-
+    
         const getUserCommand = new GetUserCommand({
             AccessToken: session.tokens?.accessToken.toString(),
         });
         const getUserResponse = await cognitoClient.send(getUserCommand);
-
+    
         const tenantId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
-
+    
         if (!tenantId) {
             console.error('TenantId not found');
             return;
         }
-
+    
         // Filter stock requests by tenantId
         const filteredStockRequests = stockRequests.filter(request => request.tenentId === tenantId);
-
+    
         // Calculate requests data
         const skuCounts: SkuCounts = filteredStockRequests.reduce((counts, request) => {
             counts[request.sku] = (counts[request.sku] || 0) + request.quantityRequested;
             return counts;
         }, {} as SkuCounts);
-
+    
         const totalRequests: number = Object.values(skuCounts).reduce((sum, count) => sum + count, 0);
         const highestRequest: number = Math.max(...Object.values(skuCounts));
         const mostRequestedEntry = Object.entries(skuCounts).reduce((a, b) => a[1] > b[1] ? a : b);
         const mostRequestedSku = mostRequestedEntry[0];
         const mostRequestedPercentage = (skuCounts[mostRequestedSku] / totalRequests) * 100;
-
+    
         // Calculate backorders data
         const backorders = orders.filter(order =>
             order.tenentId === tenantId &&
@@ -281,16 +293,16 @@ export class DashboardComponent implements OnInit {
             order.Expected_Delivery_Date
         );
         const currentBackorders = backorders.length;
-
+    
         const delays = backorders.map(order => this.calculateDelay(order.Order_Date, order.Expected_Delivery_Date!));
         const totalDelay = delays.reduce((sum, delay) => sum + delay, 0);
         const averageDelay = currentBackorders > 0 ? totalDelay / currentBackorders : 0;
-
+    
         const longestDelay = Math.max(...delays);
         const longestBackorderItem = backorders.find(order =>
             this.calculateDelay(order.Order_Date, order.Expected_Delivery_Date!) === longestDelay
         );
-
+    
         // Populate RequestOrders
         this.RequestOrders = {
             requests: {
@@ -303,23 +315,36 @@ export class DashboardComponent implements OnInit {
             },
             backorders: {
                 currentBackorders,
-                averageDelay: Number(averageDelay.toFixed(2)),
+                averageDelay: Math.round(averageDelay),
                 longestBackorderItem: {
                     productName: longestBackorderItem?.Selected_Supplier || 'None found',
                     delay: longestDelay > 0 ? this.formatDelay(longestDelay) : ''
                 }
             }
         };
-
+    
         console.log('Populated RequestOrders:', this.RequestOrders);
     }
-
-    calculateDelay(Order_Date: any, arg1: any): any {
-        throw new Error('Method not implemented.');
+    
+    private calculateDelay(orderDate: string, expectedDate: string): number {
+        const order = new Date(orderDate);
+        const expected = new Date(expectedDate);
+        return Math.max(0, Math.round((expected.getTime() - order.getTime()) / (1000 * 60 * 60 * 24)));
     }
+    
     private formatDelay(delay: number): string {
-        return delay > 0 ? `${delay.toFixed(0)} days` : "";
+        return `${delay} days`;
     }
+
+    // private calculateDelay(orderDate: string, expectedDate: string): number {
+    //     const order = new Date(orderDate);
+    //     const expected = new Date(expectedDate);
+    //     return Math.max(0, (expected.getTime() - order.getTime()) / (1000 * 60 * 60 * 24));
+    // }
+
+    // private formatDelay(delay: number): string {
+    //     return delay > 0 ? `${delay.toFixed(0)} days` : "";
+    // }
 
     // private calculateDelay(orderDate: string, expectedDate: string): number {
     //     const order = new Date(orderDate);
@@ -582,24 +607,20 @@ export class DashboardComponent implements OnInit {
     //     }
     // }
 
-    loadState() {
-        try {
-            const savedState = this.dashService.getState();
-            if (savedState) {
-                const parsedState = JSON.parse(savedState);
-                if (Array.isArray(parsedState)) {
-                    this.dashboard = parsedState;
-                } else {
-                    console.error('Saved state is not an array, initializing default dashboard');
-                    this.dashboard = this.initializeDashboard();
-                }
+    private async loadState() {
+        const savedState = this.dashService.getState();
+        if (savedState) {
+            const parsedState = JSON.parse(savedState);
+            if (Array.isArray(parsedState)) {
+                this.dashboard = parsedState;
             } else {
-                this.dashboard = this.initializeDashboard();
+                console.error('Saved state is not an array, initializing default dashboard');
+                this.dashboard = this.dashService.initializeDashboard();
             }
-        } catch (error) {
-            console.error('Error loading dashboard state:', error);
-            this.initializeDashboard();
+        } else {
+            this.dashboard = this.dashService.initializeDashboard();
         }
+        this.CDRService.detectChanges();
     }
 
     // processDashboardData() {
@@ -903,7 +924,8 @@ export class DashboardComponent implements OnInit {
     }
 
     updateDashboardWidgets(newChartConfigs: ChartConfig[]) {
-        this.dashboard = this.dashboard.map((item) => {
+        const currentDashboard = this.dashService.getDashboard();
+        const updatedDashboard = currentDashboard.map((item) => {
             const updatedConfig = newChartConfigs.find((config) => config.title === item.name);
             if (updatedConfig) {
                 return {
@@ -914,7 +936,8 @@ export class DashboardComponent implements OnInit {
             return item;
         });
 
-        this.dashService.updateDashboard(this.dashboard);
+        this.dashService.updateDashboard(updatedDashboard);
+        this.dashboard = updatedDashboard;
         this.CDRService.detectChanges();
     }
 }

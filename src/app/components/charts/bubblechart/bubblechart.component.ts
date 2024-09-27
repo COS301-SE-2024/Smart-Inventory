@@ -62,7 +62,7 @@ export class BubblechartComponent implements OnInit, OnDestroy, AfterViewInit, O
         this.chartOptions = {
             autoSize: true,
             data: [],
-            title: { text: this.chartTitle },
+            title: { text: ''},
             series: [
                 {
                     type: 'bar',
@@ -223,7 +223,10 @@ export class BubblechartComponent implements OnInit, OnDestroy, AfterViewInit, O
             console.log('Updating chart with data:', this.data);
             this.chartOptions = {
                 ...this.chartOptions,
-                data: this.data
+                data: this.data,
+                title: {
+                    text: this.chartTitle 
+                }
             };
             this.cdr.detectChanges();
         } else {

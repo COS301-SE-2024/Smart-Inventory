@@ -61,18 +61,42 @@ export class DataCollectionService {
     scatterPlotChartData: any[] = [];
     supplierQuotes: any[] = [];
 
+    private requestQueue: Promise<any> = Promise.resolve();
+
     private cacheExpirationTime = 5 * 60 * 1000; // 5 minutes in milliseconds
     private cachedInventorySummary: CachedData<InventorySummaryItem[]> | null = null;
     private cachedInventoryItems: CachedData<InventoryItem[]> | null = null;
     private cachedStockRequests: CachedData<StockRequest[]> | null = null;
+    private cachedAllStockRequests: CachedData<StockRequest[]> | null = null;
     private cachedSupplierQuotes: CachedData<any[]> | null = null;
     private cachedSupplierReportData: CachedData<any[]> | null = null;
     private cachedOrderData: CachedData<any[]> | null = null;
+    private cachedAllOrderData: CachedData<any[]> | null = null;
     private cachedScatterPlotData: CachedData<any[]> | null = null;
     private cachedActivityData: CachedData<any[]> | null = null;
 
     constructor(private inventoryService: InventoryService) {
         Amplify.configure(outputs);
+        this.setupGlobalErrorHandler();
+    }
+
+    private setupGlobalErrorHandler() {
+        window.addEventListener('unhandledrejection', (event) => {
+            console.error('Unhandled promise rejection:', event.reason);
+        });
+    }
+
+    private async enqueueRequest<T>(request: () => Promise<T>): Promise<T> {
+        return new Promise((resolve, reject) => {
+            this.requestQueue = this.requestQueue.then(async () => {
+                try {
+                    const result = await request();
+                    resolve(result);
+                } catch (error) {
+                    reject(error);
+                }
+            });
+        });
     }
 
     private isCacheValid<T>(cachedData: CachedData<T> | null): boolean {
@@ -102,26 +126,46 @@ export class DataCollectionService {
     }
 
     private async invokeLambda(functionName: string, payload: any): Promise<any> {
-        const session = await fetchAuthSession();
-        const lambdaClient = new LambdaClient({
-            region: outputs.auth.aws_region,
-            credentials: session.credentials,
-        });
+        return this.enqueueRequest(() => this.invokeLambdaWithRetry(functionName, payload));
+    }
 
-        const invokeCommand = new InvokeCommand({
-            FunctionName: functionName,
-            Payload: new TextEncoder().encode(JSON.stringify(payload)),
-        });
+    private async invokeLambdaWithRetry(functionName: string, payload: any): Promise<any> {
+        const maxRetries = 3;
+        const retryDelay = 1000; // 1 second
 
-        const lambdaResponse = await lambdaClient.send(invokeCommand);
-        const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+        for (let attempt = 0; attempt < maxRetries; attempt++) {
+            try {
+                const session = await fetchAuthSession();
+                const lambdaClient = new LambdaClient({
+                    region: outputs.auth.aws_region,
+                    credentials: session.credentials,
+                });
 
-        if (responseBody.statusCode === 200) {
-            // Check if body is a string and needs parsing
-            return typeof responseBody.body === 'string' ? JSON.parse(responseBody.body) : responseBody.body;
-        } else {
-            throw new Error(responseBody.body);
+                const invokeCommand = new InvokeCommand({
+                    FunctionName: functionName,
+                    Payload: new TextEncoder().encode(JSON.stringify(payload)),
+                });
+
+                const lambdaResponse = await lambdaClient.send(invokeCommand);
+                const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+
+                if (responseBody.statusCode === 200) {
+                    return typeof responseBody.body === 'string' ? JSON.parse(responseBody.body) : responseBody.body;
+                } else if (responseBody.statusCode === 429) {
+                    console.warn(`Rate limit exceeded for ${functionName}, retrying in ${retryDelay}ms...`);
+                    await new Promise(resolve => setTimeout(resolve, retryDelay));
+                } else {
+                    throw new Error(responseBody.body);
+                }
+            } catch (error) {
+                if (attempt === maxRetries - 1) {
+                    throw error;
+                }
+                console.warn(`Error invoking ${functionName}, retrying in ${retryDelay}ms...`);
+                await new Promise(resolve => setTimeout(resolve, retryDelay));
+            }
         }
+        throw new Error(`Failed to invoke ${functionName} after ${maxRetries} attempts`);
     }
 
     getInventorySummary(): Observable<InventorySummaryItem[]> {
@@ -210,6 +254,23 @@ export class DataCollectionService {
         );
     }
 
+    getAllStockRequests(): Observable<StockRequest[]> {
+        if (this.isCacheValid(this.cachedAllStockRequests)) {
+            return of(this.cachedAllStockRequests!.data);
+        }
+
+        return from(this.fetchAllStockRequests()).pipe(
+            map((data) => {
+                this.cachedAllStockRequests = { data, timestamp: Date.now() };
+                return data;
+            }),
+            catchError((error) => {
+                console.error('Error fetching stock requests:', error);
+                return of([]);
+            }),
+        );
+    }
+
     getStockRequests(): Observable<StockRequest[]> {
         if (this.isCacheValid(this.cachedStockRequests)) {
             return of(this.cachedStockRequests!.data);
@@ -238,6 +299,17 @@ export class DataCollectionService {
         }
     }
 
+    private async fetchAllStockRequests(): Promise<any[]> {
+        try {
+            const session = await fetchAuthSession();
+            const tenantId = await this.getTenantId(session);
+            return this.invokeLambda('getStockRequests', { pathParameters: { tenentId: tenantId } });
+        } catch (error) {
+            console.error('Error fetching stock requests:', error);
+            throw error;
+        }
+    }
+
     updateInventoryItem(updatedData: any): Observable<any> {
         return this.inventoryService.updateInventoryItem(updatedData);
     }
@@ -258,11 +330,28 @@ export class DataCollectionService {
         );
     }
 
+    getAllOrderData(): Observable<any[]> {
+        if (this.isCacheValid(this.cachedAllOrderData)) {
+            return of(this.cachedAllOrderData!.data);
+        }
+
+        return from(this.fetchAllOrders()).pipe(
+            map((data) => {
+                this.cachedAllOrderData = { data, timestamp: Date.now() };
+                return data;
+            }),
+            catchError((error) => {
+                console.error('Error fetching order data:', error);
+                return of([]);
+            })
+        );
+    }
+
     getOrderData(): Observable<any[]> {
         if (this.isCacheValid(this.cachedOrderData)) {
             return of(this.cachedOrderData!.data);
         }
-    
+
         return from(this.fetchOrdersReport()).pipe(
             map((data) => {
                 this.cachedOrderData = { data, timestamp: Date.now() };
@@ -286,14 +375,27 @@ export class DataCollectionService {
     // }
 
     getSupplierQuotePrices(): Observable<any[]> {
-        return from(this.fetchSupplierQuotePrices());
+        if (this.isCacheValid(this.cachedSupplierQuotes)) {
+            return of(this.cachedSupplierQuotes!.data);
+        }
+
+        return from(this.fetchSupplierQuotePrices()).pipe(
+            map((data) => {
+                this.cachedSupplierQuotes = { data, timestamp: Date.now() };
+                return data;
+            }),
+            catchError((error) => {
+                console.error('Error fetching supplier quote prices:', error);
+                return of([]);
+            })
+        );
     }
 
     getScatterPlotData(): Observable<any[]> {
         if (this.isCacheValid(this.cachedScatterPlotData)) {
             return of(this.cachedScatterPlotData!.data);
         }
-    
+
         return from(this.fetchScatterPlotData()).pipe(
             map((data) => {
                 this.cachedScatterPlotData = { data, timestamp: Date.now() };
@@ -311,7 +413,7 @@ export class DataCollectionService {
             return of(this.cachedActivityData!.data);
         }
 
-        
+
         return from(this.fetchActivities()).pipe(
             map((data) => {
                 this.cachedActivityData = { data, timestamp: Date.now() };
@@ -322,6 +424,17 @@ export class DataCollectionService {
                 return [];
             }),
         );
+    }
+
+    async fetchAllOrders() {
+        try {
+            const session = await fetchAuthSession();
+            const tenantId = await this.getTenantId(session);
+            return this.invokeLambda('getOrders', { queryStringParameters: { tenentId: tenantId } });
+        } catch (error) {
+            console.error('Error fetching orders:', error);
+            throw error;
+        }
     }
 
     async fetchOrdersReport() {
@@ -376,7 +489,7 @@ export class DataCollectionService {
         } catch (error) {
             console.error('Error fetching supplier quote prices:', error);
             this.scatterPlotChartData = [];
-            return []; // Add this line to return an empty array in case of an error
+            return [];
         }
     }
 
@@ -468,9 +581,9 @@ export class DataCollectionService {
     }
 
 
-    prepareHorizontalBarChartConfig(): ChartConfig{
+    prepareHorizontalBarChartConfig(): ChartConfig {
         return this.prepareChartConfig(
-            'barHorizontal',
+            'BubblechartComponent',
             this.generateChartData(this.supplierQuotes),
             'Supplier Price and Availability Comparison',
             'BubblechartComponent'
@@ -485,16 +598,16 @@ export class DataCollectionService {
             'ScatterPlotComponent'
         );
     }
-    
+
     prepareDonutChartConfig(): ChartConfig {
         // Assuming you want to show order status distribution
         // const statusCounts = this.orderData.reduce((acc, order) => {
         //     acc[order.status] = (acc[order.status] || 0) + 1;
         //     return acc;
         // }, {});
-    
+
         // const donutData = Object.entries(statusCounts).map(([name, value]) => ({ name, value }));
-    
+
         return this.prepareChartConfig(
             'donut',
             this.orderData,
@@ -783,8 +896,8 @@ export class DataCollectionService {
                 item.quantity <= item.lowStockThreshold
                     ? 'Low Stock'
                     : item.quantity <= item.lowStockThreshold + item.reorderAmount
-                      ? 'Needs Reorder'
-                      : 'Healthy Stock';
+                        ? 'Needs Reorder'
+                        : 'Healthy Stock';
             acc[category] = (acc[category] || 0) + 1;
             return acc;
         }, {});

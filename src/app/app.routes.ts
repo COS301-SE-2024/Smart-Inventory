@@ -13,7 +13,6 @@ import { InventoryReportComponent } from './components/reports/inventory-report/
 import { OrderReportComponent } from './components/reports/order-report/order-report.component';
 import { SupplierReportComponent } from './components/reports/supplier-report/supplier-report.component';
 import { ActivityReportComponent } from './components/reports/activity-report/activity-report.component';
-import { ProfileComponent } from './components/profile/profile.component';
 import { ContactSupportComponent } from './components/contact-support/contact-support.component';
 import { StockRequestReportComponent } from './components/stock-request-report/stock-request-report.component';
 import { InventorySummaryComponent } from './pages/inventory-summary/inventory-summary.component';
@@ -37,7 +36,6 @@ export const routes: Routes = [
     { path: 'grid', component: GridComponent },
     { path: 'supplierReport/:supplierID/:orderID', component: SupplierReportComponent },
     { path: 'activityReport', component: ActivityReportComponent },
-    { path: 'profile', component: ProfileComponent },
     { path: 'contact-support', component: ContactSupportComponent },
     { path: 'stock-requests-report', component: StockRequestReportComponent },
     { path: 'inventory-summary', component: InventorySummaryComponent },

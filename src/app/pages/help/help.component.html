@@ -1,4 +1,4 @@
-<div class="body" style="margin: 0px" style="position: fixed">
+<div class="body" style="margin: 0px; position: fixed; width: 98%">
     <mat-tab-group>
         <mat-tab label="FAQs">
             <ng-container>
@@ -66,23 +66,35 @@
             </ng-container>
         </mat-tab>
         <mat-tab label="User Guides">
-            <h5>View PDF Manual</h5>
-            <iframe
-                src="https://drive.google.com/file/d/1raXUg4yf6isEylJ4U-UUTEf97dDzCo0z/preview"
-                width="100%"
-                height="500px"
-            >
-                This browser does not support PDFs. Please download the PDF to view it:
-            </iframe>
-            <h5>Download PDF Manual</h5>
-            <p>
-                <a
-                    href="https://drive.google.com/uc?export=download&id=1raXUg4yf6isEylJ4U-UUTEf97dDzCo0z"
-                    download="UserManual.pdf"
+            <div style="height: 85vh; width: 100%; overflow-y: scroll; align-content: center; text-align: center">
+                <div class="intro-section">
+                    <h2>Download PDF Manual</h2>
+                    <p>
+                        Download your own personal Smart Inventory User Manual to help guide your understanding of the
+                        system system.
+                    </p>
+                </div>
+                <p>
+                    <a
+                        href="https://drive.google.com/uc?export=download&id=1raXUg4yf6isEylJ4U-UUTEf97dDzCo0z"
+                        download="UserManual.pdf"
+                    >
+                        Click here to download(PDF)
+                    </a>
+                </p>
+
+                <div class="intro-section">
+                    <h2>View PDF Manual</h2>
+                    <p>Read the user guide from the comfort of your application.</p>
+                </div>
+                <iframe
+                    src="https://drive.google.com/file/d/1raXUg4yf6isEylJ4U-UUTEf97dDzCo0z/preview"
+                    width="80%"
+                    height="500px"
                 >
-                    Click here to download the full Smart Inventory User Manual (PDF)
-                </a>
-            </p>
+                    This browser does not support PDFs. Please download the PDF to view it:
+                </iframe>
+            </div>
         </mat-tab>
         <mat-tab label="Contact Support">
             <ng-container>

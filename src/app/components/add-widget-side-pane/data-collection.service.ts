@@ -153,7 +153,7 @@ export class DataCollectionService {
                     return typeof responseBody.body === 'string' ? JSON.parse(responseBody.body) : responseBody.body;
                 } else if (responseBody.statusCode === 429) {
                     console.warn(`Rate limit exceeded for ${functionName}, retrying in ${retryDelay}ms...`);
-                    await new Promise(resolve => setTimeout(resolve, retryDelay));
+                    await new Promise((resolve) => setTimeout(resolve, retryDelay));
                 } else {
                     throw new Error(responseBody.body);
                 }
@@ -162,7 +162,7 @@ export class DataCollectionService {
                     throw error;
                 }
                 console.warn(`Error invoking ${functionName}, retrying in ${retryDelay}ms...`);
-                await new Promise(resolve => setTimeout(resolve, retryDelay));
+                await new Promise((resolve) => setTimeout(resolve, retryDelay));
             }
         }
         throw new Error(`Failed to invoke ${functionName} after ${maxRetries} attempts`);
@@ -343,7 +343,7 @@ export class DataCollectionService {
             catchError((error) => {
                 console.error('Error fetching order data:', error);
                 return of([]);
-            })
+            }),
         );
     }
 
@@ -360,7 +360,7 @@ export class DataCollectionService {
             catchError((error) => {
                 console.error('Error fetching order data:', error);
                 return of([]);
-            })
+            }),
         );
     }
 
@@ -387,7 +387,7 @@ export class DataCollectionService {
             catchError((error) => {
                 console.error('Error fetching supplier quote prices:', error);
                 return of([]);
-            })
+            }),
         );
     }
 
@@ -404,7 +404,7 @@ export class DataCollectionService {
             catchError((error) => {
                 console.error('Error fetching scatter plot data:', error);
                 return of([]);
-            })
+            }),
         );
     }
 
@@ -412,7 +412,6 @@ export class DataCollectionService {
         if (this.isCacheValid(this.cachedActivityData)) {
             return of(this.cachedActivityData!.data);
         }
-
 
         return from(this.fetchActivities()).pipe(
             map((data) => {
@@ -483,7 +482,7 @@ export class DataCollectionService {
 
     async fetchScatterPlotData(): Promise<any[]> {
         try {
-            const supplierQuotes = await this.getSupplierQuotePrices().toPromise() || [];
+            const supplierQuotes = (await this.getSupplierQuotePrices().toPromise()) || [];
             this.scatterPlotChartData = this.prepareScatterPlotData(supplierQuotes);
             return this.scatterPlotChartData;
         } catch (error) {
@@ -504,7 +503,7 @@ export class DataCollectionService {
 
     async fetchOrderData() {
         try {
-            this.orderData = await this.fetchOrdersReport() || [];
+            this.orderData = (await this.fetchOrdersReport()) || [];
             console.log('Processed orders:', this.orderData);
         } catch (error) {
             console.error('Error in fetchOrderData:', error);
@@ -515,18 +514,19 @@ export class DataCollectionService {
     generateChartConfigs(): Observable<ChartConfig[]> {
         return forkJoin({
             inventory: this.getInventoryItems(),
+            inevntorySummary: this.getInventorySummary(),
             requests: this.getStockRequests(),
             suppliers: this.getSupplierReportData(),
             scatterPlot: this.getScatterPlotData(),
             orders: this.getOrderData(),
             supplierQuotes: this.getSupplierQuotePrices(),
-            activities: this.getActivityData()
         }).pipe(
-            switchMap(({ inventory, requests, suppliers, orders, supplierQuotes, activities }) => {
+            switchMap(({ inventory, inevntorySummary, requests, suppliers, orders, supplierQuotes }) => {
                 this.inventoryData = inventory;
                 this.stockRequestData = this.filterCurrentMonthRequests(requests);
+                this.inventorySummary = inevntorySummary;
                 this.originalData = suppliers;
-                this.supplierQuotes = supplierQuotes;   //Used by the scatter plot
+                this.supplierQuotes = supplierQuotes; //Used by the scatter plot
                 this.orderData = orders;
                 return this.createChartConfigs();
             }),
@@ -536,13 +536,15 @@ export class DataCollectionService {
     private createChartConfigs(): Observable<ChartConfig[]> {
         return new Observable<ChartConfig[]>((observer) => {
             const configs = [
-                this.prepareStockRequestChartConfig(),
                 this.prepareStockRequestLineChartConfig(),
+                this.prepareABCAnalysisChartConfig(),
                 this.prepareInventoryStockLevelChartConfig('pie'),
                 this.prepareInventoryStockLevelChartConfig('bar'),
                 this.prepareIntakeOutakeCorrelationChartConfig(),
                 this.prepareAverageUnitCostByCategory(),
                 this.prepareUnitCostDistribution(),
+                this.prepareEOQChartConfig(),
+                this.prepareROPChartConfig(),
                 this.prepareInventoryRequestBubbleChart(),
                 this.prepareMonthlyCategoryRequestCountChartConfig(),
                 this.prepareAvailableStockPerCategoryChartConfig(),
@@ -551,7 +553,6 @@ export class DataCollectionService {
                 this.prepareScatterPlotChartConfig(),
                 this.prepareDonutChartConfig(),
                 this.prepareHorizontalBarChartConfig(),
-
             ];
             observer.next(configs);
             observer.complete();
@@ -560,7 +561,7 @@ export class DataCollectionService {
 
     private generateChartData(rawData: any[]): any[] {
         const aggregatedData = rawData.reduce((acc, item) => {
-            const existingItem = acc.find((i: { ItemSKU: any; }) => i.ItemSKU === item.ItemSKU);
+            const existingItem = acc.find((i: { ItemSKU: any }) => i.ItemSKU === item.ItemSKU);
             if (existingItem) {
                 existingItem.AvailableQuantity += Number(item.AvailableQuantity) || 0;
                 existingItem.TotalPrice += Number(item.TotalPrice) || 0;
@@ -568,25 +569,27 @@ export class DataCollectionService {
                 acc.push({
                     ItemSKU: item.ItemSKU,
                     AvailableQuantity: Number(item.AvailableQuantity) || 0,
-                    TotalPrice: Number(item.TotalPrice) || 0
+                    TotalPrice: Number(item.TotalPrice) || 0,
                 });
             }
             return acc;
         }, []);
 
-        const processedData = aggregatedData.filter((item: { AvailableQuantity: number; TotalPrice: number; }) => item.AvailableQuantity > 0 && item.TotalPrice > 0);
+        const processedData = aggregatedData.filter(
+            (item: { AvailableQuantity: number; TotalPrice: number }) =>
+                item.AvailableQuantity > 0 && item.TotalPrice > 0,
+        );
 
         console.log('Processed data:', processedData);
         return processedData;
     }
-
 
     prepareHorizontalBarChartConfig(): ChartConfig {
         return this.prepareChartConfig(
             'BubblechartComponent',
             this.generateChartData(this.supplierQuotes),
             'Supplier Price and Availability Comparison',
-            'BubblechartComponent'
+            'BubblechartComponent',
         );
     }
 
@@ -595,7 +598,7 @@ export class DataCollectionService {
             'scatter',
             this.scatterPlotChartData,
             'Supplier Quote Prices',
-            'ScatterPlotComponent'
+            'ScatterPlotComponent',
         );
     }
 
@@ -608,14 +611,8 @@ export class DataCollectionService {
 
         // const donutData = Object.entries(statusCounts).map(([name, value]) => ({ name, value }));
 
-        return this.prepareChartConfig(
-            'donut',
-            this.orderData,
-            'Order Cost Distribution',
-            'DonutChartComponent'
-        );
+        return this.prepareChartConfig('donut', this.orderData, 'Order Cost Distribution', 'DonutChartComponent');
     }
-
 
     prepareLineBarChartConfig(): ChartConfig {
         const groupedData = this.groupDataByTopSupplier();
@@ -624,18 +621,13 @@ export class DataCollectionService {
             'linebar',
             { source: formattedData.source },
             'Top Suppliers Spending Over Time',
-            'LineBarComponent'
+            'LineBarComponent',
         );
     }
 
     prepareRadarChartConfig(): ChartConfig {
         const topSuppliers = this.calculateTopSuppliers();
-        return this.prepareChartConfig(
-            'radar',
-            topSuppliers,
-            'Top Suppliers Performance Overview',
-            'RadarComponent'
-        );
+        return this.prepareChartConfig('radar', topSuppliers, 'Top Suppliers Performance Overview', 'RadarComponent');
     }
 
     private groupDataByTopSupplier(): any {
@@ -734,8 +726,6 @@ export class DataCollectionService {
                 'Out Standing Payments': supplier.averageOutstandingPayments,
             }));
     }
-
-
 
     filterCurrentMonthRequests(requests: StockRequest[]): StockRequest[] {
         const now = new Date();
@@ -896,8 +886,8 @@ export class DataCollectionService {
                 item.quantity <= item.lowStockThreshold
                     ? 'Low Stock'
                     : item.quantity <= item.lowStockThreshold + item.reorderAmount
-                        ? 'Needs Reorder'
-                        : 'Healthy Stock';
+                      ? 'Needs Reorder'
+                      : 'Healthy Stock';
             acc[category] = (acc[category] || 0) + 1;
             return acc;
         }, {});

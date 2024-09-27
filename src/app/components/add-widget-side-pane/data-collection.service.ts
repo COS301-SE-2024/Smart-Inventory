@@ -130,7 +130,7 @@ export class DataCollectionService {
     }
 
     private async invokeLambdaWithRetry(functionName: string, payload: any): Promise<any> {
-        const maxRetries = 3;
+        const maxRetries = 1;
         const retryDelay = 1000; // 1 second
 
         for (let attempt = 0; attempt < maxRetries; attempt++) {

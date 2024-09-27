@@ -35,8 +35,40 @@ import { DonutTemplateComponent } from 'app/components/charts/donuttemplate/donu
 import { AddWidgetSidePaneComponent } from '../../components/add-widget-side-pane/add-widget-side-pane.component';
 import { CardData, ChartConfig, DashboardItem, DashboardService } from '../dashboard/dashboard.service';
 import { ChangeDetectionService } from './change-detection.service';
-import { DataCollectionService } from '../../components/add-widget-side-pane/data-collection.service';
+import { DataCollectionService, StockRequest } from '../../components/add-widget-side-pane/data-collection.service';
 import { MetricCardComponent } from '../../components/charts/widgets/metric-card.component';
+import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
+import { fetchAuthSession } from 'aws-amplify/auth';
+interface Order {
+    tenentId: string;
+    Order_Status: string;
+    Expected_Delivery_Date?: string;
+    Order_Date: string;
+    Selected_Supplier?: string;
+}
+
+interface SkuCounts {
+    [key: string]: number;
+}
+
+interface RequestOrders {
+    requests: {
+        totalRequests: number;
+        mostRequested: {
+            name: string;
+            percentage: number;
+        };
+        highestRequest: number;
+    };
+    backorders: {
+        currentBackorders: number;
+        averageDelay: number;
+        longestBackorderItem: {
+            productName: string;
+            delay: string;
+        };
+    };
+}
 @Component({
     selector: 'app-dashboard',
     templateUrl: './dashboard.component.html',
@@ -97,6 +129,25 @@ export class DashboardComponent implements OnInit {
         MetricCardComponent: MetricCardComponent,
     };
 
+    RequestOrders: RequestOrders = {
+        requests: {
+            totalRequests: 0,
+            mostRequested: {
+                name: '',
+                percentage: 0
+            },
+            highestRequest: 0
+        },
+        backorders: {
+            currentBackorders: 0,
+            averageDelay: 0,
+            longestBackorderItem: {
+                productName: '',
+                delay: ''
+            }
+        }
+    };
+
     public chartOptions!: AgChartOptions;
 
     constructor(
@@ -141,14 +192,9 @@ export class DashboardComponent implements OnInit {
     private initializeGridsterOptions() {
         this.options = {
             gridType: GridType.VerticalFixed,
-            displayGrid: DisplayGrid.OnDragAndResize,
-            compactType: CompactType.None,
-            margin: 20, // Reduced margin for tighter layout
-            outerMargin: true,
-            outerMarginTop: null,
-            outerMarginRight: null,
-            outerMarginBottom: null,
-            outerMarginLeft: null,
+            displayGrid: DisplayGrid.None,
+            compactType: CompactType.CompactUp,
+            margin: 30,
             minCols: 12,
             maxCols: 12,
             minRows: 100,
@@ -185,7 +231,7 @@ export class DashboardComponent implements OnInit {
                 stop: () => this.dashService.saveState(),
             },
             swap: true,
-            pushItems: true,
+            pushItems: false,
             disablePushOnDrag: false,
             disablePushOnResize: false,
             pushDirections: { north: true, east: true, south: true, west: true },
@@ -203,7 +249,6 @@ export class DashboardComponent implements OnInit {
                 this.dashService.persistState(this.dashboard);
             });
     }
-
 
     async populateRequestOrders(stockRequests: any[], orders: any[]): Promise<void> {
         const session = await fetchAuthSession();

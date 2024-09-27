@@ -42,6 +42,8 @@ export interface InventoryItem {
 }
 
 export interface StockRequest {
+    tenentId: string | undefined;
+    sku: any;
     category: string;
     quantityRequested: number;
     createdAt: string;
@@ -54,6 +56,10 @@ export class DataCollectionService {
     inventoryData: InventoryItem[] = [];
     stockRequestData: StockRequest[] = [];
     inventorySummary: InventorySummaryItem[] = [];
+    originalData: any[] = [];
+    orderData: any[] = [];
+    scatterPlotChartData: any[] = [];
+    supplierQuotes: any[] = [];
 
     private requestQueue: Promise<any> = Promise.resolve();
 
@@ -61,7 +67,6 @@ export class DataCollectionService {
     private cachedInventorySummary: CachedData<InventorySummaryItem[]> | null = null;
     private cachedInventoryItems: CachedData<InventoryItem[]> | null = null;
     private cachedStockRequests: CachedData<StockRequest[]> | null = null;
-
     private cachedAllStockRequests: CachedData<StockRequest[]> | null = null;
     private cachedSupplierQuotes: CachedData<any[]> | null = null;
     private cachedSupplierReportData: CachedData<any[]> | null = null;
@@ -69,7 +74,6 @@ export class DataCollectionService {
     private cachedAllOrderData: CachedData<any[]> | null = null;
     private cachedScatterPlotData: CachedData<any[]> | null = null;
     private cachedActivityData: CachedData<any[]> | null = null;
-
 
     constructor(private inventoryService: InventoryService) {
         Amplify.configure(outputs);
@@ -234,8 +238,15 @@ export class DataCollectionService {
     }
 
     getSupplierReportData(): Observable<any[]> {
+        if (this.isCacheValid(this.cachedSupplierQuotes)) {
+            return of(this.cachedSupplierQuotes!.data);
+        }
+
         return from(this.fetchSupplierReportData()).pipe(
-            map((suppliers) => suppliers || []),
+            map((data) => {
+                this.cachedSupplierQuotes = { data, timestamp: Date.now() };
+                return data;
+            }),
             catchError((error) => {
                 console.error('Error fetching supplier report data:', error);
                 return [];
@@ -401,8 +412,13 @@ export class DataCollectionService {
         if (this.isCacheValid(this.cachedActivityData)) {
             return of(this.cachedActivityData!.data);
         }
+
+
         return from(this.fetchActivities()).pipe(
-            map((activities) => activities || []),
+            map((data) => {
+                this.cachedActivityData = { data, timestamp: Date.now() };
+                return data;
+            }),
             catchError((error) => {
                 console.error('Error fetching activities:', error);
                 return [];
@@ -432,7 +448,7 @@ export class DataCollectionService {
         }
     }
 
-    private async fetchSupplierQuotePrices(): Promise<any[]> {
+    public async fetchSupplierQuotePrices(): Promise<any[]> {
         try {
             const session = await fetchAuthSession();
             const tenantId = await this.getTenantId(session);
@@ -464,7 +480,6 @@ export class DataCollectionService {
             return [];
         }
     }
-
 
     async fetchScatterPlotData(): Promise<any[]> {
         try {
@@ -500,18 +515,20 @@ export class DataCollectionService {
     generateChartConfigs(): Observable<ChartConfig[]> {
         return forkJoin({
             inventory: this.getInventoryItems(),
-            inventorySummary: this.getInventorySummary(),
             requests: this.getStockRequests(),
+            suppliers: this.getSupplierReportData(),
+            scatterPlot: this.getScatterPlotData(),
+            orders: this.getOrderData(),
+            supplierQuotes: this.getSupplierQuotePrices(),
+            activities: this.getActivityData()
         }).pipe(
-            switchMap(({ inventory, inventorySummary, requests }) => {
+            switchMap(({ inventory, requests, suppliers, orders, supplierQuotes, activities }) => {
                 this.inventoryData = inventory;
-                this.inventorySummary = inventorySummary;
                 this.stockRequestData = this.filterCurrentMonthRequests(requests);
+                this.originalData = suppliers;
+                this.supplierQuotes = supplierQuotes;   //Used by the scatter plot
+                this.orderData = orders;
                 return this.createChartConfigs();
-            }),
-            catchError((error) => {
-                console.error('Error generating chart configs:', error);
-                return of([]); // Return an empty array in case of error
             }),
         );
     }
@@ -519,6 +536,7 @@ export class DataCollectionService {
     private createChartConfigs(): Observable<ChartConfig[]> {
         return new Observable<ChartConfig[]>((observer) => {
             const configs = [
+                this.prepareStockRequestChartConfig(),
                 this.prepareStockRequestLineChartConfig(),
                 this.prepareInventoryStockLevelChartConfig('pie'),
                 this.prepareInventoryStockLevelChartConfig('bar'),
@@ -528,9 +546,12 @@ export class DataCollectionService {
                 this.prepareInventoryRequestBubbleChart(),
                 this.prepareMonthlyCategoryRequestCountChartConfig(),
                 this.prepareAvailableStockPerCategoryChartConfig(),
-                this.prepareABCAnalysisChartConfig(),
-                this.prepareEOQChartConfig(),
-                this.prepareROPChartConfig(),
+                this.prepareLineBarChartConfig(),
+                this.prepareRadarChartConfig(),
+                this.prepareScatterPlotChartConfig(),
+                this.prepareDonutChartConfig(),
+                this.prepareHorizontalBarChartConfig(),
+
             ];
             observer.next(configs);
             observer.complete();
@@ -713,6 +734,8 @@ export class DataCollectionService {
                 'Out Standing Payments': supplier.averageOutstandingPayments,
             }));
     }
+
+
 
     filterCurrentMonthRequests(requests: StockRequest[]): StockRequest[] {
         const now = new Date();

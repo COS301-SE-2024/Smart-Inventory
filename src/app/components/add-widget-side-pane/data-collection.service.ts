@@ -253,13 +253,13 @@ export class DataCollectionService {
     }
 
     getSupplierReportData(): Observable<any[]> {
-        if (this.isCacheValid(this.cachedSupplierQuotes)) {
-            return of(this.cachedSupplierQuotes!.data);
+        if (this.isCacheValid(this.cachedSupplierReportData)) {
+            return of(this.cachedSupplierReportData!.data);
         }
 
         return from(this.fetchSupplierReportData()).pipe(
             map((data) => {
-                this.cachedSupplierQuotes = { data, timestamp: Date.now() };
+                this.cachedSupplierReportData = { data, timestamp: Date.now() };
                 return data;
             }),
             catchError((error) => {
@@ -664,30 +664,61 @@ export class DataCollectionService {
     }
 
     private formatDataForChart(data: any[]): any {
-        // Implementation as provided in your code
+        console.log('Entering formatDataForChart with data:', data);
+        
+        if (!data || !Array.isArray(data) || data.length === 0) {
+            console.warn('formatDataForChart received invalid or empty data');
+            return { source: [['Supplier ID']] };
+        }
+    
         const years = [
             ...new Set(
                 data.flatMap((supplier: any) =>
-                    this.originalData
-                        .filter((item) => item['Supplier ID'] === supplier['Supplier ID'])
-                        .map((item) => item.Date.slice(0, 4)),
+                    (this.originalData || [])
+                        .filter((item) => item && item['Supplier ID'] === supplier['Supplier ID'])
+                        .map((item) => {
+                            if (!item.Date || typeof item.Date !== 'string') {
+                                console.warn('Invalid Date found for item:', item);
+                                return null;
+                            }
+                            return item.Date.slice(0, 4);
+                        })
+                        .filter((year): year is string => year !== null)
                 ),
             ),
         ].sort();
+    
+        console.log('Extracted years:', years);
+    
         const header = ['Supplier ID', ...years];
-
-        // Map each supplier to a row in the chart data
+    
         const chartData = data.map((supplier: any) => {
+            if (!supplier || !supplier['Supplier ID']) {
+                console.warn('Invalid supplier data:', supplier);
+                return null;
+            }
+    
             const row = [supplier['Supplier ID'], ...Array(years.length).fill(0)];
-            this.originalData
-                .filter((item) => item['Supplier ID'] === supplier['Supplier ID'])
+            
+            (this.originalData || [])
+                .filter((item) => item && item['Supplier ID'] === supplier['Supplier ID'])
                 .forEach((item) => {
-                    const yearIndex = years.indexOf(item.Date.slice(0, 4)) + 1; // Find correct index for the year
-                    row[yearIndex] += item.TotalSpent; // Accumulate total spent for the year
+                    if (!item.Date || typeof item.Date !== 'string') {
+                        console.warn('Invalid Date for item:', item);
+                        return;
+                    }
+                    const year = item.Date.slice(0, 4);
+                    const yearIndex = years.indexOf(year) + 1;
+                    if (yearIndex > 0) {
+                        row[yearIndex] += parseFloat(item.TotalSpent) || 0;
+                    }
                 });
+    
             return row;
-        });
-
+        }).filter((row): row is any[] => row !== null);
+    
+        console.log('Processed chart data:', chartData);
+    
         return {
             source: [header, ...chartData],
         };

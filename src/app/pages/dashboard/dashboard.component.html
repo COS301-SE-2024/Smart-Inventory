@@ -119,7 +119,7 @@
             </mat-card>
 
             <!-- Half-width items -->
-            <mat-card class="dashboard-card half-width-card" *ngIf="item.component === 'BubblechartComponent'">
+            <!-- <mat-card class="dashboard-card half-width-card" *ngIf="item.component === 'BubblechartComponent'">
                 <button *ngIf="isDeleteMode" class="delete-button" (click)="deleteWidget(item)">
                     <mat-icon>delete</mat-icon>
                 </button>
@@ -127,7 +127,7 @@
                     [data]="item['chartConfig'].data"
                     [chartTitle]="item['chartConfig'].title"
                 ></app-bubblechart>
-            </mat-card>
+            </mat-card> -->
 
             <mat-card class="dashboard-card half-width-card" *ngIf="item.cardId === 'donut-chart'">
                 <button *ngIf="isDeleteMode" class="delete-button" (click)="deleteWidget(item)">

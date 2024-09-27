@@ -30,6 +30,18 @@ type ChartMetric = 'On Time Delivery Rate' | 'Order Accuracy Rate' | 'Out Standi
 type ChartData = {
     source: any[];
 };
+
+interface SupplierData {
+    "Supplier ID": string;
+    Date: string;
+    "On Time Delivery Rate": number;
+    "Order Accuracy Rate": number;
+    "Out Standing Payments": number;
+    "Reorder Level": string;
+    RiskScore: string;
+    TotalSpent: string;
+}
+
 @Component({
     selector: 'app-supplier-report',
     standalone: true,
@@ -172,41 +184,21 @@ export class SupplierReportComponent implements OnInit {
         this.titleService.updateTitle(this.getCurrentRoute());
         await this.loadSuppliersData();
 
-        // this.loadSupplierMetrics();
-        await this.fetchMetrics(this.originalData);
-        //console.log(this.getMostAverageSupplier()['Supplier ID']);
-        //console.log(this.getWorstPerformingSupplier()['Supplier ID']);
-        //console.log(this.calculateAverageDeliveryRate());
-        //console.log(this.calculateOnTimeOrderCompletionRate());
-        this.updateVisibleMetrics();
-        this.SupplierReport.metrics[0].value = this.getMostAverageSupplier();
-        this.SupplierReport.metrics[1].value = this.calculateDefectRate(this.orderFulfillmentDetails);
-        this.SupplierReport.metrics[2].value = this.getWorstPerformingSupplier()['Supplier ID'];
-        this.SupplierReport.metrics[3].value = this.calculateAverageDeliveryRate();
-        this.SupplierReport.metrics[4].value = this.calculateOrderFulfillmentRate(this.orderFulfillmentDetails);
-        this.SupplierReport.metrics[5].value = this.calculateInventoryTurnover(
-            this.stockRequests,
-            this.initialInventory,
-            this.endingInventory,
-        );
-        this.SupplierReport.metrics[6].value = this.calculateRightFirstTimeRate(this.orderFulfillmentDetails);
-        this.SupplierReport.metrics[7].value = this.calculateOnTimeOrderCompletionRate();
-        // console.log(this.getChartData());
-        // console.log(this.visibleTiles);
-        this.chartData = this.getChartData();
-        console.log('chartdata:', this.chartData.seriesData);
-        this.processData();
-        // this.inventory = await this.loadInventoryData();
-        this.topSuppliersData = this.calculateTopSuppliers();
-        console.log('supplier data:', this.topSuppliersData);
-        // console.log('inventory ', this.inventory)
-        // console.log('my defect rate', this.calculateDefectRate(this.orderFulfillmentDetails));
-        // console.log('my rowData', this.rowData)
+        if (this.originalData.length > 0) {
+            this.updateVisibleMetrics();
+            this.chartData = this.getChartData();
+            console.log('chartdata:', this.chartData.seriesData);
+            this.processData();
+            this.topSuppliersData = this.calculateTopSuppliers();
+            console.log('supplier data:', this.topSuppliersData);
+        } else {
+            console.warn('No supplier data available for processing');
+        }
         this.isLoading = false;
     }
 
     colDefs!: ColDef[];
-    originalData: any[] = [];
+    originalData: SupplierData[] = [];
 
     getCurrentRoute() {
         this.colDefs = [
@@ -788,45 +780,40 @@ export class SupplierReportComponent implements OnInit {
     topSuppliersData: any[] = [];
 
     calculateTopSuppliers(): any[] {
-        // Step 1: Aggregate data for each supplier
-        const supplierAggregates = this.originalData.reduce((acc, data) => {
-            const id = data['Supplier ID'];
-            if (!acc[id]) {
-                acc[id] = {
-                    supplierId: id,
-                    totalSpent: 0,
-                    averageOnTimeDelivery: 0,
-                    averageOrderAccuracy: 0,
-                    averageOutstandingPayments: 0,
-                    count: 0,
-                };
+        // Step 1: Group data by supplier ID
+        const groupedData = this.originalData.reduce((groups, item) => {
+            const id = item['Supplier ID'];
+            if (!groups[id]) {
+                groups[id] = [];
             }
-            acc[id].totalSpent += data.TotalSpent;
-            acc[id].averageOnTimeDelivery += data['On Time Delivery Rate'];
-            acc[id].averageOrderAccuracy += data['Order Accuracy Rate'];
-            acc[id].averageOutstandingPayments += data['Out Standing Payments'];
-            acc[id].count += 1;
-            return acc;
-        }, {});
+            groups[id].push(item);
+            return groups;
+        }, {} as { [key: string]: SupplierData[] });
 
-        // Step 2: Calculate averages and score
-        const scoredSuppliers = Object.values(supplierAggregates).map((supplier: any) => {
-            supplier.averageOnTimeDelivery /= supplier.count;
-            supplier.averageOrderAccuracy /= supplier.count;
-            supplier.averageOutstandingPayments /= supplier.count;
-            supplier.score =
-                supplier.averageOnTimeDelivery +
-                supplier.averageOrderAccuracy -
-                supplier.averageOutstandingPayments / 1000 +
-                supplier.totalSpent / 100000;
-            return supplier;
+        // Step 2: Calculate aggregates for each supplier
+        const supplierAggregates = Object.entries(groupedData).map(([supplierId, data]) => {
+            const totalSpent = data.reduce((sum, item) => sum + parseFloat(item.TotalSpent), 0);
+            const averageOnTimeDelivery = data.reduce((sum, item) => sum + item['On Time Delivery Rate'], 0) / data.length;
+            const averageOrderAccuracy = data.reduce((sum, item) => sum + item['Order Accuracy Rate'], 0) / data.length;
+            const averageOutstandingPayments = data.reduce((sum, item) => sum + item['Out Standing Payments'], 0) / data.length;
+
+            const score = averageOnTimeDelivery + averageOrderAccuracy - averageOutstandingPayments / 1000 + totalSpent / 100000;
+
+            return {
+                supplierId,
+                totalSpent,
+                averageOnTimeDelivery,
+                averageOrderAccuracy,
+                averageOutstandingPayments,
+                score
+            };
         });
 
-        // Step 3: Sort by score and select the top 5
-        return scoredSuppliers
+        // Step 3: Sort by score and select the top 3
+        return supplierAggregates
             .sort((a, b) => b.score - a.score)
             .slice(0, 3)
-            .map((supplier) => ({
+            .map(supplier => ({
                 'Supplier ID': supplier.supplierId,
                 'Total Spent': supplier.totalSpent,
                 'On Time Delivery Rate': supplier.averageOnTimeDelivery,
@@ -837,13 +824,45 @@ export class SupplierReportComponent implements OnInit {
 
     async loadSuppliersData() {
         try {
-            const suppliers = (await this.dataCollectionService.getSupplierReportData().toPromise()) || [];
-            this.originalData = suppliers;
-            this.rowData = this.processRowData(this.originalData);
-            console.log('Processed suppliers:', this.originalData);
+            this.isLoading = true;
+            const data = await this.dataCollectionService.getSupplierReportData().toPromise();
+            if (data && data.length > 0) {
+                this.originalData = data;
+                this.rowData = this.processRowData(this.originalData);
+                console.log('Processed suppliers:', this.originalData);
+                await this.fetchMetrics(this.originalData);
+                this.updateReportMetrics();
+            } else {
+                console.warn('No supplier data received');
+                this.originalData = [];
+                this.rowData = [];
+            }
         } catch (error) {
             console.error('Error in loadSuppliersData:', error);
+            this.originalData = [];
             this.rowData = [];
+        } finally {
+            this.isLoading = false;
+        }
+    }
+
+    private updateReportMetrics() {
+        if (this.originalData.length > 0) {
+            this.SupplierReport.metrics[0].value = this.getMostAverageSupplier();
+            this.SupplierReport.metrics[1].value = this.calculateDefectRate(this.orderFulfillmentDetails);
+            this.SupplierReport.metrics[2].value = this.getWorstPerformingSupplier()['Supplier ID'];
+            this.SupplierReport.metrics[3].value = this.calculateAverageDeliveryRate();
+            this.SupplierReport.metrics[4].value = this.calculateOrderFulfillmentRate(this.orderFulfillmentDetails);
+            this.SupplierReport.metrics[5].value = this.calculateInventoryTurnover(
+                this.stockRequests,
+                this.initialInventory,
+                this.endingInventory,
+            );
+            this.SupplierReport.metrics[6].value = this.calculateRightFirstTimeRate(this.orderFulfillmentDetails);
+            this.SupplierReport.metrics[7].value = this.calculateOnTimeOrderCompletionRate();
+            
+        } else {
+            console.warn('No data available to update report metrics');
         }
     }
 
@@ -857,21 +876,36 @@ export class SupplierReportComponent implements OnInit {
         // Now pass formattedData to LineBarComponent via its @Input() property
     }
 
-    groupDataByTopSupplier(): any {
-        const grouped = this.originalData.reduce((acc, data) => {
-            const id = data['Supplier ID'];
-            if (!acc[id]) {
-                acc[id] = { ...data, count: 1 }; // Initial creation of the group
-            } else {
-                acc[id].TotalSpent += data.TotalSpent; // Summing up TotalSpent
-                acc[id].count += 1; // Counting occurrences
+    groupDataByTopSupplier(): SupplierData[] {
+        // Step 1: Group data by supplier ID
+        const groupedData = this.originalData.reduce((groups, item) => {
+            const id = item['Supplier ID'];
+            if (!groups[id]) {
+                groups[id] = [];
             }
-            return acc;
-        }, {});
+            groups[id].push(item);
+            return groups;
+        }, {} as { [key: string]: SupplierData[] });
 
-        return Object.values(grouped)
-            .sort((a: any, b: any) => b.TotalSpent - a.TotalSpent)
-            .slice(0, 5);
+        // Step 2: Calculate total spent for each supplier
+        const supplierTotals = Object.entries(groupedData).map(([supplierId, data]) => {
+            const totalSpent = data.reduce((sum, item) => sum + parseFloat(item.TotalSpent), 0);
+            return {
+                supplierId,
+                totalSpent,
+                data: data[0] // Take the first item as representative
+            };
+        });
+
+        // Step 3: Sort by total spent and select top 5
+        return supplierTotals
+            .sort((a, b) => b.totalSpent - a.totalSpent)
+            .slice(0, 5)
+            .map(supplier => ({
+                ...supplier.data,
+                TotalSpent: supplier.totalSpent.toString(),
+                count: groupedData[supplier.supplierId].length
+            }));
     }
 
     formatDataForChart(data: any[]): any {

@@ -235,13 +235,13 @@ export class SaleschartComponent implements OnInit, OnDestroy, AfterViewInit, On
                     yName: 'Pending Orders',
                     stacked: true,
                 },
-                {
-                    type: 'area',
-                    xKey: 'month',
-                    yKey: 'cancelledCount',
-                    yName: 'Cancelled Orders',
-                    stacked: true,
-                },
+                // {
+                //     type: 'area',
+                //     xKey: 'month',
+                //     yKey: 'cancelledCount',
+                //     yName: 'Cancelled Orders',
+                //     stacked: true,
+                // },
             ],
             axes: [
                 {

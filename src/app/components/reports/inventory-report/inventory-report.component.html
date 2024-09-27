@@ -10,15 +10,16 @@
                     <ag-charts-angular [options]="options[item['chartIndex']]"></ag-charts-angular>
                 </mat-card>
             </ng-container>
-            <ng-container *ngIf="item['isGrid']">
-                <mat-card class="grid-card">
-                    <app-grid
-                        [rowData]="rowData"
-                        [columnDefs]="colDefs"
-                        (viewInventorySummary)="onViewInventorySummary()"
-                        #gridComponent
-                    ></app-grid>
-                </mat-card>
+            <ng-container *ngIf="item['isGrid']" class="order-report-item app-grid-container">
+                <div class="grid-item-content">
+                    <div class="inventoryHolder">
+                        <app-grid
+                            [rowData]="rowData"
+                            [columnDefs]="colDefs"
+                            (viewInventorySummary)="onViewInventorySummary()"
+                        ></app-grid>
+                    </div>
+                </div>
             </ng-container>
             <ng-container *ngIf="item['isMetrics']">
                 <mat-card class="metrics-card">
@@ -37,9 +38,20 @@
                 </mat-card>
             </ng-container>
         </gridster-item>
-        <mat-toolbar class="back-toolbar">
+        <mat-toolbar
+            style="
+                position: sticky;
+                top: 93%;
+                left: 0;
+                width: 300px;
+                border-radius: 20px;
+                height: 50px;
+                background-color: transparent;
+                z-index: 1;
+            "
+        >
             <button mat-flat-button class="btn" (click)="back()">
-                <mat-icon>arrow_back</mat-icon> Back To Reports
+                <mat-icon style="font-size: 24px; height: 24px; width: 24px">arrow_back</mat-icon> Back To Reports
             </button>
         </mat-toolbar>
     </gridster>

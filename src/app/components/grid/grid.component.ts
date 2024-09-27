@@ -9,9 +9,9 @@ import {
     ChangeDetectorRef,
     ViewChild,
 } from '@angular/core';
+
 import { Renderer2, ElementRef, AfterViewInit, ViewEncapsulation } from '@angular/core';
-import { AgGridAngular } from 'ag-grid-angular';
-import { AgGridModule } from 'ag-grid-angular';
+import { AgGridAngular, AgGridModule } from 'ag-grid-angular';
 import { ColDef, GridReadyEvent, CellValueChangedEvent, RowValueChangedEvent, GridApi } from 'ag-grid-community';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -147,8 +147,6 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
         this.setupThemeObserver();
     }
 
-
-
     onFilterTextBoxChanged() {
         this.gridApi.setGridOption(
             'quickFilterText',
@@ -213,7 +211,7 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     setGridHeight(): void {
-        const baseHeight = 35; // Base height in vh
+        const baseHeight = 75; // Base height in vh
         const rowHeight = 3; // Height per row in vh
         const maxHeight = 75; // Maximum height in vh
 

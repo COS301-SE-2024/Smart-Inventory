@@ -3,7 +3,7 @@
     display: none !important;
 }
 
-#chart{
+#chart {
     background-color: #fff !important;
 }
 
@@ -31,7 +31,7 @@ gridster-item:not(.supplier-report) {
         0 4px 8px rgba(0, 0, 0, 0.1),
         0 6px 20px rgba(0, 0, 0, 0.15);
     margin-left: 2px;
-    
+
     border-radius: 10px;
 }
 
@@ -70,7 +70,6 @@ gridster-item:not(.supplier-report) {
     border-bottom: 1px solid lightgrey;
 }
 
-
 .metrics-container {
     display: flex;
     align-items: center;
@@ -89,9 +88,9 @@ gridster-item:not(.supplier-report) {
 }
 
 .metric-card {
-    width: 30%;
+    width: 100%;
     /* Card width */
-    height: 180px;
+    height: 100%;
     /* Card height */
     flex-shrink: 0;
     display: flex;
@@ -131,7 +130,6 @@ gridster-item:not(.supplier-report) {
     font-size: 28px;
     font-weight: bold;
 }
-
 
 .carousel-wrapper {
     overflow-x: auto;
@@ -332,7 +330,6 @@ mat-card-content.mat-mdc-card-content {
     /* flex-wrap: nowrap; */
     align-items: center;
     justify-content: space-between;
-    padding-top: 20px;
 }
 
 .ag-chart-wrapper {
@@ -377,9 +374,6 @@ mat-card-content.mat-mdc-card-content {
     width: 100%;
 }
 
-
-
-
 .supplier-report .metrics-container {
     display: flex;
     align-items: center;
@@ -390,7 +384,9 @@ mat-card-content.mat-mdc-card-content {
 
 .supplier-report .metric-card {
     background-color: white;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.15);
+    box-shadow:
+        0 4px 8px rgba(0, 0, 0, 0.1),
+        0 6px 20px rgba(0, 0, 0, 0.15);
     border-radius: 10px;
     padding: 16px;
     box-sizing: border-box;

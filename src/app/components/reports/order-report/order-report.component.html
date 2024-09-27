@@ -6,7 +6,7 @@
     <!-- order-report-metrics.component.html -->
     <gridster [options]="options" style="background: transparent !important">
         <!-- Metrics Container -->
-        <gridster-item [item]="layout[0]" class="order-report-item">
+        <!-- <gridster-item [item]="layout[0]" class="order-report-item">
             <div class="metrics-container">
                 <button mat-icon-button (click)="scrollTiles('left')">
                     <mat-icon>chevron_left</mat-icon>
@@ -14,7 +14,7 @@
 
                 <div class="metrics-wrapper">
                     <mat-card *ngFor="let metric of visibleMetrics" class="metric-card">
-                        <!-- <mat-card-header class="align">
+                        <mat-card-header class="align">
                             <div mat-card-avatar class="metric-icon">
                                 <mat-icon class="icon" [attr.aria-label]="metric.iconLabel">{{ metric.icon }}</mat-icon>
                             </div>
@@ -28,7 +28,7 @@
                                 </mat-card-content>
                             </div>
                             
-                        </mat-card-header> -->
+                        </mat-card-header> 
                         <mat-card-content>
                             <div class="card-layout">
                                 <div class="icon-container">
@@ -52,10 +52,10 @@
                     <mat-icon>chevron_right</mat-icon>
                 </button>
             </div>
-        </gridster-item>
+        </gridster-item> -->
 
         <!-- Inventory Grid -->
-        <gridster-item [item]="layout[1]" class="order-report-item app-grid-container">
+        <gridster-item [item]="layout[0]" class="order-report-item app-grid-container">
             <div class="grid-item-content">
                 <div class="inventoryHolder">
                     <app-grid [rowData]="rowData" [columnDefs]="colDefs" #gridComponent></app-grid>
@@ -64,7 +64,7 @@
         </gridster-item>
 
         <!-- Order Report -->
-        <gridster-item [item]="layout[2]" class="order-report-item">
+        <gridster-item [item]="layout[1]" class="order-report-item">
             <mat-card class="metrics-card">
                 <mat-card-header>
                     <mat-card-title>{{ OrderReport.title }}</mat-card-title>
@@ -82,17 +82,17 @@
         </gridster-item>
 
         <!-- Stacked Bar Chart -->
-        <gridster-item [item]="layout[3]">
+        <gridster-item [item]="layout[2]">
             <app-stackedbarchart [data]="stackedBarChartData"></app-stackedbarchart>
         </gridster-item>
 
         <!-- Scatter Plot -->
-        <gridster-item [item]="layout[4]">
+        <gridster-item [item]="layout[3]">
             <app-scatterplot [data]="scatterPlotChartData"></app-scatterplot>
         </gridster-item>
 
         <!-- Donut Chart -->
-        <gridster-item [item]="layout[5]">
+        <gridster-item [item]="layout[4]">
             <app-donuttemplate [orderData]="rowData"></app-donuttemplate>
         </gridster-item>
         <mat-toolbar

@@ -67,7 +67,7 @@ export class OrdersComponent implements OnInit {
         private titleService: TitleService,
         private dialog: MatDialog,
         private snackBar: MatSnackBar,
-        private ordersService: OrdersService
+        private ordersService: OrdersService,
     ) {
         Amplify.configure(outputs);
     }
@@ -77,12 +77,23 @@ export class OrdersComponent implements OnInit {
 
     // Column Definitions: Defines & controls grid columns.
     colDefs: ColDef[] = [
-        { field: 'Order_ID', headerName: 'Order ID', filter: 'agSetColumnFilter' },
-        { field: 'Order_Date', headerName: 'Order Date', filter: 'agDateColumnFilter' },
+        {
+            field: 'Order_ID',
+            headerName: 'Order ID',
+            filter: 'agSetColumnFilter',
+            headerTooltip: 'Unique identifier for each order',
+        },
+        {
+            field: 'Order_Date',
+            headerName: 'Order Date',
+            filter: 'agDateColumnFilter',
+            headerTooltip: 'Date when the order was placed',
+        },
         {
             field: 'Creation_Time',
             headerName: 'Creation Time',
             filter: 'agTextColumnFilter',
+            headerTooltip: 'Time when the order was created',
             valueFormatter: (params) => {
                 if (params.value) {
                     const date = new Date(params.value);
@@ -95,6 +106,7 @@ export class OrdersComponent implements OnInit {
             field: 'Order_Status',
             headerName: 'Order Status',
             filter: 'agSetColumnFilter',
+            headerTooltip: 'Current status of the order',
             cellStyle: (params) => {
                 if (params.value === 'Pending Approval') {
                     return { backgroundColor: pendingApprovalColor };
@@ -105,11 +117,17 @@ export class OrdersComponent implements OnInit {
                 }
             },
         },
-        { field: 'Quote_ID', headerName: 'Quote ID', filter: 'agSetColumnFilter' },
+        {
+            field: 'Quote_ID',
+            headerName: 'Quote ID',
+            filter: 'agSetColumnFilter',
+            headerTooltip: 'Unique identifier for each quote',
+        },
         {
             field: 'Quote_Status',
             headerName: 'Quote Status',
             filter: 'agSetColumnFilter',
+            headerTooltip: 'Current status of the quote',
             cellStyle: (params) => {
                 if (params.value === 'Sent to Suppliers') {
                     return { backgroundColor: sentToSuppliersColor };
@@ -122,23 +140,41 @@ export class OrdersComponent implements OnInit {
                 }
             },
         },
-        { field: 'Selected_Supplier', headerName: 'Selected Supplier', filter: 'agSetColumnFilter' },
+        {
+            field: 'Selected_Supplier',
+            headerName: 'Selected Supplier',
+            filter: 'agSetColumnFilter',
+            headerTooltip: 'Supplier chosen for this order',
+        },
         {
             field: 'Date_Accepted',
             headerName: 'Date Accepted',
             filter: 'agDateColumnFilter',
+            headerTooltip: 'Date when the quote was accepted',
         },
         {
             field: 'Lead_Time',
             headerName: 'Lead Time (Days)',
             filter: 'agNumberColumnFilter',
+            headerTooltip: 'Number of days from order placement to expected delivery',
         },
-        { field: 'Expected_Delivery_Date', headerName: 'Expected Delivery Date', filter: 'agDateColumnFilter' },
-        { field: 'Actual_Delivery_Date', headerName: 'Actual Delivery Date', filter: 'agDateColumnFilter' },
+        {
+            field: 'Expected_Delivery_Date',
+            headerName: 'Expected Delivery Date',
+            filter: 'agDateColumnFilter',
+            headerTooltip: 'Anticipated date of order delivery',
+        },
+        {
+            field: 'Actual_Delivery_Date',
+            headerName: 'Actual Delivery Date',
+            filter: 'agDateColumnFilter',
+            headerTooltip: 'Date when the order was actually delivered',
+        },
         {
             field: 'Submission_Deadline',
             headerName: 'Submission Deadline',
             filter: 'agDateColumnFilter',
+            headerTooltip: 'Deadline for quote submission',
             valueFormatter: (params) => {
                 if (params.value) {
                     const date = new Date(params.value);
@@ -246,9 +282,9 @@ export class OrdersComponent implements OnInit {
         try {
             const session = await fetchAuthSession();
             const tenentId = await this.getTenentId(session);
-    
+
             const quoteDetails = await this.ordersService.getQuoteDetails(tenentId, quoteId).toPromise();
-    
+
             return quoteDetails;
         } catch (error) {
             console.error('Error fetching quote details:', error);
@@ -260,11 +296,11 @@ export class OrdersComponent implements OnInit {
         try {
             const session = await fetchAuthSession();
             const tenentId = await this.getTenentId(session);
-    
+
             if (!updatedQuote.quoteId) {
                 throw new Error('Quote ID is missing');
             }
-    
+
             const payload = {
                 items: updatedQuote.items.map((item: any) => ({
                     ItemSKU: item.ItemSKU,
@@ -276,25 +312,27 @@ export class OrdersComponent implements OnInit {
                 })),
                 orderId: updatedQuote.orderId,
                 orderDate: updatedQuote.orderDate,
-                Submission_Deadline: updatedQuote.Submission_Deadline
+                Submission_Deadline: updatedQuote.Submission_Deadline,
             };
-    
+
             console.log('Updating quote with payload:', JSON.stringify(payload, null, 2));
-    
-            const response = await this.ordersService.updateQuoteDetails(tenentId, updatedQuote.quoteId, payload).toPromise();
-    
+
+            const response = await this.ordersService
+                .updateQuoteDetails(tenentId, updatedQuote.quoteId, payload)
+                .toPromise();
+
             console.log('API response:', JSON.stringify(response, null, 2));
-    
+
             if (response && response.message === 'Quote updated successfully') {
                 console.log('Quote updated successfully');
-    
+
                 // Show success snackbar
                 this.snackBar.open('Changes saved successfully', 'Close', {
                     duration: 6000,
                     horizontalPosition: 'center',
                     verticalPosition: 'top',
                 });
-    
+
                 // Refresh the orders data
                 await this.loadOrdersData();
             } else {
@@ -302,7 +340,7 @@ export class OrdersComponent implements OnInit {
             }
         } catch (error) {
             console.error('Error updating quote:', error);
-    
+
             // Show error snackbar
             this.snackBar.open(`Error saving changes: ${(error as Error).message}`, 'Close', {
                 duration: 5000,
@@ -316,9 +354,9 @@ export class OrdersComponent implements OnInit {
         try {
             const session = await fetchAuthSession();
             const tenentId = await this.getTenentId(session);
-    
+
             const orderDate = new Date().toISOString().split('T')[0];
-    
+
             const newOrder = {
                 Order_Date: orderDate,
                 Order_Status: 'Pending Approval',
@@ -339,28 +377,28 @@ export class OrdersComponent implements OnInit {
                     supplierID: supplier.supplierID,
                 })),
             };
-    
+
             console.log('New Quote Data:', quoteData);
             console.log('New Order Data:', newOrder);
-    
+
             const response = await this.ordersService.createOrder(newOrder).toPromise();
-    
+
             console.log('API response:', response);
-    
+
             if (response && response.orderId && response.quoteId) {
                 console.log('Order created successfully');
-    
+
                 this.snackBar.open('Order created successfully', 'Close', {
                     duration: 3000,
                     horizontalPosition: 'center',
                     verticalPosition: 'top',
                 });
-    
+
                 console.log('Created order ID:', response.orderId);
                 console.log('Created quote ID:', response.quoteId);
-    
+
                 await this.loadOrdersData();
-    
+
                 const quoteDetails = {
                     orderId: response.orderId,
                     quoteId: response.quoteId,
@@ -369,16 +407,22 @@ export class OrdersComponent implements OnInit {
                     Submission_Deadline: quoteData.Submission_Deadline,
                     orderDate: orderDate,
                 };
-    
+
                 setTimeout(() => {
-                    this.openCustomQuoteModal(quoteDetails, response.orderId, response.quoteId, quoteData.Submission_Deadline, orderDate);
+                    this.openCustomQuoteModal(
+                        quoteDetails,
+                        response.orderId,
+                        response.quoteId,
+                        quoteData.Submission_Deadline,
+                        orderDate,
+                    );
                 }, 3000);
             } else {
                 throw new Error('Failed to create order');
             }
         } catch (error) {
             console.error('Error creating order:', error);
-    
+
             this.snackBar.open(`Error creating order: ${(error as Error).message}`, 'Close', {
                 duration: 5000,
                 horizontalPosition: 'center',
@@ -435,27 +479,27 @@ export class OrdersComponent implements OnInit {
         this.isLoading = true;
         try {
             const session = await fetchAuthSession();
-    
+
             const cognitoClient = new CognitoIdentityProviderClient({
                 region: outputs.auth.aws_region,
                 credentials: session.credentials,
             });
-    
+
             const getUserCommand = new GetUserCommand({
                 AccessToken: session.tokens?.accessToken.toString(),
             });
             const getUserResponse = await cognitoClient.send(getUserCommand);
-    
+
             const tenentId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
-    
+
             if (!tenentId) {
                 console.error('TenentId not found in user attributes');
                 this.rowData = [];
                 return;
             }
-    
+
             const orders = await this.ordersService.getOrders(tenentId).toPromise();
-    
+
             if (orders) {
                 this.rowData = orders.map((order: any) => ({
                     Order_ID: order.Order_ID,
@@ -502,7 +546,7 @@ export class OrdersComponent implements OnInit {
             alert('Please select an order to delete');
             return;
         }
-    
+
         if (this.selectedOrder.Quote_Status !== 'Draft') {
             this.snackBar.open('Only orders in draft status can be deleted', 'Close', {
                 duration: 6000,
@@ -511,27 +555,25 @@ export class OrdersComponent implements OnInit {
             });
             return;
         }
-    
+
         if (confirm('Are you sure you want to delete this order?')) {
             try {
                 const session = await fetchAuthSession();
                 const tenentId = await this.getTenentId(session);
-    
-                const response = await this.ordersService.deleteOrder(
-                    tenentId,
-                    this.selectedOrder.Order_ID,
-                    this.selectedOrder.Quote_ID
-                ).toPromise();
-    
+
+                const response = await this.ordersService
+                    .deleteOrder(tenentId, this.selectedOrder.Order_ID, this.selectedOrder.Quote_ID)
+                    .toPromise();
+
                 if (response && response.message === 'Order and associated data deleted successfully') {
                     console.log('Order deleted successfully');
-    
+
                     this.snackBar.open('Order deleted successfully', 'Close', {
                         duration: 6000,
                         horizontalPosition: 'center',
                         verticalPosition: 'top',
                     });
-    
+
                     await this.loadOrdersData();
                     this.selectedOrder = null;
                     this.refreshGridSelection();
@@ -540,7 +582,7 @@ export class OrdersComponent implements OnInit {
                 }
             } catch (error) {
                 console.error('Error deleting order:', error);
-    
+
                 this.snackBar.open(`Error deleting order: ${(error as Error).message}`, 'Close', {
                     duration: 5000,
                     horizontalPosition: 'center',
@@ -689,21 +731,21 @@ export class OrdersComponent implements OnInit {
     async markOrderAsReceived(orderData: any) {
         try {
             const result = await this.ordersService.receiveOrder(orderData.Order_ID, orderData.Order_Date).toPromise();
-    
+
             console.log('Order marked as received:', result);
-    
+
             // Update local data
             const index = this.rowData.findIndex((order) => order.Order_ID === orderData.Order_ID);
             if (index !== -1) {
                 this.rowData[index] = result.updatedOrder;
             }
-    
+
             // Reload the orders data
             await this.loadOrdersData();
-    
+
             // Refresh the grid
             this.gridComponent.refreshGrid(this.rowData);
-    
+
             // Show success message
             this.snackBar.open('Order marked as received successfully', 'Close', {
                 duration: 3000,

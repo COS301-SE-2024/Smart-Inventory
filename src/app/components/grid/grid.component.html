@@ -55,6 +55,7 @@
                     class="QAButtons"
                     mat-menu-item
                     color="primary"
+                    (click)="onViewForecast()"
                     *ngIf="getCurrentRoute('inventoryReport') && !isEndUser()"
                 >
                     <mat-icon>query_stats</mat-icon><span>Forecast Item</span>

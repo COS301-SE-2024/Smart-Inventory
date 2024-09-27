@@ -10,10 +10,13 @@ import {
     ViewChild,
 } from '@angular/core';
 import { Renderer2, ElementRef, AfterViewInit, ViewEncapsulation } from '@angular/core';
+import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
 import { AgGridAngular } from 'ag-grid-angular';
 import { AgGridModule } from 'ag-grid-angular';
+import { ForecastModalComponent } from '../forecast-modal/forecast-modal.component';
 import { ColDef, GridReadyEvent, CellValueChangedEvent, RowValueChangedEvent, GridApi } from 'ag-grid-community';
 import { MatButtonModule } from '@angular/material/button';
+import outputs from '../../../../amplify_outputs.json';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenuModule } from '@angular/material/menu';
@@ -58,6 +61,7 @@ import { ScanQrcodeModalComponent } from '../scan-qrcode-modal/scan-qrcode-modal
         MatAutocompleteModule,
         ReactiveFormsModule,
         MatCardModule,
+        ForecastModalComponent
     ],
     templateUrl: './grid.component.html',
     styleUrl: './grid.component.css',
@@ -78,6 +82,7 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     private _rowData: any[] = [];
     private role: string = '';
+    tenentId: string = '';
     @Input() columnDefs: ColDef[] = [];
     @Input() addButton: { text: string } = { text: 'Add' };
     @Input() context: any;
@@ -147,6 +152,33 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
         this.setupThemeObserver();
     }
 
+    async getUserInfo() {
+        try {
+          const session = await fetchAuthSession();
+      
+          const cognitoClient = new CognitoIdentityProviderClient({
+            region: outputs.auth.aws_region,
+            credentials: session.credentials,
+          });
+      
+          const getUserCommand = new GetUserCommand({
+            AccessToken: session.tokens?.accessToken.toString(),
+          });
+          const getUserResponse = await cognitoClient.send(getUserCommand);
+      
+          this.tenentId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value || '';
+          return this.tenentId;
+        } catch (error) {
+          console.error('Error fetching user info:', error);
+          // You might want to add some error handling here, such as showing an error message to the user
+          this.snackBar.open('Error fetching user info', 'Close', {
+            duration: 5000,
+            horizontalPosition: 'center',
+            verticalPosition: 'top',
+          });
+          return null;
+        }
+      }
 
 
     onFilterTextBoxChanged() {
@@ -495,6 +527,51 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
             });
         }
     }
+
+    async onViewForecast() {
+        const selectedRows = this.gridApi.getSelectedRows();
+        if (selectedRows && selectedRows.length > 0) {
+          const selectedItem = selectedRows[0];
+          try {
+            const tenentId = await this.getUserInfo(); // Make sure this method returns a Promise<string>
+            if (tenentId) {
+              const dialogRef = this.dialog.open(ForecastModalComponent, {
+                width: '80%',
+                maxWidth: '800px',
+                data: {
+                  tenentId: tenentId,
+                  SKU: selectedItem.sku,
+                }
+              });
+    
+              dialogRef.afterClosed().subscribe(result => {
+                if (result && result.error) {
+                  this.snackBar.open(`Error: ${result.error}`, 'Close', {
+                    duration: 5000,
+                    horizontalPosition: 'center',
+                    verticalPosition: 'top',
+                  });
+                }
+              });
+            } else {
+              throw new Error('Unable to fetch tenant ID');
+            }
+          } catch (error) {
+            console.error('Error opening forecast modal:', error);
+            this.snackBar.open('Error opening forecast modal. Please try again.', 'Close', {
+              duration: 5000,
+              horizontalPosition: 'center',
+              verticalPosition: 'top',
+            });
+          }
+        } else {
+          this.snackBar.open('Please select an inventory item to view its forecast', 'Close', {
+            duration: 3000,
+            horizontalPosition: 'center',
+            verticalPosition: 'top',
+          });
+        }
+      }
 
     onScanQRCode() {
         const dialogRef = this.dialog.open(ScanQrcodeModalComponent, {

@@ -116,10 +116,10 @@ export class InventoryReportComponent implements OnInit {
             pushResizeItems: false,
         };
         this.gridsterItems = [
-            { cols: 12, rows: 5, y: 10, x: 0, isGrid: true },
-            { cols: 8, rows: 5, y: 0, x: 0, chartIndex: 3 },
-            { cols: 4, rows: 5, y: 0, x: 8, isMetrics: true },
-            { cols: 12, rows: 5, y: 5, x: 0, chartIndex: 4 },
+            { cols: 12, rows: 5, y: 0, x: 0, isGrid: true },
+            { cols: 8, rows: 5, y: 5, x: 0, chartIndex: 3 },
+            { cols: 4, rows: 5, y: 5, x: 8, isMetrics: true },
+            { cols: 12, rows: 5, y: 10, x: 0, chartIndex: 4 },
         ];
     }
 

@@ -1,7 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ColDef } from 'ag-grid-community';
 import { GridComponent } from '../../components/grid/grid.component';
-import { MatButtonModule } from '@angular/material/button';
 import { TitleService } from '../../components/header/title.service';
 import { Amplify } from 'aws-amplify';
 import { fetchAuthSession } from 'aws-amplify/auth';
@@ -13,9 +12,8 @@ import { FormsModule } from '@angular/forms';
 import { DeleteConfirmationDialogComponent } from './delete-confirmation-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { LoadingSpinnerComponent } from '../../components/loader/loading-spinner.component';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatDialogModule } from '@angular/material/dialog';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MaterialModule } from 'app/components/material/material.module';
 import { UploadSuppliersModalComponent } from 'app/components/upload-suppliers-modal/upload-suppliers-modal.component';

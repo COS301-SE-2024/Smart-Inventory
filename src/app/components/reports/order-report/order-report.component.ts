@@ -12,9 +12,6 @@ import { DonutTemplateComponent } from 'app/components/charts/donuttemplate/donu
 import { StackedbarchartComponent } from '../../charts/stackedbarchart/stackedbarchart.component';
 import { ScatterplotComponent } from '../../charts/scatterplot/scatterplot.component';
 import { Amplify } from 'aws-amplify';
-import { fetchAuthSession } from 'aws-amplify/auth';
-import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
-import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
 import outputs from '../../../../../amplify_outputs.json';
 import { LoadingSpinnerComponent } from 'app/components/loader/loading-spinner.component';
 import { GridsterConfig, GridType, DisplayGrid, GridsterModule, CompactType } from 'angular-gridster2';

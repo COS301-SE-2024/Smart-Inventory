@@ -6,7 +6,7 @@ import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-c
 import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
 import { fetchAuthSession } from 'aws-amplify/auth';
 import outputs from '../../../../amplify_outputs.json';
-import { MatAutocompleteModule, MatAutocomplete, MatAutocompleteTrigger } from '@angular/material/autocomplete';
+import { MatAutocompleteModule, MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDatepickerModule } from '@angular/material/datepicker';

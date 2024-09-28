@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MaterialModule } from '../material/material.module';
 import { signOut } from 'aws-amplify/auth';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { TitleService } from './title.service';
 import { CognitoService } from '../../_services/cognito.service';
 import { AuthenticatorService } from '@aws-amplify/ui-angular';

@@ -10,13 +10,11 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatRadioModule } from '@angular/material/radio';
 import { CommonModule } from '@angular/common';
 import { fetchAuthSession } from 'aws-amplify/auth';
-import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
 import outputs from '../../../../amplify_outputs.json';
 import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ScanConfirmationDialogComponent } from './scan-confirmation-dialog.component';
 import { MatTabsModule } from '@angular/material/tabs';
-import { OrdersComponent } from 'app/pages/orders/orders.component';
 import { LoadingSpinnerComponent } from '../loader/loading-spinner.component';
 import { OrdersService } from '../../../../amplify/services/orders.service';
 

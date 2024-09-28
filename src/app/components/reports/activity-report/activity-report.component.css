@@ -84,6 +84,7 @@ gridster-item:not(.act-report) {
 
 .btn mat-icon {
     margin-right: 8px;
+    font-size: 18px;
 }
 
 /* Ensure the button is visible on smaller screens */

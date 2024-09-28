@@ -20,7 +20,16 @@ frontend:
       commands:
         - npm install -g @angular/cli
         - ng version
-        - node --max-old-space-size=3072 ./node_modules/.bin/ng build --configuration=production
+        - echo "Memory before build:"
+        - free -m
+        - ng build --configuration=production
+        - echo "Memory after build:"
+        - free -m
+    post_build:
+      commands:
+        - echo "Memory usage after build:"
+        - free -m
+        - ps aux --sort=-%mem | head -n 5
   artifacts:
     baseDirectory: dist/smart-inventory/browser
     files:

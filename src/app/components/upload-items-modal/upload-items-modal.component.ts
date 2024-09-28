@@ -116,13 +116,6 @@ validateCsvFile(file: File): void {
       return;
     }
   
-    // Check file size (e.g., max 10MB)
-    const maxSize = 10 * 1024 * 1024; // 10MB
-    if (this.selectedFile.size > maxSize) {
-      this.showSnackBar(`File size exceeds the maximum limit of 10MB. Please upload a smaller file.`);
-      return;
-    }
-  
     this.isLoading = true;
     this.uploading = true;
   
@@ -155,23 +148,13 @@ validateCsvFile(file: File): void {
         this.dialogRef.close(true);
       } else if (responseBody && responseBody.statusCode === 400) {
         const errorData = JSON.parse(responseBody.body);
-        let errorMessage = 'Some items could not be added:\n\n';
+        let errorMessage = errorData.message + '\n\n';
         
         if (errorData.errors && errorData.errors.length > 0) {
-          const supplierErrors = errorData.errors.filter((error: ErrorItem) => error.error.includes('Supplier'));
-          const otherErrors = errorData.errors.filter((error: ErrorItem) => !error.error.includes('Supplier'));
-          
-          if (supplierErrors.length > 0) {
-            const invalidSuppliers = [...new Set(supplierErrors.map((error: ErrorItem) => error.error.match(/"([^"]*)"/)?.[1] || ''))];
-            errorMessage += `The following suppliers do not exist in your system: ${invalidSuppliers.join(', ')}. Please add these suppliers first.\n\n`;
-          }
-          
-          if (otherErrors.length > 0) {
-            errorMessage += 'Other errors:\n';
-            otherErrors.forEach((error: ErrorItem) => {
-              errorMessage += `- Item with SKU ${error.SKU}: ${error.error}\n`;
-            });
-          }
+          errorMessage += 'Detailed errors:\n';
+          errorData.errors.forEach((error: ErrorItem) => {
+            errorMessage += `- Item with SKU ${error.SKU}: ${error.error}\n`;
+          });
         }
         
         this.showSnackBar(errorMessage, 'error');
@@ -179,19 +162,9 @@ validateCsvFile(file: File): void {
       } else {
         throw new Error(responseBody ? responseBody.body : 'Unknown error occurred');
       }
-    } catch (error: unknown) {
+    } catch (error) {
       console.error('Error uploading items:', error);
-      if (error instanceof Error) {
-        if (error.name === 'TimeoutError') {
-          this.showSnackBar('The upload process timed out. Please try again with a smaller file or during a less busy time.');
-        } else if (error.name === 'NetworkError') {
-          this.showSnackBar('A network error occurred. Please check your internet connection and try again.');
-        } else {
-          this.showSnackBar(`An unexpected error occurred: ${error.message}. Please try again or contact support if the issue persists.`);
-        }
-      } else {
-        this.showSnackBar('An unknown error occurred. Please try again or contact support if the issue persists.');
-      }
+      this.showSnackBar(`An unexpected error occurred: ${error instanceof Error ? error.message : String(error)}. Please try again or contact support if the issue persists.`);
     } finally {
       this.isLoading = false;
       this.uploading = false;
@@ -209,16 +182,16 @@ validateCsvFile(file: File): void {
       }
     }
   }
-
+  
   private readFileAsBase64(file: File): Promise<string> {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = () => resolve(reader.result as string);
-      reader.onerror = (error: ProgressEvent<FileReader>) => reject(error);
+      reader.onerror = (error) => reject(error);
       reader.readAsDataURL(file);
     });
   }
-
+  
   private getFileType(fileName: string): string {
     const extension = fileName.split('.').pop()?.toLowerCase();
     if (extension === 'csv') {
@@ -227,6 +200,16 @@ validateCsvFile(file: File): void {
       throw new Error('Only CSV files are supported for inventory upload.');
     }
   }
+  
+  private showSnackBar(message: string, type: 'error' | 'success' = 'error'): void {
+    this.snackBar.open(message, 'Close', {
+      duration: 10000,
+      horizontalPosition: 'center',
+      verticalPosition: 'top',
+      panelClass: type === 'error' ? ['error-snackbar'] : ['success-snackbar']
+    });
+  }
+
 
   onCancel(): void {
     this.dialogRef.close();
@@ -240,14 +223,5 @@ validateCsvFile(file: File): void {
     link.href = window.URL.createObjectURL(blob);
     link.download = fileName;
     link.click();
-  }
-
-  private showSnackBar(message: string, type: 'error' | 'success' = 'error'): void {
-    this.snackBar.open(message, 'Close', {
-      duration: 10000,  // Increased duration to 10 seconds for longer messages
-      horizontalPosition: 'center',
-      verticalPosition: 'top',
-      panelClass: type === 'error' ? ['error-snackbar'] : ['success-snackbar']
-    });
   }
 }

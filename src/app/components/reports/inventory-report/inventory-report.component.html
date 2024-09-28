@@ -1,27 +1,28 @@
-<div *ngIf="isLoading" class="loading-overlay">
-    <app-loading-spinner></app-loading-spinner>
-</div>
+<div class="inventory-report-container">
+    <div *ngIf="isLoading" class="loading-overlay">
+        <app-loading-spinner></app-loading-spinner>
+    </div>
 
-<div *ngIf="!isLoading" class="gridster-container">
-    <gridster [options]="gridsterOptions" style="background: transparent !important">
-        <gridster-item *ngFor="let item of gridsterItems" [item]="item" [ngClass]="{ 'grid-card': item['isGrid'] }">
-            <ng-container *ngIf="item['chartIndex'] !== undefined">
+    <div *ngIf="!isLoading">
+        <div class="grid-wrapper">
+            <app-grid
+                [rowData]="rowData"
+                [columnDefs]="colDefs"
+                (viewInventorySummary)="onViewInventorySummary()"
+            ></app-grid>
+        </div>
+        <div class="report-row">
+            <div class="chart-wrapper large">
                 <mat-card class="chart-card">
-                    <ag-charts-angular [options]="options[item['chartIndex']]"></ag-charts-angular>
+                    <mat-card-content>
+                        <ag-charts-angular
+                            [options]="options[0]"
+                            style="width: 95%; display: block; margin: auto"
+                        ></ag-charts-angular>
+                    </mat-card-content>
                 </mat-card>
-            </ng-container>
-            <ng-container *ngIf="item['isGrid']" class="order-report-item app-grid-container">
-                <div class="grid-item-content">
-                    <div class="inventoryHolder">
-                        <app-grid
-                            [rowData]="rowData"
-                            [columnDefs]="colDefs"
-                            (viewInventorySummary)="onViewInventorySummary()"
-                        ></app-grid>
-                    </div>
-                </div>
-            </ng-container>
-            <ng-container *ngIf="item['isMetrics']">
+            </div>
+            <div class="metrics-wrapper">
                 <mat-card class="metrics-card">
                     <mat-card-header>
                         <mat-card-title>{{ InventoryReport.title }}</mat-card-title>
@@ -36,23 +37,24 @@
                         </mat-list>
                     </mat-card-content>
                 </mat-card>
-            </ng-container>
-        </gridster-item>
-        <mat-toolbar
-            style="
-                position: sticky;
-                top: 93%;
-                left: 0;
-                width: 300px;
-                border-radius: 20px;
-                height: 50px;
-                background-color: transparent;
-                z-index: 1;
-            "
-        >
+            </div>
+        </div>
+        <div class="report-row">
+            <div class="chart-wrapper full-width">
+                <mat-card class="chart-card">
+                    <mat-card-content>
+                        <ag-charts-angular
+                            [options]="options[1]"
+                            style="width: 95%; display: block; margin: auto"
+                        ></ag-charts-angular>
+                    </mat-card-content>
+                </mat-card>
+            </div>
+        </div>
+        <div class="back-toolbar">
             <button mat-flat-button class="btn" (click)="back()">
-                <mat-icon style="font-size: 24px; height: 24px; width: 24px">arrow_back</mat-icon> Back To Reports
+                <mat-icon>arrow_back</mat-icon> Back To Reports
             </button>
-        </mat-toolbar>
-    </gridster>
+        </div>
+    </div>
 </div>

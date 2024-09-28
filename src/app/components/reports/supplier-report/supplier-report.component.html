@@ -1,4 +1,60 @@
-<div style="height: 100%; display: block; overflow: none">
+<div class="inventory-report-container">
+    <div *ngIf="isLoading" class="loading-overlay">
+        <app-loading-spinner></app-loading-spinner>
+    </div>
+
+    <div *ngIf="!isLoading">
+        <div class="grid-wrapper">
+            <app-grid [rowData]="rowData" [columnDefs]="colDefs" #gridComponent></app-grid>
+        </div>
+        <div class="report-row">
+            <div class="chart-wrapper large">
+                <mat-card class="chart-card">
+                    <mat-card-content>
+                        <app-radar [data]="topSuppliersData"></app-radar>
+                    </mat-card-content>
+                </mat-card>
+            </div>
+            <div class="metrics-wrapper">
+                <mat-card class="metrics-card">
+                    <mat-card-header>
+                        <mat-card-title>{{ SupplierReport.title }}</mat-card-title>
+                        <mat-card-subtitle>{{ SupplierReport.subtitle }}</mat-card-subtitle>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <mat-list>
+                            <mat-list-item *ngFor="let metric of SupplierReport.metrics">
+                                <mat-icon matListItemIcon>{{ metric.icon }}</mat-icon>
+                                <span matListItemTitle>{{ metric.name }} : {{ metric.value }}</span>
+                            </mat-list-item>
+                        </mat-list>
+                    </mat-card-content>
+                </mat-card>
+            </div>
+        </div>
+        <div class="report-row">
+            <div class="chart-wrapper full-width">
+                <mat-card class="chart-card">
+                    <mat-card-content>
+                        <app-line
+                            *ngIf="chartData"
+                            [title]="chartData.title + ' Comparison'"
+                            [xAxisData]="chartData.xAxisData"
+                            [seriesData]="chartData.seriesData"
+                        ></app-line>
+                    </mat-card-content>
+                </mat-card>
+            </div>
+        </div>
+        <div class="back-toolbar">
+            <button mat-flat-button class="btn" (click)="back()">
+                <mat-icon>arrow_back</mat-icon> Back To Reports
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- <div style="height: 100%; display: block; overflow: none">
     <gridster [options]="options" style="background: transparent !important">
         <gridster-item [item]="items[0]" class="order-report-item app-grid-container" style="box-shadow: none">
             <div class="grid-item-content">
@@ -9,7 +65,6 @@
         </gridster-item>
 
         <gridster-item [item]="items[1]" class="supplier-report">
-            <!-- <div class="grid-item-content"> -->
             <mat-card class="metrics-card">
                 <mat-card-header>
                     <mat-card-title>{{ SupplierReport.title }}</mat-card-title>
@@ -24,7 +79,6 @@
                     </mat-list>
                 </mat-card-content>
             </mat-card>
-            <!-- </div> -->
         </gridster-item>
 
         <gridster-item [item]="items[2]" id="chart">
@@ -64,4 +118,4 @@
     <div *ngIf="isLoading" class="loading-overlay">
         <app-loading-spinner></app-loading-spinner>
     </div>
-</div>
+</div> -->

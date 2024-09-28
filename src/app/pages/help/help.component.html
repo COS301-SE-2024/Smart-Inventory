@@ -30,7 +30,7 @@
                     </div>
                     <div class="faq-row faq-row-two">
                         <mat-accordion>
-                            <mat-expansion-panel *ngFor="let faq of filteredFaqs">
+                            <mat-expansion-panel *ngFor="let faq of filteredFaqs" style="background-color: white">
                                 <mat-expansion-panel-header>
                                     <mat-panel-title>
                                         {{ faq.question }}
@@ -52,7 +52,10 @@
                     </div>
                     <div class="faq-row faq-row-two">
                         <mat-accordion>
-                            <mat-expansion-panel *ngFor="let issue of troubleshootingIssues">
+                            <mat-expansion-panel
+                                *ngFor="let issue of troubleshootingIssues"
+                                style="background-color: white"
+                            >
                                 <mat-expansion-panel-header>
                                     <mat-panel-title>
                                         {{ issue.title }}

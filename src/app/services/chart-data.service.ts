@@ -37,6 +37,7 @@ export class ChartDataService {
             title: {
                 text: heading,
             },
+            autoSize: true,
             data: Array.from(test.entries()).map(([asset, amount]) => ({ asset, amount })),
             series: [
                 {
@@ -70,6 +71,7 @@ export class ChartDataService {
             title: {
                 text: heading,
             },
+            autoSize: true,
             data: this.getData(quantity, requests, requestsQuantity),
             series: [
                 {
@@ -100,6 +102,7 @@ export class ChartDataService {
             title: {
                 text: heading,
             },
+            autoSize: true,
             data: this.getAreaData(),
             series: [
                 {

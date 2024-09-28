@@ -20,7 +20,7 @@ frontend:
       commands:
         - npm ci
         - npx ng version
-        - node --max_old_space_size=12288 ./node_modules/.bin/ng build --configuration=production
+        - node --max_old_space_size=16384 ./node_modules/.bin/ng build --configuration=production
   artifacts:
     baseDirectory: dist/smart-inventory/browser
     files:

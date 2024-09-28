@@ -9,9 +9,6 @@ import { GridComponent } from '../../grid/grid.component';
 import { ColDef } from 'ag-grid-community';
 import { SaleschartComponent } from '../../charts/saleschart/saleschart.component';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
-import { fetchAuthSession } from 'aws-amplify/auth';
-import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
 import outputs from '../../../../../amplify_outputs.json';
 import { Amplify } from 'aws-amplify';
 import { LoadingSpinnerComponent } from '../../loader/loading-spinner.component';
@@ -20,13 +17,8 @@ import { RoleSelectCellEditorComponent } from '../../../pages/team/role-select-c
 import { LineBarComponent } from '../../charts/line-bar/line-bar.component';
 import { LineComponent } from '../../charts/line/line.component';
 import { RadarComponent } from '../../charts/radar/radar.component';
-import { RowNode } from 'ag-grid-community';
-import { AgGridAngular } from 'ag-grid-angular';
-import { CompactType, DisplayGrid, GridsterConfig, GridsterItem, GridsterModule, GridType } from 'angular-gridster2';
-import { InventoryService } from '../../../../../amplify/services/inventory.service';
 import { DataCollectionService } from 'app/components/add-widget-side-pane/data-collection.service';
 
-type ChartMetric = 'On Time Delivery Rate' | 'Order Accuracy Rate' | 'Out Standing Payments' | 'TotalSpent';
 type ChartData = {
     source: any[];
 };
@@ -59,7 +51,6 @@ interface SupplierData {
         RoleSelectCellEditorComponent,
         LineComponent,
         RadarComponent,
-        GridsterModule,
     ],
     templateUrl: './supplier-report.component.html',
     styleUrl: './supplier-report.component.css',

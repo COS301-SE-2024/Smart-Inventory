@@ -97,12 +97,7 @@ export class ForecastModalComponent implements OnInit {
         errorMessage = error;
       }
       
-      this.error = `Error generating forecast: ${errorMessage}`;
-      this.snackBar.open(this.error, 'Close', {
-        duration: 5000,
-        horizontalPosition: 'center',
-        verticalPosition: 'top',
-      });
+      this.error = `Error generating forecast: Not enough data to forecast, three days of data required`;
     } finally {
       this.loading = false;
     }

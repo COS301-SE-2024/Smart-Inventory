@@ -21,7 +21,7 @@ frontend:
       commands:
         - npm install -g @angular/cli
         - ng version
-        - ng build --configuration=production --aot
+        - NODE_OPTIONS=--max-old-space-size=4096 ng build --configuration=production
   artifacts:
     baseDirectory: dist/smart-inventory/browser
     files:

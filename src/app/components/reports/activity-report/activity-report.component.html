@@ -24,9 +24,7 @@
                 </mat-card>
             </ng-container>
             <ng-container *ngSwitchCase="'grid'">
-                <div class="inventoryHolder">
-                    <app-grid [rowData]="rowData" [columnDefs]="colDefs" #gridComponent></app-grid>
-                </div>
+                <app-grid [rowData]="rowData" [columnDefs]="colDefs" #gridComponent></app-grid>
             </ng-container>
         </ng-container>
     </gridster-item>

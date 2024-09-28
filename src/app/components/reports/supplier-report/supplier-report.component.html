@@ -1,43 +1,6 @@
 <div style="height: 100%; display: block; overflow: scroll; overflow-x: hidden">
-    <!-- <div class="grid-container">
-    <div class="arrow-container"  (click)="showNextTiles()">
-        <mat-icon class="arrow-icon">keyboard_arrow_down</mat-icon>
-    </div> -->
-    <!-- <mat-grid-list cols="3" rowHeight="210px"> -->
-
-    <!-- </div> -->
     <gridster [options]="options" style="background: transparent !important">
-        <!-- <gridster-item [item]="items[5]" class="supplier-report">
-            <div class="metrics-container">
-                <button style="z-index: 1" mat-icon-button (click)="scrollTiles('left')">
-                    <mat-icon>chevron_left</mat-icon>
-                </button>
-
-                <div class="metrics-wrapper">
-                    <mat-card *ngFor="let metric of visibleTiles" class="metric-card">
-                        <mat-card-header>
-                            <div mat-card-avatar class="metric-icon">
-                                <mat-icon class="icon" [attr.aria-label]="metric.iconLabel">{{ metric.icon }}</mat-icon>
-                            </div>
-                            <div>
-                                <mat-card-title>{{ metric.metricName }}</mat-card-title>
-                                <mat-card-content>
-                                    <p class="metric-value" style="padding-right: 30px">{{ metric.value }}</p>
-                                    <mat-card-subtitle class="metric-info">{{
-                                        metric.additionalInfo
-                                    }}</mat-card-subtitle>
-                                </mat-card-content>
-                            </div>
-                        </mat-card-header>
-                    </mat-card>
-                </div>
-
-                <button mat-icon-button (click)="scrollTiles('right')">
-                    <mat-icon>chevron_right</mat-icon>
-                </button>
-            </div>
-        </gridster-item> -->
-        <gridster-item [item]="items[0]" class="supplier-report app-grid-container">
+        <gridster-item [item]="items[0]" class="order-report-item app-grid-container" style="box-shadow: none">
             <div class="grid-item-content">
                 <div class="inventoryHolder">
                     <app-grid [rowData]="rowData" [columnDefs]="colDefs" #gridComponent></app-grid>

@@ -56,8 +56,8 @@ export class OrderReportComponent implements OnInit {
     options: GridsterConfig = {
         gridType: GridType.VerticalFixed,
         displayGrid: DisplayGrid.None,
-        compactType: CompactType.None,
-        margin: 10,
+        compactType: CompactType.CompactUp,
+        margin: 20,
         outerMargin: true,
         mobileBreakpoint: 640,
         minCols: 12,
@@ -92,11 +92,11 @@ export class OrderReportComponent implements OnInit {
     };
 
     layout: any[] = [
-        { cols: 12, rows: 5, y: 0, x: 0 }, // Inventory Grid
-        { cols: 4, rows: 4, y: 5, x: 8 }, // Order Report
-        { cols: 8, rows: 4, y: 5, x: 0 }, // Stacked Bar Chart
-        { cols: 8, rows: 4, y: 9, x: 6 }, // Scatter Plot
-        { cols: 4, rows: 4, y: 9, x: 4 }, // Donut Chart
+        { cols: 12, rows: 5, y: 8, x: 0 }, // Inventory Grid
+        { cols: 4, rows: 4, y: 0, x: 8 }, // Order Report
+        { cols: 8, rows: 4, y: 0, x: 0 }, // Stacked Bar Chart
+        { cols: 8, rows: 4, y: 4, x: 6 }, // Scatter Plot
+        { cols: 4, rows: 4, y: 4, x: 4 }, // Donut Chart
     ];
 
     selectedItem: any = null;

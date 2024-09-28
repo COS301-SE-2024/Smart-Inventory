@@ -141,9 +141,10 @@ export class ActivityReportComponent implements OnInit, AfterViewInit {
         this.options = {
             gridType: GridType.VerticalFixed,
             displayGrid: DisplayGrid.None,
-            compactType: CompactType.None,
-            margin: 10,
+            compactType: CompactType.CompactDown,
+            margin: 20,
             outerMargin: true,
+            innerMargin: 10,
             mobileBreakpoint: 640,
             minCols: 12,
             maxCols: 12,
@@ -155,8 +156,8 @@ export class ActivityReportComponent implements OnInit, AfterViewInit {
             defaultItemRows: 1,
             fixedColWidth: 100,
             fixedRowHeight: 100,
-            minRows: 18, // Adjust based on your total layout height
-            maxRows: 18, // Adjust based on your total layout height
+            minRows: 7.3, // Adjust based on your total layout height
+            maxRows: 7.3, // Adjust based on your total layout height
             enableEmptyCellClick: false,
             enableEmptyCellContextMenu: false,
             enableEmptyCellDrop: false,
@@ -183,10 +184,10 @@ export class ActivityReportComponent implements OnInit, AfterViewInit {
         await this.fetchActivities();
         setTimeout(() => {
             this.dashboard = [
-                { cols: 4, rows: 1.4, y: 0, x: 0, type: 'metric', data: this.ActivityReport.metrics[0] },
-                { cols: 4, rows: 1.4, y: 0, x: 3, type: 'metric', data: this.ActivityReport.metrics[1] },
-                { cols: 4, rows: 1.4, y: 0, x: 6, type: 'metric', data: this.ActivityReport.metrics[2] },
-                { cols: 12, rows: 5, y: 1.4, x: 0, type: 'grid' },
+                { cols: 4, rows: 1.3, y: 0, x: 0, type: 'metric', data: this.ActivityReport.metrics[0] },
+                { cols: 4, rows: 1.3, y: 0, x: 4, type: 'metric', data: this.ActivityReport.metrics[1] },
+                { cols: 4, rows: 1.3, y: 0, x: 8, type: 'metric', data: this.ActivityReport.metrics[2] },
+                { cols: 12, rows: 6, y: 1.3, x: 0, type: 'grid' },
             ] as CustomGridsterItem[];
             this.changeDetectorRef.detectChanges();
         });

@@ -309,6 +309,15 @@ mat-grid-tile {
     right: 0;
 }
 
+gridster-item:not(.order-report-item) {
+    box-shadow:
+        0 4px 8px rgba(0, 0, 0, 0.1),
+        0 6px 20px rgba(0, 0, 0, 0.15);
+    margin-left: 2px;
+    background: white !important;
+    border-radius: 10px;
+}
+
 .metrics-container button {
     position: absolute;
     top: 50%;
@@ -373,7 +382,6 @@ mat-card-content.mat-mdc-card-content {
     height: 100%;
     width: 100%;
 }
-
 .supplier-report .metrics-container {
     display: flex;
     align-items: center;

@@ -32,12 +32,12 @@ type ChartData = {
 };
 
 interface SupplierData {
-    "Supplier ID": string;
+    'Supplier ID': string;
     Date: string;
-    "On Time Delivery Rate": number;
-    "Order Accuracy Rate": number;
-    "Out Standing Payments": number;
-    "Reorder Level": string;
+    'On Time Delivery Rate': number;
+    'Order Accuracy Rate': number;
+    'Out Standing Payments': number;
+    'Reorder Level': string;
     RiskScore: string;
     TotalSpent: string;
 }
@@ -83,8 +83,8 @@ export class SupplierReportComponent implements OnInit {
     options: GridsterConfig = {
         gridType: GridType.VerticalFixed,
         displayGrid: DisplayGrid.None,
-        compactType: CompactType.None,
-        margin: 10,
+        compactType: CompactType.CompactUp,
+        margin: 20,
         outerMargin: true,
         mobileBreakpoint: 640,
         minCols: 12,
@@ -119,10 +119,10 @@ export class SupplierReportComponent implements OnInit {
     };
 
     items: Array<GridsterItem> = [
-        { cols: 12, rows: 5, y: 0, x: 0 },
-        { cols: 5, rows: 5, y: 5, x: 7 },
-        { cols: 12, rows: 4, y: 10, x: 0 },
-        { cols: 7, rows: 5, y: 5, x: 0 },
+        { cols: 12, rows: 6, y: 8.6, x: 0 },
+        { cols: 5, rows: 4.6, y: 0, x: 7 },
+        { cols: 12, rows: 4, y: 4.6, x: 0 },
+        { cols: 7, rows: 4.6, y: 0, x: 0 },
     ];
     startIndex = 0;
     scrollTiles(direction: 'left' | 'right') {
@@ -781,23 +781,29 @@ export class SupplierReportComponent implements OnInit {
 
     calculateTopSuppliers(): any[] {
         // Step 1: Group data by supplier ID
-        const groupedData = this.originalData.reduce((groups, item) => {
-            const id = item['Supplier ID'];
-            if (!groups[id]) {
-                groups[id] = [];
-            }
-            groups[id].push(item);
-            return groups;
-        }, {} as { [key: string]: SupplierData[] });
+        const groupedData = this.originalData.reduce(
+            (groups, item) => {
+                const id = item['Supplier ID'];
+                if (!groups[id]) {
+                    groups[id] = [];
+                }
+                groups[id].push(item);
+                return groups;
+            },
+            {} as { [key: string]: SupplierData[] },
+        );
 
         // Step 2: Calculate aggregates for each supplier
         const supplierAggregates = Object.entries(groupedData).map(([supplierId, data]) => {
             const totalSpent = data.reduce((sum, item) => sum + parseFloat(item.TotalSpent), 0);
-            const averageOnTimeDelivery = data.reduce((sum, item) => sum + item['On Time Delivery Rate'], 0) / data.length;
+            const averageOnTimeDelivery =
+                data.reduce((sum, item) => sum + item['On Time Delivery Rate'], 0) / data.length;
             const averageOrderAccuracy = data.reduce((sum, item) => sum + item['Order Accuracy Rate'], 0) / data.length;
-            const averageOutstandingPayments = data.reduce((sum, item) => sum + item['Out Standing Payments'], 0) / data.length;
+            const averageOutstandingPayments =
+                data.reduce((sum, item) => sum + item['Out Standing Payments'], 0) / data.length;
 
-            const score = averageOnTimeDelivery + averageOrderAccuracy - averageOutstandingPayments / 1000 + totalSpent / 100000;
+            const score =
+                averageOnTimeDelivery + averageOrderAccuracy - averageOutstandingPayments / 1000 + totalSpent / 100000;
 
             return {
                 supplierId,
@@ -805,7 +811,7 @@ export class SupplierReportComponent implements OnInit {
                 averageOnTimeDelivery,
                 averageOrderAccuracy,
                 averageOutstandingPayments,
-                score
+                score,
             };
         });
 
@@ -813,7 +819,7 @@ export class SupplierReportComponent implements OnInit {
         return supplierAggregates
             .sort((a, b) => b.score - a.score)
             .slice(0, 3)
-            .map(supplier => ({
+            .map((supplier) => ({
                 'Supplier ID': supplier.supplierId,
                 'Total Spent': supplier.totalSpent,
                 'On Time Delivery Rate': supplier.averageOnTimeDelivery,
@@ -860,7 +866,6 @@ export class SupplierReportComponent implements OnInit {
             );
             this.SupplierReport.metrics[6].value = this.calculateRightFirstTimeRate(this.orderFulfillmentDetails);
             this.SupplierReport.metrics[7].value = this.calculateOnTimeOrderCompletionRate();
-            
         } else {
             console.warn('No data available to update report metrics');
         }
@@ -878,14 +883,17 @@ export class SupplierReportComponent implements OnInit {
 
     groupDataByTopSupplier(): SupplierData[] {
         // Step 1: Group data by supplier ID
-        const groupedData = this.originalData.reduce((groups, item) => {
-            const id = item['Supplier ID'];
-            if (!groups[id]) {
-                groups[id] = [];
-            }
-            groups[id].push(item);
-            return groups;
-        }, {} as { [key: string]: SupplierData[] });
+        const groupedData = this.originalData.reduce(
+            (groups, item) => {
+                const id = item['Supplier ID'];
+                if (!groups[id]) {
+                    groups[id] = [];
+                }
+                groups[id].push(item);
+                return groups;
+            },
+            {} as { [key: string]: SupplierData[] },
+        );
 
         // Step 2: Calculate total spent for each supplier
         const supplierTotals = Object.entries(groupedData).map(([supplierId, data]) => {
@@ -893,7 +901,7 @@ export class SupplierReportComponent implements OnInit {
             return {
                 supplierId,
                 totalSpent,
-                data: data[0] // Take the first item as representative
+                data: data[0], // Take the first item as representative
             };
         });
 
@@ -901,10 +909,10 @@ export class SupplierReportComponent implements OnInit {
         return supplierTotals
             .sort((a, b) => b.totalSpent - a.totalSpent)
             .slice(0, 5)
-            .map(supplier => ({
+            .map((supplier) => ({
                 ...supplier.data,
                 TotalSpent: supplier.totalSpent.toString(),
-                count: groupedData[supplier.supplierId].length
+                count: groupedData[supplier.supplierId].length,
             }));
     }
 

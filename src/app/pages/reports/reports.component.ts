@@ -11,7 +11,18 @@ import { fetchAuthSession } from 'aws-amplify/auth';
 import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
 import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
 import outputs from '../../../../amplify_outputs.json';
+import { TeamsService } from '../../../../amplify/services/teams.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
+type ReportType = {
+    icon: string;
+    title: string;
+    subtitle: string;
+};
+
+type ReportsObject = {
+    [key: string]: ReportType;
+};
 @Component({
     selector: 'app-reports',
     standalone: true,
@@ -30,30 +41,34 @@ export class ReportsComponent implements OnInit {
     constructor(
         private titleService: TitleService,
         private router: Router,
-    ) {}
+        private teamService: TeamsService,
+        private snackBar: MatSnackBar,
+    ) { }
+    reportOrder: (keyof ReportsObject)[] = ['InventoryReport', 'OrderReport', 'SupplierReport', 'ActivityReport'];
 
-    reports = {
+    reports: ReportsObject = {
         InventoryReport: {
+            icon: 'inventory_2',
             title: 'Inventory Report',
-            subtitle:
-                'The Inventory Report provides a holistic view of your inventory status, movements, and forecasts. By leveraging advanced analytics and predictive modeling, this powerful tool offers actionable insights to optimize inventory levels, automate ordering processes, and enhance overall supply chain efficiency.',
-        },
-        ActivityReport: {
-            title: 'Activity Report',
-            subtitle:
-                "The Team Activity Report provides a holistic view of your team's performance, activities, and associated analytics. This powerful tool streamlines team management by offering actionable insights through intuitive visualizations and detailed metrics.",
+            subtitle: 'The Inventory Report provides a holistic view of your inventory status, movements, and forecasts. By leveraging advanced analytics and predictive modeling, this powerful tool offers actionable insights to optimize inventory levels, automate ordering processes, and enhance overall supply chain efficiency.',
         },
         OrderReport: {
+            icon: 'assignment',
             title: 'Order Report',
-            subtitle:
-                'The Order Report provides a holistic view of your ordering system, encompassing both manual and automated orders. This powerful tool offers insights into order quality, processing times, and associated analytics, enabling data-driven decisions to optimize your order fulfillment process.',
+            subtitle: 'The Order Report provides a holistic view of your ordering system, encompassing both manual and automated orders. This powerful tool offers insights into order quality, processing times, and associated analytics, enabling data-driven decisions to optimize your order fulfillment process.',
         },
         SupplierReport: {
+            icon: 'local_shipping',
             title: 'Supplier Report',
-            subtitle:
-                'The Supplier Report provides a holistic view of your supplier network, their activities, performance metrics, and associated analytics. This powerful tool offers insights into supplier reliability, quality, cost-effectiveness, and overall impact on your supply chain, enabling data-driven decisions to optimize supplier relationships and procurement strategies.',
+            subtitle: 'The Supplier Report provides a holistic view of your supplier network, their activities, performance metrics, and associated analytics. This powerful tool offers insights into supplier reliability, quality, cost-effectiveness, overall impact on your supply chain and enabling data-driven decisions to optimize supplier relationships.',
+        },
+        ActivityReport: {
+            icon: 'people',
+            title: 'Activity Report',
+            subtitle: "The Team Activity Report provides a holistic view of your team's performance, activities, and associated analytics. This powerful tool streamlines team management by offering actionable insights through intuitive visualizations and detailed metrics.",
         },
     };
+
 
     tenantId: string = '';
     userName: string = '';
@@ -68,63 +83,56 @@ export class ReportsComponent implements OnInit {
     async getUserInfo() {
         try {
             const session = await fetchAuthSession();
-
+    
             const cognitoClient = new CognitoIdentityProviderClient({
                 region: outputs.auth.aws_region,
                 credentials: session.credentials,
             });
-
+    
             const getUserCommand = new GetUserCommand({
                 AccessToken: session.tokens?.accessToken.toString(),
             });
             const getUserResponse = await cognitoClient.send(getUserCommand);
-
-            const givenName = getUserResponse.UserAttributes?.find(attr => attr.Name === 'given_name')?.Value || '';
-            const familyName = getUserResponse.UserAttributes?.find(attr => attr.Name === 'family_name')?.Value || '';
+    
+            const givenName = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'given_name')?.Value || '';
+            const familyName = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'family_name')?.Value || '';
             this.userName = `${givenName} ${familyName}`.trim();
-
-            this.tenantId = getUserResponse.UserAttributes?.find(attr => attr.Name === 'custom:tenentId')?.Value || '';
-
-            const lambdaClient = new LambdaClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
-
-            const payload = JSON.stringify({
-                userPoolId: outputs.auth.user_pool_id,
-                username: session.tokens?.accessToken.payload['username'],
-            });
-
-            const invokeCommand = new InvokeCommand({
-                FunctionName: 'getUsersV2',
-                Payload: new TextEncoder().encode(payload),
-            });
-
-            const lambdaResponse = await lambdaClient.send(invokeCommand);
-            const users = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
-            const currentUser = users.find((user: any) => 
-                user.Attributes.find((attr: any) => attr.Name === 'email')?.Value === session.tokens?.accessToken.payload['username']
+    
+            this.tenantId =
+                getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value || '';
+    
+            // Use the TeamsService to get users
+            const users = await this.teamService.getUsers(outputs.auth.user_pool_id, this.tenantId).toPromise();
+    
+            const currentUser = users.find(
+                (user: any) =>
+                    user.Attributes.find((attr: any) => attr.Name === 'email')?.Value ===
+                    session.tokens?.accessToken.payload['username'],
             );
-
+    
             if (currentUser && currentUser.Groups.length > 0) {
                 this.userRole = this.getRoleDisplayName(currentUser.Groups[0].GroupName);
             }
-
         } catch (error) {
             console.error('Error fetching user info:', error);
+            // You might want to add some error handling here, such as showing an error message to the user
+            this.snackBar.open('Error fetching user info', 'Close', {
+                duration: 5000,
+                horizontalPosition: 'center',
+                verticalPosition: 'top',
+            });
         }
     }
 
     async logActivity(task: string, details: string) {
         try {
             const session = await fetchAuthSession();
-    
+
             const lambdaClient = new LambdaClient({
                 region: outputs.auth.aws_region,
                 credentials: session.credentials,
             });
-    
+
             const payload = JSON.stringify({
                 tenentId: this.tenantId,
                 memberId: this.tenantId,
@@ -135,15 +143,15 @@ export class ReportsComponent implements OnInit {
                 idleTime: 0,
                 details: details,
             });
-    
+
             const invokeCommand = new InvokeCommand({
                 FunctionName: 'userActivity-createItem',
                 Payload: new TextEncoder().encode(JSON.stringify({ body: payload })),
             });
-    
+
             const lambdaResponse = await lambdaClient.send(invokeCommand);
             const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-    
+
             if (responseBody.statusCode === 201) {
                 console.log('Activity logged successfully');
             } else {
@@ -154,7 +162,7 @@ export class ReportsComponent implements OnInit {
         }
     }
 
-    async viewFullReport(report: string) {
+    async viewFullReport(report: keyof ReportsObject) {
         let reportDetails = '';
         switch (report) {
             case 'InventoryReport':

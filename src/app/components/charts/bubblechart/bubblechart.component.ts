@@ -18,12 +18,14 @@ import outputs from '../../../../../amplify_outputs.json';
 export class BubblechartComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges {
     public chartOptions!: AgChartOptions;
     private themeObserver!: MutationObserver;
-    private data: any[] = [];
-    @Input() chartTitle: string = "Supplier Price and Availability Comparison";
+    @Input() data: any[] = [];
+    @Input() chartTitle: string = "";
 
     ngOnChanges(changes: SimpleChanges) {
-        if (changes['chartTitle'] && this.chartOptions.title) {
-            this.chartOptions.title.text = this.chartTitle;
+        if (changes['chartTitle'] || changes['data']) {
+            // const data = this.generateChartData(this.data);
+            // this.data = data;
+            this.updateChart();
             this.cdr.detectChanges();
         }
     }
@@ -52,7 +54,6 @@ export class BubblechartComponent implements OnInit, OnDestroy, AfterViewInit, O
     };
 
     constructor(private cdr: ChangeDetectorRef) {
-
         Amplify.configure(outputs);
         this.initializeChartOptions();
     }
@@ -61,7 +62,7 @@ export class BubblechartComponent implements OnInit, OnDestroy, AfterViewInit, O
         this.chartOptions = {
             autoSize: true,
             data: [],
-            title: { text: this.chartTitle },
+            title: { text: ''},
             series: [
                 {
                     type: 'bar',
@@ -102,8 +103,9 @@ export class BubblechartComponent implements OnInit, OnDestroy, AfterViewInit, O
 
     }
 
-    async ngOnInit() {
-        await this.loadSupplierQuotes();
+    ngOnInit() {
+        this.updateChart();
+        console.log(this.data);
     }
 
     ngAfterViewInit() {
@@ -160,17 +162,6 @@ export class BubblechartComponent implements OnInit, OnDestroy, AfterViewInit, O
         console.log('Processed data:', processedData);
         return processedData;
     }
-
-
-    // private generateChartData() {
-    //     // Sample Data Processing, replace this with actual data fetching and processing logic
-    //     const formattedData = this.data.map(item => ({
-    //         ItemSKU: item.ItemSKU,
-    //         AvailableQuantity: item.AvailableQuantity,
-    //         TotalPrice: item.TotalPrice
-    //     }));
-    //     return formattedData;
-    // }
 
     async loadSupplierQuotes() {
         try {
@@ -232,7 +223,10 @@ export class BubblechartComponent implements OnInit, OnDestroy, AfterViewInit, O
             console.log('Updating chart with data:', this.data);
             this.chartOptions = {
                 ...this.chartOptions,
-                data: this.data
+                data: this.data,
+                title: {
+                    text: this.chartTitle 
+                }
             };
             this.cdr.detectChanges();
         } else {

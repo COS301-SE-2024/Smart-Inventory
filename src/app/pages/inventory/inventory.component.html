@@ -1,4 +1,4 @@
-<div style="margin: 15px; width: 100%">
+<div class="inventoryHolder">
     <app-grid
         [rowData]="rowData"
         [columnDefs]="colDefs"
@@ -7,6 +7,9 @@
         (addNewClicked)="openAddItemPopup()"
         (itemToUpdate)="handleCellValueChanged($event)"
         (requestStock)="openRequestStockPopup($event)"
+        (viewInventorySummary)="onViewInventorySummary()"
+        (importExcelClicked)="openImportItemsModal()"
+        (scanQRCode)="handleQRCodeScan($event)"
         #gridComponent
     >
     </app-grid>

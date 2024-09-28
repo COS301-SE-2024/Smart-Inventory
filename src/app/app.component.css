@@ -47,8 +47,8 @@
     /* overflow-y: auto; */
 }
 
-.container, .app-sidebar, .app-header, .content {
-    background-color: var(--background-color);
+.container {
+    background-color: #f5f7fa;
     color: var(--text-color);
 }
 
@@ -57,5 +57,16 @@
 }
 
 .app-header {
-    background-color: var(--header-bg-color);
+    background-color: #f1f1f1;
+}
+
+::ng-deep .ag-tooltip {
+    background-color: #f8f8f8 !important; /* Light gray background */
+    color: #333 !important; /* Dark text for contrast */
+    opacity: 1 !important; /* Fully opaque */
+    border: 1px solid #c8c8c8 !important; /* Light border */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important; /* Subtle shadow */
+    padding: 5px 10px !important; /* Comfortable padding */
+    font-size: 12px !important; /* Readable font size */
+    z-index: 10000 !important; /* Ensure it's above other elements */
 }

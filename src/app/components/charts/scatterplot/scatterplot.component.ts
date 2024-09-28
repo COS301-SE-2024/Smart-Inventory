@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, Input, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, OnChanges, OnDestroy, SimpleChanges, ViewChild } from '@angular/core';
 import * as echarts from 'echarts';
 
 @Component({
@@ -8,18 +8,21 @@ import * as echarts from 'echarts';
   templateUrl: './scatterplot.component.html',
   styleUrl: './scatterplot.component.css'
 })
-export class ScatterplotComponent implements OnChanges, AfterViewInit {
+export class ScatterplotComponent implements OnChanges, AfterViewInit, OnDestroy  {
   @Input() data: any[] = [];
+  @Input() title: string = "";
   private chart!: echarts.ECharts;
+  private resizeObserver!: ResizeObserver;
 
   @ViewChild('scatterContainer') private scatterContainerRef!: ElementRef<HTMLDivElement>;
 
   ngAfterViewInit(): void {
     this.initChart();
+    this.observeResize();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['data']) {
+    if (changes['data'] || changes['title']) {
       console.log('New data received for scatter plot:', this.data);
       this.updateChartOptions();
     }
@@ -32,12 +35,32 @@ export class ScatterplotComponent implements OnChanges, AfterViewInit {
     }
   }
 
+  ngOnDestroy(): void {
+    if (this.resizeObserver) {
+      this.resizeObserver.disconnect();
+    }
+    if (this.chart) {
+      this.chart.dispose();
+    }
+  }
+
+  private observeResize(): void {
+    this.resizeObserver = new ResizeObserver(() => {
+      if (this.chart) {
+        this.chart.resize();
+      }
+    });
+    this.resizeObserver.observe(this.scatterContainerRef.nativeElement);
+  }
+
   private updateChartOptions(): void {
     if (!this.chart) return;
 
     const option: echarts.EChartsOption = {
       title: {
-        text: 'Product Discount Versus Price Analysis',
+        text: this.title || 'Product Discount Versus Price Analysis',
+        left: 'center',
+        top: '5%'
       },
       tooltip: {
         trigger: 'item',
@@ -87,5 +110,6 @@ export class ScatterplotComponent implements OnChanges, AfterViewInit {
     };
 
     this.chart.setOption(option, true); // The second parameter ensures the option merge
+    // this.chart.resize();
   }
 }

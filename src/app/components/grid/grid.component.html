@@ -1,93 +1,270 @@
-<div class="btn-holder">
-    <div class="filter">
-        <div class="input-container">
-            <span matPrefix><mat-icon style="padding-top: 7px; padding-left: 2px">search</mat-icon></span>
-            <input
-                class="input-box"
-                matInput
-                [(ngModel)]="inputFilter"
-                (input)="filterGrid()"
-                placeholder="Search..."
-            />
+<div class="card">
+    <div class="btn-holder">
+        <div class="filter">
+            <div class="input-container">
+                <mat-icon>search</mat-icon>
+                <input
+                    class="input-box"
+                    type="text"
+                    [(ngModel)]="inputFilter"
+                    (input)="onFilterTextBoxChanged()"
+                    placeholder="Search..."
+                    [matAutocomplete]="auto"
+                    id="filter-text-box"
+                />
+                <mat-autocomplete #auto="matAutocomplete">
+                    <mat-option *ngFor="let option of filteredOptions" [value]="option">
+                        {{ option }}
+                    </mat-option>
+                </mat-autocomplete>
+            </div>
+            <div class="icon-container">
+                <mat-icon
+                    class="icon"
+                    matTooltip=" Type to filter across all columns. Clear the search to reset the table view. Searches are case-insensitive."
+                    matTooltipPosition="right"
+                    >info</mat-icon
+                >
+            </div>
         </div>
-        <mat-select [(ngModel)]="filterSelect" placeholder="Select Column">
-            <mat-option *ngFor="let option of selectOptions" [value]="option">{{ option }}</mat-option>
-        </mat-select>
-        <div class="icon-container">
-            <mat-icon class="icon" matTooltip="Select a column to search from, then enter your query in the search bar to filter the table." matTooltipPosition="right">info</mat-icon>
-        </div>
-    </div>
-    <div>
-        <button class="btnAdd" mat-raised-button matTooltip="Quickly access and manage tasks related to current page." [matMenuTriggerFor]="menu">Quick Actions</button>
-        <mat-menu #menu="matMenu" class="menu">
-            <button mat-menu-item color="primary" (click)="downloadCSV()">Export Excel</button>
-            <button mat-menu-item color="primary" (click)="importExcel()">Import Excel</button>
-            <button mat-menu-item color="primary" (click)="addRow()" *ngIf="getCurrentRoute('inventory')">
-                + Add Item
-            </button>
-            <button mat-menu-item color="primary" (click)="addRow()" *ngIf="getCurrentRoute('team')">
-                + Add Member
-            </button>
-            <button mat-menu-item color="primary" (click)="addRow()" *ngIf="getCurrentRoute('suppliers')">
-                + Add Supplier
-            </button>
-            <button mat-menu-item *ngIf="getCurrentRoute('orders')" color="primary" (click)="openCustomQuoteModal()">
-                + Create Order
-            </button>
-            <button mat-menu-item *ngIf="getCurrentRoute('orders')" color="primary" (click)="deleteOrder()">
-                - Delete Order
-            </button>
+        <div>
             <button
-                mat-menu-item
-                *ngIf="getCurrentRoute('orders')"
-                color="primary"
-                (click)="onViewGeneratedQuoteClick()"
+                class="btnAdd"
+                mat-fab
+                extended
+                matTooltip="Quickly access and manage tasks related to current page."
+                [matMenuTriggerFor]="menu"
             >
-                View Generated Quote
+                <span>Quick Actions</span><mat-icon matSuffix>keyboard_arrow_down</mat-icon>
+                <!-- <mat-icon style="color: black">manufacturing</mat-icon> -->
             </button>
-            <button mat-menu-item *ngIf="getCurrentRoute('orders')" color="primary" (click)="onViewReceivedQuotes()">
-                View Received Quotes
-            </button>
-            <button mat-menu-item *ngIf="getCurrentRoute('orders')" color="primary" (click)="onMarkOrderAsReceived()">
-                Mark Order As Received
-            </button>
-            <button mat-menu-item *ngIf="getCurrentRoute('orders')" color="primary" (click)="onViewEmailTemplate()">
-                View Email Template
-            </button>
-            <button mat-menu-item *ngIf="getCurrentRoute('orders')" color="primary" (click)="onViewDeliveryInfo()">
-                View Delivery Info
-            </button>
-            <button mat-menu-item *ngIf="getCurrentRoute('orders')" color="primary" (click)="openAutomationSettings()">
-                View Automation Settings
-            </button>
-            <button mat-menu-item *ngIf="getCurrentRoute('inventory')" color="primary" (click)="deleteRow()">
-                - Remove Item
-            </button>
-            <button mat-menu-item *ngIf="getCurrentRoute('suppliers')" color="primary" (click)="deleteRow()">
-                - Remove Supplier
-            </button>
-            <button mat-menu-item *ngIf="getCurrentRoute('inventory')" color="primary" (click)="onRequestStock()">
-                Request Stock
-            </button>
-        </mat-menu>
-    </div>
-</div>
+            <mat-menu #menu="matMenu" class="menu" style="width: 150px">
+                <button class="QAButtons" mat-menu-item color="primary" (click)="downloadCSV()">
+                    <mat-icon>download</mat-icon><span>Export Excel</span>
+                </button>
+                <button
+                    class="QAButtons"
+                    mat-menu-item
+                    color="primary"
+                    (click)="importExcel()"
+                    *ngIf="(getCurrentRoute('inventory') || getCurrentRoute('suppliers')) && !isEndUser()"
+                >
+                    <mat-icon>upload</mat-icon><span>Import Excel</span>
+                </button>
+                <button
+                    class="QAButtons"
+                    mat-menu-item
+                    color="primary"
+                    (click)="onViewForecast()"
+                    *ngIf="getCurrentRoute('inventoryReport') && !isEndUser()"
+                >
+                    <mat-icon>query_stats</mat-icon><span>Forecast Item</span>
+                </button>
+                <button
+                    class="QAButtons"
+                    mat-menu-item
+                    color="primary"
+                    (click)="addRow()"
+                    *ngIf="getCurrentRoute('inventory') && !isEndUser()"
+                >
+                    <mat-icon>add</mat-icon><span>Add Item</span>
+                </button>
+                <button
+                    class="QAButtons"
+                    mat-menu-item
+                    color="primary"
+                    (click)="addRow()"
+                    *ngIf="getCurrentRoute('team') && isAdmin()"
+                >
+                    <mat-icon>add</mat-icon><span>Add Member</span>
+                </button>
+                <button
+                    class="QAButtons"
+                    mat-menu-item
+                    color="primary"
+                    (click)="addRow()"
+                    *ngIf="getCurrentRoute('suppliers') && !isEndUser()"
+                >
+                    <mat-icon>add</mat-icon><span>Add Supplier</span>
+                </button>
+                <button
+                    class="QAButtons"
+                    mat-menu-item
+                    *ngIf="getCurrentRoute('orders') && !isEndUser()"
+                    color="primary"
+                    (click)="openCustomQuoteModal()"
+                >
+                    <mat-icon>add</mat-icon><span>Create Order</span>
+                </button>
+                <button
+                    class="QAButtons"
+                    mat-menu-item
+                    *ngIf="getCurrentRoute('orders') && !isEndUser()"
+                    color="primary"
+                    (click)="deleteOrder()"
+                >
+                    <mat-icon>remove</mat-icon><span>Delete Order</span>
+                </button>
+                <button
+                    class="QAButtons"
+                    mat-menu-item
+                    color="primary"
+                    (click)="deleteRow()"
+                    *ngIf="getCurrentRoute('team') && isAdmin()"
+                >
+                    <mat-icon>remove</mat-icon><span>Remove Member</span>
+                </button>
+                <button
+                    class="QAButtons"
+                    mat-menu-item
+                    *ngIf="getCurrentRoute('orders') && !isEndUser()"
+                    color="primary"
+                    (click)="onViewGeneratedQuoteClick()"
+                >
+                    <mat-icon>file_open</mat-icon><span>Generated Quote</span>
+                </button>
+                <button
+                    class="QAButtons"
+                    mat-menu-item
+                    *ngIf="getCurrentRoute('orders') && !isEndUser()"
+                    color="primary"
+                    (click)="onViewReceivedQuotes()"
+                >
+                    <mat-icon>inbox</mat-icon><span>Received Quotes</span>
+                </button>
+                <button
+                    class="QAButtons"
+                    mat-menu-item
+                    *ngIf="getCurrentRoute('orders') && !isEndUser()"
+                    color="primary"
+                    (click)="onMarkOrderAsReceived()"
+                >
+                    <mat-icon>done</mat-icon><span>Mark As Received</span>
+                </button>
+                <button
+                    class="QAButtons"
+                    mat-menu-item
+                    *ngIf="getCurrentRoute('orders') && !isEndUser()"
+                    color="primary"
+                    (click)="onViewEmailTemplate()"
+                >
+                    <mat-icon>email</mat-icon><span>Email Template</span>
+                </button>
+                <button
+                    class="QAButtons"
+                    mat-menu-item
+                    *ngIf="getCurrentRoute('orders') && !isEndUser()"
+                    color="primary"
+                    (click)="onViewDeliveryInfo()"
+                >
+                    <mat-icon>visibility</mat-icon><span>View Delivery Info</span>
+                </button>
+                <button
+                    class="QAButtons"
+                    mat-menu-item
+                    *ngIf="getCurrentRoute('orders') && !isEndUser()"
+                    color="primary"
+                    (click)="openAutomationSettings()"
+                >
+                    <mat-icon>document_scanner</mat-icon><span>Scan Inventory Now</span>
+                </button>
+                <button
+                    class="QAButtons"
+                    mat-menu-item
+                    *ngIf="getCurrentRoute('inventory') && !isEndUser()"
+                    color="primary"
+                    (click)="deleteRow()"
+                >
+                    <mat-icon>remove</mat-icon><span>Remove Item</span>
+                </button>
+                <button
+                    class="QAButtons"
+                    mat-menu-item
+                    *ngIf="getCurrentRoute('suppliers') && !isEndUser()"
+                    color="primary"
+                    (click)="deleteRow()"
+                >
+                    <mat-icon>remove</mat-icon><span>Remove Supplier</span>
+                </button>
+                <button
+                    class="QAButtons"
+                    mat-menu-item
+                    *ngIf="getCurrentRoute('orders') && !isEndUser()"
+                    color="primary"
+                    (click)="onViewTemplates()"
+                >
+                    <mat-icon>upcoming</mat-icon><span>Automation Templates</span>
+                </button>
 
-<div class="container">
-    <ag-grid-angular
-        [rowData]="filteredRowData"
-        [columnDefs]="columnDefs"
-        [rowSelection]="rowSelection"
-        [editType]="editType"
-        (cellValueChanged)="onCellValueChanged($event)"
-        (rowValueChanged)="onRowValueChanged($event)"
-        (rowSelected)="onRowSelected($event)"
-        (selectionChanged)="onSelectionChanged($event)"
-        [rowData]="rowData"
-        [class]="themeClass"
-        class="ag-theme-quartz aggrid"
-        [ngStyle]="gridStyle"
-        (gridReady)="onGridReady($event)"
-    >
-    </ag-grid-angular>
+                <button
+                    class="QAButtons"
+                    mat-menu-item
+                    *ngIf="getCurrentRoute('inventory')"
+                    color="primary"
+                    (click)="onViewQRCode()"
+                >
+                    <mat-icon>qr_code_2</mat-icon><span>View QR code</span>
+                </button>
+                <button
+                    class="QAButtons"
+                    mat-menu-item
+                    *ngIf="getCurrentRoute('inventory')"
+                    color="primary"
+                    (click)="onScanQRCode()"
+                >
+                    <mat-icon>qr_code_scanner</mat-icon><span>Scan QR code</span>
+                </button>
+                <button
+                    class="QAButtons"
+                    mat-menu-item
+                    *ngIf="(getCurrentRoute('inventoryReport') || getCurrentRoute('inventory')) && !isEndUser()"
+                    color="primary"
+                    (click)="onViewInventorySummary()"
+                >
+                    <mat-icon>inventory</mat-icon><span>View Inventory Summary</span>
+                </button>
+
+                <button
+                    class="QAButtons"
+                    mat-menu-item
+                    *ngIf="getCurrentRoute('inventory')"
+                    color="primary"
+                    (click)="onRequestStock()"
+                >
+                    <mat-icon>sell</mat-icon><span>Request Stock</span>
+                </button>
+
+                <button
+                    class="QAButtons"
+                    mat-menu-item
+                    *ngIf="getCurrentRoute('inventory-summary') && !isEndUser()"
+                    color="primary"
+                    (click)="runEoqRopCalculation.emit()"
+                >
+                    <mat-icon>query_stats</mat-icon><span>Run EOQ/ROP/ABC Calculation</span>
+                </button>
+            </mat-menu>
+        </div>
+    </div>
+
+    <div class="container">
+        <ag-grid-angular
+            [rowData]="filteredRowData"
+            [columnDefs]="columnDefs"
+            [rowSelection]="rowSelection"
+            [editType]="editType"
+            (cellValueChanged)="onCellValueChanged($event)"
+            (rowValueChanged)="onRowValueChanged($event)"
+            (rowSelected)="onRowSelected($event)"
+            (selectionChanged)="onSelectionChanged($event)"
+            [rowData]="rowData"
+            [class]="themeClass"
+            [cacheQuickFilter]="true"
+            class="ag-theme-quartz aggrid"
+            [ngStyle]="gridStyle"
+            (gridReady)="onGridReady($event)"
+            style="--ag-border-color: #c4c6d0"
+        >
+        </ag-grid-angular>
+    </div>
 </div>

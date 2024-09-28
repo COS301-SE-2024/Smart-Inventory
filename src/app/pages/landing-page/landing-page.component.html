@@ -1,0 +1,246 @@
+<div class="landing-page">
+    <header>
+        <div class="logo">Helix</div>
+        <nav>
+            <a href="#home">Home</a>
+            <a href="#features">Features</a>
+            <a href="#solutions">Solutions</a>
+        </nav>
+        <button mat-flat-button color="primary" (click)="go()" style="border-radius: 5px; width: 200px; height: 40px">
+            Login / Sign Up
+        </button>
+    </header>
+
+    <main id="home">
+        <div class="content">
+            <span class="badge">SMART INVENTORY MANAGEMENT</span>
+            <h1>Revolutionize Your Supply Chain with Machine Learning Inventory Control</h1>
+            <p>
+                Helix delivers a cutting-edge smart inventory system that automates ordering processes and streamlines
+                order transitions.
+            </p>
+            <p>
+                Our advanced algorithms analyze historical data, market trends, and seasonal fluctuations to predict
+                demand accurately. This enables you to maintain optimal inventory levels, reducing carrying costs while
+                ensuring you never run out of stock.
+            </p>
+            <button
+                mat-flat-button
+                color="primary"
+                (click)="go()"
+                style="margin-right: auto; margin-left: auto; border-radius: 5px; width: 200px; height: 40px"
+            >
+                Start Now
+            </button>
+        </div>
+        <div class="image-showcase">
+            <div class="image-container">
+                <app-inventory-grid></app-inventory-grid>
+            </div>
+            <div class="spotlight"></div>
+        </div>
+    </main>
+
+    <section id="features">
+        <h2>Our <span class="highlight">Features</span></h2>
+        <div class="feature-container">
+            <div class="feature-card">
+                <div class="feature-content">
+                    <h3><span class="title-primary">Smart</span><span class="title-secondary">Stock Tracking</span></h3>
+                    <p>
+                        Capture and manage detailed stock information including supplier, expiration date, and product
+                        usage, ensuring optimal inventory control.
+                    </p>
+                </div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-content">
+                    <h3><span class="title-primary">Automated</span><span class="title-secondary">Ordering</span></h3>
+                    <p>
+                        Intelligent system detects low stock levels and automatically places orders, considering
+                        products from the same supplier to reduce shipping costs.
+                    </p>
+                </div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-content">
+                    <h3><span class="title-primary">Ordering</span><span class="title-secondary">Process</span></h3>
+                    <p>
+                        Integrated quoting system automates the heavy lifting for end users, ensuring stock is always
+                        available and efficiently reordered when needed.
+                    </p>
+                </div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-content">
+                    <h3><span class="title-primary">Smart</span><span class="title-secondary">Reporting</span></h3>
+                    <p>
+                        Advanced reporting tools allow for efficient inventory performance analysis and streamlined
+                        stock-taking processes.
+                    </p>
+                </div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-content">
+                    <h3>
+                        <span class="title-primary">Secure</span><span class="title-secondary">Data Management</span>
+                    </h3>
+                    <p>
+                        Robust security measures including access control, data encryption, and audit logging protect
+                        sensitive supplier and stock information within the system.
+                    </p>
+                </div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-content">
+                    <h3><span class="title-primary">Automation</span><span class="title-secondary">Templates</span></h3>
+                    <p>
+                        Create and manage custom automation templates for one-time events, streamlining order processes
+                        and improving efficiency in inventory management.
+                    </p>
+                </div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-content">
+                    <h3><span class="title-primary">Item</span><span class="title-secondary">Forecasting</span></h3>
+                    <p>
+                        Utilize advanced algorithms to predict future inventory needs, helping to optimize stock levels
+                        and reduce costs associated with overstocking or stockouts.
+                    </p>
+                </div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-content">
+                    <h3><span class="title-primary">ABC</span><span class="title-secondary">Analysis</span></h3>
+                    <p>
+                        Implement ABC analysis to categorize inventory items based on their importance, allowing for
+                        more effective inventory control and resource allocation.
+                    </p>
+                </div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-content">
+                    <h3>
+                        <span class="title-primary">Multi-Location</span><span class="title-secondary">Inventory</span>
+                    </h3>
+                    <p>
+                        Manage inventory across multiple warehouses or store locations, with real-time visibility into
+                        stock levels and easy transfer between locations.
+                    </p>
+                </div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-content">
+                    <h3><span class="title-primary">Barcode</span><span class="title-secondary">Scanning</span></h3>
+                    <p>
+                        Streamline inventory tracking and order fulfillment with integrated barcode scanning
+                        functionality, compatible with mobile devices.
+                    </p>
+                </div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-content">
+                    <h3>
+                        <span class="title-primary">Supplier</span
+                        ><span class="title-secondary">Performance Metrics</span>
+                    </h3>
+                    <p>
+                        Track and analyze supplier performance including delivery times, order accuracy, and quality
+                        metrics to optimize your supply chain.
+                    </p>
+                </div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-content">
+                    <h3><span class="title-primary">Demand</span><span class="title-secondary">Planning</span></h3>
+                    <p>
+                        Utilize historical data and market trends to forecast demand, helping you maintain optimal
+                        inventory levels and improve cash flow.
+                    </p>
+                </div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-content">
+                    <h3><span class="title-primary">Custom</span><span class="title-secondary">Alerts</span></h3>
+                    <p>
+                        Set up personalized alerts for low stock levels, upcoming expiration dates, or other custom
+                        triggers to stay proactive in your inventory management.
+                    </p>
+                </div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-content">
+                    <h3><span class="title-primary">Activity</span><span class="title-secondary">Tracking</span></h3>
+                    <p>
+                        Comprehensive logging of all user actions within the system, providing full transparency and
+                        accountability for all related activities.
+                    </p>
+                </div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-content">
+                    <h3><span class="title-primary">Team</span><span class="title-secondary">Management</span></h3>
+                    <p>
+                        Create and manage teams with certain roles and permissions, ensuring efficient collaboration and
+                        secure access control.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="solutions" class="statistics-section">
+        <div class="statistics-content">
+            <h2><span class="highlight">Business</span> Solutions</h2>
+            <p>
+                Our smart inventory system leverages cloud technologies and machine learning techniques to optimize
+                stock management, automate ordering processes, and enhance overall efficiency. The following statistics
+                highlight the potential impact and benefits of implementing this system:
+            </p>
+            <div class="statistics-grid">
+                <div class="statistic-item">
+                    <div class="icon-wrapper">
+                        <ng-icon name="heroClipboard"></ng-icon>
+                    </div>
+                    <div class="statistic-value">99.9%</div>
+                    <div class="statistic-label">Stock Accuracy</div>
+                </div>
+                <div class="statistic-item">
+                    <div class="icon-wrapper">
+                        <ng-icon name="heroTruck"></ng-icon>
+                    </div>
+                    <div class="statistic-value">30%</div>
+                    <div class="statistic-label">Reduction in Shipping Costs</div>
+                </div>
+                <div class="statistic-item">
+                    <div class="icon-wrapper">
+                        <ng-icon name="heroChartBar"></ng-icon>
+                    </div>
+                    <div class="statistic-value">25%</div>
+                    <div class="statistic-label">Decrease in Stock-outs</div>
+                </div>
+                <div class="statistic-item">
+                    <div class="icon-wrapper">
+                        <ng-icon name="heroBolt"></ng-icon>
+                    </div>
+                    <div class="statistic-value">40%</div>
+                    <div class="statistic-label">Faster Order Processing</div>
+                </div>
+                <div class="statistic-item">
+                    <div class="icon-wrapper">
+                        <ng-icon name="heroArrowTrendingUp"></ng-icon>
+                    </div>
+                    <div class="statistic-value">20%</div>
+                    <div class="statistic-label">Reduction in Waste</div>
+                </div>
+                <div class="statistic-item">
+                    <div class="icon-wrapper">
+                        <ng-icon name="heroShieldCheck"></ng-icon>
+                    </div>
+                    <div class="statistic-value">100%</div>
+                    <div class="statistic-label">End-to-End Data Encryption</div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

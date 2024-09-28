@@ -1,0 +1,56 @@
+<h2 mat-dialog-title>Renegotiate Quote</h2>
+<mat-dialog-content>
+    <mat-tab-group>
+        <mat-tab label="Compose">
+            <form [formGroup]="renegotiationForm" class="renegotiation-form">
+                <mat-form-field appearance="outline">
+                    <mat-label>Subject</mat-label>
+                    <input matInput formControlName="subject" />
+                    <mat-error *ngIf="renegotiationForm.get('subject')?.hasError('required')"
+                        >Subject is required</mat-error
+                    >
+                </mat-form-field>
+
+                <div class="placeholder-buttons">
+                    <button mat-flat-button (click)="insertWebFormUrl()" class="btn" style="width: 100%">
+                        Insert Web Form URL
+                    </button>
+                </div>
+
+                <mat-form-field appearance="outline">
+                    <mat-label>Email Body</mat-label>
+                    <textarea
+                        matInput
+                        formControlName="emailBody"
+                        rows="15"
+                        #emailBodyTextarea
+                        [placeholder]="
+                            'Enter your email body here. Use the button above to insert the Web Form URL placeholder.'
+                        "
+                    ></textarea>
+                    <mat-error *ngIf="renegotiationForm.get('emailBody')?.hasError('required')"
+                        >Email body is required</mat-error
+                    >
+                    <mat-error *ngIf="renegotiationForm.get('emailBody')?.hasError('noWebFormUrl')"
+                        >Please include {{ WEB_FORM_URL }} in the email body</mat-error
+                    >
+                </mat-form-field>
+            </form>
+        </mat-tab>
+        <mat-tab label="Preview">
+            <div class="email-preview">
+                <div class="preview-content">
+                    <pre>{{ getPreviewContent() }}</pre>
+                </div>
+            </div>
+        </mat-tab>
+    </mat-tab-group>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <button mat-flat-button (click)="onCancel()" class="btn">Cancel</button>
+    <button mat-flat-button (click)="onSend()" [disabled]="!renegotiationForm.valid" class="btn">Send</button>
+</mat-dialog-actions>
+
+<div *ngIf="isSending" class="loading-overlay">
+    <app-loading-spinner></app-loading-spinner>
+</div>

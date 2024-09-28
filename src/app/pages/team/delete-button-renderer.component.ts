@@ -10,7 +10,7 @@ import { fetchAuthSession } from 'aws-amplify/auth';
 @Component({
     selector: 'app-delete-button-renderer',
     standalone: true,
-    template: `<button class="delete-button" (click)="onDeleteButtonClick()">Delete</button>`,
+    template: `<button mat-stroked-button class="delete-button" (click)="onDeleteButtonClick()">Delete</button>`,
     styles: [
         `
             .delete-button {
@@ -81,6 +81,13 @@ export class DeleteButtonRendererComponent implements ICellRendererAngularComp {
             await client.send(command);
             console.log('User deleted successfully:', email);
             this.params.api.applyTransaction({ remove: [this.params.node.data] });
+
+            // Create notification
+            const teamComponent = this.params.context.componentParent;
+            await teamComponent.createNotification(
+                `User ${this.params.data.given_name} ${this.params.data.family_name} (${email}) has been deleted`,
+                'USER_DELETED'
+            );
         } catch (error) {
             console.error('Error deleting user:', error);
         }

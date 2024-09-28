@@ -1,452 +1,193 @@
-/* PLACEHOLDER */
-::placeholder {
-    text-align: left;
-  }
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
 
-  /* Ensure input text is left-aligned */
-input.mat-input-element {
-  text-align: left;
-}
-
-
-/* width */
-::-webkit-scrollbar {
-    margin-left: 5px;
-    width: 10px;
-    border-radius: 50px;
-}
-
-/* Track */
-::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 50px;
-}
-
-/* Handle */
-::-webkit-scrollbar-thumb {
-    background: #888;
-    border-radius: 50px;
-}
-
-/* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
-    background: #555;
-}
-
-
-.body {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-}
-
-.content {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-}
-
-.content .row {
-    display: flex;
-    align-items: center;
-    padding: 16px;
-}
-
-.content .first-row {
-    justify-content: space-between;
-    height: 10%;
-    font-size: 30px;
-}
-
-.content .first-row h1 {
-    margin: 0;
-    /* font-weight: 500; */
-    font-size: 70px;
-}
-
-.content .first-row .buttons {
-    display: flex;
-}
-
-.content .first-row .buttons button {
-    margin-left: 8px;
-    width: 130px;
-    height: 60px;
-    border-radius: 15px;
-}
-
-.content .first-row .buttons .save-button {
-    background-color: #05ff00;
-    color: black;
-    font-size: 30px;
-    font-weight: 500;
-}
-
-.content .first-row .buttons .cancel-button {
-    background-color: #8f8f8f;
-    color: black;
-    font-size: 30px;
-    font-weight: 500;
-}
-
-.content .second-row {
-    height: 100%;
-    width: 100%;
-    display: flex;
-    overflow-y: auto;
-    flex-direction: column;
-    align-content: center;
-}
-mat-list {
-    flex-grow: 1;
-    /* border: 3px solid blue; */
-    overflow: scroll;
-}
-/* LEFT PANE */
-
-.content .second-row .left-pane {
-    width: 20%;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: flex-start; /* Ensure buttons start at the top */
-    padding: 0; /* Ensure there's no padding affecting positioning */
-    margin: 0; /* Ensure there's no margin affecting positioning */
-    box-sizing: border-box; /* Include padding and border in the element's total width and height */
-}
-/* LIGHT AND DARK MODE TOGGLE */
-
-.mode-toggle span {
-    font-size: 25px;
-    font-weight: 500;
-    padding-top: 40px;
-}
-
-.mode-toggle mat-slide-toggle {
-    margin-left: 15vh;
-}
-
-.content .second-row .vertical-line {
-    width: 3px;
-    background-color: #000;
-    height: 95%;
-    margin-left: 10px;
-}
-
-
-/* LIGHT AND DARK MODE SELECTION */
-
-.theme-selection-grid {
-    display: flex;
-    justify-content: space-around;
-    margin-bottom: 20px;
-    /* margin-left: 5%; */
-    width: 100%;
-    margin-top: 10px;
-}
-
-.theme-option {
-    cursor: pointer;
-    justify-content: left;
-}
-
-.theme-option img {
-    width: 30vh;
-    height: auto;
-    border-radius: 15px;
-}
-
-.theme-selection-grid .theme-option.selected-theme {
-    outline: 7px solid #05ff00;
-    border-radius: 15px;
-}
-
-/* Mat-form-field Styles */
-mat-form-field {
-    width: 100%;
-    background-color: none !important;
-    border-radius: 15px;
-}
-
-.mdc-text-field--filled.mdc-text-field--disabled {
-    background-color: white !important;
-    border-radius: 15px !important;
-}
-
-mat-label {
-    color: #000 !important;
-}
-
-/* Ensuring the dropdown looks as specified */
-.mat-select {
-    background-color: white !important;
-    border: none !important;
-    border-radius: 15px !important;
-}
-
-.mat-select-trigger {
-    background-color: white !important;
-}
-
-.mat-grid-tile-content {
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    position: absolute;
-    display: flex;
+:host {
+    font-family: 'Poppins', sans-serif;
+    display: block;
     height: 100vh;
-    padding: 0;
-    margin: 0;
-    flex-direction: column;
-    width: 100%;
-    justify-content: center;
-}
-.mdc-checkbox__checkmark {
-    color: #000 !important;
-}
-
-/* ACCOUNT SECTION */
-
-.accounts-section {
-    display: flex;
-    flex-direction: column;
-    padding: 16px;
-    background-color: none;
-    align-items: center;
-    width: 100%;
-    border-radius: 8px;
-}
-
-.accounts-row-one {
-    margin-bottom: 20px;
-    margin-top: 60px;
-}
-
-.accounts-row-one h2 {
-    margin: 0;
-    font-size: 60px;
-    margin-bottom: 10px;
-}
-
-.accounts-row-one p {
-    margin: 8px 0 16px 0;
-    font-size: 20px;
-    font-weight: 500;
-}
-
-.accounts-row-one hr {
-    height: 4px;
-    background-color: #000;
-    border: none;
-    border-radius: 15px;
-}
-
-.accounts-row-two {
-    /* overflow-y: scroll; */
-    min-height: 80vh;
-    width: 75%;
     overflow-y: auto;
+    background-color: #f5f7fa;
 }
-.mat-mdc-button .mat-mdc-button-touch-target {
-    position: absolute;
-    top: 50%;
-    height: 50px;
-    left: 0;
-    right: 0;
-    transform: translateY(-50%);
-    display: var(--mat-text-button-touch-target-display);
-    background-color: #f1f1f1;
-    border-radius: 5px;
+
+.settings-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 2rem;
 }
-.mat-mdc-form-field-infix {
-    flex: auto;
-    min-width: 0;
-    width: 180px;
-    position: relative;
-    box-sizing: border-box;
-    background-color: #f1f1f1;
-}
-.mat-mdc-text-field-wrapper.mdc-text-field.mdc-text-field--filled {
-    background-color: #f1f1f1;
-    border-radius: 15px;
-}
-/* EDIT PERSONAL INFORMATION */
-.form-container {
-    display: flex;
-    flex-direction: column;
-    align-content: center;
-    flex-wrap: wrap;
+
+.intro-section {
     text-align: center;
-    /* overflow-y: scroll; */
-    width: 100%;
+    margin-bottom: 3rem;
 }
 
-.name-surname-row {
+.intro-section h2 {
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+}
+
+.intro-section p {
+    font-size: 1.1rem;
+    color: #7f8c8d;
+}
+
+.tiles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.tile {
+    background-color: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    position: relative;
     display: flex;
-    justify-content: space-between;
-    width: 100%;
-}
-
-.form-container h3 {
-    font-size: 40px;
-}
-
-.form-container hr {
-    width: 100%;
-    margin-bottom: 20px;
-}
-
-.form-container h4 {
-    font-size: 30px;
-    align-self: flex-start;
-}
-
-.form-row {
-    display: flex;
-    gap: 0;
-    margin-bottom: 10px;
-    width: 100%;
     flex-direction: column;
+    height: 100%;
+    transition: all 0.3s ease;
 }
 
-/* EDIT PASSWORD */
-
-.form-row.form-row-password {
-    width: 100%;
-    margin-right: 30px;
-    margin-top: 15px;
+.tile:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
 }
 
-.current-password {
-    width: 70%;
-  }
-
-.form-field {
-    flex: 1;
-    width: 48%;
+.tile-content {
+    padding: 2.5rem;
+    flex-grow: 1;
 }
 
-.email-field {
-    width: 100%;
+.tile-icon {
+    font-size: 2.5rem;
+    color: #3498db;
+    margin-bottom: 1.5rem;
 }
 
-button mat-button {
-    background-color: #8f8f8f;
-    justify-content: left;
-    width: 200px;
-    height: 60px;
-    color: #000;
-    font-size: 20px;
-    font-weight: 400;
+.tile h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 1rem;
 }
 
-button.change-password-button {
-    color: black;
-    color: #000000 !important;
-    margin-top: 10px !important;
-    font-size: 15px !important;
-    margin-right: 50px;
-    width: 28%;
-}
-
-button.cancel-password-button {
-    background-color: transparent;
-    color: red !important;
-    margin-top: 10px !important;
-    font-size: 15px !important;
-    margin-left: 50px;
-}
-
-.delete-confirmation-row {
+.tile-inputs {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+input {
     width: 100%;
-    margin-top: 20px;
-  }
-
-  .delete-confirmation-row .form-field {
-    width: 48%;
-    margin-bottom: 10px;
-  }
-
-button.delete-button {
-    /* background-color: #8f8f8f; */
-    width: 200px;
-    height: 60px;
-    color: #000 !important;
-    font-size: 20px;
-    font-weight: 400;
-    margin-bottom: 20px;
-    margin-right: 10px;
+    padding: 0.75rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 5px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
 }
 
-/* CONFIRM DELETE ACCOUNT PASSWORD */
-.confirm-delete-button {
-    background-color: rgb(253, 58, 58) !important;
-    color: black !important;
-    font-size: 20px !important;
-    font-weight: 500 !important;
+input:focus {
+    outline: none;
+    border-color: #3498db;
+}
+
+.tile-button {
+    padding: 1.5rem;
+    text-align: center;
+}
+
+button {
+    background-color: #005cbb;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-size: 1rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+button:hover {
+    background-color: #004499;
+}
+
+p {
+    color: #7f8c8d;
+    margin-bottom: 1rem;
+    line-height: 1.6;
+}
+
+/* Tooltip styles */
+.tile[data-tooltip] {
+    position: relative;
+}
+
+.tile[data-tooltip]::before {
+    content: attr(data-tooltip);
+    position: absolute;
+    top: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #34495e;
+    color: #fff;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    font-size: 0.875rem;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    z-index: 1;
+}
+
+.tile[data-tooltip]::after {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 5px;
+    border-style: solid;
+    border-color: #34495e transparent transparent transparent;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.tile[data-tooltip]:hover::before,
+.tile[data-tooltip]:hover::after {
+    opacity: 1;
+    visibility: visible;
+}
+
+.scroll-spacer {
+    height: 100px;
     width: 100%;
-    margin-top: 10px;
 }
 
-.delete-account-row {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    width: 100%;
-    margin-top: 20px;
-  }
+@media (max-width: 768px) {
+    .tiles-grid {
+        grid-template-columns: 1fr;
+    }
 
-.password-action-buttons {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    margin-top: 10px;
-  }
+    .intro-section h2 {
+        font-size: 2rem;
+    }
 
-/* Custom Form Field Styling */
-.form-row mat-form-field {
-    background-color: none;
+    .intro-section p {
+        font-size: 1rem;
+    }
+
+    .tile-content {
+        padding: 2rem;
+    }
+
+    .tile h3 {
+        font-size: 1.3rem;
+    }
 }
-
-/* FORM FIELD EDITING SH** TOOK LONG YALL */
-
-/* MAKE FORM FIELDS WHITE */
-mat-form-field .mdc-text-field--filled:not(.mdc-text-field--disabled) {
-    background-color: #fff;
-    border-radius: 15px;
-}
-
-/* REMOVE UNDERLINE IN FORM FIELDS */
-mat-form-field .mdc-line-ripple {
-    display: none;
-}
-
-.mat-form-field-flex {
-    background-color: white !important;
-    border-radius: 15px !important;
-}
-
-.mat-form-field-outline {
-    border-radius: 15px !important;
-}
-
-.mat-form-field-outline-start,
-.mat-form-field-outline-end {
-    border-radius: 15px !important;
-}
-
-.mat-form-field-outline-gap {
-    border-radius: 15px !important;
-}
-
-.password-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-}
-  

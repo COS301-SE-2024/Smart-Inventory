@@ -1,79 +1,115 @@
-<div style="height: 100%; display: block; overflow: scroll">
-    <mat-toolbar style="width: 100%">
-        <button mat-button style="width: 100%; background-color: #f1f1f1; color: black" (click)="back()">
-            Back to reports
-        </button>
-    </mat-toolbar>
+<div *ngIf="isLoading" class="loading-overlay">
+    <app-loading-spinner></app-loading-spinner>
+</div>
+
+<div style="height: 100%; display: block; overflow: none">
     <!-- order-report-metrics.component.html -->
-    <div class="metrics-container">
-        <button mat-icon-button (click)="scrollTiles('left')">
-            <mat-icon>chevron_left</mat-icon>
-        </button>
+    <gridster [options]="options" style="background: transparent !important">
+        <!-- Metrics Container -->
+        <!-- <gridster-item [item]="layout[0]" class="order-report-item">
+            <div class="metrics-container">
+                <button mat-icon-button (click)="scrollTiles('left')">
+                    <mat-icon>chevron_left</mat-icon>
+                </button>
 
-        <div class="metrics-wrapper">
-            <mat-card *ngFor="let metric of visibleMetrics" class="metric-card">
-                <mat-card-header>
-                    <div mat-card-avatar class="metric-icon">
-                        <mat-icon class="icon" [attr.aria-label]="metric.iconLabel">{{ metric.icon }}</mat-icon>
-                    </div>
-                    <mat-card-title>{{ metric.metricName }}</mat-card-title>
-                </mat-card-header>
-                <mat-card-content>
-                    <p class="metric-value">{{ metric.value }}</p>
-                </mat-card-content>
-            </mat-card>
-        </div>
+                <div class="metrics-wrapper">
+                    <mat-card *ngFor="let metric of visibleMetrics" class="metric-card">
+                        <mat-card-header class="align">
+                            <div mat-card-avatar class="metric-icon">
+                                <mat-icon class="icon" [attr.aria-label]="metric.iconLabel">{{ metric.icon }}</mat-icon>
+                            </div>
+                            <div>
+                                <mat-card-title class="title">{{ metric.metricName }}</mat-card-title>
+                                <mat-card-content class="content">
+                                    <p class="metric-value">{{ metric.value }}</p>
+                                    <p class="additional-info" [ngClass]="getAdditionalInfoClass(metric)">
+                                        {{ getAdditionalInfo(metric) }}
+                                    </p>
+                                </mat-card-content>
+                            </div>
+                            
+                        </mat-card-header> 
+                        <mat-card-content>
+                            <div class="card-layout">
+                                <div class="icon-container">
+                                    <mat-icon>{{ metric.icon }}</mat-icon>
+                                </div>
+                                <div class="content-container">
+                                    <mat-card-title>{{ metric.metricName }}</mat-card-title>
+                                    <div class="metric-info">
+                                        <div class="metric-value">{{ metric.value }}</div>
+                                        <div class="additional-info" [ngClass]="getAdditionalInfoClass(metric)">
+                                            {{ getAdditionalInfo(metric) }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+                </div>
 
-        <button mat-icon-button (click)="scrollTiles('right')">
-            <mat-icon>chevron_right</mat-icon>
-        </button>
-    </div>
-    <mat-grid-list cols="8" rowHeight="29vh" gutterSize="20px">
-        <mat-grid-tile [colspan]="8" [rowspan]="2">
-            <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
+                <button mat-icon-button (click)="scrollTiles('right')">
+                    <mat-icon>chevron_right</mat-icon>
+                </button>
+            </div>
+        </gridster-item> -->
+
+        <!-- Inventory Grid -->
+        <gridster-item [item]="layout[0]" class="order-report-item app-grid-container">
+            <div class="grid-item-content">
                 <div class="inventoryHolder">
-                    <app-grid [rowData]="rowData" [columnDefs]="colDefs" #gridComponent> </app-grid>
+                    <app-grid [rowData]="rowData" [columnDefs]="colDefs" #gridComponent></app-grid>
                 </div>
             </div>
-        </mat-grid-tile>
-        <mat-grid-tile [colspan]="2" [rowspan]="2">
-            <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
-                <mat-card style="height: 100%; width: 100%">
-                    <mat-card-title style="margin-left: 15px; margin-top: 15px; font-size: 25px">
-                        {{ OrderReport.title }}
-                    </mat-card-title>
-                    <mat-card-content style="align-items: center">
-                        <ul style="list-style: none; padding: 0; margin: 0">
-                            <li *ngFor="let metric of OrderReport.metrics | keyvalue"
-                                style="font-size: 15px; padding: 8px 0; border-bottom: 1px solid lightgrey">
-                                {{ metric.value }}
-                            </li>
-                        </ul>
-                    </mat-card-content>
-                </mat-card>
-            </div>
-        </mat-grid-tile>
-        <mat-grid-tile [colspan]="6" [rowspan]="2">
-            <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
-                <mat-card style="height: 100%; width: 100%">
-                    <app-stackedbarchart [data]="stackedBarChartData"></app-stackedbarchart>
-                </mat-card>
-            </div>
-        </mat-grid-tile>
+        </gridster-item>
 
-        <mat-grid-tile [colspan]="5" [rowspan]="2">
-            <div style="padding: 10px; height: 100%; width: 100%;">
-                <mat-card style="height: 100%; width: 100%;">
-                    <app-scatterplot [data]="scatterPlotChartData"></app-scatterplot>
-                </mat-card>
-            </div>
-        </mat-grid-tile>
-        <mat-grid-tile [colspan]="3" [rowspan]="2">
-            <div style="padding: 10px; height: 100%; width: 100%;">
-                <mat-card style="height: 100%; width: 100%;">
-                    <app-donuttemplate [orderData]="rowData"></app-donuttemplate>
-                </mat-card>
-            </div>
-        </mat-grid-tile>
-    </mat-grid-list>
+        <!-- Order Report -->
+        <gridster-item [item]="layout[1]" class="order-report-item">
+            <mat-card class="metrics-card">
+                <mat-card-header>
+                    <mat-card-title>{{ OrderReport.title }}</mat-card-title>
+                    <mat-card-subtitle>{{ OrderReport.subtitle }}</mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                    <mat-list>
+                        <mat-list-item *ngFor="let metric of OrderReport.metrics | keyvalue">
+                            <mat-icon matListItemIcon>{{ metric.value.icon }}</mat-icon>
+                            <span matListItemTitle>{{ metric.value.text }}</span>
+                        </mat-list-item>
+                    </mat-list>
+                </mat-card-content>
+            </mat-card>
+        </gridster-item>
+
+        <!-- Stacked Bar Chart -->
+        <gridster-item [item]="layout[2]">
+            <app-stackedbarchart [data]="stackedBarChartData"></app-stackedbarchart>
+        </gridster-item>
+
+        <!-- Scatter Plot -->
+        <gridster-item [item]="layout[3]">
+            <app-scatterplot [data]="scatterPlotChartData"></app-scatterplot>
+        </gridster-item>
+
+        <!-- Donut Chart -->
+        <gridster-item [item]="layout[4]">
+            <app-donuttemplate [orderData]="rowData"></app-donuttemplate>
+        </gridster-item>
+        <mat-toolbar
+            style="
+                position: sticky;
+                top: 93%;
+                left: 0;
+                width: 300px;
+                border-radius: 20px;
+                height: 50px;
+                background-color: transparent;
+                z-index: 1;
+            "
+        >
+            <button mat-flat-button class="btn" (click)="back()">
+                <mat-icon style="font-size: 24px; height: 24px; width: 24px">arrow_back</mat-icon> Back To Reports
+            </button>
+        </mat-toolbar>
+    </gridster>
 </div>

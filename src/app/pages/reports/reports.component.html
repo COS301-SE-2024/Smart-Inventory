@@ -1,23 +1,22 @@
-<div style="height: 100%; display: block; overflow-y: scroll">
-    <mat-grid-list cols="1" rowHeight="190px" gutterSize="10px">
-        <mat-grid-tile *ngFor="let report of reports | keyvalue">
-            <div class="card-container">
-                <mat-card class="item-card-container">
-                    <mat-card-header class="card-header">
-                        <mat-card-title>{{ report.value.title }}</mat-card-title>
-                        <mat-card-subtitle> {{ report.value.subtitle }}</mat-card-subtitle>
-                    </mat-card-header>
-                    <mat-card-actions>
-                        <button
-                            mat-button
-                            style="width: 100%; background-color: white; color: black; border-radius: 10px"
-                            (click)="viewFullReport(report.key)"
-                        >
-                            View Full Report
-                        </button>
-                    </mat-card-actions>
-                </mat-card>
-            </div>
-        </mat-grid-tile>
-    </mat-grid-list>
-</div>
+<div class="reports-container">
+    <div class="intro-section">
+      <h2>Your Reports Dashboard</h2>
+      <p>Access and analyze key data with our comprehensive reports</p>
+    </div>
+    <div class="reports-grid">
+      <div class="report-tile" *ngFor="let reportKey of reportOrder" (click)="viewFullReport(reportKey)">
+        <div class="report-content">
+          <div class="report-icon-wrapper">
+            <mat-icon class="report-icon">{{ reports[reportKey].icon }}</mat-icon>
+          </div>
+          <h3>{{ reports[reportKey].title }}</h3>
+          <p>{{ reports[reportKey].subtitle }}</p>
+          <div class="view-report">
+            <span>View Report</span>
+            <mat-icon>arrow_forward</mat-icon>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="scroll-spacer"></div>
+  </div>

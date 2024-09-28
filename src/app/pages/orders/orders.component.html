@@ -1,27 +1,30 @@
 <div class="orderHolder">
-    <app-grid 
-    [rowData]="rowData"
-    [columnDefs]="colDefs"
-    (newCustomQuote)="handleNewCustomQuote($event)"
-    (viewGeneratedQuoteClicked)="viewGeneratedQuote()"
-    (viewEmailTemplateClicked)="viewEmailTemplate()"
-    (viewDeliveryInfoClicked)="viewDeliveryInfo()"
-    (rowSelected)="onRowSelected($event)"
-    (deleteOrderClicked)="deleteOrderRow()"
-    (viewReceivedQuotesClicked)="viewReceivedQuotes()"
-    (markOrderAsReceivedClicked)="openReceiveOrderModal($event)"
-    (viewAutomationSettingsClicked)="openAutomationSettingsModal()"
-    #gridComponent
+    <app-grid
+        [rowData]="rowData"
+        [columnDefs]="colDefs"
+        (newCustomQuote)="handleNewCustomQuote($event)"
+        (viewGeneratedQuoteClicked)="viewGeneratedQuote()"
+        (viewEmailTemplateClicked)="viewEmailTemplate()"
+        (viewDeliveryInfoClicked)="viewDeliveryInfo()"
+        (rowSelected)="onRowSelected($event)"
+        (deleteOrderClicked)="deleteOrderRow()"
+        (viewReceivedQuotesClicked)="viewReceivedQuotes($event)"
+        (markOrderAsReceivedClicked)="openReceiveOrderModal($event)"
+        (viewAutomationSettingsClicked)="openAutomationSettingsModal()"
+        (viewAutomationTemplatesClicked)="viewTemplatesQuotes()"
+        #gridComponent
     >
     </app-grid>
 </div>
-    <app-received-quotes-side-pane 
+<app-received-quotes-side-pane
     [isOpen]="isSidePaneOpen"
     [selectedOrder]="selectedOrder"
     (closed)="isSidePaneOpen = false"
     (quoteAccepted)="onQuoteAccepted()"
-    ></app-received-quotes-side-pane>
+></app-received-quotes-side-pane>
+<app-templates-quotes-side-pane [isOpen]="isTemplateSidePaneOpen" (closed)="isTemplateSidePaneOpen = false">
+</app-templates-quotes-side-pane>
+
 <div *ngIf="isLoading" class="loading-overlay">
     <app-loading-spinner></app-loading-spinner>
 </div>
-

@@ -1,0 +1,71 @@
+<div class="side-pane" [class.open]="isAddWidgetOpen">
+    <div class="side-pane-header">
+        <div style="width: 100%; height: 50px; display: flex; padding: 5px; justify-content: space-between">
+            <div style="display: flex">
+                <h2 style="font-size: 25px; margin-right: 10px">Add Widget</h2>
+            </div>
+            <button mat-icon-button class="close-button" (click)="close()">
+                <mat-icon>close</mat-icon>
+            </button>
+        </div>
+    </div>
+    <div class="side-pane-content">
+        <div class="chart-previews">
+            <div class="chart-preview" *ngFor="let chart of chartConfigs" (click)="addWidget(chart)">
+                <div class="preview-container" [ngSwitch]="chart.component">
+                    <app-bar-chart
+                        *ngSwitchCase="'BarChartComponent'"
+                        [data]="chart.data"
+                        [title]="chart.title"
+                    ></app-bar-chart>
+                    <app-line-chart
+                        *ngSwitchCase="'LineChartComponent'"
+                        [data]="chart.data"
+                        [title]="chart.title"
+                    ></app-line-chart>
+                    <app-pie-chart
+                        *ngSwitchCase="'PieChartComponent'"
+                        [data]="chart.data"
+                        [title]="chart.title"
+                    ></app-pie-chart>
+                    <app-bubble-chart
+                        *ngSwitchCase="'BubbleChartComponent'"
+                        [data]="chart.data"
+                        [title]="chart.title"
+                    ></app-bubble-chart>
+                    <app-line-bar
+                        *ngSwitchCase="'LineBarComponent'"
+                        [data]="chart.data"
+                        [title]="chart.title"
+                    ></app-line-bar>
+                    <app-radar
+                        *ngSwitchCase="'RadarComponent'"
+                        [data]="chart.data"
+                        [title]="chart.title"
+                    ></app-radar>
+                    <app-scatterplot
+                        *ngSwitchCase="'ScatterPlotComponent'"
+                        [data]="chart.data"
+                        [title]="chart.title"
+                        style="height: 20rem;"
+                    ></app-scatterplot>
+                    <app-donuttemplate
+                        *ngSwitchCase="'DonutChartComponent'"
+                        [orderData]="chart.data"
+                        [title]="chart.title"
+                        style="height: 20rem;"
+                    ></app-donuttemplate>
+                    <app-bubblechart
+                            *ngSwitchCase="'BubblechartComponent'"
+                            [data]="chart.data"
+                            [chartTitle]="chart.title"
+                            style="height: 20rem;"
+                        ></app-bubblechart>
+                    <ng-container *ngSwitchDefault>
+                        <ng-container *ngComponentOutlet="charts[chart.component]"></ng-container>
+                    </ng-container>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

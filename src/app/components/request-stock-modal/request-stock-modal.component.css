@@ -1,0 +1,25 @@
+:host {
+    display: block;
+    width: 100%;
+    max-width: 600px;
+}
+
+mat-form-field {
+    width: 100%;
+    margin-bottom: 15px;
+    --mdc-filled-text-field-label-text-color: #000000;
+    --mdc-filled-text-field-container-color: #f1f1f1;
+}
+
+mat-dialog-content {
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.btn {
+    margin-right: auto;
+    margin-left: auto;
+    border-radius: 5px;
+    width: 150px;
+    height: 40px;
+}

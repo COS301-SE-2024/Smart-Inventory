@@ -12,7 +12,6 @@ import { Component } from '@angular/core';
     styles: [
         `
             .spinner {
-                margin: 100px auto 0;
                 width: 70px;
                 text-align: center;
             }
@@ -20,7 +19,7 @@ import { Component } from '@angular/core';
             .spinner > div {
                 width: 18px;
                 height: 18px;
-                background-color: grey;
+                background-color: #1976d2;
 
                 border-radius: 100%;
                 display: inline-block;

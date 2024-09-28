@@ -1,99 +1,95 @@
-<mat-tab-group>
-    <mat-tab label="Profile">
-        <ng-container>
-            <div class="accounts-section">
-                <div class="accounts-row-two">
-                  <div class="form-container">
-                    <h4>Personal details</h4>
-                    <hr>
-                    
-                    <div class="name-surname-row">
-                      <mat-form-field class="form-field">
-                        <input matInput placeholder="Name" [(ngModel)]="profile.name">
-                      </mat-form-field>
-                      
-                      <mat-form-field class="form-field">
-                        <input matInput placeholder="Surname" [(ngModel)]="profile.surname">
-                      </mat-form-field>
-                    </div>
-                    
-                    <mat-form-field class="form-field email-field">
-                      <input matInput placeholder="Email" [formControl]="emailFormControl">
-                      <mat-error *ngIf="emailFormControl.hasError('email') && !emailFormControl.hasError('required')">
-                        Please enter a valid email address
-                      </mat-error>
-                      <mat-error *ngIf="emailFormControl.hasError('required')">
-                        Email is <strong>required</strong>
-                      </mat-error>
-                    </mat-form-field>
-                    
-                    <button mat-raised-button color="primary" (click)="saveProfileChanges()">Save Changes</button>
-              
-                    <h4>Password</h4>
-                    <hr>
-                    
-                    <div class="password-row">
-                      <mat-form-field class="form-field current-password">
-                        <input matInput [type]="hidePassword ? 'password' : 'text'" placeholder="Current Password" [(ngModel)]="password.current">
-                        <button mat-icon-button matSuffix (click)="togglePasswordVisibility()" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hidePassword">
-                          <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
-                        </button>
-                      </mat-form-field>
-                      
-                      <button mat-raised-button color="primary" class="change-password-button" (click)="initiatePasswordChange()">Change Password</button>
-                    </div>
-              
-                    <div *ngIf="isChangingPassword">
-                      <mat-form-field class="form-field">
-                        <input matInput [type]="hidePassword ? 'password' : 'text'" placeholder="New Password" [(ngModel)]="password.new">
-                      </mat-form-field>
-                      
-                      <div class="password-action-buttons">
-                        <button mat-raised-button color="primary" (click)="updatePassword()">Update</button>
-                        <button mat-button color="warn" (click)="cancelPasswordChange()">Cancel</button>
-                      </div>
-                    </div>
-              
-                    <h4>Delete Account</h4>
-                    <hr>
-                    
-                    <div class="delete-account-row">
-                      <button mat-raised-button color="warn" class="delete-button" (click)="toggleDeleteAccount()">Delete Account</button>
-                      <button mat-button *ngIf="isDeleteAccountVisible" (click)="toggleDeleteAccount()">Cancel</button>
-                    </div>
-              
-                    <div *ngIf="isDeleteAccountVisible" class="delete-confirmation-row">
-                      <mat-form-field class="form-field">
-                        <input matInput type="password" placeholder="Current Password" [(ngModel)]="password.currentDelete">
-                      </mat-form-field>
-                      
-                      <mat-form-field class="form-field">
-                        <input matInput placeholder="Confirm Email" [(ngModel)]="profile.confirmEmailDelete">
-                      </mat-form-field>
-                      
-                      <button mat-raised-button color="warn" class="confirm-delete-button" (click)="handleDeleteAccount()">Confirm Delete</button>
-                    </div>
-                  </div>
+<div class="settings-container">
+    <app-templates-quotes-side-pane [isOpen]="isTemplateSidePaneOpen" (closed)="isTemplateSidePaneOpen = false">
+    </app-templates-quotes-side-pane>
+    <div class="intro-section">
+        <h2>Customize Your Experience</h2>
+        <p>Tailor the app to your needs by adjusting these key settings</p>
+    </div>
+    <div class="tiles-grid">
+        <div class="tile" data-tooltip="Manage your personal information">
+            <div class="tile-content">
+                <div class="tile-icon">
+                    <i class="fas fa-user"></i>
                 </div>
-              </div>
-        </ng-container>
-    </mat-tab>
-    <mat-tab label="Settings">
-        <ng-container>
-            <div class="second-row" style="text-align: center">
-                <h4>Theme</h4>
-                <hr />
-                <div class="theme-selection-grid">
-                    <div class="theme-option" [ngClass]="{ 'selected-theme': currentTheme === 'light' }"
-                        (click)="selectTheme('light')">
-                        <img src="assets/img/light-mode.png" alt="Light Mode" />
-                    </div>
-                    <div class="theme-option" [ngClass]="{ 'selected-theme': currentTheme === 'dark' }"
-                        (click)="selectTheme('dark')">
-                        <img src="assets/img/dark-mode.png" alt="Dark Mode" />
-                    </div>
+                <h3>Personal Details</h3>
+                <div class="tile-inputs">
+                    <input type="text" placeholder="Name" [(ngModel)]="personalDetails.name" />
+                    <input type="text" placeholder="Surname" [(ngModel)]="personalDetails.surname" />
+                    <input type="email" placeholder="Email" [(ngModel)]="personalDetails.email" />
                 </div>
             </div>
-        </ng-container>
-    </mat-tab>
-</mat-tab-group>
+            <div class="tile-button">
+                <button (click)="savePersonalDetails()">Save Changes</button>
+            </div>
+        </div>
+
+        <div class="tile" data-tooltip="Update your account password">
+            <div class="tile-content">
+                <div class="tile-icon">
+                    <i class="fas fa-lock"></i>
+                </div>
+                <h3>Password</h3>
+                <div class="tile-inputs">
+                    <input type="password" placeholder="Current Password" [(ngModel)]="passwordChange.current" />
+                    <input type="password" placeholder="New Password" [(ngModel)]="passwordChange.new" />
+                </div>
+            </div>
+            <div class="tile-button">
+                <button (click)="updatePassword()">Update Password</button>
+            </div>
+        </div>
+
+        <div class="tile" data-tooltip="Customize your email templates">
+            <div class="tile-content">
+                <div class="tile-icon">
+                    <i class="fas fa-envelope"></i>
+                </div>
+                <h3>Email Template</h3>
+                <p>Update and edit your template for emails sent.</p>
+            </div>
+            <div class="tile-button">
+                <button (click)="editEmailTemplate()">Edit Template</button>
+            </div>
+        </div>
+
+        <div class="tile" data-tooltip="Manage your automation templates">
+            <div class="tile-content">
+                <div class="tile-icon">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <h3>Automation Templates</h3>
+                <p>Add, remove and edit your templates for order automation.</p>
+            </div>
+            <div class="tile-button">
+                <button (click)="editAutomationTemplates()">Edit Templates</button>
+            </div>
+        </div>
+
+        <div class="tile" data-tooltip="Update your delivery preferences">
+            <div class="tile-content">
+                <div class="tile-icon">
+                    <i class="fas fa-truck"></i>
+                </div>
+                <h3>Delivery Information</h3>
+                <p>Update and change your delivery information.</p>
+            </div>
+            <div class="tile-button">
+                <button (click)="editDeliveryInfo()">Edit Details</button>
+            </div>
+        </div>
+
+        <div class="tile" data-tooltip="Customize your app experience">
+            <div class="tile-content">
+                <div class="tile-icon">
+                    <i class="fas fa-palette"></i>
+                </div>
+                <h3>Theme</h3>
+                <p>Switch between light and dark theme.</p>
+            </div>
+            <div class="tile-button">
+                <button (click)="changeTheme()">Customize</button>
+            </div>
+        </div>
+    </div>
+    <div class="scroll-spacer"></div>
+</div>

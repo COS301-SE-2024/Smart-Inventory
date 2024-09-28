@@ -1,127 +1,172 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef, AfterViewInit, Input, SimpleChanges, OnChanges } from '@angular/core';
+import {
+    Component,
+    OnInit,
+    OnDestroy,
+    ViewChild,
+    ElementRef,
+    AfterViewInit,
+    Input,
+    SimpleChanges,
+    OnChanges,
+} from '@angular/core';
 import * as echarts from 'echarts';
 
 type EChartsOption = echarts.EChartsOption;
 type ChartData = {
-  source: any[];
+    source: any[];
 };
 
 @Component({
-  selector: 'app-line-bar',
-  standalone: true,
-  imports: [],
-  templateUrl: './line-bar.component.html',
-  styleUrl: './line-bar.component.css'
+    selector: 'app-line-bar',
+    standalone: true,
+    imports: [],
+    templateUrl: './line-bar.component.html',
+    styleUrl: './line-bar.component.css',
 })
 export class LineBarComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges {
-  @ViewChild('chartContainer') chartContainer!: ElementRef;
-  private myChart!: echarts.ECharts;
-  @Input() data!: ChartData; // Input property to accept data
+    @ViewChild('chartContainer') chartContainer!: ElementRef;
+    private myChart!: echarts.ECharts;
+    @Input() data!: ChartData;
+    private resizeObserver!: ResizeObserver;
 
-  // private extendedData = {
-  //   source: [
-  //     ["Metric", "2021", "2022", "2023", "2024", "2025", "2026"],
-  //     ["Supplier S001 Total Spent", 56.5, 82.1, 88.7, 70.1, 53.4, 85.1],
-  //     ["Supplier S002 Total Spent", 51.1, 51.4, 55.1, 53.3, 73.8, 68.7],
-  //     ["Supplier S003 Total Spent", 40.1, 62.2, 69.5, 36.4, 45.2, 32.5],
-  //     ["Supplier S004 Total Spent", 25.2, 37.1, 41.2, 18, 33.9, 49.1],
-  //     ["Supplier S005 Total Spent", 62.2, 37.0, 18, 88.7, 49.1, 56.5],
-  //   ]
-  // };
+    constructor() {}
 
-  constructor() { }
+    ngOnInit(): void {}
 
-  ngOnInit(): void {
-  }
-
-  ngAfterViewInit(): void {
-    this.initChart();
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['data'] && !changes['data'].firstChange) {
-      // console.log('tf: ', this.data);
-      this.initChart();  // Re-initialize the chart when input data changes
+    ngAfterViewInit(): void {
+        this.initChart();
+        this.observeResize();
     }
-  }
 
-  initChart(): void {
-    if (this.chartContainer && this.data && this.data.source) {
-      this.myChart = echarts.init(this.chartContainer.nativeElement);
-
-      const dataSource = this.data.source;
-
-      const option: EChartsOption = {
-        title: { text: 'Total amount spent over periods' },
-        tooltip: {
-          trigger: 'axis',
-          showContent: false
-        },
-        legend: {},
-        dataset: {
-          source: dataSource
-        },
-        xAxis: { type: 'category' },
-        yAxis: {},
-        grid: { top: '55%' },
-        series: [
-          ...dataSource.slice(1).map(() => ({
-            type: 'line',
-            smooth: true,
-            seriesLayoutBy: 'row',
-            emphasis: { focus: 'series' }
-          })),
-          {
-            type: 'pie',
-            id: 'pie',
-            radius: '30%',
-            center: ['50%', '25%'],
-            emphasis: { focus: 'self' },
-            label: {
-              // Ensure the formatter uses the correct data and field names
-              formatter: '{b}: {@2021} ({d}%)'
-            },
-            encode: {
-              itemName: 'Supplier ID', // Assuming 'Supplier ID' is the name field
-              value: '2021', // Assuming '2021' is a column with numeric values
-              tooltip: '2021'
+    private observeResize(): void {
+        this.resizeObserver = new ResizeObserver(() => {
+            if (this.myChart) {
+                this.myChart.resize();
             }
-          }
-        ] as echarts.SeriesOption[]
-      };
+        });
+        this.resizeObserver.observe(this.chartContainer.nativeElement);
+    }
 
-      this.myChart.setOption(option);
-
-      // Update the chart when the axis pointer updates
-      this.myChart.on('updateAxisPointer', (event: any) => {
-        const xAxisInfo = event.axesInfo[0];
-        if (xAxisInfo) {
-          const dimension = xAxisInfo.value + 1;
-          this.myChart.setOption({
-            series: [{
-              id: 'pie',
-              label: {
-                // Ensure dynamic year updates correctly
-                formatter: `{b}: {@[${dataSource[0][dimension]}]} ({d}%)`
-              },
-              encode: {
-                value: dataSource[0][dimension], // Dynamically picking the correct year
-                tooltip: dataSource[0][dimension]
-              }
-            }] as echarts.SeriesOption[]
-          });
+    ngOnChanges(changes: SimpleChanges): void {
+        if (changes['data'] && !changes['data'].firstChange) {
+            this.initChart();
         }
-      });
-    } else {
-      console.error("No data available or chart container is not ready.");
     }
-  }
 
+    initChart(): void {
+        if (this.chartContainer && this.data && this.data.source) {
+            if (!this.myChart) {
+                this.myChart = echarts.init(this.chartContainer.nativeElement);
+            }
 
-  ngOnDestroy(): void {
-    if (this.myChart != null) {
-      this.myChart.dispose();
+            const dataSource = this.data.source.slice(1); // Remove header row
+            const skus = dataSource.map((item) => item[0]);
+            const annualConsumptionValues = dataSource.map((item) => item[1]);
+            const cumulativePercentages = dataSource.map((item) => parseFloat(item[2]));
+            const categories = dataSource.map((item) => item[3]);
+
+            const option: EChartsOption = {
+                title: {
+                    text: 'ABC Analysis',
+                    left: 'center',
+                },
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'cross',
+                    },
+                    formatter: function (params: any) {
+                        const barData = params[0];
+                        const lineData = params[1];
+                        return `SKU: ${barData.name}<br/>
+                    Annual Consumption Value: $${barData.value.toFixed(2)}<br/>
+                    Cumulative Percentage: ${lineData.value.toFixed(2)}%<br/>
+                    Category: ${categories[barData.dataIndex]}`;
+                    },
+                },
+                legend: {
+                    data: ['Annual Consumption Value', 'Cumulative Percentage'],
+                    bottom: 0,
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '10%',
+                    containLabel: true,
+                },
+                xAxis: {
+                    type: 'category',
+                    data: skus,
+                    axisLabel: {
+                        interval: 0,
+                        rotate: 45,
+                    },
+                },
+                yAxis: [
+                    {
+                        type: 'value',
+                        name: 'Annual Consumption Value',
+                        axisLabel: {
+                            formatter: '${value}',
+                        },
+                    },
+                    {
+                        type: 'value',
+                        name: 'Cumulative Percentage',
+                        max: 100,
+                        axisLabel: {
+                            formatter: '{value}%',
+                        },
+                    },
+                ],
+                series: [
+                    {
+                        name: 'Annual Consumption Value',
+                        type: 'bar',
+                        data: annualConsumptionValues,
+                        itemStyle: {
+                            color: function (params: any) {
+                                const category = categories[params.dataIndex];
+                                if (category === 'A') return '#5470c6';
+                                if (category === 'B') return '#91cc75';
+                                return '#fac858';
+                            },
+                        },
+                    },
+                    {
+                        name: 'Cumulative Percentage',
+                        type: 'line',
+                        yAxisIndex: 1,
+                        data: cumulativePercentages,
+                        smooth: true,
+                        lineStyle: {
+                            width: 3,
+                            color: '#ee6666',
+                        },
+                        markLine: {
+                            silent: true,
+                            lineStyle: {
+                                color: '#333',
+                            },
+                            data: [
+                                { yAxis: 80, name: 'A (80%)' },
+                                { yAxis: 95, name: 'B (95%)' },
+                            ],
+                        },
+                    },
+                ],
+            };
+
+            this.myChart.setOption(option);
+        }
     }
-  }
 
+    ngOnDestroy(): void {
+        if (this.resizeObserver) {
+            this.resizeObserver.disconnect();
+        }
+        if (this.myChart) {
+            this.myChart.dispose();
+        }
+    }
 }

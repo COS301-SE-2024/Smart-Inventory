@@ -1,81 +1,93 @@
-<h2 mat-dialog-title>Delivery Information</h2>
-<mat-dialog-content>
-  <form [formGroup]="deliveryForm" class="delivery-form">
-    <div class="form-row">
-      <mat-form-field appearance="outline">
-        <mat-label>Company</mat-label>
-        <input matInput formControlName="company">
-        <mat-error *ngIf="deliveryForm.get('company')?.invalid">{{getErrorMessage('company')}}</mat-error>
-      </mat-form-field>
+<div class="delivery-information-container">
+    <h1 mat-dialog-title style="text-align: center; --mdc-dialog-subhead-size: 30px">Delivery Information</h1>
+    <mat-dialog-content>
+        <form [formGroup]="deliveryForm" class="delivery-form">
+            <div class="form-row">
+                <mat-form-field appearance="outline">
+                    <mat-label>Company</mat-label>
+                    <input matInput formControlName="company" />
+                    <mat-error *ngIf="deliveryForm.get('company')?.invalid">{{ getErrorMessage('company') }}</mat-error>
+                </mat-form-field>
+            </div>
+
+            <div class="form-row">
+                <mat-form-field appearance="outline">
+                    <mat-label>Street</mat-label>
+                    <input matInput formControlName="street" />
+                    <mat-error *ngIf="deliveryForm.get('street')?.invalid">{{ getErrorMessage('street') }}</mat-error>
+                </mat-form-field>
+            </div>
+
+            <div class="form-row three-col">
+                <mat-form-field appearance="outline">
+                    <mat-label>City</mat-label>
+                    <input matInput formControlName="city" />
+                    <mat-error *ngIf="deliveryForm.get('city')?.invalid">{{ getErrorMessage('city') }}</mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                    <mat-label>State</mat-label>
+                    <input matInput formControlName="state" />
+                    <mat-error *ngIf="deliveryForm.get('state')?.invalid">{{ getErrorMessage('state') }}</mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                    <mat-label>Postal Code</mat-label>
+                    <input matInput formControlName="postalCode" />
+                    <mat-error *ngIf="deliveryForm.get('postalCode')?.invalid">{{
+                        getErrorMessage('postalCode')
+                    }}</mat-error>
+                </mat-form-field>
+            </div>
+
+            <div class="form-row">
+                <mat-form-field appearance="outline">
+                    <mat-label>Country</mat-label>
+                    <input matInput formControlName="country" />
+                    <mat-error *ngIf="deliveryForm.get('country')?.invalid">{{ getErrorMessage('country') }}</mat-error>
+                </mat-form-field>
+            </div>
+
+            <div class="form-row">
+                <mat-form-field appearance="outline">
+                    <mat-label>Delivery Instructions</mat-label>
+                    <textarea matInput formControlName="instructions" rows="3"></textarea>
+                </mat-form-field>
+            </div>
+
+            <div class="form-row">
+                <mat-form-field appearance="outline">
+                    <mat-label>Contact Name</mat-label>
+                    <input matInput formControlName="contactName" />
+                    <mat-error *ngIf="deliveryForm.get('contactName')?.invalid">{{
+                        getErrorMessage('contactName')
+                    }}</mat-error>
+                </mat-form-field>
+            </div>
+
+            <div class="form-row two-col">
+                <mat-form-field appearance="outline">
+                    <mat-label>Email</mat-label>
+                    <input matInput formControlName="email" type="email" />
+                    <mat-error *ngIf="deliveryForm.get('email')?.invalid">{{ getErrorMessage('email') }}</mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                    <mat-label>Phone</mat-label>
+                    <input matInput formControlName="phone" />
+                    <mat-error *ngIf="deliveryForm.get('phone')?.invalid">{{ getErrorMessage('phone') }}</mat-error>
+                </mat-form-field>
+            </div>
+        </form>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+        <button mat-flat-button (click)="onCancel()" [disabled]="isLoading" class="btn">Cancel</button>
+        <button mat-flat-button (click)="onSave()" [disabled]="!deliveryForm.valid || isLoading" class="btn">
+            Save
+        </button>
+    </mat-dialog-actions>
+
+    <div *ngIf="isLoading" class="loading-overlay">
+        <app-loading-spinner></app-loading-spinner>
     </div>
-
-    <div class="form-row">
-      <mat-form-field appearance="outline">
-        <mat-label>Street</mat-label>
-        <input matInput formControlName="street">
-        <mat-error *ngIf="deliveryForm.get('street')?.invalid">{{getErrorMessage('street')}}</mat-error>
-      </mat-form-field>
-    </div>
-
-    <div class="form-row three-col">
-      <mat-form-field appearance="outline">
-        <mat-label>City</mat-label>
-        <input matInput formControlName="city">
-        <mat-error *ngIf="deliveryForm.get('city')?.invalid">{{getErrorMessage('city')}}</mat-error>
-      </mat-form-field>
-
-      <mat-form-field appearance="outline">
-        <mat-label>State</mat-label>
-        <input matInput formControlName="state">
-        <mat-error *ngIf="deliveryForm.get('state')?.invalid">{{getErrorMessage('state')}}</mat-error>
-      </mat-form-field>
-
-      <mat-form-field appearance="outline">
-        <mat-label>Postal Code</mat-label>
-        <input matInput formControlName="postalCode">
-        <mat-error *ngIf="deliveryForm.get('postalCode')?.invalid">{{getErrorMessage('postalCode')}}</mat-error>
-      </mat-form-field>
-    </div>
-
-    <div class="form-row">
-      <mat-form-field appearance="outline">
-        <mat-label>Country</mat-label>
-        <input matInput formControlName="country">
-        <mat-error *ngIf="deliveryForm.get('country')?.invalid">{{getErrorMessage('country')}}</mat-error>
-      </mat-form-field>
-    </div>
-
-    <div class="form-row">
-      <mat-form-field appearance="outline">
-        <mat-label>Delivery Instructions</mat-label>
-        <textarea matInput formControlName="instructions" rows="3"></textarea>
-      </mat-form-field>
-    </div>
-
-    <div class="form-row">
-      <mat-form-field appearance="outline">
-        <mat-label>Contact Name</mat-label>
-        <input matInput formControlName="contactName">
-        <mat-error *ngIf="deliveryForm.get('contactName')?.invalid">{{getErrorMessage('contactName')}}</mat-error>
-      </mat-form-field>
-    </div>
-
-    <div class="form-row two-col">
-      <mat-form-field appearance="outline">
-        <mat-label>Email</mat-label>
-        <input matInput formControlName="email" type="email">
-        <mat-error *ngIf="deliveryForm.get('email')?.invalid">{{getErrorMessage('email')}}</mat-error>
-      </mat-form-field>
-
-      <mat-form-field appearance="outline">
-        <mat-label>Phone</mat-label>
-        <input matInput formControlName="phone">
-        <mat-error *ngIf="deliveryForm.get('phone')?.invalid">{{getErrorMessage('phone')}}</mat-error>
-      </mat-form-field>
-    </div>
-  </form>
-</mat-dialog-content>
-<mat-dialog-actions align="end">
-  <button mat-button (click)="onCancel()">Cancel</button>
-  <button mat-raised-button color="primary" (click)="onSave()" [disabled]="!deliveryForm.valid">Save</button>
-</mat-dialog-actions>
+</div>

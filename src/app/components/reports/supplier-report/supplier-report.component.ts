@@ -4,7 +4,7 @@ import { MaterialModule } from '../../material/material.module';
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatGridListModule } from '@angular/material/grid-list';
-import { MatCardModule } from '@angular/material/card';
+// import { MatCardModule } from '@angular/material/card';
 import { GridComponent } from '../../grid/grid.component';
 import { ColDef } from 'ag-grid-community';
 import { SaleschartComponent } from '../../charts/saleschart/saleschart.component';
@@ -22,17 +22,32 @@ import { LineComponent } from '../../charts/line/line.component';
 import { RadarComponent } from '../../charts/radar/radar.component';
 import { RowNode } from 'ag-grid-community';
 import { AgGridAngular } from 'ag-grid-angular';
+import { CompactType, DisplayGrid, GridsterConfig, GridsterItem, GridsterModule, GridType } from 'angular-gridster2';
+import { InventoryService } from '../../../../../amplify/services/inventory.service';
+import { DataCollectionService } from 'app/components/add-widget-side-pane/data-collection.service';
 
 type ChartMetric = 'On Time Delivery Rate' | 'Order Accuracy Rate' | 'Out Standing Payments' | 'TotalSpent';
 type ChartData = {
     source: any[];
 };
+
+interface SupplierData {
+    'Supplier ID': string;
+    Date: string;
+    'On Time Delivery Rate': number;
+    'Order Accuracy Rate': number;
+    'Out Standing Payments': number;
+    'Reorder Level': string;
+    RiskScore: string;
+    TotalSpent: string;
+}
+
 @Component({
     selector: 'app-supplier-report',
     standalone: true,
     imports: [
         GridComponent,
-        MatCardModule,
+        // MatCardModule,
         MatGridListModule,
         MaterialModule,
         CommonModule,
@@ -43,7 +58,8 @@ type ChartData = {
         DateSelectCellEditorComponent,
         RoleSelectCellEditorComponent,
         LineComponent,
-        RadarComponent
+        RadarComponent,
+        GridsterModule,
     ],
     templateUrl: './supplier-report.component.html',
     styleUrl: './supplier-report.component.css',
@@ -53,6 +69,7 @@ export class SupplierReportComponent implements OnInit {
         private titleService: TitleService,
         private router: Router,
         private route: ActivatedRoute,
+        private dataCollectionService: DataCollectionService,
     ) {
         Amplify.configure(outputs);
     }
@@ -60,20 +77,69 @@ export class SupplierReportComponent implements OnInit {
     visibleTiles: any[] = []; // Holds the tiles currently being displayed
     currentIndex = 0;
     chartData: any;
-    initialInventory: number = 500;  // Starting inventory at the beginning of the period
-    endingInventory: number = 600;  // Ending inventory at the end of the period
+    initialInventory: number = 500; // Starting inventory at the beginning of the period
+    endingInventory: number = 600; // Ending inventory at the end of the period
 
-    updateVisibleTiles() {
-        this.visibleTiles = this.tiles.slice(this.currentIndex, this.currentIndex + 4);
+    options: GridsterConfig = {
+        gridType: GridType.VerticalFixed,
+        displayGrid: DisplayGrid.None,
+        compactType: CompactType.CompactUp,
+        margin: 20,
+        outerMargin: true,
+        mobileBreakpoint: 640,
+        minCols: 12,
+        maxCols: 12,
+        maxItemCols: 12,
+        minItemCols: 1,
+        maxItemRows: 100,
+        minItemRows: 1,
+        defaultItemCols: 1,
+        defaultItemRows: 1,
+        fixedColWidth: 100,
+        fixedRowHeight: 100,
+        minRows: 18, // Adjust based on your total layout height
+        maxRows: 18, // Adjust based on your total layout height
+        enableEmptyCellClick: false,
+        enableEmptyCellContextMenu: false,
+        enableEmptyCellDrop: false,
+        enableEmptyCellDrag: false,
+        enableOccupiedCellDrop: false,
+        draggable: {
+            enabled: false,
+        },
+        resizable: {
+            enabled: false,
+        },
+        swap: false,
+        pushItems: false,
+        disablePushOnDrag: true,
+        disablePushOnResize: true,
+        pushDirections: { north: false, east: false, south: false, west: false },
+        pushResizeItems: false,
+    };
+
+    items: Array<GridsterItem> = [
+        { cols: 12, rows: 6, y: 8.6, x: 0 },
+        { cols: 5, rows: 4.6, y: 0, x: 7 },
+        { cols: 12, rows: 4, y: 4.6, x: 0 },
+        { cols: 7, rows: 4.6, y: 0, x: 0 },
+    ];
+    startIndex = 0;
+    scrollTiles(direction: 'left' | 'right') {
+        if (direction === 'left') {
+            this.startIndex = (this.startIndex - 1 + this.tiles.length) % this.tiles.length;
+        } else {
+            this.startIndex = (this.startIndex + 1) % this.tiles.length;
+        }
+        this.updateVisibleMetrics();
     }
 
-    scrollTiles(direction: 'left' | 'right') {
-        if (direction === 'left' && this.currentIndex > 0) {
-            this.currentIndex--;
-        } else if (direction === 'right' && this.currentIndex < this.tiles.length - 4) {
-            this.currentIndex++;
+    private updateVisibleMetrics() {
+        this.visibleTiles = [];
+        for (let i = 0; i < 3; i++) {
+            const index = (this.startIndex + i) % this.tiles.length;
+            this.visibleTiles.push(this.tiles[index]);
         }
-        this.updateVisibleTiles();
     }
 
     automation: boolean = true;
@@ -91,15 +157,14 @@ export class SupplierReportComponent implements OnInit {
         subtitle:
             'Have an overall view of your inventory, relevant metrics to assist you in automation and ordering and provide analytics associated with it.',
         metrics: [
-            { name: 'Average supplier performance', value: null },  // Replace '90%' with the actual value
-            { name: 'Overall product defect rate', value: '0%' },    // Replace '2%' with the actual value
-            { name: 'Worst performer', value: null },        // Replace 'Supplier X' with the actual value
-            { name: 'Average delivery rate', value: null },         // Replace '95%' with the actual value
-            { name: 'Fill Rate', value: '0%' },                     // Replace '97%' with the actual value
-            { name: 'Total inventory turnover', value: 'null' },  // Replace '5 times' with the actual value
-            // { name: 'Critical/Major/Minor Defect Rate', value: '0%' }, // Replace '4%' with the actual value
-            { name: '“Right First Time” Rate', value: '0%' },       // Replace '92%' with the actual value
-            { name: 'On-time Order Completion Rate', value: 0 }  // Replace '99%' with the actual value
+            { name: 'Average supplier performance', value: null, icon: 'bar_chart' },
+            { name: 'Overall product defect rate', value: '0%', icon: 'error_outline' },
+            { name: 'Worst performer', value: null, icon: 'trending_down' },
+            { name: 'Average delivery rate', value: null, icon: 'local_shipping' },
+            { name: 'Fill Rate', value: '0%', icon: 'inventory_2' },
+            { name: 'Total inventory turnover', value: 'null', icon: 'loop' },
+            { name: '"Right First Time" Rate', value: '0%', icon: 'check_circle_outline' },
+            { name: 'On-time Order Completion Rate', value: 0, icon: 'schedule' },
         ],
         graphs: [],
     };
@@ -116,57 +181,75 @@ export class SupplierReportComponent implements OnInit {
     }
 
     async ngOnInit() {
-        
         this.titleService.updateTitle(this.getCurrentRoute());
         await this.loadSuppliersData();
 
-        this.loadSupplierMetrics();
-        await this.fetchMetrics(this.rowData);
-        console.log(this.getMostAverageSupplier()['Supplier ID']);
-        console.log(this.getWorstPerformingSupplier()['Supplier ID']);
-        console.log(this.calculateAverageDeliveryRate());
-        console.log(this.calculateOnTimeOrderCompletionRate());
-        this.updateVisibleTiles();
-        this.SupplierReport.metrics[0].value = this.getMostAverageSupplier()['Supplier ID'];
-        this.SupplierReport.metrics[1].value = this.calculateDefectRate(this.orderFulfillmentDetails);
-        this.SupplierReport.metrics[2].value = this.getWorstPerformingSupplier()['Supplier ID'];
-        this.SupplierReport.metrics[3].value = this.calculateAverageDeliveryRate();
-        this.SupplierReport.metrics[4].value = this.calculateOrderFulfillmentRate(this.orderFulfillmentDetails);
-        this.SupplierReport.metrics[5].value = this.calculateInventoryTurnover(this.stockRequests, this.initialInventory, this.endingInventory);;
-        this.SupplierReport.metrics[6].value = this.calculateRightFirstTimeRate(this.orderFulfillmentDetails);
-        this.SupplierReport.metrics[7].value = this.calculateOnTimeOrderCompletionRate();
-        // console.log(this.getChartData());
-        // console.log(this.visibleTiles);
-        this.chartData = this.getChartData();
-        console.log('chartdata:', this.chartData.seriesData)
-        this.processData();
-        this.inventory = await this.loadInventoryData();
-        this.topSuppliersData = this.calculateTopSuppliers();
-        console.log('supplier data:', this.topSuppliersData)
-        // console.log('inventory ', this.inventory)
-        // console.log('my defect rate', this.calculateDefectRate(this.orderFulfillmentDetails));
-        // console.log('my rowData', this.rowData)
+        if (this.originalData.length > 0) {
+            this.updateVisibleMetrics();
+            this.chartData = this.getChartData();
+            console.log('chartdata:', this.chartData.seriesData);
+            this.processData();
+            this.topSuppliersData = this.calculateTopSuppliers();
+            console.log('supplier data:', this.topSuppliersData);
+        } else {
+            console.warn('No supplier data available for processing');
+        }
         this.isLoading = false;
     }
 
     colDefs!: ColDef[];
-    originalData: any[] = [];
+    originalData: SupplierData[] = [];
 
     getCurrentRoute() {
         this.colDefs = [
-            { field: 'Supplier ID', headerName: 'Supplier ID' },
+            {
+                field: 'Supplier ID',
+                headerName: 'Supplier ID',
+                filter: 'agSetColumnFilter',
+                headerTooltip: 'Unique identifier for each supplier',
+            },
             {
                 field: 'Date',
                 headerName: 'Date',
-                cellEditor: DateSelectCellEditorComponent,  // Make sure this is set if it should be editable
-                cellRenderer: DateSelectCellEditorComponent
+                filter: 'agSetColumnFilter',
+                headerTooltip: 'Date of the recorded metrics',
             },
-            { field: 'On Time Delivery Rate', headerName: 'On Time Delivery Rate' },
-            { field: 'Order Accuracy Rate', headerName: 'Order Accuracy Rate' },
-            { field: 'Out Standing Payments', headerName: 'Out Standing Payments' },
-            { field: 'Reorder Level', headerName: 'Reorder Level' },
-            { field: 'RiskScore', headerName: 'Risk Score' },
-            { field: 'TotalSpent', headerName: 'Total Spent' },
+            {
+                field: 'On Time Delivery Rate',
+                headerName: 'On Time Delivery Rate',
+                filter: 'agSetColumnFilter',
+                headerTooltip: 'Percentage of orders delivered on time by the supplier',
+            },
+            {
+                field: 'Order Accuracy Rate',
+                headerName: 'Order Accuracy Rate',
+                filter: 'agSetColumnFilter',
+                headerTooltip: 'Percentage of orders fulfilled accurately by the supplier',
+            },
+            {
+                field: 'Out Standing Payments',
+                headerName: 'Out Standing Payments',
+                filter: 'agSetColumnFilter',
+                headerTooltip: 'Amount of payments currently due to the supplier',
+            },
+            {
+                field: 'Reorder Level',
+                headerName: 'Reorder Level',
+                filter: 'agSetColumnFilter',
+                headerTooltip: 'Stock level at which a new order should be placed with this supplier',
+            },
+            {
+                field: 'RiskScore',
+                headerName: 'Risk Score',
+                filter: 'agSetColumnFilter',
+                headerTooltip: 'Calculated risk assessment score for the supplier',
+            },
+            {
+                field: 'TotalSpent',
+                headerName: 'Total Spent',
+                filter: 'agSetColumnFilter',
+                headerTooltip: 'Cumulative amount spent with this supplier',
+            },
         ];
         return 'Supplier Report';
     }
@@ -185,29 +268,6 @@ export class SupplierReportComponent implements OnInit {
         return this.originalData.filter((item) => item['Supplier ID'] === supplierId).map((item) => item['Date']);
     }
 
-    onDateChange(supplierId: string, newDate: string): void {
-        // const updatedData = this.originalData.find(item =>
-        //     item['Supplier ID'] === supplierId && item['Date'] === newDate
-        // );
-        // if (updatedData) {
-        //     const rowIndex = this.rowData.findIndex(row => row['Supplier ID'] === supplierId);
-        //     if (rowIndex !== -1) {
-        //         this.rowData[rowIndex] = { ...updatedData };
-        //         const rowNode = this.gridComponent.api.getRowNode(rowIndex.toString());
-        //         if (rowNode) {
-        //             this.gridComponent.api.refreshCells({
-        //                 rowNodes: [rowNode],
-        //                 force: true
-        //             });
-        //         } else {
-        //             console.warn(`Row node not found for index ${rowIndex}`);
-        //             // Optionally, refresh the entire grid if the specific row can't be found
-        //             this.gridComponent.api.refreshCells({ force: true });
-        //         }
-        //     }
-        // }
-    }
-
     // Function to fetch data based on date and supplier ID
     fetchDataForDate(supplierId: string, date: string): any {
         // Mock function to simulate fetching data for a specific date
@@ -216,65 +276,65 @@ export class SupplierReportComponent implements OnInit {
 
     orderFulfillmentDetails: any[] = [
         {
-            OrderID: "ORD001",
-            SupplierID: "SUP001",
-            QuoteID: "QT001",
-            UPC: "012345678901",
+            OrderID: 'ORD001',
+            SupplierID: 'SUP001',
+            QuoteID: 'QT001',
+            UPC: '012345678901',
             OrderedQuantity: 100,
             DeliveredQuantity: 100,
-            ItemCondition: "Good",
-            OrderDate: new Date("2024-07-01"),
-            DeliveryDate: new Date("2024-07-03"),
-            Category: "Electronics"
+            ItemCondition: 'Good',
+            OrderDate: new Date('2024-07-01'),
+            DeliveryDate: new Date('2024-07-03'),
+            Category: 'Electronics',
         },
         {
-            OrderID: "ORD002",
-            SupplierID: "SUP002",
-            QuoteID: "QT002",
-            UPC: "012345678902",
+            OrderID: 'ORD002',
+            SupplierID: 'SUP002',
+            QuoteID: 'QT002',
+            UPC: '012345678902',
             OrderedQuantity: 200,
             DeliveredQuantity: 190,
-            ItemCondition: "Critical",
-            OrderDate: new Date("2024-07-02"),
-            DeliveryDate: new Date("2024-07-04"),
-            Category: "Appliances"
+            ItemCondition: 'Critical',
+            OrderDate: new Date('2024-07-02'),
+            DeliveryDate: new Date('2024-07-04'),
+            Category: 'Appliances',
         },
         {
-            OrderID: "ORD003",
-            SupplierID: "SUP003",
-            QuoteID: "QT003",
-            UPC: "012345678903",
+            OrderID: 'ORD003',
+            SupplierID: 'SUP003',
+            QuoteID: 'QT003',
+            UPC: '012345678903',
             OrderedQuantity: 150,
             DeliveredQuantity: 145,
-            ItemCondition: "Minor",
-            OrderDate: new Date("2024-07-01"),
-            DeliveryDate: new Date("2024-07-03"),
-            Category: "Furniture"
+            ItemCondition: 'Minor',
+            OrderDate: new Date('2024-07-01'),
+            DeliveryDate: new Date('2024-07-03'),
+            Category: 'Furniture',
         },
         {
-            OrderID: "ORD004",
-            SupplierID: "SUP004",
-            QuoteID: "QT004",
-            UPC: "012345678904",
+            OrderID: 'ORD004',
+            SupplierID: 'SUP004',
+            QuoteID: 'QT004',
+            UPC: '012345678904',
             OrderedQuantity: 120,
             DeliveredQuantity: 120,
-            ItemCondition: "Good",
-            OrderDate: new Date("2024-07-02"),
-            DeliveryDate: new Date("2024-07-05"),
-            Category: "Electronics"
+            ItemCondition: 'Good',
+            OrderDate: new Date('2024-07-02'),
+            DeliveryDate: new Date('2024-07-05'),
+            Category: 'Electronics',
         },
         {
-            OrderID: "ORD005",
-            SupplierID: "SUP005",
-            QuoteID: "QT005",
-            UPC: "012345678905",
+            OrderID: 'ORD005',
+            SupplierID: 'SUP005',
+            QuoteID: 'QT005',
+            UPC: '012345678905',
             OrderedQuantity: 300,
             DeliveredQuantity: 290,
-            ItemCondition: "Major",
-            OrderDate: new Date("2024-07-03"),
-            DeliveryDate: new Date("2024-07-06"),
-            Category: "Tools"
-        }
+            ItemCondition: 'Major',
+            OrderDate: new Date('2024-07-03'),
+            DeliveryDate: new Date('2024-07-06'),
+            Category: 'Tools',
+        },
     ];
 
     calculateInventoryTurnover(stockRequests: any[], initialInventory: number, endingInventory: number): string {
@@ -288,7 +348,7 @@ export class SupplierReportComponent implements OnInit {
         let totalOrdered = 0;
         let totalDelivered = 0;
 
-        details.forEach(detail => {
+        details.forEach((detail) => {
             totalOrdered += detail.OrderedQuantity;
             totalDelivered += detail.DeliveredQuantity;
         });
@@ -300,7 +360,7 @@ export class SupplierReportComponent implements OnInit {
         let totalItemsReceived = 0;
         let defectiveItems = 0;
 
-        details.forEach(detail => {
+        details.forEach((detail) => {
             totalItemsReceived += detail.DeliveredQuantity;
             // Consider any condition that is not 'Good' as defective
             if (detail.ItemCondition !== 'Good') {
@@ -313,7 +373,9 @@ export class SupplierReportComponent implements OnInit {
 
     calculateRightFirstTimeRate(details: any[]): number {
         let totalOrders = details.length;
-        let rightFirstTimeCount = details.filter(detail => detail.DeliveredQuantity === detail.OrderedQuantity && detail.ItemCondition === 'Good').length;
+        let rightFirstTimeCount = details.filter(
+            (detail) => detail.DeliveredQuantity === detail.OrderedQuantity && detail.ItemCondition === 'Good',
+        ).length;
 
         return (rightFirstTimeCount / totalOrders) * 100;
     }
@@ -331,13 +393,15 @@ export class SupplierReportComponent implements OnInit {
         const yAxisName = title; // Assuming you use the title as the yAxisName, adjust if necessary
 
         // Extract years dynamically from the data and sort them
-        const years = [...new Set(this.originalData.map(item => item['Date'].slice(0, 4)))].sort();
-        const supplierIds = [...new Set(this.originalData.map(item => item['Supplier ID']))];
+        const years = [...new Set(this.originalData.map((item) => item['Date'].slice(0, 4)))].sort();
+        const supplierIds = [...new Set(this.originalData.map((item) => item['Supplier ID']))];
 
         // Aggregate data for all metrics into one series per supplier
-        const seriesData = supplierIds.map(supplierId => {
-            const data = years.map(year => {
-                const yearData = this.originalData.filter(d => d['Supplier ID'] === supplierId && d['Date'].startsWith(year));
+        const seriesData = supplierIds.map((supplierId) => {
+            const data = years.map((year) => {
+                const yearData = this.originalData.filter(
+                    (d) => d['Supplier ID'] === supplierId && d['Date'].startsWith(year),
+                );
                 // Sum or average data based on metric, here we assume it's sum
                 return yearData.reduce((acc, item) => acc + Number(item[title] || 0), 0);
             });
@@ -350,12 +414,35 @@ export class SupplierReportComponent implements OnInit {
             xAxisData: years,
             seriesData,
             title,
-            yAxisName
+            yAxisName,
         };
     }
+
     async fetchMetrics(data: any[]) {
         try {
-            console.log(data);
+            console.log('processed data fetchmetrics:', data);
+
+            let totalSpent = 0;
+            let outstandingPayments = 0;
+
+            data.forEach((supplier) => {
+                // Parse the string values to floats and add them
+                totalSpent += parseFloat(supplier['TotalSpent']) || 0;
+                outstandingPayments += parseFloat(supplier['Out Standing Payments']) || 0;
+            });
+
+            console.log('Total spent:', totalSpent.toFixed(2), 'Outstanding payments:', outstandingPayments.toFixed(2));
+
+            this.tiles.push(
+                this.createTile('attach_money', 'Total Spend', 'Total Spent', totalSpent.toFixed(2)),
+                this.createTile(
+                    'money_off',
+                    'Outstanding Payments',
+                    'Outstanding Payments',
+                    outstandingPayments.toFixed(2),
+                ),
+            );
+
             data.forEach((supplier) => {
                 this.tiles.push(
                     this.createTile(
@@ -371,20 +458,11 @@ export class SupplierReportComponent implements OnInit {
                         supplier['Order Accuracy Rate'].toString(),
                     ),
                     this.createTile('repeat', 'Reorder Level', 'Reorder Level', supplier['Reorder Level']),
-                    this.createTile('attach_money', 'Total Spend', 'Total Spent', supplier['TotalSpent'].toString()),
-                    this.createTile(
-                        'money_off',
-                        'Outstanding Payments',
-                        'Outstanding Payments',
-                        supplier['Out Standing Payments'].toString(),
-                    ),
                     this.createTile('warning', 'Risk Score', 'Risk Score', supplier['RiskScore']),
                 );
             });
         } catch (error) {
-            console.log('Error fetching metrics');
-        } finally {
-            // // this.isLoading = false;
+            console.log('Error fetching metrics:', error);
         }
     }
 
@@ -444,9 +522,9 @@ export class SupplierReportComponent implements OnInit {
                     typeof curr['On Time Delivery Rate'] === 'number' ? curr['On Time Delivery Rate'] : 0;
                 const accuracyRate = typeof curr['Order Accuracy Rate'] === 'number' ? curr['Order Accuracy Rate'] : 0;
 
-                if (onTimeRate === 0 || accuracyRate === 0) {
-                    console.error('Invalid data for supplier:', curr);
-                }
+                // if (onTimeRate === 0 || accuracyRate === 0) {
+                //     console.error('Invalid data for supplier:', curr);
+                // }
 
                 return {
                     onTimeDeliveryRate: acc.onTimeDeliveryRate + onTimeRate,
@@ -473,10 +551,10 @@ export class SupplierReportComponent implements OnInit {
     // Determine average suppliers based on a threshold percentage
     getMostAverageSupplier(): any {
         const suppliers = this.originalData;
-        // console.log('The suppliers:', suppliers);
+        console.log('The suppliers:', suppliers);
 
         const averages = this.calculateAverages(suppliers);
-        // console.log("My averages:", averages);
+        console.log('My averages:', averages);
 
         let mostAverageSupplier = null;
         let smallestDifference = Infinity; // Start with a large number that any real difference will be smaller than
@@ -508,8 +586,11 @@ export class SupplierReportComponent implements OnInit {
                 mostAverageSupplier = supplier;
             }
         });
+        console.log('Most Average Supplier:', mostAverageSupplier);
+        if (mostAverageSupplier) {
+            return mostAverageSupplier['Supplier ID'];
+        }
 
-        // console.log("Most Average Supplier:", mostAverageSupplier);
         return mostAverageSupplier;
     }
 
@@ -572,7 +653,7 @@ export class SupplierReportComponent implements OnInit {
         // Calculate the average delivery rate
         // Ensure we do not divide by zero
         const averageDeliveryRate = count > 0 ? totalDeliveryRate / count : 0;
-        return (averageDeliveryRate).toFixed(2);
+        return averageDeliveryRate.toFixed(2);
     }
 
     calculateOnTimeOrderCompletionRate(): string {
@@ -582,492 +663,211 @@ export class SupplierReportComponent implements OnInit {
     }
 
     async loadInventoryData() {
+        try {
+            this.dataCollectionService.getInventoryItems().subscribe(
+                (inventoryItems) => {
+                    // this.rowData = inventoryItems.map((item: any) => ({
+                    //     inventoryID: item.inventoryID,
+                    //     sku: item.SKU,
+                    //     category: item.category,
+                    //     productId: item.productID,
+                    //     description: item.description,
+                    //     quantity: item.quantity,
+                    //     supplier: item.supplier,
+                    //     expirationDate: item.expirationDate,
+                    //     lowStockThreshold: item.lowStockThreshold,
+                    //     reorderFreq: item.reorderFreq,
+                    //     requests: 0,
+                    //     requestsQuantity: 0,
+                    // }));
+                    console.log('my inventory :', inventoryItems);
+                },
+                (error) => {
+                    console.error('Error fetching inventory data:', error);
+                    this.rowData = [];
+                },
+            );
+        } catch (error) {
+            console.error('Error in loadInventoryData:', error);
+            this.rowData = [];
+        }
         const inventoryData = [
             {
-                inventoryID: "bc9040cb-3834-4391-9ab7-153968c1d13a",
-                tenentId: "1717667019559-j85syk",
-                category: "Food: Perishable",
-                createdAt: "2024-08-05T13:14:26.211Z",
-                description: "Maize Meal - Super Fine, 5kg",
-                expirationDate: "2024-09-24T22:00:00.000Z",
+                inventoryID: 'bc9040cb-3834-4391-9ab7-153968c1d13a',
+                tenentId: '1717667019559-j85syk',
+                category: 'Food: Perishable',
+                createdAt: '2024-08-05T13:14:26.211Z',
+                description: 'Maize Meal - Super Fine, 5kg',
+                expirationDate: '2024-09-24T22:00:00.000Z',
                 lowStockThreshold: 20,
                 quantity: 72,
                 reorderFreq: 30,
-                SKU: "MS-301",
-                supplier: "Foodcorp",
-                upc: "6001070000000",
-                updatedAt: "2024-08-05T13:14:26.211Z",
-                condition: "good"
+                SKU: 'MS-301',
+                supplier: 'Foodcorp',
+                upc: '6001070000000',
+                updatedAt: '2024-08-05T13:14:26.211Z',
+                condition: 'good',
             },
             {
-                inventoryID: "7860ac1c-9b39-4c9b-bf2f-1efbb87cbdf3",
-                tenentId: "1717667019559-j85syk",
-                category: "Beverages: Non-Alcoholic",
-                createdAt: "2024-08-05T13:17:16.112Z",
-                description: "Amarula Cream Liqueur, 750ml",
-                expirationDate: "2024-08-07T22:00:00.000Z",
+                inventoryID: '7860ac1c-9b39-4c9b-bf2f-1efbb87cbdf3',
+                tenentId: '1717667019559-j85syk',
+                category: 'Beverages: Non-Alcoholic',
+                createdAt: '2024-08-05T13:17:16.112Z',
+                description: 'Amarula Cream Liqueur, 750ml',
+                expirationDate: '2024-08-07T22:00:00.000Z',
                 lowStockThreshold: 15,
                 quantity: 48,
                 reorderFreq: 15,
-                SKU: "AM-405",
-                supplier: "Eskort",
-                upc: "6009880000000",
-                updatedAt: "2024-08-05T13:17:16.112Z",
-                condition: "moderate"
+                SKU: 'AM-405',
+                supplier: 'Eskort',
+                upc: '6009880000000',
+                updatedAt: '2024-08-05T13:17:16.112Z',
+                condition: 'moderate',
             },
             {
-                inventoryID: "1525c187-b594-4992-96a7-6acd0e1c1901",
-                tenentId: "1717667019559-j85syk",
-                category: "Food: Perishable",
-                createdAt: "2024-08-05T13:11:38.253Z",
-                description: "Rooibos Tea - Organic, 40 Bags",
-                expirationDate: "2024-08-30T22:00:00.000Z",
+                inventoryID: '1525c187-b594-4992-96a7-6acd0e1c1901',
+                tenentId: '1717667019559-j85syk',
+                category: 'Food: Perishable',
+                createdAt: '2024-08-05T13:11:38.253Z',
+                description: 'Rooibos Tea - Organic, 40 Bags',
+                expirationDate: '2024-08-30T22:00:00.000Z',
                 lowStockThreshold: 10,
                 quantity: 52,
                 reorderFreq: 7,
-                SKU: "RO-102",
-                supplier: "BOS Brands",
-                upc: "6009180000000",
-                updatedAt: "2024-08-05T13:11:38.253Z",
-                condition: "good"
+                SKU: 'RO-102',
+                supplier: 'BOS Brands',
+                upc: '6009180000000',
+                updatedAt: '2024-08-05T13:11:38.253Z',
+                condition: 'good',
             },
             {
-                inventoryID: "97053b80-40f0-416e-8844-5a65bce1c577",
-                tenentId: "1",
-                category: "Sample Category",
-                createdAt: "2024-08-05T11:50:03.967Z",
-                description: "Sample Product",
-                expirationDate: "2024-07-02T00:00:00.000Z",
+                inventoryID: '97053b80-40f0-416e-8844-5a65bce1c577',
+                tenentId: '1',
+                category: 'Sample Category',
+                createdAt: '2024-08-05T11:50:03.967Z',
+                description: 'Sample Product',
+                expirationDate: '2024-07-02T00:00:00.000Z',
                 lowStockThreshold: 10,
                 quantity: 100,
                 reorderFreq: 30,
-                SKU: "SAMPLE_SKU",
-                supplier: "Sample Supplier",
-                upc: "6a9c12a1-22fc-4f6d-92ad-bc1c86c3466f",
-                updatedAt: "2024-08-05T11:50:03.967Z",
-                condition: "bad"
+                SKU: 'SAMPLE_SKU',
+                supplier: 'Sample Supplier',
+                upc: '6a9c12a1-22fc-4f6d-92ad-bc1c86c3466f',
+                updatedAt: '2024-08-05T11:50:03.967Z',
+                condition: 'bad',
             },
             {
-                inventoryID: "6b51adf0-0716-467d-b566-84db02c9e7f4",
-                tenentId: "1717667019559-j85syk",
-                category: "Food: Perishable",
-                createdAt: "2024-08-05T13:05:53.445Z",
-                description: "Biltong Snapstix - Original Beef",
-                expirationDate: "2024-08-30T22:00:00.000Z",
+                inventoryID: '6b51adf0-0716-467d-b566-84db02c9e7f4',
+                tenentId: '1717667019559-j85syk',
+                category: 'Food: Perishable',
+                createdAt: '2024-08-05T13:05:53.445Z',
+                description: 'Biltong Snapstix - Original Beef',
+                expirationDate: '2024-08-30T22:00:00.000Z',
                 lowStockThreshold: 10,
                 quantity: 54,
                 reorderFreq: 7,
-                SKU: "BF-001",
-                supplier: "Fredy Hirsch Brands",
-                upc: "6001010000000",
-                updatedAt: "2024-08-05T13:05:53.445Z",
-                condition: "moderate"
-            }
+                SKU: 'BF-001',
+                supplier: 'Fredy Hirsch Brands',
+                upc: '6001010000000',
+                updatedAt: '2024-08-05T13:05:53.445Z',
+                condition: 'moderate',
+            },
         ];
 
         return inventoryData;
-
     }
 
     topSuppliersData: any[] = [];
 
     calculateTopSuppliers(): any[] {
-        // Step 1: Aggregate data for each supplier
-        const supplierAggregates = this.originalData.reduce((acc, data) => {
-            const id = data['Supplier ID'];
-            if (!acc[id]) {
-                acc[id] = {
-                    supplierId: id,
-                    totalSpent: 0,
-                    averageOnTimeDelivery: 0,
-                    averageOrderAccuracy: 0,
-                    averageOutstandingPayments: 0,
-                    count: 0
-                };
-            }
-            acc[id].totalSpent += data.TotalSpent;
-            acc[id].averageOnTimeDelivery += data['On Time Delivery Rate'];
-            acc[id].averageOrderAccuracy += data['Order Accuracy Rate'];
-            acc[id].averageOutstandingPayments += data['Out Standing Payments'];
-            acc[id].count += 1;
-            return acc;
-        }, {});
+        // Step 1: Group data by supplier ID
+        const groupedData = this.originalData.reduce(
+            (groups, item) => {
+                const id = item['Supplier ID'];
+                if (!groups[id]) {
+                    groups[id] = [];
+                }
+                groups[id].push(item);
+                return groups;
+            },
+            {} as { [key: string]: SupplierData[] },
+        );
 
-        // Step 2: Calculate averages and score
-        const scoredSuppliers = Object.values(supplierAggregates).map((supplier: any) => {
-            supplier.averageOnTimeDelivery /= supplier.count;
-            supplier.averageOrderAccuracy /= supplier.count;
-            supplier.averageOutstandingPayments /= supplier.count;
-            supplier.score = (supplier.averageOnTimeDelivery + supplier.averageOrderAccuracy - supplier.averageOutstandingPayments / 1000 + supplier.totalSpent / 100000);
-            return supplier;
+        // Step 2: Calculate aggregates for each supplier
+        const supplierAggregates = Object.entries(groupedData).map(([supplierId, data]) => {
+            const totalSpent = data.reduce((sum, item) => sum + parseFloat(item.TotalSpent), 0);
+            const averageOnTimeDelivery =
+                data.reduce((sum, item) => sum + item['On Time Delivery Rate'], 0) / data.length;
+            const averageOrderAccuracy = data.reduce((sum, item) => sum + item['Order Accuracy Rate'], 0) / data.length;
+            const averageOutstandingPayments =
+                data.reduce((sum, item) => sum + item['Out Standing Payments'], 0) / data.length;
+
+            const score =
+                averageOnTimeDelivery + averageOrderAccuracy - averageOutstandingPayments / 1000 + totalSpent / 100000;
+
+            return {
+                supplierId,
+                totalSpent,
+                averageOnTimeDelivery,
+                averageOrderAccuracy,
+                averageOutstandingPayments,
+                score,
+            };
         });
 
-        // Step 3: Sort by score and select the top 5
-        return scoredSuppliers.sort((a, b) => b.score - a.score).slice(0, 3).map(supplier => ({
-            'Supplier ID': supplier.supplierId,
-            'Total Spent': supplier.totalSpent,
-            'On Time Delivery Rate': supplier.averageOnTimeDelivery,
-            'Order Accuracy Rate': supplier.averageOrderAccuracy,
-            'Out Standing Payments': supplier.averageOutstandingPayments
-        }));
+        // Step 3: Sort by score and select the top 3
+        return supplierAggregates
+            .sort((a, b) => b.score - a.score)
+            .slice(0, 3)
+            .map((supplier) => ({
+                'Supplier ID': supplier.supplierId,
+                'Total Spent': supplier.totalSpent,
+                'On Time Delivery Rate': supplier.averageOnTimeDelivery,
+                'Order Accuracy Rate': supplier.averageOrderAccuracy,
+                'Out Standing Payments': supplier.averageOutstandingPayments,
+            }));
     }
 
     async loadSuppliersData() {
         try {
-            const session = await fetchAuthSession();
-
-            const cognitoClient = new CognitoIdentityProviderClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
-
-            const getUserCommand = new GetUserCommand({
-                AccessToken: session.tokens?.accessToken.toString(),
-            });
-            const getUserResponse = await cognitoClient.send(getUserCommand);
-
-            const tenantId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
-
-            if (!tenantId) {
-                console.error('TenantId not found in user attributes');
-                this.rowData = [];
-                return;
-            }
-
-            const lambdaClient = new LambdaClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
-
-            const invokeCommand = new InvokeCommand({
-                FunctionName: 'getSuppliers',
-                Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: tenantId } })),
-            });
-
-            const lambdaResponse = await lambdaClient.send(invokeCommand);
-            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-            console.log('Response from Lambda:', responseBody);
-
-            if (responseBody.statusCode === 200) {
-                const suppliers = JSON.parse(responseBody.body);
-                // this.supplierIds = suppliers.map((supplier: any) => ({
-                //     supplierID: supplier.supplierID,
-                // }));
-                this.originalData = [
-                    {
-                        "Supplier ID": "S001",
-                        "Date": "2024-07-23",
-                        "On Time Delivery Rate": 95.0,
-                        "Order Accuracy Rate": 99.5,
-                        "Out Standing Payments": 1000,
-                        "Reorder Level": "Medium",
-                        "RiskScore": "Low",
-                        "TotalSpent": 150000
-                    },
-                    {
-                        "Supplier ID": "S002",
-                        "Date": "2024-07-23",
-                        "On Time Delivery Rate": 91.0,
-                        "Order Accuracy Rate": 97.5,
-                        "Out Standing Payments": 3800,
-                        "Reorder Level": "High",
-                        "RiskScore": "Moderate",
-                        "TotalSpent": 125000
-                    },
-                    {
-                        "Supplier ID": "S003",
-                        "Date": "2024-07-23",
-                        "On Time Delivery Rate": 90.5,
-                        "Order Accuracy Rate": 95.0,
-                        "Out Standing Payments": 4500,
-                        "Reorder Level": "Low",
-                        "RiskScore": "High",
-                        "TotalSpent": 110000
-                    },
-                    {
-                        "Supplier ID": "S004",
-                        "Date": "2021-07-23",
-                        "On Time Delivery Rate": 87.0,
-                        "Order Accuracy Rate": 93.0,
-                        "Out Standing Payments": 3500,
-                        "Reorder Level": "Medium",
-                        "RiskScore": "Moderate",
-                        "TotalSpent": 90000
-                    },
-                    {
-                        "Supplier ID": "S004",
-                        "Date": "2022-07-23",
-                        "On Time Delivery Rate": 88.5,
-                        "Order Accuracy Rate": 94.5,
-                        "Out Standing Payments": 3000,
-                        "Reorder Level": "Medium",
-                        "RiskScore": "Moderate",
-                        "TotalSpent": 95000
-                    },
-                    {
-                        "Supplier ID": "S004",
-                        "Date": "2023-07-23",
-                        "On Time Delivery Rate": 90.0,
-                        "Order Accuracy Rate": 96.0,
-                        "Out Standing Payments": 2500,
-                        "Reorder Level": "Medium",
-                        "RiskScore": "Moderate",
-                        "TotalSpent": 100000
-                    },
-                    {
-                        "Supplier ID": "S005",
-                        "Date": "2021-07-23",
-                        "On Time Delivery Rate": 84.0,
-                        "Order Accuracy Rate": 89.0,
-                        "Out Standing Payments": 5500,
-                        "Reorder Level": "High",
-                        "RiskScore": "High",
-                        "TotalSpent": 80000
-                    },
-                    {
-                        "Supplier ID": "S005",
-                        "Date": "2022-07-23",
-                        "On Time Delivery Rate": 85.5,
-                        "Order Accuracy Rate": 91.0,
-                        "Out Standing Payments": 5200,
-                        "Reorder Level": "High",
-                        "RiskScore": "High",
-                        "TotalSpent": 85000
-                    },
-                    {
-                        "Supplier ID": "S005",
-                        "Date": "2023-07-23",
-                        "On Time Delivery Rate": 87.0,
-                        "Order Accuracy Rate": 93.5,
-                        "Out Standing Payments": 4900,
-                        "Reorder Level": "High",
-                        "RiskScore": "High",
-                        "TotalSpent": 90000
-                    },
-                    {
-                        "Supplier ID": "S001",
-                        "Date": "2023-07-23",
-                        "On Time Delivery Rate": 95.0,
-                        "Order Accuracy Rate": 99.5,
-                        "Out Standing Payments": 1000,
-                        "Reorder Level": "Medium",
-                        "RiskScore": "Low",
-                        "TotalSpent": 150000
-                    },
-                    {
-                        "Supplier ID": "S001",
-                        "Date": "2022-07-23",
-                        "On Time Delivery Rate": 95.0,
-                        "Order Accuracy Rate": 99.5,
-                        "Out Standing Payments": 1000,
-                        "Reorder Level": "Medium",
-                        "RiskScore": "Low",
-                        "TotalSpent": 200000
-                    },
-                    {
-                        "Supplier ID": "S001",
-                        "Date": "2024-07-23",
-                        "On Time Delivery Rate": 94.5,
-                        "Order Accuracy Rate": 99.0,
-                        "Out Standing Payments": 1100,
-                        "Reorder Level": "Medium",
-                        "RiskScore": "Low",
-                        "TotalSpent": 150500
-                    },
-                    {
-                        "Supplier ID": "S001",
-                        "Date": "2023-07-23",
-                        "On Time Delivery Rate": 95.0,
-                        "Order Accuracy Rate": 99.0,
-                        "Out Standing Payments": 1050,
-                        "Reorder Level": "Medium",
-                        "RiskScore": "Low",
-                        "TotalSpent": 150250
-                    },
-                    {
-                        "Supplier ID": "S002",
-                        "Date": "2021-07-23",
-                        "On Time Delivery Rate": 91.0,
-                        "Order Accuracy Rate": 97.5,
-                        "Out Standing Payments": 3800,
-                        "Reorder Level": "High",
-                        "RiskScore": "Moderate",
-                        "TotalSpent": 125000
-                    },
-                    {
-                        "Supplier ID": "S002",
-                        "Date": "2022-07-23",
-                        "On Time Delivery Rate": 91.0,
-                        "Order Accuracy Rate": 97.5,
-                        "Out Standing Payments": 3800,
-                        "Reorder Level": "High",
-                        "RiskScore": "Moderate",
-                        "TotalSpent": 125000
-                    },
-                    {
-                        "Supplier ID": "S002",
-                        "Date": "2024-07-23",
-                        "On Time Delivery Rate": 90.5,
-                        "Order Accuracy Rate": 97.0,
-                        "Out Standing Payments": 3850,
-                        "Reorder Level": "High",
-                        "RiskScore": "Moderate",
-                        "TotalSpent": 124500
-                    },
-                    {
-                        "Supplier ID": "S002",
-                        "Date": "2024-07-23",
-                        "On Time Delivery Rate": 91.5,
-                        "Order Accuracy Rate": 98.0,
-                        "Out Standing Payments": 3750,
-                        "Reorder Level": "High",
-                        "RiskScore": "Moderate",
-                        "TotalSpent": 125500
-                    },
-                    {
-                        "Supplier ID": "S003",
-                        "Date": "2024-07-23",
-                        "On Time Delivery Rate": 90.5,
-                        "Order Accuracy Rate": 95.0,
-                        "Out Standing Payments": 4500,
-                        "Reorder Level": "Low",
-                        "RiskScore": "High",
-                        "TotalSpent": 110000
-                    },
-                    {
-                        "Supplier ID": "S003",
-                        "Date": "2022-07-23",
-                        "On Time Delivery Rate": 90.5,
-                        "Order Accuracy Rate": 95.0,
-                        "Out Standing Payments": 4500,
-                        "Reorder Level": "Low",
-                        "RiskScore": "High",
-                        "TotalSpent": 110000
-                    },
-                    {
-                        "Supplier ID": "S006",
-                        "Date": "2024-07-23",
-                        "On Time Delivery Rate": 93.0,
-                        "Order Accuracy Rate": 98.0,
-                        "Out Standing Payments": 1200,
-                        "Reorder Level": "Medium",
-                        "RiskScore": "Low",
-                        "TotalSpent": 130000
-                    },
-                    {
-                        "Supplier ID": "S007",
-                        "Date": "2024-07-23",
-                        "On Time Delivery Rate": 88.0,
-                        "Order Accuracy Rate": 94.5,
-                        "Out Standing Payments": 3100,
-                        "Reorder Level": "High",
-                        "RiskScore": "Moderate",
-                        "TotalSpent": 115000
-                    },
-                    {
-                        "Supplier ID": "S008",
-                        "Date": "2024-07-23",
-                        "On Time Delivery Rate": 85.5,
-                        "Order Accuracy Rate": 92.0,
-                        "Out Standing Payments": 4000,
-                        "Reorder Level": "Low",
-                        "RiskScore": "High",
-                        "TotalSpent": 105000
-                    },
-                    {
-                        "Supplier ID": "S009",
-                        "Date": "2023-07-23",
-                        "On Time Delivery Rate": 91.0,
-                        "Order Accuracy Rate": 97.0,
-                        "Out Standing Payments": 500,
-                        "Reorder Level": "Medium",
-                        "RiskScore": "Low",
-                        "TotalSpent": 140000
-                    },
-                    {
-                        "Supplier ID": "S010",
-                        "Date": "2024-07-23",
-                        "On Time Delivery Rate": 86.0,
-                        "Order Accuracy Rate": 90.5,
-                        "Out Standing Payments": 6000,
-                        "Reorder Level": "High",
-                        "RiskScore": "High",
-                        "TotalSpent": 95000
-                    },
-                    {
-                        "Supplier ID": "S006",
-                        "Date": "2024-07-24",
-                        "On Time Delivery Rate": 93.5,
-                        "Order Accuracy Rate": 98.5,
-                        "Out Standing Payments": 1150,
-                        "Reorder Level": "Medium",
-                        "RiskScore": "Low",
-                        "TotalSpent": 130500
-                    },
-                    {
-                        "Supplier ID": "S007",
-                        "Date": "2024-07-24",
-                        "On Time Delivery Rate": 89.0,
-                        "Order Accuracy Rate": 95.0,
-                        "Out Standing Payments": 3200,
-                        "Reorder Level": "High",
-                        "RiskScore": "Moderate",
-                        "TotalSpent": 116000
-                    },
-                    {
-                        "Supplier ID": "S008",
-                        "Date": "2024-07-24",
-                        "On Time Delivery Rate": 86.0,
-                        "Order Accuracy Rate": 93.0,
-                        "Out Standing Payments": 3900,
-                        "Reorder Level": "Low",
-                        "RiskScore": "High",
-                        "TotalSpent": 106000
-                    },
-                    {
-                        "Supplier ID": "S009",
-                        "Date": "2024-07-24",
-                        "On Time Delivery Rate": 92.0,
-                        "Order Accuracy Rate": 97.5,
-                        "Out Standing Payments": 550,
-                        "Reorder Level": "Medium",
-                        "RiskScore": "Low",
-                        "TotalSpent": 141000
-                    },
-                    {
-                        "Supplier ID": "S009",
-                        "Date": "2021-07-24",
-                        "On Time Delivery Rate": 92.0,
-                        "Order Accuracy Rate": 97.5,
-                        "Out Standing Payments": 550,
-                        "Reorder Level": "Medium",
-                        "RiskScore": "Low",
-                        "TotalSpent": 141000
-                    },
-                    {
-                        "Supplier ID": "S010",
-                        "Date": "2024-07-24",
-                        "On Time Delivery Rate": 87.0,
-                        "Order Accuracy Rate": 91.0,
-                        "Out Standing Payments": 5800,
-                        "Reorder Level": "High",
-                        "RiskScore": "High",
-                        "TotalSpent": 96000
-                    }
-                ];
-
+            this.isLoading = true;
+            const data = await this.dataCollectionService.getSupplierReportData().toPromise();
+            if (data && data.length > 0) {
+                this.originalData = data;
                 this.rowData = this.processRowData(this.originalData);
-
-                console.log('Processed suppliers:', this.rowData);
+                console.log('Processed suppliers:', this.originalData);
+                await this.fetchMetrics(this.originalData);
+                this.updateReportMetrics();
             } else {
-                console.error('Error fetching suppliers data:', responseBody.body);
+                console.warn('No supplier data received');
+                this.originalData = [];
                 this.rowData = [];
             }
         } catch (error) {
             console.error('Error in loadSuppliersData:', error);
+            this.originalData = [];
             this.rowData = [];
         } finally {
-            // // this.isLoading = false;
+            this.isLoading = false;
+        }
+    }
+
+    private updateReportMetrics() {
+        if (this.originalData.length > 0) {
+            this.SupplierReport.metrics[0].value = this.getMostAverageSupplier();
+            this.SupplierReport.metrics[1].value = this.calculateDefectRate(this.orderFulfillmentDetails);
+            this.SupplierReport.metrics[2].value = this.getWorstPerformingSupplier()['Supplier ID'];
+            this.SupplierReport.metrics[3].value = this.calculateAverageDeliveryRate();
+            this.SupplierReport.metrics[4].value = this.calculateOrderFulfillmentRate(this.orderFulfillmentDetails);
+            this.SupplierReport.metrics[5].value = this.calculateInventoryTurnover(
+                this.stockRequests,
+                this.initialInventory,
+                this.endingInventory,
+            );
+            this.SupplierReport.metrics[6].value = this.calculateRightFirstTimeRate(this.orderFulfillmentDetails);
+            this.SupplierReport.metrics[7].value = this.calculateOnTimeOrderCompletionRate();
+        } else {
+            console.warn('No data available to update report metrics');
         }
     }
 
@@ -1081,33 +881,60 @@ export class SupplierReportComponent implements OnInit {
         // Now pass formattedData to LineBarComponent via its @Input() property
     }
 
-    groupDataByTopSupplier(): any {
-        const grouped = this.originalData.reduce((acc, data) => {
-            const id = data['Supplier ID'];
-            if (!acc[id]) {
-                acc[id] = { ...data, count: 1 }; // Initial creation of the group
-            } else {
-                acc[id].TotalSpent += data.TotalSpent; // Summing up TotalSpent
-                acc[id].count += 1; // Counting occurrences
-            }
-            return acc;
-        }, {});
+    groupDataByTopSupplier(): SupplierData[] {
+        // Step 1: Group data by supplier ID
+        const groupedData = this.originalData.reduce(
+            (groups, item) => {
+                const id = item['Supplier ID'];
+                if (!groups[id]) {
+                    groups[id] = [];
+                }
+                groups[id].push(item);
+                return groups;
+            },
+            {} as { [key: string]: SupplierData[] },
+        );
 
-        return Object.values(grouped).sort((a: any, b: any) => b.TotalSpent - a.TotalSpent).slice(0, 5);
+        // Step 2: Calculate total spent for each supplier
+        const supplierTotals = Object.entries(groupedData).map(([supplierId, data]) => {
+            const totalSpent = data.reduce((sum, item) => sum + parseFloat(item.TotalSpent), 0);
+            return {
+                supplierId,
+                totalSpent,
+                data: data[0], // Take the first item as representative
+            };
+        });
+
+        // Step 3: Sort by total spent and select top 5
+        return supplierTotals
+            .sort((a, b) => b.totalSpent - a.totalSpent)
+            .slice(0, 5)
+            .map((supplier) => ({
+                ...supplier.data,
+                TotalSpent: supplier.totalSpent.toString(),
+                count: groupedData[supplier.supplierId].length,
+            }));
     }
 
     formatDataForChart(data: any[]): any {
         // Extract years directly from the data parameter instead of the whole dataset to match exactly the top suppliers
-        const years = [...new Set(data.flatMap((supplier: any) =>
-            this.originalData.filter(item => item['Supplier ID'] === supplier['Supplier ID']).map(item => item.Date.slice(0, 4))
-        ))].sort();
-        const header = ["Supplier ID", ...years];
+        const years = [
+            ...new Set(
+                data.flatMap((supplier: any) =>
+                    this.originalData
+                        .filter((item) => item['Supplier ID'] === supplier['Supplier ID'])
+                        .map((item) => item.Date.slice(0, 4)),
+                ),
+            ),
+        ].sort();
+        const header = ['Supplier ID', ...years];
 
         // Map each supplier to a row in the chart data
         const chartData = data.map((supplier: any) => {
             const row = [supplier['Supplier ID'], ...Array(years.length).fill(0)];
-            this.originalData.filter(item => item['Supplier ID'] === supplier['Supplier ID'])
-                .forEach(item => {
+            this.originalData
+                .filter((item) => item['Supplier ID'] === supplier['Supplier ID'])
+                .forEach((item) => {
                     const yearIndex = years.indexOf(item.Date.slice(0, 4)) + 1; // Find correct index for the year
                     row[yearIndex] += item.TotalSpent; // Accumulate total spent for the year
                 });
@@ -1115,15 +942,13 @@ export class SupplierReportComponent implements OnInit {
         });
 
         return {
-            source: [header, ...chartData]
+            source: [header, ...chartData],
         };
     }
 
-
-
     processRowData(rawData: any[]): any[] {
         const groupedData = this.groupDataBySupplier(rawData);
-        console.log('groupedData', groupedData)
+        console.log('groupedData', groupedData);
         return this.prepareRowData(groupedData);
     }
 
@@ -1153,65 +978,38 @@ export class SupplierReportComponent implements OnInit {
             let mostRecentRecord = { ...value[0], Dates: dates }; // Clone the most recent record and add all dates
             preparedData.push(mostRecentRecord);
         });
-
+        console.log('the preparedRowData', preparedData);
         return preparedData;
     }
 
-    stockRequests: any[] = [
-        { stockRequestId: "001", tenentId: "1001", category: "Electronics", createdAt: "2024-01-01T10:00:00.000Z", quantityRequested: 100, quantityFulfilled: 95, sku: "ELEC-001", supplier: "SupplierA", type: "STOCK_REQUEST" },
-        { stockRequestId: "002", tenentId: "1001", category: "Appliances", createdAt: "2024-01-02T10:00:00.000Z", quantityRequested: 50, quantityFulfilled: 50, sku: "APPL-002", supplier: "SupplierB", type: "STOCK_REQUEST" },
-        { stockRequestId: "003", tenentId: "1001", category: "Tools", createdAt: "2024-01-03T10:00:00.000Z", quantityRequested: 30, quantityFulfilled: 30, sku: "TOOL-003", supplier: "SupplierC", type: "STOCK_REQUEST" }
-    ];
+    async loadStockRequest() {
+        try {
+            const suppliers = (await this.dataCollectionService.getStockRequests().toPromise()) || [];
+            this.stockRequests = suppliers;
+        } catch (error) {
+            console.error('Error in loadSuppliersData:', error);
+            this.stockRequests = [];
+        }
+    }
+
+    stockRequests: any[] = [];
 
     async loadSupplierMetrics() {
         try {
-            const session = await fetchAuthSession();
-
-            const cognitoClient = new CognitoIdentityProviderClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
-
-            const getUserCommand = new GetUserCommand({
-                AccessToken: session.tokens?.accessToken.toString(),
-            });
-            const getUserResponse = await cognitoClient.send(getUserCommand);
-
-            const tenantId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
-
-            if (!tenantId) {
-                console.error('TenantId not found in user attributes');
-                this.rowData = [];
-                return;
-            }
-
-            const lambdaClient = new LambdaClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
-
-            const invokeCommand = new InvokeCommand({
-                FunctionName: 'Inventory-getItems',
-                Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: tenantId } })),
-            });
-
-            const lambdaResponse = await lambdaClient.send(invokeCommand);
-            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-            console.log('Response from Lambda:', responseBody);
-
-            // if (responseBody.statusCode === 200) {
-            //     const inventoryItems = JSON.parse(responseBody.body);
-            //     // this.rowData = this.data;
-            //     console.log('Processed inventory items:', this.rowData);
-            // } else {
-            //     console.error('Error fetching inventory data:', responseBody.body);
-            //     this.rowData = [];
-            // }
+            this.dataCollectionService.getInventoryItems().subscribe(
+                (response) => {
+                    console.log('Response from InventoryService:', response);
+                    // Process the response here
+                    console.log('Processed inventory items:', this.rowData);
+                },
+                (error) => {
+                    console.error('Error fetching inventory data:', error);
+                    this.rowData = [];
+                },
+            );
         } catch (error) {
-            console.error('Error in loadInventoryData:', error);
+            console.error('Error in loadSupplierMetrics:', error);
             this.rowData = [];
-        } finally {
-            // this.isLoading = false;
         }
     }
 

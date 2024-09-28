@@ -9,14 +9,37 @@ import { CommonModule } from '@angular/common';
     standalone: true,
     imports: [MatDialogModule, MatButtonModule, CommonModule],
     template: `
-        <h2 mat-dialog-title>Confirmation</h2>
+        <h1 mat-dialog-title style="text-align: center; --mdc-dialog-subhead-size: 30px">Confirmation</h1>
         <div mat-dialog-content>
             <p>{{ data.given_name }} {{ data.family_name }}: {{ data.email }}</p>
             <p>Are you sure you want to delete this user?</p>
         </div>
         <div mat-dialog-actions>
-            <button mat-button (click)="onNoClick()">No</button>
-            <button mat-button color="primary" (click)="onYesClick()">Yes</button>
+            <button
+                mat-flat-button
+                (click)="onNoClick()"
+                style="
+    margin-right: auto;
+    margin-left: auto;
+    border-radius: 5px;
+    width: 100px;
+    height: 40px;"
+            >
+                No
+            </button>
+            <button
+                mat-flat-button
+                color="primary"
+                (click)="onYesClick()"
+                style="
+    margin-right: auto;
+    margin-left: auto;
+    border-radius: 5px;
+    width: 100px;
+    height: 40px;"
+            >
+                Yes
+            </button>
         </div>
     `,
 })
@@ -25,7 +48,7 @@ export class DeleteConfirmationDialogComponent {
 
     constructor(
         public dialogRef: MatDialogRef<DeleteConfirmationDialogComponent>,
-        @Inject(MAT_DIALOG_DATA) public data: { given_name: string; family_name: string; email: string }
+        @Inject(MAT_DIALOG_DATA) public data: { given_name: string; family_name: string; email: string },
     ) {}
 
     onNoClick(): void {

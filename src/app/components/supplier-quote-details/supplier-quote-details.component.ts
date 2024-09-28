@@ -9,6 +9,9 @@ import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-c
 import outputs from '../../../../amplify_outputs.json';
 import { QuoteAcceptConfirmationDialogComponent } from './quote-accept-confirmation-dialog.component';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { LoadingSpinnerComponent } from '../loader/loading-spinner.component';
+import { SupplierRenegotiationModalComponent } from '../supplier-renegotiation-modal/supplier-renegotiation-modal.component';
+import { OrdersService } from '../../../../amplify/services/orders.service';
 
 interface QuoteItem {
   description: string;
@@ -35,7 +38,7 @@ interface QuoteSummary {
 @Component({
   selector: 'app-supplier-quote-details',
   standalone: true,
-  imports: [CommonModule, MatDialogModule, MatIconModule, MatButtonModule, QuoteAcceptConfirmationDialogComponent, MatSnackBarModule],
+  imports: [CommonModule, MatDialogModule, MatIconModule, MatButtonModule, QuoteAcceptConfirmationDialogComponent, MatSnackBarModule, LoadingSpinnerComponent, SupplierRenegotiationModalComponent],
   templateUrl: './supplier-quote-details.component.html',
   styleUrl: './supplier-quote-details.component.css'
 })
@@ -44,6 +47,7 @@ export class SupplierQuoteDetailsComponent implements OnInit {
   quoteItems: QuoteItem[] = [];
   quoteSummary: QuoteSummary | null = null;
   isLoading = true;
+  isAcceptingQuote = false;
   error: string | null = null;
 
   constructor(
@@ -54,8 +58,11 @@ export class SupplierQuoteDetailsComponent implements OnInit {
     orderID: string; 
     orderDate: string;},
     private dialog: MatDialog,
-    private snackBar: MatSnackBar
-  ) {}
+    private snackBar: MatSnackBar,
+    private ordersService: OrdersService
+  ) {
+    console.log(data);
+  }
 
   ngOnInit() {
     this.loadQuoteDetails();
@@ -65,37 +72,23 @@ export class SupplierQuoteDetailsComponent implements OnInit {
     try {
       const session = await fetchAuthSession();
       const tenentId = await this.getTenentId(session);
-
-      const lambdaClient = new LambdaClient({
-        region: outputs.auth.aws_region,
-        credentials: session.credentials,
-      });
-
-      const invokeCommand = new InvokeCommand({
-        FunctionName: 'getSupplierQuoteDetails',
-        Payload: new TextEncoder().encode(JSON.stringify({
-          pathParameters: {
-            quoteID: this.data.quoteID,
-            supplierID: this.data.supplierID,
-            tenentId: tenentId
+  
+      this.ordersService.getSupplierQuoteDetails(this.data.quoteID, this.data.supplierID, tenentId)
+        .subscribe(
+          (quoteDetails) => {
+            this.supplierInfo = quoteDetails.supplierInfo;
+            this.quoteItems = quoteDetails.quoteItems;
+            this.quoteSummary = quoteDetails.quoteSummary;
+            this.isLoading = false;
+          },
+          (error) => {
+            console.error('Error fetching quote details:', error);
+            this.error = 'Failed to load quote details. Please try again.';
+            this.isLoading = false;
           }
-        })),
-      });
-
-      const lambdaResponse = await lambdaClient.send(invokeCommand);
-      const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
-      if (responseBody.statusCode === 200) {
-        const quoteDetails = JSON.parse(responseBody.body);
-        this.supplierInfo = quoteDetails.supplierInfo;
-        this.quoteItems = quoteDetails.quoteItems;
-        this.quoteSummary = quoteDetails.quoteSummary;
-        this.isLoading = false;
-      } else {
-        throw new Error(responseBody.body || 'Failed to fetch quote details');
-      }
+        );
     } catch (error) {
-      console.error('Error fetching quote details:', error);
+      console.error('Error in loadQuoteDetails:', error);
       this.error = 'Failed to load quote details. Please try again.';
       this.isLoading = false;
     }
@@ -133,6 +126,7 @@ export class SupplierQuoteDetailsComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
+        this.isLoading = true; // Set to true before accepting the quote
         this.acceptQuote();
       }
     });
@@ -140,44 +134,33 @@ export class SupplierQuoteDetailsComponent implements OnInit {
 
   async acceptQuote(): Promise<void> {
     try {
+      this.isLoading = true;
       const session = await fetchAuthSession();
       const tenentId = await this.getTenentId(session);
-  
-      const lambdaClient = new LambdaClient({
-        region: outputs.auth.aws_region,
-        credentials: session.credentials,
-      });
   
       const payloadBody = {
         orderID: this.data.orderID,
         orderDate: this.data.orderDate,
         selectedSupplier: this.supplierInfo.company_name,
         supplierID: this.data.supplierID,
-        expectedDeliveryDate: this.quoteSummary?.Delivery_Date
+        expectedDeliveryDate: this.quoteSummary?.Delivery_Date,
+        tenentId: tenentId
       };
   
-      // Console log the payload
-      console.log('Payload being sent to acceptQuote Lambda:', payloadBody);
+      console.log('Payload being sent to acceptQuote:', payloadBody);
   
-      const invokeCommand = new InvokeCommand({
-        FunctionName: 'acceptQuote',
-        Payload: new TextEncoder().encode(JSON.stringify({ body: payloadBody })),
-      });
+      const response = await this.ordersService.acceptQuote(payloadBody).toPromise();
   
-      const lambdaResponse = await lambdaClient.send(invokeCommand);
-      const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+      console.log('Response from acceptQuote:', response);
   
-      // Console log the Lambda response
-      console.log('Response from acceptQuote Lambda:', responseBody);
-  
-      if (responseBody.statusCode === 200) {
+      if (response && response.message) {
         this.snackBar.open('Quote accepted successfully', 'Close', {
           duration: 6000,
           verticalPosition: 'top'
         });
-        this.dialogRef.close({ action: 'quoteAccepted' }); // Close the dialog and indicate success
+        this.dialogRef.close({ action: 'quoteAccepted' });
       } else {
-        throw new Error(responseBody.body || 'Failed to accept quote');
+        throw new Error('Failed to accept quote');
       }
     } catch (error) {
       console.error('Error accepting quote:', error);
@@ -185,6 +168,39 @@ export class SupplierQuoteDetailsComponent implements OnInit {
         duration: 6000,
         verticalPosition: 'top'
       });
+    } finally {
+      this.isLoading = false;
     }
+  }
+
+
+  openRenegotiateModal(): void {
+    this.dialogRef.close(); // Close the supplier-quote-details modal
+
+    const renegotiateDialogRef = this.dialog.open(SupplierRenegotiationModalComponent, {
+      width: '800px',
+      data: {
+        supplierName: this.supplierInfo.company_name,
+        supplierEmail: this.supplierInfo.contact_email,
+        quoteID: this.data.quoteID,
+        orderID: this.data.orderID,
+        supplierID: this.data.supplierID
+      }
+    });
+
+    renegotiateDialogRef.afterClosed().subscribe(result => {
+      if (result === 'cancelled') {
+        // Reopen the supplier-quote-details modal if renegotiation was cancelled
+        this.dialog.open(SupplierQuoteDetailsComponent, {
+          width: '90%',
+          maxWidth: '1350px',
+          data: this.data
+        });
+      } else if (result) {
+        // Handle successful renegotiation
+        console.log('Renegotiation email sent:', result);
+        // You may want to show a success message or perform other actions here
+      }
+    });
   }
 }

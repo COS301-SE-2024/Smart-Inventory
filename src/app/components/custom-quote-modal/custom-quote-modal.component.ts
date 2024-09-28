@@ -19,6 +19,11 @@ import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
 import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
 import outputs from '../../../../amplify_outputs.json';
 import { LoadingSpinnerComponent } from '../loader/loading-spinner.component';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule, provideNativeDateAdapter } from '@angular/material/core';
+import { InventoryService } from '../../../../amplify/services/inventory.service';
+import { SuppliersService } from '../../../../amplify/services/suppliers.service';
+import { OrdersService } from '../../../../amplify/services/orders.service';
 
 interface QuoteItem {
   item: { sku: string; description: string; inventoryID: string };
@@ -50,7 +55,10 @@ interface InventoryItem {
     NgxMatSelectSearchModule,
     LoadingSpinnerComponent,
     MatTooltipModule,
+    MatDatepickerModule,
+    MatNativeDateModule
   ],
+  providers: [provideNativeDateAdapter()],
   templateUrl: './custom-quote-modal.component.html',
   styleUrls: ['./custom-quote-modal.component.css']
 })
@@ -62,6 +70,7 @@ export class CustomQuoteModalComponent implements OnInit {
   selectedSuppliers: { company_name: string; supplierID: string }[] = [];
   suppliers: { company_name: string; supplierID: string }[] = [];
   inventoryItems: { sku: string; description: string }[] = [];
+  submissionDeadline: Date | null = null;
 
   supplierControl = new FormControl();
   filteredSuppliers: ReplaySubject<{ company_name: string; supplierID: string }[]> = new ReplaySubject<{ company_name: string; supplierID: string }[]>(1);
@@ -69,16 +78,22 @@ export class CustomQuoteModalComponent implements OnInit {
   isEditing: boolean = false;
   isNewQuote: boolean = false;
   hasUnsavedChanges: boolean = false;
+  isSendingQuote: boolean = false;
+  isSavingChanges: boolean = false;
 
   orderId: string | null = null;
   quoteId: string | null = null;
+  orderDate: string | null = null;
 
   protected _onDestroy = new Subject<void>();
 
   constructor(
     public dialogRef: MatDialogRef<CustomQuoteModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private inventoryService: InventoryService,
+    private suppliersService: SuppliersService,
+    private ordersService: OrdersService
   ) {
     this.isEditing = data.isEditing || false;
     this.isNewQuote = data.isNewQuote || false;
@@ -125,6 +140,8 @@ export class CustomQuoteModalComponent implements OnInit {
   
     this.orderId = quoteDetails.orderId || null;
     this.quoteId = quoteDetails.quoteId || null;
+    this.orderDate = quoteDetails.orderDate || null;
+    this.submissionDeadline = quoteDetails.Submission_Deadline ? new Date(quoteDetails.Submission_Deadline) : null;
   
     if (quoteDetails.items && Array.isArray(quoteDetails.items)) {
       this.quoteItems = quoteDetails.items.map((item: any) => {
@@ -180,12 +197,11 @@ export class CustomQuoteModalComponent implements OnInit {
 
   filterItems(value: string, index: number) {
     const filterValue = value.toLowerCase();
-    this.quoteItems[index].filteredItems.next(
-      this.inventoryItems.filter(item =>
-        item.sku.toLowerCase().includes(filterValue) ||
-        item.description.toLowerCase().includes(filterValue)
-      )
+    const filteredItems = this.inventoryItems.filter(item =>
+      item.sku.toLowerCase().includes(filterValue) ||
+      item.description.toLowerCase().includes(filterValue)
     );
+    this.quoteItems[index].filteredItems.next(filteredItems);
   }
 
   addItem() {
@@ -226,32 +242,26 @@ export class CustomQuoteModalComponent implements OnInit {
   async loadSuppliers() {
     try {
       const session = await fetchAuthSession();
-      const tenentId = await this.getTenentId(session);
+      const tenantId = await this.getTenentId(session);
   
-      const lambdaClient = new LambdaClient({
-        region: outputs.auth.aws_region,
-        credentials: session.credentials,
-      });
-  
-      const invokeCommand = new InvokeCommand({
-        FunctionName: 'getSuppliers',
-        Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: tenentId } })),
-      });
-  
-      const lambdaResponse = await lambdaClient.send(invokeCommand);
-      const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-  
-      if (responseBody.statusCode === 200) {
-        const suppliers = JSON.parse(responseBody.body);
-        this.suppliers = suppliers.map((supplier: any) => ({
-          company_name: supplier.company_name,
-          supplierID: supplier.supplierID
-        }));
-        console.log('Suppliers:', this.suppliers);
-      } else {
-        console.error('Error fetching suppliers data:', responseBody.body);
-        this.suppliers = [];
-      }
+      this.suppliersService.getSuppliers(tenantId).subscribe(
+        (response: any) => {
+          if (response && Array.isArray(response)) {
+            this.suppliers = response.map((supplier: any) => ({
+              company_name: supplier.company_name,
+              supplierID: supplier.supplierID
+            }));
+            console.log('Suppliers:', this.suppliers);
+          } else {
+            console.error('Invalid response format for suppliers data');
+            this.suppliers = [];
+          }
+        },
+        (error) => {
+          console.error('Error fetching suppliers data:', error);
+          this.suppliers = [];
+        }
+      );
     } catch (error) {
       console.error('Error in loadSuppliers:', error);
       this.suppliers = [];
@@ -263,34 +273,24 @@ export class CustomQuoteModalComponent implements OnInit {
       const session = await fetchAuthSession();
       const tenentId = await this.getTenentId(session);
 
-      const lambdaClient = new LambdaClient({
-        region: outputs.auth.aws_region,
-        credentials: session.credentials,
-      });
-
-      const invokeCommand = new InvokeCommand({
-        FunctionName: 'Inventory-getItems',
-        Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: tenentId } })),
-      });
-
-      const lambdaResponse = await lambdaClient.send(invokeCommand);
-      const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
-      if (responseBody.statusCode === 200) {
-        const inventoryItems = JSON.parse(responseBody.body);
-        this.inventoryItems = inventoryItems.map((item: any) => ({
-          sku: item.SKU,
-          description: item.description,
-          inventoryID: item.inventoryID // Add this line
-        }));
-        // Initialize filtered items for each quote item
-        this.quoteItems.forEach(quoteItem => {
-          quoteItem.filteredItems.next(this.inventoryItems.slice());
-        });
-      } else {
-        console.error('Error fetching inventory data:', responseBody.body);
-        this.inventoryItems = [];
-      }
+      this.inventoryService.getInventoryItems(tenentId).subscribe(
+        (inventoryItems) => {
+          const uniqueItems = this.filterDuplicateSKUs(inventoryItems.map((item: any) => ({
+            sku: item.SKU,
+            description: item.description,
+            inventoryID: item.inventoryID
+          })));
+          this.inventoryItems = uniqueItems;
+          // Initialize filtered items for each quote item
+          this.quoteItems.forEach(quoteItem => {
+            quoteItem.filteredItems.next(this.inventoryItems.slice());
+          });
+        },
+        (error) => {
+          console.error('Error fetching inventory data:', error);
+          this.inventoryItems = [];
+        }
+      );
     } catch (error) {
       console.error('Error in loadInventoryItems:', error);
       this.inventoryItems = [];
@@ -323,8 +323,11 @@ export class CustomQuoteModalComponent implements OnInit {
 
 
   async saveChanges() {
+    this.isSavingChanges = true;
     const updatedQuote = {
       quoteId: this.quoteId,
+      orderId: this.orderId,
+      orderDate: this.orderDate,
       items: this.quoteItems.map(({ item, quantity }) => ({
         ItemSKU: item.sku,
         Quantity: quantity,
@@ -333,78 +336,44 @@ export class CustomQuoteModalComponent implements OnInit {
       suppliers: this.selectedSuppliers.map(supplier => ({
         company_name: supplier.company_name,
         supplierID: supplier.supplierID
-      }))
+      })),
+      Submission_Deadline: this.submissionDeadline ? this.submissionDeadline.toISOString() : null
     };
-
+  
     console.log('Saving changes with data:', JSON.stringify(updatedQuote, null, 2));
   
-    try {
-      await this.updateQuote(updatedQuote);
-  
-      this.hasUnsavedChanges = false; // Reset the flag after saving
-      this.snackBar.open('Changes saved successfully', 'Close', {
-        duration: 3000,
-        horizontalPosition: 'center',
-        verticalPosition: 'top',
-      });
-    } catch (error) {
-      console.error('Error saving changes:', error);
-      this.snackBar.open('Error saving changes', 'Close', {
-        duration: 3000,
-        horizontalPosition: 'center',
-        verticalPosition: 'top',
-      });
-    }
-  }
-
-  private async updateQuote(updatedQuote: any) {
     try {
       const session = await fetchAuthSession();
       const tenentId = await this.getTenentId(session);
   
-      const lambdaClient = new LambdaClient({
-        region: outputs.auth.aws_region,
-        credentials: session.credentials,
-      });
+      if (!updatedQuote.quoteId) {
+        throw new Error('Quote ID is missing');
+      }
   
-      const payload = {
-        pathParameters: {
-          tenentId: tenentId,
-          quoteId: updatedQuote.quoteId
-        },
-        body: JSON.stringify({
-          items: updatedQuote.items.map((item: any) => ({
-            ItemSKU: item.ItemSKU,
-            Quantity: item.Quantity,
-            inventoryID: item.inventoryID
-          })),
-          suppliers: updatedQuote.suppliers.map((supplier: any) => ({
-            company_name: supplier.company_name,
-            supplierID: supplier.supplierID
-          }))
-        })
-      };
+      const response = await this.ordersService.updateQuoteDetails(tenentId, updatedQuote.quoteId, updatedQuote).toPromise();
   
-      console.log('Updating quote with payload:', JSON.stringify(payload, null, 2));
+      console.log('API response:', JSON.stringify(response, null, 2));
   
-      const invokeCommand = new InvokeCommand({
-        FunctionName: 'updateQuoteDetails', // Make sure this Lambda function name is correct
-        Payload: new TextEncoder().encode(JSON.stringify(payload)),
-      });
-  
-      const lambdaResponse = await lambdaClient.send(invokeCommand);
-      const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-  
-      console.log('Lambda response:', JSON.stringify(responseBody, null, 2));
-  
-      if (responseBody.statusCode === 200) {
+      if (response && response.message === 'Quote updated successfully') {
         console.log('Quote updated successfully');
+        this.hasUnsavedChanges = false;
+        this.snackBar.open('Changes saved successfully', 'Close', {
+          duration: 3000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+        });
       } else {
-        throw new Error(responseBody.body || 'Failed to update quote');
+        throw new Error(response.error || 'Failed to update quote');
       }
     } catch (error) {
       console.error('Error updating quote:', error);
-      throw error; // Re-throw the error to be caught in the saveChanges method
+      this.snackBar.open(`Error saving changes: ${(error as Error).message}`, 'Close', {
+        duration: 5000,
+        horizontalPosition: 'center',
+        verticalPosition: 'top',
+      });
+    } finally {
+      this.isSavingChanges = false;
     }
   }
 
@@ -423,7 +392,8 @@ export class CustomQuoteModalComponent implements OnInit {
         company_name: supplier.company_name,
         supplierID: supplier.supplierID
       })),
-      Quote_Status: 'Draft'
+      Quote_Status: 'Draft',
+      Submission_Deadline: this.submissionDeadline ? this.submissionDeadline.toISOString() : null
     };
     console.log(order);
     this.dialogRef.close({ action: 'createOrder', data: order });
@@ -444,19 +414,32 @@ export class CustomQuoteModalComponent implements OnInit {
       return;
     }
     if (!this.isNewQuote) {
-      console.log('Sending quote...');
-      const emailData = await this.prepareEmailData();
-      
-      // Send emails
-      await this.sendEmails(emailData);
+      this.isSendingQuote = true; // Set loading state to true
+      try {
+        console.log('Sending quote...');
+        const emailData = await this.prepareEmailData();
+        
+        // Send emails
+        await this.sendEmails(emailData);
 
-      this.dialogRef.close({ action: 'sendQuote', data: {
-        quoteId: this.quoteId,
-        items: this.quoteItems,
-        suppliers: this.selectedSuppliers,
-        emailData: emailData
-      }});
+        this.dialogRef.close({ action: 'sendQuote', data: {
+          quoteId: this.quoteId,
+          items: this.quoteItems,
+          suppliers: this.selectedSuppliers,
+          emailData: emailData
+        }});
+      } catch (error) {
+        console.error('Error sending quote:', error);
+        this.snackBar.open('Error sending quote. Please try again.', 'Close', {
+          duration: 5000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+        });
+      } finally {
+        this.isSendingQuote = false; // Set loading state back to false
+      }
     }
+
   }
 
   async prepareEmailData() {
@@ -488,100 +471,71 @@ export class CustomQuoteModalComponent implements OnInit {
   }
 
   async getEmailTemplate(tenentId: string): Promise<string | null> {
-    const lambdaClient = new LambdaClient({
-      region: outputs.auth.aws_region,
-      credentials: (await fetchAuthSession()).credentials,
-    });
-
-    const invokeCommand = new InvokeCommand({
-      FunctionName: 'getEmailTemplate',
-      Payload: new TextEncoder().encode(JSON.stringify({ 
-        pathParameters: { tenentId: tenentId } 
-      })),
-    });
-
-    const lambdaResponse = await lambdaClient.send(invokeCommand);
-    const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
-    if (responseBody.statusCode === 200) {
-      const { emailBody } = JSON.parse(responseBody.body);
-      return emailBody;
-    } else if (responseBody.statusCode === 404) {
-      console.log('No custom email template found for this tenant. Using default template.');
-      return null;
-    } else {
-      console.error('Error fetching email template:', responseBody.body);
+    try {
+      const response = await this.ordersService.getEmailTemplate(tenentId).toPromise();
+      
+      if (response && response.emailBody) {
+        return response.emailBody;
+      } else {
+        console.log('No custom email template found for this tenant. Using default template.');
+        return null;
+      }
+    } catch (error) {
+      console.error('Error fetching email template:', error);
       return null;
     }
   }
 
 
   async sendEmails(emailData: any[]) {
-    const lambdaClient = new LambdaClient({
-      region: outputs.auth.aws_region,
-      credentials: (await fetchAuthSession()).credentials,
-    });
-
-    const invokeCommand = new InvokeCommand({
-      FunctionName: 'sendSupplierEmails',
-      Payload: new TextEncoder().encode(JSON.stringify({ emailData: emailData })),
-    });
-
-    const lambdaResponse = await lambdaClient.send(invokeCommand);
-    const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
-    if (responseBody.statusCode === 200) {
-      console.log('Emails sent successfully:', responseBody.body);
-    } else {
-      throw new Error(`Failed to send emails: ${responseBody.body}`);
+    try {
+      const response = await this.ordersService.sendSupplierEmails(emailData).toPromise();
+      console.log('Emails sent successfully:', response);
+      // Handle success (e.g., show a success message)
+    } catch (error) {
+      console.error('Failed to send emails:', error);
+      // Handle error (e.g., show an error message)
     }
   }
 
 
 
   async getSupplierDetails(tenentId: string, supplierID: string): Promise<any> {
-    const lambdaClient = new LambdaClient({
-      region: outputs.auth.aws_region,
-      credentials: (await fetchAuthSession()).credentials,
-    });
-
-    const invokeCommand = new InvokeCommand({
-      FunctionName: 'getSupplier',
-      Payload: new TextEncoder().encode(JSON.stringify({ 
-        pathParameters: { tenentId: tenentId, supplierID: supplierID } 
-      })),
-    });
-
-    const lambdaResponse = await lambdaClient.send(invokeCommand);
-    const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
-    if (responseBody.statusCode === 200) {
-      return JSON.parse(responseBody.body);
-    } else {
-      throw new Error(`Failed to get supplier details: ${responseBody.body}`);
+    try {
+      const supplierDetails = await this.suppliersService.getSupplierDetails(tenentId, supplierID).toPromise();
+      return supplierDetails;
+    } catch (error: unknown) {
+      console.error('Error getting supplier details:', error);
+      if (error instanceof Error) {
+        throw new Error(`Failed to get supplier details: ${error.message}`);
+      } else {
+        throw new Error('Failed to get supplier details: Unknown error');
+      }
     }
   }
 
   async getDeliveryInfoID(tenentId: string): Promise<string> {
-    const lambdaClient = new LambdaClient({
-      region: outputs.auth.aws_region,
-      credentials: (await fetchAuthSession()).credentials,
-    });
-
-    const invokeCommand = new InvokeCommand({
-      FunctionName: 'getDeliveryID',
-      Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: tenentId } })),
-    });
-
-    const lambdaResponse = await lambdaClient.send(invokeCommand);
-    const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
-    if (responseBody.statusCode === 200) {
-      const { deliveryInfoID } = JSON.parse(responseBody.body);
-      return deliveryInfoID;
-    } else {
+    try {
+      const response = await this.ordersService.getDeliveryID(tenentId).toPromise();
+      if (response && response.deliveryInfoID) {
+        return response.deliveryInfoID;
+      } else {
+        throw new Error('DeliveryInfoID not found in response');
+      }
+    } catch (error) {
+      console.error('Error fetching deliveryInfoID:', error);
       throw new Error('Failed to get deliveryInfoID');
     }
+  }
+
+  private filterDuplicateSKUs(items: InventoryItem[]): InventoryItem[] {
+    const uniqueItems = new Map<string, InventoryItem>();
+    items.forEach(item => {
+      if (!uniqueItems.has(item.sku)) {
+        uniqueItems.set(item.sku, item);
+      }
+    });
+    return Array.from(uniqueItems.values());
   }
 
 }

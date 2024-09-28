@@ -7,6 +7,7 @@ import { Amplify } from 'aws-amplify';
 import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
 import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
 import { fetchAuthSession } from 'aws-amplify/auth';
+import { OrdersService } from '../../../../../amplify/services/orders.service';
 
 import outputs from '../../../../../amplify_outputs.json';
 interface DataSet {
@@ -100,7 +101,7 @@ export class SaleschartComponent implements OnInit, OnDestroy, AfterViewInit, On
         };
     }
 
-    constructor(private filterService: FilterService) {
+    constructor(private filterService: FilterService, private ordersService: OrdersService) {
         Amplify.configure(outputs);
         this.setupThemeObserver();
         // this.chartOptions = {
@@ -160,82 +161,41 @@ export class SaleschartComponent implements OnInit, OnDestroy, AfterViewInit, On
         this.isLoading = true;
         try {
             const session = await fetchAuthSession();
-
+    
             const cognitoClient = new CognitoIdentityProviderClient({
                 region: outputs.auth.aws_region,
                 credentials: session.credentials,
             });
-
+    
             const getUserCommand = new GetUserCommand({
                 AccessToken: session.tokens?.accessToken.toString(),
             });
             const getUserResponse = await cognitoClient.send(getUserCommand);
-
+    
             const tenentId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
-
+    
             if (!tenentId) {
                 console.error('TenentId not found in user attributes');
-                // this.rowData = [];
                 return;
             }
-
-            const lambdaClient = new LambdaClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
-
-            const invokeCommand = new InvokeCommand({
-                FunctionName: 'getOrders',
-                Payload: new TextEncoder().encode(JSON.stringify({ pathParameters: { tenentId: tenentId } })),
-            });
-
-            const lambdaResponse = await lambdaClient.send(invokeCommand);
-            const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-            console.log('Response from Lambda:', responseBody);
-
-            if (responseBody.statusCode === 200) {
-                const orders = JSON.parse(responseBody.body);
+    
+            // Use OrdersService to fetch orders
+            const orders = await this.ordersService.getOrders(tenentId).toPromise();
+    
+            if (orders) {
                 this.ordersData = orders.map((order: any) => ({
-                    // Order_ID: order.Order_ID,
                     orderDate: order.Order_Date,
                     orderStatus: order.Order_Status,
-                    // Quote_ID: order.Quote_ID,
-                    // Quote_Status: order.Quote_Status,
-                    // Selected_Supplier: order.Selected_Supplier,
                     deliveryDate: order.Expected_Delivery_Date,
-                    // Actual_Delivery_Date: order.Actual_Delivery_Date,
-                    // Creation_Time: order.Creation_Time // Add this line
                 }));
                 console.log('Processed orders:', this.ordersData);
-                this.ordersData.push(
-                    { orderDate: '8-7-2024', orderStatus: 'Completed', deliveryDate: '8/7/2024' },
-                    { orderDate: '8-7-2024', orderStatus: 'Pending Approval', deliveryDate: null },
-                    { orderDate: '8-5-2024', orderStatus: 'Completed', deliveryDate: '8/7/2024' },
-                    { orderDate: '8-3-2024', orderStatus: 'Completed', deliveryDate: '8/4/2024' },
-                    { orderDate: '8-1-2024', orderStatus: 'Cancelled', deliveryDate: null },
-                    { orderDate: '7-30-2024', orderStatus: 'Completed', deliveryDate: '8/1/2024' },
-                    { orderDate: '7-28-2024', orderStatus: 'Pending Approval', deliveryDate: null },
-                    { orderDate: '7-25-2024', orderStatus: 'Completed', deliveryDate: '7/27/2024' },
-                    { orderDate: '7-23-2024', orderStatus: 'Completed', deliveryDate: '7/25/2024' },
-                    { orderDate: '7-21-2024', orderStatus: 'Cancelled', deliveryDate: null },
-                    { orderDate: '6-15-2024', orderStatus: 'Completed', deliveryDate: '6/17/2024' },
-                    { orderDate: '6-12-2024', orderStatus: 'Pending Approval', deliveryDate: null },
-                    { orderDate: '6-10-2024', orderStatus: 'Completed', deliveryDate: '6/11/2024' },
-                    { orderDate: '5-29-2024', orderStatus: 'Completed', deliveryDate: '5/30/2024' },
-                    { orderDate: '5-20-2024', orderStatus: 'Cancelled', deliveryDate: null },
-                    { orderDate: '5-15-2024', orderStatus: 'Completed', deliveryDate: '5/17/2024' },
-                    { orderDate: '5-10-2024', orderStatus: 'Pending Approval', deliveryDate: null },
-                    { orderDate: '4-25-2024', orderStatus: 'Completed', deliveryDate: '4/27/2024' },
-                    { orderDate: '4-20-2024', orderStatus: 'Completed', deliveryDate: '4/21/2024' },
-                    { orderDate: '4-15-2024', orderStatus: 'Cancelled', deliveryDate: null },
-                );
             } else {
-                console.error('Error fetching orders data:', responseBody.body);
-                // this.rowData = [];
+                console.error('Error fetching orders data');
+                this.ordersData = [];
             }
         } catch (error) {
             console.error('Error in loadOrdersData:', error);
-            // this.rowData = [];
+            this.ordersData = [];
         } finally {
             this.isLoading = false;
         }
@@ -257,7 +217,7 @@ export class SaleschartComponent implements OnInit, OnDestroy, AfterViewInit, On
 
         this.chartOptions = {
             title: {
-                text: this.chartTitle || 'Sales and Shipment Duration',
+                text: this.chartTitle || 'Requests and Shipment Duration',
             },
             data: Object.values(groupedData),
             series: [

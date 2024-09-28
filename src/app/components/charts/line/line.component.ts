@@ -14,15 +14,10 @@ export class LineComponent implements OnInit, OnChanges, AfterViewInit {
   @Input() xAxisData: string[] = [];
   @Input() yAxisName: string = '';
   @Input() seriesData: { name: string; data: number[] }[] = []; // Adjusted for correct input
-
+  private resizeObserver!: ResizeObserver;
   @ViewChild('chartContainer', { static: true }) chartContainer!: ElementRef<HTMLDivElement>;
 
   private chart: echarts.ECharts | null = null;
-
-  @HostListener('window:resize')
-  onWindowResize(): void {
-    this.chart?.resize();
-  }
 
   ngOnInit() {
     // Chart initialization moved to ngAfterViewInit
@@ -30,6 +25,16 @@ export class LineComponent implements OnInit, OnChanges, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.initChart();
+    this.observeResize();
+  }
+
+  private observeResize(): void {
+    this.resizeObserver = new ResizeObserver(() => {
+      if (this.chart) {
+        this.chart.resize();
+      }
+    });
+    this.resizeObserver.observe(this.chartContainer.nativeElement);
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -43,17 +48,58 @@ export class LineComponent implements OnInit, OnChanges, AfterViewInit {
     this.updateChartOptions();
   }
 
+  ngOnDestroy(): void {
+    if (this.resizeObserver) {
+      this.resizeObserver.disconnect();
+    }
+    if (this.chart) {
+      this.chart.dispose();
+    }
+  }
+
   private updateChartOptions(): void {
     const options: EChartsOption = {
-      title: { text: this.title },
-      tooltip: { trigger: 'axis' },
+      title: {
+        text: this.title,
+        left: 'center',
+        top: '20px'
+      },
+      tooltip: { 
+        trigger: 'axis',
+        axisPointer: {
+          type: 'shadow'
+        }
+      },
       legend: {
+        type: 'scroll',
+        orient: 'horizontal',
+        bottom: 10,
         data: this.seriesData.map(series => series.name),
-        bottom: 0 // Set the legend at the bottom of the chart
+        textStyle: {
+          fontSize: 12
+        },
+        pageButtonItemGap: 5,
+        pageButtonGap: 5,
+        pageIconSize: 12,
+        pageTextStyle: {
+          fontSize: 12
+        }
       },
       xAxis: {
         type: 'category',
-        data: this.xAxisData
+        data: this.xAxisData,
+        axisLabel: {
+          rotate: 45,
+          interval: 0,
+          fontSize: 10
+        }
+      },
+      grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '12%',
+        top: '15%',
+        containLabel: true
       },
       yAxis: {
         type: 'value',

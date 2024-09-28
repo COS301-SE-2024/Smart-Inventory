@@ -14,6 +14,9 @@ import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
 import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
 import outputs from '../../../../amplify_outputs.json';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { LoadingSpinnerComponent } from '../loader/loading-spinner.component';
+import { InventoryService } from '../../../../amplify/services/inventory.service';
+import { OrdersService } from '../../../../amplify/services/orders.service';
 
 interface OrderItem {
   sku: string;
@@ -26,6 +29,7 @@ interface OrderItem {
   reorderAmount: number;
   inventoryID: string;
   quoteID: string;
+  unitCost: number;
 }
 
 @Component({
@@ -40,7 +44,8 @@ interface OrderItem {
     MatDatepickerModule,
     MatNativeDateModule,
     FormsModule,
-    MatIconModule
+    MatIconModule,
+    LoadingSpinnerComponent
   ],
   providers: [
     MatDatepickerModule,
@@ -53,59 +58,53 @@ export class ReceiveOrderModalComponent implements OnInit {
   displayedColumns: string[] = ['sku', 'description', 'quantity', 'expirationDate'];
   orderItems: OrderItem[] = [];
   tenentId: string = '';
+  isLoading = true;
 
   constructor(
     public dialogRef: MatDialogRef<ReceiveOrderModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private inventoryService: InventoryService,
+    private ordersService: OrdersService
   ) {}
 
   async ngOnInit() {
+    this.isLoading = true;
     await this.loadQuoteItems();
+    this.isLoading = false;
   }
 
   async loadQuoteItems() {
     try {
       const session = await fetchAuthSession();
       this.tenentId = await this.getTenentId(session);
-
-      const lambdaClient = new LambdaClient({
-        region: outputs.auth.aws_region,
-        credentials: session.credentials,
-      });
-
-      const invokeCommand = new InvokeCommand({
-        FunctionName: 'getQuoteItems',
-        Payload: new TextEncoder().encode(JSON.stringify({
-          pathParameters: {
-            tenentId: this.tenentId,
-            quoteID: this.data.Quote_ID
-          }
-        })),
-      });
-
-      const lambdaResponse = await lambdaClient.send(invokeCommand);
-      const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
-      console.log('Lambda response:', responseBody);
-
-      if (responseBody.statusCode === 200) {
-        const items = JSON.parse(responseBody.body);
-        this.orderItems = items.map((item: any) => ({
-          sku: item.ItemSKU,
-          description: item.Description,
-          quantity: item.Quantity,
-          expirationDate: null,
-          upc: item.UPC,
-          category: item.Category,
-          lowStockThreshold: item.LowStockThreshold,
-          reorderAmount: item.ReorderAmount,
-          inventoryID: item.inventoryID,
-          quoteID: item.QuoteID
-        }));
-      } else {
-        console.error('Error fetching quote items:', responseBody.body);
+  
+      if (!this.tenentId) {
+        console.error('TenentId not found');
+        return;
       }
+  
+      this.ordersService.getQuoteItems(this.tenentId, this.data.Quote_ID)
+        .subscribe(
+          (items: any[]) => {
+            this.orderItems = items.map((item: any) => ({
+              sku: item.ItemSKU,
+              description: item.Description,
+              quantity: item.Quantity,
+              expirationDate: null,
+              upc: item.UPC,
+              category: item.Category,
+              lowStockThreshold: item.LowStockThreshold,
+              reorderAmount: item.ReorderAmount,
+              inventoryID: item.inventoryID,
+              quoteID: item.QuoteID,
+              unitCost: item.UnitCost,
+            }));
+          },
+          (error) => {
+            console.error('Error fetching quote items:', error);
+          }
+        );
     } catch (error) {
       console.error('Error in loadQuoteItems:', error);
     }
@@ -132,14 +131,9 @@ export class ReceiveOrderModalComponent implements OnInit {
 
     return tenentId;
   }
+
   async markAsReceived() {
     try {
-      const session = await fetchAuthSession();
-      const lambdaClient = new LambdaClient({
-        region: outputs.auth.aws_region,
-        credentials: session.credentials,
-      });
-
       // First, add inventory items
       for (const item of this.orderItems) {
         const inventoryItem = {
@@ -152,60 +146,42 @@ export class ReceiveOrderModalComponent implements OnInit {
           sku: item.sku,
           supplier: this.data.Selected_Supplier,
           tenentId: this.tenentId,
-          upc: item.upc
+          upc: item.upc,
+          unitCost: item.unitCost
         };
-
+  
         console.log('Inventory item to be created:', inventoryItem);
-
-        const invokeCommand = new InvokeCommand({
-          FunctionName: 'Inventory-CreateItem',
-          Payload: new TextEncoder().encode(JSON.stringify({ body: inventoryItem })),
-        });
-
-        const lambdaResponse = await lambdaClient.send(invokeCommand);
-        const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
-        console.log('Inventory-CreateItem Lambda response:', responseBody);
-
-        if (responseBody.statusCode !== 201) {
-          throw new Error(`Failed to create inventory item: ${responseBody.body}`);
+  
+        const response = await this.inventoryService.createInventoryItem(inventoryItem).toPromise();
+  
+        console.log('Inventory-CreateItem response:', response);
+  
+        if (!response) {
+          throw new Error(`Failed to create inventory item`);
         }
       }
-
+  
       // Then, mark the order as received
-      const payload = {
-        body: JSON.stringify({
-          orderID: this.data.Order_ID,
-          orderDate: this.data.Order_Date
-        })
-      };
-
-      const invokeCommand = new InvokeCommand({
-        FunctionName: 'receiveOrder',
-        Payload: new TextEncoder().encode(JSON.stringify(payload)),
-      });
-
-      const lambdaResponse = await lambdaClient.send(invokeCommand);
-      const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
-      if (responseBody.statusCode === 200) {
-        const result = JSON.parse(responseBody.body);
-        console.log('Order marked as received:', result);
-
-        this.snackBar.open('Order marked as received and inventory items added successfully', 'Close', {
-          duration: 6000,
-          horizontalPosition: 'center',
-          verticalPosition: 'top',
-        });
-
-        this.dialogRef.close({ 
-          action: 'received', 
-          data: this.orderItems, 
-          updatedOrder: result.updatedOrder 
-        });
-      } else {
-        throw new Error(responseBody.body || 'Unknown error occurred');
+      const result = await this.ordersService.receiveOrder(this.data.Order_ID, this.data.Order_Date).toPromise();
+  
+      console.log('Order marked as received:', result);
+  
+      if (!result || !result.updatedOrder) {
+        throw new Error('Failed to update order status');
       }
+  
+      this.snackBar.open('Order marked as received and inventory items added successfully', 'Close', {
+        duration: 6000,
+        horizontalPosition: 'center',
+        verticalPosition: 'top',
+      });
+  
+      this.dialogRef.close({ 
+        action: 'received', 
+        data: this.orderItems, 
+        updatedOrder: result.updatedOrder 
+      });
+  
     } catch (error) {
       console.error('Error in markAsReceived:', error);
       this.snackBar.open(`Error marking order as received: ${(error as Error).message}`, 'Close', {

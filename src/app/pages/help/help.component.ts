@@ -13,6 +13,7 @@ import { TitleService } from '../../components/header/title.service';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatCardModule } from '@angular/material/card';
 import { MatTabsModule } from '@angular/material/tabs';
+import { ContactSupportComponent } from 'app/components/contact-support/contact-support.component';
 
 interface MenuItem {
     title: string;
@@ -47,6 +48,7 @@ interface TroubleshootingIssue {
         MatGridListModule,
         MatCardModule,
         MatTabsModule,
+        ContactSupportComponent,
     ],
     templateUrl: './help.component.html',
     styleUrls: ['./help.component.css'],
@@ -366,10 +368,6 @@ export class HelpComponent implements OnInit {
         this.onItemSelected(this.menuItems[0]); // Select FAQs by default
         this.filteredFaqs = this.faqs; // Show all FAQs by default
         this.titleService.updateTitle('Help');
-    }
-
-    renameTitle(t: string) {
-        this.titleService.updateTitle('Help > ' + t);
     }
 
     onItemSelected(item: MenuItem) {

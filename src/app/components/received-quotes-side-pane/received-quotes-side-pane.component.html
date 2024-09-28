@@ -1,30 +1,84 @@
-<div class="side-pane" [class.open]="isOpen">
-  <div class="side-pane-header">
-    <button mat-icon-button class="close-button" (click)="close()">
-      <mat-icon>close</mat-icon>
-    </button>
-    <h3>Received Quotes</h3>
-  </div>
-  <div class="side-pane-content">
-    <div *ngIf="selectedOrder">
-      <!-- <h4>Order ID: {{ selectedOrder.Order_ID }}</h4>
-      <h5>Quote ID: {{ selectedOrder.Quote_ID }}</h5> -->
-      <div class="supplier-quotes">
-        <mat-card *ngFor="let quote of supplierQuotes" class="supplier-quote-card" (click)="viewQuoteDetails(quote)">
-          <mat-card-header>
-            <mat-card-title>Supplier ID: {{ quote.supplier_name }}</mat-card-title>
-            <mat-card-subtitle>Quote Value: {{ quote.Total_Quote_Value | currency:quote.Currency:'symbol':'1.2-2' }}</mat-card-subtitle>
-          </mat-card-header>
-          <mat-card-content>
-            <p><strong>Delivery Date:</strong> {{ quote.Delivery_Date | date:'mediumDate' }}</p>
-            <p><strong>Delivery Cost:</strong> {{ quote.Delivery_Cost | currency:quote.Currency:'symbol':'1.2-2' }}</p>
-          </mat-card-content>
-        </mat-card>
-      </div>
+<div class="side-pane" [class.open]="isOpen" [style.width.px]="paneWidth">
+    <div class="resize-handle" (mousedown)="startResize($event)"></div>
+    <div class="side-pane-header">
+        <h2>Received Quotes</h2>
+        <button mat-icon-button class="close-button" (click)="close()">
+            <mat-icon>close</mat-icon>
+        </button>
     </div>
-    <div *ngIf="!selectedOrder" class="no-order-selected">
-      <mat-icon>info</mat-icon>
-      <p>No order selected</p>
+    <div class="side-pane-content">
+        <div *ngIf="isLoading" class="centered-content">
+            <app-loading-spinner></app-loading-spinner>
+        </div>
+        <ng-container *ngIf="!isLoading">
+            <div *ngIf="selectedOrder" class="order-content">
+                <div *ngIf="noQuotesReceived" class="no-quotes">
+                    <mat-icon>info_outline</mat-icon>
+                    <p>No quotes have been received for this order yet.</p>
+                </div>
+                <div *ngIf="!noQuotesReceived" class="quotes-container">
+                    <div class="filter-section">
+                        <div class="sort-buttons">
+                            <button
+                                mat-button
+                                [class.active]="sortCriteria === 'price'"
+                                (click)="setSortCriteria('price')"
+                            >
+                                Price
+                                <mat-icon>{{ getSortIcon('price') }}</mat-icon>
+                            </button>
+                            <button
+                                mat-button
+                                [class.active]="sortCriteria === 'date'"
+                                (click)="setSortCriteria('date')"
+                            >
+                                Delivery Date
+                                <mat-icon>{{ getSortIcon('date') }}</mat-icon>
+                            </button>
+                            <button
+                                mat-button
+                                [class.active]="sortCriteria === 'deliveryCost'"
+                                (click)="setSortCriteria('deliveryCost')"
+                            >
+                                Delivery Cost
+                                <mat-icon>{{ getSortIcon('deliveryCost') }}</mat-icon>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="supplier-quotes">
+                        <mat-card
+                            *ngFor="let quote of sortedQuotes"
+                            class="supplier-quote-card"
+                            (click)="viewQuoteDetails(quote)"
+                        >
+                            <mat-card-header>
+                                <mat-card-title>{{ quote.supplier_name }}</mat-card-title>
+                                <mat-card-subtitle>{{
+                                    quote.Total_Quote_Value | currency: quote.Currency : 'symbol' : '1.2-2'
+                                }}</mat-card-subtitle>
+                            </mat-card-header>
+                            <mat-card-content>
+                                <div class="quote-details">
+                                    <div class="detail-item">
+                                        <mat-icon>event</mat-icon>
+                                        <span>{{ quote.Delivery_Date | date: 'mediumDate' }}</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <mat-icon>local_shipping</mat-icon>
+                                        <span>{{
+                                            quote.Delivery_Cost | currency: quote.Currency : 'symbol' : '1.2-2'
+                                        }}</span>
+                                    </div>
+                                </div>
+                            </mat-card-content>
+                        </mat-card>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="!selectedOrder" class="no-order">
+                <mat-icon>dashboard</mat-icon>
+                <p>No order selected</p>
+            </div>
+        </ng-container>
     </div>
-  </div>
 </div>

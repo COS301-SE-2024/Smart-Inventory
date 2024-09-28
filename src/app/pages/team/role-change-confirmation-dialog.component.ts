@@ -9,7 +9,7 @@ import { CommonModule } from '@angular/common';
     standalone: true,
     imports: [MatDialogModule, MatButtonModule, CommonModule],
     template: `
-        <h2 mat-dialog-title>Confirm Role Change</h2>
+        <h1 mat-dialog-title style="text-align: center; --mdc-dialog-subhead-size: 30px">Confirm Role Change</h1>
         <div mat-dialog-content>
             <p>{{ data.given_name }} {{ data.family_name }}: {{ data.email }}</p>
             <p>
@@ -20,8 +20,31 @@ import { CommonModule } from '@angular/common';
             </p>
         </div>
         <div mat-dialog-actions>
-            <button mat-button (click)="onNoClick()">Cancel</button>
-            <button mat-button color="primary" (click)="onYesClick()">Confirm</button>
+            <button
+                mat-flat-button
+                (click)="onNoClick()"
+                style="
+    margin-right: auto;
+    margin-left: auto;
+    border-radius: 5px;
+    width: 100px;
+    height: 40px;"
+            >
+                Cancel
+            </button>
+            <button
+                mat-flat-button
+                color="primary"
+                (click)="onYesClick()"
+                style="
+    margin-right: auto;
+    margin-left: auto;
+    border-radius: 5px;
+    width: 100px;
+    height: 40px;"
+            >
+                Confirm
+            </button>
         </div>
     `,
     styles: [
@@ -41,7 +64,7 @@ export class RoleChangeConfirmationDialogComponent {
     constructor(
         public dialogRef: MatDialogRef<RoleChangeConfirmationDialogComponent>,
         @Inject(MAT_DIALOG_DATA)
-        public data: { given_name: string; family_name: string; email: string; oldRole: string; newRole: string }
+        public data: { given_name: string; family_name: string; email: string; oldRole: string; newRole: string },
     ) {}
 
     onNoClick(): void {

@@ -11,6 +11,8 @@ import { fetchAuthSession } from 'aws-amplify/auth';
 import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
 import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
 import outputs from '../../../../amplify_outputs.json';
+import { LoadingSpinnerComponent } from '../loader/loading-spinner.component';
+import { OrdersService } from '../../../../amplify/services/orders.service';
 
 @Component({
   selector: 'app-email-template-modal',
@@ -23,12 +25,15 @@ import outputs from '../../../../amplify_outputs.json';
     MatInputModule,
     MatButtonModule,
     MatTabsModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    LoadingSpinnerComponent
   ],
   templateUrl: './email-template-modal.component.html',
   styleUrls: ['./email-template-modal.component.css']
 })
 export class EmailTemplateModalComponent implements OnInit {
+  isLoading = true;
+  isSaving = false;
   emailForm: FormGroup;
   WEB_FORM_URL = '{{WEB_FORM_URL}}';
   SUPPLIER_NAME = '{{SUPPLIER_NAME}}';
@@ -47,7 +52,8 @@ Best regards`;
     public dialogRef: MatDialogRef<EmailTemplateModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private fb: FormBuilder,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private ordersService: OrdersService
   ) {
     this.emailForm = this.fb.group({
       emailBody: ['', [Validators.required, this.webFormUrlValidator]]
@@ -55,8 +61,10 @@ Best regards`;
   }
 
   async ngOnInit() {
+    this.isLoading = true;
     try {
-      const existingTemplate = await this.getEmailTemplate();
+      const tenentId = await this.getTenentId();
+      const existingTemplate = await this.getEmailTemplate(tenentId);
       if (existingTemplate) {
         this.emailForm.patchValue({ emailBody: existingTemplate.emailBody });
       } else {
@@ -65,6 +73,25 @@ Best regards`;
     } catch (error) {
       console.error('Error fetching email template:', error);
       this.emailForm.patchValue({ emailBody: this.defaultEmailBody });
+    } finally {
+      this.isLoading = false;
+    }
+  }
+
+  async onSave() {
+    if (this.emailForm.valid) {
+      this.isSaving = true;
+      try {
+        const tenentId = await this.getTenentId();
+        const savedTemplate = await this.saveEmailTemplate(tenentId, this.emailForm.value.emailBody);
+        this.showSuccessNotification();
+        this.dialogRef.close(savedTemplate);
+      } catch (error) {
+        console.error('Error saving email template:', error);
+        this.showErrorNotification(error);
+      } finally {
+        this.isSaving = false;
+      }
     }
   }
 
@@ -76,19 +103,6 @@ Best regards`;
     return null;
   }
 
-  async onSave() {
-    if (this.emailForm.valid) {
-      try {
-        const savedTemplate = await this.saveEmailTemplate(this.emailForm.value.emailBody);
-        this.showSuccessNotification();
-        this.dialogRef.close(savedTemplate);
-      } catch (error) {
-        console.error('Error saving email template:', error);
-        this.showErrorNotification(error);
-      }
-    }
-  }
-
   onCancel() {
     this.dialogRef.close();
   }
@@ -97,79 +111,25 @@ Best regards`;
     return this.emailForm.get('emailBody')?.value || '';
   }
 
-  async invokeLambda(httpMethod: string, payload: any = {}) {
-    const session = await fetchAuthSession();
-    const tenentId = await this.getTenentId(session);
-
-    const lambdaClient = new LambdaClient({
-      region: outputs.auth.aws_region,
-      credentials: session.credentials,
-    });
-
-    const invokeCommand = new InvokeCommand({
-      FunctionName: 'addEmailTemplate', 
-      Payload: new TextEncoder().encode(JSON.stringify({
-        httpMethod,
-        queryStringParameters: { tenentId },
-        body: JSON.stringify({ ...payload, tenentId })
-      })),
-    });
-
-    const lambdaResponse = await lambdaClient.send(invokeCommand);
-    return JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-  }
-
-  async getEmailTemplate() {
+  async getEmailTemplate(tenentId: string) {
     try {
-      const response = await this.invokeLambda('GET');
-
-      if (response.statusCode === 200) {
-        return JSON.parse(response.body);
-      } else if (response.statusCode === 404) {
-        return null;
-      } else {
-        throw new Error(response.body || 'Unknown error occurred');
-      }
+      const response = await this.ordersService.getEmailTemplate(tenentId).toPromise();
+      return response;
     } catch (error) {
       console.error('Error fetching email template:', error);
       throw error;
     }
   }
 
-  async saveEmailTemplate(emailBody: string) {
+  async saveEmailTemplate(tenentId: string, emailBody: string) {
     try {
-      const response = await this.invokeLambda('POST', { emailBody });
-
-      if (response.statusCode === 200 || response.statusCode === 201) {
-        console.log('Email template saved successfully');
-        return JSON.parse(response.body);
-      } else {
-        throw new Error(response.body || 'Unknown error occurred');
-      }
+      const response = await this.ordersService.saveEmailTemplate(tenentId, emailBody).toPromise();
+      console.log('Email template saved successfully');
+      return response;
     } catch (error) {
       console.error('Error saving email template:', error);
       throw error;
     }
-  }
-
-  async getTenentId(session: any): Promise<string> {
-    const cognitoClient = new CognitoIdentityProviderClient({
-      region: outputs.auth.aws_region,
-      credentials: session.credentials,
-    });
-
-    const getUserCommand = new GetUserCommand({
-      AccessToken: session.tokens?.accessToken.toString(),
-    });
-    const getUserResponse = await cognitoClient.send(getUserCommand);
-
-    const tenentId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
-
-    if (!tenentId) {
-      throw new Error('TenentId not found in user attributes');
-    }
-
-    return tenentId;
   }
 
   showSuccessNotification() {
@@ -211,5 +171,26 @@ Best regards`;
 
   insertWebFormUrl() {
     this.insertPlaceholder(this.WEB_FORM_URL);
+  }
+
+  async getTenentId(): Promise<string> {
+    const session = await fetchAuthSession();
+    const cognitoClient = new CognitoIdentityProviderClient({
+      region: outputs.auth.aws_region,
+      credentials: session.credentials,
+    });
+
+    const getUserCommand = new GetUserCommand({
+      AccessToken: session.tokens?.accessToken.toString(),
+    });
+    const getUserResponse = await cognitoClient.send(getUserCommand);
+
+    const tenentId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
+
+    if (!tenentId) {
+      throw new Error('TenentId not found in user attributes');
+    }
+
+    return tenentId;
   }
 }

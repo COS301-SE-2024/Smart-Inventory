@@ -1,0 +1,24 @@
+<div class="forecast-modal-container">
+  <mat-dialog-content>
+    <div *ngIf="loading" class="loading-container">
+      <mat-spinner></mat-spinner>
+      <p>Generating forecast...</p>
+    </div>
+    <div *ngIf="!loading && forecastData.length > 0" class="forecast-content">
+      <h2>SKU: {{ data.SKU }}</h2>
+      <p>12-Week Forecast</p>
+      <div class="chart-container">
+        <ag-charts-angular [options]="chartOptions"></ag-charts-angular>
+      </div>
+    </div>
+    <div *ngIf="!loading && error" class="error-message">
+      <p>{{ error }}</p>
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-flat-button (click)="onClose()" class="btn">Close</button>
+    <button mat-flat-button (click)="printForecast()" class="btn">
+      <mat-icon>print</mat-icon> Print Forecast
+    </button>
+  </mat-dialog-actions>
+</div>

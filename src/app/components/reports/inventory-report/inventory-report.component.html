@@ -1,74 +1,60 @@
-<div *ngIf="isLoading" class="loading-overlay">
-    <app-loading-spinner></app-loading-spinner>
-</div>
+<div class="inventory-report-container">
+    <div *ngIf="isLoading" class="loading-overlay">
+        <app-loading-spinner></app-loading-spinner>
+    </div>
 
-<div *ngIf="!isLoading" style="height: 100%; display: block; overflow: scroll">
-    <mat-toolbar style="width: 100%">
-        <button mat-button style="width: 100%; background-color: #f1f1f1; color: black" (click)="back()">
-            Back to reports
-        </button>
-    </mat-toolbar>
-    <mat-grid-list cols="9" rowHeight="29vh" gutterSize="15px">
-        <mat-grid-tile [colspan]="3" [rowspan]="2">
-            <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
-                <mat-card style="height: 100%; width: 100%">
-                    <ag-charts-angular [options]="options1" style="height: 100%" data-cy = "graph1"></ag-charts-angular>
-                </mat-card>
-            </div>
-        </mat-grid-tile>
-        <mat-grid-tile [colspan]="3" [rowspan]="2">
-            <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
-                <mat-card style="height: 100%; width: 100%">
-                    <ag-charts-angular [options]="options2" style="height: 100%" data-cy = "graph2"></ag-charts-angular>
-                </mat-card>
-            </div>
-        </mat-grid-tile>
-        <mat-grid-tile [colspan]="3" [rowspan]="2">
-            <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
-                <mat-card style="height: 100%; width: 100%">
-                    <ag-charts-angular [options]="options4" style="height: 100%" data-cy = "graph3"></ag-charts-angular>
-                </mat-card>
-            </div>
-        </mat-grid-tile>
-        <mat-grid-tile [colspan]="9" [rowspan]="2">
-            <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
-                <div class="inventoryHolder">
-                    <app-grid [rowData]="rowData" [columnDefs]="colDefs" #gridComponent></app-grid>
-                </div>
-            </div>
-        </mat-grid-tile>
-
-        <mat-grid-tile [colspan]="7" [rowspan]="2">
-            <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
-                <mat-card style="height: 100%; width: 100%">
-                    <ag-charts-angular [options]="options3" style="height: 100%"></ag-charts-angular>
-                </mat-card>
-            </div>
-        </mat-grid-tile>
-
-        <mat-grid-tile [colspan]="2" [rowspan]="2">
-            <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
-                <mat-card style="height: 100%; width: 100%">
-                    <mat-card-title style="text-align: center">{{InventoryReport.title}}</mat-card-title>
-                    <mat-card-content style="align-items: center">
-                        <ul style="list-style: none; padding: 0; margin: 0">
-                            <li
-                                *ngFor="let metric of InventoryReport.metrics | keyvalue"
-                                style="font-size: 15px; padding: 8px 0; border-bottom: 1px solid lightgrey"
-                            >
-                                {{ metric.value }}
-                            </li>
-                        </ul>
+    <div *ngIf="!isLoading">
+        <div class="grid-wrapper">
+            <app-grid
+                [rowData]="rowData"
+                [columnDefs]="colDefs"
+                (viewInventorySummary)="onViewInventorySummary()"
+            ></app-grid>
+        </div>
+        <div class="report-row">
+            <div class="chart-wrapper large">
+                <mat-card class="chart-card">
+                    <mat-card-content>
+                        <ag-charts-angular
+                            [options]="options[0]"
+                            style="width: 95%; display: block; margin: auto"
+                        ></ag-charts-angular>
                     </mat-card-content>
                 </mat-card>
             </div>
-        </mat-grid-tile>
-        <mat-grid-tile [colspan]="7" [rowspan]="2">
-            <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
-                <mat-card style="height: 100%; width: 100%">
-                    <ag-charts-angular [options]="options5" style="height: 100%"></ag-charts-angular>
+            <div class="metrics-wrapper">
+                <mat-card class="metrics-card">
+                    <mat-card-header>
+                        <mat-card-title>{{ InventoryReport.title }}</mat-card-title>
+                        <mat-card-subtitle>{{ InventoryReport.subtitle }}</mat-card-subtitle>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <mat-list>
+                            <mat-list-item *ngFor="let metric of InventoryReport.metrics | keyvalue">
+                                <mat-icon matListItemIcon>{{ metric.value.icon }}</mat-icon>
+                                <span matListItemTitle>{{ metric.value.label }}: {{ metric.value.value }}</span>
+                            </mat-list-item>
+                        </mat-list>
+                    </mat-card-content>
                 </mat-card>
             </div>
-        </mat-grid-tile>
-    </mat-grid-list>
+        </div>
+        <div class="report-row">
+            <div class="chart-wrapper full-width">
+                <mat-card class="chart-card">
+                    <mat-card-content>
+                        <ag-charts-angular
+                            [options]="options[1]"
+                            style="width: 95%; display: block; margin: auto"
+                        ></ag-charts-angular>
+                    </mat-card-content>
+                </mat-card>
+            </div>
+        </div>
+        <div class="back-toolbar">
+            <button mat-flat-button class="btn" (click)="back()">
+                <mat-icon>arrow_back</mat-icon> Back To Reports
+            </button>
+        </div>
+    </div>
 </div>

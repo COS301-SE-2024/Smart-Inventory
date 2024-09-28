@@ -1,0 +1,172 @@
+<ng-container>
+    <div
+        style="
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            align-items: flex-start;
+            overflow-y: scroll;
+            height: fit-content;
+        "
+    >
+        <mat-card class="card" style="width: 440px; margin-left: auto; margin-right: auto">
+            <mat-card-title class="cardTitle">Personal details</mat-card-title>
+            <mat-card-content style="width: 90%"
+                ><p>Name</p>
+                <mat-form-field appearance="outline">
+                    <input matInput placeholder="Name" [(ngModel)]="profile.name" />
+                </mat-form-field>
+                <p>Surname</p>
+                <mat-form-field appearance="outline">
+                    <input matInput placeholder="Surname" [(ngModel)]="profile.surname" />
+                </mat-form-field>
+                <p>Email</p>
+                <mat-form-field appearance="outline">
+                    <input matInput placeholder="Email" [formControl]="emailFormControl" />
+                    <mat-error *ngIf="emailFormControl.hasError('email') && !emailFormControl.hasError('required')">
+                        Please enter a valid email address
+                    </mat-error>
+                    <mat-error *ngIf="emailFormControl.hasError('required')">
+                        Email is <strong>required</strong>
+                    </mat-error>
+                </mat-form-field>
+            </mat-card-content>
+            <mat-card-actions style="text-align: center">
+                <button mat-fab extended color="primary" (click)="saveProfileChanges()" class="btn">
+                    Save Changes
+                </button>
+            </mat-card-actions>
+        </mat-card>
+        <div style="display: flex; flex-direction: column; width: 350px; margin-left: auto; margin-right: auto">
+            <mat-card class="card" style="width: 350px; margin-left: auto; margin-right: auto">
+                <mat-card-title class="cardTitle">Password</mat-card-title>
+                <mat-card-content style="width: 90%"
+                    ><p>Current Password</p>
+                    <mat-form-field appearance="outline">
+                        <input
+                            matInput
+                            [type]="hidePassword ? 'password' : 'text'"
+                            placeholder="Current Password"
+                            [(ngModel)]="password.current"
+                        />
+                        <button
+                            mat-icon-button
+                            matSuffix
+                            (click)="togglePasswordVisibility()"
+                            [attr.aria-label]="'Hide password'"
+                            [attr.aria-pressed]="hidePassword"
+                        >
+                            <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+                        </button>
+                    </mat-form-field>
+                    <mat-form-field *ngIf="isChangingPassword" appearance="outline">
+                        <input
+                            matInput
+                            [type]="hidePassword ? 'password' : 'text'"
+                            placeholder="New Password"
+                            [(ngModel)]="password.new"
+                        />
+                    </mat-form-field>
+                </mat-card-content>
+                <mat-card-actions style="text-align: center">
+                    <button
+                        mat-fab
+                        extended
+                        *ngIf="!isChangingPassword"
+                        color="primary"
+                        class="btn"
+                        (click)="initiatePasswordChange()"
+                    >
+                        Change Password
+                    </button>
+
+                    <button
+                        mat-fab
+                        extended
+                        *ngIf="isChangingPassword"
+                        color="primary"
+                        (click)="updatePassword()"
+                        class="btn"
+                    >
+                        Update
+                    </button>
+                    <button
+                        mat-fab
+                        extended
+                        *ngIf="isChangingPassword"
+                        color="warn"
+                        (click)="cancelPasswordChange()"
+                        class="btn"
+                    >
+                        Cancel
+                    </button></mat-card-actions
+                >
+            </mat-card>
+
+            <mat-card class="card" style="width: 350px; margin-left: auto; margin-right: auto">
+                <mat-card-title class="cardTitle">Delivery Information</mat-card-title>
+                <mat-card-content style="width: 90%; padding-bottom: 10px"
+                    ><p>Update and change your delivery information.</p></mat-card-content
+                >
+                <mat-card-actions style="text-align: center">
+                    <button
+                        mat-fab
+                        extended
+                        color="primary"
+                        class="btn"
+                        (click)="viewDeliveryInfo()"
+                        [disabled]="notEndUser()"
+                    >
+                        Edit Details
+                    </button></mat-card-actions
+                >
+            </mat-card>
+        </div>
+        <div style="display: flex; flex-direction: column; width: 350px; margin-left: auto; margin-right: auto">
+            <mat-card class="card" style="width: 350px; margin-left: auto; margin-right: auto">
+                <mat-card-title class="cardTitle">Email Template</mat-card-title>
+                <mat-card-content style="width: 90%; padding-bottom: 10px"
+                    ><p>Update and edit your template for emails sent.</p></mat-card-content
+                >
+                <mat-card-actions style="text-align: center">
+                    <button
+                        mat-fab
+                        extended
+                        color="primary"
+                        class="btn"
+                        (click)="viewEmailTemplate()"
+                        [disabled]="notEndUser()"
+                    >
+                        Edit Template
+                    </button></mat-card-actions
+                >
+            </mat-card>
+            <mat-card class="card" style="width: 350px; margin-left: auto; margin-right: auto">
+                <mat-card-title class="cardTitle">Automation Templates</mat-card-title>
+                <mat-card-content style="width: 90%; padding-bottom: 10px"
+                    ><p>Add, remove and edit your templates for order automation.</p></mat-card-content
+                >
+                <mat-card-actions style="text-align: center">
+                    <button
+                        mat-fab
+                        extended
+                        color="primary"
+                        class="btn"
+                        (click)="viewTemplatesQuotes()"
+                        [disabled]="notEndUser()"
+                    >
+                        Edit Templates
+                    </button></mat-card-actions
+                >
+            </mat-card>
+            <mat-card class="card" style="width: 350px; margin-left: auto; margin-right: auto">
+                <mat-card-title class="cardTitle">Light/Dark Mode</mat-card-title>
+                <mat-card-actions style="text-align: center">
+                    <button mat-fab extended color="primary" class="btn">Change Mode</button></mat-card-actions
+                >
+            </mat-card>
+        </div>
+    </div>
+</ng-container>
+<app-templates-quotes-side-pane [isOpen]="isTemplateSidePaneOpen" (closed)="isTemplateSidePaneOpen = false">
+</app-templates-quotes-side-pane>

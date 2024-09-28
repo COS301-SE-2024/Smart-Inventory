@@ -1,66 +1,94 @@
 :host {
-  display: block;
-  width: 100%;
-  max-width: 800px;
+    display: block;
+    width: 100%;
+    max-width: 800px;
 }
 
 .email-form {
-  padding-top: 20px;
+    padding-top: 20px;
 }
 
 mat-tab-group {
-  height: 100%;
+    height: 100%;
 }
 
 mat-dialog-content {
-  max-height: 70vh;
-  overflow-y: auto;
+    max-height: 70vh;
+    overflow-y: auto;
 }
 
 mat-form-field {
-  width: 100%;
+    width: 100%;
 }
 
 textarea {
-  min-height: 200px;
+    min-height: 200px;
 }
 
 mat-dialog-actions {
-  padding: 20px;
+    padding: 20px;
 }
 
 button {
-  margin-left: 8px;
+    margin-left: 8px;
 }
 
 .email-preview {
-  padding: 20px;
-  border-radius: 4px;
+    padding: 20px;
+    border-radius: 4px;
 }
 
 .preview-content {
-  background-color: white;
-  padding: 20px;
-  border-radius: 4px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    background-color: white;
+    padding: 20px;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .preview-content pre {
-  white-space: pre-wrap;
-  word-wrap: break-word;
-  padding: 10px;
-  border-radius: 4px;
-  font-family: Arial, sans-serif;
-  font-size: 14px;
-  line-height: 1.5;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    padding: 10px;
+    border-radius: 4px;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
 }
 
 .placeholder-buttons {
-  display: flex;
-  justify-content: flex-start;
-  margin-bottom: 30px;
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 30px;
 }
 
-.placeholder-buttons button {
-  margin-right: 10px;
+.email-template-container {
+    position: relative;
+    min-height: 400px; /* Adjust as needed */
+}
+
+.loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.btn {
+    margin-right: auto;
+    margin-left: auto;
+    border-radius: 5px;
+    width: 200px;
+    height: 40px;
+}
+
+.btn2 {
+    border-radius: 5px;
+    width: 200px;
+    height: 40px;
 }

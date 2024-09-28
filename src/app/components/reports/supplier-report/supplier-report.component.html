@@ -1,117 +1,67 @@
-<div style="height: 100%; display: block; overflow: scroll; overflow-x: hidden">
-    <mat-toolbar style="width: 100%">
-        <button mat-button style="width: 100%; background-color: #f1f1f1; color: black" (click)="back()">
-            Back to reports
-        </button>
-    </mat-toolbar>
-
-    <!-- <div class="grid-container">
-    <div class="arrow-container"  (click)="showNextTiles()">
-        <mat-icon class="arrow-icon">keyboard_arrow_down</mat-icon>
-    </div> -->
-    <!-- <mat-grid-list cols="3" rowHeight="210px"> -->
-
-    <!-- <mat-grid-tile *ngFor="let tile of tiles.slice(currentIndex, currentIndex + 3)" class="tile" gutterSize="15px">
-            <div class="icon-container">
-                <mat-icon [attr.aria-label]="tile.iconLabel" class="metric-icon">{{ tile.icon }}</mat-icon>
-            </div>
-            <div class="content">
-                <h3 class="metric-title">{{ tile.metricName }}</h3>
-                <div class="details">
-                    <p class="metric-value">{{ tile.value }}</p>
-                    <span class="metric-info">{{ tile.additionalInfo }}</span>
-                </div>
-            </div>
-        </mat-grid-tile> -->
-    <!-- </mat-grid-list> -->
-    <div class="carousel-navigation">
-        <button mat-icon-button (click)="scrollTiles('left')"><mat-icon>chevron_left</mat-icon></button>
-        <button mat-icon-button (click)="scrollTiles('right')"><mat-icon>chevron_right</mat-icon></button>
-    </div>
-    <div class="carousel-wrapper">
-        <div class="card-wrapper">
-            <!-- Repeat this card structure for each tile -->
-            <div class="card" *ngFor="let tile of visibleTiles">
-                <!-- <div class="card-header"> -->
-                <div class="icon-container">
-                    <mat-icon [attr.aria-label]="tile.iconLabel" class="metric-icon">{{ tile.icon }}</mat-icon>
-                </div>
-
-                <!-- </div> -->
-
-                <div class="content">
-                    <h3 class="metric-title">{{ tile.metricName }}</h3>
-                    <div class="details">
-                        <p class="metric-value">{{ tile.value }}</p>
-                        <span class="metric-info">{{ tile.additionalInfo }}</span>
-                    </div>
-                    <!-- </div> -->
-                </div>
-            </div>
-            <!-- Add more cards here -->
-        </div>
-    </div>
-    <!-- </div> -->
-    <mat-grid-list cols="8" rowHeight="29vh" gutterSize="20px">
-        <mat-grid-tile [colspan]="8" [rowspan]="2">
-            <div style="padding: 10px 10px 10px 10px; width: 100%">
+<div style="height: 100%; display: block; overflow: none">
+    <gridster [options]="options" style="background: transparent !important">
+        <gridster-item [item]="items[0]" class="order-report-item app-grid-container" style="box-shadow: none">
+            <div class="grid-item-content">
                 <div class="inventoryHolder">
                     <app-grid [rowData]="rowData" [columnDefs]="colDefs" #gridComponent></app-grid>
                 </div>
             </div>
-        </mat-grid-tile>
-        <mat-grid-tile [colspan]="2" [rowspan]="2">
-            <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
-                <mat-card style="height: 100%; width: 100%">
-                    <mat-card-title style="margin-left: 15px; margin-top: 15px; font-size: 25px">
-                        {{ SupplierReport.title }}
-                    </mat-card-title>
-                    <mat-card-content style="align-items: center">
-                        <ul style="list-style: none; padding: 0; margin: 0">
-                            <li *ngFor="let metric of SupplierReport.metrics"
-                                style="font-size: 15px; padding: 8px 0; border-bottom: 1px solid lightgrey">
-                                {{ metric.name }}: {{ metric.value }}
-                            </li>
-                        </ul>
-                    </mat-card-content>
-                </mat-card>
-            </div>
-        </mat-grid-tile>
-        <mat-grid-tile [colspan]="6" [rowspan]="2">
-            <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
-                <mat-card style="height: 100%; width: 100%">
-                    <app-line-bar [data]="lineBarData"></app-line-bar>
-                </mat-card>
-            </div>
-        </mat-grid-tile>
+        </gridster-item>
 
-        <mat-grid-tile [colspan]="4" [rowspan]="2">
-            <div style="padding: 10px; height: 100%; width: 100%;">
-                <mat-card style="height: 100%; width: 100%;">
-                    <app-line *ngIf="chartData" [title]="chartData.title + ' Comparison'"
-                        [xAxisData]="chartData.xAxisData" [seriesData]="chartData.seriesData"></app-line>
-                </mat-card>
+        <gridster-item [item]="items[1]" class="supplier-report">
+            <!-- <div class="grid-item-content"> -->
+            <mat-card class="metrics-card">
+                <mat-card-header>
+                    <mat-card-title>{{ SupplierReport.title }}</mat-card-title>
+                    <mat-card-subtitle>{{ SupplierReport.subtitle }}</mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                    <mat-list>
+                        <mat-list-item *ngFor="let metric of SupplierReport.metrics">
+                            <mat-icon matListItemIcon>{{ metric.icon }}</mat-icon>
+                            <span matListItemTitle>{{ metric.name }} : {{ metric.value }}</span>
+                        </mat-list-item>
+                    </mat-list>
+                </mat-card-content>
+            </mat-card>
+            <!-- </div> -->
+        </gridster-item>
+
+        <gridster-item [item]="items[2]" id="chart">
+            <div class="grid-item-content">
+                <app-line
+                    *ngIf="chartData"
+                    [title]="chartData.title + ' Comparison'"
+                    [xAxisData]="chartData.xAxisData"
+                    [seriesData]="chartData.seriesData"
+                ></app-line>
             </div>
-        </mat-grid-tile>
+        </gridster-item>
 
-        <mat-grid-tile [colspan]="4" [rowspan]="2">
-            <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%">
-                <mat-card style="height: 100%; width: 100%">
-                    <app-radar [data]="topSuppliersData"></app-radar>
-                </mat-card>
+        <gridster-item [item]="items[3]" id="chart">
+            <div class="grid-item-content">
+                <app-radar [data]="topSuppliersData"></app-radar>
             </div>
-        </mat-grid-tile>
+        </gridster-item>
+        <mat-toolbar
+            style="
+                position: sticky;
+                top: 93%;
+                left: 0;
+                width: 300px;
+                border-radius: 20px;
+                height: 50px;
+                background-color: transparent;
+                z-index: 1;
+            "
+        >
+            <button mat-flat-button class="btn" (click)="back()">
+                <mat-icon style="font-size: 24px; height: 24px; width: 24px">arrow_back</mat-icon> Back To Reports
+            </button>
+        </mat-toolbar>
+    </gridster>
 
-        <!-- <mat-grid-tile [colspan]="3" [rowspan]="2"> -->
-        <!-- <div style="padding: 10px 10px 10px 10px; height: 100%; width: 100%"> -->
-        <!-- <app-dynamic-graph></app-dynamic-graph> -->
-        <!-- </div> -->
-        <!-- </mat-grid-tile> -->
-        <!-- </mat-grid-list> -->
-        <!-- </div>  -->
-
-        <div *ngIf="isLoading" class="loading-overlay">
-            <app-loading-spinner></app-loading-spinner>
-        </div>
-    </mat-grid-list>
+    <div *ngIf="isLoading" class="loading-overlay">
+        <app-loading-spinner></app-loading-spinner>
+    </div>
 </div>

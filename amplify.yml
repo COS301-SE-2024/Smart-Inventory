@@ -21,11 +21,10 @@ frontend:
       commands:
         - npm install -g @angular/cli
         - ng version
-        - NODE_OPTIONS=--max-old-space-size=4096 ng build --configuration=production
+        - ng build --configuration=production
   artifacts:
     baseDirectory: dist/smart-inventory/browser
     files:
       - '**/*'
   cache:
     paths:
-      - node_modules/**/*

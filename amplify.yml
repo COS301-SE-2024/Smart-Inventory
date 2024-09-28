@@ -16,11 +16,11 @@ frontend:
           echo "export const environment = { production: false, apiKey: '$API_KEY' };" > src/environments/environment.ts
         - |
           echo "export const environment = { production: true, apiKey: '$API_KEY' };" > src/environments/environment.prod.ts
+        - npm install -g @angular/cli
     build:
       commands:
-        - npm install -g @angular/cli
-        - ng version
-        - ng build --configuration=production
+        - node --max_old_space_size=4096 ./node_modules/@angular/cli/bin/ng version
+        - node --max_old_space_size=4096 ./node_modules/@angular/cli/bin/ng build --configuration=production
   artifacts:
     baseDirectory: dist/smart-inventory/browser
     files:

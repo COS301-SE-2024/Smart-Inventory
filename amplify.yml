@@ -20,16 +20,7 @@ frontend:
       commands:
         - npm install -g @angular/cli
         - ng version
-        - echo "Memory before build:"
-        - free -m
         - ng build --configuration=production
-        - echo "Memory after build:"
-        - free -m
-    post_build:
-      commands:
-        - echo "Memory usage after build:"
-        - free -m
-        - ps aux --sort=-%mem | head -n 5
   artifacts:
     baseDirectory: dist/smart-inventory/browser
     files:

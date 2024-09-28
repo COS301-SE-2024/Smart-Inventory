@@ -209,3 +209,7 @@
 .mat-mdc-list-item.active {
     color: var(--active-color);
 }
+
+::ng-deep .mdc-list {
+    padding: 0 !important;
+  }

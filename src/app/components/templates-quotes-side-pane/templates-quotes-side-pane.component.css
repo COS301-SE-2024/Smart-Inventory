@@ -120,8 +120,6 @@ input:focus-visible {
     border-radius: 5px;
     width: 200px;
     height: 40px;
-    background-color: white;
-    color: #000000;
     box-shadow: 2px 2px 2px 0px #e0e0e0;
     border-color: #c4c6d0;
     border-width: 1px;

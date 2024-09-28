@@ -265,7 +265,7 @@ export class InventoryComponent implements OnInit {
         } catch (error) {
             console.error('Error in loadInventoryData:', error);
             this.rowData = [];
-            this.snackBar.open('Error loading inventory data', 'Close', {
+            this.snackBar.open('No Inventory Items have been added', 'Close', {
                 duration: 5000,
                 horizontalPosition: 'center',
                 verticalPosition: 'top',
@@ -282,7 +282,7 @@ export class InventoryComponent implements OnInit {
         } catch (error) {
             console.error('Error in loadSuppliers:', error);
             this.suppliers = [];
-            this.snackBar.open('Error loading suppliers', 'Close', {
+            this.snackBar.open('No suppliers have been added', 'Close', {
                 duration: 5000,
                 horizontalPosition: 'center',
                 verticalPosition: 'top',

@@ -9,13 +9,14 @@
 
 .report-row {
     display: flex;
-    justify-content: space-between;
+    width: 100%;
     margin-bottom: 20px;
-    margin-right: 5px;
 }
 
 /* Grid Styles */
 .grid-wrapper {
+    flex: 1;
+    width: 100%;
     margin-bottom: 20px;
 }
 
@@ -50,7 +51,7 @@
 .chart-wrapper {
     background-color: transparent;
     border-radius: 4px;
-    margin-bottom: 1px;
+    margin-right: 20px;
 }
 
 .chart-wrapper.large {
@@ -59,8 +60,21 @@
 
 .chart-wrapper.full-width {
     width: 100%;
+    margin-right: 0;
 }
 
+.chart-card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+}
+
+mat-card-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
 .chart-card {
     height: 100%;
     display: flex;
@@ -129,7 +143,7 @@ ag-charts-angular {
 
     .report-row .chart-wrapper,
     .report-row .chart-wrapper.full-width {
-        height: auto; /* Adjust for mobile view */
+        height: 400px; /* Adjust for mobile view */
     }
 }
 

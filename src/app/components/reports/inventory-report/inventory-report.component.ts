@@ -19,9 +19,7 @@ import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-c
 import outputs from '../../../../../amplify_outputs.json';
 import { LoadingSpinnerComponent } from 'app/components/loader/loading-spinner.component';
 import { MatIconModule } from '@angular/material/icon';
-import { CompactType, DisplayGrid, GridsterConfig, GridsterItem, GridsterModule, GridType } from 'angular-gridster2';
 import { MaterialModule } from 'app/components/material/material.module';
-import { InventoryService } from '../../../../../amplify/services/inventory.service';
 import { DataCollectionService } from 'app/components/add-widget-side-pane/data-collection.service';
 
 interface Metric {
@@ -54,7 +52,6 @@ interface InventoryReportType {
         GridComponent,
         LoadingSpinnerComponent,
         MatIconModule,
-        GridsterModule,
         MaterialModule,
     ],
 })
@@ -64,12 +61,8 @@ export class InventoryReportComponent implements OnInit {
     rowData: any[] = [];
     colDefs: ColDef[] = [];
     options: AgChartOptions[] = [];
-    options5: any;
     InventoryReport!: InventoryReportType;
     isLoading = true;
-
-    gridsterOptions: GridsterConfig;
-    gridsterItems: Array<GridsterItem>;
 
     constructor(
         private titleService: TitleService,
@@ -78,49 +71,6 @@ export class InventoryReportComponent implements OnInit {
         private dataCollectionService: DataCollectionService,
     ) {
         Amplify.configure(outputs);
-        this.gridsterOptions = {
-            gridType: GridType.VerticalFixed,
-            displayGrid: DisplayGrid.None,
-            compactType: CompactType.CompactUp,
-            margin: 10,
-            outerMargin: true,
-            mobileBreakpoint: 640,
-            minCols: 12,
-            maxCols: 12,
-            maxItemCols: 12,
-            minItemCols: 1,
-            maxItemRows: 100,
-            minItemRows: 1,
-            defaultItemCols: 1,
-            defaultItemRows: 1,
-            fixedColWidth: 100,
-            fixedRowHeight: 100,
-            minRows: 18, // Adjust based on your total layout height
-            maxRows: 18, // Adjust based on your total layout height
-            enableEmptyCellClick: false,
-            enableEmptyCellContextMenu: false,
-            enableEmptyCellDrop: false,
-            enableEmptyCellDrag: false,
-            enableOccupiedCellDrop: false,
-            draggable: {
-                enabled: false,
-            },
-            resizable: {
-                enabled: false,
-            },
-            swap: false,
-            pushItems: false,
-            disablePushOnDrag: true,
-            disablePushOnResize: true,
-            pushDirections: { north: false, east: false, south: false, west: false },
-            pushResizeItems: false,
-        };
-        this.gridsterItems = [
-            { cols: 12, rows: 5, y: 0, x: 0, isGrid: true },
-            { cols: 8, rows: 5, y: 5, x: 0, chartIndex: 3 },
-            { cols: 4, rows: 5, y: 5, x: 8, isMetrics: true },
-            { cols: 12, rows: 5, y: 10, x: 0, chartIndex: 4 },
-        ];
     }
 
     async ngOnInit() {
@@ -307,9 +257,6 @@ export class InventoryReportComponent implements OnInit {
 
     setupCharts() {
         this.options = [
-            this.service.setPieData(this.calculateCategoryTotalQuantities(), 'Quantity per Category'),
-            this.service.setPieData(this.calculateCategoryTotalRequests(), 'Requests per Category'),
-            this.service.setPieData(this.calculateCategoryTotalRequestsQuantity(), 'Requests Quantity per Category'),
             this.service.setBarData(
                 this.calculateCategoryTotalQuantities(),
                 this.calculateCategoryTotalRequests(),

@@ -111,70 +111,102 @@ validateCsvFile(file: File): void {
   }
 
   async uploadFile(): Promise<void> {
-    if (this.selectedFile && this.tenentId) {
-      this.isLoading = true;
-      this.uploading = true;
-      try {
-        const fileContent = await this.readFileAsBase64(this.selectedFile);
-        const fileType = this.getFileType(this.selectedFile.name);
-        const session = await fetchAuthSession();
-        const lambdaClient = new LambdaClient({
-          region: outputs.auth.aws_region,
-          credentials: session.credentials,
-        });
-
-        const payload = JSON.stringify({
-          fileContent,
-          fileType,
-          tenentId: this.tenentId
-        });
-
-        const invokeCommand = new InvokeCommand({
-          FunctionName: 'batchAddInventoryItems',
-          Payload: new TextEncoder().encode(JSON.stringify({ body: payload })),
-        });
-
-        const lambdaResponse = await lambdaClient.send(invokeCommand);
-        const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
-
-        if (responseBody && responseBody.statusCode === 201) {
-          this.showSnackBar(`Successfully uploaded ${JSON.parse(responseBody.body).addedItems.length} inventory items.`, 'success');
-          this.dialogRef.close(true);
-        } else if (responseBody && responseBody.statusCode === 400) {
-          const errorData = JSON.parse(responseBody.body);
-          let errorMessage = 'Some items could not be added:\n\n';
+    if (!this.selectedFile || !this.tenentId) {
+      this.showSnackBar('Please select a valid CSV file and ensure your user information is loaded before uploading.');
+      return;
+    }
+  
+    // Check file size (e.g., max 10MB)
+    const maxSize = 10 * 1024 * 1024; // 10MB
+    if (this.selectedFile.size > maxSize) {
+      this.showSnackBar(`File size exceeds the maximum limit of 10MB. Please upload a smaller file.`);
+      return;
+    }
+  
+    this.isLoading = true;
+    this.uploading = true;
+  
+    try {
+      const fileContent = await this.readFileAsBase64(this.selectedFile);
+      const fileType = this.getFileType(this.selectedFile.name);
+      const session = await fetchAuthSession();
+      const lambdaClient = new LambdaClient({
+        region: outputs.auth.aws_region,
+        credentials: session.credentials,
+      });
+  
+      const payload = JSON.stringify({
+        fileContent,
+        fileType,
+        tenentId: this.tenentId
+      });
+  
+      const invokeCommand = new InvokeCommand({
+        FunctionName: 'batchAddInventoryItems',
+        Payload: new TextEncoder().encode(JSON.stringify({ body: payload })),
+      });
+  
+      const lambdaResponse = await this.retryLambdaInvocation(lambdaClient, invokeCommand, 3);
+      const responseBody = JSON.parse(new TextDecoder().decode(lambdaResponse.Payload));
+  
+      if (responseBody && responseBody.statusCode === 201) {
+        const successData = JSON.parse(responseBody.body);
+        this.showSnackBar(`Successfully uploaded ${successData.addedItems.length} inventory items.`, 'success');
+        this.dialogRef.close(true);
+      } else if (responseBody && responseBody.statusCode === 400) {
+        const errorData = JSON.parse(responseBody.body);
+        let errorMessage = 'Some items could not be added:\n\n';
+        
+        if (errorData.errors && errorData.errors.length > 0) {
+          const supplierErrors = errorData.errors.filter((error: ErrorItem) => error.error.includes('Supplier'));
+          const otherErrors = errorData.errors.filter((error: ErrorItem) => !error.error.includes('Supplier'));
           
-          if (errorData.errors && errorData.errors.length > 0) {
-            const supplierErrors = errorData.errors.filter((error: ErrorItem) => error.error.includes('Supplier'));
-            const otherErrors = errorData.errors.filter((error: ErrorItem) => !error.error.includes('Supplier'));
-            
-            if (supplierErrors.length > 0) {
-              const invalidSuppliers = [...new Set(supplierErrors.map((error: ErrorItem) => error.error.match(/"([^"]*)"/)?.[1] || ''))];
-              errorMessage += `The following suppliers do not exist in your system: ${invalidSuppliers.join(', ')}. Please add these suppliers first.\n\n`;
-            }
-            
-            if (otherErrors.length > 0) {
-              errorMessage += 'Other errors:\n';
-              otherErrors.forEach((error: ErrorItem) => {
-                errorMessage += `- Item with SKU ${error.SKU}: ${error.error}\n`;
-              });
-            }
+          if (supplierErrors.length > 0) {
+            const invalidSuppliers = [...new Set(supplierErrors.map((error: ErrorItem) => error.error.match(/"([^"]*)"/)?.[1] || ''))];
+            errorMessage += `The following suppliers do not exist in your system: ${invalidSuppliers.join(', ')}. Please add these suppliers first.\n\n`;
           }
           
-          this.showSnackBar(errorMessage, 'error');
-          console.error('Detailed errors:', errorData.errors);
-        } else {
-          throw new Error(responseBody ? responseBody.body : 'Unknown error occurred');
+          if (otherErrors.length > 0) {
+            errorMessage += 'Other errors:\n';
+            otherErrors.forEach((error: ErrorItem) => {
+              errorMessage += `- Item with SKU ${error.SKU}: ${error.error}\n`;
+            });
+          }
         }
-      } catch (error: unknown) {
-        console.error('Error uploading items:', error);
-        this.showSnackBar(`Error uploading items: ${error instanceof Error ? error.message : String(error)}. Please try again or contact support if the issue persists.`);
-      } finally {
-        this.isLoading = false;
-        this.uploading = false;
+        
+        this.showSnackBar(errorMessage, 'error');
+        console.error('Detailed errors:', errorData.errors);
+      } else {
+        throw new Error(responseBody ? responseBody.body : 'Unknown error occurred');
       }
-    } else {
-      this.showSnackBar('Please select a valid CSV file and ensure your user information is loaded before uploading.');
+    } catch (error: unknown) {
+      console.error('Error uploading items:', error);
+      if (error instanceof Error) {
+        if (error.name === 'TimeoutError') {
+          this.showSnackBar('The upload process timed out. Please try again with a smaller file or during a less busy time.');
+        } else if (error.name === 'NetworkError') {
+          this.showSnackBar('A network error occurred. Please check your internet connection and try again.');
+        } else {
+          this.showSnackBar(`An unexpected error occurred: ${error.message}. Please try again or contact support if the issue persists.`);
+        }
+      } else {
+        this.showSnackBar('An unknown error occurred. Please try again or contact support if the issue persists.');
+      }
+    } finally {
+      this.isLoading = false;
+      this.uploading = false;
+    }
+  }
+  
+  private async retryLambdaInvocation(client: LambdaClient, command: InvokeCommand, maxRetries: number): Promise<any> {
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        return await client.send(command);
+      } catch (error) {
+        console.error(`Lambda invocation attempt ${attempt} failed:`, error);
+        if (attempt === maxRetries) throw error;
+        await new Promise(resolve => setTimeout(resolve, 1000 * attempt)); // Exponential backoff
+      }
     }
   }
 

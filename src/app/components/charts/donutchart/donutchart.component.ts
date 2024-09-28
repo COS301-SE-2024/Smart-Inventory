@@ -1,10 +1,9 @@
 import { Component, AfterViewInit, OnInit, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AgChartsAngular } from 'ag-charts-angular';
-import { AgChartOptions, AgCharts, AgChartTheme } from 'ag-charts-community';
+import { AgChartOptions, AgChartTheme } from 'ag-charts-community';
 import { MaterialModule } from '../../material/material.module';
 import { Amplify } from 'aws-amplify';
-import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
 import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
 import { fetchAuthSession } from 'aws-amplify/auth';
 

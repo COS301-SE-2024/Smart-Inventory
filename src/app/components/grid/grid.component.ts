@@ -5,7 +5,6 @@ import {
     OnDestroy,
     Output,
     EventEmitter,
-    output,
     ChangeDetectorRef,
     ViewChild,
 } from '@angular/core';

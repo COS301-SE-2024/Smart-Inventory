@@ -4,7 +4,6 @@ import { AgChartOptions, AgCharts, AgChartTheme } from 'ag-charts-community';
 import { FilterService } from '../../../services/filter.service';
 import { Subscription } from 'rxjs';
 import { Amplify } from 'aws-amplify';
-import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
 import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
 import { fetchAuthSession } from 'aws-amplify/auth';
 import { OrdersService } from '../../../../../amplify/services/orders.service';

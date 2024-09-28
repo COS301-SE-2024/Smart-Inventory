@@ -17,8 +17,10 @@ import { RoleSelectCellEditorComponent } from '../../../pages/team/role-select-c
 import { LineBarComponent } from '../../charts/line-bar/line-bar.component';
 import { LineComponent } from '../../charts/line/line.component';
 import { RadarComponent } from '../../charts/radar/radar.component';
+import { CompactType, DisplayGrid, GridsterConfig, GridsterItem, GridsterModule, GridType } from 'angular-gridster2';
 import { DataCollectionService } from 'app/components/add-widget-side-pane/data-collection.service';
 
+type ChartMetric = 'On Time Delivery Rate' | 'Order Accuracy Rate' | 'Out Standing Payments' | 'TotalSpent';
 type ChartData = {
     source: any[];
 };
@@ -51,6 +53,7 @@ interface SupplierData {
         RoleSelectCellEditorComponent,
         LineComponent,
         RadarComponent,
+        GridsterModule,
     ],
     templateUrl: './supplier-report.component.html',
     styleUrl: './supplier-report.component.css',
@@ -65,10 +68,73 @@ export class SupplierReportComponent implements OnInit {
         Amplify.configure(outputs);
     }
 
+    visibleTiles: any[] = []; // Holds the tiles currently being displayed
     currentIndex = 0;
     chartData: any;
     initialInventory: number = 500; // Starting inventory at the beginning of the period
     endingInventory: number = 600; // Ending inventory at the end of the period
+
+    options: GridsterConfig = {
+        gridType: GridType.VerticalFixed,
+        displayGrid: DisplayGrid.None,
+        compactType: CompactType.CompactUp,
+        margin: 20,
+        outerMargin: true,
+        mobileBreakpoint: 640,
+        minCols: 12,
+        maxCols: 12,
+        maxItemCols: 12,
+        minItemCols: 1,
+        maxItemRows: 100,
+        minItemRows: 1,
+        defaultItemCols: 1,
+        defaultItemRows: 1,
+        fixedColWidth: 100,
+        fixedRowHeight: 100,
+        minRows: 18, // Adjust based on your total layout height
+        maxRows: 18, // Adjust based on your total layout height
+        enableEmptyCellClick: false,
+        enableEmptyCellContextMenu: false,
+        enableEmptyCellDrop: false,
+        enableEmptyCellDrag: false,
+        enableOccupiedCellDrop: false,
+        draggable: {
+            enabled: false,
+        },
+        resizable: {
+            enabled: false,
+        },
+        swap: false,
+        pushItems: false,
+        disablePushOnDrag: true,
+        disablePushOnResize: true,
+        pushDirections: { north: false, east: false, south: false, west: false },
+        pushResizeItems: false,
+    };
+
+    items: Array<GridsterItem> = [
+        { cols: 12, rows: 6, y: 8.6, x: 0 },
+        { cols: 5, rows: 4.6, y: 0, x: 7 },
+        { cols: 12, rows: 4, y: 4.6, x: 0 },
+        { cols: 7, rows: 4.6, y: 0, x: 0 },
+    ];
+    startIndex = 0;
+    scrollTiles(direction: 'left' | 'right') {
+        if (direction === 'left') {
+            this.startIndex = (this.startIndex - 1 + this.tiles.length) % this.tiles.length;
+        } else {
+            this.startIndex = (this.startIndex + 1) % this.tiles.length;
+        }
+        this.updateVisibleMetrics();
+    }
+
+    private updateVisibleMetrics() {
+        this.visibleTiles = [];
+        for (let i = 0; i < 3; i++) {
+            const index = (this.startIndex + i) % this.tiles.length;
+            this.visibleTiles.push(this.tiles[index]);
+        }
+    }
 
     automation: boolean = true;
     @ViewChild('gridComponent') gridComponent!: GridComponent;
@@ -113,6 +179,7 @@ export class SupplierReportComponent implements OnInit {
         await this.loadSuppliersData();
 
         if (this.originalData.length > 0) {
+            this.updateVisibleMetrics();
             this.chartData = this.getChartData();
             console.log('chartdata:', this.chartData.seriesData);
             this.processData();

@@ -10,7 +10,6 @@ import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { fetchAuthSession } from 'aws-amplify/auth';
-import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
 import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
 import outputs from '../../../../amplify_outputs.json';
 import { MatSnackBar } from '@angular/material/snack-bar';

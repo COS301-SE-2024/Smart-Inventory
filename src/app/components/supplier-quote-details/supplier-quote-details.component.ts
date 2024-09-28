@@ -4,7 +4,6 @@ import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule, MatDialog } from '@angu
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { fetchAuthSession } from 'aws-amplify/auth';
-import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
 import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
 import outputs from '../../../../amplify_outputs.json';
 import { QuoteAcceptConfirmationDialogComponent } from './quote-accept-confirmation-dialog.component';

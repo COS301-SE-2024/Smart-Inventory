@@ -28,23 +28,11 @@
             </ng-container>
         </ng-container>
     </gridster-item>
+    <div class="back-toolbar">
+        <button mat-flat-button class="btn" (click)="back()"><mat-icon>arrow_back</mat-icon> Back To Reports</button>
+    </div>
 </gridster>
-<mat-toolbar
-    style="
-        position: sticky;
-        bottom: 0;
-        left: 0;
-        width: 300px;
-        border-radius: 20px;
-        height: 50px;
-        background-color: transparent;
-        z-index: 1;
-    "
->
-    <button mat-flat-button class="btn" (click)="back()">
-        <mat-icon style="font-size: 24px; height: 24px; width: 24px">arrow_back</mat-icon> Back To Reports
-    </button>
-</mat-toolbar>
+
 <div *ngIf="isLoading" class="loading-overlay">
     <app-loading-spinner></app-loading-spinner>
 </div>

@@ -152,7 +152,6 @@ ag-charts-angular {
     padding: 0 16px;
     height: 40px;
     min-width: 200px;
-    background-color: #f0f0f0;
     color: #333;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     transition:
@@ -168,6 +167,7 @@ ag-charts-angular {
 
 .btn:hover {
     background-color: #e0e0e0;
+    color: #333;
     transform: translateY(-2px);
 }
 

@@ -328,15 +328,59 @@ gridster-item:not(.order-report-item) {
     border-radius: 50%;
 }
 
-mat-card.mat-mdc-card.mdc-card {
-    background-color: white;
-    box-shadow: 0 4px 8px rgb(0 0 0 / 30%);
+.app-grid-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
 }
 
-mat-card-content.mat-mdc-card-content {
+.app-grid-container .grid-item-content {
+    flex-grow: 1;
     display: flex;
-    /* flex-direction: row; */
-    /* flex-wrap: nowrap; */
+    flex-direction: column;
+}
+
+.app-grid-container .inventoryHolder {
+    flex-grow: 1;
+    overflow: hidden;
+}
+
+.app-grid-container app-grid {
+    height: 100%;
+    width: 100%;
+}
+
+mat-card-content.mat-mdc-card-content.content {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 50px;
+    margin-top: 10px;
+}
+
+mat-card-title {
+    font-size: 17px;
+    margin-bottom: 8px;
+}
+
+.card-layout {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    /* Ensure full width of card */
+    gap: 10%;
+}
+
+.additional-info {
+    font-size: 14px;
+    color: #666;
+    text-align: right;
+    /* Align to the right */
+}
+
+.align {
+    display: flex;
     align-items: center;
     justify-content: space-between;
 }
@@ -424,10 +468,9 @@ mat-card-content.mat-mdc-card-content {
     border-radius: 50%;
 }
 
-.supplier-report mat-card-title {
-    font-size: 16px;
-    font-weight: normal;
-    margin-bottom: 4px;
+mat-card-title {
+    font-size: 17px;
+    margin-bottom: 8px;
 }
 
 .supplier-report .metric-value {

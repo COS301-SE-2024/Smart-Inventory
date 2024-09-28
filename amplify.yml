@@ -9,8 +9,14 @@ frontend:
   phases:
     preBuild:
       commands:
-        - nvm install 18.19.0
-        - nvm use 18.19.0
+        - npm cache clean --force
+        - nvm install 18.19.1
+        - nvm use 18.19.1
+        - mkdir -p src/environments
+        - |
+          echo "export const environment = { production: false, apiKey: '$API_KEY' };" > src/environments/environment.ts
+        - |
+          echo "export const environment = { production: true, apiKey: '$API_KEY' };" > src/environments/environment.prod.ts
     build:
       commands:
         - npm install -g @angular/cli
@@ -22,5 +28,3 @@ frontend:
       - '**/*'
   cache:
     paths:
-      - .npm/**/*
-      - node_modules/**/*

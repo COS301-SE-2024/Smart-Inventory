@@ -17,6 +17,7 @@ import { RoleSelectCellEditorComponent } from '../../../pages/team/role-select-c
 import { LineBarComponent } from '../../charts/line-bar/line-bar.component';
 import { LineComponent } from '../../charts/line/line.component';
 import { RadarComponent } from '../../charts/radar/radar.component';
+import { CompactType, DisplayGrid, GridsterConfig, GridsterItem, GridsterModule, GridType } from 'angular-gridster2';
 import { DataCollectionService } from 'app/components/add-widget-side-pane/data-collection.service';
 
 type ChartData = {

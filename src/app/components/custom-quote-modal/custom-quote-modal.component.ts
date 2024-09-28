@@ -13,9 +13,7 @@ import { takeUntil } from 'rxjs/operators';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { Amplify } from 'aws-amplify';
 import { fetchAuthSession } from 'aws-amplify/auth';
-import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
 import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
 import outputs from '../../../../amplify_outputs.json';
 import { LoadingSpinnerComponent } from '../loader/loading-spinner.component';
@@ -450,7 +448,7 @@ export class CustomQuoteModalComponent implements OnInit {
 
     const emailDataPromises = this.selectedSuppliers.map(async (supplier) => {
       const supplierDetails = await this.getSupplierDetails(tenentId, supplier.supplierID);
-      const uniqueLink = `http://localhost:4200/supplier-form/${supplier.supplierID}/${this.quoteId}/${deliveryInfoID}/${tenentId}`;
+      const uniqueLink = `https://main.d20fi26o9migpb.amplifyapp.com/supplier-form/${supplier.supplierID}/${this.quoteId}/${deliveryInfoID}/${tenentId}`;
       
       let emailBody = emailTemplate || this.defaultEmailBody;
       emailBody = emailBody.replace('{{SUPPLIER_NAME}}', supplier.company_name)

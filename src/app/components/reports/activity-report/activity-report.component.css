@@ -84,7 +84,6 @@ gridster-item:not(.act-report) {
 
 .btn mat-icon {
     margin-right: 8px;
-    font-size: 18px;
 }
 
 /* Ensure the button is visible on smaller screens */
@@ -99,12 +98,6 @@ gridster-item:not(.act-report) {
     .btn {
         width: 100%;
     }
-}
-
-.mat-icon {
-    font-size: 48px;
-    width: 48px;
-    height: 48px;
 }
 
 .text-container {

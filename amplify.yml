@@ -9,6 +9,7 @@ frontend:
   phases:
     preBuild:
       commands:
+        - npm cache clean --force
         - nvm install 18.19.1
         - nvm use 18.19.1
         - mkdir -p src/environments
@@ -20,12 +21,11 @@ frontend:
       commands:
         - npm install -g @angular/cli
         - ng version
-        - ng build --configuration=production
+        - ng build --configuration=production --aot
   artifacts:
     baseDirectory: dist/smart-inventory/browser
     files:
       - '**/*'
   cache:
     paths:
-      - .npm/**/*
       - node_modules/**/*

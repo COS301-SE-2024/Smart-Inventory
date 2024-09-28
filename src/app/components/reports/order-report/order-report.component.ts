@@ -14,7 +14,6 @@ import { ScatterplotComponent } from '../../charts/scatterplot/scatterplot.compo
 import { Amplify } from 'aws-amplify';
 import outputs from '../../../../../amplify_outputs.json';
 import { LoadingSpinnerComponent } from 'app/components/loader/loading-spinner.component';
-import { GridsterConfig, GridType, DisplayGrid, GridsterModule, CompactType } from 'angular-gridster2';
 import { DataCollectionService } from 'app/components/add-widget-side-pane/data-collection.service';
 
 @Component({
@@ -31,7 +30,6 @@ import { DataCollectionService } from 'app/components/add-widget-side-pane/data-
         StackedbarchartComponent,
         DonutTemplateComponent,
         LoadingSpinnerComponent,
-        GridsterModule,
     ],
     templateUrl: './order-report.component.html',
     styleUrl: './order-report.component.css',
@@ -50,51 +48,6 @@ export class OrderReportComponent implements OnInit {
     }
 
     rowData: any[] = [];
-    options: GridsterConfig = {
-        gridType: GridType.VerticalFixed,
-        displayGrid: DisplayGrid.None,
-        compactType: CompactType.CompactUp,
-        margin: 20,
-        outerMargin: true,
-        mobileBreakpoint: 640,
-        minCols: 12,
-        maxCols: 12,
-        maxItemCols: 12,
-        minItemCols: 1,
-        maxItemRows: 100,
-        minItemRows: 1,
-        defaultItemCols: 1,
-        defaultItemRows: 1,
-        fixedColWidth: 100,
-        fixedRowHeight: 100,
-        minRows: 18, // Adjust based on your total layout height
-        maxRows: 18, // Adjust based on your total layout height
-        enableEmptyCellClick: false,
-        enableEmptyCellContextMenu: false,
-        enableEmptyCellDrop: false,
-        enableEmptyCellDrag: false,
-        enableOccupiedCellDrop: false,
-        draggable: {
-            enabled: false,
-        },
-        resizable: {
-            enabled: false,
-        },
-        swap: false,
-        pushItems: false,
-        disablePushOnDrag: true,
-        disablePushOnResize: true,
-        pushDirections: { north: false, east: false, south: false, west: false },
-        pushResizeItems: false,
-    };
-
-    layout: any[] = [
-        { cols: 12, rows: 5, y: 8, x: 0 }, // Inventory Grid
-        { cols: 4, rows: 4, y: 0, x: 8 }, // Order Report
-        { cols: 8, rows: 4, y: 0, x: 0 }, // Stacked Bar Chart
-        { cols: 8, rows: 4, y: 4, x: 6 }, // Scatter Plot
-        { cols: 4, rows: 4, y: 4, x: 4 }, // Donut Chart
-    ];
 
     selectedItem: any = null;
     requestQuantity: number | null = null;

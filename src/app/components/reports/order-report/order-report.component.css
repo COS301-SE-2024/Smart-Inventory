@@ -1,243 +1,189 @@
-.chart {
-    width: 50%;
-}
-
-gridster {
-    background-color: transparent !important;
-}
-
-mat-card.mat-mdc-card.mdc-card {
-    background-color: white;
-    box-shadow:
-        0 4px 8px rgba(0, 0, 0, 0.1),
-        0 6px 20px rgba(0, 0, 0, 0.15);
-    height: 100%;
-}
-
-.btn {
-    border-radius: 20px;
-    margin-right: 10px;
-    --mdc-outlined-button-label-text-color: black;
-    --mdc-outlined-button-outline-color: #74777f;
-    border-radius: 5px;
-    width: 200px;
-    height: 40px;
-}
-
-/* order-report-metrics.component.css */
-.metrics-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 20px;
-    margin-top: 25px;
-    padding: 0 10px;
-}
-
-.metrics-container button {
-    background-color: white;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    border-radius: 50%;
-    margin: 10px;
-}
-
-.metrics-card ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.metrics-card li {
-    font-size: 15px;
-    padding: 8px 0;
-    border-bottom: 1px solid lightgrey;
-}
-
-.metrics-wrapper {
-    display: flex;
-    gap: 29px;
-    /* overflow: hidden; */
+.inventory-report-container {
+    height: calc(100vh - 64px);
     width: 100%;
-    justify-content: space-between;
+    overflow: auto;
+    padding: 20px;
+    box-sizing: border-box;
+    position: relative; /* Add this to create a positioning context */
 }
 
-.metric-card {
-    width: 35%;
-    height: 180px;
-    padding: 32px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+.report-row {
     display: flex;
-    justify-content: center;
+    width: 100%;
+    margin-bottom: 20px;
 }
 
-.icon-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 48px;
-    height: 48px;
-    background-color: #f0f0f0;
-    border-radius: 50%;
-    margin-right: 16px;
-    flex-shrink: 0;
-    /* Prevent icon from shrinking */
+/* Grid Styles */
+.grid-wrapper {
+    flex: 1;
+    width: 100%;
+    margin-bottom: 20px;
 }
 
-.icon-container mat-icon {
-    font-size: 24px;
-    color: #666;
-}
-
-.metric-name {
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 8px;
-}
-
-.title {
-    font-weight: 300;
-}
-
-.metric-info {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-}
-
-.metric-value {
-    font-size: 24px;
-    font-weight: bold;
-}
-
-/* Media query for responsiveness */
-@media (max-width: 1024px) {
-    .metrics-wrapper {
-        width: 780px;
-        /* (250px * 3) + (15px * 2) */
-        gap: 15px;
-    }
-
-    .metric-card {
-        width: 250px;
-        height: 150px;
-    }
-}
-
-@media (max-width: 768px) {
-    .metrics-wrapper {
-        width: 620px;
-        /* (200px * 3) + (10px * 2) */
-        gap: 10px;
-    }
-
-    .metric-card {
-        width: 200px;
-        height: 120px;
-    }
-
-    .metric-name {
-        font-size: 16px;
-    }
-
-    .metric-value {
-        font-size: 24px;
-    }
-}
-
+/* Loading Overlay */
 .loading-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(255, 255, 255, 0.5);
+    background-color: rgba(255, 255, 255, 0.7);
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 9999;
 }
 
-.content-container {
-    flex-grow: 1;
+/* Maintain existing styles */
+
+.btn mat-icon {
+    margin-right: 8px;
+}
+
+.back-toolbar {
+    position: fixed;
+    bottom: 20px;
+    width: 100%;
+    z-index: 1000;
+    transition: left 0.3s ease; /* Smooth transition for sidebar interaction */
+}
+/* Chart Styles */
+.chart-wrapper {
+    background-color: transparent;
+    border-radius: 4px;
+    margin-right: 20px;
+}
+
+.chart-wrapper.large {
+    width: 65%;
+}
+
+.chart-wrapper.full-width {
+    width: 100%;
+    margin-right: 0;
+}
+
+.chart-card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+}
+
+mat-card-content {
+    flex: 1;
     display: flex;
     flex-direction: column;
 }
-
-.inventoryHolder {
-}
-
-.report {
-    padding: 10px;
-}
-
-gridster-item:not(.order-report-item) {
-    box-shadow:
-        0 4px 8px rgba(0, 0, 0, 0.1),
-        0 6px 20px rgba(0, 0, 0, 0.15);
-    margin-left: 2px;
-    background: white !important;
-    border-radius: 10px;
-}
-
-gridster-item {
+.chart-card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
     overflow: visible !important;
-    border-radius: 10px !important;
-    background-color: transparent !important;
+    background-color: white;
 }
 
-.app-grid-container {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    overflow: hidden;
-}
-
-.app-grid-container .grid-item-content {
+mat-card-content {
     flex-grow: 1;
     display: flex;
     flex-direction: column;
 }
 
-.app-grid-container .inventoryHolder {
+ag-charts-angular {
     flex-grow: 1;
-    overflow: hidden;
+    width: 100%;
+    min-height: 300px; /* Adjust this value as needed */
 }
 
-.app-grid-container app-grid {
+/* Ensure proper sizing for different chart types */
+.report-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.report-row .chart-wrapper {
+    height: auto; /* Adjust this value as needed */
+}
+
+.report-row .chart-wrapper.full-width {
+    height: 500px; /* Adjust this value as needed */
+}
+
+/* Metrics Card Styles */
+.metrics-wrapper {
+    width: 33%;
+}
+
+.metrics-card {
     height: 100%;
-    width: 100%;
+    background-color: white;
 }
 
-mat-card-content.mat-mdc-card-content.content {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    gap: 50px;
-    margin-top: 10px;
+.metrics-card mat-list-item {
+    height: auto;
+    padding: 8px 0;
+    border-bottom: 1px solid #e0e0e0;
 }
 
-mat-card-title {
-    font-size: 17px;
-    margin-bottom: 8px;
+.metrics-card mat-icon {
+    margin-right: 10px;
 }
 
-.card-layout {
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .report-row {
+        flex-direction: column;
+    }
+
+    .chart-wrapper.large,
+    .metrics-wrapper {
+        width: 100%;
+    }
+
+    .report-row .chart-wrapper,
+    .report-row .chart-wrapper.full-width {
+        height: 400px; /* Adjust for mobile view */
+    }
+}
+
+.btn {
+    border-radius: 5px;
+    padding: 0 16px;
+    height: 40px;
+    min-width: 200px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition:
+        background-color 0.3s ease,
+        transform 0.2s ease,
+        left 0.3s ease;
     display: flex;
     align-items: center;
-    width: 100%;
-    /* Ensure full width of card */
-    gap: 10%;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
 }
 
-.additional-info {
-    font-size: 14px;
-    color: #666;
-    text-align: right;
-    /* Align to the right */
+.btn:hover {
+    background-color: #e0e0e0;
+    color: #333;
+    transform: translateY(-2px);
 }
 
-.align {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+.btn mat-icon {
+    margin-right: 8px;
+}
+
+/* Ensure the button is visible on smaller screens */
+@media (max-width: 600px) {
+    .back-toolbar {
+        left: 50%;
+        transform: translateX(-50%);
+        width: calc(100% - 40px); /* Full width minus some padding */
+        max-width: 300px;
+    }
+
+    .btn {
+        width: 100%;
+    }
 }

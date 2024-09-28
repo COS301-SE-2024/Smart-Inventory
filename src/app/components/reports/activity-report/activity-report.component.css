@@ -4,11 +4,11 @@
     align-items: center;
 }
 
-gridster{
+gridster {
     background-color: transparent !important;
 }
 
-gridster-item{
+gridster-item {
     border-radius: 10px !important;
     background-color: transparent !important;
 }
@@ -20,7 +20,6 @@ gridster-item:not(.act-report) {
     margin-left: 2px;
     background: transparent !important;
 }
-
 
 .mat-card {
     width: 100%;
@@ -53,15 +52,53 @@ gridster-item:not(.act-report) {
     justify-content: center;
     align-items: center;
 }
-
+.back-toolbar {
+    position: fixed;
+    bottom: 20px;
+    width: 100%;
+    z-index: 1000;
+    transition: left 0.3s ease; /* Smooth transition for sidebar interaction */
+}
 .btn {
-    border-radius: 20px;
-    margin-right: 10px;
-    --mdc-outlined-button-label-text-color: black;
-    --mdc-outlined-button-outline-color: #74777f;
     border-radius: 5px;
-    width: 200px;
+    padding: 0 16px;
     height: 40px;
+    min-width: 200px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition:
+        background-color 0.3s ease,
+        transform 0.2s ease,
+        left 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background-color: #e0e0e0;
+    color: #333;
+    transform: translateY(-2px);
+}
+
+.btn mat-icon {
+    margin-right: 8px;
+    font-size: 18px;
+}
+
+/* Ensure the button is visible on smaller screens */
+@media (max-width: 600px) {
+    .back-toolbar {
+        left: 50%;
+        transform: translateX(-50%);
+        width: calc(100% - 40px); /* Full width minus some padding */
+        max-width: 300px;
+    }
+
+    .btn {
+        width: 100%;
+    }
 }
 
 .mat-icon {

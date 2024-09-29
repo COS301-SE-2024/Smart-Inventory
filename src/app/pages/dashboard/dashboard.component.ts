@@ -166,14 +166,14 @@ export class DashboardComponent implements OnInit {
     async ngOnInit() {
         this.titleService.updateTitle('Dashboard');
         this.CDRService.setChangeDetectorRef(this.cdr);
-
+        this.isLoading = true;
         this.setupDashboardSubscription();
 
         await this.loadState();
         if (!this.dataCollectionService.isCacheValidOverall()) {
             this.refreshDashboard();
         }
-        this.isLoading = false;
+
         // Use Promise.all to wait for both operations to complete
         const [stockRequests, orders] = await Promise.all([
             this.dataCollectionService.getAllStockRequests().toPromise(),
@@ -354,6 +354,7 @@ export class DashboardComponent implements OnInit {
             }
         } else {
             this.dashboard = this.dashService.initializeDashboard();
+            this.isLoading = false;
         }
         this.CDRService.detectChanges();
     }

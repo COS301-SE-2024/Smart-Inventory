@@ -522,7 +522,7 @@ export class InventoryComponent implements OnInit {
                 tenentId: this.tenantId,
                 memberId: this.tenantId, // Assuming memberId is the same as tenantId
                 name: this.userName,
-                role: this.userRole || 'Admin',
+                role: this.getRoleDisplayName(session.tokens?.idToken?.payload?.['cognito:groups']?.toString() + ''),
                 task: task,
                 timeSpent: 0, // You might want to calculate this
                 idleTime: 0, // You might want to calculate this

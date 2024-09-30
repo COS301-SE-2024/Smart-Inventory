@@ -180,18 +180,35 @@ export class InventoryComponent implements OnInit {
         this.titleService.updateTitle('Inventory');
         this.checkScreenSize();
         await this.getUserInfo();
-        await this.loadInventoryData();
-        await this.loadSuppliers();
+        
+        if (!this.isMobileView) {
+            await this.loadInventoryData();
+            await this.loadSuppliers();
+        }
     }
 
 
     @HostListener('window:resize', ['$event'])
     onResize(event: any) {
+        const wasMobileView = this.isMobileView;
         this.checkScreenSize();
+        
+        // If switching from mobile to desktop view, load data
+        if (wasMobileView && !this.isMobileView) {
+            this.loadInventoryData();
+            this.loadSuppliers();
+        }
     }
-
+    
     checkScreenSize() {
-        this.isMobileView = window.innerWidth <= 768; // Adjust this value as needed
+        const wasMobileView = this.isMobileView;
+        this.isMobileView = window.innerWidth <= 768;
+        
+        // If switching from desktop to mobile view, clear data
+        if (!wasMobileView && this.isMobileView) {
+            this.rowData = [];
+            this.suppliers = [];
+        }
     }
 
     openScanQRCodeModal() {

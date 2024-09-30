@@ -55,7 +55,7 @@
 }
 
 .chart-wrapper.large {
-    width: 60%;
+    width: 51%;
 }
 
 .chart-wrapper.full-width {
@@ -112,7 +112,7 @@ ag-charts-angular {
 
 /* Metrics Card Styles */
 .metrics-wrapper {
-    width: 40%;
+    width: 45%;
 }
 
 .metrics-card {

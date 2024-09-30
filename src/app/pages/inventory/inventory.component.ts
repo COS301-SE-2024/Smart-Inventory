@@ -23,6 +23,7 @@ import { UploadItemsModalComponent } from 'app/components/upload-items-modal/upl
 import { InventoryService } from '../../../../amplify/services/inventory.service';
 import { TeamsService } from '../../../../amplify/services/teams.service';
 import { SuppliersService } from '../../../../amplify/services/suppliers.service';
+import { ScanQrcodeModalComponent } from 'app/components/scan-qrcode-modal/scan-qrcode-modal.component';
 
 import {
     MatSnackBar,
@@ -192,6 +193,22 @@ export class InventoryComponent implements OnInit {
     checkScreenSize() {
         this.isMobileView = window.innerWidth <= 768; // Adjust this value as needed
     }
+
+    openScanQRCodeModal() {
+        const dialogRef = this.dialog.open(ScanQrcodeModalComponent, {
+            width: '90%',
+            maxWidth: '400px',
+            height: 'auto',
+            maxHeight: '80vh',
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                this.handleQRCodeScan(result);
+            }
+        });
+    }
+
 
     async getUserInfo() {
         try {

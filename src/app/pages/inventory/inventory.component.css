@@ -7,10 +7,68 @@
     position: relative;
 }
 
-.mobile-view {
+.scan-qr-button {
     position: absolute;
     top: 30px;
     left: 60px;
+    background-color: #005cbb;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+    font-size: 16px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.scan-qr-button:hover {
+    background-color: #004499;
+}
+
+.scan-qr-button:active {
+    transform: translateY(1px);
+}
+
+/* Media Queries for different screen sizes */
+@media screen and (max-width: 320px) {
+    .scan-qr-button {
+        font-size: 14px;
+        padding: 10px 16px;
+    }
+}
+
+@media screen and (min-width: 321px) and (max-width: 375px) {
+    .scan-qr-button {
+        font-size: 15px;
+        padding: 11px 18px;
+    }
+}
+
+@media screen and (min-width: 376px) and (max-width: 425px) {
+    .scan-qr-button {
+        font-size: 16px;
+        padding: 12px 20px;
+    }
+}
+
+@media screen and (min-width: 426px) and (max-width: 768px) {
+    .scan-qr-button {
+        font-size: 18px;
+        padding: 14px 24px;
+    }
+}
+
+/* ... (rest of your existing styles) ... */
+
+.mobile-view {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
 }
 
 .scan-qr-button {

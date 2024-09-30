@@ -1,7 +1,5 @@
 <div class="inventoryHolder">
-    <div class="mobile-view" *ngIf="isMobileView">
-        <button class="scan-qr-button" (click)="handleQRCodeScan(null)">Scan QR Code</button>
-    </div>
+    <button *ngIf="isMobileView" class="scan-qr-button" (click)="openScanQRCodeModal()">Scan QR Code</button>
     <app-grid
         *ngIf="!isMobileView"
         [rowData]="rowData"

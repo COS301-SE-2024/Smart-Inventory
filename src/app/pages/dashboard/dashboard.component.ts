@@ -341,19 +341,12 @@ export class DashboardComponent implements OnInit {
     private formatDelay(delay: number): string {
         return `${delay} days`;
     }
-
+    initial: string = "";
     private async loadState() {
         const savedState = this.dashService.getState();
         if (savedState) {
-            const parsedState = JSON.parse(savedState);
-            if (Array.isArray(parsedState)) {
-                this.dashboard = parsedState;
-            } else {
-                console.error('Saved state is not an array, initializing default dashboard');
-                this.dashboard = this.dashService.initializeDashboard();
-            }
+            this.initial = "Add Widgets to your Dashboard";
         } else {
-            this.dashboard = this.dashService.initializeDashboard();
             this.isLoading = false;
         }
         this.CDRService.detectChanges();

@@ -573,7 +573,7 @@ export class DataCollectionService {
         });
     }
 
-    private generateChartData(rawData: any[]): any[] {
+    public generateChartData(rawData: any[]): any[] {
         const aggregatedData = rawData.reduce((acc, item) => {
             const existingItem = acc.find((i: { ItemSKU: any }) => i.ItemSKU === item.ItemSKU);
             if (existingItem) {
@@ -600,10 +600,10 @@ export class DataCollectionService {
 
     prepareHorizontalBarChartConfig(): ChartConfig {
         return this.prepareChartConfig(
-            'BubblechartComponent',
+            'BarHorizontalComponent',
             this.generateChartData(this.supplierQuotes),
             'Supplier Price and Availability Comparison',
-            'BubblechartComponent',
+            'BarHorizontalComponent',
         );
     }
 

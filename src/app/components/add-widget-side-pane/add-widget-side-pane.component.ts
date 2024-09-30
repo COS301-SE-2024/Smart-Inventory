@@ -16,6 +16,7 @@ import { PieChartComponent } from 'app/components/charts/widgets/widgetPie';
 import { BubbleChartComponent } from 'app/components/charts/widgets/widgetBubble';
 import { RadarComponent } from '../charts/radar/radar.component';
 import { LineBarComponent } from '../charts/line-bar/line-bar.component';
+import { BarHorizontalComponent } from '../charts/bar-horizontal/bar-horizontal.component';
 import { ChartConfig, DashboardService } from '../../pages/dashboard/dashboard.service';
 import { DataCollectionService, InventorySummaryItem } from './data-collection.service';
 
@@ -33,6 +34,7 @@ import { DataCollectionService, InventorySummaryItem } from './data-collection.s
         SaleschartComponent,
         BubblechartComponent,
         LineChartComponent,
+        BarHorizontalComponent,
         PieChartComponent,
         BarChartComponent,
         BubbleChartComponent,
@@ -55,6 +57,7 @@ export class AddWidgetSidePaneComponent implements OnInit {
         DonutchartComponent,
         BarChartComponent,
         LineChartComponent,
+        BarHorizontalComponent,
         PieChartComponent,
         BubbleChartComponent,
         LineBarComponent,

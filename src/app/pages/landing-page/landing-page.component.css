@@ -503,3 +503,299 @@ ng-icon {
 		transform: rotate(5deg);
 	}
 }
+
+
+/* Large tablets and small desktops */
+@media (max-width: 1200px) {
+	.content {
+	  max-width: 600px;
+	}
+  
+	.image-showcase {
+	  flex: 0 0 600px;
+	}
+  
+	main {
+	  min-height: auto;
+	  padding: 4rem 2rem;
+	}
+  }
+  
+  /* Tablets and larger phones */
+  @media (max-width: 1024px) {
+	header {
+	  padding: 1rem 1rem 1.5rem;
+	}
+  
+	nav {
+	  margin-top: 1rem;
+	}
+  
+	nav a {
+	  margin: 0 0.75rem;
+	  padding: 0.5rem 0;
+	}
+  
+	main {
+	  padding: 3rem 1.5rem;
+	  min-height: auto;
+	}
+  
+	.content {
+	  margin-right: 2rem;
+	  max-width: 500px;
+	}
+  
+	h1 {
+	  font-size: 2.2rem;
+	}
+  
+	.image-showcase {
+	  flex: 0 0 500px;
+	}
+  
+	.feature-card {
+	  width: calc(50% - 1rem);
+	}
+  
+	.statistics-grid {
+	  grid-template-columns: repeat(3, 1fr);
+	  gap: 1.5rem;
+	}
+  }
+  
+  /* Smaller tablets and large phones */
+  @media (max-width: 768px) {
+	header {
+	  flex-direction: column;
+	  align-items: center;
+	  padding: 1rem 1rem 2rem;
+	}
+  
+	.logo {
+	  margin-bottom: 1rem;
+	}
+  
+	nav {
+	  margin-bottom: 1.5rem;
+	}
+  
+	nav a {
+	  margin: 0 1rem;
+	  padding: 0.5rem 0;
+	}
+  
+	header button {
+	  width: 80%;
+	  height: 50px;
+	  font-size: 1rem;
+	}
+  
+	main {
+	  flex-direction: column;
+	  padding: 2rem 1rem;
+	  min-height: auto;
+	}
+  
+	.content {
+	  margin-right: 0;
+	  margin-bottom: 2rem;
+	  max-width: 100%;
+	}
+  
+	h1 {
+	  font-size: 2rem;
+	}
+  
+	.image-showcase {
+	  display: none;
+	}
+  
+	.feature-card {
+	  width: 100%;
+	}
+  
+	.statistics-grid {
+	  grid-template-columns: repeat(2, 1fr);
+	}
+  
+	.statistic-item {
+	  padding: 1.25rem;
+	}
+  
+	.statistic-value {
+	  font-size: 2.2rem;
+	}
+  }
+  
+  /* Most smartphones */
+  @media (max-width: 480px) {
+	header {
+	  padding: 0.75rem 0.75rem 1.5rem;
+	}
+  
+	nav {
+	  display: flex;
+	  flex-direction: column;
+	  align-items: center;
+	  width: 100%;
+	}
+  
+	nav a {
+	  margin: 0.5rem 0;
+	  padding: 0.75rem;
+	  width: 100%;
+	  text-align: center;
+	}
+  
+	header button {
+	  width: 100%;
+	}
+  
+	main {
+	  padding: 1.5rem 1rem;
+	}
+  
+	.badge {
+	  font-size: 0.7rem;
+	  padding: 0.4rem 0.8rem;
+	}
+  
+	h1 {
+	  font-size: 1.8rem;
+	}
+  
+	.content p {
+	  font-size: 0.9rem;
+	}
+  
+	.statistics-grid {
+	  grid-template-columns: 1fr;
+	}
+  
+	.statistic-item {
+	  padding: 1rem;
+	}
+  
+	.statistic-value {
+	  font-size: 2rem;
+	}
+  
+	.feature-content h3 {
+	  font-size: 1.5rem;
+	}
+  
+	.feature-content p {
+	  font-size: 0.9rem;
+	}
+  
+	#features h2, #solutions h2 {
+	  font-size: 2.5rem;
+	}
+  }
+  
+  /* Very small screens */
+  @media (max-width: 360px) {
+	header {
+	  padding: 0.5rem 0.5rem 1.25rem;
+	}
+  
+	.logo {
+	  font-size: 1.3rem;
+	}
+  
+	nav a {
+	  padding: 0.6rem;
+	  font-size: 0.9rem;
+	}
+  
+	main {
+	  padding: 1rem 0.75rem;
+	}
+  
+	h1 {
+	  font-size: 1.6rem;
+	}
+  
+	.feature-content h3 {
+	  font-size: 1.3rem;
+	}
+  
+	.feature-content p {
+	  font-size: 0.85rem;
+	}
+  
+	#features h2, #solutions h2 {
+	  font-size: 2.2rem;
+	}
+  
+	.statistic-value {
+	  font-size: 1.8rem;
+	}
+  
+	.statistic-label {
+	  font-size: 0.9rem;
+	}
+  }
+  
+  /* Ensure minimum touch target size for better accessibility */
+  @media (max-width: 768px) {
+	button, 
+	.feature-card,
+	nav a,
+	.statistic-item {
+	  min-height: 44px;
+	  min-width: 44px;
+	}
+  
+	button, nav a {
+	  padding: 12px 16px;
+	}
+  
+	.feature-card {
+	  padding: 16px;
+	}
+  }
+  
+  /* Landscape orientation adjustments */
+  @media (max-width: 900px) and (orientation: landscape) {
+	header {
+	  padding: 0.5rem 1rem 1rem;
+	  flex-direction: row;
+	  justify-content: space-between;
+	  align-items: center;
+	}
+  
+	.logo {
+	  margin-bottom: 0;
+	}
+  
+	nav {
+	  margin: 0 1rem;
+	}
+  
+	header button {
+	  width: auto;
+	}
+  
+	main {
+	  flex-direction: column;
+	  align-items: center;
+	  padding: 1rem;
+	  min-height: auto;
+	}
+  
+	.content {
+	  margin-right: 0;
+	  margin-bottom: 1rem;
+	  max-width: 100%;
+	}
+  
+	.image-showcase {
+	  display: none;
+	}
+  
+	.statistics-grid {
+	  grid-template-columns: repeat(3, 1fr);
+	}
+  }

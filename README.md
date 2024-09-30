@@ -5,7 +5,7 @@
 # Helix - SmartInventory - Smart Inventory System to track and organise inventory
 
 <div align="center">
-    <img src="/media/logo-no-background.png" width="20%" height="20%">
+    <img src="/media/logo-no-background.png" width="50%" height="50%">
 </div>
 
 ## ℹ️ About

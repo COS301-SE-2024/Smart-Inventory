@@ -180,7 +180,7 @@ export class InventoryComponent implements OnInit {
         this.titleService.updateTitle('Inventory');
         this.checkScreenSize();
         await this.getUserInfo();
-        
+        this.isLoading = false;
         if (!this.isMobileView) {
             await this.loadInventoryData();
             await this.loadSuppliers();

@@ -628,115 +628,6 @@ ng-icon {
 	}
   }
   
-  /* Most smartphones */
-  @media (max-width: 480px) {
-	header {
-	  padding: 0.75rem 0.75rem 1.5rem;
-	}
-  
-	nav {
-	  display: flex;
-	  flex-direction: column;
-	  align-items: center;
-	  width: 100%;
-	}
-  
-	nav a {
-	  margin: 0.5rem 0;
-	  padding: 0.75rem;
-	  width: 100%;
-	  text-align: center;
-	}
-  
-	header button {
-	  width: 100%;
-	}
-  
-	main {
-	  padding: 1.5rem 1rem;
-	}
-  
-	.badge {
-	  font-size: 0.7rem;
-	  padding: 0.4rem 0.8rem;
-	}
-  
-	h1 {
-	  font-size: 1.8rem;
-	}
-  
-	.content p {
-	  font-size: 0.9rem;
-	}
-  
-	.statistics-grid {
-	  grid-template-columns: 1fr;
-	}
-  
-	.statistic-item {
-	  padding: 1rem;
-	}
-  
-	.statistic-value {
-	  font-size: 2rem;
-	}
-  
-	.feature-content h3 {
-	  font-size: 1.5rem;
-	}
-  
-	.feature-content p {
-	  font-size: 0.9rem;
-	}
-  
-	#features h2, #solutions h2 {
-	  font-size: 2.5rem;
-	}
-  }
-  
-  /* Very small screens */
-  @media (max-width: 360px) {
-	header {
-	  padding: 0.5rem 0.5rem 1.25rem;
-	}
-  
-	.logo {
-	  font-size: 1.3rem;
-	}
-  
-	nav a {
-	  padding: 0.6rem;
-	  font-size: 0.9rem;
-	}
-  
-	main {
-	  padding: 1rem 0.75rem;
-	}
-  
-	h1 {
-	  font-size: 1.6rem;
-	}
-  
-	.feature-content h3 {
-	  font-size: 1.3rem;
-	}
-  
-	.feature-content p {
-	  font-size: 0.85rem;
-	}
-  
-	#features h2, #solutions h2 {
-	  font-size: 2.2rem;
-	}
-  
-	.statistic-value {
-	  font-size: 1.8rem;
-	}
-  
-	.statistic-label {
-	  font-size: 0.9rem;
-	}
-  }
   
   /* Ensure minimum touch target size for better accessibility */
   @media (max-width: 768px) {
@@ -797,5 +688,98 @@ ng-icon {
   
 	.statistics-grid {
 	  grid-template-columns: repeat(3, 1fr);
+	}
+  }
+
+  /* Extra small devices (phones, 420px and down) */
+@media (max-width: 420px) {
+	/* Main content adjustments */
+	main {
+	  padding: 2rem 1rem;
+	}
+  
+	.content {
+	  margin-bottom: 1.5rem;
+	}
+  
+	h1 {
+	  font-size: 1.8rem;
+	}
+  
+	.badge {
+	  font-size: 0.7rem;
+	  padding: 0.4rem 0.8rem;
+	}
+  
+	/* Features section adjustments */
+	#features {
+	  padding: 3rem 1rem;
+	}
+  
+	#features h2 {
+	  font-size: 2.2rem;
+	  margin-bottom: 2rem;
+	}
+  
+	.feature-card {
+	  min-width: 100%;
+	  margin-bottom: 1rem;
+	}
+  
+	.feature-content h3 {
+	  font-size: 1.5rem;
+	}
+  
+	.feature-content p {
+	  font-size: 0.9rem;
+	}
+  
+	/* Statistics section adjustments */
+	.statistics-section {
+	  padding: 3rem 1rem;
+	}
+  
+	.statistics-section h2 {
+	  font-size: 2.2rem;
+	}
+  
+	.statistics-section p {
+	  font-size: 1rem;
+	  margin-bottom: 2rem;
+	}
+  
+	.statistics-grid {
+	  grid-template-columns: 1fr;
+	  gap: 1rem;
+	}
+  
+	.statistic-item {
+	  padding: 1rem;
+	}
+  
+	.icon-wrapper {
+	  width: 50px;
+	  height: 50px;
+	}
+  
+	.icon-wrapper ::ng-deep svg {
+	  width: 25px;
+	  height: 25px;
+	}
+  
+	.statistic-value {
+	  font-size: 2rem;
+	}
+  
+	.statistic-label {
+	  font-size: 0.9rem;
+	}
+  
+	/* Button adjustments */
+	button {
+	  width: 100%;
+	  max-width: 200px;
+	  height: 40px;
+	  font-size: 0.9rem;
 	}
   }

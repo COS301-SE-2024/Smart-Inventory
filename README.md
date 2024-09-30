@@ -219,6 +219,27 @@ Reviews focus on checking that coding standards are being followed and that any 
   <a href="documents/Demo 3/TechInstall.pdf">
     Technical Installation Manual
   </a>
+  
+  ##
+
+  📄
+  <a href="documents/Demo 3/TechInstall.pdf">
+    API Service Contracts
+  </a>
+
+  ##
+
+  📄
+  <a href="documents/Demo 3/TechInstall.pdf">
+    Deployment Model
+  </a>
+
+  ##
+
+  📄
+  <a href="documents/Demo 3/TechInstall.pdf">
+    Architectural Diagram
+  </a>
   <hr>
 </br>
 
@@ -231,19 +252,19 @@ Reviews focus on checking that coding standards are being followed and that any 
 ##
 
   <a href="https://drive.google.com/file/d/1GA5bhGj_Fdi55wLu19L-26e7DdXcXDOk/view?usp=drive_link">
-    Helix - Demo 3 App Recording
+    Helix - Demo 4 App Recording
   </a>
   
 ##
 
   <a href="https://drive.google.com/file/d/1iGT_RBSD6WArLD1bJzuDQxNmeEPE8L8b/view?usp=sharing">
-    Helix - Demo 3 Recording
+    Helix - Demo 4 Recording
   </a>
   
   ##
 
   <a href="/documents/Demo 3/SmartInventory-Demo3.pdf">
-    Helix - Demo 3 Presentation Slides
+    Helix - Demo 4 Presentation Slides
   </a>
 <hr>
 </br>
@@ -264,6 +285,7 @@ Reviews focus on checking that coding standards are being followed and that any 
 * AWS Event Bridge
 * AWS SES
 * AWS SNS
+* Docker
  
 ### ⚙️ Database:
 * AWS DynamoDB
@@ -280,6 +302,7 @@ Reviews focus on checking that coding standards are being followed and that any 
 ### ⚙️ Cloud
 * Amplify
 * Amplify Cloud Sandbox
+* Cloudwatch
   
 <hr>
 </br>

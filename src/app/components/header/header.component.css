@@ -132,10 +132,6 @@ svg.theme-svg {
         display: none;
     }
 
-    mat-toolbar {
-        justify-content: center;
-    }
-
     .pageTitle {
         font-size: 20px;
     }

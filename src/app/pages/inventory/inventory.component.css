@@ -7,22 +7,34 @@
     position: relative;
 }
 
-.scan-qr-button {
-    position: absolute;
-    top: 30px;
-    left: 60px;
-    background-color: #005cbb;
-    color: white;
-    border: none;
-    padding: 12px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.1s ease;
-    font-size: 16px;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+@media screen and (max-width: 768px) {
+    .inventoryHolder {
+        height: calc(100vh - 64px);
+        width: 100%;
+        overflow: auto;
+        padding: 10px 20px 20px 20px;
+        box-sizing: border-box;
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .scan-qr-button {
+        position: static; /* Remove absolute positioning */
+        margin: 0 auto;
+        background-color: #005cbb;
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.1s ease;
+        font-size: 16px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
 }
 
 .scan-qr-button:hover {

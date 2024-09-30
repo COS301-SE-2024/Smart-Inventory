@@ -11,7 +11,7 @@ import { GridComponent } from './components/grid/grid.component';
 import { LoadingService } from './components/loader/loading.service';
 import { ThemeService } from './services/theme.service';
 import { CommonModule } from '@angular/common';
-import { filter } from 'rxjs/operators'; 
+import { filter } from 'rxjs/operators';
 
 Amplify.configure(outputs);
 @Component({
@@ -53,15 +53,14 @@ export class AppComponent implements OnInit {
             this.isSupplierForm = event.urlAfterRedirects.startsWith('/supplier-form');
             this.isLandingPage = event.urlAfterRedirects === '/landing' || event.urlAfterRedirects === '/';
         });
-
+        this.themeService.detectColorScheme();
     }
 
     //
 
-    // toggleTheme(): void {
-    //     const newTheme = this.themeService.getTheme() === 'dark' ? 'light' : 'dark';
-    //     this.themeService.setTheme(newTheme);
-    // }
+    toggleTheme() {
+        this.themeService.toggleColorScheme();
+    }
 
     // loadTheme(): void {
     //     this.themeService.setTheme(this.themeService.getTheme());

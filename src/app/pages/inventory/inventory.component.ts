@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, HostListener } from '@angular/core';
 import { ColDef } from 'ag-grid-community';
 import { GridComponent } from '../../components/grid/grid.component';
 import { MatButtonModule } from '@angular/material/button';
@@ -63,6 +63,7 @@ export class InventoryComponent implements OnInit {
     userName: string = '';
     userRole: string = '';
     tenantId: string = '';
+    isMobileView: boolean = false;
 
     colDefs: ColDef[] = [
         {
@@ -176,9 +177,20 @@ export class InventoryComponent implements OnInit {
 
     async ngOnInit(): Promise<void> {
         this.titleService.updateTitle('Inventory');
+        this.checkScreenSize();
         await this.getUserInfo();
         await this.loadInventoryData();
         await this.loadSuppliers();
+    }
+
+
+    @HostListener('window:resize', ['$event'])
+    onResize(event: any) {
+        this.checkScreenSize();
+    }
+
+    checkScreenSize() {
+        this.isMobileView = window.innerWidth <= 768; // Adjust this value as needed
     }
 
     async getUserInfo() {

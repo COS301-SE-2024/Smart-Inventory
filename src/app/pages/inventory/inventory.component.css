@@ -7,6 +7,32 @@
     position: relative;
 }
 
+.mobile-view {
+    position: absolute;
+    top: 30px;
+    left: 60px;
+}
+
+.scan-qr-button {
+    background-color: #005cbb;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-size: 1rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.scan-qr-button:hover {
+    background-color: #004499;
+}
+
+/* ... (rest of your existing styles) ... */
+
 .add-item-button {
     padding: 10px 20px;
     background-color: #4a4a4a;

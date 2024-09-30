@@ -350,10 +350,8 @@ export class DashboardComponent implements OnInit {
                 this.dashboard = parsedState;
             } else {
                 console.error('Saved state is not an array, initializing default dashboard');
-                this.dashboard = this.dashService.initializeDashboard();
             }
         } else {
-            this.dashboard = this.dashService.initializeDashboard();
             this.isLoading = false;
         }
         this.CDRService.detectChanges();

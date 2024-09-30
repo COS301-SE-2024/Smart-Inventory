@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, HostListener } from '@angular/core';
 import { ColDef } from 'ag-grid-community';
 import { GridComponent } from '../../components/grid/grid.component';
 import { MatButtonModule } from '@angular/material/button';
@@ -23,6 +23,7 @@ import { UploadItemsModalComponent } from 'app/components/upload-items-modal/upl
 import { InventoryService } from '../../../../amplify/services/inventory.service';
 import { TeamsService } from '../../../../amplify/services/teams.service';
 import { SuppliersService } from '../../../../amplify/services/suppliers.service';
+import { ScanQrcodeModalComponent } from 'app/components/scan-qrcode-modal/scan-qrcode-modal.component';
 
 import {
     MatSnackBar,
@@ -63,6 +64,7 @@ export class InventoryComponent implements OnInit {
     userName: string = '';
     userRole: string = '';
     tenantId: string = '';
+    isMobileView: boolean = false;
 
     colDefs: ColDef[] = [
         {
@@ -176,10 +178,37 @@ export class InventoryComponent implements OnInit {
 
     async ngOnInit(): Promise<void> {
         this.titleService.updateTitle('Inventory');
+        this.checkScreenSize();
         await this.getUserInfo();
         await this.loadInventoryData();
         await this.loadSuppliers();
     }
+
+
+    @HostListener('window:resize', ['$event'])
+    onResize(event: any) {
+        this.checkScreenSize();
+    }
+
+    checkScreenSize() {
+        this.isMobileView = window.innerWidth <= 768; // Adjust this value as needed
+    }
+
+    openScanQRCodeModal() {
+        const dialogRef = this.dialog.open(ScanQrcodeModalComponent, {
+            width: '90%',
+            maxWidth: '400px',
+            height: 'auto',
+            maxHeight: '80vh',
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                this.handleQRCodeScan(result);
+            }
+        });
+    }
+
 
     async getUserInfo() {
         try {

@@ -163,9 +163,9 @@ export class DashboardService {
                 rows: 3,
                 y: 6,
                 x: 0,
-                cardId: 'bar-horizontal',
-                name: 'BarHorizontalComponent',
-                component: 'BarHorizontalComponent',
+                cardId: 'bubble-chart',
+                name: 'Bubble Chart',
+                component: 'BubblechartComponent',
             },
             // Second half-width item
             {

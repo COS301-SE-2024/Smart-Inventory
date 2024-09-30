@@ -37,6 +37,7 @@ export class InventorySummaryComponent implements OnInit {
             headerName: 'SKU',
             filter: 'agSetColumnFilter',
             headerTooltip: 'Stock Keeping Unit - Unique identifier for each product',
+            
         },
         {
             field: 'description',
@@ -101,24 +102,28 @@ export class InventorySummaryComponent implements OnInit {
             headerName: 'Annual Consumption Value',
             filter: 'agSetColumnFilter',
             headerTooltip: 'Total value of product consumed in a year',
+            valueFormatter: (params) => Math.round(params.value).toString(),
         },
         {
             field: 'holdingCost',
             headerName: 'Holding Cost',
             filter: 'agSetColumnFilter',
             headerTooltip: 'Cost of holding one unit of inventory for a year',
+            valueFormatter: (params) => params.value.toFixed(2),
         },
         {
             field: 'annualDemand',
             headerName: 'Annual Demand',
             filter: 'agSetColumnFilter',
             headerTooltip: 'Total quantity demanded in a year',
+            valueFormatter: (params) => Math.round(params.value).toString(),
         },
         {
             field: 'dailyDemand',
             headerName: 'Daily Demand',
             filter: 'agSetColumnFilter',
             headerTooltip: 'Average quantity demanded per day',
+            valueFormatter: (params) => params.value.toFixed(2),
         },
     ];
 

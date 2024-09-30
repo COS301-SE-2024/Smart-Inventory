@@ -8,14 +8,14 @@
         </div>
         <mat-nav-list>
             <div *ngFor="let item of filteredMenuItems" class="nav-item">
-                <a mat-list-item *ngIf="!item.click" [routerLink]="item.routerLink" 
-                   [ngClass]="{ active: router.url === item.routerLink }"
-                   [matTooltip]="item.label" [matTooltipDisabled]="isExpanded || isHovered">
+                <a mat-list-item *ngIf="!item.click" [routerLink]="item.routerLink"
+                    [ngClass]="{ active: router.url === item.routerLink }" [matTooltip]="item.label"
+                    [matTooltipDisabled]="isExpanded || isHovered">
                     <mat-icon class="nav-icon" [id]="item.icon">{{ item.icon }}</mat-icon>
                     <span class="nav-label">{{ item.label }}</span>
                 </a>
-                <a mat-list-item *ngIf="item.click" (click)="signOut()"
-                   [matTooltip]="item.label" [matTooltipDisabled]="isExpanded || isHovered">
+                <a mat-list-item *ngIf="item.click" (click)="signOut()" [matTooltip]="item.label"
+                    [matTooltipDisabled]="isExpanded || isHovered">
                     <mat-icon class="nav-icon">{{ item.icon }}</mat-icon>
                     <span class="nav-label">{{ item.label }}</span>
                 </a>

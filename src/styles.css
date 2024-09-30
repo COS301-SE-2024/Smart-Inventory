@@ -6,6 +6,7 @@
     width: 10px;
     border-radius: 50px;
 }
+
 @media (prefers-color-scheme: dark) {
     :root {
         --background-color: #333333;
@@ -14,6 +15,7 @@
         --card-background: #424242;
     }
 }
+
 /* Track */
 ::-webkit-scrollbar-track {
     background: #f1f1f1;
@@ -177,8 +179,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 [data-amplify-authenticator] {
     --amplify-components-authenticator-router-box-shadow: 0 0 16px var(--amplify-colors-overlay-90);
     --amplify-components-authenticator-router-border-width: 0;
-    --amplify-components-authenticator-form-padding: var(--amplify-space-medium) var(--amplify-space-xl)
-        var(--amplify-space-xl);
+    --amplify-components-authenticator-form-padding: var(--amplify-space-medium) var(--amplify-space-xl) var(--amplify-space-xl);
     --amplify-components-button-primary-background-color: var(--amplify-colors-neutral-100);
     --amplify-components-fieldcontrol-focus-box-shadow: 0 0 0 2px var(--amplify-colors-purple-60);
     --amplify-components-tabs-item-active-border-color: var(--amplify-colors-neutral-100);
@@ -187,15 +188,19 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     --amplify-components-button-link-color: var(--amplify-colors-overlay-90);
     --amplify-components-button-link-hover-color: var(--amplify-colors-overlay-90);
 }
+
 .amplify-button--primary {
     background: rgb(39, 39, 39);
 }
 
 body,
 html {
-    width: 100%; /* Ensure the body takes full width */
-    margin: 0; /* Reset default margin */
-    padding: 0; /* Reset default padding */
+    width: 100%;
+    /* Ensure the body takes full width */
+    margin: 0;
+    /* Reset default margin */
+    padding: 0;
+    /* Reset default padding */
     /* overflow-y: scroll; */
 }
 
@@ -205,63 +210,27 @@ html {
 }
 
 /* Define the base colors */
-:root {
-    --background-color: #ffffff; /* Light mode background */
-    --text-color: #000000; /* Light mode text */
-    --text-color-hover: rgb(27, 27, 215);
-    --sidebar-bg-color: #f1f1f1; /* Light mode sidebar background */
-    --sidebar-hover-bg-color: #d6d6d6;
-    --sidebar-text-color: #000000;
-    --card-bg-color: #ffffff; /* Light mode card background */
-    --card-text-color: #000000; /* Light mode card text color */
-    --header-bg-color: #eeeeee;
-    --profile-pic: #ffff;
-    --header-profile-text: #000000;
-    --svg-stroke-color: #000000;
-    --dash-cards-text-color: #000000;
-    --dash-cards-bg-color: #ffffff;
-    --dash-bg-color: #ffffff;
-    --tab-active-color: #151414;
-    --tab-inactive-color: rgba(0, 0, 0, 0.6);
-    --tab-indicator-color: #242022;
-    --tab-hover-color: black;
-    --tab-ripple-color: #232222;
-    --button-bg-color: #f2f2f2; /* Light mode background color for buttons */
-    --button-text-color: black; /* Light mode text color for buttons */
-    --button-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Subtle shadow for light mode */
-    --help-accordion-bg-color: #fdfbff;
-    --help-accordion-text-color: black;
-    --user-guides-bg-color: white;
-    --report-bg-color: #0a93f6;
+@media (prefers-color-scheme: light) {
+    :root {
+        color-scheme: light;
+    }
 }
 
-[data-theme='dark'] {
-    --background-color: #000000; /* Dark mode background */
-    --text-color: #ffffff; /* Dark mode text */
-    --text-color-hover: rgb(74, 64, 186);
-    --header-bg-color: #1e1e1e; /* Dark mode header background */
-    --sidebar-bg-color: #1e1e1e; /* Dark mode sidebar background */
-    --sidebar-text-color: #fff;
-    --sidebar-hover-bg-color: #ffffff1e;
-    --card-bg-color: #424242; /* Dark mode card background */
-    --card-text-color: #ffffff; /* Dark mode card text color */
-    --profile-pic: #0000;
-    --header-profile-text: #ffff;
-    --svg-stroke-color: #ffff;
-    --dash-cards-text-color: #ffffff;
-    --dash-cards-bg-color: #1e1e1e;
-    --dash-bg-color: #000000;
-    --tab-active-color: #ffffff;
-    --tab-inactive-color: rgba(255, 255, 255, 0.6);
-    --tab-indicator-color: #f0f0f0;
-    --tab-hover-color: #ffffff;
-    --tab-ripple-color: rgba(255, 255, 255, 0.1);
-    --button-bg-color: #333; /* Dark mode background color for buttons */
-    --button-text-color: #fff; /* Dark mode text color for buttons */
-    --button-shadow: -2px 2px 8px rgb(255 255 255 / 39%); /* White shadow for dark mode */
-    --help-accordion-bg-color: #232323;
-    --help-accordion-text-color: white;
-    --user-guides-bg-color: #232323;
-    --user-guides-sidebar-bg-color: #1e1e1e;
-    --report-bg-color: #131313;
+@media (prefers-color-scheme: dark) {
+    :root {
+        color-scheme: dark;
+    }
+}
+
+:root[data-theme="light"] {
+    color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+    color-scheme: dark;
+}
+
+/* Add transitions for smooth theme changes */
+* {
+    transition: background-color 0.3s ease, color 0.3s ease;
 }

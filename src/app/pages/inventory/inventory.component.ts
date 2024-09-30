@@ -195,6 +195,7 @@ export class InventoryComponent implements OnInit {
         
         // If switching from mobile to desktop view, load data
         if (wasMobileView && !this.isMobileView) {
+            this.titleService.updateTitle('Inventory');
             this.loadInventoryData();
             this.loadSuppliers();
         }
@@ -206,6 +207,7 @@ export class InventoryComponent implements OnInit {
         
         // If switching from desktop to mobile view, clear data
         if (!wasMobileView && this.isMobileView) {
+            this.titleService.updateTitle('Request Stock');
             this.rowData = [];
             this.suppliers = [];
         }

@@ -1,4 +1,4 @@
-/* SCROLL BAR */
+/* main.css */
 
 /* width */
 ::-webkit-scrollbar {
@@ -42,6 +42,128 @@
     transform: translate(-50%, -50%);
     width: 40%;
     max-width: 500px;
+}
+
+/* Large desktop screens */
+@media screen and (min-width: 1200px) {
+    [data-amplify-authenticator] {
+        max-width: 550px;
+    }
+}
+
+/* Desktop and large tablets */
+@media screen and (max-width: 1199px) and (min-width: 992px) {
+    [data-amplify-authenticator] {
+        max-width: 500px;
+    }
+}
+
+/* Tablets and small desktops */
+@media screen and (max-width: 991px) and (min-width: 768px) {
+    [data-amplify-authenticator] {
+        width: 80%;
+        max-width: 450px;
+    }
+}
+
+/* Large phones and small tablets */
+@media screen and (max-width: 767px) and (min-width: 576px) {
+    [data-amplify-authenticator] {
+        width: 90%;
+        max-width: none;
+    }
+}
+
+/* Phones */
+@media screen and (max-width: 575px) {
+    [data-amplify-authenticator] {
+        width: 100%;
+        top: 0;
+        left: 0;
+        transform: none;
+        height: 100vh;
+    }
+
+    [data-amplify-authenticator] [data-amplify-router] {
+        height: 100%;
+    }
+}
+
+/* Adjustments for form elements */
+@media screen and (max-width: 575px) {
+    [data-amplify-authenticator] {
+        --amplify-components-authenticator-form-padding: var(--amplify-space-medium) var(--amplify-space-medium)
+            var(--amplify-space-large);
+    }
+
+    /* Ensure password input and visibility button are aligned */
+    [data-amplify-authenticator] .amplify-passwordfield {
+        display: flex;
+    }
+
+    [data-amplify-authenticator] .amplify-passwordfield__inner {
+        flex-grow: 1;
+    }
+
+    [data-amplify-authenticator] .amplify-passwordfield__visibility-button {
+        height: 100%;
+        padding: 0 10px;
+    }
+}
+
+/* Improve touch targets for mobile */
+@media screen and (max-width: 767px) {
+    [data-amplify-authenticator] .amplify-button {
+        min-height: 44px;
+    }
+
+    [data-amplify-authenticator] .amplify-input {
+        min-height: 44px;
+    }
+
+    [data-amplify-authenticator] .amplify-checkbox__button {
+        min-width: 24px;
+        min-height: 24px;
+    }
+}
+
+/* Improve readability on smaller screens */
+@media screen and (max-width: 575px) {
+    [data-amplify-authenticator] {
+        font-size: 16px;
+    }
+}
+
+/* Adjust layout for very small screens */
+@media screen and (max-width: 320px) {
+    [data-amplify-authenticator] {
+        font-size: 14px;
+    }
+
+    [data-amplify-authenticator] .amplify-button {
+        padding: 8px 12px;
+    }
+}
+
+/* High pixel density screens */
+@media screen and (min-resolution: 192dpi), screen and (min-resolution: 2dppx) {
+    [data-amplify-authenticator] {
+        font-smoothing: antialiased;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+}
+
+/* Landscape orientation adjustments */
+@media screen and (max-height: 575px) and (orientation: landscape) {
+    [data-amplify-authenticator] {
+        height: auto;
+        min-height: 100vh;
+        position: relative;
+        transform: none;
+        top: 0;
+        left: 0;
+    }
 }
 
 /* body, html {

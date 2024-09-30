@@ -1,7 +1,12 @@
 <div class="dashboard-container">
     <div class="quick-actions">
-        <button class="btnAdd" mat-fab extended matTooltip="Quickly access and manage tasks related to current page."
-            [matMenuTriggerFor]="menu">
+        <button
+            class="btnAdd"
+            mat-fab
+            extended
+            matTooltip="Quickly access and manage tasks related to current page."
+            [matMenuTriggerFor]="menu"
+        >
             <span>Quick Actions</span><mat-icon matSuffix>keyboard_arrow_down</mat-icon>
             <!-- <mat-icon style="color: black">manufacturing</mat-icon> -->
         </button>
@@ -30,9 +35,12 @@
                         </div>
                     </div>
                     <div class="right-content">
-                        <div class="progress-ring" [style.background-image]="
+                        <div
+                            class="progress-ring"
+                            [style.background-image]="
                                 getProgressRingStyle(item['cardData'].change, item['cardData'].color)
-                            ">
+                            "
+                        >
                             <span class="change-value" [ngClass]="getColor(item['cardData'].color)">
                                 {{ item['cardData'].change > 0 ? '+' : '' }}{{ item['cardData'].change }}%
                             </span>
@@ -54,7 +62,7 @@
                                 <p>Total Requests: {{ RequestOrders.requests.totalRequests }}</p>
                                 <p>
                                     Most Requested: {{ RequestOrders.requests.mostRequested.name }} ({{
-                                    RequestOrders.requests.mostRequested.percentage
+                                        RequestOrders.requests.mostRequested.percentage
                                     }}%)
                                 </p>
                                 <p>Highest Request: {{ RequestOrders.requests.highestRequest }}</p>
@@ -67,7 +75,7 @@
                                 <p>
                                     Longest Backorder:
                                     {{ RequestOrders.backorders.longestBackorderItem.productName }} ({{
-                                    RequestOrders.backorders.longestBackorderItem.delay
+                                        RequestOrders.backorders.longestBackorderItem.delay
                                     }})
                                 </p>
                             </div>
@@ -111,15 +119,14 @@
             </mat-card>
 
             <!-- Half-width items -->
-            <!-- <mat-card class="dashboard-card half-width-card" *ngIf="item.component === 'BarHorizontalComponent'">
+            <!-- <mat-card class="dashboard-card half-width-card" *ngIf="item.component === 'BubblechartComponent'">
                 <button *ngIf="isDeleteMode" class="delete-button" (click)="deleteWidget(item)">
                     <mat-icon>delete</mat-icon>
                 </button>
-                <app-bar-horizontal
-                            *ngSwitchCase="'BarHorizontalComponent'"
-                            [data]="item['chartConfig'].data"
-                            [chartTitle]="item['chartConfig'].title"
-                        ></app-bar-horizontal>
+                <app-bubblechart
+                    [data]="item['chartConfig'].data"
+                    [chartTitle]="item['chartConfig'].title"
+                ></app-bubblechart>
             </mat-card> -->
 
             <mat-card class="dashboard-card half-width-card" *ngIf="item.cardId === 'donut-chart'">
@@ -136,42 +143,56 @@
                 </button>
                 <ng-container [ngSwitch]="item.component">
                     <ng-container *ngSwitchCase="'BarChartComponent'">
-                        <app-bar-chart [data]="item['chartConfig'].data"
-                            [title]="item['chartConfig'].title"></app-bar-chart>
+                        <app-bar-chart
+                            [data]="item['chartConfig'].data"
+                            [title]="item['chartConfig'].title"
+                        ></app-bar-chart>
                     </ng-container>
                     <ng-container *ngSwitchCase="'LineChartComponent'">
-                        <app-line-chart [data]="item['chartConfig'].data"
-                            [title]="item['chartConfig'].title"></app-line-chart>
+                        <app-line-chart
+                            [data]="item['chartConfig'].data"
+                            [title]="item['chartConfig'].title"
+                        ></app-line-chart>
                     </ng-container>
                     <ng-container *ngSwitchCase="'PieChartComponent'">
-                        <app-pie-chart [data]="item['chartConfig'].data"
-                            [title]="item['chartConfig'].title"></app-pie-chart>
+                        <app-pie-chart
+                            [data]="item['chartConfig'].data"
+                            [title]="item['chartConfig'].title"
+                        ></app-pie-chart>
                     </ng-container>
                     <ng-container *ngSwitchCase="'BubbleChartComponent'">
-                        <app-bubble-chart [data]="item['chartConfig'].data"
-                            [title]="item['chartConfig'].title"></app-bubble-chart>
+                        <app-bubble-chart
+                            [data]="item['chartConfig'].data"
+                            [title]="item['chartConfig'].title"
+                        ></app-bubble-chart>
                     </ng-container>
                     <ng-container *ngSwitchCase="'LineBarComponent'">
-                        <app-line-bar [data]="item['chartConfig'].data"
-                            [title]="item['chartConfig'].title"></app-line-bar>
+                        <app-line-bar
+                            [data]="item['chartConfig'].data"
+                            [title]="item['chartConfig'].title"
+                        ></app-line-bar>
                     </ng-container>
                     <ng-container *ngSwitchCase="'RadarComponent'">
                         <app-radar [data]="item['chartConfig'].data" [title]="item['chartConfig'].title"></app-radar>
                     </ng-container>
                     <ng-container *ngSwitchCase="'ScatterPlotComponent'">
-                        <app-scatterplot [data]="item['chartConfig'].data"
-                            [title]="item['chartConfig'].title"></app-scatterplot>
+                        <app-scatterplot
+                            [data]="item['chartConfig'].data"
+                            [title]="item['chartConfig'].title"
+                        ></app-scatterplot>
                     </ng-container>
                     <ng-container *ngSwitchCase="'DonutChartComponent'">
-                        <app-donuttemplate [orderData]="item['chartConfig'].data"
-                            [title]="item['chartConfig'].title"></app-donuttemplate>
+                        <app-donuttemplate
+                            [orderData]="item['chartConfig'].data"
+                            [title]="item['chartConfig'].title"
+                        ></app-donuttemplate>
                     </ng-container>
-                    <ng-container *ngSwitchCase="'BarHorizontalComponent'">
-                        <app-bar-horizontal
-                          [data]="item['chartConfig']?.data"
-                          [chartTitle]="item['chartConfig']?.title || ''"
-                        ></app-bar-horizontal>
-                      </ng-container>
+                    <ng-container *ngSwitchCase="'BubblechartComponent'">
+                        <app-bubblechart
+                            [data]="item['chartConfig'].data"
+                            [chartTitle]="item['chartConfig'].title"
+                        ></app-bubblechart>
+                    </ng-container>
 
                 </ng-container>
             </mat-card>
@@ -180,8 +201,10 @@
     <div class="divider"></div>
 </div>
 
-<app-templates-side-pane [isAddWidgetOpen]="isSidepanelOpen"
-    (closed)="isSidepanelOpen = false"></app-templates-side-pane>
+<app-templates-side-pane
+    [isAddWidgetOpen]="isSidepanelOpen"
+    (closed)="isSidepanelOpen = false"
+></app-templates-side-pane>
 <div *ngIf="isLoading" class="loading-overlay">
     <app-loading-spinner></app-loading-spinner>
 </div>

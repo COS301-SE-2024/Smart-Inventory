@@ -30,7 +30,6 @@ import { PieChartComponent } from 'app/components/charts/widgets/widgetPie';
 import { BubbleChartComponent } from 'app/components/charts/widgets/widgetBubble';
 import { LineBarComponent } from 'app/components/charts/line-bar/line-bar.component';
 import { RadarComponent } from 'app/components/charts/radar/radar.component';
-import { BarHorizontalComponent } from 'app/components/charts/bar-horizontal/bar-horizontal.component';
 import { ScatterplotComponent } from 'app/components/charts/scatterplot/scatterplot.component';
 import { DonutTemplateComponent } from 'app/components/charts/donuttemplate/donuttemplate.component';
 import { AddWidgetSidePaneComponent } from '../../components/add-widget-side-pane/add-widget-side-pane.component';
@@ -83,7 +82,6 @@ interface RequestOrders {
         AddmemberComponent,
         GridsterModule,
         AgChartsAngular,
-        BarHorizontalComponent,
         BarchartComponent,
         DonutchartComponent,
         SaleschartComponent,
@@ -108,7 +106,7 @@ export class DashboardComponent implements OnInit {
 
     isDeleteMode = false;
     isSidepanelOpen = false;
-    isLoading = false;
+    isLoading = true;
     Math: any;
 
     cardData: CardData[] = [];

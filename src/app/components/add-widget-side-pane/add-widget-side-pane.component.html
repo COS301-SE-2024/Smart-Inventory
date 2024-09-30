@@ -55,12 +55,18 @@
                         [title]="chart.title"
                         style="height: 20rem;"
                     ></app-donuttemplate>
-                    <app-bubblechart
+                    <!-- <app-bubblechart
                             *ngSwitchCase="'BubblechartComponent'"
                             [data]="chart.data"
                             [chartTitle]="chart.title"
                             style="height: 20rem;"
-                        ></app-bubblechart>
+                        ></app-bubblechart> -->
+                        <app-bar-horizontal
+                            *ngSwitchCase="'BarHorizontalComponent'"
+                            [data]="chart.data"
+                            [chartTitle]="chart.title"
+                            style="height: 20rem;"
+                        ></app-bar-horizontal>
                     <ng-container *ngSwitchDefault>
                         <ng-container *ngComponentOutlet="charts[chart.component]"></ng-container>
                     </ng-container>

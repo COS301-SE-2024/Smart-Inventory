@@ -125,3 +125,18 @@ button:hover mat-icon {
 svg.theme-svg {
     margin-right: 12px;
 }
+
+@media (max-width: 550px) {
+    .toolbar-icon,
+    .user-profile {
+        display: none;
+    }
+
+    .pageTitle {
+        font-size: 20px;
+    }
+
+    .flex-spacer {
+        display: none;
+    }
+}

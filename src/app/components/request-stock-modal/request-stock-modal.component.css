@@ -1,25 +1,124 @@
-:host {
-    display: block;
+.modal-container {
+    display: flex;
+    flex-direction: column;
     width: 100%;
     max-width: 600px;
-}
-
-mat-form-field {
+    margin: 0 auto;
+    padding: 24px;
+    box-sizing: border-box;
+  }
+  
+  .modal-title {
+    font-size: 30px;
+    text-align: center;
+    margin: 0 0 24px;
+    color: #333;
+  }
+  
+  .modal-content {
+    max-height: 60vh;
+    overflow-y: auto;
+    margin-bottom: 24px;
+  }
+  
+  .modal-text {
+    font-size: 16px;
+    line-height: 1.5;
+    margin-bottom: 16px;
+    color: #555;
+  }
+  
+  .request-form {
+    width: 100%;
+  }
+  
+  .form-field {
     width: 100%;
     margin-bottom: 15px;
-    --mdc-filled-text-field-label-text-color: #000000;
-    --mdc-filled-text-field-container-color: #f1f1f1;
-}
-
-mat-dialog-content {
-    max-height: 70vh;
-    overflow-y: auto;
-}
-
-.btn {
-    margin-right: auto;
-    margin-left: auto;
-    border-radius: 5px;
-    width: 150px;
-    height: 40px;
-}
+  }
+  
+  .modal-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .btn {
+    width: 100%;
+    height: 44px;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 500;
+    text-transform: uppercase;
+    transition: background-color 0.3s, transform 0.1s;
+  }
+  
+  .btn:active {
+    transform: scale(0.98);
+  }
+  
+  .btn-request {
+    background-color: #1976d2;
+    color: white;
+  }
+  
+  .btn-request:hover {
+    background-color: #1565c0;
+  }
+  
+  .btn-request:disabled {
+    background-color: rgba(0, 0, 0, 0.12);
+    color: rgba(0, 0, 0, 0.38);
+  }
+  
+  .btn-cancel {
+    background-color: #f1f1f1;
+    color: #333;
+  }
+  
+  .btn-cancel:hover {
+    background-color: #e0e0e0;
+  }
+  
+  /* Custom styles for Material components */
+  ::ng-deep .mat-mdc-form-field-flex {
+    background-color: #f1f1f1 !important;
+  }
+  
+  ::ng-deep .mat-mdc-text-field-wrapper {
+    background-color: #f1f1f1 !important;
+  }
+  
+  ::ng-deep .mat-mdc-form-field-label {
+    color: #000000 !important;
+  }
+  
+  @media (max-width: 600px) {
+    .modal-container {
+      padding: 16px;
+    }
+  
+    .modal-title {
+      font-size: 24px;
+      margin-bottom: 16px;
+    }
+  
+    .modal-text {
+      font-size: 14px;
+    }
+  }
+  
+  @media (max-width: 400px) {
+    .modal-title {
+      font-size: 20px;
+    }
+  
+    .modal-text {
+      font-size: 13px;
+    }
+  
+    .btn {
+      height: 40px;
+      font-size: 14px;
+    }
+  }

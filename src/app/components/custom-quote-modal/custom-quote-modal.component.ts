@@ -448,7 +448,7 @@ export class CustomQuoteModalComponent implements OnInit {
 
     const emailDataPromises = this.selectedSuppliers.map(async (supplier) => {
       const supplierDetails = await this.getSupplierDetails(tenentId, supplier.supplierID);
-      const uniqueLink = `http://localhost:4200/supplier-form/${supplier.supplierID}/${this.quoteId}/${deliveryInfoID}/${tenentId}`;
+      const uniqueLink = `https://main.dxgjrxhqoh4ot.amplifyapp.com/supplier-form/${supplier.supplierID}/${this.quoteId}/${deliveryInfoID}/${tenentId}`;
       
       let emailBody = emailTemplate || this.defaultEmailBody;
       emailBody = emailBody.replace('{{SUPPLIER_NAME}}', supplier.company_name)

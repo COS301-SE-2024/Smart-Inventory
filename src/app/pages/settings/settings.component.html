@@ -1,4 +1,4 @@
-<div class="settings-container">
+<div class="settings-container app-container"  [ngClass]="{'dark-mode': isDarkMode}">
     <app-templates-quotes-side-pane [isOpen]="isTemplateSidePaneOpen" (closed)="isTemplateSidePaneOpen = false">
     </app-templates-quotes-side-pane>
     <div class="intro-section">

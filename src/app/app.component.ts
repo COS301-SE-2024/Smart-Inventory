@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Renderer2 } from '@angular/core';
 import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
 import { AmplifyAuthenticatorModule, AuthenticatorService } from '@aws-amplify/ui-angular';
 import { Amplify } from 'aws-amplify';
@@ -40,6 +40,7 @@ export class AppComponent implements OnInit {
         public loader: LoadingService,
         private themeService: ThemeService,
         private router: Router,
+        private renderer: Renderer2
     ) {
         // Amplify.configure(outputs);
         // this.loadTheme();
@@ -53,14 +54,21 @@ export class AppComponent implements OnInit {
             this.isSupplierForm = event.urlAfterRedirects.startsWith('/supplier-form');
             this.isLandingPage = event.urlAfterRedirects === '/landing' || event.urlAfterRedirects === '/';
         });
-        this.themeService.detectColorScheme();
+        // this.themeService.detectColorScheme();
+        this.themeService.isDarkMode$.subscribe(isDarkMode => {
+            if (isDarkMode) {
+                this.renderer.addClass(document.body, 'dark-mode');
+            } else {
+                this.renderer.removeClass(document.body, 'dark-mode');
+            }
+        });
     }
 
     //
 
-    toggleTheme() {
-        this.themeService.toggleColorScheme();
-    }
+    // toggleTheme() {
+    //     this.themeService.toggleColorScheme();
+    // }
 
     // loadTheme(): void {
     //     this.themeService.setTheme(this.themeService.getTheme());

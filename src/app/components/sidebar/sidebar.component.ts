@@ -1,10 +1,11 @@
-import { Component, OnInit, ViewChild, ElementRef, HostListener, Renderer2 } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, HostListener, Renderer2, EventEmitter, Output } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { signOut } from 'aws-amplify/auth';
 import { MaterialModule } from '../material/material.module';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { fetchAuthSession } from 'aws-amplify/auth';
+import { ThemeService } from 'app/services/theme.service';
 
 @Component({
     selector: 'app-sidebar',
@@ -33,12 +34,15 @@ export class SidebarComponent implements OnInit {
 
     filteredMenuItems: any[] = [];
     role: string = '';
-
-    constructor(public router: Router, private renderer: Renderer2) {}
+    @Output() darkModeChanged = new EventEmitter<boolean>();
+    constructor(public router: Router, private renderer: Renderer2, private themeService: ThemeService,) {}
 
     ngOnInit() {
         this.logAuthSession();
         this.loadUserPreferences();
+        this.themeService.isDarkMode$.subscribe((isDarkMode: boolean) => {
+            this.isDarkMode = isDarkMode;
+          });
     }
 
     @HostListener('mouseenter')
@@ -78,13 +82,7 @@ export class SidebarComponent implements OnInit {
     }
 
     toggleDarkMode() {
-        this.isDarkMode = !this.isDarkMode;
-        this.saveUserPreferences();
-        if (this.isDarkMode) {
-            this.renderer.addClass(document.body, 'dark-mode');
-        } else {
-            this.renderer.removeClass(document.body, 'dark-mode');
-        }
+        this.themeService.toggleDarkMode();
     }
 
     loadUserPreferences() {

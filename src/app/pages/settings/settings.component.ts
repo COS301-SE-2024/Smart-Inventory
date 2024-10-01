@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Renderer2 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
@@ -8,6 +8,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DeliveryInformationModalComponent } from 'app/components/delivery-information-modal/delivery-information-modal.component';
 import { EmailTemplateModalComponent } from 'app/components/email-template-modal/email-template-modal.component';
 import { TemplatesQuotesSidePaneComponent } from 'app/components/templates-quotes-side-pane/templates-quotes-side-pane.component';
+import { ThemeService } from 'app/services/theme.service';
 
 @Component({
     selector: 'app-settings',
@@ -29,17 +30,45 @@ export class SettingsComponent implements OnInit {
     };
 
     isTemplateSidePaneOpen = false;
+    isDarkMode = false;
 
     constructor(
         private snackBar: MatSnackBar,
         private titleService: TitleService,
         private cognitoService: CognitoService,
         private dialog: MatDialog,
+        private renderer: Renderer2,
+        private themeService: ThemeService
     ) {}
 
     ngOnInit() {
         this.titleService.updateTitle('Settings');
         this.loadUserProfile();
+        // this.loadDarkModePreference();
+        this.themeService.isDarkMode$.subscribe(isDarkMode => {
+            this.isDarkMode = isDarkMode;
+          });
+    }
+
+    loadDarkModePreference() {
+        const darkMode = localStorage.getItem('darkMode');
+        if (darkMode) {
+            this.isDarkMode = JSON.parse(darkMode);
+            this.applyDarkMode(this.isDarkMode);
+        }
+    }
+
+    onDarkModeChanged(isDarkMode: boolean) {
+        this.isDarkMode = isDarkMode;
+        this.applyDarkMode(isDarkMode);
+    }
+
+    applyDarkMode(isDarkMode: boolean) {
+        if (isDarkMode) {
+            this.renderer.addClass(document.body, 'dark-mode');
+        } else {
+            this.renderer.removeClass(document.body, 'dark-mode');
+        }
     }
 
     loadUserProfile() {

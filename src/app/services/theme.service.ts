@@ -5,48 +5,27 @@ import { BehaviorSubject } from 'rxjs';
     providedIn: 'root'
 })
 export class ThemeService {
-    private renderer: Renderer2;
-    private colorScheme: 'dark' | 'light' | 'auto';
-    private colorSchemeSubject = new BehaviorSubject<'dark' | 'light' | 'auto'>('auto');
+    private darkMode = new BehaviorSubject<boolean>(false);
 
-    constructor(rendererFactory: RendererFactory2) {
-        this.renderer = rendererFactory.createRenderer(null, null);
-        this.colorScheme = 'auto';
+    isDarkMode$ = this.darkMode.asObservable();
+
+    constructor() {
+        this.loadDarkModePreference();
     }
 
-    detectColorScheme(): void {
-        const savedScheme = localStorage.getItem('color-scheme') as 'dark' | 'light' | 'auto' | null;
-        if (savedScheme) {
-            this.setColorScheme(savedScheme);
-        } else {
-            this.setColorScheme('auto');
+    toggleDarkMode() {
+        this.darkMode.next(!this.darkMode.value);
+        this.saveDarkModePreference();
+    }
+
+    private loadDarkModePreference() {
+        const darkMode = localStorage.getItem('darkMode');
+        if (darkMode) {
+            this.darkMode.next(JSON.parse(darkMode));
         }
     }
 
-    setColorScheme(scheme: 'dark' | 'light' | 'auto'): void {
-        this.colorScheme = scheme;
-        localStorage.setItem('color-scheme', scheme);
-
-        this.applyColorScheme();
-        this.colorSchemeSubject.next(scheme);
-    }
-
-    private applyColorScheme(): void {
-        if (this.colorScheme === 'auto') {
-            this.renderer.removeAttribute(document.documentElement, 'data-theme');
-        } else {
-            this.renderer.setAttribute(document.documentElement, 'data-theme', this.colorScheme);
-        }
-    }
-
-    toggleColorScheme(): void {
-        const schemes: ('dark' | 'light' | 'auto')[] = ['light', 'dark', 'auto'];
-        const currentIndex = schemes.indexOf(this.colorScheme);
-        const nextScheme = schemes[(currentIndex + 1) % schemes.length];
-        this.setColorScheme(nextScheme);
-    }
-
-    getColorScheme() {
-        return this.colorSchemeSubject.asObservable();
+    private saveDarkModePreference() {
+        localStorage.setItem('darkMode', JSON.stringify(this.darkMode.value));
     }
 }

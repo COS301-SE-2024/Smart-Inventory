@@ -1,11 +1,28 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
 
+.app-container {
+    background-color: #f5f7fa;
+    color: #2c3e50;
+}
+
+
+.app-container.dark-mode {
+    background-color: #1a1a1a;
+    color: #e0e0e0;
+}
+
+.app-container.dark-mode .tile {
+    background-color: #2c2c2c;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+
 :host {
     font-family: 'Poppins', sans-serif;
     display: block;
     height: 100vh;
     overflow-y: auto;
-    background-color: #f5f7fa;
+    /* background-color: #f5f7fa; */
 }
 
 .settings-container {

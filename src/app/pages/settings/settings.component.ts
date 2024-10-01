@@ -1,4 +1,4 @@
-import { Component, OnInit, Renderer2 } from '@angular/core';
+import { Component, OnDestroy, OnInit, Renderer2 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
@@ -9,6 +9,7 @@ import { DeliveryInformationModalComponent } from 'app/components/delivery-infor
 import { EmailTemplateModalComponent } from 'app/components/email-template-modal/email-template-modal.component';
 import { TemplatesQuotesSidePaneComponent } from 'app/components/templates-quotes-side-pane/templates-quotes-side-pane.component';
 import { ThemeService } from 'app/services/theme.service';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-settings',
@@ -17,7 +18,7 @@ import { ThemeService } from 'app/services/theme.service';
     templateUrl: './settings.component.html',
     styleUrls: ['./settings.component.css'],
 })
-export class SettingsComponent implements OnInit {
+export class SettingsComponent implements OnInit, OnDestroy  {
     personalDetails = {
         name: '',
         surname: '',
@@ -31,6 +32,7 @@ export class SettingsComponent implements OnInit {
 
     isTemplateSidePaneOpen = false;
     isDarkMode = false;
+    private themeSubscription?: Subscription;
 
     constructor(
         private snackBar: MatSnackBar,
@@ -45,9 +47,16 @@ export class SettingsComponent implements OnInit {
         this.titleService.updateTitle('Settings');
         this.loadUserProfile();
         // this.loadDarkModePreference();
-        this.themeService.isDarkMode$.subscribe(isDarkMode => {
+        this.themeSubscription = this.themeService.isDarkMode$.subscribe(isDarkMode => {
             this.isDarkMode = isDarkMode;
-          });
+        });
+
+    }
+
+    ngOnDestroy() {
+        if (this.themeSubscription) {
+            this.themeSubscription.unsubscribe();
+        }
     }
 
     loadDarkModePreference() {
@@ -157,6 +166,7 @@ export class SettingsComponent implements OnInit {
 
     changeTheme() {
         console.log('Customizing app appearance');
+        this.themeService.toggleDarkMode();
         // Implement the logic to customize app appearance using ThemeService
     }
 }

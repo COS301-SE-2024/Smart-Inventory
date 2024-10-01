@@ -1,34 +1,31 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
 
+:host {
+    font-family: 'Poppins', sans-serif;
+    display: block;
+    height: 100vh;
+    overflow-y: auto;
+}
+
+app-settings {
+    background-color: #1a1a1a;
+}
+
 .app-container {
     background-color: #f5f7fa;
     color: #2c3e50;
+    transition: background-color 0.3s, color 0.3s;
 }
-
 
 .app-container.dark-mode {
     background-color: #1a1a1a;
     color: #e0e0e0;
 }
 
-.app-container.dark-mode .tile {
-    background-color: #2c2c2c;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-}
-
-
-:host {
-    font-family: 'Poppins', sans-serif;
-    display: block;
-    height: 100vh;
-    overflow-y: auto;
-    /* background-color: #f5f7fa; */
-}
-
 .settings-container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 2rem 2rem;
+    padding: 2rem;
 }
 
 .intro-section {
@@ -39,13 +36,22 @@
 .intro-section h2 {
     font-size: 2.5rem;
     font-weight: 600;
-    color: #2c3e50;
     margin-bottom: 0.5rem;
+    transition: color 0.3s;
+}
+
+.app-container.dark-mode .intro-section h2 {
+    color: #ffffff;
 }
 
 .intro-section p {
     font-size: 1.1rem;
     color: #7f8c8d;
+    transition: color 0.3s;
+}
+
+.app-container.dark-mode .intro-section p {
+    color: #b0b0b0;
 }
 
 .tiles-grid {
@@ -64,6 +70,11 @@
     flex-direction: column;
     height: 100%;
     transition: all 0.3s ease;
+}
+
+.app-container.dark-mode .tile {
+    background-color: #2c2c2c;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 
 .tile:hover {
@@ -87,6 +98,11 @@
     font-weight: 600;
     color: #2c3e50;
     margin-bottom: 1rem;
+    transition: color 0.3s;
+}
+
+.app-container.dark-mode .tile h3 {
+    color: #ffffff;
 }
 
 .tile-inputs {
@@ -102,7 +118,15 @@ input {
     border: 1px solid #e0e0e0;
     border-radius: 5px;
     font-size: 1rem;
-    transition: border-color 0.3s ease;
+    transition: all 0.3s ease;
+    background-color: #ffffff;
+    color: #2c3e50;
+}
+
+.app-container.dark-mode input {
+    background-color: #3c3c3c;
+    border-color: #4c4c4c;
+    color: #e0e0e0;
 }
 
 input:focus {
@@ -137,6 +161,11 @@ p {
     color: #7f8c8d;
     margin-bottom: 1rem;
     line-height: 1.6;
+    transition: color 0.3s;
+}
+
+.app-container.dark-mode p {
+    color: #b0b0b0;
 }
 
 /* Tooltip styles */

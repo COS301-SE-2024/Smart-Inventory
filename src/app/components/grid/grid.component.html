@@ -146,24 +146,6 @@
                     mat-menu-item
                     *ngIf="getCurrentRoute('orders') && !isEndUser()"
                     color="primary"
-                    (click)="onViewEmailTemplate()"
-                >
-                    <mat-icon>email</mat-icon><span>Email Template</span>
-                </button>
-                <button
-                    class="QAButtons"
-                    mat-menu-item
-                    *ngIf="getCurrentRoute('orders') && !isEndUser()"
-                    color="primary"
-                    (click)="onViewDeliveryInfo()"
-                >
-                    <mat-icon>visibility</mat-icon><span>View Delivery Info</span>
-                </button>
-                <button
-                    class="QAButtons"
-                    mat-menu-item
-                    *ngIf="getCurrentRoute('orders') && !isEndUser()"
-                    color="primary"
                     (click)="openAutomationSettings()"
                 >
                     <mat-icon>document_scanner</mat-icon><span>Scan Inventory Now</span>
@@ -243,6 +225,24 @@
                 >
                     <mat-icon>query_stats</mat-icon><span>Run EOQ/ROP/ABC Calculation</span>
                 </button>
+                <button
+                class="QAButtons"
+                mat-menu-item
+                *ngIf="getCurrentRoute('orders') && !isEndUser()"
+                color="primary"
+                (click)="onViewEmailTemplate()"
+            >
+                <mat-icon>email</mat-icon><span>Email Template</span>
+            </button>
+            <button
+                class="QAButtons"
+                mat-menu-item
+                *ngIf="getCurrentRoute('orders') && !isEndUser()"
+                color="primary"
+                (click)="onViewDeliveryInfo()"
+            >
+                <mat-icon>visibility</mat-icon><span>View Delivery Info</span>
+            </button>
             </mat-menu>
         </div>
     </div>

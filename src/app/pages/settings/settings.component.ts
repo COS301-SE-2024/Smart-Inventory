@@ -8,6 +8,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DeliveryInformationModalComponent } from 'app/components/delivery-information-modal/delivery-information-modal.component';
 import { EmailTemplateModalComponent } from 'app/components/email-template-modal/email-template-modal.component';
 import { TemplatesQuotesSidePaneComponent } from 'app/components/templates-quotes-side-pane/templates-quotes-side-pane.component';
+import { AutomationSettingsModalComponent } from 'app/components/automation-settings-modal/automation-settings-modal.component';
 
 @Component({
     selector: 'app-settings',
@@ -130,4 +131,19 @@ export class SettingsComponent implements OnInit {
         console.log('Customizing app appearance');
         // Implement the logic to customize app appearance using ThemeService
     }
+
+    openAutomationSettings() {
+        const dialogRef = this.dialog.open(AutomationSettingsModalComponent, {
+            width: '600px',
+            data: { ordersComponent: this },
+        });
+    
+        dialogRef.afterClosed().subscribe((result) => {
+            if (result) {
+                console.log('New automation settings:', result);
+                // Handle the new settings if needed
+            }
+        });
+    }
+
 }

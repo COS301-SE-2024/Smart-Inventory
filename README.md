@@ -222,14 +222,14 @@ Reviews focus on checking that coding standards are being followed and that any 
   ##
 
   📄
-  <a href="documents/Demo 3/Service Contract.pdf">
+  <a href="documents/Demo 4/Service Contract.pdf">
     API Service Contracts
   </a>
 
   ##
 
   📄
-  <a href="documents/Demo 4/DeploymentModel.pdf">
+  <a href="documents/Demo 4/DeploymentDiag.png">
     Deployment Model
   </a>
 

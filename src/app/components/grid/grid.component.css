@@ -130,7 +130,7 @@ mat-select {
 }
 
 ::ng-deep .mat-mdc-select-value {
-    width: 100px;
+    width: 100%;
 }
 
 :host ::ng-deep .mat-form-field-type-mat-select .mat-form-field-label {

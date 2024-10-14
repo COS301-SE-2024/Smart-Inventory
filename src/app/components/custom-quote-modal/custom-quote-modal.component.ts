@@ -69,6 +69,7 @@ export class CustomQuoteModalComponent implements OnInit {
   suppliers: { company_name: string; supplierID: string }[] = [];
   inventoryItems: { sku: string; description: string }[] = [];
   submissionDeadline: Date | null = null;
+  isCreatingOrder: boolean = false;
 
   supplierControl = new FormControl();
   filteredSuppliers: ReplaySubject<{ company_name: string; supplierID: string }[]> = new ReplaySubject<{ company_name: string; supplierID: string }[]>(1);
@@ -380,6 +381,7 @@ export class CustomQuoteModalComponent implements OnInit {
   }
 
   createOrder() {
+    this.isCreatingOrder = true;
     const order = {
       items: this.quoteItems.map(({ item, quantity }) => ({
         ItemSKU: item.sku,

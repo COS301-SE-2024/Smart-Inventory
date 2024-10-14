@@ -407,15 +407,13 @@ export class OrdersComponent implements OnInit {
                     orderDate: orderDate,
                 };
 
-                setTimeout(() => {
-                    this.openCustomQuoteModal(
-                        quoteDetails,
-                        response.orderId,
-                        response.quoteId,
-                        quoteData.Submission_Deadline,
-                        orderDate,
-                    );
-                }, 3000);
+                this.openCustomQuoteModal(
+                    quoteDetails,
+                    response.orderId,
+                    response.quoteId,
+                    quoteData.Submission_Deadline,
+                    orderDate,
+                  );
             } else {
                 throw new Error('Failed to create order');
             }
@@ -432,10 +430,15 @@ export class OrdersComponent implements OnInit {
 
     async handleNewCustomQuote(event: { type: string; data: any }) {
         if (event.type === 'order') {
-            await this.createNewOrder({
+            this.isLoading = true;
+            try {
+              await this.createNewOrder({
                 ...event.data,
                 Submission_Deadline: event.data.Submission_Deadline,
-            });
+              });
+            } finally {
+              this.isLoading = false;
+            }
         }
         if (event.type === 'draft') {
             await this.createNewOrder({

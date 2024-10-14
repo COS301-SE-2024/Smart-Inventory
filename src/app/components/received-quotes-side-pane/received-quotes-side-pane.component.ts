@@ -151,7 +151,9 @@ export class ReceivedQuotesSidePaneComponent implements OnChanges {
       console.error('Error in fetchSupplierQuotes:', error);
       this.noQuotesReceived = true;
     } finally {
-      this.isLoading = false;
+      setTimeout(() => {
+        this.isLoading = false;
+      }, 3000); 
     }
   }
 

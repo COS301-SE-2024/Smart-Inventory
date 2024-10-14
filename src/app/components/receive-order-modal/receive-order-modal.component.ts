@@ -70,7 +70,9 @@ export class ReceiveOrderModalComponent implements OnInit {
   async ngOnInit() {
     this.isLoading = true;
     await this.loadQuoteItems();
-    this.isLoading = false;
+    setTimeout(() => {
+      this.isLoading = false;
+    }, 3000); 
   }
 
   async loadQuoteItems() {

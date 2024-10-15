@@ -39,13 +39,6 @@ import { DataCollectionService, StockRequest } from '../../components/add-widget
 import { MetricCardComponent } from '../../components/charts/widgets/metric-card.component';
 import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
 import { fetchAuthSession } from 'aws-amplify/auth';
-interface Order {
-    tenentId: string;
-    Order_Status: string;
-    Expected_Delivery_Date?: string;
-    Order_Date: string;
-    Selected_Supplier?: string;
-}
 
 interface SkuCounts {
     [key: string]: number;

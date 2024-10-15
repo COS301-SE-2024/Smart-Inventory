@@ -115,6 +115,7 @@ export class InventoryComponent implements OnInit {
             headerName: 'Expiration Date',
             editable: true,
             cellEditor: 'agDateStringCellEditor',
+            filter: 'agSetColumnFilter',
             headerTooltip: 'Date when the product expires',
             valueFormatter: (params) => {
                 if (params.value) {
@@ -187,12 +188,11 @@ export class InventoryComponent implements OnInit {
         }
     }
 
-
     @HostListener('window:resize', ['$event'])
     onResize(event: any) {
         const wasMobileView = this.isMobileView;
         this.checkScreenSize();
-        
+
         // If switching from mobile to desktop view, load data
         if (wasMobileView && !this.isMobileView) {
             this.titleService.updateTitle('Inventory');
@@ -200,11 +200,11 @@ export class InventoryComponent implements OnInit {
             this.loadSuppliers();
         }
     }
-    
+
     checkScreenSize() {
         const wasMobileView = this.isMobileView;
         this.isMobileView = window.innerWidth <= 768;
-        
+
         // If switching from desktop to mobile view, clear data
         if (!wasMobileView && this.isMobileView) {
             this.titleService.updateTitle('Request Stock');
@@ -221,13 +221,12 @@ export class InventoryComponent implements OnInit {
             maxHeight: '80vh',
         });
 
-        dialogRef.afterClosed().subscribe(result => {
+        dialogRef.afterClosed().subscribe((result) => {
             if (result) {
                 this.handleQRCodeScan(result);
             }
         });
     }
-
 
     async getUserInfo() {
         try {

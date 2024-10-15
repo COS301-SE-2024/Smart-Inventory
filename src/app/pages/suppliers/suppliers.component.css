@@ -20,9 +20,10 @@ mat-form-field {
     flex-direction: column;
     background-color: white;
     border-radius: 20px;
+    width: 600px;
 }
 mat-dialog-content {
-    max-height: 70vh;
+    max-height: 65vh;
     overflow-y: auto;
 }
 
@@ -61,10 +62,9 @@ mat-form-field:first-of-type {
     padding: 20px;
     border-radius: 4px;
     max-width: 600px;
-    width: 100%;
+    width: 600px;
     z-index: 10000;
     max-height: 70vh;
-    overflow-y: auto;
 }
 
 .btn {
@@ -142,7 +142,6 @@ mat-form-field:first-of-type {
     align-items: center;
     z-index: 9999;
 }
-
 
 .popup-loader {
     position: absolute;

@@ -10,6 +10,15 @@
     z-index: 3;
 }
 
+.initial {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    font-size: 1.5em;
+    color: #888;
+}
+
 .dashboard-container {
     width: 101.5%;
     height: calc(100vh - 64px);

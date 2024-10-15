@@ -18,7 +18,7 @@
         </mat-menu>
     </div>
 
-    <gridster [options]="options">
+    <gridster [options]="options" *ngIf="dashboard.length > 0">
         <gridster-item [item]="item" *ngFor="let item of dashboard">
             <mat-card class="dashboard-card" *ngIf="item['cardData']">
                 <button *ngIf="isDeleteMode" class="delete-button" (click)="deleteWidget(item)">
@@ -198,8 +198,11 @@
             </mat-card>
         </gridster-item>
     </gridster>
-    <div class="divider"></div>
+    <div class="initial" *ngIf="dashboard.length === 0 && !isLoading">
+        {{ initial }}
+    </div>
 </div>
+
 
 <app-templates-side-pane
     [isAddWidgetOpen]="isSidepanelOpen"

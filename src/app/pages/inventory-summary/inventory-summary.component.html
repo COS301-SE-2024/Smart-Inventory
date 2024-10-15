@@ -1,7 +1,13 @@
 <div class="inventoryHolder">
-    <app-grid [rowData]="rowData" [columnDefs]="colDefs" (itemToUpdate)="handleCellValueChanged($event)" (runEoqRopCalculation)="runEoqRopCalculation()" #gridComponent>
+    <app-grid
+        [rowData]="rowData"
+        [columnDefs]="colDefs"
+        (itemToUpdate)="handleCellValueChanged($event)"
+        (runEoqRopCalculation)="runEoqRopCalculation()"
+        #gridComponent
+    >
     </app-grid>
-    <mat-toolbar
+    <!-- <mat-toolbar
         style="
             position: sticky;
             top: 93%;
@@ -16,14 +22,15 @@
         <button mat-flat-button class="btn" (click)="back()">
             <mat-icon style="font-size: 24px; height: 24px; width: 24px">arrow_back</mat-icon> Back To Inventory
         </button>
-    </mat-toolbar>
+    </mat-toolbar> -->
+    <div class="back-toolbar">
+        <button mat-flat-button class="btn" (click)="back()"><mat-icon>arrow_back</mat-icon> Back To Reports</button>
+    </div>
 </div>
 
 <div class="loading-overlay" *ngIf="isLoading || isCalculating">
     <div class="loading-content">
         <app-loading-spinner></app-loading-spinner>
-        <div class="calculation-status" *ngIf="isCalculating">
-            EOQ/ROP calculation in progress...
-        </div>
+        <div class="calculation-status" *ngIf="isCalculating">EOQ/ROP calculation in progress...</div>
     </div>
 </div>

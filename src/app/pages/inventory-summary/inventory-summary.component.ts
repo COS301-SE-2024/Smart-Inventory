@@ -37,7 +37,6 @@ export class InventorySummaryComponent implements OnInit {
             headerName: 'SKU',
             filter: 'agSetColumnFilter',
             headerTooltip: 'Stock Keeping Unit - Unique identifier for each product',
-            
         },
         {
             field: 'description',
@@ -255,7 +254,7 @@ export class InventorySummaryComponent implements OnInit {
     }
 
     back() {
-        this.router.navigate(['/inventory']);
+        this.router.navigate(['/inventoryReport']);
     }
 
     async runEoqRopCalculation() {

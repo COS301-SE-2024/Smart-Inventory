@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild, AfterViewInit, ChangeDetectorRef } from '@angular/core';
+import { fetchAuthSession } from 'aws-amplify/auth';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { GridComponent } from '../../grid/grid.component';
@@ -263,7 +264,7 @@ export class ActivityReportComponent implements OnInit, AfterViewInit {
     updateMetrics() {
         console.log('Updating metrics');
         const totalActivities = this.rowData.length;
-        const uniqueMembers = new Set(this.rowData.map((row) => row.memberID)).size;
+        const uniqueMembers = new Set(this.rowData.map((row) => row.name)).size;
         const avgActivities = totalActivities / uniqueMembers;
         const latestActivity = new Date(Math.max(...this.rowData.map((row) => new Date(row.timestamp).getTime())));
 

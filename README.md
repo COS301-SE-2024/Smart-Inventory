@@ -1,11 +1,10 @@
 ![GitHub pull requests](https://img.shields.io/github/issues-pr/COS301-SE-2024/Smart-Inventory)
 ![GitHub issues](https://img.shields.io/github/issues/COS301-SE-2024/Smart-Inventory)
-![Code Coverage](https://img.shields.io/codecov/c/github/COS301-SE-2024/Smart-Inventory?branch=automated-tests)
 
 # Helix - SmartInventory - Smart Inventory System to track and organise inventory
 
 <div align="center">
-    <img src="/media/Logo.jpg" width="20%" height="20%">
+    <img src="/media/logo-no-background.png" width="50%" height="70%">
 </div>
 
 ## ℹ️ About
@@ -28,6 +27,9 @@ SmartInventory is designed to cater to the needs of various user roles within an
 * Automated Reordering: Generates purchase orders based on predefined rules and stock levels.
 * Inventory Reporting: Offers insightful reports to support informed decision-making.
 * Supplier Management: Stores supplier details, tracks performance metrics, and facilitates communication.
+* EOQ Model: Determines optimal quantity to reorder and minimises total inventory costs.
+* ABC Analysis: Inventory Prioritisation it categorises inventory based on importance where importance measured by annual consumption value allowing differentiated management strategies for each category.
+* Inventory Forcasting: Using very little data individual items can be forecasted using past requested data to learn.
 
 <hr>
 </br>
@@ -87,20 +89,26 @@ Reviews focus on checking that coding standards are being followed and that any 
 * Export Table
 * Search and sort table
 * Request Items
-* Wait for stock low event trigger
+* Import items
+* QR code generation
+* QR code scanning
+* Inventory Summary
+* EOQ, ROP ABC anlysis
   
 ### 4. Supplier Management
 * Add Supplier
 * Remove Supplier
 * Edit supplier details
 * Export Table
+* Import suppliers
 * Search and sort table
 
 ### 5. Dashboard
-* Add Widget(graph, summary, table)
+* Add Widget
 * Remove widget
 * Reposistion widget
 * Save state
+* Cache system
 
 ### 6. Reports
 * Activity Report
@@ -123,20 +131,21 @@ Reviews focus on checking that coding standards are being followed and that any 
   * Metric calculation
   * Table compiler
   * Export
+  * Inventory forecasting
   
 ### 7. Order Mangement and placement
 * Create order
 * Cancel Order
 * View Qoute
-* View Template
+* Email Template
 * Email Communication with suppliers
-* Web Portal
+* Web Portal for supplier view
 * Mark as ordered
 * Autonomous ordering
+* Automation templates
 
 ### 8. User management
 * Track Idle time
-* Track log in attempts
 * Track interactions
 
 ### 9. Web Portal
@@ -164,50 +173,71 @@ Reviews focus on checking that coding standards are being followed and that any 
 
 ## 📂Documents
   📄
-  <a href="documents/Demo 3/SRS.pdf">
+  <a href="documents/Demo 4/SRS.pdf">
     Software Requirement Specification
   </a>
   
   ##
 
   📄
-  <a href="documents/Demo 3/ARS.pdf">
+  <a href="documents/Demo 4/ARS.pdf">
     Architectural Specification
   </a>
   
   ##
 
   📄
-  <a href="documents/Demo 3/DesignSpec.pdf">
+  <a href="documents/Demo 4/DesignSpec.pdf">
     Design Specification
   </a>
   
   ##
 
   📄
-  <a href="documents/Demo 3/CodingStandards.pdf">
+  <a href="documents/Demo 4/Coding Standards.pdf">
     Coding Standards
   </a>
 
   ##
 
   📄
-  <a href="documents/Demo 3/UserManual.pdf">
+  <a href="documents/Demo 4/User Manual.pdf">
     User Manual
   </a>
 
   ##
 
   📄
-  <a href="documents/Demo 3/TestingManual.pdf">
+  <a href="documents/Demo 4/Testing Manual.pdf">
     Testing Manual
   </a>
 
   ##
 
   📄
-  <a href="documents/Demo 3/TechInstall.pdf">
+  <a href="documents/Demo 4/Technical Installation Manual.pdf">
     Technical Installation Manual
+  </a>
+  
+  ##
+
+  📄
+  <a href="documents/Demo 4/Service Contract.pdf">
+    API Service Contracts
+  </a>
+
+  ##
+
+  📄
+  <a href="documents/Demo 4/DeploymentDiag.png">
+    Deployment Model
+  </a>
+
+  ##
+
+  📄
+  <a href="documents/Demo 4/Predictive Analytics.pdf">
+    Predictive Analytic 
   </a>
   <hr>
 </br>
@@ -221,19 +251,19 @@ Reviews focus on checking that coding standards are being followed and that any 
 ##
 
   <a href="https://drive.google.com/file/d/1GA5bhGj_Fdi55wLu19L-26e7DdXcXDOk/view?usp=drive_link">
-    Helix - Demo 3 App Recording
+    Helix - Demo 4 App Recording
   </a>
   
 ##
 
   <a href="https://drive.google.com/file/d/1iGT_RBSD6WArLD1bJzuDQxNmeEPE8L8b/view?usp=sharing">
-    Helix - Demo 3 Recording
+    Helix - Demo 4 Recording
   </a>
   
   ##
 
   <a href="/documents/Demo 3/SmartInventory-Demo3.pdf">
-    Helix - Demo 3 Presentation Slides
+    Helix - Demo 4 Presentation Slides
   </a>
 <hr>
 </br>
@@ -254,6 +284,7 @@ Reviews focus on checking that coding standards are being followed and that any 
 * AWS Event Bridge
 * AWS SES
 * AWS SNS
+* Docker
  
 ### ⚙️ Database:
 * AWS DynamoDB
@@ -270,84 +301,8 @@ Reviews focus on checking that coding standards are being followed and that any 
 ### ⚙️ Cloud
 * Amplify
 * Amplify Cloud Sandbox
+* Cloudwatch
   
-<hr>
-</br>
-
-## ✅ Getting Started Guide
-
-This guide will walk you through setting up and running our Angular app with AWS Amplify integration on your local machine.
-
-### Prerequisites
-
-Before you begin, ensure that you have the following installed on your machine:
-
-- Node.js (version 12 or later)
-- npm (version 6 or later)
-- Angular CLI
-- AWS CLI
-
-### Setup Steps
-
-1. Install Node.js and npm:
-   - Visit the official Node.js website: [https://nodejs.org](https://nodejs.org)
-   - Download the latest LTS version of Node.js for your operating system.
-   - Follow the installation instructions for your operating system.
-   - After installation, verify that Node.js and npm are installed correctly by running the following commands in your terminal:
-     ```
-     node --version
-     npm --version
-     ```
-
-2. Install Angular CLI:
-   - Open your terminal and run the following command to install Angular CLI globally:
-     ```
-     npm install -g @angular/cli
-     ```
-   - Verify that Angular CLI is installed correctly by running the following command:
-     ```
-     ng version
-     ```
-
-3. Install AWS CLI:
-   - Visit the official AWS CLI installation guide: [https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
-   - Follow the installation instructions for your operating system.
-   - After installation, verify that AWS CLI is installed correctly by running the following command:
-     ```
-     aws --version
-     ```
-
-4. Navigate to the cloned repository directory:
-   - Open your terminal and navigate to the `Smart-Inventory` repository directory in your `GitHub` folder.
-   - Run the following command:
-     ```
-     cd ~/Documents/GitHub/Smart-Inventory
-     ```
-
-5. Install the project dependencies:
-`npm install`
-
-6. Configure AWS CLI:
-    - Run `aws configure` in your terminal.
-    - Provide your access key and secret access key when prompted.
-
-7. Start the Amplify sandbox:
-   - Run the following command:
-     ```
-     npx ampx sandbox
-     ```
-    - Wait for the `npx ampx sandbox` command to finish running. This may take a few minutes.
-
-### Running the App
-
-To run the app locally, use the following command:
-```
-ng serve
-```
-Open your browser and navigate to `http://localhost:4200` to see the app in action.
-
-That's it! You should now have the Angular app with AWS Amplify integration running on your local machine. If you encounter any issues or have further questions, please don't hesitate to reach out to the team.
-
 <hr>
 </br>
 

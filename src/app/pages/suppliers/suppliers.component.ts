@@ -151,7 +151,7 @@ export class SuppliersComponent implements OnInit {
                 tenentId: this.tenantId,
                 memberId: this.tenantId,
                 name: this.userName,
-                role: this.userRole || 'Admin',
+                role: this.getRoleDisplayName(session.tokens?.idToken?.payload?.['cognito:groups']?.toString() + ''),
                 task: task,
                 timeSpent: 0,
                 idleTime: 0,

@@ -14,6 +14,7 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import { MatCardModule } from '@angular/material/card';
 import { MatTabChangeEvent, MatTabsModule } from '@angular/material/tabs';
 import { ContactSupportComponent } from 'app/components/contact-support/contact-support.component';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 interface MenuItem {
     title: string;
@@ -102,6 +103,8 @@ export class HelpComponent implements OnInit {
 
     noFaqResults: boolean = false;
     noTroubleshootingResults: boolean = false;
+
+    pdfUrl: string = 'assets/documents/UserManual.pdf';
 
     tutorials: Tutorial[] = [
         {
@@ -405,7 +408,7 @@ export class HelpComponent implements OnInit {
 
     constructor(
         private snackBar: MatSnackBar,
-        private titleService: TitleService,
+        private titleService: TitleService
     ) {}
 
     ngOnInit() {
@@ -506,6 +509,10 @@ export class HelpComponent implements OnInit {
     onTabChange(event: MatTabChangeEvent) {
         const selectedTab = this.menuItems[event.index];
         this.onItemSelected(selectedTab);
+    }
+
+    openPdfInNewTab() {
+        window.open(this.pdfUrl, '_blank');
     }
 
     onSave() {

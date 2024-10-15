@@ -223,7 +223,11 @@ mat-form-field .mdc-line-ripple {
     border-radius: 5px;
     min-width: 80px;
     text-align: center;
-    margin: 0; /* Remove auto margins */
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
   }
   
   .filter-buttons .btn:hover {
@@ -236,6 +240,27 @@ mat-form-field .mdc-line-ripple {
     background-color: #007bff;
     color: white;
     border-color: #007bff;
+  }
+  
+  .filter-buttons .btn mat-icon {
+    margin-right: 8px;
+  }
+  
+  /* Additional styles for the manual option buttons */
+  .manual-options .filter-buttons {
+    justify-content: center;
+
+  }
+  
+  .manual-options .filter-buttons .btn {
+    text-transform: none;
+    font-weight: 500;
+  }
+
+  .manual-options .filter-buttons .btn:hover {
+    background-color: #007bff;
+    font-weight: bolder;
+    color: white;
   }
   
  
@@ -323,6 +348,14 @@ mat-form-field .mdc-line-ripple {
     display: flex;
     flex-direction: column;
     height: 100%;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .tutorial-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
   }
   
   .tutorial-card mat-card-header {
@@ -340,7 +373,6 @@ mat-form-field .mdc-line-ripple {
     margin-top: 10px;
   }
   
-  /* Ensure consistent styling with other sections */
   .tutorials-section .intro-section {
     text-align: center;
     margin-bottom: 2rem;
@@ -357,3 +389,61 @@ mat-form-field .mdc-line-ripple {
     font-size: 1.1rem;
     color: #7f8c8d;
   }
+
+  /* User Guides */
+
+.user-guide-container {
+    padding: 20px;
+    height: 85vh;
+    overflow-y: auto;
+  }
+  
+  .manual-options {
+    margin-top: 30px;
+    padding: 20px;
+    /* background-color: #005cbb; */
+    border-radius: 4px;
+  }
+  
+  .manual-options h3 {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+  }
+  
+  .option-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+  }
+  
+  .option-buttons button,
+  .option-buttons a {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .manual-preview {
+    margin-top: 30px;
+    padding: 20px;
+    background-color: #f0f0f0;
+    border-radius: 4px;
+  }
+  
+  .manual-preview h3 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+  }
+  
+  .manual-preview ul {
+    list-style-type: disc;
+    padding-left: 20px;
+    margin-bottom: 15px;
+  }
+  
+  .manual-preview li {
+    margin-bottom: 8px;
+  }
+  
+  

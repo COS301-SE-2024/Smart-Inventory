@@ -79,7 +79,7 @@
             </div>
         </mat-tab>
 
-        <mat-tab label="User Guides">
+        <!-- <mat-tab label="User Guides">
             <div style="height: 85vh; width: 100%; overflow-y: scroll; align-content: center; text-align: center">
                 <div class="intro-section">
                     <h2>Download PDF Manual</h2>
@@ -109,7 +109,44 @@
                     This browser does not support PDFs. Please download the PDF to view it:
                 </iframe>
             </div>
-        </mat-tab>
+        </mat-tab> -->
+
+        <mat-tab label="User Guides">
+            <div class="user-guide-container">
+              <div class="intro-section">
+                <h2>User Manual</h2>
+                <p>Access the comprehensive Smart Inventory User Manual to guide your understanding of the system.</p>
+              </div>
+        
+              <div class="manual-options">
+                <h3>Choose how you'd like to view the manual:</h3>
+                <div class="filter-buttons">
+                  <button mat-flat-button class="btn" (click)="openPdfInNewTab()">
+                    <mat-icon>open_in_new</mat-icon>
+                    Open PDF
+                  </button>
+                  <a mat-flat-button [href]="pdfUrl" download="UserManual.pdf" class="btn">
+                    <mat-icon>cloud_download</mat-icon>
+                    Download PDF
+                  </a>
+                </div>
+              </div>
+        
+              <div class="manual-preview">
+                <h3>Manual Preview</h3>
+                <p>Here's a brief overview of what you'll find in the manual:</p>
+                <ul>
+                  <li>Getting Started with Smart Inventory</li>
+                  <li>Managing Your Inventory</li>
+                  <li>Creating and Tracking Orders</li>
+                  <li>Generating Reports</li>
+                  <li>User Role Management</li>
+                  <li>Troubleshooting Common Issues</li>
+                </ul>
+                <p>For the full details, please use one of the options above to access the complete manual.</p>
+              </div>
+            </div>
+          </mat-tab>
 
         <mat-tab label="Tutorials">
             <div class="tutorials-section">

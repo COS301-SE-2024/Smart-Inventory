@@ -27,11 +27,7 @@ import { ScanQrcodeModalComponent } from 'app/components/scan-qrcode-modal/scan-
 
 import {
     MatSnackBar,
-    MatSnackBarAction,
-    MatSnackBarActions,
-    MatSnackBarLabel,
     MatSnackBarModule,
-    MatSnackBarRef,
 } from '@angular/material/snack-bar';
 
 @Component({
@@ -103,6 +99,19 @@ export class InventoryComponent implements OnInit {
             filter: 'agSetColumnFilter',
             editable: true,
             headerTooltip: 'Current stock quantity',
+            cellEditor: 'agNumberCellEditor',
+            cellEditorParams: {
+                min: 0,
+                precision: 0
+            },
+            valueSetter: (params) => {
+                const newValue = params.newValue;
+                if (newValue < 0) {
+                    this.snackBar.open('Quantity must be greater than zero', 'Close', { duration: 3000 });
+                    return false;
+                }
+                return true;
+            }
         },
         {
             field: 'supplier',
@@ -126,7 +135,32 @@ export class InventoryComponent implements OnInit {
             valueParser: (params) => {
                 if (params.newValue) {
                     const date = new Date(params.newValue);
+                    const currentDate = new Date();
+                    currentDate.setHours(0, 0, 0, 0);
+                    if (date < currentDate) {
+                        this.snackBar.open('Expiration date must be in the future', 'Close', { duration: 3000 });
+                        return null;
+                    }
                     return date.toISOString();
+                }
+                return null;
+            },
+            cellStyle: (params) => {
+                if (params.value) {
+                    const expirationDate = new Date(params.value);
+                    const currentDate = new Date();
+                    currentDate.setHours(0, 0, 0, 0);
+                    
+                    const oneWeekFromNow = new Date(currentDate);
+                    oneWeekFromNow.setDate(oneWeekFromNow.getDate() + 7);
+
+                    if (expirationDate < currentDate) {
+                        return { backgroundColor: '#FFCDD2' }; // Light red for expired items
+                    } else if (expirationDate <= oneWeekFromNow) {
+                        return { backgroundColor: '#FFF9C4' }; // Light yellow for items expiring within a week
+                    } else {
+                        return { backgroundColor: '#C8E6C9' }; // Light green for items expiring in more than a week
+                    }
                 }
                 return null;
             },
@@ -187,7 +221,6 @@ export class InventoryComponent implements OnInit {
         }
     }
 
-
     @HostListener('window:resize', ['$event'])
     onResize(event: any) {
         const wasMobileView = this.isMobileView;
@@ -228,7 +261,6 @@ export class InventoryComponent implements OnInit {
         });
     }
 
-
     async getUserInfo() {
         try {
             const session = await fetchAuthSession();
@@ -264,7 +296,6 @@ export class InventoryComponent implements OnInit {
             }
         } catch (error) {
             console.error('Error fetching user info:', error);
-            // You might want to add some error handling here, such as showing an error message to the user
             this.snackBar.open('Error fetching user info', 'Close', {
                 duration: 5000,
                 horizontalPosition: 'center',
@@ -443,6 +474,19 @@ export class InventoryComponent implements OnInit {
 
     async handleCellValueChanged(event: { data: any; field: string; newValue: any }) {
         try {
+            if (event.field === 'quantity' && event.newValue < 0) {
+                throw new Error('Quantity must be greater or equal to zero');
+            }
+
+            if (event.field === 'expirationDate') {
+                const newDate = new Date(event.newValue);
+                const currentDate = new Date();
+                currentDate.setHours(0, 0, 0, 0);
+                if (newDate < currentDate) {
+                    throw new Error('Expiration date must be in the future');
+                }
+            }
+
             const updatedData = {
                 inventoryID: event.data.inventoryID,
                 tenentId: this.tenantId,
@@ -474,7 +518,7 @@ export class InventoryComponent implements OnInit {
             this.gridComponent.updateRow(event.data);
 
             // Show error message using snackbar
-            this.snackBar.open('Error updating inventory item: ' + (error as any).message, 'Close', {
+            this.snackBar.open('Error updating inventory item: ' + (error as Error).message, 'Close', {
                 duration: 5000,
                 horizontalPosition: 'center',
                 verticalPosition: 'top',

@@ -36,7 +36,35 @@
 
 .btn {
     border-radius: 5px;
-
-    width: 200px;
+    padding: 0 16px;
     height: 40px;
+    min-width: 200px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition:
+        background-color 0.3s ease,
+        transform 0.2s ease,
+        left 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background-color: #e0e0e0;
+    color: #333;
+    transform: translateY(-2px);
+}
+
+.btn mat-icon {
+    margin-right: 8px;
+}
+
+.back-toolbar {
+    position: fixed;
+    bottom: 20px;
+    width: 100%;
+    z-index: 1000;
+    transition: left 0.3s ease; /* Smooth transition for sidebar interaction */
 }

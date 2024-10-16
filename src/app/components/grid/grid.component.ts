@@ -7,13 +7,21 @@ import {
     EventEmitter,
     ChangeDetectorRef,
     ViewChild,
+    ViewContainerRef,
 } from '@angular/core';
 
 import { Renderer2, ElementRef, AfterViewInit, ViewEncapsulation } from '@angular/core';
 import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
 import { AgGridAngular, AgGridModule } from 'ag-grid-angular';
 import { ForecastModalComponent } from '../forecast-modal/forecast-modal.component';
-import { ColDef, GridReadyEvent, CellValueChangedEvent, RowValueChangedEvent, GridApi } from 'ag-grid-community';
+import {
+    ColDef,
+    GridReadyEvent,
+    CellValueChangedEvent,
+    RowValueChangedEvent,
+    GridApi,
+    CellContextMenuEvent,
+} from 'ag-grid-community';
 import { MatButtonModule } from '@angular/material/button';
 import outputs from '../../../../amplify_outputs.json';
 import { MatIconModule } from '@angular/material/icon';
@@ -38,6 +46,14 @@ import { MatCardModule } from '@angular/material/card';
 import { fetchAuthSession } from 'aws-amplify/auth';
 import { ViewQrcodeModalComponent } from '../view-qrcode-modal/view-qrcode-modal.component';
 import { ScanQrcodeModalComponent } from '../scan-qrcode-modal/scan-qrcode-modal.component';
+import { ContextMenuComponent } from './context-menu/context-menu.component';
+
+interface MenuItem {
+    title: string;
+    action: string;
+    icon?: string;
+    disabled?: boolean;
+}
 
 @Component({
     selector: 'app-grid',
@@ -60,7 +76,7 @@ import { ScanQrcodeModalComponent } from '../scan-qrcode-modal/scan-qrcode-modal
         MatAutocompleteModule,
         ReactiveFormsModule,
         MatCardModule,
-        ForecastModalComponent
+        ForecastModalComponent,
     ],
     templateUrl: './grid.component.html',
     styleUrl: './grid.component.css',
@@ -114,11 +130,12 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
     gridStyle: any;
     inputFilter = '';
     filteredOptions: string[] = [];
+    private recentSearches: string[] = [];
+    private maxRecentSearches: number = 5;
 
     gridOptions = {
         pagination: true,
-        paginationPageSize: 20, // Set the number of rows per page
-        // other grid options...
+        paginationPageSize: 20,
     };
     public themeClass: string = 'ag-theme-material'; // Default to light theme
 
@@ -151,34 +168,186 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
         this.setupThemeObserver();
     }
 
+    @ViewChild('contextMenuContainer', { read: ViewContainerRef, static: true })
+    container!: ViewContainerRef;
+
+    onCellContextMenu = (event: CellContextMenuEvent) => {
+        this.container.clear();
+        const componentRef = this.container.createComponent(ContextMenuComponent);
+        const instance = componentRef.instance;
+
+        // Clear existing selection
+        this.gridApi.deselectAll();
+
+        // Select the row that was right-clicked
+        const node = event.node;
+        if (node) {
+            node.setSelected(true);
+
+            // Trigger selection changed logic
+            this.onSelectionChanged(null);
+        }
+
+        // Check if event.event exists and is of type MouseEvent
+        if (event.event && event.event instanceof MouseEvent) {
+            instance.x = event.event.clientX;
+            instance.y = event.event.clientY;
+        } else {
+            // Fallback to default values if event.event is not a MouseEvent
+            instance.x = 0;
+            instance.y = 0;
+        }
+
+        instance.gridApi = this.gridApi;
+        instance.menuItems = this.getContextMenuItems(event);
+
+        instance.menuItemClicked.subscribe((action: string) => {
+            this.handleContextMenuAction(action, event);
+        });
+
+        event.event?.preventDefault();
+    };
+
+    private getContextMenuItems(event: CellContextMenuEvent): MenuItem[] {
+        const items: MenuItem[] = [];
+        const currentRoute = this.route.snapshot.url[0].path;
+
+        if (!this.isEndUser()) {
+            if (currentRoute === 'inventoryReport') {
+                items.push({ title: 'Forecast Item', action: 'forecastItem', icon: 'query_stats' });
+            }
+
+            if (currentRoute === 'inventory') {
+                items.push({ title: 'Add Item', action: 'addItem', icon: 'add' });
+                items.push({ title: 'Remove Item', action: 'removeItem', icon: 'remove' });
+                items.push({ title: 'Edit', action: 'edit', icon: 'edit' });
+                items.push({ title: 'View QR Code', action: 'viewQRCode', icon: 'qr_code_2' });
+            }
+
+            if (currentRoute === 'team' && this.isAdmin()) {
+                items.push({ title: 'Add Member', action: 'addMember', icon: 'add' });
+                items.push({ title: 'Remove Member', action: 'removeMember', icon: 'remove' });
+                items.push({ title: 'Edit', action: 'edit', icon: 'edit' });
+            }
+
+            if (currentRoute === 'suppliers') {
+                items.push({ title: 'Add Supplier', action: 'addSupplier', icon: 'add' });
+                items.push({ title: 'Remove Supplier', action: 'removeSupplier', icon: 'remove' });
+                items.push({ title: 'Edit', action: 'edit', icon: 'edit' });
+            }
+
+            if (currentRoute === 'orders') {
+                items.push({ title: 'Create Order', action: 'createOrder', icon: 'add' });
+                items.push({ title: 'Delete Order', action: 'deleteOrder', icon: 'remove' });
+                items.push({ title: 'Generated Quote', action: 'generatedQuote', icon: 'file_open' });
+                items.push({ title: 'Received Quotes', action: 'receivedQuotes', icon: 'inbox' });
+                items.push({ title: 'Mark As Received', action: 'markAsReceived', icon: 'done' });
+            }
+        }
+        if (currentRoute === 'inventory') {
+            items.push({ title: 'Request Stock', action: 'requestStock', icon: 'sell' });
+        }
+        return items;
+    }
+
+    private handleContextMenuAction(action: string, event: CellContextMenuEvent) {
+        switch (action) {
+            case 'edit':
+                this.gridApi.startEditingCell({
+                    rowIndex: event.node!.rowIndex!,
+                    colKey: event.column!.getColId(),
+                });
+                break;
+            case 'delete':
+            case 'removeItem':
+            case 'removeMember':
+            case 'removeSupplier':
+                this.deleteRow();
+                break;
+            case 'copy':
+                this.gridApi.copySelectedRangeToClipboard({});
+                break;
+            case 'exportExcel':
+                this.downloadCSV();
+                break;
+            case 'importExcel':
+                this.importExcel();
+                break;
+            case 'forecastItem':
+                this.onViewForecast();
+                break;
+            case 'addItem':
+            case 'addMember':
+            case 'addSupplier':
+                this.addRow();
+                break;
+            case 'viewQRCode':
+                this.onViewQRCode();
+                break;
+            case 'scanQRCode':
+                this.onScanQRCode();
+                break;
+            case 'requestStock':
+                this.onRequestStock();
+                break;
+            case 'createOrder':
+                this.openCustomQuoteModal();
+                break;
+            case 'deleteOrder':
+                this.deleteOrder();
+                break;
+            case 'generatedQuote':
+                this.onViewGeneratedQuoteClick();
+                break;
+            case 'receivedQuotes':
+                this.onViewReceivedQuotes();
+                break;
+            case 'markAsReceived':
+                this.onMarkOrderAsReceived();
+                break;
+            case 'scanInventory':
+                this.openAutomationSettings();
+                break;
+            case 'automationTemplates':
+                this.onViewTemplates();
+                break;
+            case 'viewInventorySummary':
+                this.onViewInventorySummary();
+                break;
+            case 'runEoqRopCalculation':
+                this.runEoqRopCalculation.emit();
+                break;
+        }
+    }
+
     async getUserInfo() {
         try {
-          const session = await fetchAuthSession();
-      
-          const cognitoClient = new CognitoIdentityProviderClient({
-            region: outputs.auth.aws_region,
-            credentials: session.credentials,
-          });
-      
-          const getUserCommand = new GetUserCommand({
-            AccessToken: session.tokens?.accessToken.toString(),
-          });
-          const getUserResponse = await cognitoClient.send(getUserCommand);
-      
-          this.tenentId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value || '';
-          return this.tenentId;
-        } catch (error) {
-          console.error('Error fetching user info:', error);
-          // You might want to add some error handling here, such as showing an error message to the user
-          this.snackBar.open('Error fetching user info', 'Close', {
-            duration: 5000,
-            horizontalPosition: 'center',
-            verticalPosition: 'top',
-          });
-          return null;
-        }
-      }
+            const session = await fetchAuthSession();
 
+            const cognitoClient = new CognitoIdentityProviderClient({
+                region: outputs.auth.aws_region,
+                credentials: session.credentials,
+            });
+
+            const getUserCommand = new GetUserCommand({
+                AccessToken: session.tokens?.accessToken.toString(),
+            });
+            const getUserResponse = await cognitoClient.send(getUserCommand);
+
+            this.tenentId =
+                getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value || '';
+            return this.tenentId;
+        } catch (error) {
+            console.error('Error fetching user info:', error);
+            // You might want to add some error handling here, such as showing an error message to the user
+            this.snackBar.open('Error fetching user info', 'Close', {
+                duration: 5000,
+                horizontalPosition: 'center',
+                verticalPosition: 'top',
+            });
+            return null;
+        }
+    }
 
     onFilterTextBoxChanged() {
         this.gridApi.setGridOption(
@@ -191,9 +360,63 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
     private updateFilteredOptions() {
         const allValues = this.rowData.flatMap((row) => Object.values(row));
         const uniqueValues = Array.from(new Set(allValues.map(String)));
-        this.filteredOptions = uniqueValues.filter((value) =>
+
+        const filteredValues = uniqueValues.filter((value) =>
             value.toLowerCase().includes(this.inputFilter.toLowerCase()),
         );
+
+        // Prioritize recent searches
+        const recentMatches = this.recentSearches.filter((search) =>
+            search.toLowerCase().includes(this.inputFilter.toLowerCase()),
+        );
+
+        // Combine recent matches with other filtered values, remove duplicates
+        const combinedResults = [...new Set([...recentMatches, ...filteredValues])];
+
+        this.filteredOptions = combinedResults
+            .sort((a, b) => {
+                // Prioritize exact matches
+                if (a.toLowerCase() === this.inputFilter.toLowerCase()) return -1;
+                if (b.toLowerCase() === this.inputFilter.toLowerCase()) return 1;
+
+                // Then recent searches
+                const aIndex = this.recentSearches.indexOf(a);
+                const bIndex = this.recentSearches.indexOf(b);
+                if (aIndex !== -1 && bIndex === -1) return -1;
+                if (bIndex !== -1 && aIndex === -1) return 1;
+                if (aIndex !== -1 && bIndex !== -1) return aIndex - bIndex;
+
+                // Then by length
+                return a.length - b.length;
+            })
+            .slice(0, 10); // Limit to 10 suggestions
+    }
+
+    onOptionSelected(event: any) {
+        this.inputFilter = event.option.value;
+        this.addToRecentSearches(this.inputFilter);
+        this.onFilterTextBoxChanged();
+    }
+
+    private addToRecentSearches(search: string) {
+        // Remove the search term if it already exists
+        this.recentSearches = this.recentSearches.filter((item) => item !== search);
+
+        // Add the new search term to the beginning of the array
+        this.recentSearches.unshift(search);
+
+        // Keep only the most recent searches
+        this.recentSearches = this.recentSearches.slice(0, this.maxRecentSearches);
+    }
+
+    clearSearch() {
+        this.inputFilter = '';
+        this.filteredOptions = [];
+        this.gridApi.setGridOption(
+            'quickFilterText',
+            ((document.getElementById('filter-text-box') as HTMLInputElement).value = ''),
+        );
+        this.updateFilteredOptions();
     }
 
     oopenSnackBar(message: string) {
@@ -530,47 +753,47 @@ export class GridComponent implements OnInit, OnDestroy, AfterViewInit {
     async onViewForecast() {
         const selectedRows = this.gridApi.getSelectedRows();
         if (selectedRows && selectedRows.length > 0) {
-          const selectedItem = selectedRows[0];
-          try {
-            const tenentId = await this.getUserInfo(); // Make sure this method returns a Promise<string>
-            if (tenentId) {
-              const dialogRef = this.dialog.open(ForecastModalComponent, {
-                width: '80%',
-                maxWidth: '800px',
-                data: {
-                  tenentId: tenentId,
-                  SKU: selectedItem.sku,
+            const selectedItem = selectedRows[0];
+            try {
+                const tenentId = await this.getUserInfo(); // Make sure this method returns a Promise<string>
+                if (tenentId) {
+                    const dialogRef = this.dialog.open(ForecastModalComponent, {
+                        width: '80%',
+                        maxWidth: '800px',
+                        data: {
+                            tenentId: tenentId,
+                            SKU: selectedItem.sku,
+                        },
+                    });
+
+                    dialogRef.afterClosed().subscribe((result) => {
+                        if (result && result.error) {
+                            this.snackBar.open(`Error: ${result.error}`, 'Close', {
+                                duration: 5000,
+                                horizontalPosition: 'center',
+                                verticalPosition: 'top',
+                            });
+                        }
+                    });
+                } else {
+                    throw new Error('Unable to fetch tenant ID');
                 }
-              });
-    
-              dialogRef.afterClosed().subscribe(result => {
-                if (result && result.error) {
-                  this.snackBar.open(`Error: ${result.error}`, 'Close', {
+            } catch (error) {
+                console.error('Error opening forecast modal:', error);
+                this.snackBar.open('Error opening forecast modal. Please try again.', 'Close', {
                     duration: 5000,
                     horizontalPosition: 'center',
                     verticalPosition: 'top',
-                  });
-                }
-              });
-            } else {
-              throw new Error('Unable to fetch tenant ID');
+                });
             }
-          } catch (error) {
-            console.error('Error opening forecast modal:', error);
-            this.snackBar.open('Error opening forecast modal. Please try again.', 'Close', {
-              duration: 5000,
-              horizontalPosition: 'center',
-              verticalPosition: 'top',
-            });
-          }
         } else {
-          this.snackBar.open('Please select an inventory item to view its forecast', 'Close', {
-            duration: 3000,
-            horizontalPosition: 'center',
-            verticalPosition: 'top',
-          });
+            this.snackBar.open('Please select an inventory item to view its forecast', 'Close', {
+                duration: 3000,
+                horizontalPosition: 'center',
+                verticalPosition: 'top',
+            });
         }
-      }
+    }
 
     onScanQRCode() {
         const dialogRef = this.dialog.open(ScanQrcodeModalComponent, {

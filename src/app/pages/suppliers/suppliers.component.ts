@@ -8,7 +8,7 @@ import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
 import { CognitoIdentityProviderClient, GetUserCommand } from '@aws-sdk/client-cognito-identity-provider';
 import outputs from '../../../../amplify_outputs.json';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, Validators } from '@angular/forms';
 import { DeleteConfirmationDialogComponent } from './delete-confirmation-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { LoadingSpinnerComponent } from '../../components/loader/loading-spinner.component';
@@ -25,7 +25,6 @@ import { SuppliersService } from '../../../../amplify/services/suppliers.service
     standalone: true,
     imports: [
         GridComponent,
-        // MatButtonModule,
         CommonModule,
         FormsModule,
         DeleteConfirmationDialogComponent,
@@ -33,7 +32,6 @@ import { SuppliersService } from '../../../../amplify/services/suppliers.service
         MatDialogModule,
         FormsModule,
         ReactiveFormsModule,
-        // MatFormFieldModule,
         MaterialModule,
     ],
     templateUrl: './suppliers.component.html',
@@ -41,7 +39,6 @@ import { SuppliersService } from '../../../../amplify/services/suppliers.service
 })
 export class SuppliersComponent implements OnInit {
     @ViewChild('gridComponent') gridComponent!: GridComponent;
-
     rowData: any[] = [];
     showAddPopup = false;
     showDeletePopup = false;
@@ -53,27 +50,30 @@ export class SuppliersComponent implements OnInit {
     tenantId: string = '';
     userName: string = '';
     userRole: string = '';
-    editAddress = {
-        street: '',
-        city: '',
-        state_province: '',
-        postal_code: '',
-        country: '',
-    };
+    supplierForm!: FormGroup;
+    editAddressForm!: FormGroup;
     selectedSupplier: any;
-    supplier = {
-        company_name: '',
-        contact_name: '',
-        contact_email: '',
-        phone_number: '',
-        address: {
-            street: '',
-            city: '',
-            state_province: '',
-            postal_code: '',
-            country: '',
-        },
-    };
+    createForm() {
+        this.supplierForm = this.fb.group({
+            company_name: ['', [Validators.required, Validators.minLength(2)]],
+            contact_name: ['', [Validators.required, Validators.pattern(/^[a-zA-Z\s-]+$/)]],
+            contact_email: ['', [Validators.required, Validators.email]],
+            phone_number: [
+                '',
+                [
+                    Validators.required,
+                    Validators.pattern(/^\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/),
+                ],
+            ],
+            address: this.fb.group({
+                street: ['', Validators.required],
+                city: ['', Validators.required],
+                state_province: ['', Validators.required],
+                postal_code: ['', [Validators.required, Validators.pattern(/^[A-Z0-9]{3,10}$/i)]],
+                country: ['', Validators.required],
+            }),
+        });
+    }
 
     colDefs: ColDef[] = [
         {
@@ -94,6 +94,18 @@ export class SuppliersComponent implements OnInit {
             filter: 'agSetColumnFilter',
             editable: true,
             headerTooltip: 'Name of the primary contact person at the supplier',
+            valueParser: (params) => {
+                // Remove any non-alphabetic characters except spaces and hyphens
+                return params.newValue.replace(/[^a-zA-Z\s-]/g, '');
+            },
+            valueSetter: (params) => {
+                const newValue = params.newValue.trim();
+                if (newValue.length >= 2 && /^[a-zA-Z\s-]+$/.test(newValue)) {
+                    params.data[params.colDef.field!] = newValue;
+                    return true;
+                }
+                return false;
+            },
         },
         {
             field: 'contact_email',
@@ -101,6 +113,16 @@ export class SuppliersComponent implements OnInit {
             filter: 'agSetColumnFilter',
             editable: true,
             headerTooltip: 'Email address of the primary contact person',
+            valueParser: (params) => params.newValue.trim(),
+            valueSetter: (params) => {
+                const newValue = params.newValue.trim();
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (emailRegex.test(newValue)) {
+                    params.data[params.colDef.field!] = newValue;
+                    return true;
+                }
+                return false;
+            },
         },
         {
             field: 'phone_number',
@@ -108,6 +130,19 @@ export class SuppliersComponent implements OnInit {
             filter: 'agSetColumnFilter',
             editable: true,
             headerTooltip: 'Phone number of the supplier or primary contact',
+            valueParser: (params) => {
+                // Remove any non-digit characters except +, -, (, ), and space
+                return params.newValue.replace(/[^\d+\-() ]/g, '');
+            },
+            valueSetter: (params) => {
+                const newValue = params.newValue.trim();
+                const phoneRegex = /^\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/;
+                if (phoneRegex.test(newValue)) {
+                    params.data[params.colDef.field!] = newValue;
+                    return true;
+                }
+                return false;
+            },
         },
         {
             field: 'address',
@@ -127,8 +162,11 @@ export class SuppliersComponent implements OnInit {
         private snackBar: MatSnackBar,
         private teamService: TeamsService,
         private suppliersService: SuppliersService,
+        private fb: FormBuilder,
     ) {
         Amplify.configure(outputs);
+        this.createForm();
+        this.createEditAddressForm();
     }
 
     async ngOnInit(): Promise<void> {
@@ -296,148 +334,154 @@ export class SuppliersComponent implements OnInit {
 
     closeAddPopup() {
         this.showAddPopup = false;
-        this.supplier = {
-            company_name: '',
-            contact_name: '',
-            contact_email: '',
-            phone_number: '',
-            address: {
-                street: '',
-                city: '',
-                state_province: '',
-                postal_code: '',
-                country: '',
-            },
-        };
+        this.supplierForm.reset();
+    }
+
+    createEditAddressForm() {
+        this.editAddressForm = this.fb.group({
+            street: ['', Validators.required],
+            city: ['', Validators.required],
+            state_province: ['', Validators.required],
+            postal_code: ['', [Validators.required, Validators.pattern(/^[A-Z0-9]{3,10}$/i)]],
+            country: ['', Validators.required],
+        });
     }
 
     openEditAddressPopup(supplier: any) {
         this.selectedSupplier = supplier;
-        this.editAddress = { ...supplier.address };
+        this.editAddressForm.patchValue(supplier.address);
         this.showEditAddressPopup = true;
     }
 
     closeEditAddressPopup() {
         this.showEditAddressPopup = false;
         this.selectedSupplier = null;
-        this.editAddress = {
-            street: '',
-            city: '',
-            state_province: '',
-            postal_code: '',
-            country: '',
-        };
+        this.editAddressForm.reset();
     }
 
-    async onEditAddressSubmit(formData: any) {
-        this.isEditingAddress = true;
-        try {
-            console.log('Updated address:', formData);
-            const session = await fetchAuthSession();
-            const cognitoClient = new CognitoIdentityProviderClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
-            const getUserCommand = new GetUserCommand({
-                AccessToken: session.tokens?.accessToken.toString(),
-            });
-            const getUserResponse = await cognitoClient.send(getUserCommand);
-            const tenentId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
-            if (!tenentId) {
-                throw new Error('TenentId not found in user attributes');
-            }
-            const updatedData = {
-                supplierID: this.selectedSupplier.supplierID,
-                tenentId: tenentId,
-                address: formData,
-            };
-            console.log('Updated data:', updatedData);
-            const response = await this.suppliersService.editSupplier(updatedData).toPromise();
-            console.log('API response:', response);
-            if (response && response.body) {
-                console.log('Supplier address updated successfully');
-                const updatedSupplier = response.body;
-                await this.logActivity(
-                    'Updated supplier address',
-                    `Updated address for supplier ${this.selectedSupplier.company_name}`,
-                );
-                this.closeEditAddressPopup();
-                await this.loadSuppliersData();
-                this.snackBar.open('Supplier address updated successfully', 'Close', {
+    async onEditAddressSubmit() {
+        if (this.editAddressForm.valid) {
+            this.isEditingAddress = true;
+            try {
+                const formData = this.editAddressForm.value;
+                console.log('Updated address:', formData);
+                const session = await fetchAuthSession();
+                const cognitoClient = new CognitoIdentityProviderClient({
+                    region: outputs.auth.aws_region,
+                    credentials: session.credentials,
+                });
+                const getUserCommand = new GetUserCommand({
+                    AccessToken: session.tokens?.accessToken.toString(),
+                });
+                const getUserResponse = await cognitoClient.send(getUserCommand);
+                const tenantId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
+                if (!tenantId) {
+                    throw new Error('TenantId not found in user attributes');
+                }
+                const updatedData = {
+                    supplierID: this.selectedSupplier.supplierID,
+                    tenentId: tenantId,
+                    address: formData,
+                };
+                console.log('Updated data:', updatedData);
+                const response = await this.suppliersService.editSupplier(updatedData).toPromise();
+                console.log('API response:', response);
+                if (response && response.body) {
+                    console.log('Supplier address updated successfully');
+                    const updatedSupplier = response.body;
+                    await this.logActivity(
+                        'Updated supplier address',
+                        `Updated address for supplier ${this.selectedSupplier.company_name}`,
+                    );
+                    this.closeEditAddressPopup();
+                    await this.loadSuppliersData();
+                    this.snackBar.open('Supplier address updated successfully', 'Close', {
+                        duration: 6000,
+                        horizontalPosition: 'center',
+                        verticalPosition: 'top',
+                    });
+                } else {
+                    throw new Error('Invalid response from server');
+                }
+            } catch (error) {
+                console.error('Error updating supplier address:', error);
+                this.snackBar.open(`Error updating supplier address: ${(error as Error).message}`, 'Close', {
                     duration: 6000,
                     horizontalPosition: 'center',
                     verticalPosition: 'top',
                 });
-            } else {
-                throw new Error('Invalid response from server');
+            } finally {
+                this.isEditingAddress = false;
             }
-        } catch (error) {
-            console.error('Error updating supplier address:', error);
-            this.snackBar.open(`Error updating supplier address: ${(error as Error).message}`, 'Close', {
-                duration: 6000,
-                horizontalPosition: 'center',
-                verticalPosition: 'top',
-            });
-        } finally {
-            this.isEditingAddress = false;
+        } else {
+            this.editAddressForm.markAllAsTouched();
         }
     }
 
-    async onSubmit(formData: any) {
-        this.isAddingSupplier = true;
-        try {
-            const session = await fetchAuthSession();
-            const cognitoClient = new CognitoIdentityProviderClient({
-                region: outputs.auth.aws_region,
-                credentials: session.credentials,
-            });
-            const getUserCommand = new GetUserCommand({
-                AccessToken: session.tokens?.accessToken.toString(),
-            });
-            const getUserResponse = await cognitoClient.send(getUserCommand);
-            const tenentId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
-            if (!tenentId) {
-                throw new Error('TenentId not found in user attributes');
-            }
-            const payload = {
-                company_name: formData.company_name,
-                contact_name: formData.contact_name,
-                contact_email: formData.contact_email,
-                phone_number: formData.phone_number,
-                address: {
-                    street: formData.street,
-                    city: formData.city,
-                    state_province: formData.state_province,
-                    postal_code: formData.postal_code,
-                    country: formData.country,
-                },
-                tenentId: tenentId,
-            };
-            console.log('Sending payload:', payload);
-            const response = await this.suppliersService.addSupplier(payload).toPromise();
-            console.log('Received response:', response);
-            if (response && response.supplierID) {
-                console.log('Supplier added successfully');
-                await this.loadSuppliersData();
-                this.closeAddPopup();
-                this.snackBar.open('Supplier added successfully', 'Close', {
+    async onSubmit() {
+        if (this.supplierForm.valid) {
+            // Process the form data
+            const formData = this.supplierForm.value;
+            // Call your API to add the supplier
+
+            this.isAddingSupplier = true;
+            try {
+                const session = await fetchAuthSession();
+                const cognitoClient = new CognitoIdentityProviderClient({
+                    region: outputs.auth.aws_region,
+                    credentials: session.credentials,
+                });
+                const getUserCommand = new GetUserCommand({
+                    AccessToken: session.tokens?.accessToken.toString(),
+                });
+                const getUserResponse = await cognitoClient.send(getUserCommand);
+                const tenentId = getUserResponse.UserAttributes?.find((attr) => attr.Name === 'custom:tenentId')?.Value;
+                if (!tenentId) {
+                    throw new Error('TenentId not found in user attributes');
+                }
+                const payload = {
+                    company_name: formData.company_name,
+                    contact_name: formData.contact_name,
+                    contact_email: formData.contact_email,
+                    phone_number: formData.phone_number,
+                    address: {
+                        street: formData.address.street,
+                        city: formData.address.city,
+                        state_province: formData.address.state_province,
+                        postal_code: formData.address.postal_code,
+                        country: formData.address.country,
+                    },
+                    tenentId: tenentId,
+                };
+                console.log('Sending payload:', payload);
+                const response = await this.suppliersService.addSupplier(payload).toPromise();
+                console.log('Received response:', response);
+                if (response && response.supplierID) {
+                    console.log('Supplier added successfully');
+                    await this.loadSuppliersData();
+                    this.closeAddPopup();
+                    this.snackBar.open('Supplier added successfully', 'Close', {
+                        duration: 6000,
+                        horizontalPosition: 'center',
+                        verticalPosition: 'top',
+                    });
+                    await this.logActivity('Added new supplier', `Added supplier ${formData.company_name}`);
+                } else {
+                    throw new Error('Failed to add supplier');
+                }
+            } catch (error) {
+                console.error('Error adding supplier:', error);
+                this.snackBar.open(`Error adding supplier: ${(error as Error).message}`, 'Close', {
                     duration: 6000,
                     horizontalPosition: 'center',
                     verticalPosition: 'top',
                 });
-                await this.logActivity('Added new supplier', `Added supplier ${formData.company_name}`);
-            } else {
-                throw new Error('Failed to add supplier');
+            } finally {
+                this.isAddingSupplier = false;
             }
-        } catch (error) {
-            console.error('Error adding supplier:', error);
-            this.snackBar.open(`Error adding supplier: ${(error as Error).message}`, 'Close', {
-                duration: 6000,
-                horizontalPosition: 'center',
-                verticalPosition: 'top',
-            });
-        } finally {
-            this.isAddingSupplier = false;
+        } else {
+            // Mark all fields as touched to trigger validation messages
+            this.supplierForm.markAllAsTouched();
         }
     }
 

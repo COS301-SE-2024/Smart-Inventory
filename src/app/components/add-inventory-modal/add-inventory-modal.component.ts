@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormControl } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormControl, AbstractControl, ValidationErrors } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
@@ -46,6 +46,7 @@ export class AddInventoryModalComponent implements OnInit, OnDestroy {
         'Office Supplies',
         'Packaging Materials',
         'Paper Goods',
+        'Other ',
     ];
     showFullForm = false;
     itemExists = false;
@@ -66,21 +67,26 @@ export class AddInventoryModalComponent implements OnInit, OnDestroy {
             sku: ['', Validators.required],
             description: [{value: '', disabled: true}, Validators.required],
             category: [{value: '', disabled: true}, Validators.required],
-            quantity: [{value: 0, disabled: true}, [Validators.required, Validators.min(0)]],
-            lowStockThreshold: [{value: 0, disabled: true}, [Validators.required, Validators.min(0)]],
-            reorderAmount: [{value: 0, disabled: true}, [Validators.required, Validators.min(0)]],
+            quantity: [{value: 0, disabled: true}, [Validators.required, this.positiveQuantityValidator]],
+            lowStockThreshold: [{value: 0, disabled: true}, [Validators.required, this.positiveQuantityValidator]],
+            reorderAmount: [{value: 0, disabled: true}, [Validators.required, this.positiveQuantityValidator]],
             supplier: [{value: '', disabled: true}, Validators.required],
-            expirationDate: [{value: '', disabled: true}, Validators.required],
-            unitCost: [{value: 0, disabled: true}, [Validators.required, Validators.min(0)]],
-            leadTime: [{value: 0, disabled: true}, [Validators.required, Validators.min(0)]],
-            deliveryCost: [{value: 0, disabled: true}, [Validators.required, Validators.min(0)]],
-            dailyDemand: [{value: 0, disabled: true}, [Validators.required, Validators.min(0)]],
+            expirationDate: [{value: '', disabled: true}, [Validators.required, this.futureDateValidator]],
+            unitCost: [{value: 0, disabled: true}, [Validators.required, this.positiveQuantityValidator]],
+            leadTime: [{value: 0, disabled: true}, [Validators.required, this.positiveQuantityValidator]],
+            deliveryCost: [{value: 0, disabled: true}, [Validators.required, this.positiveQuantityValidator]],
+            dailyDemand: [{value: 0, disabled: true}, [Validators.required, this.positiveQuantityValidator]],
         });
     }
 
     ngOnInit() {
         // Set initial filtered suppliers
-        this.filteredSuppliers.next(this.data.suppliers.slice());
+        const suppliersWithToBeAdded = [
+            { company_name: 'Yet to be added', supplierID: 'Yet_to_be_added' },
+            ...this.data.suppliers
+        ];
+
+        this.filteredSuppliers.next(suppliersWithToBeAdded.slice());
 
         // Listen for supplier search field value changes
         this.supplierControl.valueChanges
@@ -100,14 +106,18 @@ export class AddInventoryModalComponent implements OnInit, OnDestroy {
             return;
         }
         let search = this.supplierControl.value;
+        const suppliersWithToBeAdded = [
+            { company_name: 'Yet to be added', supplierID: 'Yet_to_be_added' },
+            ...this.data.suppliers
+        ];
         if (!search) {
-            this.filteredSuppliers.next(this.data.suppliers.slice());
+            this.filteredSuppliers.next(suppliersWithToBeAdded.slice());
             return;
         } else {
             search = search.toLowerCase();
         }
         this.filteredSuppliers.next(
-            this.data.suppliers.filter(supplier => supplier.company_name.toLowerCase().indexOf(search) > -1)
+            suppliersWithToBeAdded.filter(supplier => supplier.company_name.toLowerCase().indexOf(search) > -1)
         );
     }
 
@@ -132,7 +142,6 @@ export class AddInventoryModalComponent implements OnInit, OnDestroy {
             console.log(response);
             if (response) {
                 return response;
-                
             }
         } catch (error: unknown) {
             if (error instanceof HttpErrorResponse) {
@@ -149,7 +158,6 @@ export class AddInventoryModalComponent implements OnInit, OnDestroy {
         }
         return null;
     }
-    
 
     populateForm(item: any) {
         this.inventoryForm.patchValue({
@@ -188,6 +196,9 @@ export class AddInventoryModalComponent implements OnInit, OnDestroy {
             // Use getRawValue() to include disabled fields
             const formData = this.inventoryForm.getRawValue();
             
+            if (formData.supplier === 'Yet to be added') {
+                formData.supplier = 'Yet to be added';
+            }
             // If it's an existing item, we want to keep the original values for certain fields
             if (this.itemExists) {
                 // Only update the editable fields
@@ -227,5 +238,26 @@ export class AddInventoryModalComponent implements OnInit, OnDestroy {
         
         // Update the form control
         this.inventoryForm.get('sku')?.setValue(newSKU);
+    }
+
+    // Custom validator for positive quantity
+    positiveQuantityValidator(control: AbstractControl): ValidationErrors | null {
+        const quantity = control.value;
+        if (quantity <= 0) {
+            return { 'positiveQuantity': 'A quantity of zero or less cannot be added' };
+        }
+        return null;
+    }
+
+    // Custom validator for future date
+    futureDateValidator(control: AbstractControl): ValidationErrors | null {
+        const selectedDate = new Date(control.value);
+        const currentDate = new Date();
+        currentDate.setHours(0, 0, 0, 0); // Reset time to start of day for accurate comparison
+        
+        if (selectedDate < currentDate) {
+            return { 'futureDate': 'Expiration date must be in the future' };
+        }
+        return null;
     }
 }

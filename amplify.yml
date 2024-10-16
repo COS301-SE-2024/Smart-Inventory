@@ -1,42 +1,39 @@
 version: 1
 backend:
-  phases:
-    build:
-      commands:
-        - npm ci --cache .npm --prefer-offline
-        - npx ampx pipeline-deploy --branch $AWS_BRANCH --app-id $AWS_APP_ID
+    phases:
+        build:
+            commands:
+                - npm ci --cache .npm --prefer-offline
+                - npx ampx pipeline-deploy --branch $AWS_BRANCH --app-id $AWS_APP_ID
 frontend:
-  phases:
-    preBuild:
-      commands:
-        - npm cache clean --force
-        - nvm install 18.19.1
-        - nvm use 18.19.1
-        - mkdir -p src/environments
-        - |
-          echo "export const environment = { production: false, apiKey: '$API_KEY' };" > src/environments/environment.ts
-        - |
-          echo "export const environment = { production: true, apiKey: '$API_KEY' };" > src/environments/environment.prod.ts
-    build:
-      commands:
-        - npm install -g @angular/cli
-        - ng version
-        - ng build --configuration=production
-  artifacts:
-    baseDirectory: dist/smart-inventory/browser
-    files:
-      - '**/*'
-  cache:
-    paths:
-      - node_modules/**/*
+    phases:
+        preBuild:
+            commands:
+                - npm cache clean --force
+                - nvm install 18.19.1
+                - nvm use 18.19.1
+                - mkdir -p src/environments
+                - |
+                    echo "export const environment = { production: false, apiKey: '$API_KEY' };" > src/environments/environment.ts
+                - |
+                    echo "export const environment = { production: true, apiKey: '$API_KEY' };" > src/environments/environment.prod.ts
+        build:
+            commands:
+                - npm install -g @angular/cli
+                - ng version
+                - ng build --configuration=production
+    artifacts:
+        baseDirectory: dist/smart-inventory/browser
+        files:
+            - '**/*'
 customHeaders:
-  - pattern: '**/*'
-    headers:
-      - key: X-Frame-Options
-        value: SAMEORIGIN
-      - key: X-Content-Type-Options
-        value: nosniff
-      - key: Strict-Transport-Security
-        value: max-age=31536000; includeSubDomains
-      - key: Content-Security-Policy
-        value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://*.amazonaws.com"
+    - pattern: '**/*'
+      headers:
+          - key: X-Frame-Options
+            value: SAMEORIGIN
+          - key: X-Content-Type-Options
+            value: nosniff
+          - key: Strict-Transport-Security
+            value: max-age=31536000; includeSubDomains
+          - key: Content-Security-Policy
+            value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://*.amazonaws.com"

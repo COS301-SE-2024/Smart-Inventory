@@ -1,74 +1,85 @@
 <div class="body" style="margin: 0px; position: fixed; width: 98%">
-    <mat-tab-group>
+    <mat-tab-group (selectedTabChange)="onTabChange($event)">
         <mat-tab label="FAQs">
-            <ng-container>
-                <div class="faq-section">
-                    <div class="intro-section">
-                        <h2>Frequently Asked Questions</h2>
-                        <p>
-                            Discover answers to common inquiries and gain insights from questions others have already
-                            explored
-                        </p>
-                    </div>
-                    <div class="faq-row faq-row-one">
-                        <div class="filter-buttons">
-                            <button
-                                mat-flat-button
-                                class="btn"
-                                *ngFor="let filter of faqFilters"
-                                (click)="onFilterClick(filter)"
-                                style="
-                                    border-radius: 5px;
-                                    background-color: white;
-                                    color: black;
-                                    box-shadow: 0px 1px 1px 0px grey;
-                                "
-                            >
-                                {{ filter }}
-                            </button>
-                        </div>
-                    </div>
-                    <div class="faq-row faq-row-two">
-                        <mat-accordion>
-                            <mat-expansion-panel *ngFor="let faq of filteredFaqs" style="background-color: white">
-                                <mat-expansion-panel-header>
-                                    <mat-panel-title>
-                                        {{ faq.question }}
-                                    </mat-panel-title>
-                                </mat-expansion-panel-header>
-                                <p>{{ faq.answer }}</p>
-                            </mat-expansion-panel>
-                        </mat-accordion>
+            <div class="faq-section">
+                <div class="intro-section">
+                    <h2>Frequently Asked Questions</h2>
+                    <p>Discover answers to common inquiries and gain insights from questions others have already explored</p>
+                </div>
+
+                <div class="search-container">
+                    <div class="input-container">
+                        <mat-icon>search</mat-icon>
+                        <input matInput [(ngModel)]="faqSearchQuery" (input)="performSearch()" placeholder="Search FAQs">
                     </div>
                 </div>
-            </ng-container>
+
+                <div class="faq-row faq-row-one">
+                    <div class="filter-buttons">
+                        <button mat-flat-button class="btn" *ngFor="let filter of faqFilters" (click)="onFilterClick(filter)"
+                            [class.active]="currentFilter === filter">
+                            {{ filter }}
+                        </button>
+                    </div>
+                </div>
+
+                <div class="faq-row faq-row-two">
+                    <mat-accordion *ngIf="!noFaqResults">
+                        <mat-expansion-panel *ngFor="let faq of filteredFaqs">
+                            <mat-expansion-panel-header>
+                                <mat-panel-title [innerHTML]="faq.highlightedQuestion"></mat-panel-title>
+                            </mat-expansion-panel-header>
+                            <p [innerHTML]="faq.highlightedAnswer"></p>
+                        </mat-expansion-panel>
+                    </mat-accordion>
+                    <div *ngIf="noFaqResults" class="no-results">
+                        No matching FAQs found. Please try a different search term or filter.
+                    </div>
+                </div>
+            </div>
         </mat-tab>
+
         <mat-tab label="Troubleshooting">
-            <ng-container ()="renameTitle('Troubleshooting')">
-                <div class="faq-section">
-                    <div class="intro-section">
-                        <h2>Troubleshooting Guide</h2>
-                        <p>Simple solutions to resolve common issues and optimize your experience</p>
-                    </div>
-                    <div class="faq-row faq-row-two">
-                        <mat-accordion>
-                            <mat-expansion-panel
-                                *ngFor="let issue of troubleshootingIssues"
-                                style="background-color: white"
-                            >
-                                <mat-expansion-panel-header>
-                                    <mat-panel-title>
-                                        {{ issue.title }}
-                                    </mat-panel-title>
-                                </mat-expansion-panel-header>
-                                <p>{{ issue.description }}</p>
-                            </mat-expansion-panel>
-                        </mat-accordion>
+            <div class="faq-section">
+                <div class="intro-section">
+                    <h2>Troubleshooting Guide</h2>
+                    <p>Simple solutions to resolve common issues and optimize your experience</p>
+                </div>
+    
+                <div class="search-container">
+                    <div class="input-container">
+                        <mat-icon>search</mat-icon>
+                        <input matInput [(ngModel)]="troubleshootingSearchQuery" (input)="performSearch()" placeholder="Search Troubleshooting">
                     </div>
                 </div>
-            </ng-container>
+    
+                <div class="faq-row faq-row-one">
+                    <div class="filter-buttons">
+                        <button mat-flat-button class="btn" *ngFor="let filter of troubleshootingFilters" 
+                                (click)="onTroubleshootingFilterClick(filter)"
+                                [class.active]="currentTroubleshootingFilter === filter">
+                            {{ filter }}
+                        </button>
+                    </div>
+                </div>
+    
+                <div class="faq-row faq-row-two">
+                    <mat-accordion *ngIf="!noTroubleshootingResults">
+                        <mat-expansion-panel *ngFor="let issue of filteredTroubleshootingIssues">
+                            <mat-expansion-panel-header>
+                                <mat-panel-title [innerHTML]="issue.highlightedTitle"></mat-panel-title>
+                            </mat-expansion-panel-header>
+                            <p [innerHTML]="issue.highlightedDescription"></p>
+                        </mat-expansion-panel>
+                    </mat-accordion>
+                    <div *ngIf="noTroubleshootingResults" class="no-results">
+                        No matching troubleshooting issues found. Please try a different search term or filter.
+                    </div>
+                </div>
+            </div>
         </mat-tab>
-        <mat-tab label="User Guides">
+
+        <!-- <mat-tab label="User Guides">
             <div style="height: 85vh; width: 100%; overflow-y: scroll; align-content: center; text-align: center">
                 <div class="intro-section">
                     <h2>Download PDF Manual</h2>
@@ -98,7 +109,69 @@
                     This browser does not support PDFs. Please download the PDF to view it:
                 </iframe>
             </div>
-        </mat-tab>
+        </mat-tab> -->
+
+        <mat-tab label="User Guides">
+            <div class="user-guide-container">
+              <div class="intro-section">
+                <h2>User Manual</h2>
+                <p>Access the comprehensive Smart Inventory User Manual to guide your understanding of the system.</p>
+              </div>
+        
+              <div class="manual-options">
+                <h3>Choose how you'd like to view the manual:</h3>
+                <div class="filter-buttons">
+                  <button mat-flat-button class="btn" (click)="openPdfInNewTab()">
+                    <mat-icon>open_in_new</mat-icon>
+                    Open PDF
+                  </button>
+                  <a mat-flat-button [href]="pdfUrl" download="UserManual.pdf" class="btn">
+                    <mat-icon>cloud_download</mat-icon>
+                    Download PDF
+                  </a>
+                </div>
+              </div>
+        
+              <div class="manual-preview">
+                <h3>Manual Preview</h3>
+                <p>Here's a brief overview of what you'll find in the manual:</p>
+                <ul>
+                  <li>Getting Started with Smart Inventory</li>
+                  <li>Managing Your Inventory</li>
+                  <li>Creating and Tracking Orders</li>
+                  <li>Generating Reports</li>
+                  <li>User Role Management</li>
+                  <li>Troubleshooting Common Issues</li>
+                </ul>
+                <p>For the full details, please use one of the options above to access the complete manual.</p>
+              </div>
+            </div>
+          </mat-tab>
+
+        <mat-tab label="Tutorials">
+            <div class="tutorials-section">
+              <div class="intro-section">
+                <h2>Video Tutorials</h2>
+                <p>Watch these helpful tutorials to get started with Smart Inventory and learn about its features.</p>
+              </div>
+              
+              <div class="tutorial-list">
+                <mat-card *ngFor="let tutorial of tutorials" class="tutorial-card">
+                  <mat-card-header>
+                    <mat-card-title>{{ tutorial.title }}</mat-card-title>
+                  </mat-card-header>
+                  <mat-card-content>
+                    <p>{{ tutorial.description }}</p>
+                    <video controls width="100%">
+                      <source [src]="tutorial.videoUrl" type="video/mp4">
+                      Your browser does not support the video tag.
+                    </video>
+                  </mat-card-content>
+                </mat-card>
+              </div>
+            </div>
+          </mat-tab>
+
         <mat-tab label="Contact Support">
             <ng-container>
                 <div style="height: 85vh; width: 100%; overflow-y: scroll; align-content: center">

@@ -175,7 +175,7 @@ export class InventoryComponent implements OnInit {
     ) {
         Amplify.configure(outputs);
     }
-
+    
     async ngOnInit(): Promise<void> {
         this.titleService.updateTitle('Inventory');
         this.checkScreenSize();

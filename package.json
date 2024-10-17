@@ -8,7 +8,8 @@
         "watch": "ng build --watch --configuration development",
         "test": "ng test",
         "test:component": "cypress run --component",
-        "lint": "ng lint"
+        "lint": "ng lint",
+        "perf:dashboard": "k6 run performance-tests/dashboard.test.js"
     },
     "private": true,
     "dependencies": {

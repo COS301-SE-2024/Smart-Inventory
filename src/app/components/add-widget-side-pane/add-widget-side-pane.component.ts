@@ -18,7 +18,7 @@ import { RadarComponent } from '../charts/radar/radar.component';
 import { LineBarComponent } from '../charts/line-bar/line-bar.component';
 import { ChartConfig, DashboardService } from '../../pages/dashboard/dashboard.service';
 import { DataCollectionService, InventorySummaryItem } from './data-collection.service';
-
+import { LoadingSpinnerComponent } from '../loader/loading-spinner.component';
 @Component({
     selector: 'app-templates-side-pane',
     standalone: true,
@@ -36,6 +36,7 @@ import { DataCollectionService, InventorySummaryItem } from './data-collection.s
         PieChartComponent,
         BarChartComponent,
         BubbleChartComponent,
+        LoadingSpinnerComponent,
         LineBarComponent,
         RadarComponent,
         ScatterplotComponent,

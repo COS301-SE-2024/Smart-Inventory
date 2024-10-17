@@ -1,8 +1,10 @@
-<h2>Customize {{ data.chartType }} Chart</h2>
+<h1 mat-dialog-title style="text-align: center; --mdc-dialog-subhead-size: 30px">
+    Customize {{ data.chartType }} Chart
+</h1>
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
     <mat-form-field>
         <mat-label>Chart Title</mat-label>
-        <input matInput formControlName="title">
+        <input matInput formControlName="title" />
     </mat-form-field>
 
     <mat-form-field>

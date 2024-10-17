@@ -99,7 +99,7 @@ export class DashboardComponent implements OnInit {
 
     isDeleteMode = false;
     isSidepanelOpen = false;
-    isLoading = true;
+    // isLoading = true;
     Math: any;
 
     cardData: CardData[] = [];
@@ -159,7 +159,7 @@ export class DashboardComponent implements OnInit {
     async ngOnInit() {
         this.titleService.updateTitle('Dashboard');
         this.CDRService.setChangeDetectorRef(this.cdr);
-        this.isLoading = true;
+        // this.isLoading = true;
         this.setupDashboardSubscription();
 
         await this.loadState();
@@ -168,15 +168,15 @@ export class DashboardComponent implements OnInit {
         }
 
         // Use Promise.all to wait for both operations to complete
-        const [stockRequests, orders] = await Promise.all([
-            this.dataCollectionService.getAllStockRequests().toPromise(),
-            this.dataCollectionService.fetchAllOrders(),
-        ]);
+        // const [stockRequests, orders] = await Promise.all([
+        //     this.dataCollectionService.getAllStockRequests().toPromise(),
+        //     this.dataCollectionService.fetchAllOrders(),
+        // ]);
 
-        this.stockRequest = stockRequests || [];
-        this.orders = orders || [];
+        // this.stockRequest = stockRequests || [];
+        // this.orders = orders || [];
 
-        await this.populateRequestOrders(this.stockRequest, this.orders);
+        // await this.populateRequestOrders(this.stockRequest, this.orders);
     }
 
     private setupDashboardSubscription() {
@@ -337,10 +337,8 @@ export class DashboardComponent implements OnInit {
     initial: string = "";
     private async loadState() {
         const savedState = this.dashService.getState();
-        if (savedState) {
+        if (savedState || null) {
             this.initial = "Add Widgets to your Dashboard";
-        } else {
-            this.isLoading = false;
         }
         this.CDRService.detectChanges();
     }
@@ -455,15 +453,15 @@ export class DashboardComponent implements OnInit {
     }
 
     refreshDashboard() {
-        this.isLoading = true;
+        // this.isLoading = true;
         this.dataCollectionService.generateChartConfigs().subscribe({
             next: (chartConfigs) => {
                 this.updateDashboardWidgets(chartConfigs);
-                this.isLoading = false;
+                // this.isLoading = false;
             },
             error: (error) => {
                 console.error('Error refreshing dashboard:', error);
-                this.isLoading = false;
+                // this.isLoading = false;
             },
         });
     }

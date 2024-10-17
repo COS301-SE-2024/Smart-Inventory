@@ -10,7 +10,11 @@
         </div>
     </div>
     <div class="side-pane-content">
+        
         <div class="chart-previews">
+            <div *ngIf="isLoading" class="loading-overlay">
+                <app-loading-spinner></app-loading-spinner>
+            </div>
             <div class="chart-preview" *ngFor="let chart of chartConfigs" (click)="addWidget(chart)">
                 <div class="preview-container" [ngSwitch]="chart.component">
                     <app-bar-chart
@@ -69,3 +73,5 @@
         </div>
     </div>
 </div>
+
+

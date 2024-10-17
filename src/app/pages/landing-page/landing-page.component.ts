@@ -8,6 +8,11 @@ import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { iconRegistry } from './icon-registry';
 import { InventoryGridComponent } from './grid/grid';
 import { Router } from '@angular/router';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { HelpDialogComponent } from './help-dialog/help-dialog.component';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+
 interface Statistic {
 	icon: any;
 	value: string;
@@ -26,7 +31,11 @@ interface Image {
 		CommonModule,
 		MaterialModule,
 		NgIconComponent,
-		InventoryGridComponent
+		InventoryGridComponent,
+		HelpDialogComponent,
+		MatDialogModule,
+		MatButtonModule,
+		MatIconModule
 	],
 	providers: [
 		provideIcons(iconRegistry)
@@ -44,9 +53,17 @@ export class LandingPageComponent implements OnInit, AfterViewInit, OnDestroy {
 	private hoverSubscription: Subscription | null = null;
 	private clickSubscription: Subscription | null = null;
 
-	constructor(private router: Router){
+	constructor(private router: Router, private dialog: MatDialog){
 		
 	}
+
+	openHelpDialog() {
+		this.dialog.open(HelpDialogComponent, {
+		  width: '600px',
+		  maxWidth: '90vw',
+		  maxHeight: '90vh'
+		});
+	  }
 
 	go() {
 		this.router.navigate(['/dashboard']);

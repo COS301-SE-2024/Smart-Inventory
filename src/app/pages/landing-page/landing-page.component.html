@@ -6,9 +6,15 @@
             <a href="#features">Features</a>
             <a href="#solutions">Solutions</a>
         </nav>
+        <div class="button-group">
+            <button mat-icon-button (click)="openHelpDialog()" class="help-button">
+            <mat-icon>help_outline</mat-icon>
+          </button>
         <button mat-flat-button color="primary" (click)="go()" style="border-radius: 5px; width: 200px; height: 40px">
             Login / Sign Up
         </button>
+        </div>
+        
     </header>
 
     <main id="home">

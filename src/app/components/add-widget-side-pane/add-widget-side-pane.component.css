@@ -12,6 +12,11 @@
     flex-direction: column;
 }
 
+.loading-overlay {
+    position: absolute;
+    bottom: 40%;
+}
+
 .side-pane.open {
     right: 0;
 }

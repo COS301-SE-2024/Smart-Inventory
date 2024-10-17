@@ -6,6 +6,8 @@ import outputs from '../../../../amplify_outputs.json';
 import { Amplify } from 'aws-amplify';
 import { Observable, from, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
+import { openDB, IDBPDatabase } from 'idb';
 import { InventoryService } from '../../../../amplify/services/inventory.service';
 import { ChartConfig } from '../../pages/dashboard/dashboard.service';
 import { forkJoin } from 'rxjs';
@@ -60,6 +62,7 @@ export class DataCollectionService {
     orderData: any[] = [];
     scatterPlotChartData: any[] = [];
     supplierQuotes: any[] = [];
+    private db: IDBPDatabase | null = null;
 
     private requestQueue: Promise<any> = Promise.resolve();
 
@@ -78,7 +81,29 @@ export class DataCollectionService {
     constructor(private inventoryService: InventoryService) {
         Amplify.configure(outputs);
         this.setupGlobalErrorHandler();
+        this.initDB();
     }
+
+    private async initDB() {
+        this.db = await openDB('myAppDB', 1, {
+            upgrade(db) {
+                db.createObjectStore('apiCache');
+            },
+        });
+    }
+
+    private async getFromCache(key: string): Promise<any> {
+        if (!this.db) await this.initDB();
+        return this.db!.get('apiCache', key);
+    }
+
+    private async setInCache(key: string, data: any): Promise<void> {
+        if (!this.db) await this.initDB();
+        await this.db!.put('apiCache', data, key);
+    }
+
+
+
 
     private setupGlobalErrorHandler() {
         window.addEventListener('unhandledrejection', (event) => {
@@ -229,26 +254,26 @@ export class DataCollectionService {
     }
 
     getInventoryItems(): Observable<InventoryItem[]> {
-        if (this.isCacheValid(this.cachedInventoryItems)) {
-            return of(this.cachedInventoryItems!.data);
-        }
-
-        return from(fetchAuthSession()).pipe(
-            switchMap((session) => from(this.getTenantId(session))),
-            switchMap((tenantId) => {
-                if (!tenantId) {
-                    throw new Error('TenantId not found in user attributes');
+        return from(this.getFromCache('inventoryItems')).pipe(
+            switchMap(cachedData => {
+                if (cachedData) {
+                    return of(cachedData);
                 }
-                return this.inventoryService.getInventoryItems(tenantId);
-            }),
-            map((data) => {
-                this.cachedInventoryItems = { data, timestamp: Date.now() };
-                return data;
+                return from(fetchAuthSession()).pipe(
+                    switchMap((session) => from(this.getTenantId(session))),
+                    switchMap((tenantId) => {
+                        if (!tenantId) {
+                            throw new Error('TenantId not found in user attributes');
+                        }
+                        return this.inventoryService.getInventoryItems(tenantId);
+                    }),
+                    tap(data => this.setInCache('inventoryItems', data))
+                );
             }),
             catchError((error) => {
                 console.error('Error fetching inventory items:', error);
                 return of([]);
-            }),
+            })
         );
     }
 
@@ -933,8 +958,8 @@ export class DataCollectionService {
                 item.quantity <= item.lowStockThreshold
                     ? 'Low Stock'
                     : item.quantity <= item.lowStockThreshold + item.reorderAmount
-                      ? 'Needs Reorder'
-                      : 'Healthy Stock';
+                        ? 'Needs Reorder'
+                        : 'Healthy Stock';
             acc[category] = (acc[category] || 0) + 1;
             return acc;
         }, {});

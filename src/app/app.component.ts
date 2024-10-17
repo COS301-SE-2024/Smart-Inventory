@@ -11,7 +11,8 @@ import { GridComponent } from './components/grid/grid.component';
 import { LoadingService } from './components/loader/loading.service';
 import { ThemeService } from './services/theme.service';
 import { CommonModule } from '@angular/common';
-import { filter } from 'rxjs/operators'; 
+import { filter } from 'rxjs/operators';
+import { SwUpdate, VersionReadyEvent } from '@angular/service-worker';
 
 Amplify.configure(outputs);
 @Component({
@@ -34,15 +35,26 @@ export class AppComponent implements OnInit {
     sidebarCollapsed = false;
     isSupplierForm = false;
     isLandingPage = false;
+    updateAvailable = false;
 
     constructor(
         public authenticator: AuthenticatorService,
         public loader: LoadingService,
         private themeService: ThemeService,
         private router: Router,
+        private swUpdate: SwUpdate,
     ) {
         // Amplify.configure(outputs);
         // this.loadTheme();
+        this.swUpdate.versionUpdates
+            .pipe(filter((evt): evt is VersionReadyEvent => evt.type === 'VERSION_READY'))
+            .subscribe(evt => {
+                this.updateAvailable = true;
+            });
+    }
+
+    updateApp() {
+        this.swUpdate.activateUpdate().then(() => document.location.reload());
     }
 
     ngOnInit() {

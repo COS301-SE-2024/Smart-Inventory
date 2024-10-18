@@ -69,3 +69,8 @@
     font-size: 12px !important; /* Readable font size */
     z-index: 10000 !important; /* Ensure it's above other elements */
 }
+
+.logo-small {
+    width: 100px;
+    height: auto;
+  }

@@ -4,6 +4,16 @@
   
   <ng-template #mainApp>
     <amplify-authenticator>
+      <ng-template amplifySlot="header">
+        <div style="padding: var(--amplify-space-large); text-align: center; display: flex; align-items: center; justify-content: center;">
+          <img
+            class="amplify-image logo-small"
+            alt="Smart Inventory logo"
+            src="https://svgshare.com/i/1BcW.svg"
+          />
+          <span style="margin-left: 10px; font-size: 30px; font-weight: bold;">Smart Inventory</span>
+        </div>
+      </ng-template>
       <ng-template amplifySlot="authenticated" let-user="user" let-signOut="signOut">
         <div class="container">
           <app-sidebar></app-sidebar>

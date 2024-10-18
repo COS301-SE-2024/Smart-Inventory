@@ -175,7 +175,7 @@
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 */
 [data-amplify-authenticator] {
-    --amplify-components-authenticator-router-box-shadow: 0 0 16px var(--amplify-colors-overlay-90);
+    --amplify-components-authenticator-router-box-shadow: 0 0 2px var(--amplify-colors-overlay-90);
     --amplify-components-authenticator-router-border-width: 0;
     --amplify-components-authenticator-form-padding: var(--amplify-space-medium) var(--amplify-space-xl)
         var(--amplify-space-xl);
@@ -188,7 +188,8 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     --amplify-components-button-link-hover-color: var(--amplify-colors-overlay-90);
 }
 .amplify-button--primary {
-    background: rgb(39, 39, 39);
+    background: #005cbb;
+    color: #fff;
 }
 
 body,

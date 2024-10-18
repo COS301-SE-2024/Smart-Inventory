@@ -322,6 +322,16 @@ export class CustomQuoteModalComponent implements OnInit {
 
 
   async saveChanges() {
+    const validationError = this.validateForm();
+    if (validationError) {
+      this.snackBar.open(validationError, 'Close', {
+        duration: 5000,
+        horizontalPosition: 'center',
+        verticalPosition: 'top',
+      });
+      return;
+    }
+  
     this.isSavingChanges = true;
     const updatedQuote = {
       quoteId: this.quoteId,
@@ -381,6 +391,16 @@ export class CustomQuoteModalComponent implements OnInit {
   }
 
   createOrder() {
+    const validationError = this.validateForm();
+    if (validationError) {
+      this.snackBar.open(validationError, 'Close', {
+        duration: 5000,
+        horizontalPosition: 'center',
+        verticalPosition: 'top',
+      });
+      return;
+    }
+  
     this.isCreatingOrder = true;
     const order = {
       items: this.quoteItems.map(({ item, quantity }) => ({
@@ -536,6 +556,27 @@ export class CustomQuoteModalComponent implements OnInit {
       }
     });
     return Array.from(uniqueItems.values());
+  }
+
+  validateForm(): string | null {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+  
+    if (this.submissionDeadline && this.submissionDeadline < today) {
+      return "Submission deadline cannot be set to a date before today.";
+    }
+  
+    if (this.quoteItems.length === 0 || this.selectedSuppliers.length === 0 || !this.submissionDeadline) {
+      return "Please select at least one item, one supplier, and set a submission deadline.";
+    }
+  
+    for (const item of this.quoteItems) {
+      if (!item.item || !item.item.sku) {
+        return "Please select an item for each added row.";
+      }
+    }
+  
+    return null;
   }
 
 }

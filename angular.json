@@ -33,6 +33,11 @@
                                 "glob": "**/*.mov",
                                 "input": "src/assets/videos",
                                 "output": "/assets/videos"
+                            },
+                            {
+                                "glob": "**/*.svg",
+                                "input": "src/assets/svg",
+                                "output": "/assets/svg"
                             }
                         ],
                         "styles": [

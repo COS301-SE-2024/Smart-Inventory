@@ -264,51 +264,7 @@ section h2 {
 	padding: 4rem 2rem;
 	position: relative;
 	overflow: hidden;
-}
-
-.statistics-content {
-	max-width: 1200px;
-	margin: 0 auto;
-	position: relative;
-	z-index: 1;
-}
-
-.statistics-section h2 {
-	font-size: 3rem;
-	margin-bottom: 1.5rem;
-	font-weight: bold;
-	color: #333;
-}
-
-.statistics-section .highlight {
-	color: #1976d2;
-}
-
-.statistics-section p {
-	font-size: 1.1rem;
-	line-height: 1.6;
-	margin-bottom: 3rem;
-	max-width: 800px;
-	color: #546E7A;
-}
-
-.statistics-grid {
-	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-	gap: 2rem;
-}
-
-.statistic-item {
-	text-align: center;
-	background-color: #F5F5F5;
-	padding: 1.5rem;
-	border-radius: 8px;
-	transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.statistic-item:hover {
-	transform: translateY(-5px);
-	box-shadow: 0 10px 20px rgba(33, 150, 243, 0.1);
+	height: 10px;
 }
 
 .icon-wrapper {

@@ -98,7 +98,7 @@ export class HelpComponent implements OnInit {
     filteredFaqs: HighlightedFAQ[] = [];
     filteredTroubleshootingIssues: HighlightedTroubleshootingIssue[] = [];
 
-    troubleshootingFilters: string[] = ['All', 'Login Issues', 'Functionality', 'Technical'];
+    troubleshootingFilters: string[] = ['All', 'Functionality', 'Technical'];
     currentTroubleshootingFilter: string = 'All';
 
     noFaqResults: boolean = false;
@@ -329,21 +329,6 @@ export class HelpComponent implements OnInit {
     ];
 
     troubleshootingIssues: TroubleshootingIssue[] = [
-        {
-            title: 'Cannot login',
-            description: 'Firstly make sure you have a good network connection. Then make sure that you are providing the correct details and that the password is correct. If you are sure your details are correct and it still tells you your password is incorrect click on forgot password. If you are still having issues please contact us.',
-            category: 'Login Issues'
-        },
-        {
-            title: 'Forget password verification code not sent',
-            description: 'If the current screen says a code has been sent. Check that you are looking at the correct email that it would send it to. Also check that you have internet connection. If it is still not there ask to resend the code by clicking on "resend code". If you are still having issues please contact us.',
-            category: 'Login Issues'
-        },
-        {
-            title: 'Cannot create an account',
-            description: 'If you have been provided with a login link there is no need to create an account as your admin created your account you only need to verify your password with your email. If you are an admin and cannot create an account check that if you have already created one you are not using the same email. Any further issues please contact us.',
-            category: 'Login Issues'
-        },
         {
             title: 'Cannot add or remove from tables',
             description: 'Firstly if you are and End-User you have no ability to do so. If you are an Inventory controller or admin you should be able to check that you are using the functionality correctly, to find out about functionality go to FAQ or User Guides. Any other issues please contact us.',

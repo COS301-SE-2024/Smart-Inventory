@@ -11,9 +11,11 @@ import { GridComponent } from './components/grid/grid.component';
 import { LoadingService } from './components/loader/loading.service';
 import { ThemeService } from './services/theme.service';
 import { CommonModule } from '@angular/common';
-import { filter } from 'rxjs/operators'; 
+import { filter } from 'rxjs/operators';
+import { SecureDataService } from './services/secure-data.service';
 
 Amplify.configure(outputs);
+
 @Component({
     selector: 'app-root',
     standalone: true,
@@ -40,13 +42,11 @@ export class AppComponent implements OnInit {
         public loader: LoadingService,
         private themeService: ThemeService,
         private router: Router,
-    ) {
-        // Amplify.configure(outputs);
-        // this.loadTheme();
-    }
+        private secureDataService: SecureDataService
+    ) { }
 
-    ngOnInit() {
-        this.logAuthSession();
+    async ngOnInit() {
+        await this.logAuthSession();
         this.router.events.pipe(
             filter(event => event instanceof NavigationEnd)
         ).subscribe((event: NavigationEnd) => {
@@ -54,26 +54,27 @@ export class AppComponent implements OnInit {
             this.isLandingPage = event.urlAfterRedirects === '/landing' || event.urlAfterRedirects === '/';
         });
 
+        // Example of using SecureDataService
+        const accessToken = await this.secureDataService.getSecureItem('accessToken');
+        if (accessToken) {
+            console.log('Access token retrieved securely');
+            // Use the access token as needed
+        }
     }
-
-    //
-
-    // toggleTheme(): void {
-    //     const newTheme = this.themeService.getTheme() === 'dark' ? 'light' : 'dark';
-    //     this.themeService.setTheme(newTheme);
-    // }
-
-    // loadTheme(): void {
-    //     this.themeService.setTheme(this.themeService.getTheme());
-    // }
-
-    //
 
     async logAuthSession() {
         try {
             const session = await fetchAuthSession();
+            // Store session information securely
+            await this.secureDataService.setSecureItem('authSession', JSON.stringify(session));
         } catch (error) {
             console.error('Error fetching auth session:', error);
         }
+    }
+
+    // Add methods to securely get and set data as needed
+    async getSecureAuthSession() {
+        const sessionString = await this.secureDataService.getSecureItem('authSession');
+        return sessionString ? JSON.parse(sessionString) : null;
     }
 }

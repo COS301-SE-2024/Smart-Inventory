@@ -264,6 +264,9 @@ export class SupplierFormComponent implements OnInit {
   updateTotals(index: number) {
     const item = this.quoteItems[index];
     if (item.isAvailable) {
+      item.availableQuantity = this.validatePositiveNumber(item.availableQuantity);
+      item.unitCost = this.validatePositiveNumber(item.unitCost);
+      item.discount = this.validatePositiveNumber(item.discount);
       item.totalCost = item.availableQuantity * item.unitCost;
       const discountAmount = item.totalCost * (item.discount / 100);
       item.totalPrice = item.totalCost - discountAmount;
@@ -303,11 +306,34 @@ export class SupplierFormComponent implements OnInit {
   }
 
   updateTotalQuoteValue() {
-    // This method is called whenever VAT or delivery cost changes
-    // The actual calculation is done in getTotalQuoteValue()
+    this.vatPercentage = this.validatePositiveNumber(this.vatPercentage);
+    this.deliveryCost = this.validatePositiveNumber(this.deliveryCost);
+  }
+
+  validateForm(): string | null {
+    if (!this.deliveryDate) {
+      return "Please select a valid delivery date.";
+    }
+  
+    // Add any other validations you want here
+    // For example, checking if all required fields are filled
+  
+    return null; // Return null if the form is valid
   }
 
   submitQuote() {
+
+    const validationError = this.validateForm();
+    if (validationError) {
+      this.snackBar.open(validationError, 'Close', {
+        duration: 5000,
+        horizontalPosition: 'center',
+        verticalPosition: 'top',
+      });
+      return; // Don't proceed with submission if there's an error
+    }
+  
+
     this.isSubmitting = true;
     const quoteData = {
       quoteItems: this.quoteItems.map(item => ({
@@ -398,6 +424,25 @@ export class SupplierFormComponent implements OnInit {
         this.sendUpdateContactRequest();
       }
     });
+  }
+
+  validatePositiveNumber(value: number): number {
+    return value < 0 ? 0 : value;
+  }
+  
+  validateFutureDate(event: any) {
+    const selectedDate = new Date(event.target.value);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+  
+    if (selectedDate < today) {
+      this.snackBar.open('Please select a future date for delivery.', 'Close', {
+        duration: 3000,
+        horizontalPosition: 'center',
+        verticalPosition: 'top',
+      });
+      this.deliveryDate = '';
+    }
   }
 
   sendUpdateContactRequest() {

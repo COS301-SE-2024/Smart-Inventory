@@ -37,9 +37,9 @@
                     <ng-container matColumnDef="quantity">
                         <th mat-header-cell *matHeaderCellDef>Quantity</th>
                         <td mat-cell *matCellDef="let item">
-                            <mat-form-field appearance="outline">
-                                <input matInput type="number" [(ngModel)]="item.quantity" />
-                            </mat-form-field>
+                          <mat-form-field appearance="outline">
+                            <input matInput type="number" [(ngModel)]="item.quantity" min="0" />
+                          </mat-form-field>
                         </td>
                     </ng-container>
 

@@ -69,28 +69,32 @@
                     </td>
                     <td>
                         <input
-                            type="number"
-                            [(ngModel)]="item.availableQuantity"
-                            (ngModelChange)="updateTotals(i)"
-                            [disabled]="!item.isAvailable"
-                        />
+                        type="number"
+                        [(ngModel)]="item.availableQuantity"
+                        (ngModelChange)="updateTotals(i)"
+                        [disabled]="!item.isAvailable"
+                        min="0"
+                      />
                     </td>
                     <td>
                         <input
-                            type="number"
-                            [(ngModel)]="item.unitCost"
-                            (ngModelChange)="updateTotals(i)"
-                            [disabled]="!item.isAvailable"
-                        />
+                        type="number"
+                        [(ngModel)]="item.unitCost"
+                        (ngModelChange)="updateTotals(i)"
+                        [disabled]="!item.isAvailable"
+                        min="0"
+                      />
                     </td>
                     <td class="total-cost">{{ item.totalCost | customCurrency: selectedCurrency }}</td>
                     <td>
                         <input
-                            type="number"
-                            [(ngModel)]="item.discount"
-                            (ngModelChange)="updateTotals(i)"
-                            [disabled]="!item.isAvailable"
-                        />
+                        type="number"
+                        [(ngModel)]="item.discount"
+                        (ngModelChange)="updateTotals(i)"
+                        [disabled]="!item.isAvailable"
+                        min="0"
+                        max="100"
+                      />
                     </td>
                     <td class="total-price">{{ item.totalPrice | customCurrency: selectedCurrency }}</td>
                 </tr>
@@ -102,25 +106,35 @@
         <div class="summary-row">
             <label for="vatPercentage">VAT (%):</label>
             <input
-                type="number"
-                id="vatPercentage"
-                [(ngModel)]="vatPercentage"
-                (ngModelChange)="updateTotalQuoteValue()"
-                class="summary-input"
-            />
+            type="number"
+            id="vatPercentage"
+            [(ngModel)]="vatPercentage"
+            (ngModelChange)="updateTotalQuoteValue()"
+            class="summary-input"
+            min="0"
+            max="100"
+          />
+          
         </div>
         <div class="summary-row">
             <label for="deliveryDate">Delivery Date:</label>
-            <input type="date" id="deliveryDate" [(ngModel)]="deliveryDate" class="summary-input" />
+            <input 
+            type="date" 
+            id="deliveryDate" 
+            [(ngModel)]="deliveryDate" 
+            (change)="validateFutureDate($event)"
+            class="summary-input" 
+          />
         </div>
         <div class="summary-row">
             <label for="deliveryCost">Delivery Cost:</label>
             <input
-                type="number"
-                id="deliveryCost"
-                [(ngModel)]="deliveryCost"
-                (ngModelChange)="updateTotalQuoteValue()"
-                class="summary-input"
+            type="number"
+            id="deliveryCost"
+            [(ngModel)]="deliveryCost"
+            (ngModelChange)="updateTotalQuoteValue()"
+            class="summary-input"
+            min="0"
             />
         </div>
         <div class="summary-row">
@@ -162,10 +176,14 @@
         </ul>
     </div> -->
 
-    <button class="submit-btn" (click)="submitQuote()" [disabled]="isSubmitting || isDeadlinePassed">
-        <span *ngIf="!isSubmitting">Submit Quote</span>
-        <span *ngIf="isSubmitting">Submitting...</span>
-    </button>
+    <button 
+    class="submit-btn" 
+    (click)="submitQuote()" 
+    [disabled]="isSubmitting || isDeadlinePassed || !deliveryDate"
+  >
+    <span *ngIf="!isSubmitting">Submit Quote</span>
+    <span *ngIf="isSubmitting">Submitting...</span>
+  </button>
 </div>
 
 <div *ngIf="isDeadlinePassed" class="deadline-overlay">

@@ -134,6 +134,19 @@ export class ReceiveOrderModalComponent implements OnInit {
   }
 
   async markAsReceived() {
+    
+    const validationError = this.validateForm();
+    if (validationError) {
+      this.snackBar.open(validationError, 'Close', {
+        duration: 5000,
+        horizontalPosition: 'center',
+        verticalPosition: 'top',
+      });
+      return;
+    }
+
+    this.isLoading = true;
+
     try {
       // First, add inventory items
       for (const item of this.orderItems) {
@@ -158,6 +171,7 @@ export class ReceiveOrderModalComponent implements OnInit {
         console.log('Inventory-CreateItem response:', response);
   
         if (!response) {
+          this.isLoading = false;
           throw new Error(`Failed to create inventory item`);
         }
       }
@@ -168,8 +182,11 @@ export class ReceiveOrderModalComponent implements OnInit {
       console.log('Order marked as received:', result);
   
       if (!result || !result.updatedOrder) {
+        this.isLoading = false;
         throw new Error('Failed to update order status');
       }
+
+      this.isLoading = false;
   
       this.snackBar.open('Order marked as received and inventory items added successfully', 'Close', {
         duration: 6000,
@@ -196,5 +213,17 @@ export class ReceiveOrderModalComponent implements OnInit {
 
   close() {
     this.dialogRef.close();
+  }
+
+  validateForm(): string | null {
+    for (const item of this.orderItems) {
+      if (item.quantity < 0) {
+        return `Negative quantity not allowed for item ${item.sku}`;
+      }
+      if (!item.expirationDate) {
+        return `Expiration date must be set for item ${item.sku}`;
+      }
+    }
+    return null;
   }
 }

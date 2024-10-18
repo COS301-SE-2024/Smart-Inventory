@@ -148,7 +148,7 @@
             </div>
           </mat-tab>
 
-        <mat-tab label="Tutorials">
+        <!-- <mat-tab label="Tutorials">
             <div class="tutorials-section">
               <div class="intro-section">
                 <h2>Video Tutorials</h2>
@@ -166,11 +166,12 @@
                       <source [src]="tutorial.videoUrl" type="video/mp4">
                       Your browser does not support the video tag.
                     </video>
+                    <iframe [src]="tutorial.safeVideoUrl" width="560" height="315" frameborder="0" allowfullscreen></iframe>
                   </mat-card-content>
                 </mat-card>
               </div>
             </div>
-          </mat-tab>
+          </mat-tab> -->
 
         <mat-tab label="Contact Support">
             <ng-container>

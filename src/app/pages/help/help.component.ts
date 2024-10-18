@@ -47,6 +47,7 @@ interface Tutorial {
     title: string;
     description: string;
     videoUrl: string;
+    safeVideoUrl?: SafeResourceUrl;
 }
 
 @Component({
@@ -106,38 +107,38 @@ export class HelpComponent implements OnInit {
 
     pdfUrl: string = 'assets/documents/UserManual.pdf';
 
-    tutorials: Tutorial[] = [
-        {
-            title: 'Getting Started with Smart Inventory - Full Tutorial',
-            description: 'Learn the basics of navigating and using Smart Inventory.',
-            videoUrl: 'assets/videos/getting-started.mp4'
-        },
-        {
-            title: 'Managing Your Inventory',
-            description: 'Discover how to add, edit, and remove items from your inventory.',
-            videoUrl: 'assets/videos/manage-inventory.mp4'
-        },
-        {
-            title: 'Request Stock using QR-Codes',
-            description: 'Learn how to remove items from your inventory using qr-codes.',
-            videoUrl: 'assets/videos/request-stock-qr-code.mp4'
-        },
-        {
-            title: 'Creating and Managing Orders',
-            description: 'Learn how to create, edit, and track orders in Smart Inventory.',
-            videoUrl: 'assets/videos/managing-orders.mov'
-        },
-        {
-            title: 'Understand EOQ, ROP and FB Prophet Model',
-            description: 'Explore how to generate and interpret various reports in Smart Inventory.',
-            videoUrl: 'assets/videos/generating-reports.mp4'
-        },
-        {
-            title: 'Manage Your Dashboard',
-            description: 'Learn how to add, remove and interact with widgets.',
-            videoUrl: 'assets/videos/manage-dashboard.mp4'
-        }
-    ];
+    // tutorials: Tutorial[] = [
+    //     {
+    //         title: 'Getting Started with Smart Inventory - Full Tutorial',
+    //         description: 'Learn the basics of navigating and using Smart Inventory.',
+    //         videoUrl: 'https://drive.google.com/file/d/1aBC123XYZ/preview'
+    //     },
+    //     {
+    //         title: 'Managing Your Inventory',
+    //         description: 'Discover how to add, edit, and remove items from your inventory.',
+    //         videoUrl: 'https://drive.google.com/file/d/2bCD234ZYX/preview'
+    //     },
+    //     {
+    //         title: 'Request Stock using QR-Codes',
+    //         description: 'Learn how to remove items from your inventory using qr-codes.',
+    //         videoUrl: 'https://drive.google.com/file/d/1r5rkIOMdKqzE-sF3rbz_7eUdZJhEn0bu/view?usp=drive_link'
+    //     },
+    //     {
+    //         title: 'Creating and Managing Orders',
+    //         description: 'Learn how to create, edit, and track orders in Smart Inventory.',
+    //         videoUrl: 'https://drive.google.com/file/d/4dEF456VUT/preview'
+    //     },
+    //     {
+    //         title: 'Understand EOQ, ROP and FB Prophet Model',
+    //         description: 'Explore how to generate and interpret various reports in Smart Inventory.',
+    //         videoUrl: 'https://drive.google.com/file/d/5eFG567UTS/preview'
+    //     },
+    //     {
+    //         title: 'Manage Your Dashboard',
+    //         description: 'Learn how to add, remove and interact with widgets.',
+    //         videoUrl: 'https://drive.google.com/file/d/6fGH678TSR/preview'
+    //     }
+    // ];
 
 
     faqs: FAQ[] = [
@@ -393,14 +394,17 @@ export class HelpComponent implements OnInit {
 
     constructor(
         private snackBar: MatSnackBar,
-        private titleService: TitleService
-    ) {}
-
+        private titleService: TitleService,
+        private sanitizer: DomSanitizer
+    ) { }
+    
     ngOnInit() {
         this.onItemSelected(this.menuItems[0]); // Select FAQs by default
         this.initializeFilteredArrays();
         this.titleService.updateTitle('Help');
     }
+
+    
 
     initializeFilteredArrays() {
         this.filteredFaqs = this.faqs.map(faq => ({

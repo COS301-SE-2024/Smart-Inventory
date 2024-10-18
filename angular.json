@@ -23,6 +23,16 @@
                                 "glob": "**/*",
                                 "input": "src/assets",
                                 "output": "/assets"
+                            },
+                            {
+                                "glob": "**/*.mp4",
+                                "input": "src/assets/videos",
+                                "output": "/assets/videos"
+                            },
+                            {
+                                "glob": "**/*.mov",
+                                "input": "src/assets/videos",
+                                "output": "/assets/videos"
                             }
                         ],
                         "styles": [

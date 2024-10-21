@@ -250,19 +250,13 @@ Reviews focus on checking that coding standards are being followed and that any 
 
 ##
 
-  <a href="https://drive.google.com/file/d/1GA5bhGj_Fdi55wLu19L-26e7DdXcXDOk/view?usp=drive_link">
+  <a href="https://drive.google.com/file/d/1S0vyEOqaBQnbLdFJ1lHEiEUlkHdlbyq7/view?usp=drive_link">
     Helix - Demo 4 App Recording
   </a>
   
 ##
 
-  <a href="https://drive.google.com/file/d/1iGT_RBSD6WArLD1bJzuDQxNmeEPE8L8b/view?usp=sharing">
-    Helix - Demo 4 Recording
-  </a>
-  
-  ##
-
-  <a href="/documents/Demo 3/SmartInventory-Demo3.pdf">
+  <a href="https://docs.google.com/presentation/d/1MtD0MrGPevJN6lS7-M40DXNO6oF6PqB7/edit?usp=drive_link&ouid=102622919128406644866&rtpof=true&sd=true">
     Helix - Demo 4 Presentation Slides
   </a>
 <hr>

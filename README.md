@@ -208,7 +208,7 @@ Reviews focus on checking that coding standards are being followed and that any 
   ##
 
   📄
-  <a href="documents/Demo 4/Testing Manual.pdf">
+  <a href="documents/Demo 4/Testing Manual (2).pdf">
     Testing Manual
   </a>
 

@@ -256,7 +256,7 @@ Reviews focus on checking that coding standards are being followed and that any 
   
 ##
 
-  <a href="https://docs.google.com/presentation/d/1MtD0MrGPevJN6lS7-M40DXNO6oF6PqB7/edit?usp=drive_link&ouid=102622919128406644866&rtpof=true&sd=true">
+  <a href="documents/Demo 4/Demo 4.pdf">
     Helix - Demo 4 Presentation Slides
   </a>
 <hr>
@@ -290,7 +290,6 @@ Reviews focus on checking that coding standards are being followed and that any 
 
 ### ⚙️ Testing
 * Cypress
-* Postman
   
 ### ⚙️ Cloud
 * Amplify

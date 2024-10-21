@@ -105,7 +105,7 @@ export class HelpComponent implements OnInit {
     noFaqResults: boolean = false;
     noTroubleshootingResults: boolean = false;
 
-    pdfUrl: string = 'assets/documents/UserManual.pdf';
+    pdfUrl: string = 'https://drive.google.com/file/d/1xFkMmMGrfiLIITzNyGkm9ytivO2fOyKb/view?usp=drive_link';
 
     // tutorials: Tutorial[] = [
     //     {

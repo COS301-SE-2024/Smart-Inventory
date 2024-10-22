@@ -34,35 +34,94 @@ SmartInventory is designed to cater to the needs of various user roles within an
 <hr>
 </br>
 
-## Git Strategy - Git Flow
+## 📂Documents
+  📄
+  <a href="documents/Demo 4/SRS.pdf">
+    Software Requirement Specification
+  </a>
+  
+  ##
 
-<img src="/media/GitFolwStrategy.png">
+  📄
+  <a href="documents/Demo 4/ARS.pdf">
+    Architectural Specification
+  </a>
+  
+  ##
 
-### Git Structure
-This project follows a mono-repo structure. 
-* This means that all code, documentation, and resources are stored within this single repository.
+  📄
+  <a href="documents/Demo 4/DesignSpec.pdf">
+    Design Specification
+  </a>
+  
+  ##
 
-### Git Organisation and Management
-#### Branches:
-* main: This branch contains the final, production-ready code.
-    * No direct commits are permitted and all changes must come in a pull-request from a release branch.
-* develop: All current development happens in this branch. This includes features, tests and fixes.
-* feature: Feature branches are branched off the develop branch to add functionalities and to fix bugs.
-* documentation: This is the branch used for documentation related content and layout commits.
-* hotfix: This branch is created when a quick or crucial changes need to be made once all repo branches are merged into the main.
+  📄
+  <a href="documents/Demo 4/Coding Standards.pdf">
+    Coding Standards
+  </a>
 
-#### Pull Request Workflow:
-1. Developers create feature branches from the develop.
-2. Upon the completion of a feature, a pull-request into develop is created.
-3. Automated lints and tests are used to validate changes.
-4. A pull-request must be reviewed by at least 1 other team member before merging into develop.
+  ##
 
-#### Code Review Process:
-Reviews focus on checking that coding standards are being followed and that any issues brought on by miscommunication are cleared up early on.
+  📄
+  <a href="documents/Demo 4/User Manual.pdf">
+    User Manual
+  </a>
 
-> [!NOTE]  
-> Use of issues as well as naming conventions of branches can be found in the coding standards documentation.
+  ##
 
+  📄
+  <a href="documents/Demo 4/Testing Manual (2).pdf">
+    Testing Manual
+  </a>
+
+  ##
+
+  📄
+  <a href="documents/Demo 4/Technical Installation Manual.pdf">
+    Technical Installation Manual
+  </a>
+  
+  ##
+
+  📄
+  <a href="documents/Demo 4/Service Contract.pdf">
+    API Service Contracts
+  </a>
+
+  ##
+
+  📄
+  <a href="documents/Demo 4/DeploymentDiag.png">
+    Deployment Model
+  </a>
+
+  ##
+
+  📄
+  <a href="documents/Demo 4/Predictive Analytics.pdf">
+    Predictive Analytic 
+  </a>
+  <hr>
+</br>
+
+## 🔗Links
+
+<a href="https://github.com/orgs/COS301-SE-2024/projects/53">
+    Project Board
+  </a>
+
+##
+
+  <a href="https://drive.google.com/file/d/1S0vyEOqaBQnbLdFJ1lHEiEUlkHdlbyq7/view?usp=drive_link">
+    Helix - Demo 4 App Recording
+  </a>
+  
+##
+
+  <a href="documents/Demo 4/Demo 4.pdf">
+    Helix - Demo 4 Presentation Slides
+  </a>
 <hr>
 </br>
 
@@ -168,134 +227,6 @@ Reviews focus on checking that coding standards are being followed and that any 
 * General:
   * Dark/Light mode
 
-<hr>
-</br>
-
-## 📂Documents
-  📄
-  <a href="documents/Demo 4/SRS.pdf">
-    Software Requirement Specification
-  </a>
-  
-  ##
-
-  📄
-  <a href="documents/Demo 4/ARS.pdf">
-    Architectural Specification
-  </a>
-  
-  ##
-
-  📄
-  <a href="documents/Demo 4/DesignSpec.pdf">
-    Design Specification
-  </a>
-  
-  ##
-
-  📄
-  <a href="documents/Demo 4/Coding Standards.pdf">
-    Coding Standards
-  </a>
-
-  ##
-
-  📄
-  <a href="documents/Demo 4/User Manual.pdf">
-    User Manual
-  </a>
-
-  ##
-
-  📄
-  <a href="documents/Demo 4/Testing Manual (2).pdf">
-    Testing Manual
-  </a>
-
-  ##
-
-  📄
-  <a href="documents/Demo 4/Technical Installation Manual.pdf">
-    Technical Installation Manual
-  </a>
-  
-  ##
-
-  📄
-  <a href="documents/Demo 4/Service Contract.pdf">
-    API Service Contracts
-  </a>
-
-  ##
-
-  📄
-  <a href="documents/Demo 4/DeploymentDiag.png">
-    Deployment Model
-  </a>
-
-  ##
-
-  📄
-  <a href="documents/Demo 4/Predictive Analytics.pdf">
-    Predictive Analytic 
-  </a>
-  <hr>
-</br>
-
-## 🔗Links
-
-<a href="https://github.com/orgs/COS301-SE-2024/projects/53">
-    Project Board
-  </a>
-
-##
-
-  <a href="https://drive.google.com/file/d/1S0vyEOqaBQnbLdFJ1lHEiEUlkHdlbyq7/view?usp=drive_link">
-    Helix - Demo 4 App Recording
-  </a>
-  
-##
-
-  <a href="documents/Demo 4/Demo 4.pdf">
-    Helix - Demo 4 Presentation Slides
-  </a>
-<hr>
-</br>
-
-## 🛠️ Tech Stack
-
-> [!NOTE]  
-> Read more about decisions of technologies in the Architectural Specification.
-
-### ⚙️ Frontend:
-* Angular
-* Material
-* Typescript
-
-### ⚙️ Backend:
-* AWS Lambda Functions
-* API Gateway
-* AWS Event Bridge
-* AWS SES
-* AWS SNS
-* Docker
- 
-### ⚙️ Database:
-* AWS DynamoDB
-* AWS S3
-
-### ⚙️ Standards
-* ESLint
-* Prettier
-
-### ⚙️ Testing
-* Cypress
-  
-### ⚙️ Cloud
-* Amplify
-* Amplify Cloud Sandbox
-* Cloudwatch
-  
 <hr>
 </br>
 
